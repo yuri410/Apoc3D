@@ -2,7 +2,6 @@
 #ifndef APD_MODELDOCUMENT_H
 #define APD_MODELDOCUMENT_H
 
-
 #include "APDesigner/Document.h"
 
 namespace APDesigner

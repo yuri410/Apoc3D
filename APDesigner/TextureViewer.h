@@ -30,9 +30,16 @@ namespace APDesigner
 {
 	class TextureThumbViewer
 	{
+	public:
+		TextureThumbViewer(MainWindow* window);
+
+		void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* rect);
+
+		void Show(const Point& position, Texture* texture);
+		void Hide();
 	private:
-		Texture* m_texture;
-		
+		Texture* m_texture = nullptr;
+
 		Form* m_form;
 		PictureBox* m_pictureBox;
 
@@ -40,23 +47,14 @@ namespace APDesigner
 		Texture* m_previewCubeFaces[6];
 
 		RenderDevice* m_device;
-	public:
-		TextureThumbViewer(RenderDevice* device);
-
-		void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* rect);
-
-		void Show(const Point& position, Texture* texture);
-		void Hide();
 	};
 
 	class TextureViewer : public Document
 	{
-	
 	public:
 		TextureViewer(MainWindow* window, const String& name, const String& filePath);
 		~TextureViewer();
 
-		
 
 		virtual void Initialize(RenderDevice* device);
 
@@ -66,6 +64,10 @@ namespace APDesigner
 
 		virtual void Update(const GameTime* time);
 	private:
+		void PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
+		void BtnZoomIn_Pressed(Button* ctrl);
+		void BtnZoomOut_Pressed(Button* ctrl);
+
 		String m_name;
 		String m_filePath;
 		Texture* m_texture;
@@ -75,8 +77,5 @@ namespace APDesigner
 
 		int m_scale;
 
-		void PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
-		void BtnZoomIn_Pressed(Control* ctrl);
-		void BtnZoomOut_Pressed(Control* ctrl);
 	};
 }

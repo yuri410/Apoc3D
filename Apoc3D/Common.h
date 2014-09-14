@@ -427,7 +427,7 @@ namespace Apoc3D
 		class CheckboxGroup;
 		class ComboBox;
 
-		class Menu;
+		class MenuBar;
 		class MenuItem;
 		class SubMenu;
 

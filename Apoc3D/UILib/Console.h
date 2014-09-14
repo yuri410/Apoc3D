@@ -47,6 +47,7 @@ namespace Apoc3D
 		public:
 			typedef EventDelegate1<LogEntry*> ConsoleNewLog;
 			
+			
 			static const int MaxLogEntries = 500;
 
 			Console(RenderDevice* device, StyleSkin* skin, const Point& position, const Point& size);
@@ -65,11 +66,11 @@ namespace Apoc3D
 			ConsoleNewLog eventNewLogReceived;
 
 		private:
-			void TextBox_ReturnPressed(Control* ctrl);
-			void TextBox_UpPressed(Control* ctrl);
-			void TextBox_DownPressed(Control* ctrl);
+			void TextBox_ReturnPressed(TextBox* ctrl);
+			void TextBox_UpPressed(TextBox* ctrl);
+			void TextBox_DownPressed(TextBox* ctrl);
 
-			void Submit_Pressed(Control* ctrl);
+			void Submit_Pressed(Button* ctrl);
 
 			
 

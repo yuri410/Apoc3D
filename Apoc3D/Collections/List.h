@@ -215,7 +215,16 @@ namespace Apoc3D
 			template <typename Func>
 			void Sort(Func comparer) { if (m_count > 0) QuickSort(m_elements, 0, m_count - 1, comparer); }
 
-		
+			int32 ClampIndexInRange(int32 idx) const
+			{
+				if (idx >= m_count)
+					idx = m_count - 1;
+				if (idx < 0)
+					idx = 0;
+				return idx;
+			}
+
+			bool isIndexInRange(int32 idx) const { return idx >= 0 && idx < m_count; }
 			int32 getCount() const { return m_count; }
 
 		protected:

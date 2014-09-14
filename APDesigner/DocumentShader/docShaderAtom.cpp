@@ -35,28 +35,25 @@ namespace APDesigner
 		getDocumentForm()->setTitle(L"Shader Atom: " + name);
 		getDocumentForm()->setMinimumSize(Point(970,635));
 
+		const StyleSkin* skin = window->getUISkin();
+
 		{
-			Label* lbl = new Label(Point(23, 33), L"Name", 80);
-			lbl->SetSkin(window->getUISkin());
+			Label* lbl = new Label(skin, Point(23, 33), L"Name", 80);
 			m_labels.Add(lbl);
 
-			m_tbName = new TextBox(Point(100, 33), 120);
-			m_tbName->SetSkin(window->getUISkin());
+			m_tbName = new TextBox(skin, Point(100, 33), 120);
 
-			lbl = new Label(Point(250, 33), L"Type", 80);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(250, 33), L"Type", 80);
 			m_labels.Add(lbl);
 
 			List<String> items;
 			items.Add(GraphicsCommonUtils::ToString(SHDT_Vertex));
 			items.Add(GraphicsCommonUtils::ToString(SHDT_Pixel));
 			items.Add(GraphicsCommonUtils::ToString(SHDT_All));
-			m_cbShaderType = new ComboBox(Point(330, 33), 120, items);
-			m_cbShaderType->SetSkin(window->getUISkin());
+			m_cbShaderType = new ComboBox(skin, Point(330, 33), 120, items);
 
 
-			lbl = new Label(Point(23, 66), L"Profile", 80);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(23, 66), L"Profile", 80);
 			m_labels.Add(lbl);
 
 			items.Clear();
@@ -64,24 +61,21 @@ namespace APDesigner
 			items.Add(L"Shader Model 2");
 			items.Add(L"Shader Model 3");
 
-			m_cbProfile = new ComboBox(Point(100, 66), 120, items);
-			m_cbProfile->SetSkin(window->getUISkin());
+			m_cbProfile = new ComboBox(skin, Point(100, 66), 120, items);
 
-			m_tbCode = new TextBox(Point(33, 100),500,500,L"");
+			m_tbCode = new TextBox(skin, Point(33, 100),500,500,L"");
 			m_tbCode->setScrollbarType(TextBox::SBT_Both);
-			m_tbCode->SetSkin(window->getUISkin());
 		}
 		{
 			List2D<String> emptyList(3, 2);
 
-			m_lbPorts = new ListView(Point(550, 25), Point(400, 550), emptyList);
-			m_lbPorts->SetSkin(window->getUISkin());
+			m_lbPorts = new ListView(skin, Point(550, 25), Point(400, 550), emptyList);
 
 			m_lbPorts->getColumnHeader().Add(ListView::Header(L"Name",150));
 			m_lbPorts->getColumnHeader().Add(ListView::Header(L"Type",75));
 			m_lbPorts->getColumnHeader().Add(ListView::Header(L"Format",75));
 			m_lbPorts->getColumnHeader().Add(ListView::Header(L"Usage",100));
-			m_lbPorts->setFullRowSelect(true);
+			m_lbPorts->FullRowSelect = true;
 
 		}
 	}
@@ -126,8 +120,8 @@ namespace APDesigner
 
 			m_currentWorkingCopy = new ShaderAtomType(*requested);
 			
-			m_tbCode->setText(m_currentWorkingCopy->getCodeBody());
-			m_tbName->setText(m_currentWorkingCopy->getName());
+			m_tbCode->SetText(m_currentWorkingCopy->getCodeBody());
+			m_tbName->SetText(m_currentWorkingCopy->getName());
 
 			if (m_currentWorkingCopy->getMajorSMVersion()>0 && 
 				m_currentWorkingCopy->getMajorSMVersion()-1<m_cbProfile->getItems().getCount())
@@ -198,7 +192,7 @@ namespace APDesigner
 
 	void ShaderAtomDocument::Form_Resized(Control* ctrl)
 	{
-		m_tbCode->setWidth(getDocumentForm()->Size.X-50);
-		m_tbCode->Size.Y = getDocumentForm()->Size.Y;
+		m_tbCode->setWidth(getDocumentForm()->getWidth() - 50);
+		m_tbCode->setHeight(getDocumentForm()->getHeight());
 	}
 }

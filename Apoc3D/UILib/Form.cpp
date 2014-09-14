@@ -46,33 +46,27 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-
-		Form::Form(BorderStyle border, const String& title)
-			: m_titleOffset(12,0), m_minimumSize(100, 40), m_minimizedSize(100, 20),
-			m_maximumSize(0,0), m_maximizedPos(0,0), m_isMinimized(false), m_isMaximized(false),
-			m_previousPosition(0,0), m_previousSize(0,0), m_minimizedPos(0,0), 
-			m_hasMinimizeButton(true), m_hasMaximizeButton(true), 
-			m_dragArea(0,0,0,0), m_resizeArea(0,0,15,15), m_isDragging(false), m_isResizeing(false),
-			m_isMinimizing(false), m_isInReiszeArea(false), m_posOffset(0,0), m_oldSize(0,0), m_initialized(false), m_lastClickTime(0),
-			m_borderStyle(border), m_state(FWS_Normal), m_title(title),
-			m_borderAlpha(1), m_border(nullptr),
-			m_device(nullptr), m_btClose(nullptr), m_btMinimize(nullptr),
-			m_btMaximize(nullptr), m_btRestore(nullptr),
-			IsBackgroundForm(false)
+		Form::Form(const StyleSkin* skin, RenderDevice* device, BorderStyle border, const String& title)
+			: ControlContainer(skin), m_device(device), m_skin(skin),
+			m_titleOffset(12,0), m_minimumSize(100, 40), m_minimizedSize(100, 20),
+			m_dragArea(0,0,0,0), m_resizeArea(0,0,15,15), 
+			m_borderStyle(border), m_title(title)
 		{
-			Size = Point(200,100);
+			m_size = Point(200,100);
 			Visible = false;
+
+			Initialize(skin);
 		}
 
 		Form::~Form()
 		{
-			if (UIRoot::getModalForm() == this)
+			if (SystemUI::ModalForm == this)
 			{
-				UIRoot::setModalForm(0);
+				SystemUI::ModalForm = nullptr;
 			}
-			if (UIRoot::getTopMostForm() == this)
+			if (SystemUI::TopMostForm == this)
 			{
-				UIRoot::setTopMostForm(0);
+				SystemUI::TopMostForm = nullptr;
 			}
 			delete m_btClose;
 			delete m_btMaximize;
@@ -80,9 +74,10 @@ namespace Apoc3D
 			delete m_btRestore;
 			delete m_border;
 		}
+
 		void Form::ShowModal()
 		{
-			UIRoot::setModalForm(this);
+			SystemUI::ModalForm = this;
 			Show();
 		}
 		void Form::Show()
@@ -92,28 +87,28 @@ namespace Apoc3D
 			if (m_previousPosition!= Point::Zero)
 				Position = m_previousPosition;
 			if (m_previousSize!=Point::Zero)
-				Size = m_previousSize;
+				m_size = m_previousSize;
 
 			Visible = true;
 			Focus();
 		}
 		void Form::Hide()
 		{
-			if (UIRoot::getModalForm() == this)
+			if (SystemUI::ModalForm == this)
 			{
-				UIRoot::setModalForm(0);
+				SystemUI::ModalForm = nullptr;
 			}
 			Visible = false;
 		}
 		void Form::Close()
 		{
-			if (m_menu)
+			if (MenuBar)
 			{
-				m_menu->Close();
+				MenuBar->Close();
 			}
 
-			if (UIRoot::getTopMostForm() == this)
-				UIRoot::setTopMostForm(0);
+			if (SystemUI::TopMostForm == this)
+				SystemUI::TopMostForm = nullptr;
 
 			Hide();
 			
@@ -121,30 +116,30 @@ namespace Apoc3D
 		}
 		void Form::Focus()
 		{
-			if (UIRoot::getTopMostForm() && UIRoot::getTopMostForm() != this && 
-				UIRoot::getTopMostForm()->getMenu() && UIRoot::getTopMostForm()->getMenu()->getState() == MENU_Open)
+			if (SystemUI::TopMostForm && SystemUI::TopMostForm != this && 
+				SystemUI::TopMostForm->MenuBar && SystemUI::TopMostForm->MenuBar->getState() == MENU_Open)
 			{
 				return;
 			}
 
-			UIRoot::getForms().Remove(this);
-			UIRoot::getForms().Insert(0, this);
-			UIRoot::setTopMostForm(this);
+			SystemUI::BringToFirst(this);
+			SystemUI::TopMostForm = this;
 
 		}
 		void Form::Unfocus()
 		{
-			if (m_menu && m_menu->getState() != MENU_Closed)
+			if (MenuBar && MenuBar->getState() != MENU_Closed)
 			{
-				m_menu->Close();
+				MenuBar->Close();
 			}
-			if (UIRoot::getTopMostForm() == this)
-				UIRoot::setTopMostForm(0);
+
+			if (SystemUI::TopMostForm == this)
+				SystemUI::TopMostForm = nullptr;
 		}
 		void Form::Minimize()
 		{
 			Point minPos;
-			bool ret = UIRoot::GetMinimizedPosition(m_device, this, minPos);
+			bool ret = SystemUI::GetMinimizedPosition(m_device, this, minPos);
 			if (ret)
 				m_minimizedPos = minPos;
 			else
@@ -154,13 +149,13 @@ namespace Apoc3D
 			if (m_state == FWS_Normal)
 			{
 				m_previousPosition = Position;
-				m_previousSize = Size;
+				m_previousSize = m_size;
 			}
 			
-			if (m_menu)
+			if (MenuBar)
 			{
-				m_menu->Close();
-				m_menu->Visible = false;
+				MenuBar->Close();
+				MenuBar->Visible = false;
 			}
 
 			m_state = FWS_Minimized;
@@ -171,17 +166,17 @@ namespace Apoc3D
 			if (m_state == FWS_Normal)
 			{
 				m_previousPosition = Position;
-				m_previousSize = Size;
+				m_previousSize = m_size;
 			}
 
-			if (m_menu)
+			if (MenuBar)
 			{
-				m_menu->Close();
+				MenuBar->Close();
 			}
 
 			Focus();
 
-			Apoc3D::Math::Rectangle rect = UIRoot::GetMaximizedRect(m_device, this);
+			Apoc3D::Math::Rectangle rect = SystemUI::GetMaximizedRect(m_device, this);
 			m_maximizedPos.X = rect.X; m_maximizedPos.Y = rect.Y;
 
 			m_maximumSize.X = rect.Width; m_maximumSize.Y = rect.Height;// UIRoot::GetMaximizedSize(m_device, this);
@@ -191,30 +186,20 @@ namespace Apoc3D
 		{
 			Focus();
 
-			if (m_menu)
+			if (MenuBar)
 			{
-				m_menu->Visible = true;
-				m_menu->Close();
+				MenuBar->Visible = true;
+				MenuBar->Close();
 			}
 
 			m_state = FWS_Normal;
 		}
 
-		void Form::Initialize(RenderDevice* device)
+		void Form::Initialize(const StyleSkin* skin)
 		{
-			m_device = device;
-
-			Apoc3D::Math::Rectangle rect = UIRoot::GetUIArea(device);
+			Apoc3D::Math::Rectangle rect = SystemUI::GetUIArea(m_device);
 			m_maximumSize = Point(rect.Width, rect.Height);
-
-			if (m_menu)
-			{
-				m_minimumSize.Y = 60;
-				m_menu->setOwner(this);
-				m_menu->Position = m_menuOffset;
-				m_menu->Initialize(m_device);
-			}
-
+			
 			m_border = new Border(m_borderStyle, m_skin);
 
 			m_fontRef = m_skin->TitleTextFont;
@@ -224,75 +209,74 @@ namespace Apoc3D
 
 			m_titleOffset.X = m_skin->FormTitlePadding.Left;
 
-			InitializeButtons(device);
-
-			ControlContainer::Initialize(device);
+			InitializeButtons();
 
 			m_initialized = true;
 		}
 
-		void Form::InitializeButtons(RenderDevice* device)
+		void Form::InitializeButtons()
 		{
-			m_btClose = new Button(Point(Size.X - m_skin->FormTitlePadding.Right - m_skin->FormCBCloseNormal.Width, m_skin->FormTitlePadding.Top), L"");
-			m_btClose->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBCloseNormal);
-			m_btClose->MouseOverTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBCloseHover);
-			m_btClose->MouseDownTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBCloseDown);
-			m_btClose->OverlayIcon = UIGraphic(m_skin->SkinTexture, m_skin->FormCBIconClose);
-			m_btClose->setOwner(this);
-			m_btClose->Initialize(device);
+			ButtonVisualSettings bvs;
+			bvs.HasNormalGraphic = true;
+			bvs.HasMouseHoverGraphic = true;
+			bvs.HasMouseDownGraphic = true;
+			bvs.HasOverlayIcon = true;
+
+			bvs.NormalGraphic = UIGraphic(m_skin->SkinTexture, m_skin->FormCBCloseNormal);
+			bvs.MouseHoverGraphic = UIGraphic(m_skin->SkinTexture, m_skin->FormCBCloseHover);
+			bvs.MouseDownGraphic = UIGraphic(m_skin->SkinTexture, m_skin->FormCBCloseDown);
+			bvs.OverlayIcon = UIGraphicSimple(m_skin->SkinTexture, m_skin->FormCBIconClose);
+
+			m_btClose = new Button(bvs, Point(m_size.X - m_skin->FormTitlePadding.Right - m_skin->FormCBCloseNormal.Width, m_skin->FormTitlePadding.Top), L"");
 			m_btClose->eventRelease.Bind(this, &Form::btClose_Release);
 
 			
 			if (m_hasMinimizeButton)
 			{
-				m_btMinimize = new Button(Point(0,0),L"");
-				//m_btMinimize->setNormalTexture(m_skin->FormMinimizeButton);
-				m_btMinimize->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMinNormal);
-				m_btMinimize->MouseOverTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMinHover);
-				m_btMinimize->MouseDownTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMinDown);
-				m_btMinimize->OverlayIcon = UIGraphic(m_skin->SkinTexture, m_skin->FormCBIconMin);
-				m_btMinimize->setOwner(this);
-				m_btMinimize->Initialize(device);
+				bvs.NormalGraphic = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMinNormal);
+				bvs.MouseHoverGraphic = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMinHover);
+				bvs.MouseDownGraphic = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMinDown);
+				bvs.OverlayIcon = UIGraphicSimple(m_skin->SkinTexture, m_skin->FormCBIconMin);
+
+				m_btMinimize = new Button(bvs, Point(0, 0), L"");
 				m_btMinimize->eventRelease.Bind(this, &Form::btMinimize_Release);
 			}
 			if (m_hasMaximizeButton)
 			{
-				m_btMaximize = new Button(Point(0,0),L"");
-				m_btMaximize->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMaxNormal);
-				m_btMaximize->MouseOverTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMaxHover);
-				m_btMaximize->MouseDownTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMaxDown);
-				m_btMaximize->OverlayIcon = UIGraphic(m_skin->SkinTexture, m_skin->FormCBIconMax);
-				m_btMaximize->setOwner(this);
-				m_btMaximize->Initialize(device);
+				bvs.NormalGraphic = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMaxNormal);
+				bvs.MouseHoverGraphic = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMaxHover);
+				bvs.MouseDownGraphic = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMaxDown);
+				bvs.OverlayIcon = UIGraphicSimple(m_skin->SkinTexture, m_skin->FormCBIconMax);
+
+				m_btMaximize = new Button(bvs, Point(0, 0), L"");
 				m_btMaximize->eventRelease.Bind(this, &Form::btMaximize_Release);
 			}
 			if (m_hasMinimizeButton || m_hasMaximizeButton)
 			{
-				m_btRestore = new Button(Point(0,0), L"");
-				m_btRestore->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBRestoreNormal);
-				m_btRestore->MouseOverTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBRestoreHover);
-				m_btRestore->MouseDownTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBRestoreDown);
-				m_btRestore->OverlayIcon = UIGraphic(m_skin->SkinTexture, m_skin->FormCBIconRestore);
-				m_btRestore->setOwner(this);
-				m_btRestore->Initialize(device);
+				bvs.NormalGraphic = UIGraphic(m_skin->SkinTexture, m_skin->FormCBRestoreNormal);
+				bvs.MouseHoverGraphic = UIGraphic(m_skin->SkinTexture, m_skin->FormCBRestoreHover);
+				bvs.MouseDownGraphic = UIGraphic(m_skin->SkinTexture, m_skin->FormCBRestoreDown);
+				bvs.OverlayIcon = UIGraphicSimple(m_skin->SkinTexture, m_skin->FormCBIconRestore);
+
+				m_btRestore = new Button(bvs, Point(0, 0), L"");
 				m_btRestore->eventRelease.Bind(this, &Form::btRestore_Release);
 			}
 		}
 
 
-		void Form::btClose_Release(Control* sender)
+		void Form::btClose_Release(Button* sender)
 		{
 			Close();
 		}
-		void Form::btMinimize_Release(Control* sender)
+		void Form::btMinimize_Release(Button* sender)
 		{
 			Minimize();
 		}
-		void Form::btMaximize_Release(Control* sender)
+		void Form::btMaximize_Release(Button* sender)
 		{
 			Maximize();
 		}
-		void Form::btRestore_Release(Control* sender)
+		void Form::btRestore_Release(Button* sender)
 		{
 			Restore();
 		}
@@ -302,8 +286,12 @@ namespace Apoc3D
 			if (!Visible)
 				return;
 
+			if (MenuBar)
+				MenuBar->Position = Point(0, m_skin->FormTitle->Height); // m_menuOffset;
+
 			UpdateState();
 			UpdateTopMost();
+
 
 			if (m_state == FWS_Normal && !m_isMaximized && !m_isMinimized)
 			{
@@ -317,21 +305,34 @@ namespace Apoc3D
 				}
 			}
 
+			{
+				Point subOffset = GetAbsolutePosition();
+				m_btClose->BaseOffset = subOffset;
+				m_btMinimize->BaseOffset = subOffset;
+				m_btMaximize->BaseOffset = subOffset;
+				m_btRestore->BaseOffset = subOffset;
+				for (Control* ct : m_controls)
+				{
+					ct->ParentFocused = SystemUI::TopMostForm == this || SystemUI::ActiveForm == this;
+					ct->BaseOffset = subOffset;
+				}
+			}
+
 			CheckDoubleClick(time);
 
 			if (m_state != FWS_Minimized && !m_isMinimized)
 			{
-				if (Size.X < m_minimumSize.X)
-					Size.X = m_minimumSize.X;
-				if (Size.Y < m_minimumSize.Y)
-					Size.Y = m_minimumSize.Y;
+				if (m_size.X < m_minimumSize.X)
+					m_size.X = m_minimumSize.X;
+				if (m_size.Y < m_minimumSize.Y)
+					m_size.Y = m_minimumSize.Y;
 			}
 
-			if (UIRoot::getTopMostForm() == this || (m_isMinimized && UIRoot::getActiveForm() == this))
+			if (SystemUI::TopMostForm == this || (m_isMinimized && SystemUI::ActiveForm == this))
 			{
-				if (m_menu && m_menu->Visible)
+				if (MenuBar && MenuBar->Visible)
 				{
-					m_menu->Update(time);
+					MenuBar->Update(time);
 				}
 
 				bool blocked = false;
@@ -358,34 +359,39 @@ namespace Apoc3D
 					blocked |= m_btRestore->isMouseHover();
 				}
 
-				if (!m_menu || !m_menu->Visible || m_menu->getState() == MENU_Closed)
+				if (MenuBar == nullptr || !MenuBar->Visible || MenuBar->getState() == MENU_Closed)
 				{
 					if (m_state == FWS_Normal || m_state == FWS_Maximized)
 					{
 						bool skip = false;
-						for (int i = 0; i < m_controls.getCount(); i++)
+						for (int32 i = 0; i < m_controls.getCount();i++)
 						{
-							if (m_controls[i]->IsOverriding())
+							Control* ct = m_controls[i];
+							if (ct->IsOverriding())
 							{
-								m_controls[i]->Update(time);
+								ct->Update(time);
 								skip = true;
 							}
 						}
+
 						if (!skip)
 						{
-							for (int i = 0; i < m_controls.getCount(); i++)
+							for (int32 i = 0; i < m_controls.getCount(); i++)
 							{
-								if (m_controls[i]->Enabled)
+								Control* ct = m_controls[i];
+								if (ct->Enabled)
 								{
-									m_controls[i]->Update(time);
+									ct->Update(time);
 								}
 							}
 						}
 					}
 				}
 			}
+			
 			UpdateActive();
-			if (UIRoot::getActiveForm()!=this)
+			
+			if (SystemUI::ActiveForm != this)
 			{
 				if (m_isResizeing) m_isResizeing = false;
 				if (m_isDragging) m_isDragging = false;
@@ -396,9 +402,9 @@ namespace Apoc3D
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();	
 
-			if (mouse->IsLeftPressedState() && getArea().Contains(mouse->GetPosition()) && !UIRoot::getActiveForm())
+			if (mouse->IsLeftPressedState() && getArea().Contains(mouse->GetPosition()) && SystemUI::ActiveForm == nullptr)
 			{
-				UIRoot::setActiveForm(this);
+				SystemUI::ActiveForm = this;
 				Focus();
 			}
 		}
@@ -406,10 +412,17 @@ namespace Apoc3D
 		void Form::UpdateActive()
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			if (UIRoot::getActiveForm() == this && mouse->IsLeftReleasedState())
+			if (SystemUI::ActiveForm == this && mouse->IsLeftReleasedState())
 			{
-				UIRoot::setActiveForm(0);
+				SystemUI::ActiveForm = nullptr;
 			}
+		}
+
+		static Point Limit(Point d)
+		{
+			if (d.X > 5) d.X /= 5;
+			if (d.Y > 5) d.Y /= 5;
+			return d;
 		}
 
 		void Form::UpdateState()
@@ -417,41 +430,25 @@ namespace Apoc3D
 			//Restore the window to its original size and position
 			if (m_state == FWS_Normal && (m_isMaximized || m_isMinimized))
 			{
-				if (Vector2::Distance(
-					Vector2((float)Position.X, (float)Position.Y), 
-					Vector2((float)m_previousPosition.X, (float)m_previousPosition.Y))>2.0f)
+				if (Point::Distance(Position, m_previousPosition) > 2.0f)
 				{
-					int dx = (int)((m_previousPosition.X-Position.X)*0.2f);
-					if (!dx) dx = m_previousPosition.X-Position.X;
-					Position.X += dx;
-
-					int dy = (int)((m_previousPosition.Y-Position.Y)*0.2f);
-					if (!dy) dy = m_previousPosition.Y-Position.Y;
-					Position.Y += dy;
+					Position += Limit(m_previousPosition - Position);
 				}
 				else
 				{
 					Position = m_previousPosition;
 				}
 
-				if (Vector2::Distance(
-					Vector2((float)Size.X,(float)Size.Y), 
-					Vector2((float)m_previousPosition.X, (float)m_previousPosition.Y))>2.0f)
+				if (Point::Distance(m_size, m_previousSize)>2.0f)
 				{
-					int dx = (int)((m_previousSize.X-Size.X)*0.2f);
-					if (!dx) dx = m_previousSize.X-Size.X;
-					Size.X += dx;
-
-					int dy = (int)((m_previousSize.Y-Size.Y)*0.2f);
-					if (!dy) dy = m_previousSize.Y-Size.Y;
-					Size.Y += dy;
+					m_size += Limit(m_previousSize - m_size);
 				}
 				else
 				{
-					Size = m_previousSize;
+					m_size = m_previousSize;
 				}
 
-				if (Position == m_previousPosition && Size == m_previousSize)
+				if (Position == m_previousPosition && m_size == m_previousSize)
 				{
 					m_isMaximized = false;
 					m_isMinimized = false;
@@ -464,41 +461,25 @@ namespace Apoc3D
 			 //Minimize the window
 			else if (m_state == FWS_Minimized && !m_isMinimized)
 			{
-				if (Vector2::Distance(
-					Vector2((float)Position.X,(float)Position.Y),
-					Vector2((float)m_minimizedPos.X, (float)m_minimizedPos.Y))>2.0f)
+				if (Point::Distance(Position, m_minimizedPos)>2.0f)
 				{
-					int dx = (int)((m_minimizedPos.X-Position.X)*0.2f);
-					if (!dx) dx = m_minimizedPos.X-Position.X;
-					Position.X += dx;
-
-					int dy = (int)((m_minimizedPos.Y-Position.Y)*0.2f);
-					if (!dy) dy = m_minimizedPos.Y-Position.Y;
-					Position.Y += dy;
+					Position += Limit(m_minimizedPos - Position);
 				}
 				else
 				{
 					Position = m_minimizedPos;
 				}
 
-				if (Vector2::Distance(
-					Vector2((float)Size.X,(float)Size.Y), 
-					Vector2((float)m_minimizedSize.X, (float)m_minimizedSize.Y))>2.0f)
+				if (Point::Distance(m_size, m_minimizedSize)>2.0f)
 				{
-					int dx = (int)((m_minimizedSize.X-Size.X)*0.2f);
-					if (!dx) dx = m_minimizedSize.X-Size.X;
-					Size.X += dx;
-
-					int dy = (int)((m_minimizedSize.Y-Size.Y)*0.2f);
-					if (!dy) dy = m_minimizedSize.Y-Size.Y;
-					Size.Y += dy;
+					m_size += Limit(m_minimizedSize - m_size);
 				}
 				else
 				{
-					Size = m_minimizedSize;
+					m_size = m_minimizedSize;
 				}
 
-				if (Position == m_minimizedPos && Size == m_minimizedSize)
+				if (Position == m_minimizedPos && m_size == m_minimizedSize)
 				{
 					m_isMinimized = true;
 					m_isMaximized = false;
@@ -510,41 +491,25 @@ namespace Apoc3D
 			//Maximize the window
 			else if (m_state == FWS_Maximized && !m_isMaximized)
 			{
-				if (Vector2::Distance(
-					Vector2((float)m_maximizedPos.X, (float)m_maximizedPos.Y), 
-					Vector2((float)Position.X, (float)Position.Y))>2.0f)
+				if (Point::Distance(m_maximizedPos, Position) > 2.0f)
 				{
-					int dx = (int)((m_maximizedPos.X-Position.X)*0.2f);
-					if (!dx) dx = m_maximizedPos.X-Position.X;
-					Position.X += dx;
-
-					int dy = (int)((m_maximizedPos.Y-Position.Y)*0.2f);
-					if (!dy) dy = m_maximizedPos.Y-Position.Y;
-					Position.Y += dy;
+					Position += Limit(m_maximizedPos - Position);
 				}
 				else
 				{
 					Position = m_maximizedPos;
 				}
 				
-				if (Vector2::Distance(
-					Vector2((float)Size.X,(float)Size.Y), 
-					Vector2((float)m_maximumSize.X, (float)m_maximumSize.Y))>2.0f)
+				if (Point::Distance(m_size, m_maximumSize)>2.0f)
 				{
-					int dx = (int)((m_maximumSize.X-Size.X)*0.2f);
-					if (!dx) dx = m_maximumSize.X-Size.X;
-					Size.X += dx;
-
-					int dy = (int)((m_maximumSize.Y-Size.Y)*0.2f);
-					if (!dy) dy = m_maximumSize.Y-Size.Y;
-					Size.Y += dy;
+					m_size += Limit(m_maximumSize - m_size);
 				}
 				else
 				{
-					Size = m_maximumSize;
+					m_size = m_maximumSize;
 				}
 
-				if (Position == m_maximizedPos && Size == m_maximumSize)
+				if (Position == m_maximizedPos && m_size == m_maximumSize)
 				{
 					m_isMinimized = false;
 					m_isMaximized = true;
@@ -558,7 +523,7 @@ namespace Apoc3D
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			m_dragArea.X = Position.X + m_skin->FormTitle[0].Width;
 			m_dragArea.Y = Position.Y;
-			m_dragArea.Width = Size.X - m_skin->FormCBCloseNormal.Width - m_skin->FormTitlePadding.Right;
+			m_dragArea.Width = m_size.X - m_skin->FormCBCloseNormal.Width - m_skin->FormTitlePadding.Right;
 			if (m_hasMinimizeButton)
 				m_dragArea.Width -= m_skin->FormCBMinNormal.Width;
 			if (m_hasMaximizeButton)
@@ -566,7 +531,7 @@ namespace Apoc3D
 			m_dragArea.Height = m_skin->FormTitle[0].Height;
 
 			if (m_dragArea.Contains(mouse->GetPosition()) &&
-				mouse->IsLeftPressed() && UIRoot::getActiveForm()==this)
+				mouse->IsLeftPressed() && SystemUI::ActiveForm == this)
 			{
 				m_isDragging = true;
 				Focus();
@@ -577,7 +542,7 @@ namespace Apoc3D
 			{
 				Point dif = mouse->GetPosition() - m_posOffset - Position;
 
-				dif = UIRoot::ClampFormMovementOffset(this, dif);
+				dif = SystemUI::ClampFormMovementOffset(this, dif);
 				Position.X += dif.X;
 				Position.Y += dif.Y;
 
@@ -595,7 +560,7 @@ namespace Apoc3D
 				m_dragArea.X = Position.X + 7;
 				m_dragArea.Y = Position.Y;
 
-				m_dragArea.Width = Size.X - 29;
+				m_dragArea.Width = m_size.X - 29;
 				if (m_hasMinimizeButton)
 					m_dragArea.Width -= 15;
 				if (m_hasMaximizeButton)
@@ -607,10 +572,10 @@ namespace Apoc3D
 			{
 				if (mouse->IsLeftPressed())
 				{
-					if (UIRoot::getActiveForm() != this)
-						UIRoot::setActiveForm(this);
+					if (SystemUI::ActiveForm != this)
+						SystemUI::ActiveForm = this;
 
-					if (UIRoot::getActiveForm()==this)
+					if (SystemUI::ActiveForm==this)
 					{
 						if (time->getTotalTime() - m_lastClickTime < 0.2f)
 						{
@@ -626,11 +591,10 @@ namespace Apoc3D
 		void Form::CheckResize()
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			m_resizeArea.X = Position.X + Size.X - m_resizeArea.Width;
-			m_resizeArea.Y = Position.Y + Size.Y - m_resizeArea.Height;
+			m_resizeArea.setPosition(Position + m_size - m_resizeArea.getSize());
 
 			if (m_resizeArea.Contains(mouse->GetPosition()) &&
-				UIRoot::getTopMostForm()==this)
+				SystemUI::TopMostForm == this)
 			{
 				if (m_isInReiszeArea)
 				{
@@ -638,13 +602,13 @@ namespace Apoc3D
 				}
 
 				if (mouse->IsLeftPressed() &&
-					UIRoot::getActiveForm() == this)
+					SystemUI::ActiveForm == this)
 				{
 					m_isResizeing = true;
 					Focus();
-					m_posOffset.X = mouse->GetPosition().X;
-					m_posOffset.Y = mouse->GetPosition().Y;
-					m_oldSize = Size;
+					
+					m_posOffset = mouse->GetPosition();
+					m_oldSize = m_size;
 				}
 			}
 			else if (m_isInReiszeArea && !m_isResizeing)
@@ -654,26 +618,24 @@ namespace Apoc3D
 
 			if (m_isResizeing)
 			{
-				Point dif(
-					m_oldSize.X + mouse->GetPosition().X - m_posOffset.X - Size.X, 
-					m_oldSize.Y + mouse->GetPosition().Y - m_posOffset.Y - Size.Y);
+				Point dif = m_oldSize + mouse->GetPosition() - m_posOffset - m_size;
 
-				dif = UIRoot::ClampFormMovementOffset(this, dif);
+				dif = SystemUI::ClampFormMovementOffset(this, dif);
 
-				Size.X += dif.X;
-				Size.Y += dif.Y;
+				m_size += dif;
 
-				if ((dif.X !=0 || dif.Y !=0))
+				if (dif.X != 0 || dif.Y != 0)
 				{
 					eventResized.Invoke(this);
 				}
-				
+
 				if (mouse->IsLeftReleasedState())
 				{
 					m_isResizeing = false;
 				}
 			}
 		}
+
 		void Form::ToggleWindowState()
 		{
 			if (m_state == FWS_Normal)
@@ -689,10 +651,10 @@ namespace Apoc3D
 			if (!Visible)
 				return;
 
-			Apoc3D::Math::Rectangle uiArea = UIRoot::GetUIArea(m_device);
+			Apoc3D::Math::Rectangle uiArea = SystemUI::GetUIArea(m_device);
 
-			m_borderAlpha = 0.3f - UIRoot::getForms().IndexOf(this) * 0.04f;
-			m_border->Draw(sprite, Position, Size, m_borderAlpha);
+			m_borderAlpha = 0.3f - SystemUI::getForms().IndexOf(this) * 0.04f;
+			m_border->Draw(sprite, Position, m_size, m_borderAlpha);
 
 			DrawTitle(sprite);
 			DrawButtons(sprite);
@@ -701,9 +663,6 @@ namespace Apoc3D
 			{
 				sprite->Flush();
 
-				Matrix matrix;
-				Matrix::CreateTranslation(matrix, (float)Position.X, (float)Position.Y,0);
-				sprite->MultiplyTransform(matrix);
 				Apoc3D::Math::Rectangle rect= getAbsoluteArea();
 				if (rect.getBottom()>uiArea.getBottom())
 				{
@@ -738,47 +697,34 @@ namespace Apoc3D
 					m_controls[overlay]->DrawOverlay(sprite);
 				}
 
-				if (m_menu && m_menu->Visible)
-					m_menu->Draw(sprite);
+				if (MenuBar && MenuBar->Visible)
+					MenuBar->Draw(sprite);
 
-				if(sprite->isUsingStack())
-				{
-					sprite->PopTransform();
-				}
-				else
-				{
-					sprite->SetTransform(Matrix::Identity);
-				}
 			}
 		}
 		void Form::DrawButtons(Sprite* sprite)
 		{
-			Matrix matrix;
-			Matrix::CreateTranslation(matrix, (float)Position.X, (float)Position.Y,0);
-
-			sprite->MultiplyTransform(matrix);
 			if (m_borderStyle != FBS_None && m_borderStyle != FBS_Pane)
 			{
-				m_btClose->Position.X = Size.X - 22;
+				m_btClose->Position.X = m_size.X - 22;
 				m_btClose->Position.Y = 4;
 				m_btClose->Draw(sprite);
 			}
 
 			if (m_borderStyle == FBS_Sizable)
 			{
-				
 				if (m_hasMaximizeButton)
 				{					
 					if (m_state != FWS_Maximized)
 					{
-						m_btMaximize->Position.X = Size.X - 37;
+						m_btMaximize->Position.X = m_size.X - 37;
 						m_btMaximize->Position.Y = 4;
 						
 						m_btMaximize->Draw(sprite);
 					}
 					else
 					{
-						m_btRestore->Position.X = Size.X - 37;
+						m_btRestore->Position.X = m_size.X - 37;
 						m_btRestore->Position.Y = 4;
 						m_btRestore->Draw(sprite);
 					}
@@ -787,13 +733,13 @@ namespace Apoc3D
 					{
 						if (m_state != FWS_Minimized)
 						{
-							m_btMinimize->Position.X = Size.X - 52;
+							m_btMinimize->Position.X = m_size.X - 52;
 							m_btMinimize->Position.Y = 4;
 							m_btMinimize->Draw(sprite);
 						}
 						else
 						{
-							m_btRestore->Position.X = Size.X - 52;
+							m_btRestore->Position.X = m_size.X - 52;
 							m_btRestore->Position.Y = 4;
 							m_btRestore->Draw(sprite);
 						}
@@ -803,30 +749,25 @@ namespace Apoc3D
 				{
 					if (m_state != FWS_Minimized)
 					{
-						m_btMinimize->Position.X = Size.X - 37;
+						m_btMinimize->Position.X = m_size.X - 37;
 						m_btMinimize->Position.Y = 4;
 						m_btMinimize->Draw(sprite);
 					}
 					else
 					{
-						m_btRestore->Position.X = Size.X - 37;
+						m_btRestore->Position.X = m_size.X - 37;
 						m_btRestore->Position.Y = 4;
 						m_btRestore->Draw(sprite);
 					}
 				}
 			}
-			if(sprite->isUsingStack())
-			{
-				sprite->PopTransform();
-			}
-			else
-			{
-				sprite->SetTransform(Matrix::Identity);
-			}
 
 		}
+
 		void Form::DrawTitle(Sprite* sprite)
 		{
+			Point drawPos = GetAbsolutePosition() + m_titleOffset;
+
 			Point size = m_fontRef->MeasureString(m_title);
 			int32 padding = m_skin->FormTitlePadding.getHorizontalSum();
 			padding += m_skin->FormCBCloseNormal.Width;
@@ -834,31 +775,17 @@ namespace Apoc3D
 				padding += m_skin->FormCBMinNormal.Width;
 			if (m_hasMaximizeButton)
 				padding += m_skin->FormCBMaxNormal.Width;
-			
-			if (size.X >= Size.X-padding)
-			{
-				padding += m_fontRef->MeasureString(L"..").X;
 
-				for (size_t i = 0; i < m_title.size() + 1; i++)
-				{
-					String subStr = m_title.substr(0, i);
-					size = m_fontRef->MeasureString(subStr);
-					if (size.X >= Size.X - padding)
-					{
-						Point pos = Position;
-						pos.X += m_titleOffset.X;
-						pos.Y += m_titleOffset.Y;
-						m_fontRef->DrawString(sprite, subStr + L"..", pos, m_skin->TextColor);
-						break;
-					}
-				}
+			if (size.X >= m_size.X - padding)
+			{
+				String title = m_title;
+				guiOmitLineText(m_fontRef, m_size.X - padding, title);
+				
+				m_fontRef->DrawString(sprite, title, drawPos, m_skin->TextColor);
 			}
 			else
 			{
-				Point pos = Position;
-				pos.X += m_titleOffset.X;
-				pos.Y += m_titleOffset.Y;
-				m_fontRef->DrawString(sprite, m_title, pos, m_skin->TextColor);
+				m_fontRef->DrawString(sprite, m_title, drawPos, m_skin->TextColor);
 			}
 
 		}
@@ -946,7 +873,7 @@ namespace Apoc3D
 			{
 				m_dstRect[3].X = m_dstRect[0].X;
 				m_dstRect[3].Y = m_dstRect[0].Y + m_dstRect[0].Height;
-				m_dstRect[3].Height = size.Y - (m_dstRect[0].Height + m_skin->WhitePixelTexture->getHeight());
+				m_dstRect[3].Height = size.Y - (m_dstRect[0].Height + SystemUI::GetWhitePixel()->getHeight());
 
 			}
 			else
@@ -972,14 +899,14 @@ namespace Apoc3D
 
 			if (m_style == FBS_Pane)
 			{
-				if (size.Y > m_dstRect[0].Height + m_skin->WhitePixelTexture->getHeight())
+				if (size.Y > m_dstRect[0].Height + SystemUI::GetWhitePixel()->getHeight())
 				{
-					m_dstRect[6].Height = m_skin->WhitePixelTexture->getHeight();
+					m_dstRect[6].Height = SystemUI::GetWhitePixel()->getHeight();
 				}
 				else
 				{
 					m_dstRect[6].Y = m_dstRect[0].Y + m_dstRect[0].Height;
-					m_dstRect[6].Height = size.Y - m_skin->WhitePixelTexture->getHeight();
+					m_dstRect[6].Height = size.Y - SystemUI::GetWhitePixel()->getHeight();
 				}
 			}
 			else
@@ -1009,9 +936,9 @@ namespace Apoc3D
 		{
 			if (m_style == FBS_Pane)
 			{
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[0], m_skin->BorderColor);
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[1], m_skin->BorderColor);
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[2], m_skin->BorderColor);
+				sprite->Draw(SystemUI::GetWhitePixel(), m_dstRect[0], m_skin->BorderColor);
+				sprite->Draw(SystemUI::GetWhitePixel(), m_dstRect[1], m_skin->BorderColor);
+				sprite->Draw(SystemUI::GetWhitePixel(), m_dstRect[2], m_skin->BorderColor);
 			}
 			else
 			{
@@ -1025,9 +952,9 @@ namespace Apoc3D
 		{
 			if (m_style == FBS_Pane)
 			{
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[3], m_skin->BorderColor);
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[4], m_skin->ControlFaceColor);
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[5], m_skin->BorderColor);
+				sprite->Draw(SystemUI::GetWhitePixel(), m_dstRect[3], m_skin->BorderColor);
+				sprite->Draw(SystemUI::GetWhitePixel(), m_dstRect[4], m_skin->ControlFaceColor);
+				sprite->Draw(SystemUI::GetWhitePixel(), m_dstRect[5], m_skin->BorderColor);
 			}
 			else
 			{
@@ -1041,9 +968,9 @@ namespace Apoc3D
 		{
 			if (m_style == FBS_Pane)
 			{
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[6], m_skin->BorderColor);
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[7], m_skin->BorderColor);
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[8], m_skin->BorderColor);
+				sprite->Draw(SystemUI::GetWhitePixel(), m_dstRect[6], m_skin->BorderColor);
+				sprite->Draw(SystemUI::GetWhitePixel(), m_dstRect[7], m_skin->BorderColor);
+				sprite->Draw(SystemUI::GetWhitePixel(), m_dstRect[8], m_skin->BorderColor);
 			}
 			else
 			{
@@ -1099,406 +1026,6 @@ namespace Apoc3D
 				sprite->Draw(m_skin->FormBorderTexture[8], shadowRect, shdClr);
 			}
 			*/
-		}
-		/************************************************************************/
-		/*                                                                      */
-		/************************************************************************/
-		
-		List<Form*> UIRoot::m_forms(10);
-		List<ControlContainer*> UIRoot::m_containers(10);
-		Form* UIRoot::m_activeForm = 0;
-		Form* UIRoot::m_topMostForm = 0;
-		RectangleF UIRoot::UIArea(0,0,1,1);
-		RectangleF UIRoot::MaximizedArea(0,0,1,1);
-		SubMenu* UIRoot::m_contextMenu = 0;
-		Sprite* UIRoot::m_sprite = 0;
-		Menu* UIRoot::m_mainMenu = 0;
-		Form* UIRoot::m_modalForm = 0;
-		int UIRoot::m_modalAnim = 0;
-
-		Apoc3D::Math::Rectangle UIRoot::GetUIArea(RenderDevice* device)
-		{
-			Viewport vp = device->getViewport();
-
-			Apoc3D::Math::Rectangle rect;
-			rect.X = (int)(UIArea.X * vp.Width);
-			rect.Y = (int)(UIArea.Y * vp.Height);
-			rect.Width = (int)(UIArea.Width * vp.Width);
-			rect.Height = (int)(UIArea.Height * vp.Height);
-			return rect;
-		}
-
-		bool UIRoot::GetMinimizedPosition(RenderDevice* dev, Form* form, Point& pos)
-		{
-			for (int i = 0; i < m_forms.getCount(); i++)
-			{
-				if (m_forms[i] != form && m_forms[i]->isMinimizing())
-				{
-					return false;
-				}
-			}
-
-			Apoc3D::Math::Rectangle rect = GetUIArea(dev);
-
-			for (int y = rect.Height - 20; y > 0; y -= 20)
-			{
-				for (int x = 0; x < rect.Width - 99; x += 100)
-				{
-					bool isOccupied = false;
-					for (int i = 0; i < m_forms.getCount(); i++)
-					{
-						if (m_forms[i] != form && m_forms[i]->Visible &&
-							m_forms[i]->Position.X == x && m_forms[i]->Position.Y == y)
-						{
-							isOccupied = true;
-							break;
-						}
-					}
-
-					if (!isOccupied)
-					{
-						pos = Point(x, y);
-						return true;
-					}
-				}
-			}
-			pos = Point::Zero;
-			return true;
-		}
-
-		Apoc3D::Math::Rectangle UIRoot::GetMaximizedRect(RenderDevice* dev, Form* form)
-		{
-			Point size = GetMaximizedSize(dev, form);
-
-			if (m_mainMenu)
-			{
-				size.Y -= m_mainMenu->Size.Y;
-				Apoc3D::Math::Rectangle result(0, m_mainMenu->Size.Y, size.X, size.Y);
-				return result;
-			}
-			else
-			{
-				Apoc3D::Math::Rectangle result(0,0,size.X,size.Y);
-				return result;
-			}
-		}
-		Point UIRoot::GetMaximizedSize(RenderDevice* dev, Form* form)
-		{
-			Viewport vp = dev->getViewport();
-
-			Apoc3D::Math::Rectangle rect;
-			rect.X = (int)(UIArea.X * MaximizedArea.X * vp.Width);
-			rect.Y = (int)(UIArea.Y * MaximizedArea.Y * vp.Height);
-			rect.Width = (int)(UIArea.Width * MaximizedArea.Width * vp.Width);
-			rect.Height = (int)(UIArea.Height * MaximizedArea.Height * vp.Height);
-
-			for (int i = 0; i < m_forms.getCount(); i++)
-			{
-				Form* frm = m_forms[i];
-				if (frm != form && frm->Visible && frm->getState() == Form::FWS_Minimized)
-					if (frm->Position.Y < rect.getBottom())
-						rect.Height = frm->Position.Y - rect.Y;
-			}
-
-			return Point(rect.Width, rect.Height);
-		}
-		bool UIRoot::IsObstructed(Control* control, const Point& point)
-		{
-			for (int i = 0; i < m_forms.getCount(); i++)
-			{
-				Apoc3D::Math::Rectangle area = control->getArea();
-				if (control->getOwner() && m_forms[i] != control->getOwner())
-				{
-					if (m_forms[i]->getArea().Contains(area) || m_forms[i]->getArea().Intersects(area))
-					{
-						if (m_forms[i]->getArea().Contains(point))
-						{
-							return true;
-						}
-					}
-				}
-				else if (!control->getOwner())
-				{
-					if (m_forms[i]->getArea().Contains(area) || m_forms[i]->getArea().Intersects(area))
-					{
-						if (m_forms[i]->getArea().Contains(point))
-							return true;
-					}
-				}
-			}
-			return false;
-		}
-		
-		Point UIRoot::ClampFormMovementOffset(Form* frm, const Point& vec)
-		{
-			if (frm != m_modalForm)
-			{
-				RenderDevice* dev = frm->getRenderDevice();
-
-				Apoc3D::Math::Rectangle rect = GetMaximizedRect(dev, frm);
-				Apoc3D::Math::Rectangle formArea = frm->getAbsoluteArea();
-				formArea.Width = 80;
-				formArea.Height = 20;
-
-				Point result = vec;
-				
-				if (formArea.X + result.X < rect.X)
-					result.X = rect.X - formArea.X;
-
-				if (formArea.Y + result.Y < rect.Y)
-					result.Y = rect.Y - formArea.Y;
-
-				if (formArea.getRight() + result.X > rect.getRight())
-					result.X = rect.getRight() - formArea.getRight();
-
-				if (formArea.getBottom() + result.Y > rect.getBottom())
-					result.Y = rect.getBottom() - formArea.getBottom();
-
-				//Apoc3D::Math::Rectangle formArea(newPos.X, newPos.Y, newSize.X, newSize.Y);
-
-				return result;
-			}
-			return vec;
-		}
-		void UIRoot::Form_SizeChanged(Control* ctl)
-		{
-			Form* form = static_cast<Form*>(ctl);
-
-			Apoc3D::Math::Rectangle area = GetUIArea(form->getRenderDevice());
-			
-			{
-				//If a form is out of the working area,
-				//we need to put it back where the user can see it.
-				if (!area.Contains(form->getArea()))
-				{
-					if (form->Position.X + form->Size.X > area.Width)
-						form->Position.X = area.Width - form->Size.X;
-
-					if (form->Position.X + form->Size.Y > area.Height)
-						form->Position.Y = area.Height - form->Size.Y;
-				}
-
-				//If a form was maximized
-				if (form->getState() == Form::FWS_Maximized)
-				{
-					//resize it
-					form->Size.X = area.Width;
-					form->Size.Y = area.Height;
-				}
-			}
-		}
-
-
-
-		void UIRoot::Initialize(RenderDevice* device)
-		{
-			ObjectFactory* fac = device->getObjectFactory();
-			m_sprite = fac->CreateSprite();
-
-		}
-		void UIRoot::Finalize()
-		{
-			delete m_sprite;
-		}
-		void UIRoot::Draw()
-		{
-			FontManager::getSingleton().StartFrame();
-
-			m_sprite->Begin((Sprite::SpriteSettings)(Sprite::SPR_AlphaBlended | Sprite::SPR_UsePostTransformStack | Sprite::SPR_RestoreState));
-			
-			// first background forms
-			for (int i = m_forms.getCount() - 1; i > -1; i--)
-			{
-				Form* frm = m_forms[i];
-				if (frm->Visible &&
-					frm->getState() != Form::FWS_Minimized && frm->IsBackgroundForm)
-				{
-					frm->Draw(m_sprite);
-				}
-			}
-
-
-			// regular forms
-			for (int i = m_forms.getCount() - 1; i > -1; i--)
-			{
-				Form* frm = m_forms[i];
-				if (frm->Visible && frm != m_topMostForm &&
-					frm->getState() != Form::FWS_Minimized && !frm->IsBackgroundForm)
-				{
-					frm->Draw(m_sprite);
-				}
-			}
-
-			if (m_topMostForm && m_topMostForm->Visible && !m_topMostForm->IsBackgroundForm)
-			{
-				m_topMostForm->Draw(m_sprite);
-			}
-
-			// minimized always last
-			for (int i = m_forms.getCount() - 1; i >= 0; i--)
-			{
-				Form* frm = m_forms[i];
-				if (frm->getState() == Form::FWS_Minimized &&
-					frm->Visible && frm != m_topMostForm)
-				{
-					frm->Draw(m_sprite);
-				}
-			}
-
-			if (m_contextMenu && m_contextMenu->Visible && m_contextMenu->getState() != MENU_Closed)
-			{
-				m_contextMenu->Draw(m_sprite);
-			}
-			if (m_mainMenu && m_mainMenu->Visible)
-			{
-				m_mainMenu->Draw(m_sprite);
-			}
-
-			if (m_modalForm)
-			{
-				const StyleSkin* skin = m_modalForm->getSkin();
-				if (m_modalAnim>3)
-				{
-					m_sprite->Draw(skin->WhitePixelTexture, GetUIArea(m_sprite->getRenderDevice()),0, CV_PackColor(0,0,0, 180));
-				}
-				else if (m_modalAnim)
-				{
-					m_sprite->Draw(skin->WhitePixelTexture, GetUIArea(m_sprite->getRenderDevice()),0, CV_PackColor(0,0,0, 225));
-				}
-
-				m_modalForm->Draw(m_sprite);
-			}
-			
-
-			// cursor
-			m_sprite->End();
-		}
-		void UIRoot::Update(const GameTime* time)
-		{
-			if (m_modalForm)
-			{
-				m_modalForm->Update(time);
-				m_modalAnim++;
-				return;
-			}
-
-			m_modalAnim = 0;
-			bool menuOverriden = false;
-			if (m_mainMenu)
-			{
-				for (int i = 0; i < m_mainMenu->getItems().getCount(); i++)
-				{
-					if (m_mainMenu->getItems()[i]->getSubMenu() && m_mainMenu->getItems()[i]->getSubMenu()->getState() == MENU_Open)
-					{
-						menuOverriden = true;
-					}
-				}
-			}
-			
-			if (!menuOverriden)
-			{
-				Form* alreadyUpdatedForm = nullptr;
-				if (m_activeForm)
-				{
-					alreadyUpdatedForm = m_activeForm;
-					m_activeForm->Update(time);
-				}
-				else if (m_topMostForm && !m_topMostForm->IsBackgroundForm)
-				{
-					alreadyUpdatedForm = m_topMostForm;
-					m_topMostForm->Update(time);
-				}
-				//else if (!m_topMostForm && m_forms.getCount())
-				//{
-				//	m_topMostForm = m_forms[0];
-				//	m_topMostForm->Focus();
-				//}
-
-				for (int i = 0; i < m_forms.getCount(); i++)
-				{
-					Form* frm = m_forms[i];
-					if (frm->Enabled && frm != alreadyUpdatedForm)
-					{
-						frm->Update(time);
-					}
-				}
-
-				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-				if (mouse->IsLeftPressedState())
-				{
-					if (!m_activeForm && m_topMostForm)
-					{
-						// empty selection
-						m_topMostForm->Unfocus();
-					}
-					if (m_topMostForm && m_topMostForm->IsBackgroundForm && m_topMostForm != m_activeForm)
-					{
-						// deselsect background form
-						m_topMostForm->Unfocus();
-						m_activeForm->Focus();
-					}
-				}
-			}
-			
-
-			//Update Context Menu
-			if (m_contextMenu && m_contextMenu->getState() != MENU_Closed &&
-				m_contextMenu->Visible)
-			{
-				m_contextMenu->Update(time);
-			}
-			if (m_mainMenu && m_mainMenu->Visible)
-			{
-				m_mainMenu->Update(time);
-			}
-		}
-	
-
-		void UIRoot::Add(ControlContainer* cc)
-		{
-			Form* form = up_cast<Form*>(cc);
-			if (form)
-			{
-				m_forms.Insert(0, form);
-			}
-			else
-			{
-				m_containers.Add(cc);
-			}
-		}
-		void UIRoot::Remove(ControlContainer* cc)
-		{
-			Form* form = up_cast<Form*>(cc);
-			if (form)
-			{
-				m_forms.Remove(form);
-			}
-			else
-			{
-				m_containers.Remove(cc);
-			}
-		}
-		void UIRoot::RemoveForm(const String& name)
-		{
-			for (int i = 0; i < m_forms.getCount(); i++)
-			{
-				if (m_forms[i]->Name == name)
-				{
-					m_forms.RemoveAt(i);
-					break;
-				}
-			}
-		}
-		void UIRoot::RemoveContainer(const String& name)
-		{
-			for (int i = 0; i < m_containers.getCount(); i++)
-			{
-				if (m_containers[i]->Name == name)
-				{
-					m_containers.RemoveAt(i);
-					break;
-				}
-			}
 		}
 
 	}

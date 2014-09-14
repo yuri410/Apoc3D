@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Graphics/EffectSystem/Effect.h"
 #include "apoc3d/Graphics/RenderSystem/InstancingData.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Math/Point.h"
 
 using namespace Apoc3D::Graphics::EffectSystem;
 using namespace Apoc3D::Utility;
@@ -188,6 +189,32 @@ namespace Apoc3D
 			{
 				Sorter = DP + InstancingBatch;
 			}
+
+			/************************************************************************/
+			/* ObjectFactory                                                        */
+			/************************************************************************/
+
+			Texture* ObjectFactory::CreateTexture(const Point& size2d, int levelCount, TextureUsage usage, PixelFormat format)
+			{
+				return CreateTexture(size2d.X, size2d.Y, levelCount, usage, format);
+			}
+			RenderTarget* ObjectFactory::CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, DepthFormat depthFmt)
+			{
+				return CreateRenderTarget(size2d.X, size2d.Y, clrFmt, depthFmt);
+			}
+			RenderTarget* ObjectFactory::CreateRenderTarget(const Point& size2d, PixelFormat clrFmt)
+			{
+				return CreateRenderTarget(size2d.X, size2d.Y, clrFmt);
+			}
+			RenderTarget* ObjectFactory::CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, DepthFormat depthFmt, const String& multisampleMode)
+			{
+				return CreateRenderTarget(size2d.X, size2d.Y, clrFmt, depthFmt, multisampleMode);
+			}
+			RenderTarget* ObjectFactory::CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, const String& multisampleMode)
+			{
+				return CreateRenderTarget(size2d.X, size2d.Y, clrFmt, multisampleMode);
+			}
+
 		}
 	}
 }

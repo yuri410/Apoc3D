@@ -10,12 +10,9 @@ namespace APDesigner
 	UIDocument::UIDocument(MainWindow* window, EditorExtension* ext, const String& file)
 		: Document(window, ext), m_editingForm(nullptr), m_filePath(file)
 	{
-
-		m_uiViewer = new PictureBox(Point(15, 27), 1);
-		m_uiViewer->Size = Point(512,512);
-		m_uiViewer->SetSkin(window->getUISkin());
+		m_uiViewer = new PictureBox(window->getUISkin(), Point(15, 27), 1);
+		m_uiViewer->setSize(512,512);
 		m_uiViewer->eventPictureDraw.Bind(this, &UIDocument::UIViewer_Draw);
-
 
 		getDocumentForm()->setMinimumSize(Point(1000,600));
 
@@ -31,9 +28,7 @@ namespace APDesigner
 	void UIDocument::LoadRes()
 	{
 		// create virtual form here
-		m_editingForm = new Form();
-		m_editingForm->SetSkin(getMainWindow()->getUISkin());
-		m_editingForm->Initialize(getMainWindow()->getDevice());
+		m_editingForm = new Form(getMainWindow()->getUISkin(), getMainWindow()->getDevice());
 		m_editingForm->Visible = true;
 	}
 	void UIDocument::SaveRes()
@@ -52,7 +47,7 @@ namespace APDesigner
 	{
 		Document::Update(time);
 
-		m_uiViewer->Size = getDocumentForm()->Size - Point(30, 50);
+		m_uiViewer->setSize(getDocumentForm()->getSize() - Point(30, 50));
 	}
 	void UIDocument::Render()
 	{
@@ -61,7 +56,7 @@ namespace APDesigner
 
 	void UIDocument::UIViewer_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
-		sprite->Draw(getMainWindow()->getUISkin()->WhitePixelTexture, *dstRect, nullptr, CV_LightGray);
+		sprite->Draw(SystemUI::GetWhitePixel(), *dstRect, nullptr, CV_LightGray);
 
 		Matrix orginalTrans;
 		if (!sprite->isUsingStack())

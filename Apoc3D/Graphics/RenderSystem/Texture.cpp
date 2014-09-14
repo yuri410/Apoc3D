@@ -32,6 +32,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Math/Box.h"
 #include "apoc3d/Exception.h"
 #include "apoc3d/VFS/ResourceLocation.h"
+#include "apoc3d/Library/squish.h"
 
 namespace Apoc3D
 {
@@ -232,6 +233,153 @@ namespace Apoc3D
 				}
 			}
 			
+			void Texture::FillColor(ColorValue cv)
+			{
+				if (m_type == TT_Texture2D || m_type == TT_Texture1D)
+					FillColor(cv, Apoc3D::Math::Rectangle(0, 0, m_width, m_height));
+				else if (m_type == TT_Texture3D)
+					;
+				else
+					;
+			}
+
+			void Texture::FillColor(ColorValue cv, const Apoc3D::Math::Rectangle& rect)
+			{
+				DataRectangle dr = Lock(0, LOCK_None);
+				char* dst = (char*)dr.getDataPointer();
+
+				if (PixelFormatUtils::IsCompressed(m_format))
+				{
+					squish::u8 colorInBlock[16 * 4];
+
+					for (int32 i = 0; i < 16; i++)
+					{
+						colorInBlock[i * 4 + 0] = CV_GetColorR(cv);
+						colorInBlock[i * 4 + 1] = CV_GetColorG(cv);
+						colorInBlock[i * 4 + 2] = CV_GetColorB(cv);
+						colorInBlock[i * 4 + 3] = CV_GetColorA(cv);
+					}
+
+					squish::u8 block[16] = { 0 };
+
+					int32 blockSize = 0;
+
+					int squishFlags = 0;
+
+					switch (m_format)
+					{
+						case Apoc3D::Graphics::FMT_DXT1:
+							squishFlags |= squish::kDxt1;
+							blockSize = 8;
+							break;
+						case Apoc3D::Graphics::FMT_DXT3:
+							squishFlags |= squish::kDxt3;
+							blockSize = 16;
+							break;
+						case Apoc3D::Graphics::FMT_DXT5:
+							squishFlags |= squish::kDxt5;
+							blockSize = 16;
+							break;
+						default:
+							throw AP_EXCEPTION(ExceptID::NotSupported, L"Format not supported for filling.");
+					}
+
+					squish::Compress(colorInBlock, block, squishFlags);
+
+					// iterate through 2d array of blocks
+					for (int y = 0; y < dr.getHeight(); y += 4)
+					{
+						char* writeLine = dst + dr.getPitch() * y;
+
+						for (int x = 0; x < dr.getWidth(); x += 4)
+						{
+							memcpy(writeLine, block, blockSize);
+							writeLine += blockSize;
+						}
+					}
+				}
+				else
+				{
+					switch (m_format)
+					{
+						case Apoc3D::Graphics::FMT_Luminance8:
+							break;
+						case Apoc3D::Graphics::FMT_Luminance16:
+							break;
+						case Apoc3D::Graphics::FMT_Alpha8:
+							break;
+						case Apoc3D::Graphics::FMT_A4L4:
+							break;
+						case Apoc3D::Graphics::FMT_A8L8:
+							break;
+						case Apoc3D::Graphics::FMT_R5G6B5:
+							break;
+						case Apoc3D::Graphics::FMT_B5G6R5:
+							break;
+						case Apoc3D::Graphics::FMT_A4R4G4B4:
+							break;
+						case Apoc3D::Graphics::FMT_A1R5G5B5:
+							break;
+						case Apoc3D::Graphics::FMT_R8G8B8:
+							break;
+						case Apoc3D::Graphics::FMT_B8G8R8:
+							break;
+						case Apoc3D::Graphics::FMT_A8R8G8B8:
+							for (int32 y = 0; y < dr.getHeight(); y++)
+							{
+								for (int32 x = 0; x < dr.getWidth(); x++)
+									*(((uint32*)dst) + x) = cv;
+								dst += dr.getPitch();
+							}
+
+							break;
+						case Apoc3D::Graphics::FMT_A8B8G8R8:
+							break;
+						case Apoc3D::Graphics::FMT_B8G8R8A8:
+							break;
+						case Apoc3D::Graphics::FMT_A2R10G10B10:
+							break;
+						case Apoc3D::Graphics::FMT_A2B10G10R10:
+							break;
+
+						case Apoc3D::Graphics::FMT_A16B16G16R16F:
+							break;
+						case Apoc3D::Graphics::FMT_A32B32G32R32F:
+							break;
+						case Apoc3D::Graphics::FMT_X8R8G8B8:
+							break;
+						case Apoc3D::Graphics::FMT_X8B8G8R8:
+							break;
+						case Apoc3D::Graphics::FMT_X1R5G5B5:
+							break;
+						case Apoc3D::Graphics::FMT_R8G8B8A8:
+							break;
+						case Apoc3D::Graphics::FMT_A16B16G16R16:
+							break;
+						case Apoc3D::Graphics::FMT_R3G3B2:
+							break;
+						case Apoc3D::Graphics::FMT_R16F:
+							break;
+						case Apoc3D::Graphics::FMT_R32F:
+							break;
+						case Apoc3D::Graphics::FMT_G16R16:
+							break;
+						case Apoc3D::Graphics::FMT_G16R16F:
+							break;
+						case Apoc3D::Graphics::FMT_G32R32F:
+							break;
+						case Apoc3D::Graphics::FMT_R16G16B16:
+							break;
+						case Apoc3D::Graphics::FMT_B4G4R4A4:
+							break;
+						default:
+							throw AP_EXCEPTION(ExceptID::NotSupported, L"Format not supported for filling.");
+					}
+				}
+				
+
+				Unlock(0);
+			}
 		}
 	}
 }

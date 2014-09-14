@@ -161,17 +161,17 @@ namespace Apoc3D
 						D3DCUBEMAP_FACE_POSITIVE_Z, D3DCUBEMAP_FACE_NEGATIVE_Z,
 					};
 
-					for (int32 j=0;j<ARRAYSIZE(faces);j++)
+					for (D3DCUBEMAP_FACES cf : faces)
 					{
 						D3DLOCKED_RECT rect;
-						HRESULT hr = tex->LockRect(faces[j], i, &rect, NULL, D3DLOCK_READONLY);
+						HRESULT hr = tex->LockRect(cf, i, &rect, NULL, D3DLOCK_READONLY);
 						assert(SUCCEEDED(hr));
 
 						copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
 							data.Format, desc.Width, desc.Height, false);
 						startPos += faceSize;
 
-						hr = tex->UnlockRect(faces[j], i);
+						hr = tex->UnlockRect(cf, i);
 						assert(SUCCEEDED(hr));
 					}
 
@@ -258,17 +258,17 @@ namespace Apoc3D
 						D3DCUBEMAP_FACE_POSITIVE_Z, D3DCUBEMAP_FACE_NEGATIVE_Z,
 					};
 
-					for (int32 j=0;j<ARRAYSIZE(faces);j++)
+					for (D3DCUBEMAP_FACES cf : faces)
 					{
 						D3DLOCKED_RECT rect;
-						HRESULT hr = tex->LockRect(faces[j], i, &rect, NULL, 0);
+						HRESULT hr = tex->LockRect(cf, i, &rect, NULL, 0);
 						assert(SUCCEEDED(hr));
 
 						copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
 							data.Format, desc.Width, desc.Height, true);
 						startPos += faceSize;
 
-						hr = tex->UnlockRect(faces[j], i);
+						hr = tex->UnlockRect(cf, i);
 						assert(SUCCEEDED(hr));
 					}
 

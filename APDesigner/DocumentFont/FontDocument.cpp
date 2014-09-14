@@ -4,57 +4,11 @@
 #include "APDesigner/CommonDialog/ChooseColor.h"
 
 #include "apoc3d/Core/ResourceHandle.h"
-
-#include "apoc3d/Config/XmlConfigurationFormat.h"
-
-#include "apoc3d/Input/InputAPI.h"
-#include "apoc3d/Input/Mouse.h"
-
-#include "apoc3d/IOLib/ModelData.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/IOLib/BinaryReader.h"
-
-#include "apoc3d/Graphics/Animation/AnimationData.h"
-#include "apoc3d/Graphics/Animation/AnimationManager.h"
-#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
-#include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
-#include "apoc3d/Graphics/RenderSystem/RenderTarget.h"
-#include "apoc3d/Graphics/RenderSystem/Sprite.h"
-#include "apoc3d/Graphics/RenderSystem/VertexElement.h"
-#include "apoc3d/Graphics/RenderSystem/Buffer/HardwareBuffer.h"
-#include "apoc3d/Graphics/EffectSystem/EffectManager.h"
-#include "apoc3d/Graphics/ModelManager.h"
-#include "apoc3d/Graphics/Material.h"
-#include "apoc3d/Graphics/Model.h"
-#include "apoc3d/Graphics/Mesh.h"
-#include "apoc3d/Graphics/Camera.h"
-
-#include "apoc3d/Scene/SceneRenderer.h"
-#include "apoc3d/Scene/SceneProcedure.h"
-#include "apoc3d/Scene/ScenePass.h"
-#include "apoc3d/Scene/SceneObject.h"
-
-#include "apoc3d/UILib/Form.h"
-#include "apoc3d/UILib/Button.h"
-#include "apoc3d/UILib/PictureBox.h"
-#include "apoc3d/UILib/Label.h"
-#include "apoc3d/UILib/FontManager.h"
-#include "apoc3d/UILib/ComboBox.h"
-#include "apoc3d/UILib/StyleSkin.h"
-#include "apoc3d/UILib/CheckBox.h"
-#include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-#include "apoc3d/Vfs/FileSystem.h"
-#include "apoc3d/Vfs/FileLocateRule.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Vfs/File.h"
+#include "FontDocument.h"
 
 #include <strstream>
 #include <sstream>
 
-using namespace Apoc3D::Input;
-using namespace Apoc3D::Utility;
-using namespace Apoc3D::IO;
 using namespace APDesigner::CommonDialog;
 
 namespace APDesigner
@@ -62,9 +16,9 @@ namespace APDesigner
 	FontDocument::FontDocument(MainWindow* window, EditorExtension* ext, const String& file)
 		: Document(window, ext), m_filePath(file)
 	{
-		m_glyphDistribution = new PictureBox(Point(15, 27), 1);
-		m_glyphDistribution->Size = Point(512,512);
-		m_glyphDistribution->SetSkin(window->getUISkin());
+		m_glyphDistribution = new PictureBox(window->getUISkin(), Point(15, 27), 1);
+		m_glyphDistribution->setSize(512, 512);
+		
 		m_glyphDistribution->eventPictureDraw.Bind(this, &FontDocument::GlyphDistribution_Draw);
 
 
@@ -110,7 +64,7 @@ namespace APDesigner
 	{
 		Document::Update(time);
 
-		m_glyphDistribution->Size = getDocumentForm()->Size - Point(30, 50);
+		m_glyphDistribution->setSize(getDocumentForm()->getSize() - Point(30, 50));
 	}
 	void FontDocument::Render()
 	{
@@ -120,7 +74,7 @@ namespace APDesigner
 
 	void FontDocument::GlyphDistribution_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
-		Texture* white = getMainWindow()->getUISkin()->WhitePixelTexture;
+		Texture* white = SystemUI::GetWhitePixel();
 		sprite->Draw(white, *dstRect, nullptr, CV_White);
 
 		Matrix orginalTrans;

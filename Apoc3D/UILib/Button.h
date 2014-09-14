@@ -36,98 +36,99 @@ namespace Apoc3D
 {
 	namespace UI
 	{
+
 		class APAPI Button : public Control
 		{
 			RTTI_DERIVED(Button, Control);
 		public:
-			Button(const Point& position, const String& text)
-				: Control(position, text), m_mouseOver(false), m_mouseDown(false),
-				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(CV_PackColor(0x7f,0x7f,0x7f,0x7f)),
-				m_rotation(0), m_hasTextColorValue(false)
-			{
-				Size.X = Size.Y = 0;
-			}
-			Button(const Point& position, int width, const String& text)
-				: Control(position, text, Point(width, 0)), m_mouseOver(false), m_mouseDown(false),
-				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(CV_PackColor(0x7f,0x7f,0x7f,0x7f)),
-				m_rotation(0), m_hasTextColorValue(false)
-			{
-			}
-			Button(const Point& position, const Point& size, const String& text)
-				: Control(position, text, size), m_mouseOver(false), m_mouseDown(false),
-				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(CV_PackColor(0x7f,0x7f,0x7f,0x7f)),
-				m_rotation(0), m_hasTextColorValue(false)
-			{
-			}
-			
-			virtual ~Button() { }
+			typedef EventDelegate1<Button*> ButtonEvent;
 
-			virtual void Initialize(RenderDevice* device);
+			Button(const ButtonVisualSettings& settings, const Point& position, const String& text);
+			Button(const ButtonVisualSettings& settings, const Point& position, int width, const String& text);
+			Button(const ButtonVisualSettings& settings, const Point& position, int width, int height, const String& text);
+			Button(const ButtonVisualSettings& settings, const Point& position, const Point& size, const String& text);
+
+			Button(const StyleSkin* skin, const Point& position, const String& text);
+			Button(const StyleSkin* skin, const Point& position, int width, const String& text);
+			Button(const StyleSkin* skin, const Point& position, int width, int height, const String& text);
+			Button(const StyleSkin* skin, const Point& position, const Point& size, const String& text);
+			virtual ~Button();
 
 			virtual void Draw(Sprite* sprite);
 			virtual void Update(const GameTime* time);
 
+		
 
-			void SetTextColorOverride(ColorValue cv);
+			void SetFont(Font* fontRef);
+			void SetText(const String& text);
 
-			/** 
-			 *  Gets the modulation color for custom button in normal state.
-			 */
-			ColorValue getCustomModColor() const { return m_modColor; }
-			void setCustomModColor(ColorValue clr) { m_modColor = clr; }
+			void SetSize(int32 w, int32 h) { SetSize(Point(w, h)); }
+			void SetSize(const Point& sz) { AutoSizedX = AutoSizedY = false; m_size = sz; }
+			void SetSizeX(int32 sz) { AutoSizedX = false; m_size.X = sz; }
+			void SetSizeY(int32 sz) { AutoSizedY = false; m_size.Y = sz; }
 
-			/**
-			 *  Gets the modulation color for custom button when mouse hover.
-			 */
-			ColorValue getCustomModColorMouseOver() const { return m_modMouseOverColor; }
-			void setCustomModColorMouseOver(ColorValue clr) { m_modMouseOverColor = clr; }
-
-			/** 
-			 *  Gets the modulation color for custom button when mouse down.
-			 */
-			ColorValue getCustomModColorMouseDown() const { return m_modMouseDownColor; }
-			void setCustomModColorMouseDown(ColorValue clr) { m_modMouseDownColor = clr; }
-			
-			ColorValue getCustomDisabledColor() const { return m_modDisabledColor; }
-			void setCustomDisabledColor(ColorValue clr) { m_modDisabledColor = clr; }
-
-
-			void setRotation(float rot) { m_rotation = rot; }
-			float getRotation() const { return m_rotation; }
-
+			const String& getText() const { return m_text; }
 			bool isMouseHover() const { return m_mouseOver; }
-
-			UIGraphic DisabledTexture;
-			UIGraphic NormalTexture;
-			UIGraphic MouseOverTexture;
-			UIGraphic MouseDownTexture;
 			
-			UIGraphic OverlayIcon;
+			UIGraphic DisabledGraphic;
+			UIGraphic NormalGraphic;
+			UIGraphic MouseHoverGraphic;
+			UIGraphic MouseDownGraphic;
+			
+			UIGraphicSimple OverlayIcon;
 
+			float Rotation = 0;
+
+			bool IsSwitchMode = false;
+			bool IsSwitchedOn = false;
+
+			bool AutoSizedX = false;
+			bool AutoSizedY = false;
+			bool ForceMouseDownVisual = false;
+			
+
+			TextRenderSettings TextSettings;
+
+			ControlBounds ContentPadding;
+			ControlBounds Margin;
+
+			ButtonEvent eventMouseHover;
+			ButtonEvent eventMouseOut;
+			ButtonEvent eventPress;
+			ButtonEvent eventRelease;
+
+			static ButtonEvent eventAnyPress;
+			static ButtonEvent eventAnyRelease;
 		protected:
 
-			bool m_mouseOver;
-			bool m_mouseDown;
+			bool m_mouseOver = false;
+			bool m_mouseDown = false;
 
 		private:
-			Apoc3D::Math::Rectangle m_btnDestRect[9];
+			void DrawDefaultButton(Sprite* spriteBatch);
+			void DrawTextureButton(Sprite* spriteBatch);
+			void DrawButtonCore(Sprite* spriteBatch, const Apoc3D::Math::Rectangle& dstRect);
 
-			ColorValue m_modColor;
-			ColorValue m_modMouseDownColor;
-			ColorValue m_modMouseOverColor;
-			ColorValue m_modDisabledColor;
+			void UpdateEvents();
+			void UpdateSize();
+			void CopySkinGraphic(const StyleSkin* skin);
+			
+			void Initialize(const StyleSkin* skin);
+			void Initialize(const ButtonVisualSettings& settings);
 
+			void OnMouseHover();
+			void OnMouseOut();
+			void OnPress();
+			void OnRelease();
+			
 			Point m_textPos;
 			Point m_textSize;
 
-			float m_rotation;
 
-			bool m_hasTextColorValue;
-			ColorValue m_textColorOverride;
+			String m_text;
 
-			void DrawDefaultButton(Sprite* spriteBatch);
-			void DrawCustomButton(Sprite* spriteBatch);
-			void UpdateEvents();
+			//bool m_hasTextOffsetYOverride = false;
+			//int32 m_textOffsetYOverride = 0;
 		};
 
 		class APAPI ButtonRow : public Control
@@ -135,22 +136,35 @@ namespace Apoc3D
 			RTTI_DERIVED(ButtonRow, Control);
 		public:
 			typedef EventDelegate1<int> SelectedChangedHandler;
+			typedef EventDelegate1<ButtonRow*> ButtonEvent;
 
-			ButtonRow(const Point& position, int32 width, const List<String>& titles);
-			ButtonRow(const Point& position, int32 width, int32 colCount, const List<String>& titles);
+			ButtonRow(const StyleSkin* skin, const Point& position, int32 width, const List<String>& titles);
+			ButtonRow(const StyleSkin* skin, const Point& position, int32 width, int32 colCount, const List<String>& titles);
 			~ButtonRow();
-
-			virtual void Initialize(RenderDevice* device);
 
 			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
 			int getSelectedIndex() const { return m_selectedIndex; }
 
+			TextRenderSettings TextSettings;
+			UIGraphic DisabledGraphic;
+			UIGraphic NormalGraphic;
+			UIGraphic MouseHoverGraphic;
+			UIGraphic MouseDownGraphic;
+			ControlBounds ButtonMargin;
+
+			ColorValue SeparationLineColor = CV_Black;
+
 			SelectedChangedHandler eventSelectedChanging;
+			
+			ButtonEvent eventPress;
+			ButtonEvent eventRelease;
+
+			static ButtonEvent eventAnyPress;
+			static ButtonEvent eventAnyRelease;
 
 		private:
-
 			enum VerticalBorderStyle
 			{
 				VBS_Both,
@@ -176,70 +190,114 @@ namespace Apoc3D
 				R9Mix_BottomBar = R9_BottomLeft | R9_BottomCenter | R9_BottomRight,
 				R9Mix_All = R9Mix_TopBar | R9Mix_MiddleBar | R9Mix_BottomBar
 			};
-
+			void Setup(const StyleSkin* skin);
 			void Init(int32 width, const List<String>& titles);
 
 			void UpdatePositions();
 
-			void DrawButton(Sprite* sprite, int32 idx, int32 colType, VerticalBorderStyle rowType, const Apoc3D::Math::Rectangle* srcRect);
+			void DrawButton(Sprite* sprite, Texture* tex, int32 idx, int32 colType, VerticalBorderStyle rowType, const Apoc3D::Math::Rectangle* srcRect);
 
 			void DrawRegion9Subbox(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, ColorValue cv, Texture* texture, const Apoc3D::Math::Rectangle* srcRects, uint32 subRegionFlags);
 
-			int32 m_selectedIndex;
+			void OnPress();
+			void OnRelease();
 
-			bool m_mouseDown;
+
+			int32 m_selectedIndex = 0;
+			int32 m_hoverIndex = -1;
+
+			bool m_mouseDown = false;
 
 			int32 m_countPerRow;
 			int32 m_numRows;
 			int32 m_count;
 			int32 m_rowHeight;
 			String* m_titles;
-			Point* m_textPos;
-			Point* m_textSize;
 			Apoc3D::Math::Rectangle* m_buttonDstRect;
-
-			int32 m_hoverIndex;
-
 		};
 
+		class APAPI ButtonGroupTextured
+		{
+		public:
+			typedef EventDelegate2<ButtonGroupTextured*, int32> ButtonEvent;
+
+			ButtonGroupTextured(const Point& position, Texture* tex, const Apoc3D::Math::Rectangle& normalRegion,
+				const List<Apoc3D::Math::Rectangle>& hoverRegs, const List<Apoc3D::Math::Rectangle>& downRegs, const List<ControlBounds>& paddings);
+			~ButtonGroupTextured();
+
+			void Draw(Sprite* sprite);
+			void Update(const GameTime* time);
+
+			bool isMouseHover() const { return m_hasMouseHoverArea; }
+			const Apoc3D::Math::Rectangle& getMouseHoverArea() const { assert(m_hasMouseHoverArea); return m_mouseHoverArea; }
+
+			int32 ForceMouseDownLookIndex;
+
+			bool Enabled;
+			bool Visible;
+
+			Point Position;
+
+			ButtonEvent eventPress;
+			ButtonEvent eventRelease;
+			
+			static ButtonEvent eventAnyPress;
+			static ButtonEvent eventAnyRelease;
+
+		private:
+			Texture* m_graphic;
+
+			int32 m_buttonCount;
+
+			Apoc3D::Math::Rectangle m_graphicsSrcRect;
+
+			Apoc3D::Math::Rectangle* m_graphicsSrcRectHover;
+			Apoc3D::Math::Rectangle* m_graphicsSrcRectDown;
+
+			ControlBounds* m_hotAreaPaddings;
+
+			bool* m_isMouseHover;
+			bool* m_isMouseDown;
+
+			bool m_hasMouseHoverArea;
+			Apoc3D::Math::Rectangle m_mouseHoverArea;
+		};
 
 		class APAPI ButtonGroup : public Control
 		{
 			RTTI_DERIVED(ButtonGroup, Control);
 		public:
+			ButtonGroup(const StyleSkin* skin, const List<Button*>& buttons);
+			ButtonGroup(const StyleSkin* skin, const List<Button*>& buttons, int selected);
+			~ButtonGroup();
 
-			ButtonGroup(const List<Button*> buttons);
-			ButtonGroup(const List<Button*> buttons, int selected);
-
-			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* time);
-
 			virtual void Draw(Sprite* sprite);
 
 			int getSelectedIndex() const { return m_selectedIndex; }
 
 			Button* getSelectedButton() const { return m_button[m_selectedIndex]; }
 
-			const String& getSelectedText() const;
-			void setSelectedText(const String& text);
+			const String& getSelectedText() const { return m_button[m_selectedIndex]->getText(); }
 
 			UIEventHandler eventSelectionChanged;
 
 		private:
+			void Initialize();
+			void Button_OnRelease(Button* button);
+
 			List<Button*> m_button;
 			int m_selectedIndex;
 			
-			void Button_OnRelease(Control* sender);
 		};
 
 		class APAPI RadioButton : public Control
 		{
 			RTTI_DERIVED(RadioButton, Control);
 		public:
-			RadioButton(const Point& position, const String& text, bool checked);
+			RadioButton(const StyleSkin* skin, const Point& position, const String& text, bool checked);
 			~RadioButton() { }
 
-			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
@@ -248,13 +306,14 @@ namespace Apoc3D
 			bool isChecked() const { return m_checked; }
 			bool canUncheck() const { return m_canUncheck; }
 
+			String Text;
 		private:
 			Point m_textOffset;
 
-			bool m_mouseDown;
-			bool m_mouseOver;
-			bool m_checked;
-			bool m_canUncheck;
+			bool m_mouseDown = false;
+			bool m_mouseOver = false;
+			bool m_checked = false;
+			bool m_canUncheck = true;
 
 			void UpdateEvents();
 		};

@@ -50,157 +50,126 @@ namespace Apoc3D
 		{
 			RTTI_BASE;
 		public:
-			Control()
-				: Position(Point::Zero), Size(0,0), m_owner(0), m_skin(0), Enabled(true), Visible(true), UserData(0), m_fontRef(0)
-			{
+			Control();
+			Control(const Point& position);
+			Control(const Point& position, const Point& size);
 
-			}
-			Control(const Point& position)
-				: Position(position), Size(0,0), m_owner(0), m_skin(0), Enabled(true), Visible(true), UserData(0), m_fontRef(0)
-			{
+			Control(const StyleSkin* skin);
+			Control(const StyleSkin* skin, const Point& position);
+			Control(const StyleSkin* skin, const Point& position, const Point& size);
 
-			}
-			Control(const Point& position, const String& text)
-				: Position(position), Text(text), Size(15,15), m_owner(0), m_skin(0), Enabled(true), Visible(true), UserData(0), m_fontRef(0)
-			{
+			virtual ~Control();
 
-			}
-			Control(const Point& position, const String& text, const Point& size)
-				: Position(position), Text(text), Size(size), m_owner(0), m_skin(0), Enabled(true), Visible(true), UserData(0), m_fontRef(0)
-			{
-
-			}
-			virtual ~Control() { }
-
-			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* time)
-			{
-				//m_area = Apoc3D::Math::Rectangle(Position.X, Position.Y, Size.X, Size.Y);
-			}
+			//virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* time) { }
 			virtual void Draw(Sprite* sprite) = 0;
 			virtual void DrawOverlay(Sprite* sprite) { }
 
-			virtual void SetSkin(const StyleSkin* skin) { m_skin = skin; }
+			//virtual void SetSkin(const StyleSkin* skin) { m_skin = skin; }
 
-			virtual void Load(ConfigurationSection* data) { };
-			virtual void Save(ConfigurationSection* data) { };
-
-		
-			Point GetAbsolutePosition() const;
+			Point GetAbsolutePosition() const { return Position + BaseOffset; }
 
 			/**
 			 *  Gets a bool indicating if the control is blocking its parent
 			 */
 			virtual bool IsOverriding() { return false; }
 
-			Apoc3D::Math::Rectangle getAbsoluteArea() const
-			{
-				Point pos = GetAbsolutePosition();
+			Apoc3D::Math::Rectangle getAbsoluteArea() const { return Apoc3D::Math::Rectangle(GetAbsolutePosition(), m_size); }
+			Apoc3D::Math::Rectangle getArea() const { return Apoc3D::Math::Rectangle(Position, m_size); }
 
-				return Apoc3D::Math::Rectangle(pos.X, pos.Y, Size.X, Size.Y);
-			}
-			Apoc3D::Math::Rectangle getArea() const { return Apoc3D::Math::Rectangle(Position.X, Position.Y, Size.X, Size.Y); }
+			const Point& getSize() const { return m_size; }
+			int32 getWidth() const { return m_size.X; }
+			int32 getHeight() const { return m_size.Y; }
 
-			const StyleSkin* getSkin() const { return m_skin; }
+			Font* getFont() const { return m_fontRef; }
+			virtual void SetFont(Font* fontRef);
 
+			bool Enabled = true;
+			bool Visible = true;
 
-			Font* getFontRef() const { return m_fontRef; }
-			void setFontRef(Font* fnt) { m_fontRef = fnt; }
-
-			ControlContainer* getOwner() const { return m_owner; }
-			void setOwner(ControlContainer* val) { m_owner = val; }
-
-
-			bool Enabled;
-			bool Visible;
+			bool ParentFocused = true;
 
 			/** 
 			 *  Specifies the position of the control in screen coordinate.
 			 *	This coordinate is relative to owner containers. 
 			 *	Except those have no owner or root containers.
 			 */
-			Point Position;
-			Point Size;
+			Point Position = Point(0,0);
+			Point BaseOffset = Point(0,0);
 
 			String Name;
-			String Text;
-
 			String TooltipText;
 
-			void* UserData;
-
-			UIEventHandler eventMouseOver;
-			UIEventHandler eventMouseOut;
-			UIEventHandler eventPress;
-			UIEventHandler eventRelease;
+			void* UserPointer = nullptr;
+			int32 UserInt32 = 0;
 
 		protected:
-			ControlContainer* m_owner;
-			const StyleSkin* m_skin;
-			Font* m_fontRef;
+			Font* m_fontRef = nullptr;
 
-			//Apoc3D::Math::Rectangle m_area;
+			Point m_size;
 
-			virtual void OnMouseOver() { eventMouseOver.Invoke(this); }
-			virtual void OnMouseOut() { eventMouseOut.Invoke(this); }
-			virtual void OnPress() { eventPress.Invoke(this); }
-			virtual void OnRelease() { eventRelease.Invoke(this); }
+			template <typename T>
+			void UpdateEvents_StandardButton(bool& mouseHover, bool& mouseDown, const Apoc3D::Math::Rectangle area,
+				void (T::*onMouseHover)(), void (T::*onMouseOut)(), void (T::*onPress)(), void (T::*onRelease)());
+
+		private:
+			void Initialze(const StyleSkin* skin);
 		};
 
-		class APAPI ControlCollection
+		class APAPI ScrollableControl : public Control
 		{
+			RTTI_DERIVED(ScrollableControl, Control);
 		public:
-			ControlCollection(ControlContainer* owner)
-				: m_owner(owner), ActiveControl(0)
-			{
 
-			}
+			bool hasHorizontalScrollbar() const { return m_hscrollbar != nullptr; }
+			void UseHorizontalScrollbar(bool v);
 
-			
-			int getCount() const { return m_controls.getCount(); }
-			Control* operator [](int index) const { return m_controls[index]; }
-
-			void Add(Control* ctrl);
-			void Remove(Control* ctrl);
-
-			void RemoveAt(int index);
-			void Clear();
-
-			void DestroyAndClear();
-
-			Control* ActiveControl;
+			Apoc3D::Math::Rectangle GetContentArea() const;
 
 		protected:
-			List<Control*> m_controls;
+			ScrollableControl();
+			ScrollableControl(const Point& position);
+			ScrollableControl(const Point& position, const Point& size);
 
-			ControlContainer* m_owner;
+			ScrollableControl(const StyleSkin* skin);
+			ScrollableControl(const StyleSkin* skin, const Point& position);
+			ScrollableControl(const StyleSkin* skin, const Point& position, const Point& size);
 
+			virtual ~ScrollableControl();
+
+			void InitScrollbars(const StyleSkin* skin, bool initBoth);
+			void UpdateScrollBarsLength(const Apoc3D::Math::Rectangle& area);
+			void UpdateScrollBarsGeneric(const Apoc3D::Math::Rectangle& area, const GameTime* time);
+			void DrawScrollBars(Sprite* sprite);
+
+			ScrollBar* m_vscrollbar = nullptr;
+			ScrollBar* m_hscrollbar = nullptr;
+
+			bool m_alwaysShowHS = false;
+			bool m_alwaysShowVS = false;
 		};
 
+		typedef List<Control*> ControlList;
 
 		class APAPI ControlContainer : public Control
 		{
 			RTTI_DERIVED(ControlContainer, Control);
 		public:
-			ControlContainer();
+			ControlContainer(const StyleSkin* skin);
 			virtual ~ControlContainer();
 
-			virtual void Initialize(RenderDevice* device);
+			//virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* time);
 
 			virtual void Draw(Sprite* sprite);
 
-			ControlCollection& getControls() { return m_controls; }
-			int getCount() const { return m_controls.getCount(); }
-			Control* operator [](int index) const { return m_controls[index]; }
+			ControlList& getControls() { return m_controls; }
 
-			Menu* getMenu() const { return m_menu; }
-			void setMenu(Menu* m);
-
+			MenuBar* MenuBar = nullptr;
 		protected:
-			ControlCollection m_controls;
-			Menu* m_menu;
-			Point m_menuOffset;
+			ControlList m_controls;
+			
+			//Point m_menuOffset;
 
 		};
 	}

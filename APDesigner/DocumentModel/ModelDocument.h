@@ -27,16 +27,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "APDesigner/Document.h"
 
-#include "apoc3d/Scene/SimpleSceneManager.h"
-#include "apoc3d/Scene/SceneObject.h"
-#include "apoc3d/UILib/Control.h"
-#include "apoc3d/Graphics/ModelTypes.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::Animation;
-using namespace Apoc3D::Scene;
-
 namespace APDesigner
 {
 	class CopyMaterialDialog;
@@ -174,16 +164,16 @@ namespace APDesigner
 		CopyMaterialDialog* m_batchCopyMtrl;
 		SelectMaterialDialog* m_selectMtrl;
 
-		void PassButton_Pressed(Control* ctrl);
-		void CBMesh_SelectionChanged(Control* ctrl);
-		void CBMeshPart_SelectionChanged(Control* ctrl);
-		void CBSubMtrl_SelectionChanged(Control* ctrl);
+		void PassButton_Pressed(Button* ctrl);
+		void CBMesh_SelectionChanged(ComboBox* ctrl);
+		void CBMeshPart_SelectionChanged(ComboBox* ctrl);
+		void CBSubMtrl_SelectionChanged(ComboBox* ctrl);
 		void PBTime_Pressed(Control* ctrl);
 
-		void BtnApplyAllMtrl_Pressed(Control* ctrl);
-		void BtnApplyMtrl_Pressed(Control* ctrl);
-		void BtnAddMtrl_Pressed(Control* ctrl);
-		void BtnRemoveMtrl_Pressed(Control* ctrl);
+		void BtnApplyAllMtrl_Pressed(Button* ctrl);
+		void BtnApplyMtrl_Pressed(Button* ctrl);
+		void BtnAddMtrl_Pressed(Button* ctrl);
+		void BtnRemoveMtrl_Pressed(Button* ctrl);
 
 		void ModelView_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void Timeline_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
@@ -191,22 +181,22 @@ namespace APDesigner
 
 		void Transform(const Matrix& transform);
 
-		void RecenterModel_Pressed(Control* ctrl);
-		void RevertZ_Pressed(Control* ctrl);
-		void RevertYZ_Pressed(Control* ctrl);
-		void RotY_Pressed(Control* ctrl);
-		void RotZ_Pressed(Control* ctrl);
-		void ZoomIn_Pressed(Control* ctrl);
-		void ZoomOut_Pressed(Control* ctrl);
-		void SetSequenceImages_Pressed(Control* ctrl);
-		void ApplyColorToAll_Pressed(Control* ctrl);
-		void ApplyFXToAll_Pressed(Control* ctrl);
-		void AutoTex_Pressed(Control* ctrl);
+		void RecenterModel_Pressed(Button* ctrl);
+		void RevertZ_Pressed(Button* ctrl);
+		void RevertYZ_Pressed(Button* ctrl);
+		void RotY_Pressed(Button* ctrl);
+		void RotZ_Pressed(Button* ctrl);
+		void ZoomIn_Pressed(Button* ctrl);
+		void ZoomOut_Pressed(Button* ctrl);
+		void SetSequenceImages_Pressed(Button* ctrl);
+		void ApplyColorToAll_Pressed(Button* ctrl);
+		void ApplyFXToAll_Pressed(Button* ctrl);
+		void AutoTex_Pressed(Button* ctrl);
 
-		void PassViewSelect_SelectionChanged(Control* ctrl);
+		void PassViewSelect_SelectionChanged(ComboBox* ctrl);
 
-		void CBUseRef_Checked(Control* ctrl);
-		void BtnRefMtrl_Pressed(Control* ctrl);
+		void CBUseRef_Checked(CheckBox* ctrl);
+		void BtnRefMtrl_Pressed(Button* ctrl);
 
 		void DisplayMaterialEditor(Material* mtrl, bool usingRef);
 
@@ -241,9 +231,9 @@ namespace APDesigner
 		MeshMaterialSet<Material*>* m_mtrl;
 		int m_selectedSet;
 
-		void ButtonOK_Pressed(Control* ctrl);
+		void ButtonOK_Pressed(Button* ctrl);
 		void Form_Closed(Control* ctrl);
-		void Config_Changed(Control* ctrl);
+		void Config_Changed(TextBox* ctrl);
 	};
 
 	class SelectMaterialDialog
@@ -255,6 +245,9 @@ namespace APDesigner
 		void ShowModal(Material* mtrl);
 
 	private:
+		void ButtonOK_Pressed(Button* ctrl);
+		void Form_Closed(Control* ctrl);
+
 		ModelDocument* m_parent;
 		Form* m_form;
 
@@ -265,8 +258,6 @@ namespace APDesigner
 		Material* m_mtrl;
 		bool m_dialogResult;
 
-		void ButtonOK_Pressed(Control* ctrl);
-		void Form_Closed(Control* ctrl);
 	};
 }
 

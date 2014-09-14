@@ -165,26 +165,20 @@ namespace Apoc3D
 
 				String m_rdName;
 
-				Apoc3D::Collections::HashMap<void*, BatchReportEntry>* m_reportTableByMaterial;
+				Apoc3D::Collections::HashMap<void*, BatchReportEntry>* m_reportTableByMaterial = nullptr;
 
 				static int32 BatchReportEntryComparison(BatchReportEntry* const& a, BatchReportEntry* const& b);
 			protected:
 				//Capabilities m_caps;
-				uint m_batchCount;
-				uint m_primitiveCount;
-				uint m_vertexCount;
+				uint m_batchCount = 0;
+				uint m_primitiveCount = 0;
+				uint m_vertexCount = 0;
 
-				ObjectFactory* m_objectFactory;
-				RenderStateManager* m_renderStates;
+				ObjectFactory* m_objectFactory = nullptr;
+				RenderStateManager* m_renderStates = nullptr;
 
 				RenderDevice(const String &renderSysName)
-					: m_rdName(renderSysName), 
-					m_batchCount(0), m_primitiveCount(0), m_vertexCount(0), 
-					m_objectFactory(0), m_renderStates(0),
-					m_reportTableByMaterial(nullptr)
-				{
-
-				}
+					: m_rdName(renderSysName) { }
 			};
 
 			/**
@@ -241,6 +235,7 @@ namespace Apoc3D
 				 *  Thus, no more comment unless clarification is needed.
 				 */
 				virtual Texture* CreateTexture(int width, int height, int levelCount, TextureUsage usage, PixelFormat format) = 0;
+				Texture* CreateTexture(const Point& size2d, int levelCount, TextureUsage usage, PixelFormat format);
 
 				/**
 				 *  Creates a blank 2D, 1D or 3D texture.
@@ -253,16 +248,17 @@ namespace Apoc3D
 				 */
 				virtual Texture* CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format) = 0;
 
-
 				/**
 				 *  Creates a RenderTarget with a depth buffer and a color buffer.
 				 */
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt) = 0;
+				RenderTarget* CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, DepthFormat depthFmt);
 
 				/**
 				 *  Creates a RenderTarget with a color buffer only.
 				 */
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt) = 0;
+				RenderTarget* CreateRenderTarget(const Point& size2d, PixelFormat clrFmt);
 
 				/**
 				 *  Creates a RenderTarget with a depth buffer and a color buffer. 
@@ -276,6 +272,8 @@ namespace Apoc3D
 				 */
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt, const String& multisampleMode) = 0;
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, const String& multisampleMode) = 0;
+				RenderTarget* CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, DepthFormat depthFmt, const String& multisampleMode);
+				RenderTarget* CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, const String& multisampleMode);
 
 
 				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage) = 0;
@@ -302,10 +300,7 @@ namespace Apoc3D
 
 			protected:
 				ObjectFactory(RenderDevice* rd)
-					: m_renderDevice(rd)
-				{
-
-				}
+					: m_renderDevice(rd) { }
 
 			private:
 				RenderDevice* m_renderDevice;

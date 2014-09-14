@@ -3,7 +3,7 @@
 #include "apoc3d/Graphics/RenderSystem/Texture.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
 #include "FontManager.h"
-#include "Label.h"
+#include "Text.h"
 #include "Button.h"
 #include "List.h"
 
@@ -18,56 +18,76 @@ namespace Apoc3D
 	namespace UI
 	{
 		ComboBox::ComboBox(const Point& position, int width, const List<String>& items)
-			: Control(position), m_items(items), m_textbox(0), m_listBox(0), m_button(0)
+			: ComboBox(nullptr, position, width, items) { }
+
+		ComboBox::ComboBox(const StyleSkin* skin, const Point& position, int width, const List<String>& items)
+			: Control(skin, position), m_items(items)
 		{
-			Size.X = width;
+			m_size.X = width;
+			Initialize(skin);
 		}
+
+
 		ComboBox::~ComboBox()
 		{
-			if (m_textbox)
-				delete m_textbox;
-			if (m_button)
-				delete m_button;
-			if (m_listBox)
-				delete m_listBox;
+			DELETE_AND_NULL(m_textbox);
+			DELETE_AND_NULL(m_button);
+			DELETE_AND_NULL(m_listBox);
 		}
 
-		void ComboBox::Initialize(RenderDevice* device)
+		//void ComboBox::Initialize(RenderDevice* device)
+		void ComboBox::Initialize(const StyleSkin* skin)
 		{
-			Control::Initialize(device);
+			//Control::Initialize(device);
 
-			m_textbox = new TextBox(Position, Size.X);
-			m_textbox->SetSkin(m_skin);
-			m_textbox->setOwner(getOwner());
+			m_textbox = new TextBox(skin, Position, m_size.X);
+			//m_textbox->SetSkin(m_skin);
+			//m_textbox->setOwner(getOwner());
 			m_textbox->setLocked(true);
-			m_textbox->Initialize(device);
+			//m_textbox->Initialize(device);
 
-			m_button = new Button(Position + Point(Size.X-16,0), L"");
-			m_button->setOwner(getOwner());
-			m_button->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->DropDownButtonNormal); //m_skin->ComboButton);
-			m_button->MouseOverTexture = UIGraphic(m_skin->SkinTexture, m_skin->DropDownButtonHover); 
-			m_button->MouseDownTexture = UIGraphic(m_skin->SkinTexture, m_skin->DropDownButtonDown); 
+			ButtonVisualSettings bvs;
+			bvs.HasNormalGraphic = true;
+			bvs.HasMouseHoverGraphic = true;
+			bvs.HasMouseDownGraphic = true;
 
-			m_button->eventPress.Bind(this, &ComboBox::Button_OnPress);
-			m_button->Initialize(device);
+			bvs.NormalGraphic = UIGraphic(skin->SkinTexture, skin->DropDownButtonNormal); //m_skin->ComboButton);
+			bvs.MouseHoverGraphic = UIGraphic(skin->SkinTexture, skin->DropDownButtonHover);
+			bvs.MouseDownGraphic = UIGraphic(skin->SkinTexture, skin->DropDownButtonDown);
+
+			m_button = new Button(bvs, Position + Point(m_size.X - skin->DropDownButtonNormal.Width, 0), L"");
+			//m_button->setOwner(getOwner());
 			
 
-			m_listBox = new ListBox(Position + Point(0,19), Size.X, 8*m_fontRef->getLineHeightInt(), m_items);
-			m_listBox->SetSkin(m_skin);
-			m_listBox->setOwner(getOwner());
+			//m_button->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->DropDownButtonNormal); //m_skin->ComboButton);
+			//m_button->MouseOverTexture = UIGraphic(m_skin->SkinTexture, m_skin->DropDownButtonHover); 
+			//m_button->MouseDownTexture = UIGraphic(m_skin->SkinTexture, m_skin->DropDownButtonDown); 
+
+			m_button->eventPress.Bind(this, &ComboBox::Button_OnPress);
+			//m_button->Initialize(device);
+			
+
+			m_listBox = new ListBox(skin, Position + Point(0,19), m_size.X, 8*m_fontRef->getLineHeightInt(), m_items);
+			//m_listBox->SetSkin(m_skin);
+			//m_listBox->setOwner(getOwner());
 			m_listBox->Visible = false;
 			m_listBox->eventSelectionChanged.Bind(this, &ComboBox::ListBox_SelectionChanged);
 			m_listBox->eventPress.Bind(this, &ComboBox::ListBox_OnPress);
-			m_listBox->Initialize(device);
+			//m_listBox->Initialize(device);
 		}
 		void ComboBox::Update(const GameTime* time)
 		{
 			m_textbox->Position = Position;
-			m_button->Position = Position + Point(Size.X-16,0);
+			m_button->Position = Position + Point(m_size.X-16,0);
 			m_listBox->Position = Position + Point(0,19);
-			m_textbox->setOwner(getOwner());
-			m_button->setOwner(getOwner());
-			m_listBox->setOwner(getOwner());
+
+			m_textbox->ParentFocused = m_button->ParentFocused = m_listBox->ParentFocused = ParentFocused;
+			m_textbox->BaseOffset = m_button->BaseOffset = m_listBox->BaseOffset = BaseOffset;
+
+
+			//m_textbox->setOwner(getOwner());
+			//m_button->setOwner(getOwner());
+			//m_listBox->setOwner(getOwner());
 
 			m_textbox->Update(time);
 			m_button->Update(time);
@@ -106,33 +126,41 @@ namespace Apoc3D
 		bool ComboBox::getOpened() const { return m_listBox->Visible; }
 		bool ComboBox::getLocked() const { return m_textbox->getLocked(); }
 		void ComboBox::setLocked(bool value) const { m_textbox->setLocked(value); }
-		const String& ComboBox::getText() const { return m_textbox->Text; }
-		void ComboBox::setText(const String& value) { m_textbox->Text = value; }
+
 		int ComboBox::getSelectedIndex() const { return m_listBox->getSelectedIndex(); }
 		void ComboBox::setSelectedIndex(int v) const
 		{
 			m_listBox->setSelectedIndex(v);
 			if (m_listBox->getSelectedIndex()!=-1)
 			{
-				m_textbox->Text = m_listBox->getItems()[m_listBox->getSelectedIndex()];
+				m_textbox->SetText(m_listBox->getItems()[m_listBox->getSelectedIndex()]);
 			}
 		}
-		void ComboBox::SetSelectedByName(const String& name)
+
+		void ComboBox::SetSelectionByName(const String& n)
 		{
-			m_listBox->SetSelectedByName(name);
-			if (m_listBox->getSelectedIndex()!=-1)
-			{
-				m_textbox->Text = m_listBox->getItems()[m_listBox->getSelectedIndex()];
-			}
+			int idx = m_listBox->FindEntry(n);
+			if (idx != -1)
+				m_listBox->setSelectedIndex(idx);
 		}
-		void ComboBox::ListBox_OnPress(Control* ctrl) {  }
-		void ComboBox::ListBox_SelectionChanged(Control* ctrl)
+		String* ComboBox::getSelectedItem() const
+		{
+			int32 idx = m_listBox->getSelectedIndex();
+			if (idx != -1)
+			{
+				return &m_items[idx];
+			}
+			return nullptr;
+		}
+
+		void ComboBox::ListBox_OnPress(ListBox* ctrl) {  }
+		void ComboBox::ListBox_SelectionChanged(ListBox* ctrl)
 		{
 			//String previousItem = m_textbox->Text;
 			//int lastIndex = m_listBox->getSelectedIndex();
 			if (m_listBox->getSelectedIndex()!=-1)
 			{
-				m_textbox->Text = m_listBox->getItems()[m_listBox->getSelectedIndex()];
+				m_textbox->SetText(m_listBox->getItems()[m_listBox->getSelectedIndex()]);
 
 				eventSelectionChanged.Invoke(this);
 				
@@ -140,7 +168,7 @@ namespace Apoc3D
 			}
 			
 		}
-		void ComboBox::Button_OnPress(Control* ctrl)
+		void ComboBox::Button_OnPress(Button* ctrl)
 		{
 			if (!m_listBox->Visible)
 				Open();

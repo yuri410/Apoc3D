@@ -40,15 +40,14 @@ namespace Apoc3D
 			MENU_Closed
 		};
 
-		class APAPI Menu : public Control
+		class APAPI MenuBar : public Control
 		{
-			RTTI_DERIVED(Menu, Control);
+			RTTI_DERIVED(MenuBar, Control);
 		public:
-			Menu();
-			virtual ~Menu();
+			MenuBar(const StyleSkin* skin);
+			virtual ~MenuBar();
 
 			void Add(MenuItem* item, SubMenu* submenu);
-			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* time);
 
 			virtual void Draw(Sprite* sprite);
@@ -59,36 +58,41 @@ namespace Apoc3D
 
 			const List<MenuItem*>& getItems() const { return m_items; }
 			MenuState getState() const { return m_state; }
+
+			ControlContainer* Owner = nullptr;
 		private:
-			Point m_drawPos;
-
-			Point m_itemPos;
-			List<MenuItem*> m_items;
-			MenuState m_state;
-
-			int m_hoverIndex;
-			Point m_openPos;
-			Apoc3D::Math::Rectangle m_itemArea;
-
-
-			KeyboardHelper m_helper;
-			bool m_altDown;
-			bool m_openedMenu;
-			int m_indexToOpen;
+			void Initialize(const StyleSkin* skin);
 
 			void CheckSelection();
 			void CheckHovering();
 			void Keyboard_OnPress(KeyboardKeyCode key, KeyboardEventsArgs e);
 			void Keyboard_OnRelease(KeyboardKeyCode key, KeyboardEventsArgs e);
 			void CloseSubMenus();
+
+			const StyleSkin* m_skin = nullptr;
+
+			Point m_drawPos;
+
+			Point m_itemPos;
+			List<MenuItem*> m_items;
+			MenuState m_state = MENU_Closed;
+
+			int m_hoverIndex = -1;
+			Point m_openPos;
+			Apoc3D::Math::Rectangle m_itemArea;
+
+
+			KeyboardHelper m_helper;
+			bool m_altDown = false;
+			bool m_openedMenu = false;
+			int m_indexToOpen = -1;
+
 		};
 
 		class APAPI MenuItem
 		{
 		public:
 			MenuItem(const String& text)
-				: m_submenu(0), UserPointer(0), m_key(KEY_UNASSIGNED), m_keyIndex(-1),
-				Enabled(true)
 			{
 				setText(text);
 			}
@@ -103,8 +107,8 @@ namespace Apoc3D
 			SubMenu* getSubMenu() const { return m_submenu; }
 			void setSubMenu(SubMenu* sm) { m_submenu = sm; }
 
-			void* UserPointer;
-			bool Enabled;
+			void* UserPointer = nullptr;
+			bool Enabled = true;
 
 			MenuItemEventHandler event;
 
@@ -112,28 +116,23 @@ namespace Apoc3D
 			String m_text;
 			String m_cleanText;
 
-			int m_keyIndex;
-			KeyboardKeyCode m_key;
+			int m_keyIndex = -1;
+			KeyboardKeyCode m_key = KEY_UNASSIGNED;
 
-			SubMenu* m_submenu;
+			SubMenu* m_submenu = nullptr;
 		};
 
 		class APAPI SubMenu : public Control
 		{
 			RTTI_DERIVED(SubMenu, Control);
 		public:
-			MenuState getState() const { return m_state; }
-			Control* getParent() const { return m_parent; }
-			void setParent(Control* ctrl) { m_parent = ctrl; }
-
-			SubMenu(ControlContainer* owner);
+			SubMenu(const StyleSkin* skin, ControlContainer* owner);
 			virtual ~SubMenu();
 
 			void Add(MenuItem* item, SubMenu* submenu);
 
 			void Clear();
 
-			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
@@ -145,6 +144,10 @@ namespace Apoc3D
 			int getHoverIndex() const { return m_hoverIndex; }
 			const List<MenuItem*>& getItems() const { return m_items; }
 
+			MenuState getState() const { return m_state; }
+			Control* getParentMenu() const { return m_parentMenu; }
+			void setParentMenu(Control* ctrl) { m_parentMenu = ctrl; }
+
 		private:
 			void Keyboard_OnPress(KeyboardKeyCode key, KeyboardEventsArgs e);
 			void Keyboard_OnRelease(KeyboardKeyCode key, KeyboardEventsArgs e);
@@ -153,25 +156,29 @@ namespace Apoc3D
 			void CloseSubMenus();
 			void CheckSelection();
 
-			Control* m_parent;
+			Control* m_parentMenu = nullptr;
+			const StyleSkin* m_skin = nullptr;
+
 			List<MenuItem*> m_items;
 			Point m_itemPos;
 			Point m_arrowPos;
 			Point m_textPos;
+			Point m_openPos;
+
 			Apoc3D::Math::Rectangle m_itemArea;
 			Apoc3D::Math::Rectangle m_borderArea;
-			int m_hoverIndex;
-			Point m_openPos;
-			ColorValue m_shadowColor;
+			int m_hoverIndex = -1;
+			ColorValue m_shadowColor = CV_PackColor(0, 0, 0, 127);
 
-			MenuState m_state;
+			MenuState m_state = MENU_Closed;
 
 			KeyboardHelper m_helper;
-			int m_indexToOpen;
+			int m_indexToOpen = -1;
 
-			float m_timerCount;
-			bool m_timerStarted;
+			float m_timerCount = 0.5f;
+			bool m_timerStarted = false;
 
+			
 		};
 	}
 }

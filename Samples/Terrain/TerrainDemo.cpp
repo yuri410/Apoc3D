@@ -135,11 +135,9 @@ namespace SampleTerrain
 		int x = vp.Width - 180;
 		int y = vp.Height - 120;
 
-		m_cbPushTrees = new CheckBox(Point(x,y), L"", false);
-		m_cbPushTrees->SetSkin(m_UIskin);
-		m_cbPushTrees->Initialize(m_device);
-		m_cbPushTrees->setFontRef(FontManager::getSingleton().getFont(L"comic"));
-		m_cbPushTrees->setValue(true);
+		m_cbPushTrees = new CheckBox(m_UIskin, Point(x,y), L"", false);
+		m_cbPushTrees->SetFont(FontManager::getSingleton().getFont(L"comic"));
+		m_cbPushTrees->Checked = true;
 		
 		FileLocation fl = FileSystem::getSingleton().Locate(L"loading.tex", FileLocateRule::Default);
 		m_loadingScreen = TextureManager::getSingleton().CreateUnmanagedInstance(m_device, fl, false);
@@ -216,9 +214,9 @@ namespace SampleTerrain
 		else if (m_isLoading)
 		{
 			// the OperationCount from TerrainMeshManager(or other resource manager)
-			// is very fluctuant some times.
+			// is very fluctuating some times.
 			// We use a counter to do the trick. If the counter is counting up to a
-			// bigg enough value. That means the terrainMeshManager has been idle for some
+			// value big enough. That means the terrainMeshManager has been idle for some
 			// time period. Then the loading screen should gone.
 			if (TerrainMeshManager::getSingleton().GetCurrentOperationCount()==0)
 				m_zeroOpFrameCounter++;
@@ -264,7 +262,7 @@ namespace SampleTerrain
 
 		if (!m_isLoading)
 		{
-			if (!UIRoot::getActiveForm() && !UIRoot::getTopMostForm())
+			if (SystemUI::ActiveForm == nullptr && SystemUI::TopMostForm == nullptr)
 			{
 				Keyboard* kb = InputAPIManager::getSingleton().getKeyboard();
 				if (kb->IsPressing(KEY_W))
@@ -312,7 +310,7 @@ namespace SampleTerrain
 		{
 			m_cbPushTrees->Update(time);
 
-			m_allowTakingDownTrees = m_cbPushTrees->getValue();
+			m_allowTakingDownTrees = m_cbPushTrees->Checked;
 
 			if (m_helpShowState<20)
 				m_helpShowState += time->getElapsedTime();

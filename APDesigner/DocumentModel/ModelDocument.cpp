@@ -58,10 +58,11 @@ namespace APDesigner
 
 		int32 lineHeight = window->getUISkin()->ContentTextFont->getLineHeightInt();
 		
+		const StyleSkin* skin = window->getUISkin();
+
 		{
-			m_modelViewer = new PictureBox(Point(15, 10 + 25 + 90), 1);
-			m_modelViewer->Size = Point(512,512);
-			m_modelViewer->SetSkin(window->getUISkin());
+			m_modelViewer = new PictureBox(skin, Point(15, 10 + 25 + 90), 1);
+			m_modelViewer->setSize(512, 512);
 			m_modelViewer->eventPictureDraw.Bind(this, &ModelDocument::ModelView_Draw);
 
 			List<String> items(MaxScenePass+1);
@@ -70,112 +71,88 @@ namespace APDesigner
 			{
 				items.Add(L"Pass " + StringUtils::IntToString(i));
 			}
-			m_passViewSelect = new ComboBox(Point(m_modelViewer->Position.X, m_modelViewer->Position.Y - lineHeight), 150, items);
-			m_passViewSelect->SetSkin(window->getUISkin());
+			m_passViewSelect = new ComboBox(skin, Point(m_modelViewer->Position.X, m_modelViewer->Position.Y - lineHeight), 150, items);
 			m_passViewSelect->eventSelectionChanged.Bind(this, &ModelDocument::PassViewSelect_SelectionChanged);
 		}
 
 		{
-			Label* lbl = new Label(Point(23, 33), L"Time", 100);
-			lbl->SetSkin(window->getUISkin());
+			Label* lbl = new Label(skin, Point(23, 33), L"Time", 100);
 			m_labels.Add(lbl);
-			m_pbTime = new PictureBox(Point(94, 27), 1);
-			m_pbTime->Size = Point(957, 30);
-			m_pbTime->SetSkin(window->getUISkin());
+			m_pbTime = new PictureBox(skin, Point(94, 27), 1);
+			m_pbTime->setSize(957, 30);
 
 			m_pbTime->eventPress.Bind(this, &ModelDocument::PBTime_Pressed);
 		}
 		{
 			int32 sy = 68;
-			Label* lbl = new Label(Point(21, sy), L"Material Keyframe Props", 180);
-			lbl->SetSkin(window->getUISkin());
+			Label* lbl = new Label(skin, Point(21, sy), L"Material Keyframe Props", 180);
 			m_labels.Add(lbl);
 
-			lbl = new Label(Point(200, sy), L"Time", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(200, sy), L"Time", 100);
 			m_labels.Add(lbl);
 
-			m_tbMKeyTime = new TextBox(Point(241, sy), 100);
-			m_tbMKeyTime->SetSkin(window->getUISkin());
+			m_tbMKeyTime = new TextBox(skin, Point(241, sy), 100);
 
 
-			lbl = new Label(Point(391, sy), L"Material Sub-Index", 150);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(391, sy), L"Material Sub-Index", 150);
 			m_labels.Add(lbl);
-			m_tbMKeyIndex = new TextBox(Point(536, sy), 100);
-			m_tbMKeyIndex->SetSkin(window->getUISkin());
+			m_tbMKeyIndex = new TextBox(skin, Point(536, sy), 100);
 
-			m_btnRefreshTimeLine = new Button(Point(693, sy), L"Refresh");
-			m_btnRefreshTimeLine->SetSkin(window->getUISkin());
-			m_btnRefreshTimeLine->Size.Y = lineHeight;
+			m_btnRefreshTimeLine = new Button(skin, Point(693, sy), L"Refresh");
+			m_btnRefreshTimeLine->SetSizeY(lineHeight);
 
-			m_btnModify = new Button(Point(788, sy), L"Modify");
-			m_btnModify->SetSkin(window->getUISkin());
-			m_btnModify->Size.Y = lineHeight;
+			m_btnModify = new Button(skin, Point(788, sy), L"Modify");
+			m_btnModify->SetSizeY(lineHeight);
 
-			m_btnAddMkey = new Button(Point(881, sy), L"Add");
-			m_btnAddMkey->SetSkin(window->getUISkin());
-			m_btnAddMkey->Size.Y = lineHeight;
+			m_btnAddMkey = new Button(skin, Point(881, sy), L"Add");
+			m_btnAddMkey->SetSizeY(lineHeight);
 
-			m_btnRemoveMKey = new Button(Point(950, sy), L"Remove");
-			m_btnRemoveMKey->SetSkin(window->getUISkin());
-			m_btnRemoveMKey->Size.Y = lineHeight;
+			m_btnRemoveMKey = new Button(skin, Point(950, sy), L"Remove");
+			m_btnRemoveMKey->SetSizeY(lineHeight);
 		}
 		{
-			Label* lbl = new Label(Point(21 + 522, 107), L"Mesh", 100);
-			lbl->SetSkin(window->getUISkin());
+			Label* lbl = new Label(skin, Point(21 + 522, 107), L"Mesh", 100);
 			m_labels.Add(lbl);
 
-			lbl = new Label(Point(21 + 522, 133), L"Material", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(21 + 522, 133), L"Material", 100);
 			m_labels.Add(lbl);
 
 			List<String> items;
-			m_cbMesh = new ComboBox(Point(21+522+100, 107), 200, items);
-			m_cbMesh->SetSkin(window->getUISkin());
+			m_cbMesh = new ComboBox(skin, Point(21+522+100, 107), 200, items);
 			m_cbMesh->eventSelectionChanged.Bind(this, &ModelDocument::CBMesh_SelectionChanged);
 
-			m_cbMeshPart = new ComboBox(Point(21+522+100, 133), 200, items);
-			m_cbMeshPart->SetSkin(window->getUISkin());
+			m_cbMeshPart = new ComboBox(skin, Point(21+522+100, 133), 200, items);
 			m_cbMeshPart->eventSelectionChanged.Bind(this, &ModelDocument::CBMeshPart_SelectionChanged);
 
-			lbl = new Label(Point(21 + 522, 183), L"Mesh Name", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(21 + 522, 183), L"Mesh Name", 100);
 			m_labels.Add(lbl);
 
-			m_tbMeshName = new TextBox(Point(21+522+100, 183), 200);
-			m_tbMeshName->SetSkin(window->getUISkin());
+			m_tbMeshName = new TextBox(skin, Point(21+522+100, 183), 200);
 
 
 
-			m_applyMtrl = new Button(Point(21 + 522+100+220, 159),175, L"Apply Changes");
-			m_applyMtrl->SetSkin(window->getUISkin());
+			m_applyMtrl = new Button(skin, Point(21 + 522+100+220, 159),175, L"Apply Changes");
 			m_applyMtrl->eventRelease.Bind(this, &ModelDocument::BtnApplyMtrl_Pressed);
-			m_applyMtrl->Size.Y = lineHeight;
+			m_applyMtrl->SetSizeY(lineHeight);
 
-			m_applyAllMtrl = new Button(Point(21 + 522+100+220, 185),175, L"Apply To All");
-			m_applyAllMtrl->SetSkin(window->getUISkin());
+			m_applyAllMtrl = new Button(skin, Point(21 + 522+100+220, 185),175, L"Apply To All");
 			m_applyAllMtrl->eventRelease.Bind(this, &ModelDocument::BtnApplyAllMtrl_Pressed);
-			m_applyAllMtrl->Size.Y = lineHeight;
+			m_applyAllMtrl->SetSizeY(lineHeight);
 
 
-			lbl = new Label(Point(21 + 522, 159), L"SubMaterial", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(21 + 522, 159), L"SubMaterial", 100);
 			m_labels.Add(lbl);
-			m_cbSubMtrl = new ComboBox(Point(21+522+100, 159), 200, items);
-			m_cbSubMtrl->SetSkin(window->getUISkin());
+			m_cbSubMtrl = new ComboBox(skin, Point(21+522+100, 159), 200, items);
 			m_cbSubMtrl->eventSelectionChanged.Bind(this, &ModelDocument::CBSubMtrl_SelectionChanged);
 			
 
-			m_addMtrlFrame = new Button(Point(21 + 522+100+220, 107),175, L"Add Sub Material");
-			m_addMtrlFrame->SetSkin(window->getUISkin());
+			m_addMtrlFrame = new Button(skin, Point(21 + 522+100+220, 107),175, L"Add Sub Material");
 			m_addMtrlFrame->eventRelease.Bind(this, &ModelDocument::BtnAddMtrl_Pressed);
-			m_addMtrlFrame->Size.Y = lineHeight;
+			m_addMtrlFrame->SetSizeY(lineHeight);
 
-			m_removeMtrlFrame = new Button(Point(21 + 522+100+220, 133),175, L"Remove Sub Material");
-			m_removeMtrlFrame->SetSkin(window->getUISkin());
+			m_removeMtrlFrame = new Button(skin, Point(21 + 522+100+220, 133),175, L"Remove Sub Material");
 			m_removeMtrlFrame->eventRelease.Bind(this, &ModelDocument::BtnRemoveMtrl_Pressed);
-			m_removeMtrlFrame->Size.Y = lineHeight;
+			m_removeMtrlFrame->SetSizeY(lineHeight);
 
 		}
 		{
@@ -183,89 +160,61 @@ namespace APDesigner
 			int sx2 = sx + 100;
 			int sy = 210;
 
-			m_cbUseRef = new CheckBox(Point(sx,sy), L"Use External", false);
-			m_cbUseRef->SetSkin(window->getUISkin());
+			m_cbUseRef = new CheckBox(skin, Point(sx,sy), L"Use External", false);
 			m_cbUseRef->eventToggled.Bind(this, &ModelDocument::CBUseRef_Checked);
 
-			m_tbRefMaterialName = new TextBox(Point(sx+150,sy), 150);
-			m_tbRefMaterialName->SetSkin(window->getUISkin());
+			m_tbRefMaterialName = new TextBox(skin, Point(sx+150,sy), 150);
 			
-			m_btnRefMaterial = new Button(Point(sx + 310, sy), L"...");
-			m_btnRefMaterial->SetSkin(window->getUISkin());
+			m_btnRefMaterial = new Button(skin, Point(sx + 310, sy), L"...");
 			m_btnRefMaterial->eventPress.Bind(this, &ModelDocument::BtnRefMtrl_Pressed);
-			m_btnRefMaterial->Size.Y = lineHeight;
-
-			sy+=30;
-			m_cfAmbient = new ColorField(Point(sx, sy), CV_Red);
-			m_cfAmbient->Text = L"Ambient";
-			m_cfAmbient->SetSkin(window->getUISkin());
-
-			m_cfDiffuse = new ColorField(Point(sx + 250, sy), CV_Red);
-			m_cfDiffuse->Text = L"Diffuse";
-			m_cfDiffuse->SetSkin(window->getUISkin());
-
-			sy += 25;
-			m_cfSpecular = new ColorField(Point(sx, sy), CV_Red);
-			m_cfSpecular->Text = L"Specular";
-			m_cfSpecular->SetSkin(window->getUISkin());
-
-			m_cfEmissive = new ColorField(Point(sx + 250, sy), CV_Red);
-			m_cfEmissive->Text = L"Emissive";
-			m_cfEmissive->SetSkin(window->getUISkin());
-			
-			sy += 25;
-			Label* lbl = new Label(Point(sx, sy), L"Shininess", 120);
-			lbl->SetSkin(window->getUISkin());
-			m_mtrlPanelLabels.Add(lbl);
-			m_tbShinness = new TextBox(Point(sx+100, sy), 200, L"");
-			m_tbShinness->SetSkin(window->getUISkin());
+			m_btnRefMaterial->SetSizeY(lineHeight);
 
 			sy += 30;
-			lbl = new Label(Point(sx, sy), L"Texture1", 120);
-			lbl->SetSkin(window->getUISkin());
-			m_mtrlPanelLabels.Add(lbl);
-			m_tbTex1 = new TextBox(Point(sx2, sy), 200, L"");
-			m_tbTex1->SetSkin(window->getUISkin());
+			m_cfAmbient = new ColorField(skin, Point(sx, sy), L"Ambient", CV_Red);
+			m_cfDiffuse = new ColorField(skin, Point(sx + 250, sy),  L"Diffuse", CV_Red);
 
 			sy += 25;
-			lbl = new Label(Point(sx, sy), L"Texture2", 120);
-			lbl->SetSkin(window->getUISkin());
+			m_cfSpecular = new ColorField(skin, Point(sx, sy), L"Specular", CV_Red);
+			m_cfEmissive = new ColorField(skin, Point(sx + 250, sy), L"Emissive", CV_Red);
+			
+			sy += 25;
+			Label* lbl = new Label(skin, Point(sx, sy), L"Shininess", 120);
 			m_mtrlPanelLabels.Add(lbl);
-			m_tbTex2 = new TextBox(Point(sx2, sy), 200, L"");
-			m_tbTex2->SetSkin(window->getUISkin());
+			m_tbShinness = new TextBox(skin, Point(sx+100, sy), 200, L"");
+
+			sy += 30;
+			lbl = new Label(skin, Point(sx, sy), L"Texture1", 120);
+			m_mtrlPanelLabels.Add(lbl);
+			m_tbTex1 = new TextBox(skin, Point(sx2, sy), 200, L"");
 
 			sy += 25;
-			lbl = new Label(Point(sx, sy), L"Texture3", 120);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Texture2", 120);
 			m_mtrlPanelLabels.Add(lbl);
-			m_tbTex3 = new TextBox(Point(sx2, sy), 200, L"");
-			m_tbTex3->SetSkin(window->getUISkin());
+			m_tbTex2 = new TextBox(skin, Point(sx2, sy), 200, L"");
 
 			sy += 25;
-			lbl = new Label(Point(sx, sy), L"Texture4", 120);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Texture3", 120);
 			m_mtrlPanelLabels.Add(lbl);
-			m_tbTex4 = new TextBox(Point(sx2, sy), 200, L"");
-			m_tbTex4->SetSkin(window->getUISkin());
+			m_tbTex3 = new TextBox(skin, Point(sx2, sy), 200, L"");
 
 			sy += 25;
-			lbl = new Label(Point(sx, sy), L"Texture5", 120);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Texture4", 120);
 			m_mtrlPanelLabels.Add(lbl);
-			m_tbTex5 = new TextBox(Point(sx2, sy), 200, L"");
-			m_tbTex5->SetSkin(window->getUISkin());
+			m_tbTex4 = new TextBox(skin, Point(sx2, sy), 200, L"");
+
+			sy += 25;
+			lbl = new Label(skin, Point(sx, sy), L"Texture5", 120);
+			m_mtrlPanelLabels.Add(lbl);
+			m_tbTex5 = new TextBox(skin, Point(sx2, sy), 200, L"");
 
 
 
 			sy += 35;
-			lbl = new Label(Point(sx, sy), L"Priority[0,127]", 120);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Priority[0,127]", 120);
 			m_mtrlPanelLabels.Add(lbl);
-			m_tbPriority = new TextBox(Point(sx2, sy), 200, L"");
-			m_tbPriority->SetSkin(window->getUISkin());
+			m_tbPriority = new TextBox(skin, Point(sx2, sy), 200, L"");
 
-			m_cbDepthTest = new CheckBox(Point(sx+ 250 + 100, sy), L"DepthTest", false);
-			m_cbDepthTest->SetSkin(window->getUISkin());
+			m_cbDepthTest = new CheckBox(skin, Point(sx+ 250 + 100, sy), L"DepthTest", false);
 
 
 			sy += 25;
@@ -273,27 +222,21 @@ namespace APDesigner
 			items.Add(GraphicsCommonUtils::ToString(CULL_None));
 			items.Add(GraphicsCommonUtils::ToString(CULL_Clockwise));
 			items.Add(GraphicsCommonUtils::ToString(CULL_CounterClockwise));
-			lbl = new Label(Point(sx, sy), L"Cull Mode", 120);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Cull Mode", 120);
 			m_mtrlPanelLabels.Add(lbl);
-			m_cbCull = new ComboBox(Point(sx2, sy), 200, items);
-			m_cbCull->SetSkin(window->getUISkin());
+			m_cbCull = new ComboBox(skin, Point(sx2, sy), 200, items);
 
-			m_cbDepthWrite = new CheckBox(Point(sx+ 250 + 100, sy), L"DepthWrite", false);
-			m_cbDepthWrite->SetSkin(window->getUISkin());
+			m_cbDepthWrite = new CheckBox(skin, Point(sx+ 250 + 100, sy), L"DepthWrite", false);
 
 			sy += 25;
-			lbl = new Label(Point(sx, sy), L"AlphaTest[0,1]", 120);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"AlphaTest[0,1]", 120);
 			m_mtrlPanelLabels.Add(lbl);
-			m_tbAlphaTest = new TextBox(Point(sx2, sy), 200, L"");
-			m_tbAlphaTest->SetSkin(window->getUISkin());
+			m_tbAlphaTest = new TextBox(skin, Point(sx2, sy), 200, L"");
 			
 
 			sy += 25;
 
-			m_cbTransparent = new CheckBox(Point(sx + 250 + 100, sy), L"Transparent", false);
-			m_cbTransparent->SetSkin(window->getUISkin());
+			m_cbTransparent = new CheckBox(skin, Point(sx + 250 + 100, sy), L"Transparent", false);
 
 			items.Clear();
 			items.Add(GraphicsCommonUtils::ToString(BLFUN_Add));
@@ -301,11 +244,9 @@ namespace APDesigner
 			items.Add(GraphicsCommonUtils::ToString(BLFUN_ReverseSubtract));
 			items.Add(GraphicsCommonUtils::ToString(BLFUN_Max));
 			items.Add(GraphicsCommonUtils::ToString(BLFUN_Min));
-			lbl = new Label(Point(sx, sy), L"Blend Func", 120);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Blend Func", 120);
 			m_mtrlPanelLabels.Add(lbl);
-			m_cbBlendFunction = new ComboBox(Point(sx2, sy), 200, items);
-			m_cbBlendFunction->SetSkin(window->getUISkin());
+			m_cbBlendFunction = new ComboBox(skin, Point(sx2, sy), 200, items);
 
 			items.Clear();
 			items.Add(GraphicsCommonUtils::ToString(BLEND_Zero));
@@ -323,31 +264,24 @@ namespace APDesigner
 			items.Add(GraphicsCommonUtils::ToString(BLEND_BlendFactor));
 			
 			sy += 25;
-			lbl = new Label(Point(sx, sy), L"Src Blend", 120);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Src Blend", 120);
 			m_mtrlPanelLabels.Add(lbl);
-			m_cbSrcBlend = new ComboBox(Point(sx2, sy), 200, items);
-			m_cbSrcBlend->SetSkin(window->getUISkin());
+			m_cbSrcBlend = new ComboBox(skin, Point(sx2, sy), 200, items);
 
 			sy += 25;
-			lbl = new Label(Point(sx, sy), L"Dest Blend", 120);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Dest Blend", 120);
 			m_mtrlPanelLabels.Add(lbl);
-			m_cbDstBlend = new ComboBox(Point(sx2, sy), 200, items);
-			m_cbDstBlend->SetSkin(window->getUISkin());
+			m_cbDstBlend = new ComboBox(skin, Point(sx2, sy), 200, items);
 
 			sy += 30;
-			lbl = new Label(Point(sx, sy), L"Pass Flags", 120);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Pass Flags", 120);
 			m_mtrlPanelLabels.Add(lbl);
-			m_pbPassFlag = new PictureBox(Point(sx2, sy),1);
-			m_pbPassFlag->SetSkin(window->getUISkin());
+			m_pbPassFlag = new PictureBox(skin, Point(sx2, sy),1);
 			//m_pbPassFlag->Size.Y = getDocumentForm()->getFontRef()->getLineHeight();
-			m_pbPassFlag->Size.X = 256;
+			m_pbPassFlag->setHeight(256);
 			m_pbPassFlag->eventPictureDraw.Bind(this, &ModelDocument::PassFlags_Draw);
 
-			m_btnPassFlag = new Button(Point(sx+100+300, sy), L"Edit");
-			m_btnPassFlag->SetSkin(window->getUISkin());
+			m_btnPassFlag = new Button(skin, Point(sx+100+300, sy), L"Edit");
 			m_btnPassFlag->eventPress.Bind(this, &ModelDocument::PassButton_Pressed);
 		}
 
@@ -356,72 +290,60 @@ namespace APDesigner
 			int sx = 21;
 			int sy = 522 + 115;
 
-			Label* lbl = new Label(Point(sx, sy), L"Utilities: ", 100);
-			lbl->SetSkin(window->getUISkin());
+			Label* lbl = new Label(skin, Point(sx, sy), L"Utilities: ", 100);
 			m_labels.Add(lbl);
 			sy+=20;
 
 			int btnWidth = 80;
-			m_revertZ = new Button(Point(sx , sy),btnWidth, L"Revert Z");
-			m_revertZ->SetSkin(window->getUISkin());
+			m_revertZ = new Button(skin, Point(sx , sy),btnWidth, L"Revert Z");
 			m_revertZ->eventPress.Bind(this, &ModelDocument::RevertZ_Pressed);
 			sx += btnWidth+10;
 
 			btnWidth = 100;
-			m_recenterModel = new Button(Point(sx, sy),btnWidth, L"Center model");
-			m_recenterModel->SetSkin(window->getUISkin());
+			m_recenterModel = new Button(skin, Point(sx, sy),btnWidth, L"Center model");
 			m_recenterModel->eventPress.Bind(this, &ModelDocument::RecenterModel_Pressed);
 			sx += btnWidth+10;
 
 			btnWidth = 80;
-			m_swapYZ = new Button(Point(sx, sy),btnWidth, L"Swap YZ");
-			m_swapYZ->SetSkin(window->getUISkin());
+			m_swapYZ = new Button(skin, Point(sx, sy), btnWidth, L"Swap YZ");
 			m_swapYZ->eventPress.Bind(this, &ModelDocument::RevertYZ_Pressed);
 			sx += btnWidth+10;
 
 			btnWidth = 100;
-			m_rotateY = new Button(Point(sx, sy),btnWidth, L"Rotation Y 90");
-			m_rotateY->SetSkin(window->getUISkin());
+			m_rotateY = new Button(skin, Point(sx, sy),btnWidth, L"Rotation Y 90");
 			m_rotateY->eventPress.Bind(this, &ModelDocument::RotY_Pressed);
 			sx += btnWidth+10;
 
-			m_rotateZ = new Button(Point(sx, sy),btnWidth, L"Rotation Z 90");
-			m_rotateZ->SetSkin(window->getUISkin());
+			m_rotateZ = new Button(skin, Point(sx, sy),btnWidth, L"Rotation Z 90");
 			m_rotateZ->eventPress.Bind(this, &ModelDocument::RotZ_Pressed);
 			sx += btnWidth+10;
 
 			btnWidth = 30;
-			m_zoomIn = new Button(Point(sx, sy),btnWidth, L"+");
-			m_zoomIn->SetSkin(window->getUISkin());
+			m_zoomIn = new Button(skin, Point(sx, sy),btnWidth, L"+");
 			m_zoomIn->eventPress.Bind(this, &ModelDocument::ZoomIn_Pressed);
 			sx += btnWidth+10;
 
-			m_zoomOut = new Button(Point(sx, sy),btnWidth, L"-");
-			m_zoomOut->SetSkin(window->getUISkin());
+			m_zoomOut = new Button(skin, Point(sx, sy),btnWidth, L"-");
 			m_zoomOut->eventPress.Bind(this, &ModelDocument::ZoomOut_Pressed);
 			sx += btnWidth+10;
 
 			btnWidth = 170;
-			m_setSequenceImages = new Button(Point(sx, sy),btnWidth, L"Set Sequence Material");
-			m_setSequenceImages->SetSkin(window->getUISkin());
+			m_setSequenceImages = new Button(skin, Point(sx, sy),btnWidth, L"Set Sequence Material");
 			m_setSequenceImages->eventPress.Bind(this, &ModelDocument::SetSequenceImages_Pressed);
 			sx += btnWidth+10;
 
 			btnWidth = 80;
-			m_applyColorToAll = new Button(Point(sx, sy),btnWidth, L"Color All");
-			m_applyColorToAll->SetSkin(window->getUISkin());
+			m_applyColorToAll = new Button(skin, Point(sx, sy),btnWidth, L"Color All");
 			m_applyColorToAll->eventPress.Bind(this, &ModelDocument::ApplyColorToAll_Pressed);
 			sx += btnWidth + 10;
 
 			btnWidth = 50;
-			m_applyFXToAll = new Button(Point(sx, sy),btnWidth, L"FX All");
-			m_applyFXToAll->SetSkin(window->getUISkin());
+			m_applyFXToAll = new Button(skin, Point(sx, sy),btnWidth, L"FX All");
 			m_applyFXToAll->eventPress.Bind(this, &ModelDocument::ApplyFXToAll_Pressed);
 			sx += btnWidth + 10;
 
 			btnWidth = 80;
-			m_autoTex = new Button(Point(sx, sy),btnWidth, L"Auto Tex");
-			m_autoTex->SetSkin(window->getUISkin());
+			m_autoTex = new Button(skin, Point(sx, sy),btnWidth, L"Auto Tex");
 			m_autoTex->eventPress.Bind(this, &ModelDocument::AutoTex_Pressed);
 			sx += btnWidth + 10;
 
@@ -721,9 +643,9 @@ namespace APDesigner
 		m_camera->setChaseDirection(Vector3(cosf(m_xang), -sinf(m_yang), sinf(m_xang)));
 		m_camera->setDesiredOffset(Vector3(0,0,m_distance));
 
-		if (getDocumentForm()->getFontRef())
+		if (getDocumentForm()->getFont())
 		{
-			m_pbPassFlag->Size.Y = static_cast<int>(getDocumentForm()->getFontRef()->getLineBackgroundHeight());
+			m_pbPassFlag->setHeight(static_cast<int>(getDocumentForm()->getFont()->getLineBackgroundHeight()));
 		}
 		Document::Update(time);
 	}
@@ -764,7 +686,7 @@ namespace APDesigner
 		}
 	}
 
-	void ModelDocument::PassButton_Pressed(Control* ctrl)
+	void ModelDocument::PassButton_Pressed(Button* ctrl)
 	{
 		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
@@ -791,7 +713,7 @@ namespace APDesigner
 			sprite->Draw(texture, *dstRect, 0, CV_White);
 		}
 
-		Font* font = getDocumentForm()->getFontRef();
+		Font* font = getDocumentForm()->getFont();
 		int totalVertexCount = 0;
 		int totalFaceCount = 0;
 		bool hasSkin = false;
@@ -840,7 +762,7 @@ namespace APDesigner
 					Apoc3D::Math::Rectangle dr(*dstRect);
 					dr.X += i * CX;
 					dr.Width = CX;
-					sprite->Draw(getDocumentForm()->getSkin()->WhitePixelTexture, dr, 0, (flag & 1) ? CV_Red : CV_White);
+					sprite->Draw(SystemUI::GetWhitePixel(), dr, 0, (flag & 1) ? CV_Red : CV_White);
 					flag = flag>>1;
 				}
 			}
@@ -859,7 +781,7 @@ namespace APDesigner
 			}
 		}
 	}
-	void ModelDocument::CBMesh_SelectionChanged(Control* ctrl)
+	void ModelDocument::CBMesh_SelectionChanged(ComboBox* ctrl)
 	{
 		m_cbMeshPart->getItems().Clear();
 		m_cbMeshPart->setSelectedIndex(-1);
@@ -873,7 +795,7 @@ namespace APDesigner
 		{
 			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
 			
-			m_tbMeshName->setText(ents[selMeshIdx]->getName());
+			m_tbMeshName->SetText(ents[selMeshIdx]->getName());
 
 			for (int32 i=0;i<mtrls->getMaterialCount();i++)
 			{
@@ -881,7 +803,7 @@ namespace APDesigner
 			}
 		}
 	}
-	void ModelDocument::CBMeshPart_SelectionChanged(Control* ctrl)
+	void ModelDocument::CBMeshPart_SelectionChanged(ComboBox* ctrl)
 	{
 		m_cbSubMtrl->getItems().Clear();
 		m_cbSubMtrl->setSelectedIndex(-1);
@@ -901,7 +823,7 @@ namespace APDesigner
 			}
 		}
 	}
-	void ModelDocument::CBSubMtrl_SelectionChanged(Control* ctrl)
+	void ModelDocument::CBSubMtrl_SelectionChanged(ComboBox* ctrl)
 	{
 		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
@@ -925,7 +847,7 @@ namespace APDesigner
 		}
 	}
 
-	void ModelDocument::CBUseRef_Checked(Control* ctrl)
+	void ModelDocument::CBUseRef_Checked(CheckBox* ctrl)
 	{
 		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
@@ -937,11 +859,11 @@ namespace APDesigner
 			if (partIdx != -1 && frameIndex != -1)
 			{
 				Material* m = mtrls->getMaterial(partIdx, frameIndex);
-				DisplayMaterialEditor(m, m_cbUseRef->getValue());
+				DisplayMaterialEditor(m, m_cbUseRef->Checked);
 			}
 		}
 	}
-	void ModelDocument::BtnRefMtrl_Pressed(Control* ctrl)
+	void ModelDocument::BtnRefMtrl_Pressed(Button* ctrl)
 	{
 		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
@@ -963,9 +885,10 @@ namespace APDesigner
 		if (mtrl)
 		{
 			m_cbUseRef->Visible = true;
-			m_cbUseRef->setValue(usingRef);
+			m_cbUseRef->Checked = usingRef;
+
 			m_tbRefMaterialName->Visible = usingRef;
-			m_tbRefMaterialName->setText(mtrl->ExternalReferenceName);
+			m_tbRefMaterialName->SetText(mtrl->ExternalReferenceName);
 			m_btnRefMaterial->Visible = usingRef;
 
 			bool v = !usingRef;
@@ -1007,26 +930,26 @@ namespace APDesigner
 				m_cfSpecular->SetValue(mtrl->Specular);
 				m_cfEmissive->SetValue(mtrl->Emissive);
 
-				m_tbShinness->Text = StringUtils::SingleToString(mtrl->Power);
+				m_tbShinness->SetText(StringUtils::SingleToString(mtrl->Power));
 
-				m_tbTex1->setText(mtrl->getTextureName(0));
-				m_tbTex2->setText(mtrl->getTextureName(1));
-				m_tbTex3->setText(mtrl->getTextureName(2));
-				m_tbTex4->setText(mtrl->getTextureName(3));
-				m_tbTex5->setText(mtrl->getTextureName(4));
+				m_tbTex1->SetText(mtrl->getTextureName(0));
+				m_tbTex2->SetText(mtrl->getTextureName(1));
+				m_tbTex3->SetText(mtrl->getTextureName(2));
+				m_tbTex4->SetText(mtrl->getTextureName(3));
+				m_tbTex5->SetText(mtrl->getTextureName(4));
 
-				m_tbPriority->setText(StringUtils::UIntToString(mtrl->getPriority()));
-				m_tbAlphaTest->setText(StringUtils::UIntToString(mtrl->AlphaReference));
+				m_tbPriority->SetText(StringUtils::UIntToString(mtrl->getPriority()));
+				m_tbAlphaTest->SetText(StringUtils::UIntToString(mtrl->AlphaReference));
 
-				m_cbDepthTest->setValue(mtrl->DepthTestEnabled);
-				m_cbDepthWrite->setValue(mtrl->DepthWriteEnabled);
+				m_cbDepthTest->Checked = mtrl->DepthTestEnabled;
+				m_cbDepthWrite->Checked = mtrl->DepthWriteEnabled;
 
-				m_cbTransparent->setValue(mtrl->IsBlendTransparent);
+				m_cbTransparent->Checked = mtrl->IsBlendTransparent;
 
-				m_cbSrcBlend->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->SourceBlend));
-				m_cbDstBlend->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->DestinationBlend));
-				m_cbBlendFunction->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->BlendFunction));
-				m_cbCull->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->Cull));
+				m_cbSrcBlend->SetSelectionByName(GraphicsCommonUtils::ToString(mtrl->SourceBlend));
+				m_cbDstBlend->SetSelectionByName(GraphicsCommonUtils::ToString(mtrl->DestinationBlend));
+				m_cbBlendFunction->SetSelectionByName(GraphicsCommonUtils::ToString(mtrl->BlendFunction));
+				m_cbCull->SetSelectionByName(GraphicsCommonUtils::ToString(mtrl->Cull));
 
 			}
 			m_pbPassFlag->Visible = v;
@@ -1076,7 +999,7 @@ namespace APDesigner
 	}
 
 
-	void ModelDocument::BtnApplyAllMtrl_Pressed(Control* ctrl)
+	void ModelDocument::BtnApplyAllMtrl_Pressed(Button* ctrl)
 	{
 		Material* currentMtrl = 0;
 		const List<Mesh*> ents = m_modelSData->getEntities();
@@ -1084,7 +1007,7 @@ namespace APDesigner
 		if (selMeshIdx != -1)
 		{
 			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			ents[selMeshIdx]->setName(m_tbMeshName->Text);
+			ents[selMeshIdx]->setName(m_tbMeshName->getText());
 
 			int partIdx = m_cbMeshPart->getSelectedIndex();
 			int frameIndex = m_cbSubMtrl->getSelectedIndex();
@@ -1109,21 +1032,21 @@ namespace APDesigner
 					mtrl->Diffuse = Color4(m_cfDiffuse->GetValue());
 					mtrl->Specular = Color4(m_cfSpecular->GetValue());
 					mtrl->Emissive = Color4(m_cfEmissive->GetValue());
-					mtrl->Power = StringUtils::ParseSingle(m_tbShinness->Text);
+					mtrl->Power = StringUtils::ParseSingle(m_tbShinness->getText());
 
-					mtrl->setTextureName(0, m_tbTex1->Text);
-					mtrl->setTextureName(1, m_tbTex2->Text);
-					mtrl->setTextureName(2, m_tbTex3->Text);
-					mtrl->setTextureName(3, m_tbTex4->Text);
-					mtrl->setTextureName(4, m_tbTex5->Text);
+					mtrl->setTextureName(0, m_tbTex1->getText());
+					mtrl->setTextureName(1, m_tbTex2->getText());
+					mtrl->setTextureName(2, m_tbTex3->getText());
+					mtrl->setTextureName(3, m_tbTex4->getText());
+					mtrl->setTextureName(4, m_tbTex5->getText());
 
-					mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->Text));
-					mtrl->AlphaReference = StringUtils::ParseUInt32(m_tbAlphaTest->Text);
+					mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->getText()));
+					mtrl->AlphaReference = StringUtils::ParseUInt32(m_tbAlphaTest->getText());
 
-					mtrl->DepthTestEnabled = m_cbDepthTest->getValue();
-					mtrl->DepthWriteEnabled = m_cbDepthWrite->getValue();
+					mtrl->DepthTestEnabled = m_cbDepthTest->Checked;
+					mtrl->DepthWriteEnabled = m_cbDepthWrite->Checked;
 
-					mtrl->IsBlendTransparent = m_cbTransparent->getValue();
+					mtrl->IsBlendTransparent = m_cbTransparent->Checked;
 
 					if (m_cbSrcBlend->getSelectedIndex()!=-1)
 					{
@@ -1170,7 +1093,7 @@ namespace APDesigner
 			
 		}
 	}
-	void ModelDocument::BtnAddMtrl_Pressed(Control* ctrl)
+	void ModelDocument::BtnAddMtrl_Pressed(Button* ctrl)
 	{
 		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
@@ -1182,17 +1105,17 @@ namespace APDesigner
 			Material* newMtrl = new Material(*mtrls->getMaterial(partIdx, mtrls->getFrameCount(partIdx)-1));
 			mtrls->AddFrame(newMtrl, partIdx);
 
-			CBMeshPart_SelectionChanged(ctrl);
+			CBMeshPart_SelectionChanged(nullptr);
 		}
 	}
-	void ModelDocument::BtnApplyMtrl_Pressed(Control* ctrl)
+	void ModelDocument::BtnApplyMtrl_Pressed(Button* ctrl)
 	{
 		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx != -1)
 		{
 			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			ents[selMeshIdx]->setName(m_tbMeshName->Text);
+			ents[selMeshIdx]->setName(m_tbMeshName->getText());
 
 			int partIdx = m_cbMeshPart->getSelectedIndex();
 			int frameIndex = m_cbSubMtrl->getSelectedIndex();
@@ -1200,9 +1123,9 @@ namespace APDesigner
 			{
 				Material* mtrl = mtrls->getMaterial(partIdx, frameIndex);
 
-				if (m_cbUseRef->getValue())
+				if (m_cbUseRef->Checked)
 				{
-					mtrl->ExternalReferenceName = m_tbRefMaterialName->Text;
+					mtrl->ExternalReferenceName = m_tbRefMaterialName->getText();
 				}
 				else
 				{
@@ -1212,21 +1135,21 @@ namespace APDesigner
 					mtrl->Diffuse = Color4(m_cfDiffuse->GetValue());
 					mtrl->Specular = Color4(m_cfSpecular->GetValue());
 					mtrl->Emissive = Color4(m_cfEmissive->GetValue());
-					mtrl->Power = StringUtils::ParseSingle(m_tbShinness->Text);
+					mtrl->Power = StringUtils::ParseSingle(m_tbShinness->getText());
 
-					mtrl->setTextureName(0, m_tbTex1->Text);
-					mtrl->setTextureName(1, m_tbTex2->Text);
-					mtrl->setTextureName(2, m_tbTex3->Text);
-					mtrl->setTextureName(3, m_tbTex4->Text);
-					mtrl->setTextureName(4, m_tbTex5->Text);
+					mtrl->setTextureName(0, m_tbTex1->getText());
+					mtrl->setTextureName(1, m_tbTex2->getText());
+					mtrl->setTextureName(2, m_tbTex3->getText());
+					mtrl->setTextureName(3, m_tbTex4->getText());
+					mtrl->setTextureName(4, m_tbTex5->getText());
 
-					mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->Text));
-					mtrl->AlphaReference = StringUtils::ParseUInt32(m_tbAlphaTest->Text);
+					mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->getText()));
+					mtrl->AlphaReference = StringUtils::ParseUInt32(m_tbAlphaTest->getText());
 				
-					mtrl->DepthTestEnabled = m_cbDepthTest->getValue();
-					mtrl->DepthWriteEnabled = m_cbDepthWrite->getValue();
+					mtrl->DepthTestEnabled = m_cbDepthTest->Checked;
+					mtrl->DepthWriteEnabled = m_cbDepthWrite->Checked;
 				
-					mtrl->IsBlendTransparent = m_cbTransparent->getValue();
+					mtrl->IsBlendTransparent = m_cbTransparent->Checked;
 				
 					if (m_cbSrcBlend->getSelectedIndex()!=-1)
 					{
@@ -1255,7 +1178,7 @@ namespace APDesigner
 			}
 		}
 	}
-	void ModelDocument::BtnRemoveMtrl_Pressed(Control* ctrl)
+	void ModelDocument::BtnRemoveMtrl_Pressed(Button* ctrl)
 	{
 		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
@@ -1270,12 +1193,12 @@ namespace APDesigner
 				Material* m = mtrls->getMaterial(partIdx, frameIndex);
 				mtrls->RemoveFrame(partIdx, frameIndex);
 				delete m;
-				CBMeshPart_SelectionChanged(ctrl);
+				CBMeshPart_SelectionChanged(nullptr);
 			}
 		}
 	}
 
-	void ModelDocument::RecenterModel_Pressed(Control* ctrl)
+	void ModelDocument::RecenterModel_Pressed(Button* ctrl)
 	{
 		Vector3 center = Vector3::Zero;
 		int totalVertexCount = 0;
@@ -1360,14 +1283,14 @@ namespace APDesigner
 			mesh->setBoundingSphere(sphere);
 		}
 	}
-	void ModelDocument::RevertYZ_Pressed(Control* ctrl)
+	void ModelDocument::RevertYZ_Pressed(Button* ctrl)
 	{
 		Matrix rot;
 		Matrix::CreateRotationX(rot, Math::Half_PI);
 		Transform(rot);
 
 	}
-	void ModelDocument::RevertZ_Pressed(Control* ctrl)
+	void ModelDocument::RevertZ_Pressed(Button* ctrl)
 	{
 		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
 		{
@@ -1406,28 +1329,28 @@ namespace APDesigner
 			mesh->setBoundingSphere(sphere);
 		}
 	}
-	void ModelDocument::RotY_Pressed(Control* ctrl)
+	void ModelDocument::RotY_Pressed(Button* ctrl)
 	{
 		Matrix rot;
 		Matrix::CreateRotationY(rot, Math::Half_PI);
 		Transform(rot);
 	}
-	void ModelDocument::RotZ_Pressed(Control* ctrl)
+	void ModelDocument::RotZ_Pressed(Button* ctrl)
 	{
 		Matrix rot;
 		Matrix::CreateRotationZ(rot, Math::Half_PI);
 		Transform(rot);
 	}
-	void ModelDocument::ZoomIn_Pressed(Control* ctrl)
+	void ModelDocument::ZoomIn_Pressed(Button* ctrl)
 	{
 		m_distance -= 10;
 	}
-	void ModelDocument::ZoomOut_Pressed(Control* ctrl)
+	void ModelDocument::ZoomOut_Pressed(Button* ctrl)
 	{
 		m_distance += 10;
 	}
 
-	void ModelDocument::SetSequenceImages_Pressed(Control* ctrl)
+	void ModelDocument::SetSequenceImages_Pressed(Button* ctrl)
 	{
 		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
@@ -1439,7 +1362,7 @@ namespace APDesigner
 			m_batchCopyMtrl->ShowModal(mtrls, partIdx);
 		}
 	}
-	void ModelDocument::ApplyColorToAll_Pressed(Control* ctrl)
+	void ModelDocument::ApplyColorToAll_Pressed(Button* ctrl)
 	{
 		Material* currentMtrl = 0;
 		const List<Mesh*> ents = m_modelSData->getEntities();
@@ -1477,7 +1400,7 @@ namespace APDesigner
 
 		}
 	}
-	void ModelDocument::ApplyFXToAll_Pressed(Control* ctrl)
+	void ModelDocument::ApplyFXToAll_Pressed(Button* ctrl)
 	{
 		Material* currentMtrl = 0;
 		const List<Mesh*> ents = m_modelSData->getEntities();
@@ -1516,7 +1439,7 @@ namespace APDesigner
 			}
 		}
 	}
-	void ModelDocument::AutoTex_Pressed(Control* ctrl)
+	void ModelDocument::AutoTex_Pressed(Button* ctrl)
 	{
 		const List<Mesh*> ents = m_modelSData->getEntities();
 
@@ -1551,7 +1474,7 @@ namespace APDesigner
 		}
 	}
 
-	void ModelDocument::PassViewSelect_SelectionChanged(Control* ctrl)
+	void ModelDocument::PassViewSelect_SelectionChanged(ComboBox* ctrl)
 	{
 		SceneProcedure* sp = m_sceneRenderer->getSelectedProc();
 		if (sp)
@@ -1569,74 +1492,60 @@ namespace APDesigner
 	/*   CopyMaterialDialog                                                 */
 	/************************************************************************/
 
-	CopyMaterialDialog::CopyMaterialDialog(ModelDocument* parent, MainWindow* window,RenderDevice* device)
+	CopyMaterialDialog::CopyMaterialDialog(ModelDocument* parent, MainWindow* window, RenderDevice* device)
 		: m_parent(parent), m_dialogResult(false)
 	{
 		const StyleSkin* skin = window->getUISkin();
 
-		m_form = new Form(FBS_Fixed, L"Name Pattern");
+		m_form = new Form(skin, device, FBS_Fixed, L"Name Pattern");
 
-		Apoc3D::Math::Rectangle rect = UIRoot::GetUIArea(device);
-		m_form->Size = Point(400, 250);
-		m_form->Position = Point(rect.Width, rect.Height) - m_form->Size;
-		m_form->Position.X /= 2;
-		m_form->Position.Y /= 2;
-		m_form->SetSkin(skin);
+		Apoc3D::Math::Rectangle rect = SystemUI::GetUIArea(device);
+		m_form->setSize(400, 250);
+		m_form->Position = (rect.getSize() - m_form->getSize()) / 2;
 		m_form->eventClosed.Bind(this, &CopyMaterialDialog::Form_Closed);
-		
+
 		int32 sy = skin->FormTitle->Height + 5;
-		m_lblTextureName = new Label(Point(15, sy), L"Texture Name (C style)", 180);
-		m_lblTextureName->SetSkin(skin);
+		m_lblTextureName = new Label(skin, Point(15, sy), L"Texture Name (C style)", 180);
 		m_form->getControls().Add(m_lblTextureName);
 
-		m_tbTextureName = new TextBox(Point(15+190, sy), 150);
-		m_tbTextureName->SetSkin(skin);
+		m_tbTextureName = new TextBox(skin, Point(15 + 190, sy), 150);
 		m_tbTextureName->eventContentChanged.Bind(this, &CopyMaterialDialog::Config_Changed);
 		m_form->getControls().Add(m_tbTextureName);
 
 		sy += 40;
-		m_lblPreview = new Label(Point(15, sy), L"[Preview] ", 350);
-		m_lblPreview->SetSkin(skin);
+		m_lblPreview = new Label(skin, Point(15, sy), L"[Preview] ", 350);
 		m_form->getControls().Add(m_lblPreview);
 
 		sy += 40;
-		m_lblStartNumber = new Label(Point(15, sy), L"Start No.", 120);
-		m_lblStartNumber->SetSkin(skin);
+		m_lblStartNumber = new Label(skin, Point(15, sy), L"Start No.", 120);
 		m_form->getControls().Add(m_lblStartNumber);
 
-		m_tbStartNumber = new TextBox(Point(15+190, sy), 150);
-		m_tbStartNumber->SetSkin(skin);
-		m_tbStartNumber->setText(L"0");
+		m_tbStartNumber = new TextBox(skin, Point(15 + 190, sy), 150, L"0");
 		m_tbStartNumber->eventContentChanged.Bind(this, &CopyMaterialDialog::Config_Changed);
 		m_form->getControls().Add(m_tbStartNumber);
 
 
 		sy += 40;
-		m_lblEndNumber = new Label(Point(15, sy), L"End No.", 120);
-		m_lblEndNumber->SetSkin(skin);
+		m_lblEndNumber = new Label(skin, Point(15, sy), L"End No.", 120);
 		m_form->getControls().Add(m_lblEndNumber);
 
-		m_tbEndNumber = new TextBox(Point(15+190, sy), 150);
-		m_tbEndNumber->SetSkin(skin);
-		m_tbEndNumber->setText(L"0");
+		m_tbEndNumber = new TextBox(skin, Point(15 + 190, sy), 150, L"0");
 		m_form->getControls().Add(m_tbEndNumber);
 
-		
+
 		sy += 20;
-		m_btnOK = new Button(Point(m_form->Size.X - 150 - 25, sy), 150, L"OK");
-		m_btnOK->SetSkin(skin);
+		m_btnOK = new Button(skin, Point(m_form->getWidth() - 150 - 25, sy), 150, L"OK");
 		m_btnOK->eventPress.Bind(this, &CopyMaterialDialog::ButtonOK_Pressed);
 		m_form->getControls().Add(m_btnOK);
 
-		m_form->Initialize(device);
-		UIRoot::Add(m_form);
+		SystemUI::Add(m_form);
 	}
 
 	CopyMaterialDialog::~CopyMaterialDialog()
 	{
 		m_form->eventClosed.Unbind(this, &CopyMaterialDialog::Form_Closed);
 
-		UIRoot::Remove(m_form);
+		SystemUI::Remove(m_form);
 		
 		delete m_form;
 		delete m_lblTextureName;
@@ -1656,15 +1565,15 @@ namespace APDesigner
 		m_form->ShowModal();
 	}
 
-	void CopyMaterialDialog::ButtonOK_Pressed(Control* ctrl)
+	void CopyMaterialDialog::ButtonOK_Pressed(Button* ctrl)
 	{
 		m_dialogResult = true;
 		m_form->Close();
 	}
-	void CopyMaterialDialog::Config_Changed(Control* ctrl)
+	void CopyMaterialDialog::Config_Changed(TextBox* ctrl)
 	{
-		int startNo = StringUtils::ParseInt32(m_tbStartNumber->Text);
-		std::string formatString = StringUtils::toPlatformNarrowString(m_tbTextureName->Text);
+		int startNo = StringUtils::ParseInt32(m_tbStartNumber->getText());
+		std::string formatString = StringUtils::toPlatformNarrowString(m_tbTextureName->getText());
 
 		char buffer[256];
 		memset(buffer, 0, sizeof(buffer));
@@ -1680,11 +1589,11 @@ namespace APDesigner
 		{
 			String texName = StringUtils::toPlatformWideString(buffer);
 
-			m_lblPreview->Text = L"[Preview]" + texName;
+			m_lblPreview->SetText(L"[Preview]" + texName);
 		}
 		else
 		{
-			m_lblPreview->Text = L"[INVALID]";
+			m_lblPreview->SetText(L"[INVALID]");
 		}
 	}
 
@@ -1694,10 +1603,10 @@ namespace APDesigner
 			return;
 
 		// copy frames
-		int startNo = StringUtils::ParseInt32(m_tbStartNumber->Text);
-		int endNo = StringUtils::ParseInt32(m_tbEndNumber->Text);
+		int startNo = StringUtils::ParseInt32(m_tbStartNumber->getText());
+		int endNo = StringUtils::ParseInt32(m_tbEndNumber->getText());
 
-		std::string formatString = StringUtils::toPlatformNarrowString(m_tbTextureName->Text);
+		std::string formatString = StringUtils::toPlatformNarrowString(m_tbTextureName->getText());
 
 		Material* baseMtrl = m_mtrl->getMaterial(m_selectedSet, m_mtrl->getFrameCount(m_selectedSet)-1);
 
@@ -1730,14 +1639,13 @@ namespace APDesigner
 	{
 		const StyleSkin* skin = window->getUISkin();
 
-		m_form = new Form(FBS_Fixed, L"Material Table");
+		m_form = new Form(skin, device, FBS_Fixed, L"Material Table");
 		
-		Apoc3D::Math::Rectangle rect = UIRoot::GetUIArea(device);
-		m_form->Size = Point(600, 600);
-		m_form->Position = Point(rect.Width, rect.Height) - m_form->Size;
+		Apoc3D::Math::Rectangle rect = SystemUI::GetUIArea(device);
+		m_form->setSize(600, 600);
+		m_form->Position = Point(rect.Width, rect.Height) - m_form->getSize();
 		m_form->Position.X /= 2;
 		m_form->Position.Y /= 2;
-		m_form->SetSkin(window->getUISkin());
 		m_form->eventClosed.Bind(this, &SelectMaterialDialog::Form_Closed);
 
 		const List<std::pair<String, String>>& mtrlList = window->getProjectMaterialDesc();
@@ -1750,28 +1658,25 @@ namespace APDesigner
 		}
 
 		int32 sy = skin->FormTitle->Height + 5;
-		m_materialTable = new ListView(Point(5, sy), Point(m_form->Size.X - 10, m_form->Size.Y - sy - 50), items);
-		m_materialTable->SetSkin(skin);
-		m_materialTable->getColumnHeader().Add(ListView::Header(L"Name", m_materialTable->Size.X*2/5-5));
-		m_materialTable->getColumnHeader().Add(ListView::Header(L"Description", m_materialTable->Size.X*3/5-5));
-		m_materialTable->setFullRowSelect(true);
+		m_materialTable = new ListView(skin, Point(5, sy), m_form->getSize() - Point(10, sy + 50), items);
+		m_materialTable->getColumnHeader().Add(ListView::Header(L"Name", m_materialTable->getWidth() * 2 / 5 - 5));
+		m_materialTable->getColumnHeader().Add(ListView::Header(L"Description", m_materialTable->getWidth() * 3 / 5 - 5));
+		m_materialTable->FullRowSelect = true;
 		m_form->getControls().Add(m_materialTable);
 
-		sy += m_materialTable->Size.Y + 5;
-		m_btnOK = new Button(Point(m_form->Size.X - 150 - 25, sy), 150, L"OK");
-		m_btnOK->SetSkin(window->getUISkin());
+		sy += m_materialTable->getHeight() + 5;
+		m_btnOK = new Button(skin, Point(m_form->getWidth() - 150 - 25, sy), 150, L"OK");
 		m_btnOK->eventPress.Bind(this, &SelectMaterialDialog::ButtonOK_Pressed);
 		m_form->getControls().Add(m_btnOK);
 
-		m_form->Initialize(device);
-		UIRoot::Add(m_form);
+		SystemUI::Add(m_form);
 	}
 
 	SelectMaterialDialog::~SelectMaterialDialog()
 	{
 		m_form->eventClosed.Unbind(this, &SelectMaterialDialog::Form_Closed);
 
-		UIRoot::Remove(m_form);
+		SystemUI::Remove(m_form);
 
 		delete m_form;
 		delete m_materialTable;
@@ -1785,7 +1690,7 @@ namespace APDesigner
 		m_form->ShowModal();
 	}
 
-	void SelectMaterialDialog::ButtonOK_Pressed(Control* ctrl)
+	void SelectMaterialDialog::ButtonOK_Pressed(Button* ctrl)
 	{
 		m_dialogResult = true;
 		m_form->Close();

@@ -29,7 +29,18 @@ namespace APDesigner
 {
 	class ToolsPane
 	{
+	public:
+		ToolsPane(MainWindow* window);
+		~ToolsPane();
+
+		void Initialize(RenderDevice* device);
+
+		void Update(const GameTime* time);
+
+		Form* getPane() const { return m_pane; }
 	private:
+		void BtnSave_Release(Button* ctrl);
+
 		MainWindow* m_mainWindow;
 
 		Form* m_pane;
@@ -37,16 +48,6 @@ namespace APDesigner
 
 		ObjectTools* m_currentTools;
 
-		void BtnSave_Release(Control* ctrl);
-	public:
-		Form* getPane() const { return m_pane; }
-		ToolsPane(MainWindow* window);
-		~ToolsPane();
-
-
-		void Initialize(RenderDevice* device);
-
-		void Update(const GameTime* time);
 	};
 
 	//class PropEditor
@@ -88,14 +89,14 @@ namespace APDesigner
 		void BuildTreeViewNodes(TreeViewNode* parentNode, const List<ProjectItem*> items);
 		void BuildTreeViewNodes(const List<ProjectItem*> items);
 
-		void BtnAdd_Release(Control* ctrl);
-		void BtnRemove_Release(Control* ctrl);
-		void BtnOpen_Release(Control* ctrl);
-		void BtnForceBuild_Release(Control* ctrl);
-		void BtnApplyMod_Release(Control* ctrl);
+		void BtnAdd_Release(Button* ctrl);
+		void BtnRemove_Release(Button* ctrl);
+		void BtnOpen_Release(Button* ctrl);
+		void BtnForceBuild_Release(Button* ctrl);
+		void BtnApplyMod_Release(Button* ctrl);
 
-		void BtnBrowseOpen_Release(Control* ctrl);
-		void BtnBrowseSave_Release(Control* ctrl);
+		void BtnBrowseOpen_Release(Button* ctrl);
+		void BtnBrowseSave_Release(Button* ctrl);
 
 		void TreeView_SelectionChanged(Control* ctrl);
 
@@ -145,8 +146,7 @@ namespace APDesigner
 			PropItem() : Desc(nullptr), Editor(nullptr), ExtraButton(nullptr), LoadOrSave(false) { }
 			PropItem(const String& name, Label* l, Control* edi, Button* eb)
 				: Name(name), Desc(l), Editor(edi), ExtraButton(eb), LoadOrSave(false)
-			{
-			}
+			{ }
 
 
 			bool getAsTextbox(String& val) const;

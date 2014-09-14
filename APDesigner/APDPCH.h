@@ -148,7 +148,7 @@
 #include "apoc3d/UILib/FontManager.h"
 #include "apoc3d/UILib/Form.h"
 #include "apoc3d/UILib/KeyboardHelper.h"
-#include "apoc3d/UILib/Label.h"
+#include "apoc3d/UILib/Text.h"
 #include "apoc3d/UILib/List.h"
 #include "apoc3d/UILib/Menu.h"
 #include "apoc3d/UILib/PictureBox.h"

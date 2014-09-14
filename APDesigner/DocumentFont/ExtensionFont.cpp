@@ -1,10 +1,5 @@
 #include "ExtensionFont.h"
 #include "FontDocument.h"
-#include "apoc3d/Project/Project.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Vfs/File.h"
-
-using namespace Apoc3D::VFS;
 
 namespace APDesigner
 {

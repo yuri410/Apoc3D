@@ -35,37 +35,97 @@ namespace Apoc3D
 {
 	namespace UI
 	{
+		struct CheckboxVisualSettings
+		{
+			Font* FontRef = nullptr;
+
+			bool HasNormalGraphic = false;
+			bool HasHoverGraphic = false;
+			bool HasDownGraphic = false;
+			bool HasDisabledGraphic = false;
+
+			bool HasTickGraphic = false;
+			bool HasDisabledTickGraphic = false;
+			bool HasMargin = false;
+
+			UIGraphicSimple NormalGraphic;
+			UIGraphicSimple HoverGraphic;
+			UIGraphicSimple DownGraphic;
+			UIGraphicSimple DisabledGraphic;
+
+			UIGraphicSimple TickGraphic;
+			UIGraphicSimple DisabledTickGraphic;
+
+			ControlBounds Margin;
+		};
+
 		class APAPI CheckBox : public Control
 		{
 			RTTI_DERIVED(CheckBox, Control);
 		public:
-			CheckBox(const Point& position, const String& text, bool checked);
+			typedef EventDelegate1<CheckBox*> CheckBoxEvent;
+
+			CheckBox(const CheckboxVisualSettings& settings, const Point& position, const String& text, bool checked);
+			CheckBox(const CheckboxVisualSettings& settings, const Point& position, const String& text, const Point& sz, bool checked);
+
+			CheckBox(const StyleSkin* skin, const Point& position, const String& text, bool checked);
+			CheckBox(const StyleSkin* skin, const Point& position, const String& text, const Point& sz, bool checked);
 			virtual ~CheckBox();
 
-			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
 			void Toggle();
 
-			bool getValue() const { return m_check; }
-			void setValue(bool v) { m_check = v; }
+			void SetFont(Font* fontRef);
+			void SetText(const String& text);
 
-			bool getCanUncheck() const { return m_canUncheck; }
-			void setCanUncheck(bool v) { m_canUncheck = v; }
+			void SetSize(int32 w, int32 h) { SetSize(Point(w, h)); }
+			void SetSize(const Point& sz);
+			void SetSizeX(int32 v);
+			void SetSizeY(int32 v);
 
-			UIEventHandler eventToggled;
+			TextRenderSettings TextSettings;
 
-		private:
+			bool Checked = false;
+			bool CanUncheck = true;
+			bool AutosizeX = false;
+			bool AutosizeY = false;
+
+			UIGraphicSimple NormalGraphic;
+			UIGraphicSimple HoverGraphic;
+			UIGraphicSimple DownGraphic;
+			UIGraphicSimple DisabledGraphic;
+
+			UIGraphicSimple TickGraphic;
+			UIGraphicSimple DisabledTickGraphic;
+
+			ControlBounds Margin;
+
+			int32 TextSpacing = 0;
 			
-			bool m_mouseDown;
-			bool m_mouseOver;
+			CheckBoxEvent eventToggled;
 
-			bool m_check;
-			bool m_canUncheck;
-			Point m_textOffset;
+			CheckBoxEvent eventPress;
+			CheckBoxEvent eventRelease;
 
-			void UpdateEvents();
+			static CheckBoxEvent eventAnyPress;
+			static CheckBoxEvent eventAnyRelease;
+		private:
+			void Initialize(const StyleSkin* skin);
+			void Initialize(const CheckboxVisualSettings& settings);
+
+			void UpdateSize();
+
+			void OnPress();
+			void OnRelease();
+			void OnMouseHover();
+			void OnMouseOut();
+
+			bool m_mouseDown = false;
+			bool m_mouseOver = false;
+
+			String m_text;
 		};
 
 		class APAPI CheckboxGroup : public Control
@@ -75,7 +135,6 @@ namespace Apoc3D
 			CheckboxGroup(const List<CheckBox*>& checkbox);
 			virtual ~CheckboxGroup();
 
-			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
@@ -86,12 +145,11 @@ namespace Apoc3D
 			UIEventHandler eventSelectionChanged;
 
 		private:
+			void Initialize(const StyleSkin* skin);
+			void Checkbox_Press(CheckBox* ctrl);
+
 			List<CheckBox*> m_checkbox;
-			int m_selectedIndex;
-
-			void Checkbox_Press(Control* ctrl);
-
-
+			int m_selectedIndex = -1;
 		};
 	}
 }

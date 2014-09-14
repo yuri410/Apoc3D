@@ -37,520 +37,380 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		void Button::UpdateEvents()
+		/************************************************************************/
+		/*  Button                                                              */
+		/************************************************************************/
+
+		Button::ButtonEvent Button::eventAnyPress;
+		Button::ButtonEvent Button::eventAnyRelease;
+
+		Button::Button(const ButtonVisualSettings& settings, const Point& position, const String& text)
+			: Control(nullptr, position), m_text(text)
 		{
-			if (!Visible)
-				return;
+			Initialize(settings);
+		}
 
-			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			//Keyboard* keyb = InputAPIManager::getSingleton().getKeyboard();
+		Button::Button(const ButtonVisualSettings& settings, const Point& position, int width, const String& text)
+			: Control(nullptr, position, Point(width, 0)), m_text(text)
+		{
+			Initialize(settings);
+		}
 
-			Apoc3D::Math::Rectangle rect = getAbsoluteArea();
-			
-			Point cursorPos = mouse->GetPosition();
+		Button::Button(const ButtonVisualSettings& settings, const Point& position, int width, int height, const String& text)
+			: Control(nullptr, position, Point(width, height)), m_text(text)
+		{
+			Initialize(settings);
+		}
 
-			if (m_owner && rect.Contains(cursorPos))
+		Button::Button(const ButtonVisualSettings& settings, const Point& position, const Point& size, const String& text)
+			: Control(nullptr, position, size), m_text(text)
+		{
+			Initialize(settings);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		Button::Button(const StyleSkin* skin, const Point& position, const String& text)
+			: Control(skin, position), m_text(text), AutoSizedX(true), AutoSizedY(true)
+		{
+			Initialize(skin);
+		}
+		Button::Button(const StyleSkin* skin, const Point& position, int width, const String& text)
+			: Control(skin, position, Point(width, 0)), m_text(text), AutoSizedY(true)
+		{
+			Initialize(skin);
+		}
+		Button::Button(const StyleSkin* skin, const Point& position, int width, int height, const String& text)
+			: Control(skin, position, Point(width, height)), m_text(text)
+		{
+			Initialize(skin);
+		}
+
+		Button::Button(const StyleSkin* skin, const Point& position, const Point& size, const String& text)
+			: Control(skin, position, size), m_text(text)
+		{
+			Initialize(skin);
+		}
+
+		Button::~Button() 
+		{
+
+		}
+
+		void Button::Initialize(const StyleSkin* skin)
+		{
+			if (skin)
 			{
-				if (!m_mouseOver)
-				{
-					m_mouseOver = true;
-					OnMouseOver();
-				}
-				if (!m_mouseDown && mouse && mouse->IsLeftPressed())
-				{
-					m_mouseDown = true;
-					OnPress();
-				}
-				else if (m_mouseDown && mouse && mouse->IsLeftUp())
-				{
-					m_mouseDown = false;
-					OnRelease();
-				}
+				SetFont(skin->ButtonFont);
 			}
-			else if (m_mouseOver)
+			CopySkinGraphic(skin);
+
+			UpdateSize();
+
+		}
+		void Button::CopySkinGraphic(const StyleSkin* skin)
+		{
+			if (skin)
 			{
-				m_mouseOver = false;
-				m_mouseDown = false;
-				OnMouseOut();
+				NormalGraphic = UIGraphic(skin->SkinTexture, skin->ButtonRegionsNormal);
+				MouseDownGraphic = UIGraphic(skin->SkinTexture, skin->ButtonRegionsDown);
+				MouseHoverGraphic = UIGraphic(skin->SkinTexture, skin->ButtonRegionsHover);
+
+				DisabledGraphic = UIGraphic(skin->SkinTexture, skin->ButtonRegionsNormal, skin->ButtonDisabledColorMod);
+
+				TextSettings.TextColor = skin->TextColor;
+
+				ContentPadding = skin->ButtonPadding;
+				Margin = skin->ButtonMargin;
 			}
 		}
 
-		void Button::Initialize(RenderDevice* device)
+		void Button::Initialize(const ButtonVisualSettings& settings)
 		{
-			Control::Initialize(device);
+			if (settings.FontRef)
+				SetFont(settings.FontRef);
 
-			if (!m_skin)
-			{
-				assert(NormalTexture.isSet());
-				if (NormalTexture.HasSourceRect)
-				{
-					Size.X = NormalTexture.SourceRect.Width;
-					Size.Y = NormalTexture.SourceRect.Height;
-				}
-				else
-				{
-					Size.X = NormalTexture.Graphic->getWidth();
-					Size.Y = NormalTexture.Graphic->getHeight();
-				}
-			}
-			else
-			{
-				m_fontRef = m_skin->TitleTextFont;
+			if (settings.HasHotZonePadding)
+				ContentPadding = settings.ContentPadding;
 
-				m_textSize = m_fontRef->MeasureString(Text);
-				//if (Size.X < m_textSize.X + m_skin->BtnVertPadding)
-				//if (Size.Y < m_textSize.Y + m_skin->BtnHozPadding)
+			if (settings.HasDisabledGraphic)
+				DisabledGraphic = settings.DisabledGraphic;
 
-				int32 hozPadding = m_skin->ButtonPadding.getHorizontalSum();
-				int32 vertPadding = m_skin->ButtonPadding.getVerticalSum();
+			if (settings.HasNormalGraphic)
+				NormalGraphic = settings.NormalGraphic;
 
-				if (Size.X == 0)
-				{
-					Size.X = m_textSize.X + hozPadding;
+			if (settings.HasMouseHoverGraphic)
+				MouseHoverGraphic = settings.MouseHoverGraphic;
 
-					if (OverlayIcon.isSet())
-					{
-						int32 cw = OverlayIcon.HasSourceRect ? OverlayIcon.SourceRect.Width : OverlayIcon.Graphic->getWidth();
-						cw += hozPadding;
+			if (settings.HasMouseDownGraphic)
+				MouseDownGraphic = settings.MouseDownGraphic;
 
-						if (cw > Size.X)
-							Size.X = cw;
-					}
-				}
+			if (settings.HasOverlayIcon)
+				OverlayIcon = settings.OverlayIcon;
 
-				if (Size.Y == 0)
-				{
-					Size.Y = m_textSize.Y + vertPadding;
-
-					if (OverlayIcon.isSet())
-					{
-						int32 ch = OverlayIcon.HasSourceRect ? OverlayIcon.SourceRect.Height : OverlayIcon.Graphic->getHeight();
-						ch += vertPadding;
-
-						if (ch > Size.Y)
-							Size.Y = ch;
-					}
-				}
-
-			}
+			UpdateSize();
 		}
 
-
-		void Button::DrawDefaultButton(Sprite* sprite)
-		{
-			Apoc3D::Math::Rectangle graphicalArea(Position.X, Position.Y, Size.X, Size.Y);
-			graphicalArea = m_skin->ButtonMargin.InflateRect(graphicalArea);
-
-			const int GraphicalPaddingWidth = m_skin->ButtonRegionsNormal[0].Width + m_skin->ButtonRegionsNormal[2].Width;
-			const int GraphicalPaddingHeight = m_skin->ButtonRegionsNormal[0].Height + m_skin->ButtonRegionsNormal[6].Height;
-
-
-			Apoc3D::Math::Rectangle destRect[9];
-			for (int i=0;i<9;i++)
-			{
-				destRect[i] = m_skin->ButtonRegionsNormal[i];
-
-				destRect[i].X = graphicalArea.X + (destRect[i].X - m_skin->ButtonRegionsNormal[0].X);
-				destRect[i].Y = graphicalArea.Y + (destRect[i].Y - m_skin->ButtonRegionsNormal[0].Y);
-			}
-
-			int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
-			int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
-
-			destRect[1].Width = eWidth; // top
-			destRect[4].Width = eWidth; // mid
-			destRect[7].Width = eWidth; // bottom
-
-			destRect[3].Height = eHeight; // left
-			destRect[4].Height = eHeight; // mid
-			destRect[5].Height = eHeight; // right
-
-			destRect[2].X = destRect[5].X = destRect[8].X = destRect[1].getRight();
-			destRect[6].Y = destRect[7].Y = destRect[8].Y = destRect[3].getBottom();
-
-			
-			if (Text.size())
-			{
-				m_textSize = m_fontRef->MeasureString(Text);
-
-				m_textPos.X = Position.X + (Size.X - m_textSize.X) / 2;
-				m_textPos.Y = Position.Y + (Size.Y - m_textSize.Y) / 2;
-			}
-
-
-			
-			if (Enabled)
-			{
-				const Apoc3D::Math::Rectangle* srcRect;
-				if (m_mouseDown)
-				{
-					srcRect = m_skin->ButtonRegionsDown;
-				}
-				else if (m_mouseOver)
-				{
-					srcRect = m_skin->ButtonRegionsHover;
-				}
-				else
-				{
-					srcRect = m_skin->ButtonRegionsNormal;
-				}
-
-				for (int i=0;i<9;i++)
-				{
-					if (destRect[i].Width > 0 && destRect[i].Height)
-						sprite->Draw(m_skin->SkinTexture, destRect[i], &srcRect[i], CV_White);
-				}
-			}
-			else
-			{
-				for (int i=0;i<9;i++)
-				{
-					if (destRect[i].Width > 0 && destRect[i].Height)
-						sprite->Draw(m_skin->SkinTexture, destRect[i], &m_skin->ButtonRegionsNormal[i], m_skin->ButtonDisabledColorMod);
-				}
-			}
-
-
-			if (Text.size())
-			{
-				m_fontRef->DrawString(sprite, Text, m_textPos, m_hasTextColorValue ? m_textColorOverride : m_skin->TextColor);
-			}
-			if (OverlayIcon.isSet())
-			{
-				if (OverlayIcon.HasSourceRect)
-				{
-					int ix = (int)(Size.X - OverlayIcon.SourceRect.Width) / 2 + Position.X;
-					int iy = (int)(Size.Y - OverlayIcon.SourceRect.Height) / 2 + Position.Y;
-					Apoc3D::Math::Rectangle icoDR(ix, iy, OverlayIcon.SourceRect.Width, OverlayIcon.SourceRect.Height);
-					sprite->Draw(OverlayIcon.Graphic, icoDR, &OverlayIcon.SourceRect, CV_White);
-				}
-				else
-				{
-					int ix = (int)(Size.X - OverlayIcon.Graphic->getWidth()) / 2 + Position.X;
-					int iy = (int)(Size.Y - OverlayIcon.Graphic->getHeight()) / 2 + Position.Y;
-					Apoc3D::Math::Rectangle icoDR(ix, iy, OverlayIcon.Graphic->getWidth(), OverlayIcon.Graphic->getHeight());
-					sprite->Draw(OverlayIcon.Graphic, icoDR, nullptr, CV_White);
-				}
-			}
-		}
-
-		void Button::DrawCustomButton(Sprite* spriteBatch)
-		{
-			if (fabs(m_rotation) > 0.01f)
-			{
-				Matrix oldTransform;
-				if (!spriteBatch->isUsingStack())
-				{
-					oldTransform = spriteBatch->getTransform();
-				}
-
-				Apoc3D::Math::Rectangle destRect = getArea();
-				Matrix rot; Matrix::CreateRotationZ(rot, m_rotation);
-				Matrix preT; Matrix::CreateTranslation(preT, -0.5f * destRect.Width, -0.5f * destRect.Height, 0);
-				
-				Matrix trans;
-				Matrix::Multiply(trans, preT, rot);
-				trans.SetTranslation(destRect.X + trans.M41 + 0.5f * destRect.Width, destRect.Y + trans.M42 + 0.5f * destRect.Height, trans.M43);
-				spriteBatch->PreMultiplyTransform(trans);
-
-				Apoc3D::Math::Rectangle newDestRect(0,0, destRect.Width, destRect.Height);
-				
-				if (Enabled)
-				{
-					if (m_mouseDown)
-					{
-						if (MouseDownTexture.isSet())
-							spriteBatch->Draw(MouseDownTexture.Graphic, newDestRect, MouseDownTexture.HasSourceRect ? &MouseDownTexture.SourceRect : nullptr, m_modMouseDownColor);
-						else
-							spriteBatch->Draw(NormalTexture.Graphic, newDestRect, NormalTexture.HasSourceRect ? &NormalTexture.SourceRect : nullptr, m_modMouseDownColor);
-					}
-					else if (m_mouseOver)
-					{
-						if (MouseOverTexture.isSet())
-							spriteBatch->Draw(MouseOverTexture.Graphic, newDestRect, MouseOverTexture.HasSourceRect ? &MouseOverTexture.SourceRect : nullptr, m_modMouseOverColor);
-						else
-							spriteBatch->Draw(NormalTexture.Graphic, newDestRect, NormalTexture.HasSourceRect ? &NormalTexture.SourceRect : nullptr, m_modMouseOverColor);
-					}
-					else
-					{
-						spriteBatch->Draw(NormalTexture.Graphic, newDestRect, NormalTexture.HasSourceRect ? &NormalTexture.SourceRect : nullptr, m_modColor);
-					}
-				}
-				else
-				{
-					if (DisabledTexture.isSet())
-						spriteBatch->Draw(DisabledTexture.Graphic, newDestRect, DisabledTexture.HasSourceRect ? &DisabledTexture.SourceRect : nullptr, m_modDisabledColor);
-					else
-						spriteBatch->Draw(NormalTexture.Graphic, newDestRect, NormalTexture.HasSourceRect ? &NormalTexture.SourceRect : nullptr, m_modDisabledColor);
-				}
-
-				if (OverlayIcon.isSet())
-				{
-					if (OverlayIcon.HasSourceRect)
-					{
-						int ix = (int)(Size.X - OverlayIcon.SourceRect.Width) / 2;
-						int iy = (int)(Size.Y - OverlayIcon.SourceRect.Height) / 2;
-						Apoc3D::Math::Rectangle icoDR(ix, iy, OverlayIcon.SourceRect.Width, OverlayIcon.SourceRect.Height);
-						spriteBatch->Draw(OverlayIcon.Graphic, icoDR, &OverlayIcon.SourceRect, CV_White);
-					}
-					else
-					{
-						int ix = (int)(Size.X - OverlayIcon.Graphic->getWidth()) / 2;
-						int iy = (int)(Size.Y - OverlayIcon.Graphic->getHeight()) / 2;
-						Apoc3D::Math::Rectangle icoDR(ix, iy, OverlayIcon.Graphic->getWidth(), OverlayIcon.Graphic->getHeight());
-						spriteBatch->Draw(OverlayIcon.Graphic, icoDR, nullptr, CV_White);
-					}
-				}
-
-
-				if (spriteBatch->isUsingStack())
-				{
-					spriteBatch->PopTransform();
-				}
-				else
-				{
-					spriteBatch->SetTransform(oldTransform);
-				}
-			}
-			else
-			{
-				if (Enabled)
-				{
-					if (m_mouseDown)
-					{
-						if (MouseDownTexture.isSet())
-							spriteBatch->Draw(MouseDownTexture.Graphic, getArea(), MouseDownTexture.HasSourceRect ? &MouseDownTexture.SourceRect : nullptr, m_modMouseDownColor);
-						else
-							spriteBatch->Draw(NormalTexture.Graphic, getArea(), NormalTexture.HasSourceRect ? &NormalTexture.SourceRect : nullptr, m_modMouseDownColor);
-					}
-					else if (m_mouseOver)
-					{
-						if (MouseOverTexture.isSet())
-							spriteBatch->Draw(MouseOverTexture.Graphic, getArea(), MouseOverTexture.HasSourceRect ? &MouseOverTexture.SourceRect : nullptr, m_modMouseOverColor);
-						else
-							spriteBatch->Draw(NormalTexture.Graphic, getArea(), NormalTexture.HasSourceRect ? &NormalTexture.SourceRect : nullptr, m_modMouseOverColor);
-					}
-					else
-					{
-						spriteBatch->Draw(NormalTexture.Graphic, getArea(), NormalTexture.HasSourceRect ? &NormalTexture.SourceRect : nullptr, m_modColor);
-					}
-				}
-				else
-				{
-					if (DisabledTexture.isSet())
-						spriteBatch->Draw(DisabledTexture.Graphic, getArea(), DisabledTexture.HasSourceRect ? &DisabledTexture.SourceRect : nullptr, m_modDisabledColor);
-					else
-						spriteBatch->Draw(NormalTexture.Graphic, getArea(), NormalTexture.HasSourceRect ? &NormalTexture.SourceRect : nullptr, m_modDisabledColor);
-				}
-
-				if (OverlayIcon.isSet())
-				{
-					if (OverlayIcon.HasSourceRect)
-					{
-						int ix = (int)(Size.X - OverlayIcon.SourceRect.Width) / 2 + Position.X;
-						int iy = (int)(Size.Y - OverlayIcon.SourceRect.Height) / 2 + Position.Y;
-						Apoc3D::Math::Rectangle icoDR(ix, iy, OverlayIcon.SourceRect.Width, OverlayIcon.SourceRect.Height);
-						spriteBatch->Draw(OverlayIcon.Graphic, icoDR, &OverlayIcon.SourceRect, CV_White);
-					}
-					else
-					{
-						int ix = (int)(Size.X - OverlayIcon.Graphic->getWidth()) / 2 + Position.X;
-						int iy = (int)(Size.Y - OverlayIcon.Graphic->getHeight()) / 2 + Position.Y;
-						Apoc3D::Math::Rectangle icoDR(ix, iy, OverlayIcon.Graphic->getWidth(), OverlayIcon.Graphic->getHeight());
-						spriteBatch->Draw(OverlayIcon.Graphic, icoDR, nullptr, CV_White);
-					}
-				}
-			}
-		}
 
 		void Button::Draw(Sprite* sprite)
 		{
-			if (m_skin)
+			Apoc3D::Math::Rectangle graphicalArea = Margin.InflateRect(getAbsoluteArea());
+
+			if (fabs(Rotation) > 0.01f)
 			{
-				DrawDefaultButton(sprite);
+				Matrix oldTransform;
+				if (!sprite->isUsingStack())
+				{
+					oldTransform = sprite->getTransform();
+				}
+
+				Apoc3D::Math::Rectangle destRect = graphicalArea;
+				Matrix rot; Matrix::CreateRotationZ(rot, Rotation);
+				Matrix preT; Matrix::CreateTranslation(preT, -0.5f * destRect.Width, -0.5f * destRect.Height, 0);
+
+				Matrix trans;
+				Matrix::Multiply(trans, preT, rot);
+				trans.SetTranslation(destRect.X + trans.M41 + 0.5f * destRect.Width, destRect.Y + trans.M42 + 0.5f * destRect.Height, trans.M43);
+				sprite->PreMultiplyTransform(trans);
+
+				Apoc3D::Math::Rectangle newDestRect(0, 0, destRect.Width, destRect.Height);
+
+				DrawButtonCore(sprite, newDestRect);
+
+				OverlayIcon.DrawCentered(sprite, Point(0, 0), m_size);
+
+				if (sprite->isUsingStack())
+				{
+					sprite->PopTransform();
+				}
+				else
+				{
+					sprite->SetTransform(oldTransform);
+				}
 			}
 			else
 			{
-				DrawCustomButton(sprite);
+				DrawButtonCore(sprite, graphicalArea);
+
+				OverlayIcon.DrawCentered(sprite, graphicalArea);
 			}
 		}
+
+		void Button::DrawButtonCore(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect)
+		{
+			if (Enabled)
+			{
+				UIGraphic* selectedGraphic;
+
+				if (m_mouseDown || ForceMouseDownVisual || (IsSwitchMode && IsSwitchedOn))
+				{
+					selectedGraphic = MouseDownGraphic.isSet() ? &MouseDownGraphic : &NormalGraphic;
+				}
+				else if (m_mouseOver)
+				{
+					selectedGraphic = MouseHoverGraphic.isSet() ? &MouseHoverGraphic : &NormalGraphic;
+				}
+				else
+				{
+					selectedGraphic = &NormalGraphic;
+				}
+
+				selectedGraphic->Draw(sprite, dstRect);
+			}
+			else
+			{
+				DisabledGraphic.Draw(sprite, dstRect);
+			}
+
+			if (m_text.size())
+			{
+				TextSettings.Draw(sprite, m_fontRef, m_text, dstRect, Enabled ? 0xff : 0x7f);
+			}
+
+		}
+
+
 		void Button::Update(const GameTime* time)
 		{
 			Control::Update(time);
 
 			UpdateEvents();
 		}
-
-
-		void Button::SetTextColorOverride(ColorValue cv)
+		
+		void Button::UpdateEvents()
 		{
-			m_textColorOverride = cv;
-			m_hasTextColorValue = true;
+			if (!Visible)
+				return;
+
+			UpdateEvents_StandardButton(m_mouseOver, m_mouseDown, getAbsoluteArea(),
+				&Button::OnMouseHover, &Button::OnMouseOut, &Button::OnPress, &Button::OnRelease);
 		}
-		/************************************************************************/
-		/*                                                                      */
-		/************************************************************************/
 
-
-		ButtonGroup::ButtonGroup(const List<Button*> buttons)
-			: m_selectedIndex(0)
+		void Button::UpdateSize()
 		{
-			for (int i=0;i<buttons.getCount();i++)
+			int32 vertPad = ContentPadding.getVerticalSum();
+			int32 hozPad = ContentPadding.getHorizontalSum();
+
+			if (m_fontRef)
 			{
-				m_button.Add(buttons[i]);
-			}
-		}
+				Point textSize = m_fontRef->MeasureString(m_text);
 
-		ButtonGroup::ButtonGroup(const List<Button*> buttons, int selected)
-			: m_selectedIndex(selected)
-		{
-			for (int i=0;i<buttons.getCount();i++)
-			{
-				m_button.Add(buttons[i]);
-			}
-		}
-
-		const String& ButtonGroup::getSelectedText() const
-		{
-			return m_button[m_selectedIndex]->Text;
-		}
-
-		void ButtonGroup::setSelectedText(const String& text)
-		{
-			for (int i=0;i<m_button.getCount();i++)
-			{
-				if (m_button[i]->Text == text)
+				if (AutoSizedX)
 				{
-					m_selectedIndex = i;
-					break;
-				}
-			}
-		}
-
-		void ButtonGroup::Initialize(RenderDevice* device)
-		{
-			Control::Initialize(device);
-			for (int i=0;i<m_button.getCount();i++)
-			{
-				m_button[i]->Initialize(device);
-				m_button[i]->eventRelease.Bind(this, &ButtonGroup::Button_OnRelease);
-				m_button[i]->setOwner(m_owner);
-			}
-		}
-
-		void ButtonGroup::Button_OnRelease(Control* sender)
-		{
-			Button* button = static_cast<Button*>(sender);
-
-			for (int i=0;i<m_button.getCount();i++)
-			{
-				if (m_button[i] == button)
-				{
-					if (m_selectedIndex != i)
+					m_size.X = textSize.X + hozPad;
+					if (OverlayIcon.isSet())
 					{
-						m_selectedIndex = i;
-						eventSelectionChanged.Invoke(this);
+						int32 cw = OverlayIcon.getWidth() + hozPad;
+						
+						if (cw > m_size.X)
+							m_size.X = cw;
+					}
+				}
+
+				if (AutoSizedY)
+				{
+					m_size.Y = textSize.Y + vertPad;
+
+					if (OverlayIcon.isSet())
+					{
+						int32 ch = OverlayIcon.getHeight() + vertPad;
+						
+						if (ch > m_size.Y)
+							m_size.Y = ch;
 					}
 				}
 			}
-		}
-
-		void ButtonGroup::Draw(Sprite* sprite)
-		{
-			for (int i=0;i<m_button.getCount();i++)
+			else if (NormalGraphic.isSet())
 			{
-				//if (m_selectedIndex == i)
-				{
-					m_button[i]->Draw(sprite);
-				}
+				m_size.X = NormalGraphic.getWidth() - hozPad;
+				m_size.Y = NormalGraphic.getHeight() - vertPad;
 			}
 		}
 
-		void ButtonGroup::Update(const GameTime* time)
+		
+		void Button::SetFont(Font* fontRef)
 		{
-			Control::Update(time);
-
-			for (int i=0;i<m_button.getCount();i++)
+			if (fontRef != m_fontRef)
 			{
-				m_button[i]->Update(time);
+				m_fontRef = fontRef;
+				UpdateSize();
 			}
+		}
+		void Button::SetText(const String& text)
+		{
+			if (m_text != text)
+			{
+				m_text = text;
+				UpdateSize();
+			}
+		}
+
+		void Button::OnMouseHover() { eventMouseHover.Invoke(this);  }
+		void Button::OnMouseOut() { eventMouseOut.Invoke(this); }
+
+		void Button::OnPress() 
+		{
+			eventPress.Invoke(this);
+			eventAnyPress.Invoke(this);
+		}
+		void Button::OnRelease() 
+		{
+			if (IsSwitchMode)
+			{
+				IsSwitchedOn = !IsSwitchedOn;
+			}
+
+			eventRelease.Invoke(this);
+			eventAnyRelease.Invoke(this);
 		}
 
 		/************************************************************************/
 		/*  ButtonRow                                                           */
 		/************************************************************************/
 
-		ButtonRow::ButtonRow(const Point& position, int32 width, const List<String>& titles)
-			: Control(position), m_countPerRow(titles.getCount()), m_count(titles.getCount()), m_numRows(1), m_hoverIndex(-1), m_selectedIndex(0)
+		ButtonRow::ButtonEvent ButtonRow::eventAnyPress;
+		ButtonRow::ButtonEvent ButtonRow::eventAnyRelease;
+
+		ButtonRow::ButtonRow(const StyleSkin* skin, const Point& position, int32 width, const List<String>& titles)
+			: Control(skin, position), m_countPerRow(titles.getCount()), m_count(titles.getCount()), m_numRows(1)
 		{ 
+			Setup(skin);
 			Init(width, titles);
 		}
-		ButtonRow::ButtonRow(const Point& position, int32 width, int32 colCount, const List<String>& titles)
-			: Control(position), m_countPerRow(colCount), m_count(titles.getCount()), m_hoverIndex(-1), m_selectedIndex(0)
+		ButtonRow::ButtonRow(const StyleSkin* skin, const Point& position, int32 width, int32 colCount, const List<String>& titles)
+			: Control(skin, position), m_countPerRow(colCount), m_count(titles.getCount())
 		{
 			m_numRows = (m_count + m_countPerRow - 1) / m_countPerRow;
 
+			Setup(skin);
 			Init(width, titles);
-		}
-
-		void ButtonRow::Init(int32 width, const List<String>& titles)
-		{
-			Size.X = width;
-			m_rowHeight = 0;
-
-			m_textPos = new Point[m_count];
-			m_textSize = new Point[m_count];
-			m_titles = new String[m_count];
-			m_buttonDstRect = new Apoc3D::Math::Rectangle[m_count];
-
-			for (int i=0;i<titles.getCount();i++)
-			{
-				m_titles[i] = titles[i];
-			}
 		}
 
 		ButtonRow::~ButtonRow()
 		{
-			delete[] m_textPos;
-			delete[] m_textSize;
+			//delete[] m_textPos;
+			//delete[] m_textSize;
 
 			delete[] m_titles;
 			delete[] m_buttonDstRect;
 		}
 
-
-		void ButtonRow::Initialize(RenderDevice* device)
+		void ButtonRow::Setup(const StyleSkin* skin)
 		{
-			Control::Initialize(device);
+			m_fontRef = skin->TitleTextFont;
 
-			int32 vertPadding = m_skin->ButtonMargin.getVerticalSum();
-			m_rowHeight = m_skin->TitleTextFont->getLineHeightInt() + vertPadding;
+			ButtonMargin = skin->ButtonMargin;
+			NormalGraphic = UIGraphic(skin->SkinTexture, skin->ButtonRegionsNormal);
 
-			Size.Y = m_rowHeight * m_numRows;
+			MouseHoverGraphic = UIGraphic(skin->SkinTexture, skin->ButtonRegionsHover);
+			MouseDownGraphic = UIGraphic(skin->SkinTexture, skin->ButtonRegionsDown);
+			DisabledGraphic = NormalGraphic;
+			DisabledGraphic.ModColor = skin->ButtonDisabledColorMod;
 
-			for (int i=0;i<m_count;i++)
+			TextSettings.TextColor = skin->TextColor;
+
+			SeparationLineColor = skin->MIDBackgroundColor;
+		}
+
+		void ButtonRow::Init(int32 width, const List<String>& titles)
+		{
+			m_size.X = width;
+			m_rowHeight = 0;
+
+			//m_textPos = new Point[m_count];
+			//m_textSize = new Point[m_count];
+			m_titles = titles.AllocateArrayCopy();
+			m_buttonDstRect = new Apoc3D::Math::Rectangle[m_count];
+
+			int32 vertPadding = ButtonMargin.getVerticalSum();// m_skin->ButtonMargin.getVerticalSum();
+			m_rowHeight = m_fontRef->getLineHeightInt() + vertPadding;
+
+			m_size.Y = m_rowHeight * m_numRows;
+
+			/*for (int i = 0; i < m_count; i++)
 			{
 				m_textSize[i] = m_fontRef->MeasureString(m_titles[i]);
-			}
+			}*/
 
 			UpdatePositions();
-
-			Text = m_titles[0];
-			Control::Initialize(device);
 		}
+
 		void ButtonRow::Draw(Sprite* sprite)
 		{
-			for (int i=0;i<m_count;i++)
+			for (int i = 0; i < m_count; i++)
 			{
-				const Apoc3D::Math::Rectangle* btnSrcRect = m_skin->ButtonRegionsNormal;
-				
+				Texture* tex = NormalGraphic.Graphic;
+				const Apoc3D::Math::Rectangle* btnSrcRect = NormalGraphic.SourceRects.getElements();// m_skin->ButtonRegionsNormal;
+
 				if (i == m_selectedIndex)
 				{
-					btnSrcRect = m_skin->ButtonRegionsDown;
+					btnSrcRect = MouseDownGraphic.SourceRects.getElements();// m_skin->ButtonRegionsDown;
+					tex = MouseDownGraphic.Graphic;
 				}
 				else if (i == m_hoverIndex)
 				{
-					btnSrcRect = m_skin->ButtonRegionsHover;
+					btnSrcRect = MouseHoverGraphic.SourceRects.getElements();// m_skin->ButtonRegionsHover;
+					tex = MouseHoverGraphic.Graphic;
 				}
 
 				int32 colStyle = 0;
@@ -560,9 +420,9 @@ namespace Apoc3D
 
 				if (idxInRow == 0)
 					colStyle = -1;
-				else if (idxInRow == m_countPerRow - 1 || i == m_count-1)
+				else if (idxInRow == m_countPerRow - 1 || i == m_count - 1)
 					colStyle = 1;
-				
+
 
 				if (m_numRows >= 1)
 				{
@@ -574,32 +434,32 @@ namespace Apoc3D
 						vertStyle = VBS_None;
 				}
 
-				DrawButton(sprite, i, colStyle, vertStyle, btnSrcRect);
-				
+				DrawButton(sprite, tex, i, colStyle, vertStyle, btnSrcRect);
+
 				const Apoc3D::Math::Rectangle& dstRect = m_buttonDstRect[i];
 
 				if (idxInRow > 0 && idxInRow < m_countPerRow)
 				{
 					// vertical separation line
-					sprite->Draw(m_skin->WhitePixelTexture, 
-						Apoc3D::Math::Rectangle(dstRect.X-1,dstRect.Y,1,dstRect.Height),
-						nullptr, m_skin->MIDBackgroundColor);
+					sprite->Draw(SystemUI::GetWhitePixel(),
+						Apoc3D::Math::Rectangle(dstRect.X - 1, dstRect.Y, 1, dstRect.Height),
+						nullptr, SeparationLineColor);
 				}
 
-				if (rowIndex<m_numRows-1)
+				if (rowIndex < m_numRows - 1)
 				{
 					// horizontal separation line
-					sprite->Draw(m_skin->WhitePixelTexture, 
-						Apoc3D::Math::Rectangle(dstRect.X,dstRect.getBottom(),dstRect.Width,1),
-						nullptr, m_skin->MIDBackgroundColor);
+					sprite->Draw(SystemUI::GetWhitePixel(),
+						Apoc3D::Math::Rectangle(dstRect.X, dstRect.getBottom(), dstRect.Width, 1),
+						nullptr, SeparationLineColor);
 				}
 
-				m_fontRef->DrawString(sprite, m_titles[i], m_textPos[i], m_skin->TextColor);
+				TextSettings.Draw(sprite, m_fontRef, m_titles[i], m_buttonDstRect[i], 0xff);
+				//m_fontRef->DrawString(sprite, m_titles[i], m_textPos[i], m_skin->TextColor);
 			}
 		}
 
-		
-		void ButtonRow::DrawButton(Sprite* sprite, int32 i, int32 colType, VerticalBorderStyle rowType, const Apoc3D::Math::Rectangle* btnSrcRect)
+		void ButtonRow::DrawButton(Sprite* sprite, Texture* tex, int32 i, int32 colType, VerticalBorderStyle rowType, const Apoc3D::Math::Rectangle* btnSrcRect)
 		{
 			uint32 subBox = R9_MiddleCenter;
 
@@ -611,24 +471,24 @@ namespace Apoc3D
 				subBox |= R9_TopCenter;
 				subBox |= R9_BottomCenter;
 
-				padding.Top = m_skin->ButtonMargin.Top;
-				padding.Bottom = m_skin->ButtonMargin.Bottom;
+				padding.Top = ButtonMargin.Top;
+				padding.Bottom = ButtonMargin.Bottom;
 
 				break;
 			case Apoc3D::UI::ButtonRow::VBS_Top:
 				subBox |= R9_TopCenter;
-				padding.Top = m_skin->ButtonMargin.Top;
+				padding.Top = ButtonMargin.Top;
 				break;
 			case Apoc3D::UI::ButtonRow::VBS_Bottom:
 				subBox |= R9_BottomCenter;
-				padding.Bottom = m_skin->ButtonMargin.Bottom;
+				padding.Bottom = ButtonMargin.Bottom;
 				break;
 			}
 
 			if (colType == -1)
 			{
 				subBox |= R9_MiddleLeft;
-				padding.Left = m_skin->ButtonMargin.Left;
+				padding.Left = ButtonMargin.Left;
 
 				if (subBox & R9_TopCenter)
 					subBox |= R9_TopLeft;
@@ -638,7 +498,7 @@ namespace Apoc3D
 			else if (colType == 1)
 			{
 				subBox |= R9_MiddleRight;
-				padding.Right = m_skin->ButtonMargin.Right;
+				padding.Right = ButtonMargin.Right;
 
 				if (subBox & R9_TopCenter)
 					subBox |= R9_TopRight;
@@ -648,12 +508,10 @@ namespace Apoc3D
 
 			Apoc3D::Math::Rectangle graphicalArea = padding.InflateRect(m_buttonDstRect[i]);
 		
-			DrawRegion9Subbox(sprite, graphicalArea, CV_White, m_skin->SkinTexture, btnSrcRect, subBox);
+			DrawRegion9Subbox(sprite, graphicalArea, CV_White, tex, btnSrcRect, subBox);
 			
 		}
 		
-
-
 		void ButtonRow::DrawRegion9Subbox(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, ColorValue cv, 
 			Texture* texture, const Apoc3D::Math::Rectangle* srcRects, uint32 subRegionFlags)
 		{
@@ -704,19 +562,12 @@ namespace Apoc3D
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
-			Point basePosition(0,0);
-			if (m_owner)
-			{
-				basePosition = m_owner->GetAbsolutePosition();
-			}
 			m_hoverIndex = -1;
 
 			for (int i=0;i<m_count;i++)
 			{
 				Apoc3D::Math::Rectangle rect = m_buttonDstRect[i];
-				rect.X += basePosition.X;
-				rect.Y += basePosition.Y;
-
+				
 				if (rect.Contains(mouse->GetPosition().X, mouse->GetPosition().Y))
 				{
 					m_hoverIndex = i;
@@ -730,7 +581,7 @@ namespace Apoc3D
 						m_mouseDown = false;
 						eventSelectedChanging.Invoke(i);
 						m_selectedIndex = i;
-						Text = m_titles[i];
+						//Text = m_titles[i];
 						OnRelease();
 					}
 				}
@@ -744,38 +595,230 @@ namespace Apoc3D
 
 		void ButtonRow::UpdatePositions()
 		{
-			float cellWidth = (float)Size.X / m_countPerRow;
-			Apoc3D::Math::Rectangle area = getArea();
+			float cellWidth = (float)m_size.X / m_countPerRow;
+			Apoc3D::Math::Rectangle area = getAbsoluteArea();
 
 			for (int i=0;i<m_count;i++)
 			{
 				int32 rowIndex = i / m_countPerRow;
 				int32 idxInRow = i % m_countPerRow;
 
-				const Point& textSize = m_textSize[i];
+				//const Point& textSize = m_textSize[i];
 				Apoc3D::Math::Rectangle& dstRect = m_buttonDstRect[i];
 
 				dstRect = Apoc3D::Math::Rectangle(
 					area.X + (int)(cellWidth*idxInRow), area.Y + rowIndex*(m_rowHeight+1), 
 					(int)cellWidth, m_rowHeight);
 
-				m_textPos[i] = Point((int)(dstRect.X + (dstRect.Width - textSize.X) * 0.5f),
-					(int)(dstRect.Y + (dstRect.Height - textSize.Y) * 0.5f));
+				//m_textPos[i] = Point((int)(dstRect.X + (dstRect.Width - textSize.X) * 0.5f),
+				//	(int)(dstRect.Y + (dstRect.Height - textSize.Y) * 0.5f));
+			}
+		}
+
+		void ButtonRow::OnPress()
+		{
+			eventPress.Invoke(this);
+			eventAnyPress.Invoke(this);
+		}
+		void ButtonRow::OnRelease()
+		{
+			eventRelease.Invoke(this);
+			eventAnyRelease.Invoke(this);
+		}
+
+		/************************************************************************/
+		/*  ButtonRowTextured                                                   */
+		/************************************************************************/
+
+		ButtonGroupTextured::ButtonEvent ButtonGroupTextured::eventAnyPress;
+		ButtonGroupTextured::ButtonEvent ButtonGroupTextured::eventAnyRelease;
+
+		ButtonGroupTextured::ButtonGroupTextured(const Point& position, Texture* tex, const Apoc3D::Math::Rectangle& normalRegion,
+			const List<Apoc3D::Math::Rectangle>& hoverRegs, const List<Apoc3D::Math::Rectangle>& downRegs, const List<ControlBounds>& paddings)
+			: Position(position), m_graphic(tex), m_hasMouseHoverArea(false),
+			Enabled(true), Visible(true), ForceMouseDownLookIndex(-1)
+		{
+			m_graphicsSrcRect = normalRegion;
+
+			m_buttonCount = hoverRegs.getCount();
+
+			assert(m_buttonCount == downRegs.getCount());
+			assert(m_buttonCount == paddings.getCount());
+
+			m_isMouseHover = new bool[m_buttonCount];
+			m_isMouseDown = new bool[m_buttonCount];
+
+			m_graphicsSrcRectHover = new Apoc3D::Math::Rectangle[m_buttonCount];
+			m_graphicsSrcRectDown = new Apoc3D::Math::Rectangle[m_buttonCount];
+			m_hotAreaPaddings = new ControlBounds[m_buttonCount];
+			for (int32 i = 0; i < m_buttonCount; i++)
+			{
+				m_hotAreaPaddings[i] = paddings[i];
+				m_graphicsSrcRectDown[i] = downRegs[i];
+				m_graphicsSrcRectHover[i] = hoverRegs[i];
+			}
+
+			memset(m_isMouseHover, 0, sizeof(bool) * m_buttonCount);
+			memset(m_isMouseDown, 0, sizeof(bool) * m_buttonCount);
+		}
+		ButtonGroupTextured::~ButtonGroupTextured()
+		{
+			delete[] m_hotAreaPaddings;
+			m_hotAreaPaddings = nullptr;
+
+			delete[] m_graphicsSrcRectHover;
+			m_graphicsSrcRectHover = nullptr;
+			delete[] m_graphicsSrcRectDown;
+			m_graphicsSrcRectDown = nullptr;
+
+			delete[] m_isMouseHover;
+			m_isMouseHover = nullptr;
+			delete[] m_isMouseDown;
+			m_isMouseDown = nullptr;
+		}
+
+		void ButtonGroupTextured::Draw(Sprite* sprite)
+		{
+			const Apoc3D::Math::Rectangle* srcRect = &m_graphicsSrcRect;
+
+			for (int32 i = 0; i < m_buttonCount; i++)
+			{
+				if (m_isMouseDown[i] || ForceMouseDownLookIndex == i)
+				{
+					srcRect = &m_graphicsSrcRectDown[i];
+				}
+				else if (m_isMouseHover[i])
+				{
+					srcRect = &m_graphicsSrcRectHover[i];
+				}
+			}
+
+			Apoc3D::Math::Rectangle dstRect = *srcRect;
+			dstRect.X = Position.X - m_hotAreaPaddings[0].Left;
+			dstRect.Y = Position.Y - m_hotAreaPaddings[0].Top;
+
+			sprite->Draw(m_graphic, dstRect, srcRect, CV_White);
+		}
+
+		void ButtonGroupTextured::Update(const GameTime* time)
+		{
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+
+			m_hasMouseHoverArea = false;
+
+			for (int32 i = 0; i < m_buttonCount; i++)
+			{
+				Apoc3D::Math::Rectangle rect;
+
+				rect = m_graphicsSrcRect;
+
+				rect.X = Position.X + m_hotAreaPaddings[i].Left - m_hotAreaPaddings[0].Left;
+				rect.Y = Position.Y + m_hotAreaPaddings[i].Top - m_hotAreaPaddings[0].Top;
+				rect.Width -= m_hotAreaPaddings[i].Right + m_hotAreaPaddings[i].Left;
+				rect.Height -= m_hotAreaPaddings[i].Top + m_hotAreaPaddings[i].Bottom;
+
+				if (rect.Contains(mouse->getX(), mouse->getY()))
+				{
+					if (m_isMouseHover[i])
+					{
+						m_isMouseHover[i] = true;
+					}
+
+					if (!m_isMouseDown[i] && mouse->IsLeftPressed())
+					{
+						m_isMouseDown[i] = true;
+						eventPress.Invoke(this, i);
+						eventAnyPress.Invoke(this, i);
+					}
+					else if (m_isMouseDown[i] && mouse->IsLeftUp())
+					{
+						m_isMouseDown[i] = false;
+
+						eventRelease.Invoke(this, i);
+						eventAnyRelease.Invoke(this, i);
+					}
+
+					m_hasMouseHoverArea = true;
+					m_mouseHoverArea = rect;
+					break;
+				}
+				else
+				{
+					m_isMouseHover[i] = false;
+					m_isMouseDown[i] = false;
+				}
 			}
 		}
 
 		/************************************************************************/
-		/*                                                                      */
+		/*  ButtonGroup                                                         */
 		/************************************************************************/
-		RadioButton::RadioButton(const Point& position, const String& text, bool checked)
-			: Control(position, text), m_checked(checked), m_canUncheck(true), m_mouseOver(false), m_mouseDown(false), m_textOffset(0,0)
+
+		ButtonGroup::ButtonGroup(const StyleSkin* skin, const List<Button*>& buttons)
+			: Control(skin), m_button(buttons), m_selectedIndex(0)
+		{
+			Initialize();
+		}
+
+		ButtonGroup::ButtonGroup(const StyleSkin* skin, const List<Button*>& buttons, int selected)
+			: Control(skin), m_button(buttons), m_selectedIndex(selected)
+		{
+			Initialize();
+		}
+		ButtonGroup::~ButtonGroup()
+		{
+			m_button.DeleteAndClear();
+		}
+
+		void ButtonGroup::Initialize()
+		{
+			for (Button* btn : m_button)
+			{
+				btn->eventRelease.Bind(this, &ButtonGroup::Button_OnRelease);
+			}
+		}
+
+		void ButtonGroup::Button_OnRelease(Button* button)
+		{
+			for (int i = 0; i < m_button.getCount(); i++)
+			{
+				Button* btn = m_button[i];
+
+				if (btn == button)
+				{
+					if (m_selectedIndex != i)
+					{
+						m_selectedIndex = i;
+						eventSelectionChanged.Invoke(this);
+					}
+				}
+			}
+		}
+
+		void ButtonGroup::Draw(Sprite* sprite)
+		{
+			for (Button* btn : m_button)
+				btn->Draw(sprite);
+		}
+
+		void ButtonGroup::Update(const GameTime* time)
+		{
+			Control::Update(time);
+
+			for (Button* btn : m_button)
+				btn->Update(time);
+		}
+
+		/************************************************************************/
+		/*  RadioButton                                                         */
+		/************************************************************************/
+
+		RadioButton::RadioButton(const StyleSkin* skin, const Point& position, const String& text, bool checked)
+			: Control(skin, position), Text(text), m_checked(checked), m_textOffset(0,0)
 		{
 			
 		}
-		void RadioButton::Initialize(RenderDevice* device)
-		{
-			Control::Initialize(device);
-		}
+
 		void RadioButton::Draw(Sprite* sprite)
 		{
 

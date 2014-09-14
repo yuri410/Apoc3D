@@ -41,73 +41,71 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		void PictureBox::Initialize(RenderDevice* device)
-		{
-			m_device = device;
+		PictureBox::PictureBox(const Point& position, int border)
+			: PictureBox(nullptr, position, border, nullptr)
+		{ }
 
-			if (m_texture)
+		PictureBox::PictureBox(const Point& position, int border, Texture* texture)
+			: PictureBox(nullptr, position, border, nullptr)
+		{ }
+
+		PictureBox::PictureBox(const StyleSkin* skin, const Point& position, int border)
+			: PictureBox(nullptr, position, border, nullptr)
+		{ }
+
+		PictureBox::PictureBox(const StyleSkin* skin, const Point& position, int border, Texture* texture)
+			: Control(skin, position), m_border(border)
+		{
+			if (texture)
 			{
-				if (Size == Point::Zero)
-				{
-					Size = Point(m_texture->getWidth(),m_texture->getHeight());
-				}
-				m_srcRect = Apoc3D::Math::Rectangle(0,0,m_texture->getWidth(),m_texture->getHeight());
+				m_size = Point(texture->getWidth(), texture->getHeight());
+
+				Graphic = UIGraphicSimple(texture);
+				//m_srcRect = Apoc3D::Math::Rectangle(0, 0, m_texture->getWidth(), m_texture->getHeight());
 			}
-			Control::Initialize(device);
+
 		}
+
+		PictureBox::~PictureBox()
+		{
+
+		}
+
 		void PictureBox::Update(const GameTime* time)
 		{
-			UpdateEvents();
-		}
-		void PictureBox::UpdateEvents()
-		{
-			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			Apoc3D::Math::Rectangle rect = getAbsoluteArea();
-			if (rect.Contains(mouse->GetPosition()) && getOwner()->getAbsoluteArea().Contains(rect))
-			{
-				if (!m_mouseOver)
-				{
-					m_mouseOver = true;
-					OnMouseOver();
-				}
+			if (!Visible)
+				return;
 
-				if (mouse->IsLeftPressed())
-				{
-					OnPress();
-				}
-				else if (mouse->IsLeftUp())
-				{
-					OnRelease();
-				}
-			}
-			else if (m_mouseOver)
-			{
-				m_mouseOver = false;
-				OnMouseOut();
-			}
+			UpdateEvents_StandardButton(m_mouseHover, m_mouseDown, getAbsoluteArea(),
+				&PictureBox::OnMouseHover, &PictureBox::OnMouseOut, &PictureBox::OnPress, &PictureBox::OnRelease);
 		}
+
 		void PictureBox::Draw(Sprite* sprite)
 		{
-			Apoc3D::Math::Rectangle destRect(Position.X, Position.Y, Size.X, Size.Y);
+			RenderDevice* m_device = sprite->getRenderDevice();
+
+			Apoc3D::Math::Rectangle destRect = getAbsoluteArea();
 			if (m_border)
 			{
-				Apoc3D::Math::Rectangle borderRect(destRect.X - m_border, 
-					destRect.Y - m_border, Size.X+m_border*2, Size.Y+m_border*2);
-				sprite->Draw(m_skin->WhitePixelTexture, borderRect, 0 , CV_Black);
+				Apoc3D::Math::Rectangle borderRect = destRect;
+				borderRect.Inflate(m_border, m_border);
+
+				sprite->Draw(SystemUI::GetWhitePixel(), borderRect, nullptr, CV_Black);
 			}
-			if (m_texture)
+			if (Graphic.isSet())
 			{
-				sprite->Draw(m_texture, destRect, &m_srcRect, CV_White);
+				//sprite->Draw(m_texture, destRect, &m_srcRect, CV_White);
+				Graphic.Draw(sprite, destRect);
 			}
 
 			if (eventPictureDraw.getCount())
 			{
 				sprite->Flush();
 
-				Apoc3D::Math::Rectangle uiArea = UIRoot::GetUIArea(m_device);
+				Apoc3D::Math::Rectangle uiArea = SystemUI::GetUIArea(m_device);
 
-				Apoc3D::Math::Rectangle rect= getAbsoluteArea();
-				if (rect.getBottom()>uiArea.getBottom())
+				Apoc3D::Math::Rectangle rect = getAbsoluteArea();
+				if (rect.getBottom() > uiArea.getBottom())
 				{
 					rect.Height -= rect.getBottom() - uiArea.getBottom();
 				}
@@ -120,8 +118,13 @@ namespace Apoc3D
 				eventPictureDraw.Invoke(sprite, &destRect);
 
 				sprite->Flush();
-				m_device->getRenderState()->setScissorTest(false,0);
+				m_device->getRenderState()->setScissorTest(false, 0);
 			}
 		}
+
+		void PictureBox::OnMouseHover() { eventMouseHover.Invoke(this); } 
+		void PictureBox::OnMouseOut() { eventMouseOut.Invoke(this); }
+		void PictureBox::OnPress() { eventPress.Invoke(this); }
+		void PictureBox::OnRelease() { eventRelease.Invoke(this); }
 	}
 }

@@ -38,505 +38,329 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		HScrollbar::HScrollbar(const Point& position, int width)
-			: Control(position), m_value(0), m_max(0), m_step(1), m_isScrolling(false), m_inverted(false)
+#pragma region FormVScrollBar
+		ScrollBar::ScrollBar(const ScrollBarVisualSettings& settings, const Point& position, ScrollBarType type, int32 length)
+			: Control(nullptr, position), m_type(type)
 		{
-			Size.X = width;
-		}
-		HScrollbar::~HScrollbar()
-		{
-			delete m_btLeft;
-			delete m_btRight;
-		}
-		void HScrollbar::setPosition(const Point& pos)
-		{
-			m_btLeft->Position = pos;
-			Position = pos;
-			setWidth(Size.X);
-		}
-		void HScrollbar::setWidth(int w)
-		{
-			Size.X = w;
-			m_btRight->Position.X = Position.X + w - m_skin->HScrollBarBG.Height;
-			m_btRight->Position.Y = Position.Y;
-		}
-		void HScrollbar::Initialize(RenderDevice* device)
-		{
-			Control::Initialize(device);
-
-			Size.Y = m_skin->HScrollBarBG.Height;
-
-			m_btLeft = new Button(Position,1, L"");
-			m_btLeft->setOwner(getOwner());
-			m_btLeft->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->HScrollBarLeft);
-			m_btLeft->eventPress.Bind(this, &HScrollbar::btLeft_OnPress);
-			m_btLeft->Initialize(device);
-
-			m_btRight = new Button(Point(Position.X + Size.X - 12, Position.Y), 1, L"");
-			m_btRight->setOwner(getOwner());
-			//m_btRight->setNormalTexture(m_skin->HScrollBar_Button);
-			m_btRight->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->HScrollBarRight);
-			m_btRight->eventPress.Bind(this, &HScrollbar::btRight_OnPress);
-			m_btRight->Initialize(device);
-		}
-
-		void HScrollbar::btLeft_OnPress(Control* ctrl)
-		{
-			if (!m_inverted)
-			{
-				if (m_value>0)
-				{
-					m_value -= m_step;
-					
-					eventValueChanged.Invoke(this);
-				}
-			}
-			else if (m_value<m_max)
-			{
-				m_value += m_step;
-				
-				eventValueChanged.Invoke(this);
-			}
-		}
-		void HScrollbar::btRight_OnPress(Control* ctrl)
-		{
-			if (!m_inverted)
-			{
-				if (m_value<m_max)
-				{
-					m_value += m_step;
-					
-					eventValueChanged.Invoke(this);
-				}
-			}
-			else if (m_value>0)
-			{
-				m_value -= m_step;
-				
-				eventValueChanged.Invoke(this);
-			}
-		}
-
-		void HScrollbar::Update(const GameTime* time)
-		{
-			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-
-			if (getOwner()->getArea().Contains(m_cursorArea) && m_cursorArea.Contains(mouse->GetPosition()))
-			{
-				if (mouse->IsLeftPressed())
-				{
-					m_isScrolling = true;
-					m_cursorOffset = mouse->GetPosition();
-					m_cursorOffset.X -= m_cursorArea.X;
-					m_cursorOffset.Y -= m_cursorArea.Y;
-				}
-			}
-
-			if (m_isScrolling)
-			{
-				if (mouse->IsLeftPressedState())
-					UpdateScrolling();
-				else if (mouse->IsLeftReleasedState())
-					m_isScrolling = false;
-			}
-
-			if (m_max>0)
-			{
-				m_btLeft->Update(time);
-				m_btRight->Update(time);
-			}
-		}
-
-		
-		void HScrollbar::UpdateScrolling()
-		{
-			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			m_decrButton = new Button(settings.DecrButton, Point(0, 0), settings.DecrButton.NormalGraphic.getSize(), L"");
+			m_incrButton = new Button(settings.IncrButton, Point(0, 0), m_decrButton->getSize(), L"");
 			
-			m_cursorPos.X = mouse->GetPosition().X - m_cursorOffset.X - getOwner()->Position.X;
+			if (settings.HasHandleGraphic)
+				HandleGraphic = settings.HandleGraphic;
+			if (settings.HasBackgroundGraphic)
+				BackgroundGraphic = settings.BackgroundGraphic;
 
-			if (m_cursorPos.X < Position.X + m_skin->HScrollBarLeft.Width)
+			if (settings.HasDisabledHandleGraphic)
+				DisabledHandleGraphic = settings.DisabledHandleGraphic;
+			if (settings.HasDisabledBackgroundGraphic)
+				DisabledBackgroundGraphic = settings.DisabledBackgroundGraphic;
+
+			PostInit(length);
+		}
+
+		ScrollBar::ScrollBar(const StyleSkin* skin, const Point& position, ScrollBarType type, int32 length)
+			: Control(skin, position), m_type(type)
+		{
+			if (type == SCRBAR_Vertical)
 			{
-				m_cursorPos.X = Position.X + m_skin->HScrollBarLeft.Width;
-			}
-			else if (m_cursorPos.X > Position.X + Size.X - m_cursorArea.Width + m_skin->HScrollBarLeft.Width)
-			{
-				m_cursorPos.X = Position.X + Size.X - m_cursorArea.Width + m_skin->HScrollBarLeft.Width;
-			}
+				ButtonVisualSettings bvs;
+				bvs.HasNormalGraphic = true;
+				bvs.NormalGraphic = UIGraphic(skin->SkinTexture, skin->VScrollBarUp);
 
-			float x = (float)(m_cursorPos.X - m_backArea.X);
+				m_decrButton = new Button(bvs, Point(0, 0), skin->VScrollBarUp.getSize(), L"");
+				//m_decrButton->NormalGraphic = UIGraphic(skin->SkinTexture, skin->VScrollBarUp);
+				//m_decrButton->MouseDownGraphic = UIGraphic(skin->SkinTexture, gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarUpD);
+				//m_decrButton->MouseOverGraphic = UIGraphic(skin->SkinTexture, gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarUpH);
+				//m_decrButton->DisabledGraphic = m_decrButton->NormalGraphic;
+				//m_decrButton->DisabledGraphic.ModColor = CV_PackColor(0xff, 0xff, 0xff, m_disabledAlpha);
 
-			int value;
+				bvs.NormalGraphic = UIGraphic(skin->SkinTexture, skin->VScrollBarDown);
 
-			if (!m_inverted)
-			{
-				value = Math::Round(x/(m_backArea.Width-m_cursorArea.Width)*m_max);
+				m_incrButton = new Button(bvs, Point(0, 0), m_decrButton->getSize(), L"");
+				//m_incrButton->NormalGraphic = UIGraphic(skin->SkinTexture, skin->VScrollBarDown);
+				//m_incrButton->MouseDownGraphic = UIGraphic(gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarDownD);
+				//m_incrButton->MouseOverGraphic = UIGraphic(gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarDownH);
+				//m_incrButton->DisabledGraphic = m_incrButton->NormalGraphic;
+				//m_incrButton->DisabledGraphic.ModColor = m_incrButton->DisabledGraphic.ModColor;
+
+				HandleGraphic = UIGraphic(skin->SkinTexture, skin->VScrollBarCursor);
+				BackgroundGraphic = UIGraphic(skin->SkinTexture, skin->VScrollBarBG);
 			}
 			else
 			{
-				value = m_max - Math::Round(x/(m_backArea.Width - m_cursorArea.Width)*m_max);
+				ButtonVisualSettings bvs;
+				bvs.HasNormalGraphic = true;
+				bvs.NormalGraphic = UIGraphic(skin->SkinTexture, skin->HScrollBarLeft);
+
+				m_decrButton = new Button(bvs, Point(0, 0), skin->HScrollBarLeft.getSize(), L"");
+				//m_decrButton->NormalGraphic = UIGraphic(skin->SkinTexture, skin->HScrollBarLeft);// gui_ControlAssets.VScrollBarUpN);
+				//m_decrButton->MouseDownGraphic = UIGraphic(gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarUpD);
+				//m_decrButton->MouseOverGraphic = UIGraphic(gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarUpH);
+				//m_decrButton->DisabledGraphic = m_decrButton->NormalGraphic;
+				//m_decrButton->DisabledGraphic.ModColor = CV_PackColor(0xff, 0xff, 0xff, m_disabledAlpha);
+
+				bvs.NormalGraphic = UIGraphic(skin->SkinTexture, skin->HScrollBarRight);
+				m_incrButton = new Button(bvs, Point(0, 0), skin->HScrollBarRight.getSize(), L"");
+				//m_incrButton->NormalGraphic = UIGraphic(skin->SkinTexture, skin->HScrollBarRight); // gui_ControlAssets.VScrollBarDownN
+				//m_incrButton->MouseDownGraphic = UIGraphic(gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarDownD);
+				//m_incrButton->MouseOverGraphic = UIGraphic(gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarDownH);
+				//m_incrButton->DisabledGraphic = m_incrButton->NormalGraphic;
+				//m_incrButton->DisabledGraphic.ModColor = m_incrButton->DisabledGraphic.ModColor;
+
+
+				HandleGraphic = UIGraphic(skin->SkinTexture, skin->HScrollBarCursor);
+				BackgroundGraphic = UIGraphic(skin->SkinTexture, skin->HScrollBarBG);
 			}
 
-			if (value <0)
-				value = 0;
-			else if (value>m_max)
-				value = m_max;
-
-			if (m_value != value)
-			{
-				m_value = value;
-				
-				eventValueChanged.Invoke(this);
-			}
-		}
-		void HScrollbar::Draw(Sprite* sprite)
-		{
-			DrawBackground(sprite);
-			if (m_max>0)
-				DrawCursor(sprite);
-			m_btLeft->Draw(sprite);
-			m_btRight->Draw(sprite);
-		}
-		void HScrollbar::DrawBackground(Sprite* sprite)
-		{
-			m_backArea = Apoc3D::Math::Rectangle(
-				Position.X + m_skin->HScrollBarLeft.Width, Position.Y, Size.X - m_skin->HScrollBarLeft.Width - m_skin->HScrollBarRight.Width, m_skin->HScrollBarBG.Height);
-
-			sprite->Draw(m_skin->SkinTexture, m_backArea, &m_skin->HScrollBarBG, CV_White);
-		}
-
-		void HScrollbar::DrawCursor(Sprite* sprite)
-		{
-			m_cursorArea.Width = Math::Max(20, m_backArea.Width - Math::Max(20, m_max / 4));
-			m_cursorArea.Height = m_skin->HScrollBarCursor->Height;
-			m_cursorPos.Y = Position.Y;
-			if (!m_isScrolling)
-			{
-				if (!m_inverted)
-				{
-					m_cursorPos.X = (int)( m_backArea.X + (Size.X - m_cursorArea.Width) * ((float)m_value/(float)m_max));
-				}
-				else
-				{
-					m_cursorPos.X = (int)( m_backArea.X + (Size.X - m_cursorArea.Width) * ((float)(m_max-m_value)/(float)m_max));
-				}
-			}
-			m_cursorArea.X = m_cursorPos.X + getOwner()->Position.X;
-			m_cursorArea.Y = m_cursorPos.Y + getOwner()->Position.Y;
-
-			Apoc3D::Math::Rectangle dstRect(m_cursorPos.X, m_cursorPos.Y, m_skin->HScrollBarCursor[0].Width, m_skin->HScrollBarCursor[0].Height);
-			sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->HScrollBarCursor[0], CV_White);
-
-			dstRect = Apoc3D::Math::Rectangle(
-				m_cursorPos.X + m_skin->HScrollBarCursor[0].Width, 
-				m_cursorPos.Y, 
-				m_cursorArea.Width - m_skin->HScrollBarCursor[0].Width - m_skin->HScrollBarCursor[2].Width, m_skin->HScrollBarCursor[1].Height);
-			sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->HScrollBarCursor[1], CV_White);
-
-			int32 midWidth = dstRect.Width;
-			dstRect = Apoc3D::Math::Rectangle(
-				m_cursorPos.X + midWidth, m_cursorPos.Y, m_skin->HScrollBarCursor[2].Width, m_skin->HScrollBarCursor[2].Height);
-			sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->HScrollBarCursor[2], CV_White);
-
-			
-		}
-
-		/************************************************************************/
-		/* VScrollBar                                                           */
-		/************************************************************************/
-
-		VScrollBar::VScrollBar(const Point& position, int height)
-			: Control(position), m_value(0), m_max(0), m_step(1), m_isScrolling(false), m_inverted(false)
-		{
-			Size.Y = height;
-		}
-		VScrollBar::~VScrollBar()
-		{
-			delete m_btDown;
-			delete m_btUp;
-		}
-		void VScrollBar::setHeight(int w)
-		{
-			Size.Y= w;
-			m_btDown->Position.Y = Position.Y + w-m_skin->VScrollBarBG.Width;
-			m_btDown->Position.X = Position.X;
-		}
-		void VScrollBar::setPosition(const Point& pos)
-		{
-			m_btUp->Position = pos;
-			Position = pos;
-			setHeight(Size.Y);
-		}
-		void VScrollBar::Initialize(RenderDevice* device)
-		{
-			Control::Initialize(device);
-
-			Size.X = m_skin->VScrollBarBG.Width;
-
-
-			m_btUp = new Button(Position, 1, L"");
-			m_btUp->setOwner(getOwner());
-			m_btUp->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->VScrollBarUp);// (m_skin->VScrollBar_Button);
-			m_btUp->eventPress.Bind(this, &VScrollBar::btUp_OnPress);
-			m_btUp->Initialize(device);
-
-			m_btDown = new Button(Point(Position.X, Position.Y + Size.Y -12),1,L"");
-			m_btDown->setOwner(getOwner());
-			m_btDown->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->VScrollBarDown);
-			m_btDown->eventPress.Bind(this, &VScrollBar::btDown_OnPress);
-			m_btDown->Initialize(device);
-
-		}
-
-		void VScrollBar::btUp_OnPress(Control* ctrl)
-		{
-			if (!m_inverted)
-			{
-				if (m_value>0)
-				{
-					m_value -= m_step;
-					
-					eventValueChanged.Invoke(this);
-				}
-			}
-			else if (m_value<m_max)
-			{
-				m_value += m_step;
-				
-				eventValueChanged.Invoke(this);
-			}
-		}
-		void VScrollBar::btDown_OnPress(Control* ctrl)
-		{
-			if (!m_inverted)
-			{
-				if (m_value<m_max)
-				{
-					m_value += m_step;
-					
-					eventValueChanged.Invoke(this);
-				}
-			}
-			else if (m_value>0)
-			{
-				m_value -= m_step;
-				
-				eventValueChanged.Invoke(this);
-			}
-		}
-
-		void VScrollBar::Update(const GameTime* time)
-		{
-			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-
-			if (m_cursorArea.Contains(mouse->GetPosition()))
-			{
-				if (mouse->IsLeftPressed())
-				{
-					m_isScrolling = true;
-					m_cursorOffset = mouse->GetPosition();
-					m_cursorOffset.X -= m_cursorArea.X;
-					m_cursorOffset.Y -= m_cursorArea.Y;
-				}
-			}
-
-			if (m_isScrolling)
-			{
-				if (mouse->IsLeftPressedState())
-					UpdateScrolling();
-				else if (mouse->IsLeftReleasedState())
-					m_isScrolling = false;
-			}
-
-			if (m_max>0)
-			{
-				m_btUp->Update(time);
-				m_btDown->Update(time);
-			}
-		}
-
-
-		void VScrollBar::UpdateScrolling()
-		{
-			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-
-			m_cursorPos.Y = mouse->GetPosition().Y - m_cursorOffset.Y - getOwner()->Position.Y;
-
-			if (m_cursorPos.Y < Position.Y + m_skin->VScrollBarUp.Height)
-			{
-				m_cursorPos.Y = Position.Y + m_skin->VScrollBarUp.Height;
-			}
-			else if (m_cursorPos.Y > Position.Y + Size.Y - m_cursorArea.Height + m_skin->VScrollBarUp.Height)
-			{
-				m_cursorPos.Y = Position.Y + Size.Y - m_cursorArea.Height + m_skin->VScrollBarUp.Height;
-			}
-
-			float y = (float)(m_cursorPos.Y - m_backArea.Y);
-
-			int value;
-
-			if (!m_inverted)
-			{
-				value = Math::Round(y/(m_backArea.Height-m_cursorArea.Height)*m_max);
-			}
-			else
-			{
-				value = m_max - Math::Round(y/(m_backArea.Height - m_cursorArea.Height)*m_max);
-			}
-
-			if (value <0)
-				value = 0;
-			else if (value>m_max)
-				value = m_max;
-
-			if (m_value != value)
-			{
-				m_value = value;
-				
-				eventValueChanged.Invoke(this);
-			}
-		}
-		void VScrollBar::Draw(Sprite* sprite)
-		{
-			DrawBackground(sprite);
-			DrawCursor(sprite);
-			m_btUp->Draw(sprite);
-			m_btDown->Draw(sprite);
-		}
-		void VScrollBar::DrawBackground(Sprite* sprite)
-		{
-			m_backArea = Apoc3D::Math::Rectangle(
-				Position.X, Position.Y + m_skin->VScrollBarUp.Height, m_skin->VScrollBarBG.Width, Size.Y - m_skin->VScrollBarUp.Height - m_skin->VScrollBarDown.Height);
-
-			sprite->Draw(m_skin->SkinTexture, m_backArea, &m_skin->VScrollBarBG, CV_White);
-		}
-
-		void VScrollBar::DrawCursor(Sprite* sprite)
-		{
-			m_cursorArea.Height = Math::Max(20, m_backArea.Height - Math::Max(20, m_max / 4));
-			m_cursorArea.Width = m_skin->VScrollBarCursor->Width;
-			m_cursorPos.X = Position.X;
-
-			int32 btnHeight = m_skin->VScrollBarDown.Height;
-
-			if (!m_isScrolling)
-			{
-				if (!m_inverted)
-				{
-					m_cursorPos.Y = (int)( m_backArea.Y + (Size.Y - m_cursorArea.Height) * ((float)m_value/(float)m_max));
-				}
-				else
-				{
-					m_cursorPos.Y = (int)( m_backArea.Y + (Size.Y - m_cursorArea.Height) * ((float)(m_max-m_value)/(float)m_max));
-				}
-			}
-			m_cursorArea.X = m_cursorPos.X + getOwner()->Position.X;
-			m_cursorArea.Y = m_cursorPos.Y + getOwner()->Position.Y;
-
-			Apoc3D::Math::Rectangle dstRect(m_cursorPos.X, m_cursorPos.Y, m_skin->VScrollBarCursor[0].Width, m_skin->VScrollBarCursor[0].Height);
-			sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->VScrollBarCursor[0], CV_White);
-
-			dstRect = Apoc3D::Math::Rectangle(
-				m_cursorPos.X, 
-				m_cursorPos.Y + m_skin->VScrollBarCursor[0].Height, 
-				m_skin->VScrollBarCursor[1].Width,
-				m_cursorArea.Height - m_skin->HScrollBarCursor[0].Height - m_skin->HScrollBarCursor[2].Height);
-			sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->VScrollBarCursor[1], CV_White);
-
-
-			int32 midHeight = dstRect.Height;
-
-			dstRect = Apoc3D::Math::Rectangle(
-				m_cursorPos.X, m_cursorPos.Y+midHeight, m_skin->VScrollBarCursor[2].Width, m_skin->VScrollBarCursor[2].Height);
-			sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->VScrollBarCursor[2], CV_White);
-		}
-
-		/************************************************************************/
-		/* ScrollBar                                                            */
-		/************************************************************************/
-
-		ScrollBar::ScrollBar(const Point& position, ScrollBarType type, int size)
-			: m_hsbar(0), m_vsbar(0), m_type(type)
-		{
-			if (m_type == SCRBAR_Horizontal)
-			{
-				m_hsbar = new HScrollbar(position, size);
-			}
-			else
-			{
-				m_vsbar = new VScrollBar(position, size);
-			}
+			PostInit(length);
 		}
 		ScrollBar::~ScrollBar()
 		{
-			if (m_hsbar)
-				delete m_hsbar;
-			if (m_vsbar)
-				delete m_vsbar;
+			m_decrButton->eventRelease.Reset();
+			m_incrButton->eventRelease.Reset();
+
+			DELETE_AND_NULL(m_decrButton);
+			DELETE_AND_NULL(m_incrButton);
 		}
 
-		void ScrollBar::Initialize(RenderDevice* device)
+		void ScrollBar::PostInit(int32 length)
 		{
-			if (m_hsbar)
-			{
-				m_hsbar->SetSkin(m_skin);
-				m_hsbar->setOwner(getOwner());
-				m_hsbar->Initialize(device);
-			}
-			if (m_vsbar)
-			{
-				m_vsbar->SetSkin(m_skin);
-				m_vsbar->setOwner(getOwner());
-				m_vsbar->Initialize(device);
-			}
+			m_decrButton->eventRelease.Bind(this, &ScrollBar::DecrButton_Pressed);
+			m_incrButton->eventRelease.Bind(this, &ScrollBar::IncrButton_Pressed);
 
-		}
-		void ScrollBar::Update(const GameTime* time)
-		{
-			if (Visible)
-			{
-				if (m_hsbar)
-				{
-					m_hsbar->setOwner(getOwner());
-					m_hsbar->Update(time);
-				}
-				if (m_vsbar)
-				{
-					m_vsbar->setOwner(getOwner());
-					m_vsbar->Update(time);
-				}
-			}
-		}
-		void ScrollBar::Draw(Sprite* sprite)
-		{
-			if (Visible)
-			{
-				if (m_hsbar)
-					m_hsbar->Draw(sprite);
-				if (m_vsbar)
-					m_vsbar->Draw(sprite);
-			}
-		}
+			UpdateButtonPosition();
 
-		void ScrollBar::setPosition(const Point& pos)
-		{
-			if (m_type == SCRBAR_Horizontal)
+			if (m_type != SCRBAR_Vertical)
 			{
-				m_hsbar->Position = pos;
-				m_hsbar->setPosition(pos);
+				m_size.X = length;
+				m_size.Y = BackgroundGraphic.SourceRects[0].Height;
 			}
 			else
 			{
-				m_vsbar->Position = pos;
-				m_vsbar->setPosition(pos);
+				m_size.X = BackgroundGraphic.SourceRects[0].Width;
+				m_size.Y = length;
 			}
 		}
-		const Point& ScrollBar::getPosition() const 
+
+		void ScrollBar::Draw(Sprite* sprite)
 		{
-			if (m_type == SCRBAR_Horizontal)
-				return m_hsbar->Position;
-			return m_vsbar->Position;
+			//if (m_disabledAlpha == 0 && !Enabled)
+			//	return;
+
+			{
+				UIGraphic* g = Enabled ? &BackgroundGraphic : &DisabledBackgroundGraphic;
+
+				g->Draw(sprite, getAbsoluteArea(), m_type == SCRBAR_Vertical);
+			}
+
+			if (m_decrButton->Enabled && Maximum > 0)
+			{
+				Apoc3D::Math::Rectangle handleArea = CalculateHandleArea();
+				handleArea = HandlePadding.InflateRect(handleArea);
+
+				UIGraphic* g = Enabled ? &HandleGraphic : &DisabledHandleGraphic;
+
+				g->Draw(sprite, handleArea, m_type == SCRBAR_Vertical);
+			}
+
+
+			m_decrButton->Draw(sprite);
+			m_incrButton->Draw(sprite);
+		}
+		void ScrollBar::Update(const GameTime* time)
+		{
+			m_isMouseHovering = false;
+
+			if (m_value > Maximum)
+				m_value = Maximum;
+			
+
+			if (!Enabled || !Visible)
+				return;
+
+			int32 scrLen = GetScrollableLength();
+			if (Maximum > 0)
+			{
+				m_decrButton->Enabled = true;
+				m_incrButton->Enabled = true;
+
+				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+
+				Apoc3D::Math::Rectangle handleArea = CalculateHandleArea();
+				int32 handleLen = m_type == SCRBAR_Vertical ? handleArea.Height : handleArea.Width;
+
+				if (m_isDragging)
+				{
+					if (handleLen < scrLen)
+					{
+						int32 dm = m_type == SCRBAR_Horizontal ? mouse->getDX() : mouse->getDY();
+						int32 dv = dm * Maximum / (scrLen - handleLen);
+
+						m_value += IsInverted ? -dv : dv;
+						m_value = Math::Clamp(m_value, 0, Maximum);
+					}
+
+					if (mouse->IsLeftUp())
+					{
+						m_isDragging = false;
+					}
+
+					m_isMouseHovering = true;
+					m_mouseHoverArea = handleArea;
+				}
+				else
+				{
+					m_decrButton->Update(time);
+					m_incrButton->Update(time);
+
+					if (m_decrButton->isMouseHover())
+					{
+						m_isMouseHovering = true;
+						m_mouseHoverArea = m_decrButton->getAbsoluteArea();
+					}
+					if (m_incrButton->isMouseHover())
+					{
+						m_isMouseHovering = true;
+						m_mouseHoverArea = m_incrButton->getAbsoluteArea();
+					}
+
+					if (!m_isMouseHovering && handleArea.Contains(mouse->getX(), mouse->getY()))
+					{
+						m_isMouseHovering = true;
+						m_mouseHoverArea = handleArea;
+
+						if (mouse->IsLeftPressed())
+						{
+							m_isDragging = true;
+						}
+					}
+				}
+
+			}
+			else
+			{
+				m_decrButton->Enabled = false;
+				m_incrButton->Enabled = false;
+			}
+			UpdateButtonPosition();
+		}
+		void ScrollBar::UpdateButtonPosition()
+		{
+			Point decrButtonOffset(BorderPadding.Left, BorderPadding.Top);
+			Point incrButtonOffset(BorderPadding.Left, BorderPadding.Bottom);
+
+			m_decrButton->Position = Position + decrButtonOffset;// Point(1, 1);
+			m_incrButton->Position = Position + incrButtonOffset;// +Point(1, -1);
+
+			m_decrButton->BaseOffset = m_incrButton->BaseOffset = BaseOffset;
+
+			if (m_type == SCRBAR_Vertical)
+			{
+				m_incrButton->Position.Y += m_size.Y - m_incrButton->getSize().Y;
+			}
+			else
+			{
+				m_incrButton->Position.X += m_size.X - m_incrButton->getSize().X;
+			}
+			//m_incrButton->Position.Y += Height - m_incrButton->getSize().Y;
 		}
 
+		int32 ScrollBar::GetScrollableLength() const
+		{
+			int32 result;
+			if (m_type == SCRBAR_Vertical)
+				result = m_size.Y - m_decrButton->getSize().Y - m_incrButton->getSize().Y;
+			else
+				result = m_size.X - m_decrButton->getSize().X - m_incrButton->getSize().X;
+
+			if (result < 0)
+				result = 0;
+			return result;
+			//return Height - m_upButton->getSize().Y - m_downButton->getSize().Y;
+		}
+
+		int32 ScrollBar::CalculateBarLength() const
+		{
+			int32 scrollHeight = GetScrollableLength();
+			if (Maximum + scrollHeight == 0)
+				return 100;
+
+			int32 r = (int32)(scrollHeight * scrollHeight / (Maximum + scrollHeight));
+			if (r > scrollHeight)
+				r = scrollHeight;
+			if (r < 100)
+				r = 100;
+			return r;
+		}
+		Apoc3D::Math::Rectangle ScrollBar::CalculateHandleArea() const
+		{
+			Point pos = GetAbsolutePosition();
+
+			if (m_type == SCRBAR_Vertical)
+			{
+				Apoc3D::Math::Rectangle handleArea;
+
+				handleArea.X = pos.X + BorderPadding.Left;// +1;
+				handleArea.Width = BackgroundGraphic.getWidth() - BorderPadding.getHorizontalSum();// -2;
+
+				handleArea.Height = CalculateBarLength();
+				int32 scrH = GetScrollableLength() - handleArea.Height;
+
+				if (IsInverted)
+					handleArea.Y = m_decrButton->getAbsoluteArea().getBottom() + Maximum - m_value * scrH / Maximum;
+				else
+					handleArea.Y = m_decrButton->getAbsoluteArea().getBottom() + m_value * scrH / Maximum;
+
+				return handleArea;
+			}
+			else
+			{
+				Apoc3D::Math::Rectangle handleArea;
+
+				handleArea.Y = pos.Y + BorderPadding.Top;
+				handleArea.Height = BackgroundGraphic.getHeight() - BorderPadding.getVerticalSum();
+
+				handleArea.Width = CalculateBarLength();
+				int32 scrW = GetScrollableLength() - handleArea.Width;
+
+				if (IsInverted)
+					handleArea.X = m_decrButton->getAbsoluteArea().getRight() + Maximum - m_value * scrW / Maximum;
+				else
+					handleArea.X = m_decrButton->getAbsoluteArea().getRight() + m_value * scrW / Maximum;
+
+				return handleArea;
+			}
+		}
+
+		void ScrollBar::DecrButton_Pressed(Button* btn)
+		{
+			ForceScroll(IsInverted ? Step : -Step);
+		}
+		void ScrollBar::IncrButton_Pressed(Button* btn)
+		{
+			ForceScroll(IsInverted ? -Step : Step);
+		}
+
+		void ScrollBar::ForceScroll(int32 chg)
+		{
+			m_value += chg;
+			m_value = Math::Clamp(m_value, 0, Maximum);
+		}
+		void ScrollBar::SetValue(int32 val)
+		{
+			m_value = Math::Clamp(val, 0, Maximum);
+		}
+
+		void ScrollBar::SetLength(int32 len)
+		{
+			(m_type != SCRBAR_Vertical ? m_size.X : m_size.Y) = len;
+		}
+		int32 ScrollBar::GetLength() const
+		{
+			return m_type != SCRBAR_Vertical ? m_size.X : m_size.Y;
+			//return 
+		}
+#pragma endregion
 
 
 	}

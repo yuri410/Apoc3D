@@ -412,19 +412,12 @@ namespace Apoc3D
 
 			delete config;
 
-			WhitePixelTexture = device->getObjectFactory()->CreateTexture(1,1,1, TU_Static, FMT_A8R8G8B8);
-
-			DataRectangle rect = WhitePixelTexture->Lock(0, LOCK_None);
-			*(uint32*)rect.getDataPointer() = CV_White;
-			WhitePixelTexture->Unlock(0);
-
 			fl = FileSystem::getSingleton().Locate(packTexName, rule);
 			SkinTexture = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl);
 		}
 
 		StyleSkin::~StyleSkin()
 		{
-			delete WhitePixelTexture;
 			delete SkinTexture;
 		}
 

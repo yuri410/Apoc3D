@@ -180,6 +180,9 @@ namespace Apoc3D
 			Point getBottomLeft() const { return Point(X, Y + Height); }
 			Point getBottomRight() const { return Point(X + Width, Y + Height); }
 
+			Point getPosition() const { return Point(X, Y); }
+			void setPosition(const Point& pt) { X = pt.X; Y = pt.Y; }
+
 			Point getSize() const { return Point(Width, Height); }
 
 			bool IsEmpty() const { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }

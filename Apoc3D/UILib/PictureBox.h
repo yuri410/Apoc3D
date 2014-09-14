@@ -40,31 +40,46 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(PictureBox, Control);
 		public:
-			PictureBox(const Point& position, int border)
-				: Control(position), m_mouseOver(false), m_border(border), m_texture(0)
-			{
+			PictureBox(const Point& position, int border);
+			PictureBox(const Point& position, int border, Texture* texture);
+			PictureBox(const StyleSkin* skin, const Point& position, int border);
+			PictureBox(const StyleSkin* skin, const Point& position, int border, Texture* texture);
 
-			}
-
-			virtual void Initialize(RenderDevice* device);
+			virtual ~PictureBox();
 
 			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
-			Texture* getImage() const { return m_texture; }
-			void setImage(Texture* tex) { m_texture = tex; }
+			void setSize(const Point& sz) { m_size = sz; }
+			void setSize(int32 w, int32 h) { m_size = Point(w, h); }
+			void setWidth(int32 w) { m_size.X = w; }
+			void setHeight(int32 h) { m_size.Y = h; }
+
+			//Texture* getImage() const { return m_texture; }
+			//void setImage(Texture* tex) { m_texture = tex; }
+
+			//Texture* m_texture = nullptr;
+			//Apoc3D::Math::Rectangle m_srcRect;
+
+			UIGraphicSimple Graphic;
 
 			PictureDrawEventHandler eventPictureDraw;
 
+			UIEventHandler eventMouseHover;
+			UIEventHandler eventMouseOut;
+			UIEventHandler eventPress;
+			UIEventHandler eventRelease;
+
 		private:
-			RenderDevice* m_device;
-			Texture* m_texture;
-			Apoc3D::Math::Rectangle m_srcRect;
+			void OnMouseHover();
+			void OnMouseOut();
+			void OnPress();
+			void OnRelease();
 
-			bool m_mouseOver;
-			int m_border;
-
-			void UpdateEvents();
+			bool m_mouseDown = false;
+			bool m_mouseHover = false;
+			int m_border = 0;
+			
 		};
 	}
 }

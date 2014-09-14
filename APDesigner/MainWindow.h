@@ -60,7 +60,7 @@ namespace APDesigner
 
 		Document* getCurrentDocument() const { return m_currentDocument; }
 
-		Menu* getMenuBar() const { return m_mainMenu; }
+		MenuBar* getMenuBar() const { return m_mainMenu; }
 
 		const List<std::pair<String, String>>& getProjectMaterialDesc() const { return m_projectMaterialNames; }
 	private:
@@ -78,7 +78,7 @@ namespace APDesigner
 		List<Document*> m_documentList;
 		Console* m_console;
 
-		Menu* m_mainMenu;
+		MenuBar* m_mainMenu;
 		MenuItem* m_buildMemuItem;
 		MenuItem* m_savePrjMemuItem;
 		SubMenu* m_recentPrjSubMenu;

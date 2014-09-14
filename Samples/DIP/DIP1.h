@@ -61,31 +61,31 @@ namespace dip
 		};
 		
 		void Work11(MenuItem* ctrl);
-		void Work11_Process(Control* ctrl);
+		void Work11_Process(Button* ctrl);
 		void Work11_HG1(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void Work11_HG2(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void Work11_HG3(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 
 		void Work12(MenuItem* ctrl);
-		void Work12_Process(Control* ctrl);
+		void Work12_Process(Button* ctrl);
 
 		void Work13(MenuItem* ctrl);
-		void Work13_Process(Control* ctrl);
+		void Work13_Process(Button* ctrl);
 
 
 		void Work21(MenuItem* ctrl);
 		void Work21_SubProcess(Texture* original, Texture* resultTex1, Texture* resultTex2, Texture* resultTex3,
 			int thres1, int thres2, int thres3);
-		void Work21_Process(Control* ctrl);
+		void Work21_Process(Button* ctrl);
 
 		void Work22(MenuItem* ctrl);
 		void Work22_Subprocess(const Complex* source, const FreqDomainFilter& filter, Texture* resultTex);
-		void Work22_Process(Control* ctrl);
-		void Work22_SelImage(Control* ctrl);
+		void Work22_Process(Button* ctrl);
+		void Work22_SelImage(ComboBox* ctrl);
 
 		void Work23(MenuItem* ctrl);
-		void Work23_Process(Control* ctrl);
-		void Work23_SelImage(Control* ctrl);
+		void Work23_Process(Button* ctrl);
+		void Work23_SelImage(ComboBox* ctrl);
 
 		void GenerateHistogramInformation(Texture* texture, HistogramData& result);
 		void DrawHistogramFor(Sprite* sprite, const Apoc3D::Math::Rectangle& rect, const HistogramData& data);
@@ -93,7 +93,7 @@ namespace dip
 		void ShowAbout(MenuItem* ctrl);
 
 		void WorkDM(MenuItem* ctrl);
-		void WorkDM_Process(Control* ctrl);
+		void WorkDM_Process(Button* ctrl);
 
 		Texture* m_colorPhoto;
 		Texture* m_original256;
@@ -169,7 +169,7 @@ namespace dip
 
 		Form* m_aboutDlg;
 
-		Menu* m_mainMenu;
+		MenuBar* m_mainMenu;
 
 		Sprite* m_sprite;
     };

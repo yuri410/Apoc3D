@@ -32,235 +32,105 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		class APAPI HScrollbar : public Control
+		struct ScrollBarVisualSettings
 		{
-			RTTI_DERIVED(HScrollbar, Control);
-		public:
-			HScrollbar(const Point& position, int width);
-			virtual ~HScrollbar();
+			bool HasBackgroundGraphic = false;
+			bool HasHandleGraphic = false;
+			bool HasDisabledBackgroundGraphic = false;
+			bool HasDisabledHandleGraphic = false;
+			bool HasBorderPadding = false;
+			bool HasHandlePadding = false;
 
-			virtual void Initialize(RenderDevice* device);
+			UIGraphic BackgroundGraphic;
+			UIGraphic HandleGraphic;
+			UIGraphic DisabledBackgroundGraphic;
+			UIGraphic DisabledHandleGraphic;
 
-			virtual void Update(const GameTime* time);
-			virtual void Draw(Sprite* sprite);
+			ButtonVisualSettings DecrButton;
+			ButtonVisualSettings IncrButton;
 
-			void setWidth(int w);
-			void setPosition(const Point& pos);
+			ControlBounds BorderPadding;
+			ControlBounds HandlePadding;
 
-			int getStep() const { return m_step; }
-			void setStep(int step) { m_step = step; }
-
-			bool getIsInverted() const { return m_inverted; }
-			void setIsInverted(bool val) { m_inverted = val; }
-
-			int getValue() const { return m_value; }
-			void setValue(int v) { m_value = v; if (m_value<0)m_value = 0; else if (m_value>m_max) m_value = m_max; }
-
-			int getMax() const { return m_max; }
-			void setMax(int v) { m_max = v; if (m_max<0)m_max =0; if (m_value>m_max) m_value = m_max; }
-
-			UIEventHandler eventValueChanged;
-
-		private:
-			void btLeft_OnPress(Control* ctrl);
-			void btRight_OnPress(Control* ctrl);
-
-			void DrawBackground(Sprite* sprite);
-			void DrawCursor(Sprite* sprite);
-
-			void UpdateScrolling();
-
-			Button* m_btLeft;
-			Button* m_btRight;
-
-			Apoc3D::Math::Rectangle m_backArea;
-			int m_value;
-			int m_max;
-			int m_step;
-			bool m_isScrolling;
-			bool m_inverted;
-
-			Apoc3D::Math::Rectangle m_cursorArea;
-
-			Point m_cursorPos;
-			Point m_cursorOffset;
-		};
-		class APAPI VScrollBar : public Control
-		{
-			RTTI_DERIVED(VScrollBar, Control);
-		public:
-			VScrollBar(const Point& position, int width);
-			~VScrollBar();
-
-			virtual void Initialize(RenderDevice* device);
-
-			virtual void Update(const GameTime* time);
-			virtual void Draw(Sprite* sprite);
-
-			void setHeight(int w);
-			void setPosition(const Point& pos);
-
-			int getStep() const { return m_step; }
-			void setStep(int step) { m_step = step; }
-
-			bool getIsInverted() const { return m_inverted; }
-			void setIsInverted(bool val) { m_inverted = val; }
-
-			int getValue() const { return m_value; }
-			void setValue(int v) { m_value = v; if (m_value<0)m_value = 0; else if (m_value>m_max) m_value = m_max; }
-
-			int getMax() const { return m_max; }
-			void setMax(int v) { m_max = v; if (m_max<0)m_max =0; if (m_value>m_max) m_value = m_max; }
-
-			UIEventHandler eventValueChanged;
-		private:
-
-			void btUp_OnPress(Control* ctrl);
-			void btDown_OnPress(Control* ctrl);
-
-			void DrawBackground(Sprite* sprite);
-			void DrawCursor(Sprite* sprite);
-
-			void UpdateScrolling();
-
-			Button* m_btUp;
-			Button* m_btDown;
-
-			Apoc3D::Math::Rectangle m_backArea;
-			int m_value;
-			int m_max;
-			int m_step;
-			bool m_isScrolling;
-			bool m_inverted;
-
-			Apoc3D::Math::Rectangle m_cursorArea;
-
-			Point m_cursorPos;
-			Point m_cursorOffset;
 		};
 
 		class APAPI ScrollBar : public Control
 		{
 			RTTI_DERIVED(ScrollBar, Control);
 		public:
+			typedef EventDelegate1<ScrollBar*> ScrollBarEvent;
+
 			enum ScrollBarType
 			{
 				SCRBAR_Horizontal,
 				SCRBAR_Vertical
 			};
-
-
-			ScrollBar(const Point& position, ScrollBarType type, int size);
+			ScrollBar(const ScrollBarVisualSettings& settings, const Point& position, ScrollBarType type, int32 length);
+			ScrollBar(const StyleSkin* skin, const Point& position, ScrollBarType type, int32 length);
 			~ScrollBar();
 
-			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* time);
-			virtual void Draw(Sprite* sprite);
+			void Draw(Sprite* sprite);
+			void Update(const GameTime* time);
 
-			void setPosition(const Point& pos);
-			const Point& getPosition() const;
+			void UpdateButtonPosition();
+			void Reset() { m_value = 0; }
 
-			int getValue() const
-			{
-				if (m_type == SCRBAR_Horizontal)
-					return m_hsbar->getValue();
-				return m_vsbar->getValue();
-			}
-			void setValue(int val)
-			{
-				if (m_type == SCRBAR_Horizontal)
-					m_hsbar->setValue(val);
-				else
-					m_vsbar->setValue(val);
-			}
+			void ForceScroll(int32 chg);
+			void SetValue(int32 val);
+			
+			void SetLength(int32 len);
+			int32 GetLength() const;
 
-			int getMax() const
-			{
-				if (m_type == SCRBAR_Horizontal)
-					return m_hsbar->getMax();
-				return m_vsbar->getMax();
-			}
-			void setMax(int v)
-			{
-				if (m_type == SCRBAR_Horizontal)
-					m_hsbar->setMax(v);
-				else
-					m_vsbar->setMax(v);
-			}
+			bool isMouseHover() const { return m_isMouseHovering; }
+			const Apoc3D::Math::Rectangle& getMouseHoverArea() const { assert(m_isMouseHovering); return m_mouseHoverArea; }
 
-			int getStep() const
-			{
-				if (m_type == SCRBAR_Horizontal)
-					return m_hsbar->getStep();
-				return m_vsbar->getStep();
-			}
-			void setStep(int s)
-			{
-				if (m_type == SCRBAR_Horizontal)
-					m_hsbar->setStep(s);
-				else
-					m_vsbar->setStep(s);
-			}
+			int32 getValue() const { return m_value; }
 
-			UIEventHandler& eventValueChanged()
-			{
-				if (m_type == SCRBAR_Horizontal)
-					return m_hsbar->eventValueChanged;
-				return m_vsbar->eventValueChanged;
-			}
+			Button* getDecrButton() const { return m_decrButton; }
+			Button* getIncrButton() const { return m_incrButton; }
 
-			bool getIsInverted() const
-			{
-				if (m_type == SCRBAR_Horizontal)
-					return m_hsbar->getIsInverted();
-				return m_vsbar->getIsInverted();
-			}
-			void setIsInverted(bool v)
-			{
-				if (m_type == SCRBAR_Horizontal)
-					m_hsbar->setIsInverted(v);
-				else
-					m_vsbar->setIsInverted(v);
-			}
+			int32 Maximum = 0;
+			int32 Step = 1;
 
-			void setWidth(int v)
-			{
-				if (m_hsbar)
-					m_hsbar->setWidth(v);
-			}
-			int getWidth() const
-			{
-				if (m_hsbar)
-					return m_hsbar->Size.X;
-				return 0;
-			}
-			void setHeight(int v)
-			{
-				if (m_vsbar)
-					m_vsbar->setHeight(v);
-			}
-			int getHeight() const 
-			{
-				if (m_vsbar)
-					return m_vsbar->Size.Y;
-				return 0;
-			}
+			UIGraphic BackgroundGraphic;
+			UIGraphic HandleGraphic;
+			UIGraphic DisabledBackgroundGraphic;
+			UIGraphic DisabledHandleGraphic;
 
-			int getBarWidth() const
-			{
-				if (m_hsbar)
-					return m_hsbar->Size.Y;
-				if (m_vsbar)
-					return m_vsbar->Size.X;
-				return 0;
-			}
+			ControlBounds BorderPadding;
+			ControlBounds HandlePadding;
 
+			bool IsInverted = false;
+
+			ScrollBarEvent eventValueChanged;
+			
 		private:
-			ScrollBarType m_type;
-			HScrollbar* m_hsbar;
-			VScrollBar* m_vsbar;
+			void PostInit(int32 length);
+			void DecrButton_Pressed(Button* btn);
+			void IncrButton_Pressed(Button* btn);
 
+			int32 CalculateBarLength() const;
+			int32 GetScrollableLength() const;
+			Apoc3D::Math::Rectangle CalculateHandleArea() const;
+
+			bool m_isMouseHovering = false;
+			bool m_isDragging = false;
+			ScrollBarType m_type;
+
+			int32 m_value = 0;
+			//int32 m_length;
+
+			Button* m_decrButton;
+			Button* m_incrButton;
+
+			
+			Apoc3D::Math::Rectangle m_mouseHoverArea;
+
+
+			//int32 m_disabledAlpha;
 		};
+
+	
 	}
 }
 

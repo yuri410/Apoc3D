@@ -42,129 +42,47 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		
-		ListBox::ListBox(const Point& position, int width, int height, const List<String>& items)
-			: Control(position), m_sorted(false), m_isSorted(false), m_visisbleItems(0), m_textOffset(0,0),
-			m_selectionRect(0,0,0,0), m_hoverIndex(-1), m_selectedIndex(-1), m_vscrollbar(0), m_hscrollbar(0), m_horizontalScrollbar(false), m_hScrollWidth(0),
-			m_mouseOver(false), m_items(items)
+		ListBox::ListBox(const StyleSkin* skin, const Point& position, int width, int height, const List<String>& items)
+			: ScrollableControl(skin, position, Point(width, height)),  m_items(items)
 		{
-			Size = Point(width, height);
+			Initialize(skin);
 		}
 
 		ListBox::~ListBox()
+		{ }
+
+		void ListBox::Initialize(const StyleSkin* skin)
 		{
-			if(m_hscrollbar)
-				delete m_hscrollbar;
-			if (m_vscrollbar)
-				delete m_vscrollbar;
+			BackgroundGraphic = UIGraphic(skin->SkinTexture, skin->ListBoxBackground);
+			Margin = skin->ListBoxMargin;
+
+			ItemSettings.HorizontalAlignment = TextHAlign::Left;
+			ItemSettings.TextColor = skin->TextColor;
+
+			m_visisbleItems = (int)ceilf((float)m_size.Y / getItemHeight());
+			m_size.Y = m_visisbleItems * getItemHeight();
+
+			InitScrollbars(skin, false);
 		}
 
-		void ListBox::Initialize(RenderDevice* device)
-		{
-			Control::Initialize(device);
-
-			m_textOffset = Point(m_skin->ListBoxPadding.Left, m_skin->ListBoxPadding.Top + 
-				m_skin->TextBox->Height-m_fontRef->getLineHeightInt()/2);
-
-			//m_destRect[0] = Apoc3D::Math::Rectangle(0,0, 
-			//	m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
-			//m_destRect[1] = Apoc3D::Math::Rectangle(0,0, 
-			//	Size.X - m_skin->TextBoxSrcRects[0].Width*2, m_skin->TextBoxSrcRects[0].Height);
-			//m_destRect[2] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
-
-			//m_destRect[3] = Apoc3D::Math::Rectangle(0,0, 
-			//	m_skin->TextBoxSrcRects[0].Width, Size.Y - m_skin->TextBoxSrcRects[0].Height*2);
-			//m_destRect[4] = Apoc3D::Math::Rectangle(0,0,
-			//	m_destRect[1].Width, m_destRect[3].Height);
-			//m_destRect[5] = Apoc3D::Math::Rectangle(0,0,
-			//	m_skin->TextBoxSrcRects[0].Width, m_destRect[3].Height);
-
-			//m_destRect[6] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
-			//m_destRect[7] = Apoc3D::Math::Rectangle(0,0, m_destRect[1].Width, m_skin->TextBoxSrcRects[0].Height);
-			//m_destRect[8] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
-
-			m_visisbleItems = (int)ceilf((float)Size.Y / m_fontRef->getLineHeightInt());
-			Size.Y = m_visisbleItems * m_fontRef->getLineHeightInt();
-
-			UpdateHScrollbar();
-			InitScrollbars(device);
-
-			if (m_sorted)
-			{
-				m_isSorted = true;
-			}
-		}
-
-		void ListBox::InitScrollbars(RenderDevice* device)
-		{
-			if (m_vscrollbar)
-			{
-				delete m_vscrollbar;
-				m_vscrollbar = 0;
-			}
-			if (m_hscrollbar)
-			{
-				delete m_hscrollbar;
-				m_hscrollbar = 0;
-			}
-
-			if (getUseHorizontalScrollbar())
-			{
-				if (m_items.getCount()>m_visisbleItems)
-				{
-					m_hscrollbar = new ScrollBar(Point(Position.X+1,Position.Y+Size.Y-13),ScrollBar::SCRBAR_Horizontal,Size.X -14);
-				}
-				else
-				{
-					m_hscrollbar = new ScrollBar(Point(Position.X+1,Position.Y+Size.Y-13),ScrollBar::SCRBAR_Horizontal,Size.X -2);
-				}
-
-				m_hscrollbar->setOwner(getOwner());
-				m_hscrollbar->SetSkin(m_skin);
-				m_hscrollbar->Initialize(device);
-			}
-
-			int vScrollbarHeight = 0;
-			if (getUseHorizontalScrollbar() && m_hscrollbar->Visible && m_hscrollbar->getMax()>0)
-			{
-				vScrollbarHeight = Size.Y - 14;
-			}
-			else
-			{
-				vScrollbarHeight = Size.Y - 2;
-			}
-
-			m_vscrollbar = new ScrollBar(Point(Position.X+Size.X - 13,Position.Y+1),ScrollBar::SCRBAR_Vertical,vScrollbarHeight);
-			m_vscrollbar->setOwner(getOwner());
-			m_vscrollbar->SetSkin(m_skin);
-			m_vscrollbar->Initialize(device);
-		}
 		void ListBox::Update(const GameTime* time)
 		{
-			if (m_selectedIndex>=m_items.getCount())
-				m_selectedIndex=-1;
+			if (m_selectedIndex >= m_items.getCount())
+				m_selectedIndex = -1;
 
-			if (m_hscrollbar)
-				m_hscrollbar->setOwner(getOwner());
-			if (m_vscrollbar)
-				m_vscrollbar->setOwner(getOwner());
+			UpdateScrollBarsGeneric(getArea(), time);
+			UpdateHScrollbar();
 
-			if (m_vscrollbar && m_vscrollbar->Visible)
-			{
-				m_vscrollbar->Update(time);
-			}
-			if (m_hscrollbar && m_hscrollbar->Visible)
-			{
-				m_hscrollbar->Update(time);
-			}
+			Apoc3D::Math::Rectangle cntArea = GetContentArea();
 
-			if (!m_isSorted && m_sorted)
-			{
+			m_visisbleItems = (int)ceilf((float)cntArea.Height / getItemHeight());
 
-			}
+			m_vscrollbar->Maximum = Math::Max(0, m_items.getCount() - m_visisbleItems);
+			m_vscrollbar->Step = Math::Max(1, m_vscrollbar->Maximum / 15);
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			if (UIRoot::getTopMostForm() == getOwner())
+
+			if (ParentFocused)
 			{
 				if (m_hoverIndex != -1 && mouse->IsLeftPressed())
 				{
@@ -179,15 +97,15 @@ namespace Apoc3D
 
 				if (getAbsoluteArea().Contains(mouse->GetPosition()))
 				{
-					if (!m_mouseOver)
+					if (!m_mouseHover)
 					{
-						m_mouseOver = true;
-						OnMouseOver();
+						m_mouseHover = true;
+						OnMouseHover();
 					}
 
 					if (mouse->getDZ())
 					{
-						m_vscrollbar->setValue(Math::Clamp(m_vscrollbar->getValue() - mouse->getDZ() / 60, 0, m_vscrollbar->getMax()));
+						m_vscrollbar->SetValue(m_vscrollbar->getValue() - mouse->getDZ() / 60);
 					}
 
 					if (mouse->IsLeftPressed())
@@ -195,9 +113,9 @@ namespace Apoc3D
 					else if (mouse->IsLeftUp())
 						OnRelease();
 				}
-				else if (m_mouseOver)
+				else if (m_mouseHover)
 				{
-					m_mouseOver = false;
+					m_mouseHover = false;
 					OnMouseOut();
 				}
 			}
@@ -207,13 +125,13 @@ namespace Apoc3D
 		{
 			// measure the max width among all the item
 			int ew = 0;
-			for (int i=0;i<m_items.getCount();i++)
+			for (const String& item : m_items)
 			{
 				int w;
-				if (!m_vscrollbar || m_vscrollbar->getMax()==0)
-					w = m_fontRef->MeasureString(m_items[i]).X - Size.X + 12;
+				if (!m_vscrollbar || m_vscrollbar->Maximum == 0)
+					w = m_fontRef->MeasureString(item).X - m_size.X + 12;
 				else
-					w = m_fontRef->MeasureString(m_items[i]).X - Size.X + 30;
+					w = m_fontRef->MeasureString(item).X - m_size.X + 30;
 
 				if (w > ew)
 					ew = w;
@@ -221,7 +139,7 @@ namespace Apoc3D
 
 			m_hScrollWidth = ew;
 			if (m_hscrollbar)
-				m_hscrollbar->setMax(m_hScrollWidth);
+				m_hscrollbar->Maximum = m_hScrollWidth;
 		}
 
 		void ListBox::Draw(Sprite* sprite)
@@ -229,9 +147,6 @@ namespace Apoc3D
 			DrawBackground(sprite);
 
 			sprite->Flush();
-			Matrix trans;
-			Matrix::CreateTranslation(trans, (float)Position.X, (float)Position.Y ,0);
-			sprite->MultiplyTransform(trans);
 
 			bool shouldRestoreScissorTest = false;
 			Apoc3D::Math::Rectangle oldScissorRect;
@@ -244,327 +159,126 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle scissorRect = getAbsoluteArea();
 			dev->getRenderState()->setScissorTest(true, &scissorRect);
 
+			Apoc3D::Math::Rectangle cntArea = GetContentArea();
+
 			m_hoverIndex = -1;
-			for (int i=m_vscrollbar->getValue();
-				i<Math::Min(m_items.getCount(), m_vscrollbar->getValue()+m_visisbleItems);i++)
+			for (int i = m_vscrollbar->getValue();
+				i < Math::Min(m_items.getCount(), m_vscrollbar->getValue() + m_visisbleItems); i++)
 			{
+				Point textOffset;
+
 				if (m_hscrollbar)
-					m_textOffset.X = -m_hscrollbar->getValue() + 2;
+					textOffset.X = -m_hscrollbar->getValue() + 2;
 				else
-					m_textOffset.X = 2;
+					textOffset.X = 2;
 
-				m_textOffset.Y = (i - m_vscrollbar->getValue()) * m_fontRef->getLineHeightInt();
-				if (UIRoot::getTopMostForm() == getOwner())
-					RenderSelectionBox(sprite,i);
+				textOffset.Y = (i - m_vscrollbar->getValue()) * getItemHeight();
 
-				m_fontRef->DrawString(sprite, m_items[i], m_textOffset, m_skin->TextColor);
+				textOffset += cntArea.getPosition();
+
+				if (ParentFocused)
+					RenderSelectionBox(sprite, i, textOffset);
+
+				ItemSettings.Draw(sprite, m_fontRef, m_items[i], textOffset, Point(m_size.X, getItemHeight()), 0xff);
 			}
 			sprite->Flush();
 			if (shouldRestoreScissorTest)
 			{
-				dev->getRenderState()->setScissorTest(true,&oldScissorRect);
+				dev->getRenderState()->setScissorTest(true, &oldScissorRect);
 			}
 			else
 			{
-				dev->getRenderState()->setScissorTest(false,0);
+				dev->getRenderState()->setScissorTest(false, 0);
 			}
-			if (sprite->isUsingStack())
-				sprite->PopTransform();
-			else
-				sprite->SetTransform(Matrix::Identity);
-			
-			UpdateHScrollbar();
-			DrawScrollbar(sprite);
+
+			DrawScrollBars(sprite);
 		}
 
-		
-		void ListBox::RenderSelectionBox(Sprite* sprite, int index)
+		void ListBox::RenderSelectionBox(Sprite* sprite, int index, const Point& txtPos)
 		{
+			Texture* whitePix = SystemUI::GetWhitePixel();
+
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
-			m_selectionRect.X = 0;
-			m_selectionRect.Y = m_textOffset.Y;
-			m_selectionRect.Height = m_fontRef->getLineHeightInt();
+			Apoc3D::Math::Rectangle cntArea = GetContentArea();
 
-			if (m_vscrollbar->getMax()>0)
-				m_selectionRect.Width = Size.X - 13;
-			else
-				m_selectionRect.Width = Size.X - 1;
+			Apoc3D::Math::Rectangle selectionRect;
+			selectionRect.X = txtPos.X;
+			selectionRect.Y = txtPos.Y;
+			selectionRect.Height = getItemHeight();
+			selectionRect.Width = cntArea.Width;
 
 			if (index == m_selectedIndex)
-				sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_LightGray);
-			else if (//getOwner()->getArea().Contains(mouse->GetCurrentPosition()) &&
-				m_selectionRect.Contains(Point(mouse->GetPosition().X-getOwner()->Position.X-Position.X, 
-				mouse->GetPosition().Y-getOwner()->Position.Y-Position.Y)))
+				sprite->Draw(whitePix, selectionRect, CV_LightGray);
+			else if (selectionRect.Contains(mouse->GetPosition()))
 			{
 				m_hoverIndex = index;
-				sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_Silver);
+				sprite->Draw(whitePix, selectionRect, CV_Silver);
 			}
-				
 		}
+
 		void ListBox::DrawBackground(Sprite* sprite)
 		{
-			const Apoc3D::Math::Rectangle* srcRects = m_skin->ListBoxBackground;
+			Apoc3D::Math::Rectangle graphicalArea = getAbsoluteArea();
+			graphicalArea = Margin.InflateRect(graphicalArea);
 
-			Apoc3D::Math::Rectangle graphicalArea = getArea();
-			graphicalArea = m_skin->ListBoxMargin.InflateRect(graphicalArea);
-
-			const int GraphicalPaddingWidth = srcRects[0].Width + srcRects[2].Width;
-			const int GraphicalPaddingHeight = srcRects[0].Height + srcRects[6].Height;
-
-			
-			Apoc3D::Math::Rectangle destRect[9];
-			for (int i=0;i<9;i++)
-			{
-				destRect[i] = srcRects[i];
-
-				destRect[i].X += graphicalArea.X - srcRects[0].X;
-				destRect[i].Y += graphicalArea.Y - srcRects[0].Y;
-			}
-
-			int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
-			int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
-
-			destRect[1].Width = eWidth; // top
-			destRect[4].Width = eWidth; // mid
-			destRect[7].Width = eWidth; // bottom
-
-			destRect[3].Height = eHeight; // left
-			destRect[4].Height = eHeight; // mid
-			destRect[5].Height = eHeight; // right
-
-			destRect[2].X = destRect[5].X = destRect[8].X = destRect[1].getRight();
-			destRect[6].Y = destRect[7].Y = destRect[8].Y = destRect[3].getBottom();
-
-			for (int i=0;i<9;i++)
-			{
-				if (destRect[i].Width > 0 && destRect[i].Height)
-					sprite->Draw(m_skin->SkinTexture, destRect[i], &srcRects[i], CV_White);
-			}
-
+			BackgroundGraphic.Draw(sprite, graphicalArea);
 		}
-		void ListBox::DrawScrollbar(Sprite* sprite)
-		{
-			m_vscrollbar->setMax(Math::Max(0, m_items.getCount()-m_visisbleItems));
-			if (m_vscrollbar->getValue()>m_vscrollbar->getMax())
-				m_vscrollbar->setValue(m_vscrollbar->getMax());
+		
+		int32 ListBox::FindEntry(const String& v) { return m_items.IndexOf(v); }
+		int32 ListBox::getItemHeight() const { return m_fontRef->getLineHeightInt(); }
 
-			if (m_vscrollbar->getMax()>0)
-			{
-				m_vscrollbar->Draw(sprite);
-				if (m_hscrollbar)
-				{
-					m_hscrollbar->setWidth( Size.X - 14);
-					UpdateHScrollbar();
-				}
-				m_vscrollbar->setStep(Math::Max(1, m_vscrollbar->getMax() / 15));
-			}
-			else if (m_hscrollbar)
-			{
-				m_hscrollbar->setWidth(Size.X-2);
-				UpdateHScrollbar();
-			}
-
-			if (getUseHorizontalScrollbar() && m_hscrollbar && m_hscrollbar->getMax()>0)
-			{
-				m_vscrollbar->setHeight(Size.Y - 12);
-				m_hscrollbar->setMax(m_hScrollWidth);
-				m_hscrollbar->Draw(sprite);
-				m_visisbleItems = (int)ceilf((float)Size.Y / m_fontRef->getLineHeight())-1;
-			}
-			else if ((!m_hscrollbar || !m_hscrollbar->getMax()) && m_vscrollbar->getHeight() != Size.Y-2)
-			{
-				m_vscrollbar->setHeight(Size.Y - 2);
-				m_visisbleItems++;
-			}
-		}
+		void ListBox::OnMouseHover() { }
+		void ListBox::OnMouseOut() { }
+		void ListBox::OnPress() { eventPress.Invoke(this); } 
+		void ListBox::OnRelease() { eventRelease.Invoke(this); }
 
 		/************************************************************************/
 		/* Tree view                                                            */
 		/************************************************************************/
 
-		int TreeViewIntent = 25;
+		const int TreeViewIntent = 20;
 
-		TreeView::TreeView(const Point& position, int width, int height)
-			: Control(position), m_visisbleItems(0), m_textOffset(0,0),
-			m_selectionRect(0,0,0,0), m_selectedNode(0), m_vscrollbar(0), m_hscrollbar(0), m_horizontalScrollbar(false), m_hScrollWidth(0),
-			m_mouseOver(false)
+		TreeView::TreeView(const StyleSkin* skin, const Point& position, int width, int height)
+			: ScrollableControl(skin, position, Point(width, height))
 		{
-			Size = Point(width, height);
+			Initialize(skin);
 		}
 
 		TreeView::~TreeView()
 		{
 			NukeTreeViewNodes();
-
-			if(m_hscrollbar)
-				delete m_hscrollbar;
-			if (m_vscrollbar)
-				delete m_vscrollbar;
 		}
 
-		int TreeView::GetAllVisibleNodeCount(const List<TreeViewNode*>& node) const
+		void TreeView::Initialize(const StyleSkin* skin)
 		{
-			int result = node.getCount();
+			BackgroundGraphic = UIGraphic(skin->SkinTexture, skin->ListBoxBackground);
+			Margin = skin->ListBoxMargin;
 
-			for (int i=0;i<node.getCount();i++)
-			{
-				if (node[i]->isExpanded())
-					result += GetAllVisibleNodeCount( node[i]->getNodes());
-			}
-			
-			return result;
-		}
-		int TreeView::GetAllVisibleNodeCount() const
-		{
-			return GetAllVisibleNodeCount(m_nodes);
-		}
-		int TreeView::GetExpandedNodeMaxRight(const List<TreeViewNode*>& node) const
-		{
-			int r = 0;
-			for (int i=0;i<node.getCount();i++)
-			{
-				if (node[i]->isExpanded())
-				{
-					if (node[i]->getNodes().getCount())
-					{
-						int res = GetExpandedNodeMaxRight(node[i]->getNodes()) + TreeViewIntent;
-						if (res>r)
-							r = res;
-					}
-				}
-				int w;
-				if (!m_vscrollbar || m_vscrollbar->getMax()==0)
-					w = m_fontRef->MeasureString(node[i]->getText()).X - Size.X + 12;
-				else
-					w = m_fontRef->MeasureString(node[i]->getText()).X - Size.X + 30;
-				if (w>r)
-					r= w;
-			}
-			return r;
-		}
-		int TreeView::GetExpandedNodeCount(const List<TreeViewNode*>& node) const
-		{
-			int r = 0;
-			for (int i=0;i<node.getCount();i++)
-			{
-				r++;
-				if (node[i]->isExpanded())
-				{
-					if (node[i]->getNodes().getCount())
-					{
-						r+=GetExpandedNodeCount(node[i]->getNodes());
-					}
-				}
-			}
-			return r;
-		}
-		int TreeView::GetItemHeight() const
-		{
-			return (int)(1.2f * m_fontRef->getLineHeight());
-		}
-		int TreeView::MeasureExpandedModeHeight() const
-		{
-			return GetExpandedNodeCount() * GetItemHeight();
-		}
-		int TreeView::MeasureExpandedNodeWidth() const
-		{
-			// measure the width of space taken by all the expanded nodes
-			return GetExpandedNodeMaxRight(m_nodes);
-		}
-		void TreeView::Initialize(RenderDevice* device)
-		{
-			Control::Initialize(device);
-			//m_textOffset = Point(5, m_skin->TextBox->getHeight()-GetItemHeight()/2);
-			m_textOffset = Point(m_skin->ListBoxPadding.Left, m_skin->ListBoxPadding.Top + 
-				m_skin->TextBox->Height-m_fontRef->getLineHeightInt()/2);
+			ItemSettings.TextColor = skin->TextColor;
+			ItemSettings.HorizontalAlignment = TextHAlign::Left;
 
-			/*m_destRect[0] = Apoc3D::Math::Rectangle(0,0, 
-				m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
-			m_destRect[1] = Apoc3D::Math::Rectangle(0,0, 
-				Size.X - m_skin->TextBoxSrcRects[0].Width*2, m_skin->TextBoxSrcRects[0].Height);
-			m_destRect[2] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
-
-			m_destRect[3] = Apoc3D::Math::Rectangle(0,0, 
-				m_skin->TextBoxSrcRects[0].Width, Size.Y - m_skin->TextBoxSrcRects[0].Height*2);
-			m_destRect[4] = Apoc3D::Math::Rectangle(0,0,
-				m_destRect[1].Width, m_destRect[3].Height);
-			m_destRect[5] = Apoc3D::Math::Rectangle(0,0,
-				m_skin->TextBoxSrcRects[0].Width, m_destRect[3].Height);
-
-			m_destRect[6] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
-			m_destRect[7] = Apoc3D::Math::Rectangle(0,0, m_destRect[1].Width, m_skin->TextBoxSrcRects[0].Height);
-			m_destRect[8] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
-			*/
-			m_visisbleItems = (int)ceilf((float)Size.Y / GetItemHeight());
-			Size.Y = m_visisbleItems * GetItemHeight();
+			m_visisbleItems = (int)ceilf((float)m_size.Y / GetItemHeight());
+			m_size.Y = m_visisbleItems * GetItemHeight();
 
 			UpdateHScrollbar();
-			InitScrollbars(device);
-
+			InitScrollbars(skin, false);
 		}
 
-		void TreeView::InitScrollbars(RenderDevice* device)
-		{
-			if (m_vscrollbar)
-			{
-				delete m_vscrollbar;
-				m_vscrollbar = 0;
-			}
-			if (m_hscrollbar)
-			{
-				delete m_hscrollbar;
-				m_hscrollbar = 0;
-			}
 
-			if (getUseHorizontalScrollbar())
-			{
-				if (GetAllVisibleNodeCount()>m_visisbleItems)
-				{
-					m_hscrollbar = new ScrollBar(Point(Position.X+1,Position.Y+Size.Y-13-12),ScrollBar::SCRBAR_Horizontal,Size.X -14);
-				}
-				else
-				{
-					m_hscrollbar = new ScrollBar(Point(Position.X+1,Position.Y+Size.Y-13-12),ScrollBar::SCRBAR_Horizontal,Size.X -2);
-				}
-
-				m_hscrollbar->setOwner(getOwner());
-				m_hscrollbar->SetSkin(m_skin);
-				m_hscrollbar->Initialize(device);
-			}
-
-			int vScrollbarHeight = 0;
-			if (getUseHorizontalScrollbar() && m_hscrollbar->Visible && m_hscrollbar->getMax()>0)
-			{
-				vScrollbarHeight = Size.Y - 14;
-			}
-			else
-			{
-				vScrollbarHeight = Size.Y - 2;
-			}
-			vScrollbarHeight-=12;
-
-			m_vscrollbar = new ScrollBar(Point(Position.X+Size.X - 13,Position.Y+1),ScrollBar::SCRBAR_Vertical,vScrollbarHeight);
-			m_vscrollbar->setOwner(getOwner());
-			m_vscrollbar->SetSkin(m_skin);
-			m_vscrollbar->Initialize(device);
-		}
 		void TreeView::Update(const GameTime* time)
 		{
-			m_visisbleItems = (int)ceilf((float)Size.Y / GetItemHeight());
+			UpdateScrollBarsGeneric(getArea(), time);
+			UpdateHScrollbar();
 
-			if (m_vscrollbar && m_vscrollbar->Visible)
-			{
-				m_vscrollbar->Update(time);
-			}
-			if (m_hscrollbar && m_hscrollbar->Visible)
-			{
-				m_hscrollbar->Update(time);
-			}
+			Apoc3D::Math::Rectangle cntArea = GetContentArea();
+			m_visisbleItems = (int)ceilf((float)cntArea.Height / GetItemHeight());
 
+			m_vscrollbar->Maximum = Math::Max(0, GetAllVisibleNodeCount() - m_visisbleItems);
+			m_vscrollbar->Step = Math::Max(1, m_vscrollbar->Maximum / 15);
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			if (UIRoot::getTopMostForm() == getOwner())
+			if (ParentFocused)
 			{
 				if (m_hoverNode && mouse->IsLeftPressed())
 				{
@@ -575,21 +289,24 @@ namespace Apoc3D
 					if (m_selectedNode != previousNode)
 						eventSelectionChanged.Invoke(this);
 				}
+
 				if (getAbsoluteArea().Contains(mouse->GetPosition()))
 				{
 					if (!m_mouseOver)
 					{
 						m_mouseOver = true;
-						OnMouseOver();
+						OnMouseHover();
 					}
 					
 					if (mouse->getDZ())
 					{
-						m_vscrollbar->setValue(Math::Clamp(m_vscrollbar->getValue() - mouse->getDZ() / 60, 0, m_vscrollbar->getMax()));
+						m_vscrollbar->SetValue(m_vscrollbar->getValue() - mouse->getDZ() / 60);
 					}
 
 					if (mouse->IsLeftPressed())
+					{
 						OnPress();
+					}
 					else if (mouse->IsLeftUp())
 					{
 						OnRelease();
@@ -614,62 +331,62 @@ namespace Apoc3D
 		void TreeView::UpdateHScrollbar()
 		{
 			m_hScrollWidth = MeasureExpandedNodeWidth();
-			int barmax = m_hScrollWidth - Size.X;
+			int barmax = m_hScrollWidth - m_size.X;
 			if (barmax<0) barmax = 0;
 			if (m_hscrollbar)
-				m_hscrollbar->setMax(barmax);
+				m_hscrollbar->Maximum = barmax;
 		}
 
 		void TreeView::DrawNodes(Sprite* sprite, const List<TreeViewNode*>& nodes, int depth, int& counter, int maxCount)
 		{
-			Apoc3D::Math::Rectangle absArea = getAbsoluteArea();
+			
+			//Apoc3D::Math::Rectangle absArea = getAbsoluteArea();
+			Apoc3D::Math::Rectangle cntArea = GetContentArea();
 
-			for (int i=0;i<nodes.getCount();i++)
+			for (TreeViewNode* nde : nodes)
 			{
 				counter++;
-				if (counter>maxCount)
+				if (counter > maxCount)
 					return;
 
+				Point itemOffset;
+
 				if (m_hscrollbar)
-					m_textOffset.X = -m_hscrollbar->getValue() + 2;
+					itemOffset.X = -m_hscrollbar->getValue() + 2;
 				else
-					m_textOffset.X = 2;
-				m_textOffset.X += depth * TreeViewIntent;
+					itemOffset.X = 2;
+				itemOffset.X += depth * TreeViewIntent;
 
-				m_textOffset.Y = (counter-1 - m_vscrollbar->getValue()) * GetItemHeight();
+				itemOffset.Y = (counter - 1 - m_vscrollbar->getValue()) * GetItemHeight();
 
-				if (UIRoot::getTopMostForm() == getOwner())
-					RenderSelectionBox(sprite,nodes[i], absArea);
+				itemOffset += cntArea.getTopLeft();
 
-				if (nodes[i]->getIcon())
+				if (ParentFocused)
+					RenderSelectionBox(sprite, nde, cntArea, itemOffset);
+
+				if (nde->getIcon())
 				{
 					//Apoc3D::Math::Rectangle iconRect(m_textOffset.X, m_textOffset.Y, m_nodes[i]->getIcon()->getWidth(), m_nodes[i]->getIcon()->getHeight());
-					sprite->Draw(nodes[i]->getIcon(),m_textOffset.X,m_textOffset.Y,CV_White);
+					sprite->Draw(nde->getIcon(), itemOffset.X, itemOffset.Y, CV_White);
 
-					Point to(m_textOffset);
-					to.X+=nodes[i]->getIcon()->getWidth();
-					m_fontRef->DrawString(sprite, nodes[i]->getText(), to, m_skin->TextColor);
+					itemOffset.X += nde->getIcon()->getWidth();
 				}
-				else
-				{
-					m_fontRef->DrawString(sprite, nodes[i]->getText(), m_textOffset, m_skin->TextColor);
-				}
-				
 
-				if (nodes[i]->isExpanded() && nodes[i]->getNodes().getCount())
+				ItemSettings.Draw(sprite, m_fontRef, nde->getText(), itemOffset, Point(0, GetItemHeight()), 0xff);
+				//m_fontRef->DrawString(sprite, nodes[i]->getText(), to, m_skin->TextColor);
+
+				if (nde->isExpanded() && nde->getNodes().getCount())
 				{
-					DrawNodes(sprite, nodes[i]->getNodes(), depth+1, counter, maxCount);
+					DrawNodes(sprite, nde->getNodes(), depth + 1, counter, maxCount);
 				}
 			}
 		}
+
 		void TreeView::Draw(Sprite* sprite)
 		{
 			DrawBackground(sprite);
 
 			sprite->Flush();
-			Matrix trans;
-			Matrix::CreateTranslation(trans, (float)Position.X, (float)Position.Y ,0);
-			sprite->MultiplyTransform(trans);
 
 			bool shouldRestoreScissorTest = false;
 			Apoc3D::Math::Rectangle oldScissorRect;
@@ -687,207 +404,78 @@ namespace Apoc3D
 			int counter = 0;
 			DrawNodes(sprite, m_nodes, 0, counter, m_visisbleItems + m_vscrollbar->getValue());
 
-			//for (int i=m_vscrollbar->getValue();
-			//	i<min(m_nodes.getCount(), m_vscrollbar->getValue()+m_visisbleItems);i++)
-			//{
-			//	if (m_hscrollbar)
-			//		m_textOffset.X = -m_hscrollbar->getValue() + 2;
-			//	else
-			//		m_textOffset.X = 2;
-
-			//	m_textOffset.Y = (i - m_vscrollbar->getValue()) * m_fontRef->getLineHeight();
-			//	if (UIRoot::getTopMostForm() == getOwner())
-			//		RenderSelectionBox(sprite,i);
-
-			//	m_fontRef->DrawString(sprite, m_items[i], m_textOffset, m_skin->ForeColor);
-			//}
 			sprite->Flush();
 			if (shouldRestoreScissorTest)
 			{
-				dev->getRenderState()->setScissorTest(true,&oldScissorRect);
+				dev->getRenderState()->setScissorTest(true, &oldScissorRect);
 			}
 			else
 			{
-				dev->getRenderState()->setScissorTest(false,0);
+				dev->getRenderState()->setScissorTest(false, 0);
 			}
-			if (sprite->isUsingStack())
-				sprite->PopTransform();
-			else
-				sprite->SetTransform(Matrix::Identity);
 
-			UpdateHScrollbar();
-			DrawScrollbar(sprite);
+			DrawScrollBars(sprite);
 		}
 
-
-
-		void TreeView::RenderSelectionBox(Sprite* sprite, TreeViewNode* node, const Apoc3D::Math::Rectangle& absoluteArea)
+		void TreeView::RenderSelectionBox(Sprite* sprite, TreeViewNode* node, const Apoc3D::Math::Rectangle& contentArea, const Point& txtPos)
 		{
+			Texture* whitePix = SystemUI::GetWhitePixel();
+
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
-			m_selectionRect.X = 0;
-			m_selectionRect.Y = m_textOffset.Y;
-			m_selectionRect.Height = GetItemHeight();
+			Apoc3D::Math::Rectangle selectionRect;
 
-			if (m_vscrollbar->getMax()>0)
-				m_selectionRect.Width = Size.X - 13;
+			selectionRect.X = txtPos.X;
+			selectionRect.Y = txtPos.Y;
+			selectionRect.Height = GetItemHeight();
+
+			if (m_vscrollbar->Maximum>0)
+				selectionRect.Width = m_size.X - 13;
 			else
-				m_selectionRect.Width = Size.X - 1;
+				selectionRect.Width = m_size.X - 1;
 
 			
 			if (node == m_selectedNode)
-				sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_LightGray);
-			if (absoluteArea.Contains(mouse->GetPosition()) &&
-				m_selectionRect.Contains(Point(mouse->GetPosition().X-absoluteArea.X, mouse->GetPosition().Y-absoluteArea.Y)))
+				sprite->Draw(whitePix, selectionRect, CV_LightGray);
+			if (contentArea.Contains(mouse->GetPosition()) &&
+				selectionRect.Contains(mouse->GetPosition()))
 			{
 				m_anyHoverNode = node;
 				if (node != m_selectedNode)
 				{
 					m_hoverNode = node;
-					sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_Silver);
+					sprite->Draw(whitePix, selectionRect, CV_Silver);
 				}
 			}
 
 		}
+
 		void TreeView::DrawBackground(Sprite* sprite)
 		{
-			const Apoc3D::Math::Rectangle* srcRects = m_skin->ListBoxBackground;
+			Apoc3D::Math::Rectangle graphicalArea = getAbsoluteArea();
+			graphicalArea = Margin.InflateRect(graphicalArea);
 
-			Apoc3D::Math::Rectangle graphicalArea = getArea();
-			graphicalArea = m_skin->ListBoxMargin.InflateRect(graphicalArea);
-
-			const int GraphicalPaddingWidth = srcRects[0].Width + srcRects[2].Width;
-			const int GraphicalPaddingHeight = srcRects[0].Height + srcRects[6].Height;
-
-
-			Apoc3D::Math::Rectangle destRect[9];
-			for (int i=0;i<9;i++)
-			{
-				destRect[i] = srcRects[i];
-
-				destRect[i].X += graphicalArea.X - srcRects[0].X;
-				destRect[i].Y += graphicalArea.Y - srcRects[0].Y;
-			}
-
-			int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
-			int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
-
-			destRect[1].Width = eWidth; // top
-			destRect[4].Width = eWidth; // mid
-			destRect[7].Width = eWidth; // bottom
-
-			destRect[3].Height = eHeight; // left
-			destRect[4].Height = eHeight; // mid
-			destRect[5].Height = eHeight; // right
-
-			destRect[2].X = destRect[5].X = destRect[8].X = destRect[1].getRight();
-			destRect[6].Y = destRect[7].Y = destRect[8].Y = destRect[3].getBottom();
-
-			for (int i=0;i<9;i++)
-			{
-				if (destRect[i].Width > 0 && destRect[i].Height)
-					sprite->Draw(m_skin->SkinTexture, destRect[i], &srcRects[i], CV_White);
-			}
+			BackgroundGraphic.Draw(sprite, graphicalArea);
 		}
-		void TreeView::DrawScrollbar(Sprite* sprite)
-		{
-			if (m_hscrollbar && m_vscrollbar->getMax()>0)
-			{
-				m_vscrollbar->setMax(Math::Max(0, GetAllVisibleNodeCount() - m_visisbleItems + 1));
-			}
-			else
-			{
-				m_vscrollbar->setMax(Math::Max(0, GetAllVisibleNodeCount() - m_visisbleItems));
-			}
-
-			if (m_vscrollbar->getValue()>m_vscrollbar->getMax())
-				m_vscrollbar->setValue(m_vscrollbar->getMax());
-
-			if (m_vscrollbar->getMax()>0)
-			{
-				m_vscrollbar->Draw(sprite);
-				if (m_hscrollbar)
-				{
-					m_hscrollbar->setWidth( Size.X - 14);
-					UpdateHScrollbar();
-				}
-				m_vscrollbar->setStep(Math::Max(1, m_vscrollbar->getMax() / 15));
-			}
-			else if (m_hscrollbar)
-			{
-				m_hscrollbar->setWidth(Size.X-2);
-				UpdateHScrollbar();
-			}
-
-			if (getUseHorizontalScrollbar() && m_hscrollbar && m_hscrollbar->getMax()>0)
-			{
-				m_vscrollbar->setHeight(Size.Y - 12-12);
-				m_hscrollbar->setMax(m_hScrollWidth);
-				m_hscrollbar->Draw(sprite);
-				//m_visisbleItems = (int)ceilf((float)Size.Y / GetItemHeight())-1;
-			}
-			else if ((!m_hscrollbar || !m_hscrollbar->getMax()) && m_vscrollbar->getHeight() != Size.Y-2)
-			{
-				m_vscrollbar->setHeight(Size.Y - 2-12);
-				//m_visisbleItems++;
-			}
-		}
-
+		
 		void TreeView::SetSize(const Point& newSize)
 		{
-			if (newSize==Size)
+			if (newSize == m_size)
 				return;
 
-			Size = newSize;
-			/*m_destRect[0] = Apoc3D::Math::Rectangle(0,0, 
-				m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
-			m_destRect[1] = Apoc3D::Math::Rectangle(0,0, 
-				Size.X - m_skin->TextBoxSrcRects[0].Width*2, m_skin->TextBoxSrcRects[0].Height);
-			m_destRect[2] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
+			m_size = newSize;
 
-			m_destRect[3] = Apoc3D::Math::Rectangle(0,0, 
-				m_skin->TextBoxSrcRects[0].Width, Size.Y - m_skin->TextBoxSrcRects[0].Height*2);
-			m_destRect[4] = Apoc3D::Math::Rectangle(0,0,
-				m_destRect[1].Width, m_destRect[3].Height);
-			m_destRect[5] = Apoc3D::Math::Rectangle(0,0,
-				m_skin->TextBoxSrcRects[0].Width, m_destRect[3].Height);
-
-			m_destRect[6] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
-			m_destRect[7] = Apoc3D::Math::Rectangle(0,0, m_destRect[1].Width, m_skin->TextBoxSrcRects[0].Height);
-			m_destRect[8] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
-			*/
-
-			if (getUseHorizontalScrollbar())
-			{
-				if (GetAllVisibleNodeCount()>m_visisbleItems)
-				{
-					m_hscrollbar->setPosition( Point(Position.X+1,Position.Y+Size.Y-13));
-				}
-				else
-				{
-					m_hscrollbar->setPosition( Point(Position.X+1,Position.Y+Size.Y-13));
-				}
-			}
-
-			int vScrollbarHeight = 0;
-			if (getUseHorizontalScrollbar() && m_hscrollbar->Visible && m_hscrollbar->getMax()>0)
-			{
-				vScrollbarHeight = Size.Y - 14;
-			}
-			else
-			{
-				vScrollbarHeight = Size.Y - 2;
-			}
-			vScrollbarHeight-=12;
-
-			m_vscrollbar->setPosition( Point(Position.X+Size.X - 13,Position.Y+1));
-
-			if (m_hscrollbar)
-				m_hscrollbar->setWidth(newSize.X);
-			if (m_vscrollbar)
-				m_vscrollbar->setHeight(newSize.Y);
+			UpdateScrollBarsLength(getArea());
 		}
 
+		void TreeView::NukeTreeViewNodes()
+		{
+			NukeTreeViewNodes(m_nodes);
+			
+			m_selectedNode = nullptr;
+			m_hoverNode = nullptr;
+			m_anyHoverNode = nullptr;
+		}
 
 		void TreeView::NukeTreeViewNodes(List<TreeViewNode*>& nodes)
 		{
@@ -902,93 +490,127 @@ namespace Apoc3D
 			nodes.Clear();
 		}
 
+		int TreeView::GetAllVisibleNodeCount(const List<TreeViewNode*>& nodes) const
+		{
+			int result = nodes.getCount();
+
+			for (TreeViewNode* n : nodes)
+			{
+				if (n->isExpanded())
+					result += GetAllVisibleNodeCount(n->getNodes());
+			}
+
+			return result;
+		}
+		int TreeView::GetAllVisibleNodeCount() const { return GetAllVisibleNodeCount(m_nodes); }
+		int TreeView::GetExpandedNodeMaxRight(const List<TreeViewNode*>& nodes) const
+		{
+			int r = 0;
+			for (TreeViewNode* n : nodes)
+			{
+				if (n->isExpanded())
+				{
+					if (n->getNodes().getCount())
+					{
+						int res = GetExpandedNodeMaxRight(n->getNodes()) + TreeViewIntent;
+						if (res > r)
+							r = res;
+					}
+				}
+				int w;
+				if (!m_vscrollbar || m_vscrollbar->Maximum == 0)
+					w = m_fontRef->MeasureString(n->getText()).X - m_size.X + 12;
+				else
+					w = m_fontRef->MeasureString(n->getText()).X - m_size.X + 30;
+				if (w > r)
+					r = w;
+			}
+			return r;
+		}
+		int TreeView::GetExpandedNodeCount(const List<TreeViewNode*>& nodes) const
+		{
+			int r = 0;
+			for (TreeViewNode* n : nodes)
+			{
+				r++;
+				if (n->isExpanded())
+				{
+					if (n->getNodes().getCount())
+					{
+						r += GetExpandedNodeCount(n->getNodes());
+					}
+				}
+			}
+			return r;
+		}
+
+		int TreeView::GetItemHeight() const { return (int)(1.05f * m_fontRef->getLineHeight()); }
+		int TreeView::MeasureExpandedModeHeight() const { return GetExpandedNodeCount() * GetItemHeight(); }
+
+		// measure the width of space taken by all the expanded nodes
+		int TreeView::MeasureExpandedNodeWidth() const { return GetExpandedNodeMaxRight(m_nodes); }
+
+		void TreeView::OnMouseHover() { }
+		void TreeView::OnMouseOut() { }
+		void TreeView::OnPress() { }
+		void TreeView::OnRelease() { }
+
 		/************************************************************************/
 		/*  ListView                                                            */
 		/************************************************************************/
 
-		ListView::ListView(const Point& position, const Point& size, const List2D<String>& items)
-			: Control(position, L"", size), m_headerArea(0,0,0,0), m_isResizing(false),
-			m_headerStyle(LHSTYLE_Clickable), m_headerHoverIndex(-1), m_gridLines(false),
-			m_lineRect(0,0,0,0), m_gridSize(0,0), m_selectedRow(-1), m_selectedColumn(-1),
-			m_hoverRowIndex(-1), m_hoverColumnIndex(-1), m_selectionArea(0,0,0,0),
-			m_selectionRect(0,0,0,0), m_fullRowSelect(false), m_hoverSelection(false),
-			m_resizeIndex(-1), m_sizeArea(0,0,0,0),
-			m_items(items),
-			m_hScrollBar(0), m_vScrollBar(0),
-			m_srcRect(0,0,0,0)
+		ListView::ListView(const StyleSkin* skin, const Point& position, const Point& size, const List2D<String>& items)
+			: ScrollableControl(skin, position, size), m_items(items)
 		{
-
+			Initialize(skin);
 		}
+
 		ListView::~ListView()
 		{
-			if (m_hScrollBar)
-				delete m_hScrollBar;
-			if (m_vScrollBar)
-				delete m_vScrollBar;
 		}
 
-		void ListView::Initialize(RenderDevice* device)
+		void ListView::Initialize(const StyleSkin* skin)
 		{
-			Control::Initialize(device);
-
-			//Size.Y = (Size.Y - 2 + 12) / m_fontRef->getLineHeight();
-
-			m_backArea.Width = Size.X;
-			m_backArea.Height = Size.Y;
-			m_backArea.X = Position.X;
-			m_backArea.Y = Position.Y;
-
 			// init scrollbars
-			m_vScrollBar = new ScrollBar(Position+Point(Size.X-13, 1), ScrollBar::SCRBAR_Vertical, Size.Y - 14);
-			m_vScrollBar->setOwner(getOwner());
-			m_vScrollBar->SetSkin(m_skin);
-			m_vScrollBar->Initialize(device);
+			InitScrollbars(skin, true);
 
-			m_hScrollBar = new ScrollBar(Position+Point(1, Size.Y-13), ScrollBar::SCRBAR_Horizontal, Size.X -14);
-			m_hScrollBar->setOwner(getOwner());
-			m_hScrollBar->SetSkin(m_skin);
-			m_hScrollBar->Initialize(device);
-
+			m_headerHeight = m_rowHeight = m_fontRef->getLineHeightInt();
 		}
 
 		void ListView::Update(const GameTime* time)
 		{
-			m_hScrollBar->Update(time);
-			m_vScrollBar->Update(time);
-
+			UpdateScrollBarsGeneric(getArea(), time);
+			
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
-			if (m_isResizing && mouse->IsLeftReleasedState())
-				m_isResizing = false;
+			if (m_isResizingHeaders && mouse->IsLeftReleasedState())
+				m_isResizingHeaders = false;
 
-			m_selectionArea = getAbsoluteArea();
-			if (m_selectionArea.Contains(mouse->GetPosition()))
+			if (getAbsoluteArea().Contains(mouse->GetPosition()))
 			{
 				if (mouse->getDZ())
 				{
-					m_vScrollBar->setValue(Math::Clamp(m_vScrollBar->getValue() - mouse->getDZ() / 60, 0, m_vScrollBar->getMax()));
+					m_vscrollbar->SetValue(m_vscrollbar->getValue() - mouse->getDZ() / 60);
 				}
 			}
 
+			m_contentArea = GetContentArea();
+
 			if (m_headerStyle != LHSTYLE_None)
 			{
-				m_selectionArea.Y += m_fontRef->getLineHeightInt();
-				m_selectionArea.Height -= m_fontRef->getLineHeightInt();
+				m_contentArea.Y += m_headerHeight;
+				m_contentArea.Height -= m_headerHeight;
 			}
 
-			if (m_vScrollBar->getMax()>0)
-				m_selectionArea.Width -= 12;
-			if (m_hScrollBar->getMax()>0)
-				m_selectionArea.Height -= 12;
-
-			if (m_hoverRowIndex != -1)
-				UpdateSelection();
+			UpdateScrollBars();
+			UpdateColumnHeaders();
+			
+			UpdateSelection();
 
 			if (m_headerStyle == LHSTYLE_Clickable && m_headerHoverIndex != -1 &&
 				mouse->IsLeftUp())
 			{
 				m_columnHeader[m_headerHoverIndex].enentRelease.Invoke(this);
-				m_headerHoverIndex = -1;
 			}
 		}
 
@@ -1001,24 +623,148 @@ namespace Apoc3D
 				m_selectedRow = m_hoverRowIndex;
 				m_selectedColumn = m_hoverColumnIndex;
 
-				if (m_fullRowSelect)
+				if (FullRowSelect)
 					eventSelected.Invoke(m_selectedRow, 0);
 				else
 					eventSelected.Invoke(m_selectedRow, m_selectedColumn);
 			}
 			m_hoverRowIndex = -1;
 			m_hoverColumnIndex = -1;
+
+			if (!ParentFocused || !m_contentArea.Contains(mouse->GetPosition()))
+				return;
+
+			if (FullRowSelect)
+			{
+				for (int y = 0; y < m_items.getCount(); y++)
+				{
+					Apoc3D::Math::Rectangle selectionRect;
+					selectionRect.setPosition(GetCellOffset() + m_contentArea.getTopLeft());
+					selectionRect.Y += m_rowHeight * y;
+					selectionRect.Width = m_contentArea.Width;
+					selectionRect.Height = m_rowHeight;
+
+					if (selectionRect.Contains(mouse->GetPosition()))
+					{
+						m_hoverColumnIndex = 0;
+						m_hoverRowIndex = y;
+					}
+				}
+			}
+			else
+			{
+				Apoc3D::Math::Rectangle cellArea;
+				cellArea.setPosition(GetCellOffset() + m_contentArea.getTopLeft());
+				cellArea.Height = m_rowHeight;
+
+				for (int y = 0; y < m_items.getCount(); y++)
+				{
+					int32 baseX = cellArea.X;
+					for (int x = 0; x<m_items.getWidth(); x++)
+					{
+						cellArea.Width = m_columnHeader[x].Width;
+
+						if (y > m_vscrollbar->getValue() - 1)
+						{
+							if (cellArea.Contains(mouse->GetPosition()))
+							{
+								m_hoverColumnIndex = 0;
+								m_hoverRowIndex = y;
+							}
+						}
+
+						cellArea.X += cellArea.Width;
+					}
+
+					cellArea.X = baseX;
+					cellArea.Y += m_rowHeight;
+				}
+			}
+
 		}
+
+		void ListView::UpdateColumnHeaders()
+		{
+			m_headerHoverIndex = -1;
+
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			Point mousePos = mouse->GetPosition();
+
+			Apoc3D::Math::Rectangle maxPossibleArea = getAbsoluteArea();
+			maxPossibleArea.Width = m_contentArea.Width;// excluding possible VScrollBar
+
+			if (ParentFocused && maxPossibleArea.Contains(mousePos))
+			{
+				Point absP = GetAbsolutePosition();
+
+				Apoc3D::Math::Rectangle headerArea;
+				headerArea.setPosition(GetColumnHeaderOffset() + absP);
+				headerArea.Height = m_headerHeight;
+
+				for (int i = 0; i < m_columnHeader.getCount(); i++)
+				{
+					headerArea.Width = m_columnHeader[i].Width;
+
+					Apoc3D::Math::Rectangle sizeArea;
+					sizeArea.X = headerArea.X + headerArea.Width - 5;
+					sizeArea.Y = headerArea.Y;
+					sizeArea.Width = 10;
+					sizeArea.Height = headerArea.Height;
+
+					if (sizeArea.Contains(mousePos))
+					{
+						if (mouse->IsLeftPressed())
+						{
+							m_isResizingHeaders = true;
+							m_resizeIndex = i;
+						}
+					}
+
+					if (m_headerStyle == LHSTYLE_Clickable &&
+						headerArea.Contains(mouse->GetPosition()))
+					{
+						m_headerHoverIndex = i;
+
+						if (mouse->IsLeftPressed())
+						{
+							m_columnHeader[i].eventPress.Invoke(this);
+						}
+						if (mouse->IsLeftUp())
+						{
+							m_columnHeader[i].enentRelease.Invoke(this);
+						}
+					}
+
+					headerArea.X += headerArea.Width;
+				}
+			}
+		}
+		void ListView::UpdateScrollBars()
+		{
+			int totalWidth = 0;
+			if (m_columnHeader.getCount() > 0)
+			{
+				for (const ListView::Header& hdr : m_columnHeader)
+					totalWidth += hdr.Width;
+			}
+
+			if (!m_isResizingHeaders)
+				m_hscrollbar->Maximum = Math::Max(0, totalWidth - m_contentArea.Width);
+
+			m_hscrollbar->Step = Math::Max(1, m_hscrollbar->Maximum / 15);
+
+			int rowCount = m_items.getCount();
+			int visiCount = GetVisibleItems();
+			m_vscrollbar->Maximum = Math::Max(0, rowCount - visiCount);
+		}
+
 
 		void ListView::Draw(Sprite* sprite)
 		{
-			DrawBorder(sprite);
+			DrawBackground(sprite);
 
 			{
 				sprite->Flush();
-				Matrix trans;
-				Matrix::CreateTranslation(trans, (float)Position.X, (float)Position.Y ,0);
-				sprite->MultiplyTransform(trans);
 
 				bool shouldRestoreScissorTest = false;
 				Apoc3D::Math::Rectangle oldScissorRect;
@@ -1040,422 +786,244 @@ namespace Apoc3D
 				sprite->Flush();
 				if (shouldRestoreScissorTest)
 				{
-					dev->getRenderState()->setScissorTest(true,&oldScissorRect);
+					dev->getRenderState()->setScissorTest(true, &oldScissorRect);
 				}
 				else
 				{
-					dev->getRenderState()->setScissorTest(false,0);
+					dev->getRenderState()->setScissorTest(false, 0);
 				}
-				if (sprite->isUsingStack())
-					sprite->PopTransform();
-				else
-					sprite->SetTransform(Matrix::Identity);
-
-				//if (m_hScrollBar->getMax()>0)
-				//m_srcRect.Height = mar
 			}
 			
-
-			DrawScrollbars(sprite);
+			DrawScrollBars(sprite);
 		}
 
-		void ListView::DrawBorder(Sprite* sprite)
+		void ListView::DrawBackground(Sprite* sprite)
 		{
-			m_backArea.X = Position.X;
-			m_backArea.Y = Position.Y;
-			m_backArea.Width = Size.X;
-			m_backArea.Height = Size.Y;
+			Texture* whitePix = SystemUI::GetWhitePixel();
+			
+			Apoc3D::Math::Rectangle m_backArea = getAbsoluteArea();
+			sprite->Draw(whitePix, m_backArea, nullptr, CV_Black);
 
-			sprite->Draw(m_skin->WhitePixelTexture, m_backArea,0,CV_Black);
-
-			m_backArea.X++;
-			m_backArea.Y++;
-			m_backArea.Width -=2;
-			m_backArea.Height -=2;
-			sprite->Draw(m_skin->WhitePixelTexture, m_backArea, 0, CV_White);
+			m_backArea.Inflate(-1, -1);
+			sprite->Draw(whitePix, m_backArea, nullptr, CV_White);
 		}
-		void ListView::DrawScrollbars(Sprite* sprite)
-		{
-			int totalWidth = 0;
-			if (m_columnHeader.getCount()>0)
-			{
-				for (int i=0;i<m_columnHeader.getCount();i++)
-					totalWidth += m_columnHeader[i].Width;
-			}
 
-			if (!m_isResizing)
-			{
-				if (m_vScrollBar->getMax() ==0)
-					m_hScrollBar->setMax(totalWidth - Size.X);
-				else
-					m_hScrollBar->setMax(totalWidth-Size.X+12);
-			}
-			m_hScrollBar->setStep(Math::Max(1, m_hScrollBar->getMax() / 15));
-
-			if (m_hScrollBar->getMax()>0)
-			{
-				if (m_vScrollBar->getMax()>0 && m_hScrollBar->getWidth() != Size.X - 14)
-					m_hScrollBar->setWidth(Size.X - 14);
-				else if (m_vScrollBar->getMax() ==0 && m_hScrollBar->getWidth() != Size.X - 2)
-					m_hScrollBar->setWidth(Size.X - 2);
-
-				m_hScrollBar->Draw(sprite);
-			}
-
-			int rowCount = m_items.getCount();
-			int visiCount = GetVisibleItems();
-			if (rowCount > visiCount)
-				m_vScrollBar->setMax(rowCount-visiCount);
-			else
-				m_vScrollBar->setMax(0);
-
-			if (m_vScrollBar->getMax()>0)
-			{
-				if (m_hScrollBar->getMax()>0 && m_vScrollBar->getHeight() != Size.Y -14)
-					m_vScrollBar->setHeight(Size.Y - 14);
-				else if (m_hScrollBar->getMax() ==0 && m_vScrollBar->getHeight() != Size.Y - 2)
-					m_vScrollBar->setHeight(Size.Y - 2);
-
-				m_vScrollBar->Draw(sprite);
-			}
-		}
 
 		void ListView::DrawColumnHeaders(Sprite* sprite)
 		{
+			Point drawPos = GetAbsolutePosition();
+			Texture* whitePix = SystemUI::GetWhitePixel();
+
+			Apoc3D::Math::Rectangle headerArea;
+			headerArea.setPosition(GetColumnHeaderOffset() + drawPos);
+			headerArea.Height = m_headerHeight;
+
 			if (m_headerStyle != LHSTYLE_None)
 			{
-				m_headerArea.X = -m_hScrollBar->getValue();
-				m_headerArea.Y = 0;
-
-				Point textPos(0,0);
 				int totalWidth = 0;
 
-				for (int i=0;i<m_columnHeader.getCount();i++)
+				for (int i = 0; i < m_columnHeader.getCount(); i++)
 				{
-					m_headerArea.Width = m_columnHeader[i].Width;
-					m_headerArea.Height = m_fontRef->getLineHeightInt();
-					totalWidth += m_headerArea.Width;
-					
-					UpdateHeaderSize(m_headerArea, i, sprite);
+					headerArea.Width = m_columnHeader[i].Width;
 
-					sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, CV_Black);
+					sprite->Draw(whitePix, headerArea, CV_Black);
 
-					// MouseOver Bevel Effect
-					Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-					Apoc3D::Math::Rectangle hoverArea(m_headerArea);
-					Point pos = GetAbsolutePosition();
-					//m_headerArea.X += Position.X;
-					//m_headerArea.Y += Position.Y;
-
-					if (m_headerStyle == LHSTYLE_Clickable && 
-						m_headerArea.Contains(mouse->GetPosition()-pos) &&
-						UIRoot::getActiveForm() == getOwner())
+					if (m_headerHoverIndex == i)
 					{
-						m_headerHoverIndex = i;
+						// MouseOver Bevel Effect
+						Apoc3D::Math::Rectangle r2 = headerArea;
 
-						if (mouse->IsLeftPressed())
-						{
-							m_columnHeader[i].eventPress.Invoke(this);
-						}
+						r2.Width--;
+						r2.Height--;
 
-						if (mouse->IsLeftReleasedState())
-						{
-							m_headerArea.Width--;
-							m_headerArea.Height--;
+						sprite->Draw(whitePix, r2, nullptr, CV_DarkGray);
 
-							sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, 0, CV_DarkGray);
+						r2.X++;
+						r2.Y++;
+						r2.Width--;
+						r2.Height--;
 
-							m_headerArea.X ++;
-							m_headerArea.Y ++;
-							m_headerArea.Width--;
-							m_headerArea.Height--;
-
-							sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, 0, CV_LightGray);
-
-							m_headerArea.X++;
-							m_headerArea.Y--;
-						}
-						else
-						{
-							// Draw normal header
-							m_headerArea.Width--;
-							m_headerArea.Height--;
-							sprite->Draw(m_skin->WhitePixelTexture, m_headerArea,0, CV_White);
-
-							m_headerArea.X++;
-							m_headerArea.Y++;
-							m_headerArea.Width--;
-							m_headerArea.Height--;
-							sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, CV_LightGray);
-
-							m_headerArea.X++;
-							m_headerArea.Y--;
-						}
+						sprite->Draw(whitePix, r2, nullptr, CV_LightGray);
 					}
 					else
 					{
+						Apoc3D::Math::Rectangle r2 = headerArea;
+
 						//Draw normal header
-						m_headerArea.Width--;
-						m_headerArea.Height--;
-						sprite->Draw(m_skin->WhitePixelTexture, m_headerArea,0, CV_White);
+						r2.Width--;
+						r2.Height--;
+						sprite->Draw(whitePix, r2, nullptr, CV_White);
 
-						m_headerArea.X++;
-						m_headerArea.Y++;
-						m_headerArea.Width--;
-						m_headerArea.Height--;
-						sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, CV_LightGray);
+						r2.X++;
+						r2.Y++;
+						r2.Width--;
+						r2.Height--;
+						sprite->Draw(whitePix, r2, CV_LightGray);
 
-						m_headerArea.X++;
-						m_headerArea.Y--;
+						r2.X++;
+						r2.Y--;
 					}
 
+					// =========================================
 
+					Point textPos = headerArea.getTopLeft();
+					String text = m_columnHeader[i].Text;
+					guiOmitLineText(m_fontRef, headerArea.Width, text);
 
+					Point mts = m_fontRef->MeasureString(text);
+					textPos.X += (headerArea.Width - mts.X) / 2;
+					m_fontRef->DrawString(sprite, text, textPos, CV_Black);
 
-					// ===============
-					Point mts = m_fontRef->MeasureString(m_columnHeader[i].Text);
-
-					if (mts.X > m_headerArea.Width - 20)
-					{
-						//truncate text
-						String text = m_columnHeader[i].Text;
-						for (size_t j=0;j<Text.size();j++)
-						{
-							if (m_fontRef->MeasureString(text.substr(0,j)).X > m_headerArea.Width - 20)
-							{
-								if (j>0)
-									text = text.substr(0,j-1) + L"..";
-								else
-									text = L"";
-								break;
-							}
-						}
-
-						textPos.X = m_headerArea.X + (m_headerArea.Width - m_fontRef->MeasureString(text).X)/2;
-						textPos.Y = 0;
-						m_fontRef->DrawString(sprite, text, textPos, CV_Black);
-					}
-					else
-					{
-						textPos.X = m_headerArea.X + 
-							(m_headerArea.Width - mts.X)/2;
-						m_fontRef->DrawString(sprite, m_columnHeader[i].Text, textPos, CV_Black);
-					}
-
-					UpdateHeaderSize(m_headerArea, i, sprite);
-
-					m_headerArea.X += m_headerArea.Width;
+					headerArea.X += headerArea.Width;
+					totalWidth += headerArea.Width;
 				}
 
-				if (m_hScrollBar->getMax() == 0)
-					DrawHeaderEnd(sprite, Size.X - totalWidth);
+				if (m_hscrollbar->Maximum == 0)
+					DrawHeaderEnd(sprite, headerArea.getPosition(), m_size.X - totalWidth);
 			}
 		}
 
-		void ListView::UpdateHeaderSize(Apoc3D::Math::Rectangle headerArea, int index, Sprite* sprite)
+		void ListView::DrawHeaderEnd(Sprite* sprite, const Point& pos, int32 width)
 		{
-			if (getOwner() == UIRoot::getTopMostForm())
-			{
-				m_sizeArea.X = m_headerArea.X + m_headerArea.Width - 5;
-				m_sizeArea.Y = m_headerArea.Y;
-				m_sizeArea.Width = 10;
-				m_sizeArea.Height =  m_headerArea.Height;
+			Apoc3D::Math::Rectangle headerArea;
+			headerArea.setPosition(pos);
 
-				Point absP = GetAbsolutePosition();
-				//m_sizeArea.X += absP.X;
-				//m_sizeArea.Y += absP.Y;
-				
-				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-				Point mousePos = mouse->GetPosition();
-				mousePos = mousePos - absP;
-				if (m_sizeArea.Contains(mousePos))
-				{
-					if (mouse->IsLeftPressed())
-					{
-						m_isResizing = true;
-						m_resizeIndex = index;
-					}
-				}
+			Texture* whitePix = SystemUI::GetWhitePixel();
 
-			}
-		}
-		void ListView::DrawHeaderEnd(Sprite* sprite, int width)
-		{
-			m_headerArea.Width = width;
-			m_headerArea.Height = m_fontRef->getLineHeightInt();
-			sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, CV_Black);
+			headerArea.Width = width;
+			headerArea.Height = m_headerHeight;
+			sprite->Draw(whitePix, headerArea, CV_Black);
 
-			m_headerArea.Width--;
-			m_headerArea.Height--;
-			sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, CV_White);
+			headerArea.Width--;
+			headerArea.Height--;
+			sprite->Draw(whitePix, headerArea, CV_White);
 
-			m_headerArea.X++;
-			m_headerArea.Y++;
-			m_headerArea.Width--;
-			m_headerArea.Height--;
-			sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, CV_LightGray);
+			headerArea.X++;
+			headerArea.Y++;
+			headerArea.Width--;
+			headerArea.Height--;
+			sprite->Draw(whitePix, headerArea, CV_LightGray);
 		}
 
 		void ListView::DrawGridLines(Sprite* sprite)
 		{
-			m_lineRect.X = 0;
-			m_lineRect.Y = 0;
+			Texture* whitePix = SystemUI::GetWhitePixel();
 
-			m_gridSize.X = m_columnHeader.getCount()+1;
-			m_gridSize.Y = Size.Y / m_fontRef->getLineHeightInt();
+			int32 rowCount = GetVisibleItems();
 
-			if (m_headerStyle != LHSTYLE_None)
-				m_gridSize.Y --;
+			Apoc3D::Math::Rectangle lineRect;
+			lineRect.setPosition(m_contentArea.getTopLeft());
+			lineRect.Width = m_contentArea.Width;
+			lineRect.Height = 1;
 
-			m_lineRect.Width = Size.X;
-			m_lineRect.Height = 1;
-
-			for (int y=1;y<m_gridSize.Y;y++)
+			// rows
+			for (int y = 0; y <= rowCount; y++)
 			{
-				if (m_headerStyle != LHSTYLE_None)
-					m_lineRect.Y = y * m_fontRef->getLineHeightInt() + m_fontRef->getLineHeightInt();
-				else
-					m_lineRect.Y = y * m_fontRef->getLineHeightInt();
+				sprite->Draw(whitePix, lineRect, CV_LightGray);
 
-				sprite->Draw(m_skin->WhitePixelTexture, m_lineRect, CV_LightGray);
+				lineRect.Y += m_rowHeight;
 			}
 
-			m_lineRect.Width = 1;
-			m_lineRect.Height = Size.Y;
-			if (m_headerStyle != LHSTYLE_None)
-				m_lineRect.Y = m_fontRef->getLineHeightInt();
-			else
-				m_lineRect.Y = 0;
+			// columns
+			lineRect.Width = 1;
+			lineRect.Height = m_contentArea.Height;
 
-			m_lineRect.X = -1-m_hScrollBar->getValue();
-			for (int x=0;x<m_columnHeader.getCount();x++)
+			lineRect.setPosition(GetColumnHeaderOffset() + m_contentArea.getTopLeft());
+			lineRect.X--;
+
+			for (const ListView::Header& hdr : m_columnHeader)
 			{
-				sprite->Draw(m_skin->WhitePixelTexture, m_lineRect, CV_LightGray);
-				m_lineRect.X += m_columnHeader[x].Width;
+				sprite->Draw(whitePix, lineRect, CV_LightGray);
+
+				lineRect.X += hdr.Width;
 			}
 
-			sprite->Draw(m_skin->WhitePixelTexture, m_lineRect, CV_LightGray);
+			sprite->Draw(whitePix, lineRect, CV_LightGray);
 		}
 
 		void ListView::DrawItems(Sprite* sprite)
 		{
-			Point textPos(0,0);
+			Apoc3D::Math::Rectangle cellArea;
+			cellArea.setPosition(GetCellOffset() + m_contentArea.getTopLeft());
+			cellArea.Height = m_rowHeight;
 
-			for (int y=0;y<m_items.getCount();y++)
+			int32 baseX = cellArea.X;
+			for (int y = 0; y < m_items.getCount(); y++)
 			{
-				textPos.X = -m_hScrollBar->getValue() + 4;
-				for (int x=0;x<m_items.getWidth();x++)
+				for (int x = 0; x<m_items.getWidth(); x++)
 				{
-					if (y > m_vScrollBar->getValue() -1)
+					cellArea.Width = m_columnHeader[x].Width;
+
+					if (y > m_vscrollbar->getValue() - 1)
 					{
-						if (m_headerStyle == LHSTYLE_None)
-							textPos.Y = (y - m_vScrollBar->getValue()) * m_fontRef->getLineHeightInt();
-						else
-							textPos.Y = (y - m_vScrollBar->getValue()) * m_fontRef->getLineHeightInt() + m_fontRef->getLineHeightInt();
+						if (!m_isResizingHeaders)
+						{
+							if (HoverSelectionMode && x == m_hoverColumnIndex && y == m_hoverRowIndex)
+								DrawHoverBox(sprite, cellArea);
+						}
 
-						if (m_fullRowSelect && x ==0 && y == m_selectedRow)
-							DrawSelectedBox(sprite, Point(0, textPos.Y));
-						else if (!m_fullRowSelect && x == m_selectedRow && y == m_selectedColumn)
-							DrawSelectedBox(sprite, textPos);
+						if (FullRowSelect && x == 0 && y == m_selectedRow)
+							DrawSelectedBox(sprite, cellArea);
+						else if (!FullRowSelect && x == m_selectedRow && y == m_selectedColumn)
+							DrawSelectedBox(sprite, cellArea);
 
-						if (!m_isResizing)
-							DrawSelectionBox(sprite, textPos, x, y);
-
-						if (m_columnHeader.getCount()==0 || (x<m_columnHeader.getCount() &&
-							m_fontRef->MeasureString(m_items.at(y,x)).X > m_columnHeader[x].Width - 15))
 						{
 							// truncate text
-							String text = m_items.at(y,x);
-							for (size_t i=0;i<text.size();i++)
-								if (m_columnHeader.getCount()==0 ||
-									(x<m_columnHeader.getCount() && m_fontRef->MeasureString(text.substr(0,i)).X > m_columnHeader[x].Width-10))
-								{
-									if (i)
-										text = text.substr(0,i-1)+L"..";
-									else
-										text = L"";
-								}
+							String text = m_items.at(y, x);
 
-							if (x <m_columnHeader.getCount())
-								m_fontRef->DrawString(sprite, text, textPos, CV_Black);
+							guiOmitLineText(m_fontRef, cellArea.Width, text);
+
+							//m_fontRef->DrawString(sprite, text, cellArea.getTopLeft(), CV_Black);
+							TextSettings.Draw(sprite, m_fontRef, text, cellArea, 0xff);
 						}
-						else if (x<m_columnHeader.getCount())
-							m_fontRef->DrawString(sprite, m_items.at(y,x), textPos, CV_Black);
 					}
-
-					if (m_columnHeader.getCount()>0 && x<m_columnHeader.getCount())
-						textPos.X += m_columnHeader[x].Width;
+					cellArea.X += cellArea.Width;
 				}
+				cellArea.X = baseX;
+				cellArea.Y += m_rowHeight;
 			}
 		}
 
-		void ListView::DrawSelectionBox(Sprite* sprite, const Point& position, int x, int y)
+		void ListView::DrawSelectedBox(Sprite* sprite, const Apoc3D::Math::Rectangle& area) { DrawItemBox(sprite, area, CV_Silver); }
+		void ListView::DrawHoverBox(Sprite* sprite, const Apoc3D::Math::Rectangle& area) { DrawItemBox(sprite, area, CV_LightGray); }
+		void ListView::DrawItemBox(Sprite* sprite, const Apoc3D::Math::Rectangle& area, ColorValue cv)
 		{
-			if (m_fullRowSelect)
-				m_selectionRect.Width = Size.X;//m_srcRect.Width + 2;
-			else
-				m_selectionRect.Width = m_columnHeader[x].Width + 2;
+			Apoc3D::Math::Rectangle selectionRect;
 
-			m_selectionRect.Height = m_fontRef->getLineHeightInt();
-
-			Point absp = GetAbsolutePosition();
-			m_selectionRect.X = position.X + absp.X - 4;
-			m_selectionRect.Y = position.Y + absp.Y;
-
-			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			if (m_selectionArea.Contains(mouse->GetPosition()) &&
-				m_selectionRect.Contains(mouse->GetPosition()) &&
-				UIRoot::getTopMostForm() == getOwner())
+			if (FullRowSelect)
 			{
-				//if (m_fullRowSelect)
-				//{
-				//	m_hoverRowIndex = y;
-				//	m_hoverColumnIndex = x;
-				//}
-				//else
-				//{
-				//}
-
-				m_hoverRowIndex = y;
-				m_hoverColumnIndex = x;
-
-				if (m_hoverSelection)
-				{
-					m_selectionRect.X = position.X - 4;
-					m_selectionRect.Y = position.Y;
-					sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_LightGray);
-				}
+				selectionRect.X = GetAbsolutePosition().X;
+				selectionRect.Width = m_size.X;
 			}
+			else
+			{
+				selectionRect.X = area.X - 4;
+				selectionRect.Width = area.Width;
+			}
+			selectionRect.Height = area.Height;
+			selectionRect.Y = area.Y;
+
+			sprite->Draw(SystemUI::GetWhitePixel(), selectionRect, cv);
 		}
 
-		void ListView::DrawSelectedBox(Sprite* sprite, const Point& position)
+		Point ListView::GetColumnHeaderOffset() const
 		{
-			if (m_fullRowSelect)
-			{
-				m_selectionRect.X = 0;
-				m_selectionRect.Width = Size.X;
-			}
-			else
-			{
-				m_selectionRect.X = position.X - 4;
-				m_selectionRect.Width = m_columnHeader[m_selectedRow].Width;
-			}
-			m_selectionRect.Height = m_fontRef->getLineHeightInt();
-			m_selectionRect.Y = position.Y;
-
-			sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_Silver);
+			Point r;
+			r.X = -m_hscrollbar->getValue();
+			r.Y = 0;
+			return r;
+		}
+		Point ListView::GetCellOffset() const
+		{
+			Point r;
+			r.X = -m_hscrollbar->getValue();
+			r.Y = -m_vscrollbar->getValue() * m_rowHeight;
+			return r;
 		}
 
 		int ListView::GetVisibleItems()
 		{
-			int visibleItems = (int)floor((float)(Size.Y / m_fontRef->getLineHeight()));
-
-			if (m_hScrollBar->getMax()>0)
-				visibleItems--;
-			if (m_headerStyle != LHSTYLE_None)
-				visibleItems--;
-
-			return visibleItems;
+			return (int)ceilf((float)(m_contentArea.Height / m_rowHeight));
 		}
 	}
 }

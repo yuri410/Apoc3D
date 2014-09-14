@@ -27,16 +27,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "APDesigner/Document.h"
 
-#include "apoc3d/Scene/SimpleSceneManager.h"
-#include "apoc3d/Scene/SceneObject.h"
-#include "apoc3d/UILib/Control.h"
-#include "apoc3d/Math/ColorValue.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::Animation;
-using namespace Apoc3D::Scene;
-
 namespace APDesigner
 {
 	class MaterialDocument : public Document
@@ -52,7 +42,16 @@ namespace APDesigner
 		virtual void Initialize(RenderDevice* device);
 		virtual void Update(const GameTime* time);
 		virtual void Render();
+
 	private:
+		void PassButton_Pressed(Button* ctrl);
+		void BtnApplyMtrl_Pressed(Button* ctrl);
+
+		void ModelView_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
+		void PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
+
+		void DisplayMaterialEditor(Material* mtrl);
+
 		class ModelWrapper : public Entity 
 		{
 		public:
@@ -131,13 +130,6 @@ namespace APDesigner
 		ComboBox* m_cbCull;
 		PassFlagDialog* m_passEditor;
 
-		void PassButton_Pressed(Control* ctrl);
-		void BtnApplyMtrl_Pressed(Control* ctrl);
-
-		void ModelView_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
-		void PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
-
-		void DisplayMaterialEditor(Material* mtrl);
 	};
 
 	class APDAPI PassFlagDialog
@@ -149,37 +141,43 @@ namespace APDesigner
 		void ShowModal(Material* mtrl);
 
 	private:
+		void Form_Closed(Control* ctrl);
 
 		Form* m_form;
 		List<Label*> m_lblTable;
 		List<TextBox*> m_tbTable;
 
 		Material* m_mtrl;
-		void Form_Closed(Control* ctrl);
 	};
+
 	class APDAPI ColorField : public Control
 	{
 	public:
-		ColorField(const Point& position, ColorValue defaultColor);
+		ColorField(const StyleSkin* skin, const Point& position, const String& text, ColorValue defaultColor);
 		~ColorField();
 
-		virtual void Initialize(RenderDevice* device);
 		virtual void Draw(Sprite* sprite);
 		virtual void Update(const GameTime* time);
 
-		UIEventHandler& eventColorSelected() { return m_selected; }
-
 		void SetValue(const Color4& color);
 		ColorValue GetValue() const { return m_color; }
+
+		void SetText(const String& txt) const { m_lblAmbient->SetText(txt); }
+
+		UIEventHandler eventColorSelected;
+
 	private:
-		Label* m_lblAmbient;
-		PictureBox* m_pbAmbient;
-		Button* m_btnAmbient;
-		ColorValue m_color;
-		UIEventHandler m_selected;
+		void Initialize(const StyleSkin* skin);
 
 		void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
-		void Button_Press(Control* ctrl);
+		void Button_Press(Button* ctrl);
+
+		Label* m_lblAmbient = nullptr;
+		PictureBox* m_pbAmbient = nullptr;
+		Button* m_btnAmbient = nullptr;
+		ColorValue m_color;
+
+		const StyleSkin* m_skin;
 	};
 }
 

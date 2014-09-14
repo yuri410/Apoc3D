@@ -47,20 +47,20 @@ namespace APDesigner
 	ToolsPane::ToolsPane(MainWindow* window)
 		: m_mainWindow(window), m_currentTools(nullptr)
 	{
-		m_pane = new Form(FBS_Pane);
-		m_pane->SetSkin(window->getUISkin());
+		m_pane = new Form(window->getUISkin(), window->getDevice(), FBS_Pane);
 		m_pane->IsBackgroundForm = true;
 
 		m_pane->setMinimumSize(Point(50,50));
-		m_pane->Size = Point(50,600);
-		m_pane->Position = Point(0, window->getMenuBar()->Size.Y);
+		m_pane->setSize(50, 600);
+		m_pane->Position = Point(0, window->getMenuBar()->getHeight());
 
-		m_pane->Text = L"";
+		m_pane->setTitle(L"");
 		//m_pane->setTitle(m_pane->Text);
 
-		m_btSave = new Button(Point(5,20), L"");
-		m_btSave->NormalTexture = UIGraphic(UIResources::GetTexture(L"adui_save"));
-		m_btSave->setCustomModColorMouseOver(CV_Silver);
+		m_btSave = new Button(window->getUISkin(), Point(5,20), L"");
+		m_btSave->NormalGraphic = UIGraphic(UIResources::GetTexture(L"adui_save"));
+
+		//m_btSave->setCustomModColorMouseOver(CV_Silver);
 		
 		m_btSave->eventRelease.Bind(this,&ToolsPane::BtnSave_Release);
 		m_pane->getControls().Add(m_btSave);
@@ -71,7 +71,7 @@ namespace APDesigner
 		delete m_btSave;
 	}
 
-	void ToolsPane::BtnSave_Release(Control* ctrl)
+	void ToolsPane::BtnSave_Release(Button* ctrl)
 	{
 		if (m_mainWindow->getCurrentDocument())
 		{
@@ -129,11 +129,7 @@ namespace APDesigner
 
 	void ToolsPane::Initialize(RenderDevice* device)
 	{
-
-
-		m_pane->Initialize(device);
-
-		UIRoot::Add(m_pane);
+		SystemUI::Add(m_pane);
 		m_pane->Show();
 	}
 
@@ -156,10 +152,10 @@ namespace APDesigner
 			m_btSave->Enabled = false;
 		}
 
-		m_pane->Position.X = m_mainWindow->getUIAreaSize().X - m_pane->Size.X;
-		m_pane->Position.Y = m_mainWindow->getMenuBar()->Size.Y;
+		m_pane->Position.X = m_mainWindow->getUIAreaSize().X - m_pane->getWidth();
+		m_pane->Position.Y = m_mainWindow->getMenuBar()->getHeight();
 
-		m_pane->Size.Y = m_mainWindow->getUIAreaSize().Y - m_pane->Position.Y;
+		m_pane->setHeight(m_mainWindow->getUIAreaSize().Y - m_pane->Position.Y);
 		//Point newSize = m_pane->Size;
 		//newSize.X -= 10;
 		//newSize.Y -= 30+300;
@@ -251,20 +247,19 @@ namespace APDesigner
 	ResourcePane::ResourcePane(MainWindow* window)
 		: m_mainWindow(window), m_currentProject(0), m_skin(window->getUISkin())
 	{
-		m_form = new Form(FBS_Pane);
-		m_form->SetSkin(window->getUISkin());
+		RenderDevice* device = window->getDevice();
+
+		m_form = new Form(m_skin, device, FBS_Pane);
 		m_form->IsBackgroundForm = true;
 
-		m_form->Size = Point(300,600);
-		m_form->Position = Point(0, window->getMenuBar()->Size.Y);
+		m_form->setSize(300, 600);
+		m_form->Position = Point(0, window->getMenuBar()->getHeight());
 		
-		m_form->Text = L"Resource Explorer.";
-		m_form->setTitle(m_form->Text);
+		m_form->setTitle(L"Resource Explorer.");
 
 		{
-			TreeView* treeview = new TreeView(Point(5, 25), 200, 300);
-			treeview->SetSkin(window->getUISkin());
-			treeview->setUseHorizontalScrollbar(true);
+			TreeView* treeview = new TreeView(m_skin, Point(5, 25), 200, 300);
+			treeview->UseHorizontalScrollbar(true);
 
 			TreeViewNode* node1 = new TreeViewNode(L"No project opened");
 			treeview->getNodes().Add(node1);
@@ -274,32 +269,26 @@ namespace APDesigner
 			m_resourceView->eventSelectionChanged.Bind(this, &ResourcePane::TreeView_SelectionChanged);
 		}
 
-		m_infoDisplay = new Label(Point(5,355),L"",1);
-		m_infoDisplay->SetSkin(window->getUISkin());
+		m_infoDisplay = new Label(m_skin, Point(5,355),L"",1);
 		m_form->getControls().Add(m_infoDisplay);
 
-		m_addItem = new Button(Point(5,325),L"Add...");
-		m_addItem->SetSkin(window->getUISkin());
+		m_addItem = new Button(m_skin, Point(5,325),L"Add...");
 		m_addItem->eventRelease.Bind(this, &ResourcePane::BtnAdd_Release);
 		m_form->getControls().Add(m_addItem);
 
-		m_removeItem = new Button(Point(m_addItem->Position.X + m_addItem->Size.X,325),L"Delete");
-		m_removeItem->SetSkin(window->getUISkin());
+		m_removeItem = new Button(m_skin, Point(m_addItem->Position.X + m_addItem->getWidth(), 325), L"Delete");
 		m_removeItem->eventRelease.Bind(this, &ResourcePane::BtnRemove_Release);
 		m_form->getControls().Add(m_removeItem);
 
-		m_openItem = new Button(Point(m_removeItem->Position.X + m_removeItem->Size.X, 325),L"Open");
-		m_openItem->SetSkin(window->getUISkin());
+		m_openItem = new Button(m_skin, Point(m_removeItem->Position.X + m_removeItem->getWidth(), 325),L"Open");
 		m_openItem->eventRelease.Bind(this, &ResourcePane::BtnOpen_Release);
 		m_form->getControls().Add(m_openItem);
 
-		m_forceBuildItem = new Button(Point(m_removeItem->Position.X + m_removeItem->Size.X, 325),L"Force Build");
-		m_forceBuildItem->SetSkin(window->getUISkin());
+		m_forceBuildItem = new Button(m_skin, Point(m_removeItem->Position.X + m_removeItem->getWidth(), 325),L"Force Build");
 		m_forceBuildItem->eventRelease.Bind(this, &ResourcePane::BtnForceBuild_Release);
 		m_form->getControls().Add(m_forceBuildItem);
 
-		m_applyModify = new Button(Point(5,400),L"Apply Settings");
-		m_applyModify->SetSkin(window->getUISkin());
+		m_applyModify = new Button(m_skin, Point(5,400),L"Apply Settings");
 		m_applyModify->eventRelease.Bind(this, &ResourcePane::BtnApplyMod_Release);
 		m_applyModify->Visible = false;
 		m_form->getControls().Add(m_applyModify);
@@ -320,29 +309,27 @@ namespace APDesigner
 
 	void ResourcePane::Initialize(RenderDevice* device)
 	{
-		m_form->Initialize(device);
+		m_removeItem->Position.X = m_addItem->Position.X + m_addItem->getWidth() + 5;
+		m_openItem->Position.X = m_removeItem->Position.X + m_removeItem->getWidth() + 5;
+		m_forceBuildItem->Position.X = m_openItem->Position.X + m_openItem->getWidth() + 5;
 
-		m_removeItem->Position.X = m_addItem->Position.X + m_addItem->Size.X + 5;
-		m_openItem->Position.X = m_removeItem->Position.X + m_removeItem->Size.X + 5;
-		m_forceBuildItem->Position.X = m_openItem->Position.X + m_openItem->Size.X + 5;
-
-		UIRoot::Add(m_form);
+		SystemUI::Add(m_form);
 		m_form->Show();
 	}
 
 	void ResourcePane::Update(const GameTime* time)
 	{
 		m_form->Position.X = 0;
-		m_form->Position.Y = m_mainWindow->getMenuBar()->Size.Y;
-		m_form->Size.Y = m_mainWindow->getUIAreaSize().Y - m_form->Position.Y;
-		Point newSize = m_form->Size;
+		m_form->Position.Y = m_mainWindow->getMenuBar()->getHeight();
+		m_form->setHeight(m_mainWindow->getUIAreaSize().Y - m_form->Position.Y);
+		Point newSize = m_form->getSize();
 		newSize.X -= 10;
 		newSize.Y -= 30+400;
 		m_resourceView->SetSize(newSize);
 	
-		m_forceBuildItem->Position.Y = m_removeItem->Position.Y = m_addItem->Position.Y = m_openItem->Position.Y = m_resourceView->Size.Y + m_resourceView->Position.Y + + 5;
+		m_forceBuildItem->Position.Y = m_removeItem->Position.Y = m_addItem->Position.Y = m_openItem->Position.Y = m_resourceView->getHeight() + m_resourceView->Position.Y + + 5;
 
-		m_infoDisplay->Position.Y = m_removeItem->Position.Y + m_removeItem->Size.Y + 5;
+		m_infoDisplay->Position.Y = m_removeItem->Position.Y + m_removeItem->getHeight() + 5;
 
 		m_applyModify->Position.Y = m_infoDisplay->Position.Y + 45;
 
@@ -433,16 +420,11 @@ namespace APDesigner
 		int lw = getPropertyLabelWidth();
 		int fw = getPropertyFieldWidth();
 
-		Label* label = new Label(Point(PropFieldMargin, top), a, lw);
-		TextBox* tb = new TextBox(Point(PropFieldMargin*2+lw, top), fw, b);
+		Label* label = new Label(m_skin, Point(PropFieldMargin, top), a, lw);
+		TextBox* tb = new TextBox(m_skin, Point(PropFieldMargin*2+lw, top), fw, b);
 
 		PropItem item(a, label, tb, nullptr);
 		m_proplist.Add(item);
-
-		label->SetSkin(m_skin);
-		label->Initialize(m_form->getRenderDevice());
-		tb->SetSkin(m_skin);
-		tb->Initialize(m_form->getRenderDevice());
 
 		m_form->getControls().Add(label);
 		m_form->getControls().Add(tb);
@@ -454,21 +436,15 @@ namespace APDesigner
 		int lw = getPropertyLabelWidth();
 		int fw = getPropertyFieldWidth();
 
-		Label* label = new Label(Point(PropFieldMargin, top), a, lw);
-		TextBox* tb = new TextBox(Point(PropFieldMargin*2+lw, top), fw-30, b);
-		Button* bb = new Button(Point(tb->Position.X+tb->Size.X, top), 30, L"...");
-		bb->Size.Y = m_skin->TitleTextFont->getLineHeightInt();
+		Label* label = new Label(m_skin, Point(PropFieldMargin, top), a, lw);
+		TextBox* tb = new TextBox(m_skin, Point(PropFieldMargin*2+lw, top), fw-30, b);
+		Button* bb = new Button(m_skin, Point(tb->Position.X + tb->getWidth(), top), 30, L"...");
+		bb->SetSizeY(m_skin->TitleTextFont->getLineHeightInt());
 
 		PropItem item(a, label, tb, bb);
 		item.LoadOrSave = isLoad;
 		m_proplist.Add(item);
 
-		label->SetSkin(m_skin);
-		label->Initialize(m_form->getRenderDevice());
-		tb->SetSkin(m_skin);
-		tb->Initialize(m_form->getRenderDevice());
-		bb->SetSkin(m_skin);
-		bb->Initialize(m_form->getRenderDevice());
 		if (isLoad)
 			bb->eventRelease.Bind(this, &ResourcePane::BtnBrowseOpen_Release);
 		else
@@ -485,17 +461,12 @@ namespace APDesigner
 		int lw = getPropertyLabelWidth();
 		int fw = getPropertyFieldWidth();
 
-		Label* label = new Label(Point(PropFieldMargin, top), name, lw);
-		ComboBox* combo = new ComboBox(Point(PropFieldMargin*2+lw, top), fw, list);
+		Label* label = new Label(m_skin, Point(PropFieldMargin, top), name, lw);
+		ComboBox* combo = new ComboBox(m_skin, Point(PropFieldMargin*2+lw, top), fw, list);
 		
 		PropItem item(name, label, combo, nullptr);
 		m_proplist.Add(item);
 		
-		label->SetSkin(m_skin);
-		label->Initialize(m_form->getRenderDevice());
-		combo->SetSkin(m_skin);
-		combo->Initialize(m_form->getRenderDevice());
-
 		if (selectedIndex != -1)
 			combo->setSelectedIndex(selectedIndex);
 
@@ -509,13 +480,10 @@ namespace APDesigner
 		int lw = getPropertyLabelWidth();
 		int fw = getPropertyFieldWidth();
 
-		CheckBox* cb = new CheckBox(Point(PropFieldMargin*2+lw, top), name, checked);
+		CheckBox* cb = new CheckBox(m_skin, Point(PropFieldMargin*2+lw, top), name, checked);
 		
 		PropItem item(name, nullptr, cb, nullptr);
 		m_proplist.Add(item);
-
-		cb->SetSkin(m_skin);
-		cb->Initialize(m_form->getRenderDevice());
 
 		m_form->getControls().Add(cb);
 	}
@@ -657,40 +625,42 @@ namespace APDesigner
 			ProjectItem* item = static_cast<ProjectItem*>(m_resourceView->getSelectedNode()->UserData);
 			if (item)
 			{
-				m_infoDisplay->Text = item->getName();
-				m_infoDisplay->Text.append(L"  ");
-
+				String msg = item->getName() + L"  ";
+				
 				ResourcePaneHelper::ItemTypeInformation* itemType =
 					ResPaneHelperInstance.Lookup(item->getType());
 
 				if (itemType)
-					m_infoDisplay->Text.append(L"[" + itemType->Name + L"]\n");
+					msg.append(L"[" + itemType->Name + L"]\n");
 				else
-					m_infoDisplay->Text.append(L"[Unknown]\n");
+					msg.append(L"[Unknown]\n");
 				
 				if (item->IsOutDated())
 				{
-					m_infoDisplay->Text.append(L"Built(but outdated).");
+					msg.append(L"Built(but outdated).");
 				}
 				else
 				{
-					m_infoDisplay->Text.append(L"Built(up to date).");
+					msg.append(L"Built(up to date).");
 				}
+
+				m_infoDisplay->SetText(msg);
+
 				ListNewProperties(item->getData());
 			}
 			
 		}
 	}
 
-	void ResourcePane::BtnAdd_Release(Control* ctrl)
+	void ResourcePane::BtnAdd_Release(Button* ctrl)
 	{
 
 	}
-	void ResourcePane::BtnRemove_Release(Control* ctrl)
+	void ResourcePane::BtnRemove_Release(Button* ctrl)
 	{
 
 	}
-	void ResourcePane::BtnOpen_Release(Control* ctrl)
+	void ResourcePane::BtnOpen_Release(Button* ctrl)
 	{
 		if (m_resourceView->getSelectedNode())
 		{
@@ -737,7 +707,7 @@ namespace APDesigner
 			
 		}
 	}
-	void ResourcePane::BtnForceBuild_Release(Control* ctrl)
+	void ResourcePane::BtnForceBuild_Release(Button* ctrl)
 	{
 		if (m_resourceView->getSelectedNode())
 		{
@@ -751,7 +721,7 @@ namespace APDesigner
 			}
 		}
 	}
-	void ResourcePane::BtnApplyMod_Release(Control* ctrl)
+	void ResourcePane::BtnApplyMod_Release(Button* ctrl)
 	{
 		if (m_resourceView->getSelectedNode())
 		{
@@ -768,7 +738,7 @@ namespace APDesigner
 		}
 		NukePropertyList();
 	}
-	void ResourcePane::BtnBrowseOpen_Release(Control* ctrl)
+	void ResourcePane::BtnBrowseOpen_Release(Button* ctrl)
 	{
 		if (!m_currentProject)
 			return;
@@ -813,7 +783,7 @@ namespace APDesigner
 						if (StringUtils::StartsWith(result, toIgnore))
 							result = result.substr(2);
 
-						tb->setText(result);
+						tb->SetText(result);
 					}
 				}
 
@@ -821,7 +791,7 @@ namespace APDesigner
 			}
 		}
 	}
-	void ResourcePane::BtnBrowseSave_Release(Control* ctrl)
+	void ResourcePane::BtnBrowseSave_Release(Button* ctrl)
 	{
 		if (!m_currentProject)
 			return;
@@ -866,7 +836,7 @@ namespace APDesigner
 						if (StringUtils::StartsWith(result, toIgnore))
 							result = result.substr(2);
 						
-						tb->setText(result);
+						tb->SetText(result);
 					}
 				}
 
@@ -878,11 +848,11 @@ namespace APDesigner
 
 	int ResourcePane::getPropertyFieldWidth() const
 	{
-		return (m_form->Size.X-PropFieldMargin*3)/2 + 25;
+		return (m_form->getWidth() - PropFieldMargin * 3) / 2 + 25;
 	}
 	int ResourcePane::getPropertyLabelWidth() const
 	{
-		return (m_form->Size.X-PropFieldMargin*3)/2 - 25;
+		return (m_form->getWidth() - PropFieldMargin * 3) / 2 - 25;
 	}
 	int ResourcePane::getPropertyFieldTop() const
 	{
@@ -933,7 +903,7 @@ namespace APDesigner
 		TextBox* tb = up_cast<TextBox*>(Editor);
 		if (tb)
 		{
-			val = tb->Text;
+			val = tb->getText();
 			return true;
 		}
 		return false;
@@ -944,7 +914,7 @@ namespace APDesigner
 		CheckBox* cb = up_cast<CheckBox*>(Editor);
 		if (cb)
 		{
-			val = cb->getValue();
+			val = cb->Checked;
 			return true;
 		}
 		return false;

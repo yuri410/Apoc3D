@@ -28,6 +28,7 @@
 
 #include "apoc3d/Graphics/LockData.h"
 #include "apoc3d/Core/Resource.h"
+#include "apoc3d/Math/ColorValue.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Core;
@@ -62,6 +63,9 @@ namespace Apoc3D
 				 */
 				DataRectangle Lock(int32 surface, LockMode mode);
 				DataBox Lock(int32 surface, LockMode mode, const Box& box);
+
+				void FillColor(ColorValue cv);
+				void FillColor(ColorValue cv, const Apoc3D::Math::Rectangle& rect);
 
 				/**
 				 *  Unlocks the lock part. Works for all types of textures.

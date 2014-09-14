@@ -157,7 +157,6 @@ namespace Apoc3D
 
 			Apoc3D::Math::Rectangle HShade;
 
-			Texture* WhitePixelTexture;
 			Texture* SkinTexture;
 
 		private:

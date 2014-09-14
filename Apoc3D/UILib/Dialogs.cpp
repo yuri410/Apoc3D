@@ -9,7 +9,7 @@
 #include "apoc3d/UILib/List.h"
 #include "apoc3d/UILib/Console.h"
 #include "apoc3d/UILib/PictureBox.h"
-#include "apoc3d/UILib/Label.h"
+#include "apoc3d/UILib/Text.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
 
@@ -27,9 +27,9 @@ namespace Apoc3D
 			const String& title, const String& text, int buttonsFlags)
 			: m_renderDevice(device)
 		{
-			m_form = new Form(FBS_Fixed, title);
+			m_form = new Form(skin, device, FBS_Fixed, title);
 
-			Apoc3D::Math::Rectangle rect = UIRoot::GetUIArea(device);
+			Apoc3D::Math::Rectangle rect = SystemUI::GetUIArea(device);
 
 			if (buttonsFlags & DLGRES_OK)
 				AddButton(L"OK", skin, DLGRES_OK);
@@ -57,19 +57,20 @@ namespace Apoc3D
 			
 			int buttonSpacing = 15;
 			int buttonsWidth = 0;
-			for (int i=0;i<m_controlButtons.getCount();i++)
+			for (int i = 0; i<m_controlButtons.getCount(); i++)
 			{
 				buttonsWidth += singleFixedButtonWidth;
-				if (i != m_controlButtons.getCount()-1)
+				if (i != m_controlButtons.getCount() - 1)
 					buttonsWidth += buttonSpacing;
 			}
+
 			int minimumWidth = buttonsWidth;
 			Point orginalContentSize = controlFont->MeasureString(text);
 
 			bool useContentWidthCap = false;
-			if (orginalContentSize.X > (rect.Width * 3/4))
+			if (orginalContentSize.X > (rect.Width * 3 / 4))
 			{
-				int contentWidthLimit = rect.Width * 3/4;
+				int contentWidthLimit = rect.Width * 3 / 4;
 				float lines = (float)orginalContentSize.X / contentWidthLimit;
 				orginalContentSize.Y *= (int)ceil(lines);
 				useContentWidthCap = true;
@@ -83,47 +84,43 @@ namespace Apoc3D
 
 			int vertPadding = 15;
 			int btnHozPadding = 50;
-			m_form->Size = Point(minimumWidth + btnHozPadding * 2, orginalContentSize.Y + estButtonHeight + vertPadding * 5);
+			m_form->setWidth(minimumWidth + btnHozPadding * 2);
+			m_form->setHeight(orginalContentSize.Y + estButtonHeight + vertPadding * 5);
 
 			int contentHozPadding = 25;
-			m_content = new Label(Point(contentHozPadding, 14 + vertPadding), text, m_form->Size.X - contentHozPadding * 2);
-			m_content->SetSkin(skin);
+			m_content = new Label(skin, Point(contentHozPadding, 14 + vertPadding), text, m_form->getWidth() - contentHozPadding * 2);
+			//m_content->SetSkin(skin);
 			m_form->getControls().Add(m_content);
 
 			int buttonPosY = orginalContentSize.Y + vertPadding * 4;
-			for (int i=0;i<m_controlButtons.getCount();i++)
+			for (Button* btn : m_controlButtons) //int i=0;i<m_controlButtons.getCount();i++)
 			{
-				m_controlButtons[i]->Position = Point(0, buttonPosY);
-				m_form->getControls().Add(m_controlButtons[i]);
+				btn->Position = Point(0, buttonPosY);
+				m_form->getControls().Add(btn);
 			}
 
-			m_form->Position = Point(rect.Width, rect.Height) - m_form->Size;
-			m_form->Position.X /= 2;
-			m_form->Position.Y /= 2;
-			m_form->SetSkin(skin);
+			m_form->Position = (rect.getSize() - m_form->getSize()) / 2;
 
-			m_form->Initialize(device);
+			//m_form->SetSkin(skin);
 
-			int buttonPosX = (m_form->Size.X - buttonsWidth - btnHozPadding * 2)/2;
-			for (int i=0;i<m_controlButtons.getCount();i++)
+			//m_form->Initialize(device);
+
+			int buttonPosX = (m_form->getWidth() - buttonsWidth - btnHozPadding * 2) / 2;
+			for (int i = 0; i < m_controlButtons.getCount(); i++)
 			{
 				buttonPosX += i * buttonsWidth / m_controlButtons.getCount();
-				const Point& btnSize = m_controlButtons[i]->Size;
-				m_controlButtons[i]->Position.X = btnSize.X/2 + buttonPosX;
+				const Point& btnSize = m_controlButtons[i]->getSize();
+				m_controlButtons[i]->Position.X = btnSize.X / 2 + buttonPosX;
 			}
-			UIRoot::Add(m_form);
+			SystemUI::Add(m_form);
 		}
 
 		MessageDialogBox::~MessageDialogBox()
 		{
-			UIRoot::Remove(m_form);
+			SystemUI::Remove(m_form);
 			delete m_form;
 
-			for (int i=0;i<m_controlButtons.getCount();i++)
-			{
-				delete m_controlButtons[i];
-			}
-			m_controlButtons.Clear();
+			m_controlButtons.DeleteAndClear();
 			delete m_content;
 		}
 
@@ -135,15 +132,15 @@ namespace Apoc3D
 
 		void MessageDialogBox::AddButton(const String& caption, const StyleSkin* skin, DialogResult dr)
 		{
-			Button* btn = new Button(Point(0,0), singleFixedButtonWidth, caption);
-			btn->SetSkin(skin);
+			Button* btn = new Button(skin, Point(0,0), singleFixedButtonWidth, caption);
+			//btn->SetSkin(skin);
 			btn->eventRelease.Bind(this, &MessageDialogBox::Button_Release);
 
 			m_controlButtons.Add(btn);
 			m_buttonMapping.Add(btn, dr);
 		}
 
-		void MessageDialogBox::Button_Release(Control* ctrl)
+		void MessageDialogBox::Button_Release(Button* ctrl)
 		{
 			m_result = m_buttonMapping[ctrl];
 			m_form->Close();
@@ -159,46 +156,45 @@ namespace Apoc3D
 			const String& title, const String& text, bool multiline)
 			: m_renderDevice(device)
 		{
-			m_form = new Form(FBS_Fixed, title);
+			m_form = new Form(skin, device, FBS_Fixed, title);
 
-			m_form->Size = Point(500, !multiline ? 150 : 400);
+			m_form->setSize(Point(500, !multiline ? 150 : 400));
 
-			m_content = new Label(Point(15, skin->FormTitle->Height + 10), text, m_form->Size.X - 30);
-			m_content->SetSkin(skin);
+			m_content = new Label(skin, Point(15, skin->FormTitle->Height + 10), text, m_form->getWidth() - 30);
+			//m_content->SetSkin(skin);
 			m_form->getControls().Add(m_content);
 
-			m_btnOk = new Button(Point(315, m_form->Size.Y - 50), singleFixedButtonWidth, L"OK");
-			m_btnOk->SetSkin(skin);
+			m_btnOk = new Button(skin, Point(315, m_form->getHeight() - 50), singleFixedButtonWidth, L"OK");
+			//m_btnOk->SetSkin(skin);
 			m_btnOk->eventRelease.Bind(this, &InputDialogBox::Button_OkRelease);
 			m_form->getControls().Add(m_btnOk);
 
-			m_btnCancel = new Button(Point(400, m_form->Size.Y - 50), singleFixedButtonWidth, L"Cancel");
-			m_btnCancel->SetSkin(skin);
+			m_btnCancel = new Button(skin, Point(400, m_form->getHeight() - 50), singleFixedButtonWidth, L"Cancel");
+			//m_btnCancel->SetSkin(skin);
 			m_btnCancel->eventRelease.Bind(this, &InputDialogBox::Button_CancelRelease);
 			m_form->getControls().Add(m_btnCancel);
 
 			if (multiline)
-				m_inputField = new TextBox(Point(15, 60), m_form->Size.X - 30, m_form->Size.Y - 140, L"");
+				m_inputField = new TextBox(skin, Point(15, 60), m_form->getWidth() - 30, m_form->getHeight() - 140, L"");
 			else
-				m_inputField = new TextBox(Point(15, 60), m_form->Size.X - 30, L"");
-			m_inputField->SetSkin(skin);
+				m_inputField = new TextBox(skin, Point(15, 60), m_form->getWidth() - 30, L"");
+			//m_inputField->SetSkin(skin);
 			m_inputField->setScrollbarType(TextBox::SBT_Vertical);
-			m_inputField->eventRelease.Bind(this, &InputDialogBox::Button_CancelRelease);
+			//m_inputField->eventRelease.Bind(this, &InputDialogBox::Button_CancelRelease);
 			m_form->getControls().Add(m_inputField);
 
-			Apoc3D::Math::Rectangle rect = UIRoot::GetUIArea(device);
-			m_form->Position = Point(rect.Width, rect.Height) - m_form->Size;
-			m_form->Position.X /= 2;
-			m_form->Position.Y /= 2;
-			m_form->SetSkin(skin);
+			Apoc3D::Math::Rectangle rect = SystemUI::GetUIArea(device);
+			m_form->Position = (rect.getSize() - m_form->getSize()) / 2;
+			
+			//m_form->SetSkin(skin);
 
-			m_form->Initialize(device);
-			UIRoot::Add(m_form);
+			//m_form->Initialize(device);
+			SystemUI::Add(m_form);
 		}
 
 		InputDialogBox::~InputDialogBox()
 		{
-			UIRoot::Remove(m_form);
+			SystemUI::Remove(m_form);
 			delete m_form;
 
 			delete m_btnCancel;
@@ -213,20 +209,20 @@ namespace Apoc3D
 			m_form->ShowModal();
 		}
 
-		void InputDialogBox::Button_CancelRelease(Control* ctrl)
+		void InputDialogBox::Button_CancelRelease(Button* ctrl)
 		{
 			m_result = DLGRES_Cancel;
 			m_form->Close();
 			eventInputConfirmed.Invoke(this);
 		}
-		void InputDialogBox::Button_OkRelease(Control* ctrl)
+		void InputDialogBox::Button_OkRelease(Button* ctrl)
 		{
 			m_result = DLGRES_OK;
 			m_form->Close();
 			eventInputConfirmed.Invoke(this);
 		}
 
-		const String& InputDialogBox::getTextInput() const { return m_inputField->Text; }
+		const String& InputDialogBox::getTextInput() const { return m_inputField->getText(); }
 
 		bool InputDialogBox::isActive() const { return m_form->Visible; }
 

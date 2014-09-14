@@ -59,7 +59,7 @@ namespace Apoc3DEx
 	}
 	void Game::Draw(const GameTime* time)
 	{
-		UIRoot::Draw();
+		SystemUI::Draw();
 	}
 	void Game::Initialize()
 	{
@@ -81,14 +81,14 @@ namespace Apoc3DEx
 			m_UIskin = new StyleSkin(m_device, rule);
 		}
 
-		UIRoot::Initialize(m_device);
+		SystemUI::Initialize(m_device);
 
 		m_console = new Console(m_device, m_UIskin, Point(600,100), Point(400,400));
 	}
 
 	void Game::Unload()
 	{
-		UIRoot::Finalize();
+		SystemUI::Finalize();
 		delete m_UIskin;
 		delete m_console;
 	}
@@ -115,7 +115,7 @@ namespace Apoc3DEx
 
 		m_console->Update(time);
 
-		UIRoot::Update(time);
+		SystemUI::Update(time);
 
 		ResourceManager::PerformAllPostSync(time->getElapsedRealTime());
 	}

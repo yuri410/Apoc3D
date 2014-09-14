@@ -2,7 +2,7 @@
 
 namespace APDesigner
 {
-	HashMap<String, Texture*> m_maps;
+	static HashMap<String, Texture*> m_maps;
 
 	void UIResources::Initialize(RenderDevice* device)
 	{

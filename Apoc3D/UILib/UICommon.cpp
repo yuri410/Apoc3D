@@ -26,13 +26,170 @@
 #include "UICommon.h"
 
 #include "Apoc3D/Graphics/RenderSystem/Sprite.h"
+#include "apoc3d/Graphics/RenderSystem/Texture.h"
+#include "FontManager.h"
+#include "SystemUIImpl.h"
 
 namespace Apoc3D
 {
 	namespace UI
 	{
 		/************************************************************************/
-		/* ControlBounds                                                        */
+		/*  UIGraphic                                                           */
+		/************************************************************************/
+
+		UIGraphic::UIGraphic(Texture* tex) : UIGraphic(tex, CV_White) { }
+		UIGraphic::UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect) : UIGraphic(tex, srcRect, CV_White) { }
+		UIGraphic::UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[3]) : UIGraphic(tex, srcRect, CV_White) { }
+		UIGraphic::UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[9]) : UIGraphic(tex, srcRect, CV_White) { }
+
+		UIGraphic::UIGraphic(Texture* tex, ColorValue color)
+			: Graphic(tex), ModColor(color) { }
+
+		UIGraphic::UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect, ColorValue color)
+			: Graphic(tex), ModColor(color) 
+		{
+			SourceRects.Add(srcRect);
+		}
+
+		UIGraphic::UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[3], ColorValue color)
+			: Graphic(tex), ModColor(color)
+		{
+			SourceRects.AddArray(srcRect);
+		}
+
+		UIGraphic::UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[9], ColorValue color)
+			: Graphic(tex), ModColor(color)
+		{
+			SourceRects.AddArray(srcRect);
+		}
+
+		void UIGraphic::Draw(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, bool vertical) const
+		{
+			if (isSet() && CV_GetColorA(ModColor))
+			{
+				if (SourceRects.getCount())
+				{
+					if (is9patch())
+					{
+						guiDrawRegion9(sprite, dstRect, ModColor, Graphic, 
+							reinterpret_cast<const Apoc3D::Math::Rectangle(&)[9]>(*SourceRects.getElements()));
+					}
+					else if (is3patch())
+					{
+						if (vertical)
+						{
+							guiDrawRegion3Vert(sprite, dstRect.getTopLeft(), dstRect.Height, ModColor, Graphic,
+								reinterpret_cast<const Apoc3D::Math::Rectangle(&)[3]>(*SourceRects.getElements()));
+						}
+						else
+						{
+							guiDrawRegion3(sprite, dstRect.getTopLeft(), dstRect.Width, ModColor, Graphic,
+								reinterpret_cast<const Apoc3D::Math::Rectangle(&)[3]>(*SourceRects.getElements()));
+						}
+					}
+					else
+					{
+						sprite->Draw(Graphic, dstRect, SourceRects.getElements(), ModColor);
+					}
+				}
+				else
+				{
+					sprite->Draw(Graphic, dstRect, nullptr, ModColor);
+				}
+			}
+		}
+		void UIGraphic::DrawVert(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect) const { Draw(sprite, dstRect, true); }
+		void UIGraphic::Draw(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect) const { Draw(sprite, dstRect, false); }
+
+		int32 UIGraphic::getWidth() const
+		{
+			assert(isSet() && (SourceRects.getCount() == 0 || SourceRects.getCount() == 1));
+			return isSimple() ? SourceRects[0].Width : Graphic->getWidth();
+		}
+		int32 UIGraphic::getHeight() const
+		{
+			assert(isSet() && (SourceRects.getCount() == 0 || SourceRects.getCount() == 1));
+			return isSimple() ? SourceRects[0].Height : Graphic->getHeight();
+		}
+		Point UIGraphic::getSize() const 
+		{
+			int32 w = getWidth();
+			int32 h = getHeight();
+			return Point(w, h);
+		}
+
+		/************************************************************************/
+		/*  UIGraphicSimple                                                     */
+		/************************************************************************/
+
+		UIGraphicSimple::UIGraphicSimple(Texture* tex) : UIGraphicSimple(tex, CV_White) { }
+		UIGraphicSimple::UIGraphicSimple(Texture* tex, const Apoc3D::Math::Rectangle& srcRect) : UIGraphicSimple(tex, srcRect, CV_White) { }
+
+		UIGraphicSimple::UIGraphicSimple(Texture* tex, ColorValue modColor) 
+			: Graphic(tex), ModColor(modColor) { }
+
+		UIGraphicSimple::UIGraphicSimple(Texture* tex, const Apoc3D::Math::Rectangle& srcRect, ColorValue modColor) 
+			: Graphic(tex), ModColor(modColor) 
+		{
+			SourceRects.Add(srcRect);
+		}
+		
+
+		void UIGraphicSimple::Draw(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect) const
+		{
+			if (isSet() && CV_GetColorA(ModColor))
+			{
+				sprite->Draw(Graphic, dstRect, SourceRects.getCount() > 0 ? SourceRects.getElements() : nullptr, ModColor);
+			}
+		}
+
+		void UIGraphicSimple::DrawCentered(Sprite* sprite, const Point& pos, const Point& parentSize) const
+		{
+			if (isSet() && CV_GetColorA(ModColor))
+			{
+				if (SourceRects.getCount())
+				{
+					const Apoc3D::Math::Rectangle& sr = SourceRects[0];
+					int ix = (int)(parentSize.X - sr.Width) / 2 + pos.X;
+					int iy = (int)(parentSize.Y - sr.Height) / 2 + pos.Y;
+					Apoc3D::Math::Rectangle icoDR(ix, iy, sr.Width, sr.Height);
+					sprite->Draw(Graphic, icoDR, &sr, ModColor);
+				}
+				else
+				{
+					int ix = (int)(parentSize.X - Graphic->getWidth()) / 2 + pos.X;
+					int iy = (int)(parentSize.Y - Graphic->getHeight()) / 2 + pos.Y;
+					Apoc3D::Math::Rectangle icoDR(ix, iy, Graphic->getWidth(), Graphic->getHeight());
+					sprite->Draw(Graphic, icoDR, nullptr, ModColor);
+				}
+			}
+		}
+		void UIGraphicSimple::DrawCentered(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect) const
+		{
+			DrawCentered(sprite, dstRect.getTopLeft(), dstRect.getSize());
+		}
+
+		int32 UIGraphicSimple::getWidth() const
+		{
+			assert(isSet());
+			return SourceRects.getCount() > 0 ? SourceRects[0].Width : Graphic->getWidth();
+		}
+		int32 UIGraphicSimple::getHeight() const
+		{
+			assert(isSet());
+			return SourceRects.getCount() > 0 ? SourceRects[0].Height : Graphic->getHeight();
+		}
+		Point UIGraphicSimple::getSize() const
+		{
+			int32 w = getWidth();
+			int32 h = getHeight();
+			return Point(w, h);
+		}
+
+
+		/************************************************************************/
+		/*  ControlBounds                                                       */
 		/************************************************************************/
 
 		ControlBounds::ControlBounds(const Apoc3D::Math::Rectangle& graphicalArea, const Apoc3D::Math::Rectangle& hotArea)
@@ -92,8 +249,143 @@ namespace Apoc3D
 			Left = Right = Top = Bottom = 0;
 		}
 
+
 		/************************************************************************/
-		/*    gui sprite rendering                                              */
+		/* TextRenderSettings                                                   */
+		/************************************************************************/
+		Point TextRenderSettings::GetTextOffset(const String& text, Font* font, const Point& size) const
+		{
+			Point textSize = font->MeasureString(text);
+
+			Point textPos;
+			if (HorizontalAlignment == TextHAlign::Left)
+			{
+				textPos.X = 0;
+			}
+			else if (HorizontalAlignment == TextHAlign::Right)
+			{
+				textPos.X = size.X - textSize.X;
+			}
+			else
+			{
+				textPos.X = (size.X - textSize.X) / 2;
+			}
+
+			if (VerticalAlignment == TextVAlign::Top)
+			{
+				textPos.Y = 0;
+			}
+			else if (VerticalAlignment == TextVAlign::Bottom)
+			{
+				textPos.Y = size.Y - textSize.Y;
+			}
+			else
+			{
+				textPos.Y = (size.Y - textSize.Y) / 2;
+			}
+
+			return textPos;
+		}
+
+		void TextRenderSettings::Draw(Sprite* sprite, Font* font, const String& text, const Apoc3D::Math::Rectangle& area, int32 alpha) const
+		{
+			if (CV_GetColorA(TextColor) == 0 && (!HasTextShadow || CV_GetColorA(TextShadowColor) == 0))
+				return;
+
+			Apoc3D::Math::Rectangle modArea = TextPadding.ShrinkRect(area);
+
+			Point pos = modArea.getTopLeft();
+			Point size = modArea.getSize();
+
+			// x dir alignment
+			Point textPos = pos + GetTextOffset(text, font, size);
+
+			if (HasTextShadow)
+			{
+				Point shdTextPos = textPos + TextShadowOffset;
+				font->DrawString(sprite, text, shdTextPos, alpha != -1 ? CV_RepackAlpha(TextShadowColor, alpha) : TextShadowColor);
+			}
+
+			ColorValue textColor = alpha != -1 ? CV_RepackAlpha(TextColor, alpha) : TextColor;
+			font->DrawString(sprite, text, textPos, textColor);
+		}
+
+		void TextRenderSettings::Draw(Sprite* sprite, Font* font, const String& text, const Point& pos, const Point& size, int32 alpha) const
+		{
+			Draw(sprite, font, text, Apoc3D::Math::Rectangle(pos, size), alpha);
+		}
+
+		/************************************************************************/
+		/*  SystemUI                                                            */
+		/************************************************************************/
+
+		static SystemUIImpl sysUI;
+
+		RectangleF& SystemUI::UIArea = sysUI.UIArea;
+		RectangleF& SystemUI::MaximizedArea = sysUI.MaximizedArea;
+
+		Form*& SystemUI::ActiveForm = sysUI.m_activeForm;
+		MenuBar*& SystemUI::MainMenu = sysUI.m_mainMenu;
+		Form*& SystemUI::TopMostForm = sysUI.m_topMostForm;
+		Form*& SystemUI::ModalForm = sysUI.m_modalForm;
+
+		void SystemUI::Initialize(RenderDevice* device) { sysUI.Initialize(device); }
+		void SystemUI::Finalize() { sysUI.Finalize(); }
+
+		void SystemUI::Add(ControlContainer* cc) { sysUI.Add(cc); }
+		void SystemUI::Remove(ControlContainer* cc) { sysUI.Remove(cc); }
+		void SystemUI::RemoveForm(const String& name) { sysUI.RemoveForm(name); }
+		void SystemUI::RemoveContainer(const String& name) { sysUI.RemoveContainer(name); }
+		void SystemUI::BringToFirst(ControlContainer* cc) { sysUI.BringToFirst(cc); }
+
+		void SystemUI::Draw() { sysUI.Draw(); }
+		void SystemUI::Update(const GameTime* time) { sysUI.Update(time); }
+
+		Point SystemUI::ClampFormMovementOffset(Form* frm, const Point& vec) { return sysUI.ClampFormMovementOffset(frm, vec); }
+		Texture* SystemUI::GetWhitePixel() { return sysUI.getWhitePixel(); }
+
+		Apoc3D::Math::Rectangle SystemUI::GetUIArea(RenderDevice* device) { return sysUI.GetUIArea(device); }
+
+		bool SystemUI::GetMinimizedPosition(RenderDevice* dev, Form* form, Point& pos) { return sysUI.GetMinimizedPosition(dev, form, pos); }
+		Point SystemUI::GetMaximizedSize(RenderDevice* dev, Form* form) { return sysUI.GetMaximizedSize(dev, form); }
+		Apoc3D::Math::Rectangle SystemUI::GetMaximizedRect(RenderDevice* dev, Form* form) { return sysUI.GetMaximizedRect(dev, form); }
+		
+		const List<Form*>& SystemUI::getForms() { return sysUI.getForms(); }
+
+		/************************************************************************/
+		/* GUIUtils                                                             */
+		/************************************************************************/
+
+		void GUIUtils::CalculateScrollBarPositions(const Apoc3D::Math::Rectangle& area, ScrollBarPositioning* vs, ScrollBarPositioning* hs)
+		{
+			Point size = area.getSize();
+			if (vs)
+			{
+				size.X -= vs->Width;
+			}
+			
+			if (hs)
+			{
+				size.Y -= hs->Width;
+			}
+			
+			if (vs)
+			{
+				vs->Position = area.getTopRight();
+				vs->Position.X -= vs->Width;
+				vs->Length = size.Y;
+			}
+
+			if (hs)
+			{
+				hs->Position = area.getBottomLeft();
+				hs->Position.Y -= hs->Width;
+				hs->Length = size.X;
+			}
+		}
+
+		/************************************************************************/
+		/*    GUI sprite rendering                                              */
 		/************************************************************************/
 
 		// layout 3 one-dimensional segments with in the given fullLength
@@ -476,6 +768,16 @@ namespace Apoc3D
 			return false;
 		}
 
+		void guiOmitLineText(Font* fnt, int32 widthlimit, String& line)
+		{
+			int chCount = fnt->FitSingleLineString(line, widthlimit);
 
+			if (chCount < (int32)line.length() - 2)
+			{
+				String textToDraw = line.substr(0, chCount);
+				textToDraw.append(L"..");
+				line = textToDraw;
+			}
+		}
 	}
 }

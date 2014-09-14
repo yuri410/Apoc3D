@@ -30,6 +30,7 @@
 #include "UICommon.h"
 
 #include "apoc3d/Input/Keyboard.h"
+#include "apoc3d/Collections/List.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Input;
@@ -47,9 +48,7 @@ namespace Apoc3D
 
 			KeyboardEventsArgs()
 				: ShiftDown(false), ControlDown(false), AltDown(false), CapsLock(false)
-			{
-
-			}
+			{ }
 		};
 		
 		typedef EventDelegate1<String> PasteEventHandler;
@@ -58,29 +57,75 @@ namespace Apoc3D
 		class APAPI KeyboardHelper
 		{
 		public:
-			KeyboardEventHandler& eventKeyPress() { return m_eKeyPress; }
-			KeyboardEventHandler& eventKeyRelease() { return m_eKeyRelease; }
-			PasteEventHandler& eventKeyPaste() { return m_ePaste; }
-
 			KeyboardHelper()
 				: m_pasting(false), m_pressingTime(0), m_timerStarted(false), m_currentKey(KEY_UNASSIGNED), m_previousKey(KEY_UNASSIGNED)
-			{
+			{ }
 
-			}
 			void Update(const GameTime* time);
 
+			KeyboardEventHandler eventKeyPress;
+			KeyboardEventHandler eventKeyRelease;
+			PasteEventHandler eventKeyPaste;
+
 		private:
-			KeyboardEventHandler m_eKeyPress;
-			KeyboardEventHandler m_eKeyRelease;
-			PasteEventHandler m_ePaste;
-
-			bool m_timerStarted;
-			float m_pressingTime;
-
 			KeyboardKeyCode m_currentKey;
 			KeyboardKeyCode m_previousKey;
 			bool m_pasting;
-			
+
+			bool m_timerStarted;
+			float m_pressingTime;
+		};
+
+		class APAPI TextEditState
+		{
+		public:
+			TextEditState(const Point& cursorPos, bool multiline);
+			~TextEditState();
+
+			void Update(const GameTime* time);
+
+			void Add(const String& text);
+
+			void SetText(const String& text);
+			const String& getText() const { return m_text; }
+			const Collections::List<String>& getLines() const { return m_lines; }
+			const String& getCurrentLine() const { return m_lines[m_cursorLocation.Y]; }
+
+			const Point& getCursorPosition() const { return m_cursorLocation; }
+			int32 getLineCount() const { return m_multiline ? m_lines.getCount() : 1; }
+
+			void MoveCursorToEnd();
+			void MoveCursorTo(const Point& cp);
+
+			KeyboardEventHandler& eventKeyPress() { return m_keyboard.eventKeyPress; }
+			KeyboardEventHandler& eventKeyRelease() { return m_keyboard.eventKeyRelease; }
+			PasteEventHandler& eventKeyPaste() { return m_keyboard.eventKeyPaste; }
+
+			bool AllowMouseSelection = false;
+			bool AllowSelection = false;
+
+			EventDelegate0 eventEnterPressed;
+			EventDelegate0 eventContentChanged;
+			EventDelegate0 eventUpPressedSingleline;
+			EventDelegate0 eventDownPressedSingleline;
+
+		private:
+			void Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e);
+			void Keyboard_OnPaste(String value);
+
+			KeyboardHelper m_keyboard;
+
+
+			String m_text;
+			Collections::List<String> m_lines;	// used for multiline editing
+
+			Point m_cursorLocation;
+			bool m_multiline = false;
+
+			bool m_hasSelection = false;
+			Point m_selectionStart;
+			Point m_selectionEnd;
+
 		};
 	}
 }

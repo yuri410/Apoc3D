@@ -51,16 +51,16 @@ namespace APDesigner
 
 
 		void Form_Resized(Control* ctrl);
-		void CBVSHasSampler_Changed(Control* ctrl);
-		void CBVSIsCustom_Changed(Control* ctrl);
-		void CBPSHasSampler_Changed(Control* ctrl);
-		void CBPSIsCustom_Changed(Control* ctrl);
-		void PSAddParam_Clicked(Control* ctrl);
-		void PSRemoveParam_Clicked(Control* ctrl);
-		void PSApplyParam_Clicked(Control* ctrl);
-		void VSAddParam_Clicked(Control* ctrl);
-		void VSRemoveParam_Clicked(Control* ctrl);
-		void VSApplyParam_Clicked(Control* ctrl);
+		void CBVSHasSampler_Changed(CheckBox* ctrl);
+		void CBVSIsCustom_Changed(CheckBox* ctrl);
+		void CBPSHasSampler_Changed(CheckBox* ctrl);
+		void CBPSIsCustom_Changed(CheckBox* ctrl);
+		void PSAddParam_Clicked(Button* ctrl);
+		void PSRemoveParam_Clicked(Button* ctrl);
+		void PSApplyParam_Clicked(Button* ctrl);
+		void VSAddParam_Clicked(Button* ctrl);
+		void VSRemoveParam_Clicked(Button* ctrl);
+		void VSApplyParam_Clicked(Button* ctrl);
 		void VSParams_Selected(int x, int y);
 		void PSParams_Selected(int x, int y);
 

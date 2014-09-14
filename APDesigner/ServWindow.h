@@ -45,9 +45,9 @@ namespace APDesigner
 		virtual void OnFrameEnd() { }
 
 	private:
-		void BtnHide_Release(Control* ctrl);
-		void BtnBuild_Release(Control* ctrl);
-		void BtnExit_Release(Control* ctrl);
+		void BtnHide_Release(Button* ctrl);
+		void BtnBuild_Release(Button* ctrl);
+		void BtnExit_Release(Button* ctrl);
 
 		void Notify(const String& title, const String& message);
 		void UpdateProject();

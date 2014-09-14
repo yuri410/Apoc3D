@@ -39,10 +39,12 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(ComboBox, Control);
 		public:
+			typedef EventDelegate1<ComboBox*> ComboBoxEvent;
+
 			ComboBox(const Point& position, int width, const List<String>& items);
+			ComboBox(const StyleSkin* skin, const Point& position, int width, const List<String>& items);
 			virtual ~ComboBox();
 
-			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 			virtual void DrawOverlay(Sprite* sprite);
@@ -53,27 +55,31 @@ namespace Apoc3D
 			bool getOpened() const;
 			bool getLocked() const;
 			void setLocked(bool value) const;
-			const String& getText() const;
-			void setText(const String& value);
+			//const String& getText() const;
+			//void setText(const String& value);
 			int getSelectedIndex() const;
 			void setSelectedIndex(int v) const;
-			void SetSelectedByName(const String& name);
 
-			UIEventHandler eventSelectionChanged;
+			void SetSelectionByName(const String& n);
+
+			String* getSelectedItem() const;
+
+			ComboBoxEvent eventSelectionChanged;
 		private:
-			TextBox* m_textbox;
-			Button* m_button;
-			ListBox* m_listBox;
-			List<String> m_items;
+			void Initialize(const StyleSkin* skin);
 
-			bool m_justOpened;
-
-			void ListBox_SelectionChanged(Control* ctrl);
-			void ListBox_OnPress(Control* ctrl);
-			void Button_OnPress(Control* ctrl);
+			void ListBox_SelectionChanged(ListBox* ctrl);
+			void ListBox_OnPress(ListBox* ctrl);
+			void Button_OnPress(Button* ctrl);
 			void Open();
 			void Close();
 
+			TextBox* m_textbox = nullptr;
+			Button* m_button = nullptr;
+			ListBox* m_listBox = nullptr;
+			List<String> m_items;
+
+			bool m_justOpened = false;
 
 		};
 	}

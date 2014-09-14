@@ -3,27 +3,19 @@
 #define APOC3D_LIST_H
 
 /**
- * -----------------------------------------------------------------------------
- * This source file is part of Apoc3D Engine
+ * --------------------------------------------------------------------------------------------------
+ * This source file is part of Apoc3D Framework
  * 
- * Copyright (c) 2009+ Tao Xin
+ * Copyright (c) 2009-2014 Tao Xin
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This content of this file is subject to the terms of the Mozilla Public License v2.0. 
+ * If a copy of the MPL was not distributed with this file, you can obtain one at 
+ * http://mozilla.org/MPL/2.0/.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, WITHOUT WARRANTY OF ANY KIND; 
+ * either express or implied. See the Mozilla Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  if not, write to the Free Software Foundation, 
- * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
- * http://www.gnu.org/copyleft/gpl.txt.
- * 
- * -----------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------
  */
 
 #include "Control.h"
@@ -34,80 +26,71 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		class APAPI ListBox : public Control
+		class APAPI ListBox : public ScrollableControl
 		{
-			RTTI_DERIVED(ListBox, Control);
+			RTTI_DERIVED(ListBox, ScrollableControl);
 		public:
-			ListBox(const Point& position, int width, int height, const List<String>& items);
+			typedef EventDelegate1<ListBox*> ListBoxEvent;
+
+			ListBox(const StyleSkin* skin, const Point& position, int width, int height, const List<String>& items);
 			~ListBox();
 
-			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
-			bool getUseHorizontalScrollbar() const { return m_horizontalScrollbar; }
-			void setUseHorizontalScrollbar(bool v) { m_horizontalScrollbar = v; }
+			int32 FindEntry(const String& v);
 
+			
 			List<String>& getItems() { return m_items; }
 
-			bool getIsSorted() const { return m_sorted; }
-			void setIsSorted(bool v) { m_sorted = v; }
+			int32 getItemHeight() const;
 
 			int getSelectedIndex() const { return m_selectedIndex; }
 			void setSelectedIndex(int i) { m_selectedIndex = i; }
-			void SetSelectedByName(const String& name)
-			{
-				for (int i=0;i<m_items.getCount();i++)
-					if (m_items[i] == name)
-					{
-						setSelectedIndex(i); 
-						return;
-					}
-			}
 
-			UIEventHandler eventSelect;
-			UIEventHandler eventSelectionChanged;
+			TextRenderSettings ItemSettings;
+
+			UIGraphic BackgroundGraphic;
+			
+			ControlBounds Margin;
+
+			ListBoxEvent eventSelect;
+			ListBoxEvent eventSelectionChanged;
+			ListBoxEvent eventPress;
+			ListBoxEvent eventRelease;
+
 		private:
-			List<String> m_items;
-			bool m_sorted;
-			bool m_isSorted;
-			int m_visisbleItems;
+			void Initialize(const StyleSkin* skin);
 
-			Point m_textOffset;
-
-			//Apoc3D::Math::Rectangle m_destRect[9];
-
-			Apoc3D::Math::Rectangle m_selectionRect;
-			int m_hoverIndex;
-			int m_selectedIndex;
-
-			ScrollBar* m_vscrollbar;
-			ScrollBar* m_hscrollbar;
-			bool m_horizontalScrollbar;
-			int m_hScrollWidth;
-
-			bool m_mouseOver;
-
-			void InitScrollbars(RenderDevice* device);
 			void UpdateHScrollbar();
-			void RenderSelectionBox(Sprite* sprite, int index);
+			void RenderSelectionBox(Sprite* sprite, int index, const Point& txtPos);
 			void DrawBackground(Sprite* sprite);
-			void DrawScrollbar(Sprite* sprite);
+			
+			void OnMouseHover();
+			void OnMouseOut();
+			void OnPress();
+			void OnRelease();
+
+			List<String> m_items;
+			bool m_mouseHover = false;
+
+			int m_visisbleItems = 0;
+
+			int m_hoverIndex = -1;
+			int m_selectedIndex = -1;
+
+			int m_hScrollWidth = 0;
+
 		};
 
 		class APAPI TreeViewNode
 		{
 		public:
 			TreeViewNode(const String& text)
-				: m_text(text), m_icon(0), m_expanded(false), UserData(0)
-			{
+				: m_text(text) { }
 
-			}
 			TreeViewNode(const String& text, Texture* icon)
-				: m_text(text), m_icon(icon), m_expanded(false), UserData(0)
-			{
-
-			}
+				: m_text(text), m_icon(icon) { }
 
 			void Expand()
 			{
@@ -128,72 +111,52 @@ namespace Apoc3D
 
 			List<TreeViewNode*>& getNodes() { return m_subNode; }
 
-			void* UserData;
+			void* UserData = nullptr;
 
 		private:
 			String m_text;
-			Texture* m_icon;
+			Texture* m_icon = nullptr;
 			List<TreeViewNode*> m_subNode;
 
-			bool m_expanded;
+			bool m_expanded = false;
 		};
 
-		class APAPI TreeView : public Control
+		class APAPI TreeView : public ScrollableControl
 		{
-			RTTI_DERIVED(TreeView, Control);
+			RTTI_DERIVED(TreeView, ScrollableControl);
 		public:
-			TreeView(const Point& position, int width, int height);
+			TreeView(const StyleSkin* skin, const Point& position, int width, int height);
 			virtual ~TreeView();
 
-			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* time);
-			
 			virtual void Draw(Sprite* sprite);
 
 			void SetSize(const Point& newSize);
 
-			void NukeTreeViewNodes() { NukeTreeViewNodes(m_nodes); }
-
-			bool getUseHorizontalScrollbar() const { return m_horizontalScrollbar; }
-			void setUseHorizontalScrollbar(bool v) { m_horizontalScrollbar = v; }
-
+			void NukeTreeViewNodes();
+			
 			List<TreeViewNode*>& getNodes() { return m_nodes; }
 
 			TreeViewNode* getSelectedNode() const { return m_selectedNode; }
 
+			TextRenderSettings ItemSettings;
+
+			UIGraphic BackgroundGraphic;
+
+			ControlBounds Margin;
+
 			UIEventHandler eventSelect;
 			UIEventHandler eventSelectionChanged;
+
 		private:
+			void Initialize(const StyleSkin* skin);
 			void NukeTreeViewNodes(List<TreeViewNode*>& nodes);
-
-			List<TreeViewNode*> m_nodes;
-
-			int m_visisbleItems;
-
-			Point m_textOffset;
-
-			//Apoc3D::Math::Rectangle m_destRect[9];
-
-			Apoc3D::Math::Rectangle m_selectionRect;
-			TreeViewNode* m_selectedNode;
-			TreeViewNode* m_hoverNode;
-			TreeViewNode* m_anyHoverNode;
-
-			ScrollBar* m_vscrollbar;
-			ScrollBar* m_hscrollbar;
-			bool m_horizontalScrollbar;
-			int m_hScrollWidth;
-
-			bool m_mouseOver;
-
 			int GetItemHeight() const;
 
-			void InitScrollbars(RenderDevice* device);
 			void UpdateHScrollbar();
 
-			void RenderSelectionBox(Sprite* sprite, TreeViewNode* node, const Apoc3D::Math::Rectangle& absoluteArea);
+			void RenderSelectionBox(Sprite* sprite, TreeViewNode* node, const Apoc3D::Math::Rectangle& contentArea, const Point& txtPos);
 			void DrawBackground(Sprite* sprite);
-			void DrawScrollbar(Sprite* sprite);
 			void DrawNodes(Sprite* sprite, const List<TreeViewNode*>& nodes, int depth, int& counter, int maxCount);
 
 			int GetExpandedNodeCount() const { return GetExpandedNodeCount(m_nodes); }
@@ -203,28 +166,39 @@ namespace Apoc3D
 			int GetAllVisibleNodeCount() const;
 			int MeasureExpandedNodeWidth() const;
 			int MeasureExpandedModeHeight() const;
+
+			void OnMouseHover();
+			void OnMouseOut();
+			void OnPress();
+			void OnRelease();
+
+			List<TreeViewNode*> m_nodes;
+
+			int m_visisbleItems = 0;
+
+			TreeViewNode* m_selectedNode = nullptr;
+			TreeViewNode* m_hoverNode = nullptr;
+			TreeViewNode* m_anyHoverNode = nullptr;
+			
+			int m_hScrollWidth = 0;
+			bool m_mouseOver = false;
 		};
 
 		typedef EventDelegate2<int, int> ListViewSelectionHandler;
 
-		class APAPI ListView : public Control
+		class APAPI ListView : public ScrollableControl
 		{
-			RTTI_DERIVED(ListView, Control);
+			RTTI_DERIVED(ListView, ScrollableControl);
 		public:
 			class Header
 			{
 			public:
-				Header()
-					:Width(0)
-				{
-				}
+				Header() { }
 				Header(const String& text, int width)
-					: Text(text), Width(width)
-				{
-				}
+					: Text(text), Width(width) { }
 
 				String Text;
-				int Width;
+				int Width = 0;
 
 				UIEventHandler eventPress;
 				UIEventHandler enentRelease;
@@ -236,10 +210,9 @@ namespace Apoc3D
 				LHSTYLE_None
 			};
 
-			ListView(const Point& position, const Point& size, const List2D<String>& items);
+			ListView(const StyleSkin* skin, const Point& position, const Point& size, const List2D<String>& items);
 			virtual ~ListView();
 
-			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
@@ -248,63 +221,61 @@ namespace Apoc3D
 			ListViewHeaderStyle getHeaderStyle() const { return m_headerStyle; }
 			void setHeaderStyle(ListViewHeaderStyle s) { m_headerStyle = s; }
 
-			bool getGridLines() const { return m_gridLines; }
-			void setGridLines(bool v) { m_gridLines = v; }
-
-			bool getFullRowSelect() const { return m_fullRowSelect; }
-			void setFullRowSelect(bool v) { m_fullRowSelect = v; }
-
-			bool getHoverSelection() const { return m_hoverSelection; }
-			void setHoverSelection(bool v) { m_hoverSelection = v; }
-
 			int getSelectedRowIndex() const { return m_selectedRow; }
 			int getSelectedColumnIndex() const { return m_selectedColumn; }
 
+			bool ShowGridLines = false;
+			bool FullRowSelect = false;
+			bool HoverSelectionMode = true;
+
+			TextRenderSettings TextSettings;
+
 			ListViewSelectionHandler eventSelected;
 		private:
+			void Initialize(const StyleSkin* skin);
 			int GetVisibleItems();
 			
+			Point GetColumnHeaderOffset() const;
+			Point GetCellOffset() const;
+
+			void UpdateColumnHeaders();
+			void UpdateScrollBars();
 			void UpdateSelection();
-			void DrawBorder(Sprite* sprite);
-			void DrawScrollbars(Sprite* sprite);
+
+			void DrawBackground(Sprite* sprite);
 			void DrawColumnHeaders(Sprite* sprite);
-			void UpdateHeaderSize(Apoc3D::Math::Rectangle headerArea, int index, Sprite* sprite);
-			void DrawHeaderEnd(Sprite* sprite, int width);
+			void DrawHeaderEnd(Sprite* sprite, const Point& pos, int32 width);
+
 			void DrawGridLines(Sprite* sprite);
 			void DrawItems(Sprite* sprite);
-			void DrawSelectionBox(Sprite* sprite, const Point& position, int x, int y);
-			void DrawSelectedBox(Sprite* sprite, const Point& position);
+			void DrawSelectedBox(Sprite* sprite, const Apoc3D::Math::Rectangle& area);
+			void DrawHoverBox(Sprite* sprite, const Apoc3D::Math::Rectangle& area);
+			void DrawItemBox(Sprite* sprite, const Apoc3D::Math::Rectangle& area, ColorValue cv);
 
-			Apoc3D::Math::Rectangle m_sizeArea;
-			int m_resizeIndex;
+			void OnMouseHover();
+			void OnMouseOut();
+			void OnPress();
+			void OnRelease();
 
 			List2D<String> m_items;
 
 			List<Header> m_columnHeader;
-			Apoc3D::Math::Rectangle m_headerArea;
-			bool m_isResizing;
+			int32 m_headerHeight = 0;
+			int32 m_rowHeight = 0;
 
-			Apoc3D::Math::Rectangle m_backArea;
+			bool m_isResizingHeaders = false;
+			int m_resizeIndex = -1;
 
-			ScrollBar* m_hScrollBar;
-			ScrollBar* m_vScrollBar;
+			ListViewHeaderStyle m_headerStyle = LHSTYLE_Clickable;
+			int m_headerHoverIndex = -1;
+			
+			int m_selectedRow = -1;
+			int m_selectedColumn = -1;
+			int m_hoverRowIndex = -1;
+			int m_hoverColumnIndex = -1;
+			Apoc3D::Math::Rectangle m_contentArea;
 
-			ListViewHeaderStyle m_headerStyle;
-			int m_headerHoverIndex;
-			bool m_gridLines;
-			Apoc3D::Math::Rectangle m_lineRect;
-			Point m_gridSize;
 
-			int m_selectedRow;
-			int m_selectedColumn;
-			int m_hoverRowIndex;
-			int m_hoverColumnIndex;
-			Apoc3D::Math::Rectangle m_selectionArea;
-			Apoc3D::Math::Rectangle m_selectionRect;
-			bool m_fullRowSelect;
-			bool m_hoverSelection;
-
-			Apoc3D::Math::Rectangle m_srcRect;
 		};
 	}
 }

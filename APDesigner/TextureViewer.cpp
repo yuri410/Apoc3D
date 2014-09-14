@@ -31,15 +31,14 @@ namespace APDesigner
 	const Point MaxSize(300, 300);
 	const Point MinSize(64, 64);
 
-	TextureThumbViewer::TextureThumbViewer(RenderDevice* device)
-		: m_texture(0), m_device(device)
+	TextureThumbViewer::TextureThumbViewer(MainWindow* window)
+		: m_texture(0), m_device(window->getDevice())
 	{
-		m_form = new Form(FBS_None, L"Texture thumbnail");
+		m_form = new Form(window->getUISkin(), window->getDevice(), FBS_None, L"Texture thumbnail");
 
 		m_pictureBox = new PictureBox(Point::Zero, 1);
 		m_pictureBox->eventPictureDraw.Bind(this, &TextureThumbViewer::PictureBox_Draw);
 		m_form->getControls().Add(m_pictureBox);
-		m_form->Initialize(device);
 	}
 	void TextureThumbViewer::PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* rect)
 	{
@@ -185,11 +184,9 @@ namespace APDesigner
 		if (newSize.X < MinSize.X)
 			newSize.X = MinSize.X;
 
-		m_pictureBox->Size = newSize;
+		m_pictureBox->setSize(newSize);
 		m_form->Position = position;
-		m_form->Size = newSize;
-		m_form->Size.X += 2;
-		m_form->Size.Y += 2;
+		m_form->setSize(newSize + Point(2, 2));
 		m_form->Show();
 	}
 
@@ -221,14 +218,11 @@ namespace APDesigner
 		: Document(window, nullptr), m_pictureBox(0), m_filePath(filePath), m_texture(0), m_scale(0), m_name(name)
 	{
 		int32 sy = window->getUISkin()->FormTitle->Height;
-		m_pictureBox = new PictureBox(Point(5,5 + sy), 1);
-		m_pictureBox->SetSkin(window->getUISkin());
+		m_pictureBox = new PictureBox(window->getUISkin(), Point(5,5 + sy), 1);
 		m_pictureBox->eventPictureDraw.Bind(this, &TextureViewer::PixtureBox_Draw);
-		m_btnZoomIn = new Button(Point(100,sy+7), L"+");
-		m_btnZoomIn->SetSkin(window->getUISkin());
+		m_btnZoomIn = new Button(window->getUISkin(), Point(100,sy+7), L"+");
 		m_btnZoomIn->eventPress.Bind(this, &TextureViewer::BtnZoomIn_Pressed);
-		m_btnZoomOut = new Button(Point(140,sy+7), L"-");
-		m_btnZoomOut->SetSkin(window->getUISkin());
+		m_btnZoomOut = new Button(window->getUISkin(), Point(140,sy+7), L"-");
 		m_btnZoomOut->eventPress.Bind(this, &TextureViewer::BtnZoomOut_Pressed);
 
 
@@ -308,8 +302,8 @@ namespace APDesigner
 					msg.append(L"\nMip Levels:");
 					msg.append(StringUtils::IntToString(m_texture->getLevelCount()));	
 					
-					m_pictureBox->getFontRef()->DrawString(sprite, msg, Point(5+dr.X, 6+dr.Y), CV_Black);
-					m_pictureBox->getFontRef()->DrawString(sprite, msg, Point(5+dr.X, 5+dr.Y), CV_White);
+					m_pictureBox->getFont()->DrawString(sprite, msg, Point(5+dr.X, 6+dr.Y), CV_Black);
+					m_pictureBox->getFont()->DrawString(sprite, msg, Point(5+dr.X, 5+dr.Y), CV_White);
 				}
 				break;
 			}
@@ -363,7 +357,7 @@ namespace APDesigner
 			
 		}
 	}
-	void TextureViewer::BtnZoomIn_Pressed(Control* ctrl)
+	void TextureViewer::BtnZoomIn_Pressed(Button* ctrl)
 	{
 		m_scale++;
 		if (m_scale>8)
@@ -376,7 +370,7 @@ namespace APDesigner
 
 		getDocumentForm()->setTitle(m_name + scaleRatio);
 	}
-	void TextureViewer::BtnZoomOut_Pressed(Control* ctrl)
+	void TextureViewer::BtnZoomOut_Pressed(Button* ctrl)
 	{
 		m_scale--;
 		if (m_scale<-8)
@@ -414,12 +408,10 @@ namespace APDesigner
 
 	void TextureViewer::Update(const GameTime* time)
 	{
-		m_pictureBox->Size = getDocumentForm()->Size;
-		m_pictureBox->Size.X -= m_pictureBox->Position.X*2;
-		m_pictureBox->Size.Y -= m_pictureBox->Position.Y*2;
+		m_pictureBox->setSize(getDocumentForm()->getSize() - m_pictureBox->Position * 2);
 
-		m_btnZoomIn->Position.X = m_pictureBox->Size.X-65;
-		m_btnZoomOut->Position.X = m_pictureBox->Size.X-30;
+		m_btnZoomIn->Position.X = m_pictureBox->getWidth() - 65;
+		m_btnZoomOut->Position.X = m_pictureBox->getWidth() - 30;
 		Document::Update(time);
 	}
 }

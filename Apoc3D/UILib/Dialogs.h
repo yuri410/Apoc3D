@@ -67,7 +67,7 @@ namespace Apoc3D
 			InputHandler eventInputResponsed;
 		private:
 			void AddButton(const String& caption, const StyleSkin* skin, DialogResult dr);
-			void Button_Release(Control* ctrl);
+			void Button_Release(Button* ctrl);
 
 			Apoc3D::Graphics::RenderSystem::RenderDevice* m_renderDevice;
 
@@ -98,8 +98,8 @@ namespace Apoc3D
 			ConfirmInputHandler eventInputConfirmed;
 		private:
 			void AddButton(const String& caption, const StyleSkin* skin, DialogResult dr);
-			void Button_OkRelease(Control* ctrl);
-			void Button_CancelRelease(Control* ctrl);
+			void Button_OkRelease(Button* ctrl);
+			void Button_CancelRelease(Button* ctrl);
 
 			Apoc3D::Graphics::RenderSystem::RenderDevice* m_renderDevice;
 

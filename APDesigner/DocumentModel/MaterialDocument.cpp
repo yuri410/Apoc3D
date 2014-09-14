@@ -64,83 +64,62 @@ namespace APDesigner
 
 		m_scene.AddObject(&m_object);
 
-		m_modelViewer = new PictureBox(Point(10,10 + 17), 1);
-		m_modelViewer->Size = Point(512,512);
-		m_modelViewer->SetSkin(window->getUISkin());
+		const StyleSkin* skin = window->getUISkin();
+
+		m_modelViewer = new PictureBox(skin, Point(10,10 + 17), 1);
+		m_modelViewer->setSize(512, 512);
 		m_modelViewer->eventPictureDraw.Bind(this, &MaterialDocument::ModelView_Draw);
 
 		{
 
-			m_applyMtrl = new Button(Point(21 + 522+100+220, 159),150, L"Apply Changes");
-			m_applyMtrl->SetSkin(window->getUISkin());
+			m_applyMtrl = new Button(skin, Point(21 + 522+100+220, 159),150, L"Apply Changes");
 			m_applyMtrl->eventRelease.Bind(this, &MaterialDocument::BtnApplyMtrl_Pressed);
 
 		}
 		{
 			int sx = 21 + 522;
 			int sy = 10+17;
-			m_cfAmbient = new ColorField(Point(sx, sy), CV_Red);
-			m_cfAmbient->Text = L"Ambient";
-			m_cfAmbient->SetSkin(window->getUISkin());
-
-			m_cfDiffuse = new ColorField(Point(sx + 250, sy), CV_Red);
-			m_cfDiffuse->Text = L"Diffuse";
-			m_cfDiffuse->SetSkin(window->getUISkin());
-
+			m_cfAmbient = new ColorField(skin, Point(sx, sy), L"Ambient", CV_Red);
+			m_cfDiffuse = new ColorField(skin, Point(sx + 250, sy), L"Diffuse", CV_Red);
 			sy += 30;
 
-			m_cfSpecular = new ColorField(Point(sx, sy), CV_Red);
-			m_cfSpecular->Text = L"Specular";
-			m_cfSpecular->SetSkin(window->getUISkin());
-
-			m_cfEmissive = new ColorField(Point(sx + 250, sy), CV_Red);
-			m_cfEmissive->Text = L"Emissive";
-			m_cfEmissive->SetSkin(window->getUISkin());
+			m_cfSpecular = new ColorField(skin, Point(sx, sy), L"Specular", CV_Red);
+			m_cfEmissive = new ColorField(skin, Point(sx + 250, sy), L"Emissive", CV_Red);
 			sy += 30;
 
-			Label* lbl = new Label(Point(sx, sy), L"Shininess", 100);
-			lbl->SetSkin(window->getUISkin());
+			Label* lbl = new Label(skin, Point(sx, sy), L"Shininess", 100);
 			m_mtrlPanelLabels.Add(lbl);
-			m_tbShinness = new TextBox(Point(sx + 100, sy), 200, L"");
-			m_tbShinness->SetSkin(window->getUISkin());
+
+			m_tbShinness = new TextBox(skin, Point(sx + 100, sy), 200, L"");
 
 			sy += 40;
-			lbl = new Label(Point(sx, sy), L"Texture1", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Texture1", 100);
 			m_mtrlPanelLabels.Add(lbl);
-			m_tbTex1 = new TextBox(Point(sx + 100, sy), 200, L"");
-			m_tbTex1->SetSkin(window->getUISkin());
+
+			m_tbTex1 = new TextBox(skin, Point(sx + 100, sy), 200, L"");
 
 			sy += 25;
-			lbl = new Label(Point(sx, sy), L"Texture2", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Texture2", 100);
 			m_mtrlPanelLabels.Add(lbl);
-			m_tbTex2 = new TextBox(Point(sx + 100, sy), 200, L"");
-			m_tbTex2->SetSkin(window->getUISkin());
 
+			m_tbTex2 = new TextBox(skin, Point(sx + 100, sy), 200, L"");
 			
 			sy += 25;
-			lbl = new Label(Point(sx, sy), L"Texture3", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Texture3", 100);
 			m_mtrlPanelLabels.Add(lbl);
-			m_tbTex3 = new TextBox(Point(sx + 100, sy), 200, L"");
-			m_tbTex3->SetSkin(window->getUISkin());
+			m_tbTex3 = new TextBox(skin, Point(sx + 100, sy), 200, L"");
 
 
 			sy += 25;
-			lbl = new Label(Point(sx, sy), L"Texture4", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Texture4", 100);
 			m_mtrlPanelLabels.Add(lbl);
-			m_tbTex4 = new TextBox(Point(sx + 100, sy), 200, L"");
-			m_tbTex4->SetSkin(window->getUISkin());
+			m_tbTex4 = new TextBox(skin, Point(sx + 100, sy), 200, L"");
 
 
 			sy += 25;
-			lbl = new Label(Point(sx, sy), L"Texture5", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Texture5", 100);
 			m_mtrlPanelLabels.Add(lbl);
-			m_tbTex5 = new TextBox(Point(sx + 100, sy), 200, L"");
-			m_tbTex5->SetSkin(window->getUISkin());
+			m_tbTex5 = new TextBox(skin, Point(sx + 100, sy), 200, L"");
 
 
 			//sy += 25;
@@ -152,14 +131,11 @@ namespace APDesigner
 
 
 			sy += 35;
-			lbl = new Label(Point(sx, sy), L"Priority[0,127]", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Priority[0,127]", 100);
 			m_mtrlPanelLabels.Add(lbl);
-			m_tbPriority = new TextBox(Point(sx + 100, sy), 200, L"");
-			m_tbPriority->SetSkin(window->getUISkin());
+			m_tbPriority = new TextBox(skin, Point(sx + 100, sy), 200, L"");
 
-			m_cbDepthTest = new CheckBox(Point(sx+ 250 + 100, sy), L"DepthTest", false);
-			m_cbDepthTest->SetSkin(window->getUISkin());
+			m_cbDepthTest = new CheckBox(skin, Point(sx+ 250 + 100, sy), L"DepthTest", false);
 
 
 			sy += 25;
@@ -167,27 +143,21 @@ namespace APDesigner
 			items.Add(GraphicsCommonUtils::ToString(CULL_None));
 			items.Add(GraphicsCommonUtils::ToString(CULL_Clockwise));
 			items.Add(GraphicsCommonUtils::ToString(CULL_CounterClockwise));
-			lbl = new Label(Point(sx, sy), L"Cull Mode", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Cull Mode", 100);
 			m_mtrlPanelLabels.Add(lbl);
-			m_cbCull = new ComboBox(Point(sx + 100, sy), 200, items);
-			m_cbCull->SetSkin(window->getUISkin());
+			m_cbCull = new ComboBox(skin, Point(sx + 100, sy), 200, items);
 
-			m_cbDepthWrite = new CheckBox(Point(sx+ 250 + 100, sy), L"DepthWrite", false);
-			m_cbDepthWrite->SetSkin(window->getUISkin());
+			m_cbDepthWrite = new CheckBox(skin, Point(sx+ 250 + 100, sy), L"DepthWrite", false);
 
 			sy += 25;
-			lbl = new Label(Point(sx, sy), L"AlphaTest[0,1]", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"AlphaTest[0,1]", 100);
 			m_mtrlPanelLabels.Add(lbl);
-			m_tbAlphaTest = new TextBox(Point(sx + 100, sy), 200, L"");
-			m_tbAlphaTest->SetSkin(window->getUISkin());
+			m_tbAlphaTest = new TextBox(skin, Point(sx + 100, sy), 200, L"");
 			
 
 			sy += 25;
 
-			m_cbTransparent = new CheckBox(Point(sx + 250 + 100, sy), L"Transparent", false);
-			m_cbTransparent->SetSkin(window->getUISkin());
+			m_cbTransparent = new CheckBox(skin, Point(sx + 250 + 100, sy), L"Transparent", false);
 
 			items.Clear();
 			items.Add(GraphicsCommonUtils::ToString(BLFUN_Add));
@@ -195,11 +165,9 @@ namespace APDesigner
 			items.Add(GraphicsCommonUtils::ToString(BLFUN_ReverseSubtract));
 			items.Add(GraphicsCommonUtils::ToString(BLFUN_Max));
 			items.Add(GraphicsCommonUtils::ToString(BLFUN_Min));
-			lbl = new Label(Point(sx, sy), L"Blend Func", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Blend Func", 100);
 			m_mtrlPanelLabels.Add(lbl);
-			m_cbBlendFunction = new ComboBox(Point(sx + 100, sy), 200, items);
-			m_cbBlendFunction->SetSkin(window->getUISkin());
+			m_cbBlendFunction = new ComboBox(skin, Point(sx + 100, sy), 200, items);
 
 			items.Clear();
 			items.Add(GraphicsCommonUtils::ToString(BLEND_Zero));
@@ -217,31 +185,24 @@ namespace APDesigner
 			items.Add(GraphicsCommonUtils::ToString(BLEND_BlendFactor));
 			
 			sy += 25;
-			lbl = new Label(Point(sx, sy), L"Src Blend", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Src Blend", 100);
 			m_mtrlPanelLabels.Add(lbl);
-			m_cbSrcBlend = new ComboBox(Point(sx + 100, sy), 200, items);
-			m_cbSrcBlend->SetSkin(window->getUISkin());
+			m_cbSrcBlend = new ComboBox(skin, Point(sx + 100, sy), 200, items);
 
 			sy += 25;
-			lbl = new Label(Point(sx, sy), L"Dest Blend", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Dest Blend", 100);
 			m_mtrlPanelLabels.Add(lbl);
-			m_cbDstBlend = new ComboBox(Point(sx + 100, sy), 200, items);
-			m_cbDstBlend->SetSkin(window->getUISkin());
+			m_cbDstBlend = new ComboBox(skin, Point(sx + 100, sy), 200, items);
 
 			sy += 35;
-			lbl = new Label(Point(sx, sy), L"Pass Flags", 100);
-			lbl->SetSkin(window->getUISkin());
+			lbl = new Label(skin, Point(sx, sy), L"Pass Flags", 100);
 			m_mtrlPanelLabels.Add(lbl);
-			m_pbPassFlag = new PictureBox(Point(sx+100, sy),1);
-			m_pbPassFlag->SetSkin(window->getUISkin());
+			m_pbPassFlag = new PictureBox(skin, Point(sx+100, sy),1);
 			//m_pbPassFlag->Size.Y = getDocumentForm()->getFontRef()->getLineHeight();
-			m_pbPassFlag->Size.X = 256;
+			m_pbPassFlag->setWidth(256);
 			m_pbPassFlag->eventPictureDraw.Bind(this, &MaterialDocument::PassFlags_Draw);
 
-			m_btnPassFlag = new Button(Point(sx+100+300, sy), L"Edit");
-			m_btnPassFlag->SetSkin(window->getUISkin());
+			m_btnPassFlag = new Button(skin, Point(sx+100+300, sy), L"Edit");
 			m_btnPassFlag->eventPress.Bind(this, &MaterialDocument::PassButton_Pressed);
 		}
 		
@@ -435,9 +396,9 @@ namespace APDesigner
 		m_camera->setChaseDirection(Vector3(cosf(m_xang), -sinf(m_yang), sinf(m_xang)));
 		m_camera->setDesiredOffset(Vector3(0,0,m_distance));
 
-		if (getDocumentForm()->getFontRef())
+		if (getDocumentForm()->getFont())
 		{
-			m_pbPassFlag->Size.Y = static_cast<int>(getDocumentForm()->getFontRef()->getLineBackgroundHeight());
+			m_pbPassFlag->setHeight(static_cast<int>(getDocumentForm()->getFont()->getLineBackgroundHeight()));
 		}
 		Document::Update(time);
 	}
@@ -446,7 +407,7 @@ namespace APDesigner
 		m_sceneRenderer->RenderScene(&m_scene);
 	}
 
-	void MaterialDocument::PassButton_Pressed(Control* ctrl)
+	void MaterialDocument::PassButton_Pressed(Button* ctrl)
 	{
 		m_passEditor->ShowModal(m_material);
 	}
@@ -476,11 +437,11 @@ namespace APDesigner
 			Apoc3D::Math::Rectangle dr(*dstRect);
 			dr.X += i * CX;
 			dr.Width = CX;
-			sprite->Draw(getDocumentForm()->getSkin()->WhitePixelTexture, dr, 0, (flag & 1) ? CV_Red : CV_White);
+			sprite->Draw(SystemUI::GetWhitePixel(), dr, 0, (flag & 1) ? CV_Red : CV_White);
 			flag = flag>>1;
 		}
 	}
-	void MaterialDocument::BtnApplyMtrl_Pressed(Control* ctrl)
+	void MaterialDocument::BtnApplyMtrl_Pressed(Button* ctrl)
 	{
 		Material* mtrl = m_material;
 		if (!mtrl)
@@ -490,21 +451,21 @@ namespace APDesigner
 		mtrl->Diffuse = Color4(m_cfDiffuse->GetValue());
 		mtrl->Specular = Color4(m_cfSpecular->GetValue());
 		mtrl->Emissive = Color4(m_cfEmissive->GetValue());
-		mtrl->Power = StringUtils::ParseSingle(m_tbShinness->Text);
+		mtrl->Power = StringUtils::ParseSingle(m_tbShinness->getText());
 
-		mtrl->setTextureName(0, m_tbTex1->Text);
-		mtrl->setTextureName(1, m_tbTex2->Text);
-		mtrl->setTextureName(2, m_tbTex3->Text);
-		mtrl->setTextureName(3, m_tbTex4->Text);
-		mtrl->setTextureName(4, m_tbTex5->Text);
+		mtrl->setTextureName(0, m_tbTex1->getText());
+		mtrl->setTextureName(1, m_tbTex2->getText());
+		mtrl->setTextureName(2, m_tbTex3->getText());
+		mtrl->setTextureName(3, m_tbTex4->getText());
+		mtrl->setTextureName(4, m_tbTex5->getText());
 
-		mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->Text));
-		mtrl->AlphaReference = StringUtils::ParseUInt32(m_tbAlphaTest->Text);
+		mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->getText()));
+		mtrl->AlphaReference = StringUtils::ParseUInt32(m_tbAlphaTest->getText());
 
-		mtrl->DepthTestEnabled = m_cbDepthTest->getValue();
-		mtrl->DepthWriteEnabled = m_cbDepthWrite->getValue();
+		mtrl->DepthTestEnabled = m_cbDepthTest->Checked;
+		mtrl->DepthWriteEnabled = m_cbDepthWrite->Checked;
 
-		mtrl->IsBlendTransparent = m_cbTransparent->getValue();
+		mtrl->IsBlendTransparent = m_cbTransparent->Checked;
 
 		if (m_cbSrcBlend->getSelectedIndex()!=-1)
 		{
@@ -571,26 +532,26 @@ namespace APDesigner
 			m_cfSpecular->SetValue(mtrl->Specular);
 			m_cfEmissive->SetValue(mtrl->Emissive);
 
-			m_tbShinness->Text = StringUtils::SingleToString(mtrl->Power);
+			m_tbShinness->SetText(StringUtils::SingleToString(mtrl->Power));
 
-			m_tbTex1->setText(mtrl->getTextureName(0));
-			m_tbTex2->setText(mtrl->getTextureName(1));
-			m_tbTex3->setText(mtrl->getTextureName(2));
-			m_tbTex4->setText(mtrl->getTextureName(3));
-			m_tbTex5->setText(mtrl->getTextureName(4));
+			m_tbTex1->SetText(mtrl->getTextureName(0));
+			m_tbTex2->SetText(mtrl->getTextureName(1));
+			m_tbTex3->SetText(mtrl->getTextureName(2));
+			m_tbTex4->SetText(mtrl->getTextureName(3));
+			m_tbTex5->SetText(mtrl->getTextureName(4));
 
-			m_tbPriority->setText(StringUtils::UIntToString(mtrl->getPriority()));
-			m_tbAlphaTest->setText(StringUtils::UIntToString(mtrl->AlphaReference));
+			m_tbPriority->SetText(StringUtils::UIntToString(mtrl->getPriority()));
+			m_tbAlphaTest->SetText(StringUtils::UIntToString(mtrl->AlphaReference));
 
-			m_cbDepthTest->setValue(mtrl->DepthTestEnabled);
-			m_cbDepthWrite->setValue(mtrl->DepthWriteEnabled);
+			m_cbDepthTest->Checked = mtrl->DepthTestEnabled;
+			m_cbDepthWrite->Checked = mtrl->DepthWriteEnabled;
 
-			m_cbTransparent->setValue(mtrl->IsBlendTransparent);
+			m_cbTransparent->Checked = mtrl->IsBlendTransparent;
 
-			m_cbSrcBlend->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->SourceBlend));
-			m_cbDstBlend->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->DestinationBlend));
-			m_cbBlendFunction->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->BlendFunction));
-			m_cbCull->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->Cull));
+			m_cbSrcBlend->SetSelectionByName(GraphicsCommonUtils::ToString(mtrl->SourceBlend));
+			m_cbDstBlend->SetSelectionByName(GraphicsCommonUtils::ToString(mtrl->DestinationBlend));
+			m_cbBlendFunction->SetSelectionByName(GraphicsCommonUtils::ToString(mtrl->BlendFunction));
+			m_cbCull->SetSelectionByName(GraphicsCommonUtils::ToString(mtrl->Cull));
 		}
 		else
 		{
@@ -632,50 +593,38 @@ namespace APDesigner
 	/*                                                                      */
 	/************************************************************************/
 
-	ColorField::ColorField(const Point& position, ColorValue defaultColor)
-		: Control(position), m_lblAmbient(0), m_pbAmbient(0), m_btnAmbient(0), m_color(defaultColor)
+	ColorField::ColorField(const StyleSkin* skin, const Point& position, const String& text, ColorValue defaultColor)
+		: Control(skin, position),  m_color(defaultColor)
 	{
+		Initialize(skin);
 
+		m_lblAmbient->SetText(text);
 	}
 	ColorField::~ColorField()
 	{
-		if (m_lblAmbient)
-			delete m_lblAmbient;
-		if (m_pbAmbient)
-			delete m_pbAmbient;
-
-		if (m_btnAmbient)
-			delete m_btnAmbient;
+		DELETE_AND_NULL(m_lblAmbient);
+		DELETE_AND_NULL(m_pbAmbient);
+		DELETE_AND_NULL(m_btnAmbient);
 	}
 
-	void ColorField::Initialize(RenderDevice* device)
+	void ColorField::Initialize(const StyleSkin* skin)
 	{
 		assert(m_skin);
 		int32 lineHeight = m_skin->ContentTextFont->getLineHeightInt();
 
-		m_lblAmbient = new Label(Position, Text, 80);
-		m_lblAmbient->SetSkin(m_skin);
-		m_lblAmbient->setOwner(getOwner());
-		m_lblAmbient->Initialize(device);
-		m_lblAmbient->Size.Y = lineHeight;
+		m_lblAmbient = new Label(skin, Position, L"", 80, lineHeight);
 		
-		m_pbAmbient = new PictureBox(Position + Point(100, 0), 1);
-		m_pbAmbient->SetSkin(m_skin);
-		m_pbAmbient->Size = Point(50, lineHeight);
+		m_pbAmbient = new PictureBox(skin, Position + Point(100, 0), 1);
+		m_pbAmbient->setSize(50, lineHeight);
 		m_pbAmbient->eventPictureDraw.Bind(this, &ColorField::PictureBox_Draw);
-		m_pbAmbient->setOwner(getOwner());
-		m_pbAmbient->Initialize(device);
 
-		m_btnAmbient = new Button(Position + Point(160, 0), L"...");
+		m_btnAmbient = new Button(skin, Position + Point(160, 0), L"...");
 		
-		Size.Y = m_lblAmbient->Size.Y;
-		Size.X = m_btnAmbient->Position.X + m_btnAmbient->Size.X;
+		m_size.Y = m_lblAmbient->getHeight();
+		m_size.X = m_btnAmbient->Position.X + m_btnAmbient->getWidth();
 		
-		m_btnAmbient->SetSkin(m_skin);
-		m_btnAmbient->setOwner(getOwner());
-		m_btnAmbient->Size.Y = lineHeight;
-		m_btnAmbient->Initialize(device);
-		m_btnAmbient->Position.Y += (m_lblAmbient->Size.Y - m_btnAmbient->Size.Y)/2;
+		m_btnAmbient->SetSizeY(lineHeight);
+		m_btnAmbient->Position.Y += (m_lblAmbient->getHeight() - m_btnAmbient->getHeight())/2;
 		m_btnAmbient->eventPress.Bind(this, &ColorField::Button_Press);
 	}
 	void ColorField::Draw(Sprite* sprite)
@@ -689,7 +638,7 @@ namespace APDesigner
 		m_lblAmbient->Position = Position;
 		m_pbAmbient->Position = Position + Point(100, 0);
 		m_btnAmbient->Position = Position + Point(160, 0);
-		m_btnAmbient->Position.Y += (m_lblAmbient->Size.Y - m_btnAmbient->Size.Y)/2;
+		m_btnAmbient->Position.Y += (m_lblAmbient->getHeight() - m_btnAmbient->getHeight())/2;
 
 		m_lblAmbient->Update(time);
 		m_pbAmbient->Update(time);
@@ -698,16 +647,16 @@ namespace APDesigner
 
 	void ColorField::PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
-		sprite->Draw(m_skin->WhitePixelTexture, *dstRect, 0, m_color);
+		sprite->Draw(SystemUI::GetWhitePixel(), *dstRect, 0, m_color);
 	}
-	void ColorField::Button_Press(Control* ctrl)
+	void ColorField::Button_Press(Button* ctrl)
 	{
 		ChooseColorDialog dlg(m_color);
 		if (dlg.ShowDialog() == DLGRES_OK)
 		{
 			m_color = dlg.getSelectedColor();
 
-			m_selected.Invoke(this);
+			eventColorSelected.Invoke(this);
 		}
 	}
 
@@ -715,19 +664,21 @@ namespace APDesigner
 	{
 		m_color = color.ToArgb();
 	}
+
 	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/
-	PassFlagDialog::PassFlagDialog(MainWindow* window,RenderDevice* device)
-	{
-		m_form = new Form(FBS_Fixed, L"Pass Editor");
 
-		Apoc3D::Math::Rectangle rect = UIRoot::GetUIArea(device);
-		m_form->Size = Point(980, 450);
-		m_form->Position = Point(rect.Width, rect.Height) - m_form->Size;
-		m_form->Position.X /= 2;
-		m_form->Position.Y /= 2;
-		m_form->SetSkin(window->getUISkin());
+	PassFlagDialog::PassFlagDialog(MainWindow* window, RenderDevice* device)
+	{
+		const StyleSkin* skin = window->getUISkin();
+
+		m_form = new Form(skin, device, FBS_Sizable, L"Pass Editor");
+
+		Apoc3D::Math::Rectangle rect = SystemUI::GetUIArea(device);
+		m_form->setSize(980, 450);
+		m_form->Position = (Point(rect.getSize()) - m_form->getSize()) / 2;
+
 		m_form->eventClosed.Bind(this, &PassFlagDialog::Form_Closed);
 		int ofsX = 10;
 		int ofsY = 27;
@@ -736,12 +687,10 @@ namespace APDesigner
 		{
 			for (int j=0;j<16;j++)
 			{
-				Label* lbl = new Label(Point(i * 250+ofsX,j * 25+ofsY), L"Pass " + StringUtils::IntToString(counter++), 50);
-				lbl->SetSkin(window->getUISkin());
+				Label* lbl = new Label(skin, Point(i * 250+ofsX,j * 25+ofsY), L"Pass " + StringUtils::IntToString(counter++), 50);
 				m_lblTable.Add(lbl);
 
-				TextBox* text = new TextBox(Point(i * 250+ofsX+lbl->Size.X,j * 25+ofsY), 150, L"");
-				text->SetSkin(window->getUISkin());
+				TextBox* text = new TextBox(skin, Point(i * 250 + ofsX + lbl->getWidth(), j * 25 + ofsY), 150, L"");
 				m_tbTable.Add(text);
 			}
 		}
@@ -751,14 +700,14 @@ namespace APDesigner
 			m_form->getControls().Add(m_lblTable[i]);
 			m_form->getControls().Add(m_tbTable[i]);
 		}
-		m_form->Initialize(device);
-		UIRoot::Add(m_form);
+
+		SystemUI::Add(m_form);
 	}
 
 	PassFlagDialog::~PassFlagDialog()
 	{
 		m_form->eventClosed.Unbind(this, &PassFlagDialog::Form_Closed);
-		UIRoot::Remove(m_form);
+		SystemUI::Remove(m_form);
 		delete m_form;
 		for (int i=0;i<m_lblTable.getCount();i++)
 		{
@@ -772,7 +721,7 @@ namespace APDesigner
 		m_mtrl = mtrl;
 		for (int i=0;i<MaxScenePass;i++)
 		{
-			m_tbTable[i]->setText(mtrl->getPassEffectName(i));
+			m_tbTable[i]->SetText(mtrl->getPassEffectName(i));
 		}
 		m_form->ShowModal();
 	}
@@ -782,13 +731,15 @@ namespace APDesigner
 		uint64 passFlags = 0;
 		for (int i=0;i<MaxScenePass;i++)
 		{
-			if (m_tbTable[i]->Text.size())
+			const String& tv = m_tbTable[i]->getText();
+
+			if (tv.size())
 			{
 				passFlags |= (uint64)1<<i;
 			}
 			//passFlags = passFlags << (uint)1;
-			m_mtrl->setPassEffectName(i, m_tbTable[i]->Text);
-			if (m_tbTable[i]->Text.size())
+			m_mtrl->setPassEffectName(i, tv);
+			if (tv.size())
 			{
 				m_mtrl->setPassEffect(i, EffectManager::getSingleton().getEffect(m_mtrl->getPassEffectName(i)));
 			}

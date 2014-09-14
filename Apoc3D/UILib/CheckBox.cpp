@@ -3,7 +3,7 @@
 #include "apoc3d/Graphics/RenderSystem/Texture.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
 #include "FontManager.h"
-#include "Label.h"
+#include "Text.h"
 #include "Button.h"
 #include "List.h"
 
@@ -17,122 +17,246 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		CheckBox::CheckBox(const Point& position, const String& text, bool checked)
-			: Control(position, text), 
-			m_check(checked), m_canUncheck(true), m_mouseOver(false), m_mouseDown(false), m_textOffset(0,0)
+		CheckBox::CheckBoxEvent CheckBox::eventAnyPress;
+		CheckBox::CheckBoxEvent CheckBox::eventAnyRelease;
+
+		CheckBox::CheckBox(const CheckboxVisualSettings& settings, const Point& position, const String& text, bool checked)
+			: Control(nullptr, position), m_text(text), Checked(checked), AutosizeX(true), AutosizeY(true)
 		{
-			
+			Initialize(settings);
 		}
+		CheckBox::CheckBox(const CheckboxVisualSettings& settings, const Point& position, const String& text, const Point& sz, bool checked)
+			: Control(nullptr, position), m_text(text), Checked(checked)
+		{
+			Initialize(settings);
+			m_size = sz;
+		}
+
+		CheckBox::CheckBox(const StyleSkin* skin, const Point& position, const String& text, bool checked)
+			: Control(skin, position), m_text(text), Checked(checked), AutosizeX(true), AutosizeY(true)
+		{
+			Initialize(skin);
+		}
+		CheckBox::CheckBox(const StyleSkin* skin, const Point& position, const String& text, const Point& sz, bool checked)
+			: Control(skin, position), m_text(text), Checked(checked)
+		{
+			Initialize(skin);
+			m_size = sz;
+		}
+
 		CheckBox::~CheckBox()
 		{
 
 		}
 
-		void CheckBox::Initialize(RenderDevice* device)
+		void CheckBox::Initialize(const StyleSkin* skin)
 		{
-			Control::Initialize(device);
+			TextSpacing = skin->CheckBoxTextSpacing;
+			TextSettings.TextColor = skin->TextColor;
+			TextSettings.HorizontalAlignment = TextHAlign::Left;
 
-			int32 hozMg = m_skin->CheckBoxMargin.getHorizontalSum();
-			int32 vertMg = m_skin->CheckBoxMargin.getVerticalSum();
-			Size.X = m_skin->CheckBoxNormal.Width - hozMg + m_fontRef->MeasureString(Text).X + m_skin->CheckBoxTextSpacing;
-			Size.Y = Math::Max(m_skin->CheckBoxNormal.Height,m_fontRef->getLineHeightInt()) - vertMg;
+			NormalGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxNormal);
+			HoverGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxHover);
+			DownGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxDown);
+			DisabledGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxDisable);
+			
+			TickGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxChecked);
+			DisabledTickGraphic = TickGraphic;
+			DisabledTickGraphic.ModColor = CV_RepackAlpha(DisabledTickGraphic.ModColor, 0x7f);
 
-			m_textOffset.X = m_skin->CheckBoxNormal.Width + m_skin->CheckBoxTextSpacing;
-			m_textOffset.Y = (m_skin->CheckBoxNormal.Height - m_fontRef->getLineHeightInt())/2 - vertMg;
+			Margin = skin->CheckBoxMargin;
+
+			SetFont(skin->CheckBoxFont);
+
+			UpdateSize();
 		}
+		void CheckBox::Initialize(const CheckboxVisualSettings& settings)
+		{
+			if (settings.HasNormalGraphic)
+				NormalGraphic = settings.NormalGraphic;
+
+			if (settings.HasHoverGraphic)
+				HoverGraphic = settings.HoverGraphic;
+
+			if (settings.HasDownGraphic)
+				DownGraphic = settings.DownGraphic;
+
+			if (settings.HasDisabledGraphic)
+				DisabledGraphic = settings.DisabledGraphic;
+
+			if (settings.HasTickGraphic)
+				TickGraphic = settings.TickGraphic;
+
+			if (settings.HasDisabledTickGraphic)
+				DisabledTickGraphic = settings.DisabledTickGraphic;
+
+			if (settings.HasMargin)
+				Margin = settings.Margin;
+
+			if (settings.FontRef)
+				SetFont(settings.FontRef);
+
+			TextSettings.HorizontalAlignment = TextHAlign::Left;
+
+			UpdateSize();
+		}
+
 		void CheckBox::Update(const GameTime* time)
 		{
-			UpdateEvents();
+			if (!Visible)
+				return;
+
+			return UpdateEvents_StandardButton(m_mouseOver, m_mouseDown, getAbsoluteArea(),
+				&CheckBox::OnMouseHover, &CheckBox::OnMouseOut, &CheckBox::OnPress, &CheckBox::OnRelease);
 		}
-		void CheckBox::UpdateEvents()
+
+		void CheckBox::UpdateSize()
 		{
-			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			if (AutosizeX || AutosizeY)
+			{
+				Point textSize = m_fontRef->MeasureString(m_text);
 
-			Apoc3D::Math::Rectangle rect = getAbsoluteArea();
+				if (AutosizeX)
+					m_size.X = textSize.X + NormalGraphic.getWidth() + Margin.getHorizontalSum() + TextSpacing;
+
+				if (AutosizeY)
+					m_size.Y = Math::Max(textSize.Y, NormalGraphic.getHeight()) + Margin.getVerticalSum();
+			}
 			
-			if (rect.Contains(mouse->GetPosition()) && (!getOwner() || getOwner()->getAbsoluteArea().Contains(rect)))
-			{
-				if (!m_mouseOver)
-				{
-					m_mouseOver = true;
-					OnMouseOver();
-				}
+			// gui_ControlAssets.CheckBoxNormalRegion.Width - gui_ControlAssets.CheckBoxPad.getHorizontalSum() + 5;
+			// gui_ControlAssets.CheckBoxNormalRegion.Height - gui_ControlAssets.CheckBoxPad.getVerticalSum();
 
-				if (mouse->IsLeftPressed())
-				{
-					Toggle();
-
-					if (!m_mouseDown)
-					{
-						m_mouseDown = true;
-						OnPress();
-					}
-				}
-				else if (m_mouseDown && mouse->IsLeftUp())
-				{
-					OnRelease();
-					m_mouseDown = false;
-				}
-			}
-			else
-			{
-				if (m_mouseOver)
-				{
-					m_mouseOver = false;
-					OnMouseOut();
-				}
-				m_mouseDown = false;
-			}
+			/*int32 hozMg = m_skin->CheckBoxMargin.getHorizontalSum();
+			int32 vertMg = m_skin->CheckBoxMargin.getVerticalSum();
+			m_size.X = m_skin->CheckBoxNormal.Width - hozMg + m_fontRef->MeasureString(Text).X + m_skin->CheckBoxTextSpacing;
+			m_size.Y = Math::Max(m_skin->CheckBoxNormal.Height, m_fontRef->getLineHeightInt()) - vertMg;
+			*/
 		}
+
 		void CheckBox::Toggle()
 		{
-			if (m_check && m_canUncheck)
+			if (Checked && CanUncheck)
 			{
-				m_check = false;
+				Checked = false;
 				eventToggled.Invoke(this);
 			}
-			else if (!m_check)
+			else if (!Checked)
 			{
-				m_check = true;
+				Checked = true;
 				eventToggled.Invoke(this);
 			}
 		}
 
 		void CheckBox::Draw(Sprite* sprite)
 		{
-			Apoc3D::Math::Rectangle dstRect(Position.X - m_skin->CheckBoxMargin.Left, Position.Y - m_skin->CheckBoxMargin.Top, 0,0);
-			dstRect.Width = m_skin->CheckBoxNormal.Width;
-			dstRect.Height = m_skin->CheckBoxNormal.Height;
+			Point drawPos = GetAbsolutePosition();
+
+			Apoc3D::Math::Rectangle gfxRect =
+			{
+				drawPos.X - Margin.Left,
+				drawPos.Y - Margin.Top + (m_size.Y - NormalGraphic.getHeight()) / 2,
+				NormalGraphic.getWidth(),
+				NormalGraphic.getHeight()
+			};
 
 			if (Enabled)
 			{
 				if (m_mouseDown)
-					sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->CheckBoxDown, CV_White);
+					DownGraphic.Draw(sprite, gfxRect);
 				else if (m_mouseOver)
-					sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->CheckBoxHover, CV_White);
+					HoverGraphic.Draw(sprite, gfxRect);
 				else
-					sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->CheckBoxNormal, CV_White);
-
-				if (m_check)
-					sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->CheckBoxChecked, CV_White);
+					NormalGraphic.Draw(sprite, gfxRect);
+					
+				if (Checked)
+					TickGraphic.Draw(sprite, gfxRect);
+					//sprite->Draw(m_skin->SkinTexture, gfxRect, &m_skin->CheckBoxChecked, CV_White);
 			}
 			else
 			{
-				sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->CheckBoxDisable, CV_White);
+				DisabledGraphic.Draw(sprite, gfxRect);
+				//sprite->Draw(m_skin->SkinTexture, gfxRect, &m_skin->CheckBoxDisable, CV_White);
 
-				if (m_check)
-					sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->CheckBoxChecked, 0x7fffffffU);
+				if (Checked)
+					DisabledTickGraphic.Draw(sprite, gfxRect);
+					//sprite->Draw(m_skin->SkinTexture, gfxRect, &m_skin->CheckBoxChecked, 0x7fffffffU);
 			}
-			
-			m_fontRef->DrawString(sprite, Text, Position + m_textOffset, m_skin->TextColor);
+
+			Point textOffset;
+			textOffset.X = gfxRect.Width + Margin.getHorizontalSum() + TextSpacing;
+			textOffset.Y = 0;// (m_size.Y - m_fontRef->getLineHeightInt() - 1) / 2;
+
+			//m_fontRef->DrawString(sprite, Text, Position + m_textOffset, m_skin->TextColor);
+			Point textPos = drawPos + textOffset;
+			TextSettings.Draw(sprite, m_fontRef, m_text, textPos, Point(m_size.X - textOffset.X, m_size.Y), 0xff);
 		}
+
+		void CheckBox::SetFont(Font* fontRef)
+		{
+			if (fontRef != m_fontRef)
+			{
+				m_fontRef = fontRef;
+				UpdateSize();
+			}
+		}
+		void CheckBox::SetText(const String& text)
+		{
+			if (m_text != text)
+			{
+				m_text = text;
+				UpdateSize();
+			}
+		}
+
+		void CheckBox::SetSize(const Point& sz)
+		{
+			m_size = sz;
+			AutosizeX = AutosizeY = false;
+		}
+
+		void CheckBox::SetSizeX(int32 v)
+		{
+			m_size.X = v;
+			AutosizeX = false;
+		}
+		void CheckBox::SetSizeY(int32 v)
+		{
+			m_size.Y = v;
+			AutosizeY = false;
+		}
+
+		void CheckBox::OnMouseHover()
+		{
+			//eventMouseOver.Invoke(this); 
+		}
+		void CheckBox::OnMouseOut()
+		{
+			//eventMouseOut.Invoke(this); 
+		}
+		void CheckBox::OnPress()
+		{
+			//AudioManager::RaiseOneShotEvent(SoundEventID::ButtonClick_Down);
+			//eventMousePress.Invoke(this); 
+			eventPress.Invoke(this);
+			eventAnyPress.Invoke(this);
+		}
+		void CheckBox::OnRelease()
+		{
+			//AudioManager::RaiseOneShotEvent(SoundEventID::ButtonClick_Up);
+			//eventMouseRelease.Invoke(this); 
+			Checked = !Checked;
+
+			eventRelease.Invoke(this);
+			eventAnyRelease.Invoke(this);
+		}
+
 
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
 
 		CheckboxGroup::CheckboxGroup(const List<CheckBox*>& checkbox)
-			: m_checkbox(checkbox), m_selectedIndex(-1)
+			: m_checkbox(checkbox)
 		{
 
 		}
@@ -141,50 +265,50 @@ namespace Apoc3D
 
 		}
 
-		void CheckboxGroup::Initialize(RenderDevice* device)
+		void CheckboxGroup::Initialize(const StyleSkin* skin)
 		{
-			Control::Initialize(device);
-
 			for (int i=0;i<m_checkbox.getCount();i++)
 			{
-				m_checkbox[i]->SetSkin(m_skin);
-				m_checkbox[i]->setOwner(getOwner());
-				m_checkbox[i]->setCanUncheck(false);
-				m_checkbox[i]->eventPress.Bind(this, &CheckboxGroup::Checkbox_Press);
-				m_checkbox[i]->Initialize(device);
+				CheckBox* chb = m_checkbox[i];
+				//m_checkbox[i]->SetSkin(m_skin);
+				//m_checkbox[i]->setOwner(getOwner());
+				//m_checkbox[i]->setCanUncheck(false);
+				chb->eventPress.Bind(this, &CheckboxGroup::Checkbox_Press);
+				//m_checkbox[i]->Initialize(device);
 
-				if (m_checkbox[i]->getValue())
+				if (chb->Checked)
 					m_selectedIndex = i;
 
-				if (Position.X < m_checkbox[i]->Position.X)
-					Position.X = m_checkbox[i]->Position.X;
-				if (Position.Y < m_checkbox[i]->Position.Y)
-					Position.Y = m_checkbox[i]->Position.Y;
-				if (Size.X < m_checkbox[i]->Size.X)
-					Size.X = m_checkbox[i]->Size.X;
+				if (Position.X < chb->Position.X)
+					Position.X = chb->Position.X;
+				if (Position.Y < chb->Position.Y)
+					Position.Y = chb->Position.Y;
 
-				Size.Y += m_checkbox[i]->Size.Y;
+				Point sz = chb->getSize();
+
+				if (m_size.X < sz.X)
+					m_size.X = sz.X;
+
+				m_size.Y += sz.Y;
 			}
 		}
 		void CheckboxGroup::Update(const GameTime* time)
 		{
-			for (int i=0;i<m_checkbox.getCount();i++)
+			for (CheckBox* chb : m_checkbox)
 			{
-				m_checkbox[i]->Update(time);
+				chb->Update(time);
 			}
 		}
 		void CheckboxGroup::Draw(Sprite* sprite)
 		{
-			for (int i=0;i<m_checkbox.getCount();i++)
+			for (CheckBox* chb : m_checkbox)
 			{
-				m_checkbox[i]->Draw(sprite);
+				chb->Draw(sprite);
 			}
 		}
 
-		void CheckboxGroup::Checkbox_Press(Control* ctrl)
+		void CheckboxGroup::Checkbox_Press(CheckBox* cb)
 		{
-			CheckBox* cb = static_cast<CheckBox*>(ctrl);
-
 			int checkIndex = -1;
 			for (int i=0;i<m_checkbox.getCount();i++)
 			{
@@ -205,7 +329,7 @@ namespace Apoc3D
 			{
 				if (i!=checkIndex)
 				{
-					m_checkbox[i]->setValue(false);
+					m_checkbox[i]->Checked = false;
 				}
 			}
 		}

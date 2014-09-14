@@ -38,7 +38,7 @@ namespace APDesigner
 		getDocumentForm()->eventResized.Bind(this, &ShaderNetDocument::Form_Resized);
 
 		ObjectFactory* fac = window->getDevice()->getObjectFactory();
-		m_renderTarget = fac->CreateRenderTarget(getDocumentForm()->Size.X,getDocumentForm()->Size.Y, FMT_X8R8G8B8, DEPFMT_Depth24X8);
+		m_renderTarget = fac->CreateRenderTarget(getDocumentForm()->getSize(), FMT_X8R8G8B8, DEPFMT_Depth24X8);
 
 	}
 
@@ -107,6 +107,6 @@ namespace APDesigner
 		delete m_renderTarget;
 
 		ObjectFactory* fac = getMainWindow()->getDevice()->getObjectFactory();
-		m_renderTarget = fac->CreateRenderTarget(getDocumentForm()->Size.X,getDocumentForm()->Size.Y, FMT_X8R8G8B8, DEPFMT_Depth24X8);
+		m_renderTarget = fac->CreateRenderTarget(getDocumentForm()->getSize(), FMT_X8R8G8B8, DEPFMT_Depth24X8);
 	}
 }

@@ -32,7 +32,7 @@ namespace Sample_GUI
 
 		Form* m_aboutDlg;
 
-		Menu* m_mainMenu;
+		MenuBar* m_mainMenu;
 
 		Sprite* m_sprite;
     };

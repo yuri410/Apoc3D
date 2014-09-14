@@ -30,6 +30,7 @@
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Math/ColorValue.h"
 #include "apoc3d/EventDelegate.h"
+#include "apoc3d/Collections/List.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -39,21 +40,81 @@ namespace Apoc3D
 	namespace UI
 	{
 		typedef EventDelegate1<Control*> UIEventHandler;
-
 		typedef EventDelegate1<MenuItem*> MenuItemEventHandler;
 
-		struct UIGraphic
+		enum struct TextHAlign
 		{
-			Texture* Graphic;
-			bool HasSourceRect;
-			Apoc3D::Math::Rectangle SourceRect;
-
-			UIGraphic() : HasSourceRect(false), Graphic(nullptr) { }
-			UIGraphic(Texture* tex) : HasSourceRect(false), Graphic(tex) { }
-			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect) : Graphic(tex), HasSourceRect(true), SourceRect(srcRect) { }
-
-			bool isSet() const { return !!Graphic; }
+			Left,
+			Center,
+			Right
 		};
+		enum struct TextVAlign
+		{
+			Top,
+			Middle,
+			Bottom
+		};
+
+		struct APAPI UIGraphic
+		{
+			Texture* Graphic = nullptr;
+			ColorValue ModColor = CV_White;
+			Collections::FixedList<Apoc3D::Math::Rectangle, 9> SourceRects;
+
+			UIGraphic() { }
+
+			UIGraphic(Texture* tex);
+			UIGraphic(Texture* tex, ColorValue modColor);
+
+			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect);
+			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect, ColorValue modColor);
+
+			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[3]);
+			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[3], ColorValue modColor);
+
+			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[9]);
+			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[9], ColorValue modColor);
+
+			void Draw(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, bool vertical) const;
+			void Draw(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect) const;
+			void DrawVert(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect) const;
+
+			bool isSet() const { return Graphic != nullptr; }
+
+			bool isSimple() const { return SourceRects.getCount() == 1; }
+			bool is3patch() const { return SourceRects.getCount() == 3; }
+			bool is9patch() const { return SourceRects.getCount() == 9; }
+
+			int32 getWidth() const;
+			int32 getHeight() const;
+			Point getSize() const;
+		};
+
+		struct APAPI UIGraphicSimple 
+		{
+			Texture* Graphic = nullptr;
+			ColorValue ModColor = CV_White;
+			Collections::FixedList<Apoc3D::Math::Rectangle, 1> SourceRects;
+
+			UIGraphicSimple() { }
+
+			UIGraphicSimple(Texture* tex);
+			UIGraphicSimple(Texture* tex, ColorValue modColor);
+
+			UIGraphicSimple(Texture* tex, const Apoc3D::Math::Rectangle& srcRect);
+			UIGraphicSimple(Texture* tex, const Apoc3D::Math::Rectangle& srcRect, ColorValue modColor);
+
+			void Draw(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect) const;
+			void DrawCentered(Sprite* sprite, const Point& pos, const Point& parentSize) const;
+			void DrawCentered(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect) const;
+
+			bool isSet() const { return Graphic != nullptr; }
+
+			int32 getWidth() const;
+			int32 getHeight() const;
+			Point getSize() const;
+		};
+
 
 		struct APAPI ControlBounds
 		{
@@ -65,13 +126,12 @@ namespace Apoc3D
 				SI_Bottom
 			};
 
+			int32 Left = 0;
+			int32 Right = 0;
+			int32 Top = 0;
+			int32 Bottom = 0;
 
-			int32 Left;
-			int32 Right;
-			int32 Top;
-			int32 Bottom;
-
-			ControlBounds() : Left(0), Right(0), Top(0), Bottom(0) { }
+			ControlBounds()  { }
 			ControlBounds(int32 left, int32 right, int32 top, int32 bottom) : Left(left), Right(right), Top(top), Bottom(bottom) { }
 			ControlBounds(const Apoc3D::Math::Rectangle& graphicalArea, const Apoc3D::Math::Rectangle& hotArea);
 
@@ -87,12 +147,106 @@ namespace Apoc3D
 			void SetZero();
 		};
 
-		enum struct TextAlignment
+		struct APAPI TextRenderSettings
 		{
-			Left,
-			Center,
-			Right
+			bool HasTextShadow = false;
+
+			Point TextShadowOffset = Point(2, 1);
+			ColorValue TextShadowColor = CV_White;
+
+			ColorValue TextColor = CV_Black;
+
+			TextHAlign HorizontalAlignment = TextHAlign::Center;
+			TextVAlign VerticalAlignment = TextVAlign::Middle;
+
+			ControlBounds TextPadding;
+
+			Point GetTextOffset(const String& text, Font* font, const Point& size) const;
+
+			void Draw(Sprite* sprite, Font* font, const String& text, const Point& pos, const Point& size, int32 alpha) const;
+			void Draw(Sprite* sprite, Font* font, const String& text, const Apoc3D::Math::Rectangle& area, int32 alpha) const;
 		};
+
+		struct ButtonVisualSettings
+		{
+			Font* FontRef = nullptr;
+
+			bool HasDisabledGraphic = false;
+			bool HasNormalGraphic = false;
+			bool HasMouseHoverGraphic = false;
+			bool HasMouseDownGraphic = false;
+			bool HasOverlayIcon = false;
+			bool HasHotZonePadding = false;
+
+			UIGraphic DisabledGraphic;
+			UIGraphic NormalGraphic;
+			UIGraphic MouseHoverGraphic;
+			UIGraphic MouseDownGraphic;
+
+			UIGraphicSimple OverlayIcon;
+			ControlBounds ContentPadding;
+		};
+
+
+		/**
+		 *  The interfaces for System Forms and Panels. And it is also responsible
+		 *  for drawing and updating them.
+		 *  Any system forms should be added through this interface.
+		 */
+		namespace SystemUI
+		{
+			APAPI void Initialize(RenderDevice* device);
+			APAPI void Finalize();
+
+			APAPI void Add(ControlContainer* cc);
+			APAPI void Remove(ControlContainer* cc);
+			APAPI void RemoveForm(const String& name);
+			APAPI void RemoveContainer(const String& name);
+			APAPI void BringToFirst(ControlContainer* cc);
+
+			APAPI void Draw();
+			APAPI void Update(const Core::GameTime* time);
+
+			APAPI Point ClampFormMovementOffset(Form* frm, const Point& vec);
+			APAPI Texture* GetWhitePixel();
+
+			/** Return the area to display UI in the viewport. In screen coordinates. */
+			APAPI Apoc3D::Math::Rectangle GetUIArea(RenderDevice* device);
+
+			APAPI bool GetMinimizedPosition(RenderDevice* dev, Form* form, Point& pos);
+			APAPI Point GetMaximizedSize(RenderDevice* dev, Form* form);
+			APAPI Apoc3D::Math::Rectangle GetMaximizedRect(RenderDevice* dev, Form* form);
+			
+			APAPI const List<Form*>& getForms();
+
+			/** Specifies the area to display UI in the viewport. In unified coordinates. */
+			APAPI extern RectangleF& UIArea;
+			APAPI extern RectangleF& MaximizedArea;
+			
+			/**
+			 *  The active form is the one that is currently being dragged/clicked.
+			 *  Used to mark the first form being touched.
+			 */
+			APAPI extern Form*& ActiveForm;
+			APAPI extern MenuBar*& MainMenu;
+			APAPI extern Form*& TopMostForm;
+			APAPI extern Form*& ModalForm;
+		}
+
+		namespace GUIUtils
+		{
+			struct ScrollBarPositioning
+			{
+				Point Position;
+				int32 Width = 0;
+
+				int32 Length = 0;
+
+				ScrollBarPositioning(int32 width) : Width(width) { }
+			};
+
+			APAPI void CalculateScrollBarPositions(const Apoc3D::Math::Rectangle& area, ScrollBarPositioning* vs, ScrollBarPositioning* hs);
+		}
 
 		APAPI void guiGenerateRegion9Rects(const Apoc3D::Math::Rectangle& dstRect, Apoc3D::Math::Rectangle (&srcRects)[9], Apoc3D::Math::Rectangle (&destRects)[9]);
 		APAPI void guiGenerateRegion3Rects(const Point& pos, int32 width, Apoc3D::Math::Rectangle (&srcRects)[3], Apoc3D::Math::Rectangle (&destRects)[3]);
@@ -123,6 +277,9 @@ namespace Apoc3D
 		APAPI bool guiDrawRegion3VertNoclip(Sprite* sprite, const Point& pos, int height, ColorValue cv,
 			Texture* texture, const Apoc3D::Math::Rectangle (&srcRects)[3], Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
 
+		APAPI void guiOmitLineText(Font* fnt, int32 widthlimit, String& line);
+
+		
 	}
 }
 

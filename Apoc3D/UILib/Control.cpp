@@ -26,126 +26,325 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "FontManager.h"
 #include "StyleSkin.h"
 #include "Menu.h"
+#include "Button.h"
+#include "Text.h"
+#include "PictureBox.h"
+#include "CheckBox.h"
+#include "List.h"
+#include "Scrollbar.h"
+
+#include "apoc3d/Input/Mouse.h"
+#include "apoc3d/Input/InputAPI.h"
 
 namespace Apoc3D
 {
 	namespace UI
 	{
-		void Control::Initialize(RenderDevice* device)
+		/************************************************************************/
+		/*  Control                                                             */
+		/************************************************************************/
+
+		Control::Control()
+			: Control(nullptr) { }
+
+		Control::Control(const Point& position)
+			: Control(nullptr, position) { }
+
+		Control::Control(const Point& position, const Point& size)
+			: Control(nullptr, position, size) { }
+
+		Control::Control(const StyleSkin* skin)
+			: Position(Point::Zero), m_size(0, 0)
 		{
-			if (m_skin)
+			Initialze(skin);
+		}
+
+		Control::Control(const StyleSkin* skin, const Point& position)
+			: Position(position), m_size(0, 0)
+		{
+			Initialze(skin);
+		}
+
+		Control::Control(const StyleSkin* skin, const Point& position, const Point& size)
+			: Position(position), m_size(size)
+		{
+			Initialze(skin);
+		}
+
+		Control::~Control()
+		{
+
+		}
+
+		void Control::Initialze(const StyleSkin* skin)
+		{
+			if (skin)
+				m_fontRef = skin->ContentTextFont;
+		}
+
+		void Control::SetFont(Font* fontRef)
+		{
+			m_fontRef = fontRef;
+		}
+
+		
+		template <typename T>
+		void Control::UpdateEvents_StandardButton(bool& mouseHover, bool& mouseDown, const Apoc3D::Math::Rectangle area,
+			void (T::*onMouseHover)(), void (T::*onMouseOut)(), void (T::*onPress)(), void (T::*onRelease)())
+		{
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+
+			Point cursorPos = mouse->GetPosition();
+
+			T* obj = static_cast<T*>(this);
+
+			if (Visible && Enabled && area.Contains(cursorPos))
 			{
-				if (m_fontRef == nullptr)
-					m_fontRef = m_skin->ContentTextFont;
+				if (!mouseHover)
+				{
+					mouseHover = true;
+					(obj->*onMouseHover)();
+				}
+				if (!mouseDown && mouse && mouse->IsLeftPressed())
+				{
+					mouseDown = true;
+					(obj->*onPress)();
+				}
+				else if (mouseDown && mouse && mouse->IsLeftUp())
+				{
+					mouseDown = false;
+					(obj->*onRelease)();
+				}
+			}
+			else if (mouseHover)
+			{
+				mouseHover = false;
+				mouseDown = false;
+				(obj->*onMouseOut)();
+			}
+		}
+
+		template void Control::UpdateEvents_StandardButton<Button>(bool& mouseHover, bool& mouseDown, const Apoc3D::Math::Rectangle area, 
+			void (Button::*onMouseHover)(), void (Button::*onMouseOut)(), void (Button::*onPress)(), void (Button::*onRelease)());
+
+		template void Control::UpdateEvents_StandardButton<Label>(bool& mouseHover, bool& mouseDown, const Apoc3D::Math::Rectangle area,
+			void (Label::*onMouseHover)(), void (Label::*onMouseOut)(), void (Label::*onPress)(), void (Label::*onRelease)());
+		
+		template void Control::UpdateEvents_StandardButton<PictureBox>(bool& mouseHover, bool& mouseDown, const Apoc3D::Math::Rectangle area,
+			void (PictureBox::*onMouseHover)(), void (PictureBox::*onMouseOut)(), void (PictureBox::*onPress)(), void (PictureBox::*onRelease)());
+
+		template void Control::UpdateEvents_StandardButton<CheckBox>(bool& mouseHover, bool& mouseDown, const Apoc3D::Math::Rectangle area,
+			void (CheckBox::*onMouseHover)(), void (CheckBox::*onMouseOut)(), void (CheckBox::*onPress)(), void (CheckBox::*onRelease)());
+
+		template void Control::UpdateEvents_StandardButton<TreeView>(bool& mouseHover, bool& mouseDown, const Apoc3D::Math::Rectangle area,
+			void (TreeView::*onMouseHover)(), void (TreeView::*onMouseOut)(), void (TreeView::*onPress)(), void (TreeView::*onRelease)());
+
+		/************************************************************************/
+		/* ScrollableControl                                                    */
+		/************************************************************************/
+
+		ScrollableControl::ScrollableControl()
+			: Control() { }
+
+		ScrollableControl::ScrollableControl(const Point& position)
+			: Control(position) { }
+
+		ScrollableControl::ScrollableControl(const Point& position, const Point& size)
+			: Control(position, size) { }
+
+		ScrollableControl::ScrollableControl(const StyleSkin* skin)
+			: Control(skin) { }
+
+		ScrollableControl::ScrollableControl(const StyleSkin* skin, const Point& position)
+			: Control(skin, position) { }
+
+		ScrollableControl::ScrollableControl(const StyleSkin* skin, const Point& position, const Point& size)
+			: Control(skin, position, size) { }
+
+		ScrollableControl::~ScrollableControl()
+		{
+			DELETE_AND_NULL(m_vscrollbar);
+			DELETE_AND_NULL(m_hscrollbar);
+		}
+
+		void ScrollableControl::InitScrollbars(const StyleSkin* skin, bool initBoth)
+		{
+			DELETE_AND_NULL(m_vscrollbar);
+			DELETE_AND_NULL(m_hscrollbar);
+
+			GUIUtils::ScrollBarPositioning hs = skin->HScrollBarBG.Y;
+			GUIUtils::ScrollBarPositioning vs = skin->VScrollBarBG.X;
+
+			GUIUtils::CalculateScrollBarPositions(getArea(), &vs, &hs);
+			m_hscrollbar = new ScrollBar(skin, hs.Position, ScrollBar::SCRBAR_Horizontal, hs.Length);
+
+			if (initBoth)
+			{
+				m_vscrollbar = new ScrollBar(skin, vs.Position, ScrollBar::SCRBAR_Vertical, vs.Length);
 			}
 			else
 			{
+				m_hscrollbar->Visible = false;
+
+				GUIUtils::CalculateScrollBarPositions(getArea(), &vs, nullptr);
+
+				m_vscrollbar = new ScrollBar(skin, vs.Position, ScrollBar::SCRBAR_Vertical, vs.Length);
 			}
 		}
-		Point Control::GetAbsolutePosition() const
+
+		void ScrollableControl::UpdateScrollBarsLength(const Apoc3D::Math::Rectangle& area)
 		{
-			if (m_owner)
+			bool hasVSB = m_vscrollbar && m_vscrollbar->Visible;
+			bool hasHSB = m_hscrollbar && m_hscrollbar->Visible;
+
+			GUIUtils::ScrollBarPositioning vs = hasVSB ? m_vscrollbar->getWidth() : 0;
+			GUIUtils::ScrollBarPositioning hs = hasHSB ? m_hscrollbar->getHeight() : 0;
+
+			GUIUtils::CalculateScrollBarPositions(area, hasVSB ? &vs : nullptr, hasHSB ? &hs : nullptr);
+
+			if (hasVSB)
 			{
-				Point result = m_owner->GetAbsolutePosition();
-				result.X += Position.X;
-				result.Y += Position.Y;
-				return result;
+				m_vscrollbar->Position = vs.Position;
+				if (m_vscrollbar->GetLength() != vs.Length)
+					m_vscrollbar->SetLength(vs.Length);
 			}
-			return Position;
+			if (hasHSB)
+			{
+				m_hscrollbar->Position = hs.Position;
+				if (m_hscrollbar->GetLength() != hs.Length)
+					m_hscrollbar->SetLength(hs.Length);
+			}
+		}
+		void ScrollableControl::UpdateScrollBarsGeneric(const Apoc3D::Math::Rectangle& area, const GameTime* time)
+		{
+			bool hasVSB = m_vscrollbar && m_vscrollbar->Visible;
+			bool hasHSB = m_hscrollbar && m_hscrollbar->Visible;
+
+			UpdateScrollBarsLength(area);
+
+			if (hasVSB)
+			{
+				m_vscrollbar->BaseOffset = BaseOffset;
+				m_vscrollbar->Update(time);
+			}
+			if (hasHSB)
+			{
+				m_hscrollbar->BaseOffset = BaseOffset;
+				m_hscrollbar->Update(time);
+			}
 		}
 
-		void ControlCollection::Add(Control* ctrl)
+		void ScrollableControl::DrawScrollBars(Sprite* sprite)
 		{
-			ctrl->setOwner(m_owner);
-			m_controls.Add(ctrl);
-		}
-		void ControlCollection::Remove(Control* ctrl)
-		{
-			ctrl->setOwner(0);
-			m_controls.Remove(ctrl);
-		}
-		void ControlCollection::RemoveAt(int index)
-		{
-			m_controls[index]->setOwner(0);
-			m_controls.RemoveAt(index);
+			if (m_alwaysShowHS || m_hscrollbar->Maximum > 0)
+			{
+				if (m_alwaysShowHS && !m_hscrollbar->Visible)
+					m_hscrollbar->Visible = true;
+
+				m_hscrollbar->Draw(sprite);
+			}
+
+			if (m_alwaysShowVS || m_vscrollbar->Maximum > 0)
+			{
+				if (m_alwaysShowVS && !m_vscrollbar->Visible)
+					m_vscrollbar->Visible = true;
+
+				m_vscrollbar->Draw(sprite);
+			}
 		}
 
-		void ControlCollection::Clear()
+		Apoc3D::Math::Rectangle ScrollableControl::GetContentArea() const
 		{
-			m_controls.Clear();
+			Apoc3D::Math::Rectangle rect = getAbsoluteArea();
+
+			if (m_alwaysShowVS || (m_vscrollbar->Visible && m_vscrollbar->Maximum > 0))
+			{
+				rect.Width -= m_vscrollbar->getWidth();
+			}
+
+			if (m_alwaysShowHS || (m_hscrollbar->Visible && m_hscrollbar->Maximum > 0))
+			{
+				rect.Height -= m_hscrollbar->getHeight();
+			}
+
+			return rect;
 		}
-		void ControlCollection::DestroyAndClear()
+
+		void ScrollableControl::UseHorizontalScrollbar(bool v)
 		{
-			m_controls.DeleteAndClear();
+			if (v)
+			{
+				m_hscrollbar->Visible = true;
+			}
+			else
+			{
+				m_hscrollbar->Visible = false;
+			}
 		}
+		/************************************************************************/
+		/* ControlCollection                                                    */
+		/************************************************************************/
 
-
-
-		ControlContainer::ControlContainer()
-			: Control(), m_controls(this), m_menu(0), m_menuOffset(0,20)
+		ControlContainer::ControlContainer(const StyleSkin* skin)
+			: Control(skin)
 		{
 
 		}
 		ControlContainer::~ControlContainer()
 		{
-		}
-		void ControlContainer::setMenu(Menu* m)
-		{
-			 m_menu = m;
-			 m->setOwner(this);
-		}
-		void ControlContainer::Initialize(RenderDevice* device)
-		{
-			Control::Initialize(device);
-			for (int i=0;i<m_controls.getCount();i++)
-			{
-				m_controls[i]->Initialize(device);
-			}
+			m_controls.DeleteAndClear();
 		}
 
 		void ControlContainer::Draw(Sprite* sprite)
 		{
-			int overlay = 0;
-			for (int i=0;i<m_controls.getCount();i++)
+			Control* overlayControl = nullptr;
+
+			for (Control* ctrl : m_controls)
 			{
-				Control* ctrl = m_controls[i];
 				if (ctrl->IsOverriding())
 				{
-					overlay = i;
+					overlayControl = ctrl;
 				}
 				if (ctrl->Enabled)
 				{
 					ctrl->Draw(sprite);
 				}
 			}
-			if (overlay)
+
+			if (overlayControl)
 			{
-				m_controls[overlay]->DrawOverlay(sprite);
+				overlayControl->DrawOverlay(sprite);
 			}
 
-			if (m_menu && m_menu->Visible)
+			if (MenuBar && MenuBar->Visible)
 			{
-				m_menu->Draw(sprite);
+				MenuBar->Draw(sprite);
 			}
 		}
+
 		void ControlContainer::Update(const GameTime* time)
 		{
-			bool skip = false;
-			for (int i=0;i<m_controls.getCount();i++)
+			for (Control* ctrl : m_controls)
 			{
-				if (m_controls[i]->IsOverriding())
+				ctrl->BaseOffset = GetAbsolutePosition();
+			}
+
+			bool skip = false;
+			for (Control* ctrl : m_controls)
+			{
+				if (ctrl->IsOverriding())
 				{
-					m_controls[i]->Update(time);
+					ctrl->Update(time);
 					skip = true;
 				}
 			}
 			if (!skip)
 			{
-				for (int i=0;i<m_controls.getCount();i++)
+				for (Control* ctrl : m_controls)
 				{
-					if (m_controls[i]->Enabled)
+					if (ctrl->Enabled)
 					{
-						m_controls[i]->Update(time);
+						ctrl->Update(time);
 					}
 				}
 			}

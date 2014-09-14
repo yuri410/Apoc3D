@@ -46,9 +46,9 @@ namespace APDesigner
 	private:
 		void UpdateAtomListView();
 
-		void BtnAdd_Release(Control* ctrl);
-		void BtnRemove_Release(Control* ctrl);
-		void BtnEdit_Release(Control* ctrl);
+		void BtnAdd_Release(Button* ctrl);
+		void BtnRemove_Release(Button* ctrl);
+		void BtnEdit_Release(Button* ctrl);
 
 
 		MainWindow* m_mainWindow;

@@ -63,6 +63,7 @@ namespace Apoc3D
 			void DrawShadow(Sprite* sprite, const Point& pos, float alpha);
 
 		};
+
 		class APAPI Form : public ControlContainer
 		{
 			RTTI_DERIVED(Form, ControlContainer);
@@ -76,7 +77,7 @@ namespace Apoc3D
 
 		public:
 
-			Form(BorderStyle border = FBS_Sizable, const String& title = L"");
+			Form(const StyleSkin* skin, RenderDevice* device, BorderStyle border = FBS_Sizable, const String& title = L"");
 			virtual ~Form();
 
 			void ShowModal();
@@ -89,8 +90,6 @@ namespace Apoc3D
 			virtual void Maximize();
 			virtual void Restore();
 
-			virtual void Initialize(RenderDevice* device);
-			
 			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
@@ -99,7 +98,10 @@ namespace Apoc3D
 			RenderDevice* getRenderDevice() const { return m_device; }
 
 			void setMinimumSize(const Point& size) { m_minimumSize = size; }
+			void setMinimumSize(int32 w, int32 h) { m_minimumSize = Point(w,h); }
+
 			void setMaximumSize(const Point& size) { m_maximumSize = size; }
+			void setMaximumSize(int32 w, int32 h) { m_maximumSize = Point(w,h); }
 
 			bool isResized() const { return m_isResizeing; }
 			bool isDragged() const { return m_isDragging; }
@@ -114,6 +116,11 @@ namespace Apoc3D
 			const String& getTitle() const { return m_title; }
 			void setTitle(const String& txt) { m_title = txt; }
 
+			void setSize(const Point& sz) { m_size = sz; }
+			void setSize(int32 w, int32 h) { m_size = Point(w, h); }
+			void setWidth(int32 w) { m_size.X = w; }
+			void setHeight(int32 h) { m_size.Y = h; }
+
 			WindowState getState() const { return m_state; }
 			BorderStyle getBorderStyle() const { return m_borderStyle; }
 
@@ -124,10 +131,11 @@ namespace Apoc3D
 			/**
 			 *  Background from will never cover other's on top
 			 */
-			bool IsBackgroundForm;
+			bool IsBackgroundForm = false;
 
 		private:
-			void InitializeButtons(RenderDevice* device);
+			void Initialize(const StyleSkin* skin);
+			void InitializeButtons();
 
 			void DrawTitle(Sprite* sprite);
 			void DrawButtons(Sprite* sprite);
@@ -140,20 +148,21 @@ namespace Apoc3D
 			void CheckResize();
 			void ToggleWindowState();
 
-			void btClose_Release(Control* sender);
-			void btMinimize_Release(Control* sender);
-			void btMaximize_Release(Control* sender);
-			void btRestore_Release(Control* sender);
+			void btClose_Release(Button* sender);
+			void btMinimize_Release(Button* sender);
+			void btMaximize_Release(Button* sender);
+			void btRestore_Release(Button* sender);
 
-			RenderDevice* m_device;
+			RenderDevice* m_device = nullptr;
+			const StyleSkin* m_skin = nullptr;
 
 			Point m_titleOffset;
 			Point m_minimumSize;
 			Point m_minimizedSize;
 			Point m_maximumSize;
 
-			bool m_isMinimized;
-			bool m_isMaximized;
+			bool m_isMinimized = false;
+			bool m_isMaximized = false;
 
 			Point m_previousPosition;
 			Point m_previousSize;
@@ -166,16 +175,16 @@ namespace Apoc3D
 			String m_title;
 
 
-			Border* m_border;
-			float m_borderAlpha;
+			Border* m_border = nullptr;
+			float m_borderAlpha = 1;
 
-			Button* m_btClose;
-			Button* m_btMinimize;
-			Button* m_btMaximize;
-			Button* m_btRestore;
+			Button* m_btClose = nullptr;
+			Button* m_btMinimize = nullptr;
+			Button* m_btMaximize = nullptr;
+			Button* m_btRestore = nullptr;
 
-			bool m_hasMinimizeButton;
-			bool m_hasMaximizeButton;
+			bool m_hasMinimizeButton = true;
+			bool m_hasMaximizeButton = true;
 
 			/**
 			 *  Specify the form's drag area, where can be dragged to move the form
@@ -186,17 +195,17 @@ namespace Apoc3D
 			 */
 			Apoc3D::Math::Rectangle m_resizeArea;
 			
-			bool m_isDragging;
-			bool m_isResizeing;
+			bool m_isDragging = false;
+			bool m_isResizeing = false;
 
 			/** 
 			 *  Tells if the form is on the minimizing animation process.
 			 */
-			bool m_isMinimizing;
+			bool m_isMinimizing = false;
 			/**
 			 *  Tells if current cursor position is in the form's resize area, where can be dragged to resize the form
 			 */
-			bool m_isInReiszeArea;
+			bool m_isInReiszeArea = false;
 
 			/** Specify the cursor position difference since last frame when dragging or resizing the form.
 			*/
@@ -205,81 +214,15 @@ namespace Apoc3D
 
 			bool m_initialized;
 
-			float m_lastClickTime;
+			float m_lastClickTime = 0;
 
 
 			BorderStyle m_borderStyle;
-			WindowState m_state;
+			WindowState m_state = FWS_Normal;
+
+			
 		};
 
-		/**
-		 *  The manager class for Forms and Panels. And it is also responsible
-		 *  for drawing and updating them.
-		 *  Any forms should be added to this class.
-		 */
-		class APAPI UIRoot
-		{
-		public:
-			/** 
-			 *  Specifies the area to display UI in the viewport. In unified coordinates.
-			 */
-			static RectangleF UIArea;
-
-			static RectangleF MaximizedArea;
-
-			/**
-			 *  Return the area to display UI in the viewport. In screen coordinates.
-			 */
-			static Apoc3D::Math::Rectangle GetUIArea(RenderDevice* device);
-
-			static List<Form*>& getForms() { return m_forms; }
-
-			/**
-			 *  The active form is the one that is currently being dragged/clicked.
-			 *  Used to mark the first form being touched.
-			 */
-			static Form* getActiveForm() { return m_activeForm; }
-			static void setActiveForm(Form* frm) { m_activeForm = frm; }
-			
-			static Menu* getMainMenu() { return m_mainMenu; }
-			static void setMainMenu(Menu* mm) { m_mainMenu = mm; }
-
-			static Form* getTopMostForm() { return m_topMostForm; }
-			static void setTopMostForm(Form* frm) { m_topMostForm = frm; }
-			static Form* getModalForm() { return m_modalForm; }
-			static void setModalForm(Form* frm) { m_modalForm = frm; }
-
-			static bool GetMinimizedPosition(RenderDevice* dev, Form* form, Point& pos);
-			static Point GetMaximizedSize(RenderDevice* dev, Form* form);
-			static Apoc3D::Math::Rectangle GetMaximizedRect(RenderDevice* dev, Form* form);
-			static bool IsObstructed(Control* control, const Point& point);
-			
-			static void Initialize(RenderDevice* device);
-			static void Finalize();
-
-			static void Add(ControlContainer* cc);
-			static void Remove(ControlContainer* cc);
-			static void RemoveForm(const String& name);
-			static void RemoveContainer(const String& name);
-
-			static void Draw();
-			static void Update(const GameTime* time);
-
-			static Point ClampFormMovementOffset(Form* frm, const Point& vec);
-
-		private:
-			static List<Form*> m_forms;
-			static List<ControlContainer*> m_containers;
-			static Form* m_activeForm;
-			static Form* m_topMostForm;
-			static SubMenu* m_contextMenu;
-			static Sprite* m_sprite;
-			static Menu* m_mainMenu;
-			static Form* m_modalForm;
-			static int m_modalAnim;
-
-			static void Form_SizeChanged(Control* ctl);
-		};
 	}
 }
 #endif

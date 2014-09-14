@@ -65,7 +65,7 @@ namespace APDesigner
 
 	void MainWindow::AddDocument(Document* document)
 	{
-		UIRoot::Add(document->getDocumentForm());
+		SystemUI::Add(document->getDocumentForm());
 		document->Initialize(m_device);
 		document->eventDocumentActivated().Bind(this, &MainWindow::Document_Activated);
 		document->eventDocumentDeactivated().Bind(this, &MainWindow::Document_Deactivated);
@@ -148,7 +148,7 @@ namespace APDesigner
 		m_toolsPane = new ToolsPane(this);
 		m_atomManager = new AtomManagerDialog(this);
 
-		UIRoot::Initialize(m_device);
+		SystemUI::Initialize(m_device);
 		//UIRoot::Add(m_form);
 		m_resourcePane->Initialize(m_device);
 		m_toolsPane->Initialize(m_device);
@@ -158,15 +158,13 @@ namespace APDesigner
 	}
 	void MainWindow::LoadMenus()
 	{
-		m_mainMenu = new Menu();
-		m_mainMenu->SetSkin(m_UIskin);
+		m_mainMenu = new MenuBar(m_UIskin);
 
 		{
 			MenuItem* pojMenu = new MenuItem(L"Project");
 
 
-			SubMenu* pojSubMenu = new SubMenu(0);
-			pojSubMenu->SetSkin(m_UIskin);
+			SubMenu* pojSubMenu = new SubMenu(m_UIskin, nullptr);
 
 			MenuItem* mi=new MenuItem(L"New Project...");
 			mi->event.Bind(this, &MainWindow::Menu_NewProject);
@@ -181,8 +179,7 @@ namespace APDesigner
 			pojSubMenu->Add(m_savePrjMemuItem, 0);
 
 
-			m_recentPrjSubMenu = new SubMenu(nullptr);
-			m_recentPrjSubMenu->SetSkin(m_UIskin);
+			m_recentPrjSubMenu = new SubMenu(m_UIskin, nullptr);
 
 			mi = new MenuItem(L"Recent Projects");
 			pojSubMenu->Add(mi, m_recentPrjSubMenu);
@@ -215,12 +212,9 @@ namespace APDesigner
 		{
 			MenuItem* buildMenu = new MenuItem(L"Build");
 
-			SubMenu* buildSubMenu = new SubMenu(nullptr);
-			buildSubMenu->SetSkin(m_UIskin);
+			SubMenu* buildSubMenu = new SubMenu(m_UIskin, nullptr);
 
-
-			m_quickbuildSubMenu = new SubMenu(nullptr);
-			m_quickbuildSubMenu->SetSkin(m_UIskin);
+			m_quickbuildSubMenu = new SubMenu(m_UIskin, nullptr);
 
 			MenuItem* mi=new MenuItem(L"QuickBuild");
 			buildSubMenu->Add(mi,m_quickbuildSubMenu);
@@ -237,8 +231,7 @@ namespace APDesigner
 		{
 			MenuItem* toolsMenu = new MenuItem(L"Tools");
 
-			SubMenu* toolSubMenu = new SubMenu(nullptr);
-			toolSubMenu->SetSkin(m_UIskin);
+			SubMenu* toolSubMenu = new SubMenu(m_UIskin, nullptr);
 
 
 			for (EditorExtensionManager::ExtensionEnumerator e = EditorExtensionManager::getSingleton().GetEnumerator();e.MoveNext();)
@@ -247,8 +240,7 @@ namespace APDesigner
 
 				if (ext->SupportsIndependentEditing())
 				{
-					SubMenu* subMenu = new SubMenu(nullptr);
-					subMenu->SetSkin(m_UIskin);
+					SubMenu* subMenu = new SubMenu(m_UIskin, nullptr);
 
 					MenuItem* mi2 = new MenuItem(L"New Document...");
 					//mi2->event.bind(this, &MainWindow::Menu_ToolItem);
@@ -279,15 +271,14 @@ namespace APDesigner
 			m_mainMenu->Add(toolsMenu,toolSubMenu);
 		}
 		{
-			m_mainMenu->Initialize(m_device);
-			UIRoot::setMainMenu(m_mainMenu);
+			SystemUI::MainMenu = m_mainMenu;
 		}
 
 		UpdateRecentProjects();
 	}
 	void MainWindow::Unload()
 	{
-		UIRoot::Finalize();
+		SystemUI::Finalize();
 		delete m_UIskin;
 		delete m_sprite;
 
@@ -305,7 +296,7 @@ namespace APDesigner
 
 		//m_pane->Update(time);
 		//m_form->Update(time);
-		UIRoot::Update(time);
+		SystemUI::Update(time);
 		m_console->Update(time);
 		m_resourcePane->Update(time);
 		m_toolsPane->Update(time);
@@ -346,7 +337,7 @@ namespace APDesigner
 		//m_sprite->Begin(true);
 		//m_font->DrawString(m_sprite, L"Apoc3D Designer\nfdsfds!!", 50,50, CV_White);
 		//m_sprite->Draw(m_UIskin->ButtonTexture, 50,50, CV_White);
-		UIRoot::Draw();
+		SystemUI::Draw();
 		//m_pane->Draw(m_sprite);
 
 		//m_sprite->End();
@@ -358,7 +349,7 @@ namespace APDesigner
 
 		m_device->EndFrame();
 
-		Apoc3D::Math::Rectangle rect = UIRoot::GetUIArea(m_device);
+		Apoc3D::Math::Rectangle rect = SystemUI::GetUIArea(m_device);
 		if (m_lastSize.X != rect.Width || m_lastSize.Y != rect.Height)
 		{
 			m_lastSize.X = rect.Width;

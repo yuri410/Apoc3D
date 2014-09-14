@@ -344,16 +344,16 @@ namespace Apoc3D
 								, LOGLVL_Warning);
 
 
-							TextureData newdata;
-							newdata.Format = data.Format;
-							newdata.ContentSize = 0;
-							newdata.LevelCount = data.LevelCount;
-							newdata.Type = data.Type;
-							newdata.Levels.ResizeDiscard(data.LevelCount);
-							newdata.Flags = data.Flags;
+							TextureData newData;
+							newData.Format = data.Format;
+							newData.ContentSize = 0;
+							newData.LevelCount = data.LevelCount;
+							newData.Type = data.Type;
+							newData.Levels.ResizeDiscard(data.LevelCount);
+							newData.Flags = data.Flags;
 
 							// do it for all levels
-							for (int i=0;i<newdata.LevelCount;i++)
+							for (int i=0;i<newData.LevelCount;i++)
 							{
 								TextureLevelData& srcLvl = data.Levels[i];
 
@@ -363,7 +363,7 @@ namespace Apoc3D
 								dstLvl.Height = srcLvl.Height;
 
 								int dstLvlSize = PixelFormatUtils::GetMemorySize(
-									dstLvl.Width, dstLvl.Height, dstLvl.Depth, newdata.Format);
+									dstLvl.Width, dstLvl.Height, dstLvl.Depth, newData.Format);
 
 								if (data.Type == TT_CubeTexture)
 								{
@@ -372,7 +372,7 @@ namespace Apoc3D
 								dstLvl.LevelSize = dstLvlSize;
 
 								dstLvl.ContentData = new char[dstLvlSize];
-								newdata.ContentSize += dstLvlSize;
+								newData.ContentSize += dstLvlSize;
 
 								if (data.Type == TT_CubeTexture)
 								{
@@ -381,19 +381,19 @@ namespace Apoc3D
 									for (int32 j=0;j<6;j++)
 									{
 										PixelFormatUtils::Resize(srcLvl.ContentData + i * srcFaceSize, srcLvl.Width, srcLvl.Height, 
-											dstLvl.ContentData + i*dstFaceSize, dstLvl.Width, dstLvl.Height, newdata.Format);
+											dstLvl.ContentData + i*dstFaceSize, dstLvl.Width, dstLvl.Height, newData.Format);
 									}
 								}
 								else
 								{
-									PixelFormatUtils::Resize(srcLvl.ContentData, srcLvl.Width, srcLvl.Height, dstLvl.ContentData, dstLvl.Width, dstLvl.Height, newdata.Format);
+									PixelFormatUtils::Resize(srcLvl.ContentData, srcLvl.Width, srcLvl.Height, dstLvl.ContentData, dstLvl.Width, dstLvl.Height, newData.Format);
 								}
 
-								newdata.Levels.Add(dstLvl);
+								newData.Levels.Add(dstLvl);
 							}
 
 							data.Free();
-							data = newdata;
+							data = newData;
 						}
 
 						// automatically converts to the preferred format
@@ -440,9 +440,9 @@ namespace Apoc3D
 
 								if (data.Type == TT_CubeTexture)
 								{
-									int32 srcFaceSize = srcLvl.LevelSize/6;
-									int32 dstFaceSize = dstLvlSize/6;
-									for (int32 j=0;j<6;j++)
+									int32 srcFaceSize = srcLvl.LevelSize / 6;
+									int32 dstFaceSize = dstLvlSize / 6;
+									for (int32 j = 0; j < 6; j++)
 									{
 										ConvertFormat(srcLvl, dstLvl, data.Format, newdata.Format, i*srcFaceSize, i*dstFaceSize);
 									}
@@ -563,17 +563,17 @@ namespace Apoc3D
 				if (m_tex2D)
 				{
 					m_tex2D->Release();
-					m_tex2D = 0;
+					m_tex2D = nullptr;
 				}
 				if (m_tex3D)
 				{
 					m_tex3D->Release();
-					m_tex3D = 0;
+					m_tex3D = nullptr;
 				}
 				if (m_cube)
 				{
 					m_cube->Release();
-					m_cube = 0;
+					m_cube = nullptr;
 				}
 			}
 
@@ -645,12 +645,12 @@ namespace Apoc3D
 					else if (getType() == TT_Texture3D)
 					{
 						m_tex3D->Release();
-						m_tex3D = 0;
+						m_tex3D = NULL;
 					}
 					else if (getType() == TT_CubeTexture)
 					{
 						m_cube->Release();
-						m_cube = 0;
+						m_cube = NULL;
 					}
 				}
 			}

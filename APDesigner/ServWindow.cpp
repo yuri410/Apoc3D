@@ -50,39 +50,29 @@ namespace APDesigner
 		ObjectFactory* fac = m_device->getObjectFactory();
 		m_sprite = fac->CreateSprite();
 
-		UIRoot::Initialize(m_device);
+		SystemUI::Initialize(m_device);
 		
 		{
-			m_baseForm = new Form(FBS_Pane, L"");
-			m_baseForm->SetSkin(m_UIskin);
+			m_baseForm = new Form(m_UIskin, m_device, FBS_Pane, L"");
 
 			m_baseForm->Position = Point(0, 0);
-			m_baseForm->Size = Point(m_window->getClientSize().Width, m_window->getClientSize().Height);
+			m_baseForm->setSize(m_window->getClientSize().Width, m_window->getClientSize().Height);
 			
-			m_lblDescription = new Label(Point(10, 5), L"Automatic Content Build Service", m_baseForm->Size.X-10);
-			m_lblDescription->SetSkin(m_UIskin);
+			m_lblDescription = new Label(m_UIskin, Point(10, 5), L"Automatic Content Build Service", m_baseForm->getWidth() - 10);
+			m_lblLoadedProject = new Label(m_UIskin, Point(10, 22 + 25), L"Project: ", m_baseForm->getWidth() - 10);
+			m_lblStatus = new Label(m_UIskin, Point(10, 22 + 25 * 2), L"Status: ", m_baseForm->getWidth() - 10);
 
-			m_lblLoadedProject = new Label(Point(10, 22+25), L"Project: ", m_baseForm->Size.X-10);
-			m_lblLoadedProject->SetSkin(m_UIskin);
+			m_lblHotKeys = new Label(m_UIskin, Point(10, m_baseForm->getHeight() - 90),
+				L"Toggle Hide: Ctrl + Alt + H\nForce Build: Ctrl + Alt + B", m_baseForm->getWidth() - 10);
 
-			m_lblStatus = new Label(Point(10, 22+25*2), L"Status: ", m_baseForm->Size.X-10);
-			m_lblStatus->SetSkin(m_UIskin);
-
-
-			m_lblHotKeys = new Label(Point(10, m_baseForm->Size.Y - 90), L"Toggle Hide: Ctrl + Alt + H\nForce Build: Ctrl + Alt + B", m_baseForm->Size.X-10);
-			m_lblHotKeys->SetSkin(m_UIskin);
-
-			int32 btnWidth = (m_baseForm->Size.X-40)/3;
-			m_btnHide = new Button(Point(10, m_baseForm->Size.Y - 35), btnWidth, L"Hide");
-			m_btnHide->SetSkin(m_UIskin);
+			int32 btnWidth = (m_baseForm->getWidth() - 40) / 3;
+			m_btnHide = new Button(m_UIskin, Point(10, m_baseForm->getHeight() - 35), btnWidth, L"Hide");
 			m_btnHide->eventRelease.Bind(this, &ServWindow::BtnHide_Release);
 
-			m_btnBuild = new Button(Point(m_btnHide->Position.X + btnWidth + 10, m_baseForm->Size.Y - 35), btnWidth, L"Build");
-			m_btnBuild->SetSkin(m_UIskin);
+			m_btnBuild = new Button(m_UIskin, Point(m_btnHide->Position.X + btnWidth + 10, m_baseForm->getHeight() - 35), btnWidth, L"Build");
 			m_btnBuild->eventRelease.Bind(this, &ServWindow::BtnBuild_Release);
 
-			m_btnExit = new Button(Point(m_btnHide->Position.X + btnWidth * 2 + 20, m_baseForm->Size.Y - 35), btnWidth, L"Exit");
-			m_btnExit->SetSkin(m_UIskin);
+			m_btnExit = new Button(m_UIskin, Point(m_btnHide->Position.X + btnWidth * 2 + 20, m_baseForm->getHeight() - 35), btnWidth, L"Exit");
 			m_btnExit->eventRelease.Bind(this, &ServWindow::BtnExit_Release);
 
 
@@ -93,10 +83,8 @@ namespace APDesigner
 			m_baseForm->getControls().Add(m_btnExit);
 			m_baseForm->getControls().Add(m_btnHide);
 			m_baseForm->getControls().Add(m_btnBuild);
-
-			m_baseForm->Initialize(m_device);
-
-			UIRoot::Add(m_baseForm);
+			
+			SystemUI::Add(m_baseForm);
 
 			m_baseForm->Show();
 		}
@@ -104,7 +92,7 @@ namespace APDesigner
 	}
 	void ServWindow::Unload()
 	{
-		UIRoot::Finalize();
+		SystemUI::Finalize();
 		delete m_UIskin;
 		delete m_sprite;
 
@@ -124,26 +112,30 @@ namespace APDesigner
 
 		EffectManager::getSingleton().Update(time);
 
-		m_baseForm->Size = Point(m_window->getClientSize().Width, m_window->getClientSize().Height);
+		m_baseForm->setSize(m_window->getClientSize().Width, m_window->getClientSize().Height);
 
+		String msg = L"Project: " + m_currentProject->getName();
+		msg.append(L" (");
+		msg.append(PathUtils::GetFileName(m_projectFilePath));
+		msg.append(L")");
 
-		m_lblLoadedProject->Text = L"Project: " + m_currentProject->getName();
-		m_lblLoadedProject->Text.append(L" (");
-		m_lblLoadedProject->Text.append(PathUtils::GetFileName(m_projectFilePath));
-		m_lblLoadedProject->Text.append(L")");
+		m_lblLoadedProject->SetText(msg);
 
-		m_lblStatus->Position.Y = m_lblLoadedProject->Position.Y + m_lblLoadedProject->Size.Y;
-		m_lblStatus->Text = L"Status: ";
+		m_lblStatus->Position.Y = m_lblLoadedProject->Position.Y + m_lblLoadedProject->getHeight();
+
+		msg = L"Status: ";
+
 		if (!BuildInterface::getSingleton().IsRunning())
 		{
-			m_lblStatus->Text.append(L" Ready");
+			msg.append(L" Ready");
 		}
 		else
 		{
-			m_lblStatus->Text.append(L" Building...");
+			msg.append(L" Building...");
 		}
+		m_lblStatus->SetText(msg);
 
-		UIRoot::Update(time);
+		SystemUI::Update(time);
 
 		BuildInterface::BuildResult result;
 		if (BuildInterface::getSingleton().MainThreadUpdate(time, &result))
@@ -190,7 +182,7 @@ namespace APDesigner
 
 		m_device->BeginFrame();
 
-		UIRoot::Draw();
+		SystemUI::Draw();
 
 		m_device->EndFrame();
 
@@ -244,11 +236,11 @@ namespace APDesigner
 		}
 	}
 
-	void ServWindow::BtnHide_Release(Control* ctrl)
+	void ServWindow::BtnHide_Release(Button* ctrl)
 	{
 		m_window->SetVisible(false);
 	}
-	void ServWindow::BtnBuild_Release(Control* ctrl)
+	void ServWindow::BtnBuild_Release(Button* ctrl)
 	{
 		if (!BuildInterface::getSingleton().IsRunning())
 		{
@@ -259,7 +251,7 @@ namespace APDesigner
 			BuildInterface::getSingleton().Execute();
 		}
 	}
-	void ServWindow::BtnExit_Release(Control* ctrl)
+	void ServWindow::BtnExit_Release(Button* ctrl)
 	{
 		m_window->Exit();
 	}

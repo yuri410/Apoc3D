@@ -38,16 +38,14 @@ namespace Apoc3D
 		public:
 			int Width;
 			int Height;
+
 			Size() : Width(0), Height(0) { }
 			Size(int w, int h) : Width(w), Height(h) { }
 
-			bool operator==(const Size &other) const
-			{
-				return (Width == other.Width) && (Height == other.Height);	
-			}
+			bool operator==(const Size &other) const { return (Width == other.Width) && (Height == other.Height); }
 			bool operator!=(const Size &other) const { return !(*this == other); }
 
-			const static Size Zero;
+			static const Size Zero;
 		};
 
 		class APAPI Point
@@ -56,16 +54,25 @@ namespace Apoc3D
 			int X;
 			int Y;
 
-			Point() : X(0), Y(0) { X = Y = 0; }
-			Point(int x, int y) { X = x; Y = y; }
+			Point() : X(0), Y(0) { }
+			Point(int x, int y) : X(x), Y(y) { }
 
 
-			bool operator==(const Point &other) const { return (X == other.X) && (Y == other.Y); }
-			bool operator!=(const Point &other) const { return !(*this == other); }
+			bool operator==(const Point& other) const { return (X == other.X) && (Y == other.Y); }
+			bool operator!=(const Point& other) const { return !(*this == other); }
 
-			Point operator+(const Point &other) const { return Point(X + other.X, Y + other.Y); }
-			Point operator-(const Point &other) const { return Point(X - other.X, Y - other.Y); }
+			Point operator+(const Point& other) const { return Point(X + other.X, Y + other.Y); }
+			Point operator-(const Point& other) const { return Point(X - other.X, Y - other.Y); }
 			
+			Point operator/(int32 v) const { return Point(X / v, Y / v); }
+			Point operator*(int32 v) const { return Point(X * v, Y * v); }
+
+			static float Distance(const Point& a, const Point& b)
+			{
+				int32 dx = b.X - a.X;
+				int32 dy = b.Y - a.Y;
+				return sqrtf(static_cast<float>(dx*dx + dy*dy));
+			}
 
 			Point& operator +=(const Point& rhs)
 			{
@@ -79,16 +86,29 @@ namespace Apoc3D
 				Y -= rhs.Y;
 				return *this;
 			}
-			const static Point Zero;
+
+			Point& operator *=(int32 v)
+			{
+				X *= v; Y *= v;
+				return *this;
+			}
+			Point& operator /=(int32 v)
+			{
+				X /= v; Y /= v;
+				return *this;
+			}
+
+			static const Point Zero;
 		};
+
 		class APAPI PointF
 		{
 		public:
 			float X;
 			float Y;
 
-			PointF() { X = Y = 0; }
-			PointF(float x, float y) { X = x; Y = y; }
+			PointF() : X(0), Y(0) { }
+			PointF(float x, float y) : X(x), Y(y) { }
 
 
 			bool operator==(const PointF &other) const { return (X == other.X) && (Y == other.Y); }
@@ -110,7 +130,7 @@ namespace Apoc3D
 				return *this;
 			}
 
-			const static PointF Zero;
+			static const PointF Zero;
 		};
 
 	}
