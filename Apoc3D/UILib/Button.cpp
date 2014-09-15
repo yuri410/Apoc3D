@@ -148,12 +148,17 @@ namespace Apoc3D
 			if (settings.HasOverlayIcon)
 				OverlayIcon = settings.OverlayIcon;
 
+			if (settings.HasDisabledOverlayIcon)
+				DisabledOverlayIcon = settings.DisabledOverlayIcon;
+
 			UpdateSize();
 		}
 
 
 		void Button::Draw(Sprite* sprite)
 		{
+			UIGraphicSimple& iconOverlay = Enabled ? OverlayIcon : (DisabledOverlayIcon.isSet() ? DisabledOverlayIcon : OverlayIcon);
+
 			Apoc3D::Math::Rectangle graphicalArea = Margin.InflateRect(getAbsoluteArea());
 
 			if (fabs(Rotation) > 0.01f)
@@ -177,7 +182,7 @@ namespace Apoc3D
 
 				DrawButtonCore(sprite, newDestRect);
 
-				OverlayIcon.DrawCentered(sprite, Point(0, 0), m_size);
+				iconOverlay.DrawCentered(sprite, Point(0, 0), m_size);
 
 				if (sprite->isUsingStack())
 				{
@@ -192,7 +197,7 @@ namespace Apoc3D
 			{
 				DrawButtonCore(sprite, graphicalArea);
 
-				OverlayIcon.DrawCentered(sprite, graphicalArea);
+				iconOverlay.DrawCentered(sprite, graphicalArea);
 			}
 		}
 

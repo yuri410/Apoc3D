@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/IOLib/BinaryWriter.h"
+#include "InputAPI.h"
 
 using namespace Apoc3D::IO;
 
@@ -87,6 +88,36 @@ namespace Apoc3D
 			
 			m_z = br->ReadInt32();
 			m_lastZ = br->ReadInt32();
+		}
+
+		/************************************************************************/
+		/*  MouseMoveDistanceTracker                                            */
+		/************************************************************************/
+
+		MouseMoveDistanceTracker::MouseMoveDistanceTracker() { Reset(); }
+		MouseMoveDistanceTracker::~MouseMoveDistanceTracker() { }
+
+		void MouseMoveDistanceTracker::Reset(Mouse* mouse)
+		{
+			m_distance = 0;
+
+			if (mouse == nullptr)
+			{
+				mouse = InputAPIManager::getSingleton().getMouse();
+			}
+
+			m_previousPos = mouse->GetPosition();
+		}
+		void MouseMoveDistanceTracker::Track(Mouse* mouse)
+		{
+			if (mouse == nullptr)
+			{
+				mouse = InputAPIManager::getSingleton().getMouse();
+			}
+
+			float di = Point::Distance(m_previousPos, mouse->GetPosition());
+			m_distance += di;
+			m_previousPos = mouse->GetPosition();
 		}
 	}
 }

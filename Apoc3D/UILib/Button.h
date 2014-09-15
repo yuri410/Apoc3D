@@ -76,6 +76,7 @@ namespace Apoc3D
 			UIGraphic MouseDownGraphic;
 			
 			UIGraphicSimple OverlayIcon;
+			UIGraphicSimple DisabledOverlayIcon;
 
 			float Rotation = 0;
 

@@ -574,18 +574,13 @@ namespace Apoc3D
 				{
 					if (SystemUI::ActiveForm != this)
 						SystemUI::ActiveForm = this;
-
-					if (SystemUI::ActiveForm==this)
-					{
-						if (time->getTotalTime() - m_lastClickTime < 0.2f)
-						{
-							ToggleWindowState();
-						}
-
-						m_lastClickTime = time->getTotalTime();
-					}
+				}
+				if (m_clickChecker.Check(mouse))
+				{
+					ToggleWindowState();
 				}
 			}
+			m_clickChecker.Update(time);
 		}
 
 		void Form::CheckResize()

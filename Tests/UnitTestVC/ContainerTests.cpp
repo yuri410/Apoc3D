@@ -305,9 +305,40 @@ namespace UnitTestVC
 			_TestRemove<String>(data, 5, L"missing");
 		}
 
-		
 		//////////////////////////////////////////////////////////////////////////
 
+		TEST_METHOD(List_Insert)
+		{
+			List<int> lst = { 1, 2, 3, 4, 5 };
+
+			lst.Insert(0, 0);
+			Assert::AreEqual(6, lst.getCount());
+			
+			Assert::AreEqual(0, lst[0]);
+			Assert::AreEqual(1, lst[1]);
+			Assert::AreEqual(2, lst[2]);
+			Assert::AreEqual(3, lst[3]);
+			Assert::AreEqual(4, lst[4]);
+			Assert::AreEqual(5, lst[5]);
+
+			lst.RemoveAt(0);
+			Assert::AreEqual(5, lst.getCount());
+
+
+			int32 testData[] = { 2, 1, 0 };
+			lst.InsertArray(3, testData, countof(testData));
+
+			Assert::AreEqual(8, lst.getCount());
+
+			Assert::AreEqual(1, lst[0]);
+			Assert::AreEqual(2, lst[1]);
+			Assert::AreEqual(3, lst[2]);
+			Assert::AreEqual(2, lst[3]);
+			Assert::AreEqual(1, lst[4]);
+			Assert::AreEqual(0, lst[5]);
+			Assert::AreEqual(4, lst[6]);
+			Assert::AreEqual(5, lst[7]);
+		}
 	private:
 
 		template<typename S>

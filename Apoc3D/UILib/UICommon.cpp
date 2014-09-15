@@ -295,7 +295,7 @@ namespace Apoc3D
 			Point textPos = pos + GetTextOffset(textSize, size);
 
 			int32 preX = selStart > 0 ? font->MeasureString(text.substr(0, selStart)).X : 0;
-			int32 postX = selEnd < text.size() ? font->MeasureString(text.substr(0, selEnd)).X : textSize.X;
+			int32 postX = selEnd < (int32)text.size() ? font->MeasureString(text.substr(0, selEnd)).X : textSize.X;
 
 			Point bgSize;
 			bgSize.X = postX - preX;

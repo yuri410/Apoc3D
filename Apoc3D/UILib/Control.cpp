@@ -33,6 +33,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "List.h"
 #include "Scrollbar.h"
 
+#include "apoc3d/Core/GameTime.h"
+
 #include "apoc3d/Input/Mouse.h"
 #include "apoc3d/Input/InputAPI.h"
 
@@ -40,6 +42,28 @@ namespace Apoc3D
 {
 	namespace UI
 	{
+		void DoubleClickChecker::Update(const GameTime* time)
+		{
+			m_timeSinceLastClick += time->getElapsedTime();
+		}
+
+		bool DoubleClickChecker::Check(Mouse* mouse)
+		{
+			if (mouse == nullptr)
+				mouse = InputAPIManager::getSingleton().getMouse();
+
+			if (mouse->IsLeftPressed())
+			{
+				if (m_timeSinceLastClick < 0.2f)
+				{
+					m_timeSinceLastClick = 0;
+					return true;
+				}
+
+				m_timeSinceLastClick = 0;
+			}
+			return false;
+		}
 		/************************************************************************/
 		/*  Control                                                             */
 		/************************************************************************/

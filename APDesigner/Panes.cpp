@@ -57,8 +57,10 @@ namespace APDesigner
 		m_pane->setTitle(L"");
 		//m_pane->setTitle(m_pane->Text);
 
-		m_btSave = new Button(window->getUISkin(), Point(5,20), L"");
-		m_btSave->NormalGraphic = UIGraphic(UIResources::GetTexture(L"adui_save"));
+		m_btSave = new Button(window->getUISkin(), Point(7, 10), Point(35, 35), L"");
+		m_btSave->OverlayIcon = UIGraphicSimple(UIResources::GetTexture(L"adui_save"));
+		m_btSave->DisabledOverlayIcon = m_btSave->OverlayIcon;
+		m_btSave->DisabledOverlayIcon.ModColor = CV_PackLA(0xff, 64);
 
 		//m_btSave->setCustomModColorMouseOver(CV_Silver);
 		

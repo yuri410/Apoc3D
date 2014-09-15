@@ -88,9 +88,9 @@ namespace Apoc3D
 			void Update(const GameTime* time);
 
 			void Add(const String& text);
+			void SetText(const String& text);
 			bool GetLineSelectionRegion(int32 line, int32& start, int32& end);
 
-			void SetText(const String& text);
 			const String& getText() const { return m_text; }
 			const Collections::List<String>& getLines() const { return m_lines; }
 			const String& getCurrentLine() const { return m_lines[m_cursorLocation.Y]; }
@@ -103,9 +103,10 @@ namespace Apoc3D
 
 			void StartSelection();
 			void EndSelection();
-			void SetSelectionEndFromCurrent();
+			void SetSelectionEndFromCursor();
+			void SetSelectionFromCursorWord();
 			bool isSelecting() const { return m_isSelecting; }
-			
+			bool hasSelection() const { return m_selectionStart != m_selectionEnd; }
 			
 			KeyboardEventHandler& eventKeyPress() { return m_keyboard.eventKeyPress; }
 			KeyboardEventHandler& eventKeyRelease() { return m_keyboard.eventKeyRelease; }
@@ -121,6 +122,10 @@ namespace Apoc3D
 
 		private:
 			bool isKeyboardSelecting() const { return m_keyboard.isShiftDown(); }
+
+			void AddFirstLine(const String& line);
+			void ClampCursorPos();
+			void ClampCursorPos(Point& cp);
 
 			void Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e);
 			void Keyboard_OnPaste(String value);

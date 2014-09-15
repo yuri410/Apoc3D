@@ -214,8 +214,7 @@ namespace Apoc3D
 
 			bool m_initialized;
 
-			float m_lastClickTime = 0;
-
+			DoubleClickChecker m_clickChecker;
 
 			BorderStyle m_borderStyle;
 			WindowState m_state = FWS_Normal;

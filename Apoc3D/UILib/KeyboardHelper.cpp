@@ -275,101 +275,118 @@ namespace Apoc3D
 		void TextEditState::Update(const GameTime* time)
 		{
 			m_keyboard.Update(time);
-
-			if (m_multiline && m_lines.isIndexInRange(m_cursorLocation.Y) && 
-				m_cursorLocation.X > (int)m_lines[m_cursorLocation.Y].size())
-				m_cursorLocation.X = (int)m_lines[m_cursorLocation.Y].size();
 		}
 
-		void TextEditState::Add(const String& newText)
+		void ReplaceTabs(const List<String>& lines)
 		{
+			for (String& line : lines)
+			{
+				for (size_t j = 0; j < line.size(); j++)
+				{
+					if (line[j] == '\t')
+					{
+						line[j] = ' ';
+						line.insert(j, L"   ");
+					}
+				}
+			}
+		}
+
+		void TextEditState::SetText(const String& text)
+		{
+			m_lines.Clear();
+
 			if (!m_multiline)
 			{
-				if (m_cursorLocation.X > static_cast<int>(m_text.size()))
-					m_cursorLocation.X = static_cast<int>(m_text.size());
+				m_text = text;
 
+				m_lines.Add(m_text);
+			}
+			else
+			{
+				StringUtils::Split(text, m_lines, L"\n\r");
+				ReplaceTabs(m_lines);
+
+				m_text.clear();
+
+				for (const String& l : m_lines)
+					m_text.append(l);
+			}
+
+			m_cursorLocation.X = 0;
+			m_cursorLocation.Y = 0;
+			
+			m_selectionStart = m_selectionEnd = Point::Zero;
+
+		}
+		void TextEditState::Add(const String& newText)
+		{
+			ClampCursorPos(m_cursorLocation);
+			ClampCursorPos(m_selectionStart);
+			ClampCursorPos(m_selectionEnd);
+
+			if (!m_multiline)
+			{
 				m_text = m_text.insert(m_cursorLocation.X, newText);
+				m_cursorLocation.X += newText.size();
+
 				m_lines.Clear();
 				m_lines.Add(m_text);
 			}
 			else
 			{
+				String& currentLine = m_lines[m_cursorLocation.Y];
+
 				if (newText.find_first_of('\n', 0) != String::npos)
 				{
+					String linePre = currentLine.substr(0, m_cursorLocation.X);
+					String linePost = m_cursorLocation.X < (int32)currentLine.size() ? currentLine.substr(m_cursorLocation.X) : L"";
+
 					// new line
 					List<String> lines;
 					StringUtils::Split(newText, lines, L"\n\r");
 
-					for (int32 i = 0; i < lines.getCount();i++)
-					{
-						String& line = lines[i];
+					ReplaceTabs(lines);
 
-						for (size_t j = 0; j < line.size(); j++)
-						{
-							if (line[j] == '\t')
-							{
-								line[j] = ' ';
-								line.insert(j, L"   ");
-							}
-						}
+					lines[0] = linePre + lines[0];
+					lines[lines.getCount() - 1].append(linePost);
 
-						if (i == 0)
-						{
-							if (m_lines.getCount() == 0)
-								m_lines.Add(L"");
+					m_lines[m_cursorLocation.Y] = lines[0];
 
-							if (m_cursorLocation.X > (int)m_lines[m_cursorLocation.Y].size())
-								m_cursorLocation.X = (int)m_lines[m_cursorLocation.Y].size();
+					if (lines.getCount()>1)
+						m_lines.InsertArray(m_cursorLocation.Y + 1, lines.getElements()+1, lines.getCount() - 1);
 
-							m_lines[m_cursorLocation.Y] = m_lines[m_cursorLocation.Y].insert(m_cursorLocation.X, line);
-						}
-						else
-						{
-							m_lines.Insert(m_cursorLocation.Y + i, line);
-						}
-					}
+					m_cursorLocation.Y += lines.getCount() - 1;
+					m_cursorLocation.X = (int32)lines[lines.getCount()-1].size() - (int32)linePost.size();
 				}
 				else
 				{
-					if (m_lines.getCount() == 0)
-						m_lines.Add(L"");
-
-					if (m_cursorLocation.X > (int)m_lines[m_cursorLocation.Y].size())
-						m_cursorLocation.X = (int)m_lines[m_cursorLocation.Y].size();
-
 					m_lines[m_cursorLocation.Y] = m_lines[m_cursorLocation.Y].insert(m_cursorLocation.X, newText);
+					m_cursorLocation.X += newText.size();
 				}
 
-				for (int i = 0; i < m_lines.getCount(); i++)
-					m_text.append(m_lines[i]);
+				m_text.clear();
+
+				for (const String& l : m_lines)
+					m_text.append(l);
 			}
+
+			ClampCursorPos(m_cursorLocation);
+			ClampCursorPos(m_selectionStart);
+			ClampCursorPos(m_selectionEnd);
 		}
+
+		void TextEditState::AddFirstLine(const String& line)
+		{
+			m_lines[m_cursorLocation.Y] = m_lines[m_cursorLocation.Y].insert(m_cursorLocation.X, line);
+		}
+
 
 		void TextEditState::Keyboard_OnPaste(String value)
 		{
 			if (value.size())
 			{
-				String newText(value);
-
-				for (size_t i = 0; i < newText.size(); i++)
-				{
-					if (newText[i] == '\r')
-						newText[i] = ' ';
-
-					if (m_multiline && newText[i] == '\t')
-					{
-						newText[i] = ' ';
-						newText.insert(i, L"   ");
-					}
-				}
-
-				Add(newText);
-
-				List<String> lines;
-				StringUtils::Split(newText, lines, L"\n\r");
-
-				int len = (int)lines.getCount();
-				m_cursorLocation.X += (int)lines[len - 1].size();
+				Add(value);
 
 				eventContentChanged.Invoke();
 			}
@@ -388,21 +405,11 @@ namespace Apoc3D
 				{
 					if (e.ControlDown)
 					{
-						bool foundSpace = false;
-						if (m_lines.getCount() > 0)
-						{
-							for (int i = m_cursorLocation.X - 2; i > 0; i--)
-							{
-								if (currentLine[i] == ' ')
-								{
-									m_cursorLocation.X = i + 1;
-									foundSpace = true;
-									break;
-								}
-							}
-						}
+						size_t spacePos = String::npos;
+						if (m_lines.getCount() > 0 && m_cursorLocation.X > 1)
+							spacePos = currentLine.find_last_of(' ', m_cursorLocation.X - 2);
 
-						if (!foundSpace)
+						if (spacePos != String::npos)
 						{
 							if (m_cursorLocation.X != 0)
 								m_cursorLocation.X = 0;
@@ -412,12 +419,14 @@ namespace Apoc3D
 								m_cursorLocation.X = (int)previousLine->size();
 							}
 						}
+						else
+							m_cursorLocation.X = spacePos;
 					}
 					else
 					{
-						if (!m_multiline && m_cursorLocation.X > 0)
+						if (!m_multiline)
 							m_cursorLocation.X--;
-						else if (m_multiline)
+						else
 						{
 							if (m_cursorLocation.X > 0)
 								m_cursorLocation.X--;
@@ -429,45 +438,34 @@ namespace Apoc3D
 						}
 					}
 
-					if (isKeyboardSelecting())
-						SetSelectionEndFromCurrent();
-
 					break;
 				}
 				case KEY_RIGHT:
 				{
 					if (e.ControlDown)
 					{
-						bool foundSpace = false;
+						size_t spacePos = String::npos;
 						if (m_lines.getCount() > 0)
-						{
-							for (int i = m_cursorLocation.X; i < (int)currentLine.size(); i++)
-							{
-								if (currentLine[i] == ' ')
-								{
-									m_cursorLocation.X = i + 1;
-									foundSpace = true;
-									break;
-								}
-							}
+							spacePos = currentLine.find_first_of(' ', m_cursorLocation.X);
 
-							if (!foundSpace)
+						if (spacePos != String::npos)
+						{
+							if (m_cursorLocation.X != (int)currentLine.size())
+								m_cursorLocation.X = (int)currentLine.size();
+							else if (nextLine)
 							{
-								if (m_cursorLocation.X != (int)currentLine.size())
-									m_cursorLocation.X = (int)currentLine.size();
-								else if (nextLine)
-								{
-									m_cursorLocation.X = 0;
-									m_cursorLocation.Y++;
-								}
+								m_cursorLocation.X = 0;
+								m_cursorLocation.Y++;
 							}
 						}
+						else
+							m_cursorLocation.X = spacePos;
 					}
 					else
 					{
-						if (!m_multiline && m_cursorLocation.X < (int)m_text.size())
+						if (!m_multiline)
 							m_cursorLocation.X++;
-						else if (m_multiline)
+						else
 						{
 							if (m_cursorLocation.X < (int)currentLine.size())
 								m_cursorLocation.X++;
@@ -479,48 +477,42 @@ namespace Apoc3D
 						}
 					}
 
-					if (isKeyboardSelecting())
-						SetSelectionEndFromCurrent();
-
 					break;
 				}
 				case KEY_UP:
 					if (!m_multiline)
 						eventUpPressedSingleline.Invoke();
 
-					if (previousLine) m_cursorLocation.Y--;
-
-					if (isKeyboardSelecting())
-						SetSelectionEndFromCurrent();
+					m_cursorLocation.Y--;
 
 					break;
 				case KEY_DOWN:
 					if (!m_multiline)
 						eventDownPressedSingleline.Invoke();
 
-					if (nextLine) m_cursorLocation.Y++;
-
-					if (isKeyboardSelecting())
-						SetSelectionEndFromCurrent();
+					m_cursorLocation.Y++;
 
 					break;
 				case KEY_BACK:
 				{
-					if (!m_multiline && m_cursorLocation.X > 0 && m_cursorLocation.X < (int)m_text.size() + 1)
+					if (!m_multiline) 
 					{
-						if (m_cursorLocation.X > 1 && m_text.substr(m_cursorLocation.X - 2, 2) == L"\r\n")
+						if (m_cursorLocation.X > 0 && m_cursorLocation.X <= (int32)m_text.size())
 						{
-							m_text = m_text.erase(m_cursorLocation.X - 2, 2);
-							m_cursorLocation.X -= 2;
+							if (m_cursorLocation.X > 1 && m_text.substr(m_cursorLocation.X - 2, 2) == L"\r\n")
+							{
+								m_text = m_text.erase(m_cursorLocation.X - 2, 2);
+								m_cursorLocation.X -= 2;
+							}
+							else
+							{
+								m_text = m_text.erase(m_cursorLocation.X - 1, 1);
+								m_cursorLocation.X--;
+							}
+							changed = true;
 						}
-						else
-						{
-							m_text = m_text.erase(m_cursorLocation.X - 1, 1);
-							m_cursorLocation.X--;
-						}
-						changed = true;
 					}
-					else if (m_multiline)
+					else
 					{
 						if (m_cursorLocation.X > 0)
 						{
@@ -546,16 +538,19 @@ namespace Apoc3D
 				}
 				case KEY_DELETE:
 				{
-					if (!m_multiline && m_cursorLocation.X < (int)m_text.size())
+					if (!m_multiline)
 					{
-						if (m_cursorLocation.X < (int)m_text.size() - 1 && m_text.substr(m_cursorLocation.X, 2) == L"\r\n")
-							m_text = m_text.erase(m_cursorLocation.X, 2);
-						else
-							m_text = m_text.erase(m_cursorLocation.X, 1);
+						if (m_cursorLocation.X < (int)m_text.size())
+						{
+							if (m_cursorLocation.X < (int)m_text.size() - 1 && m_text.substr(m_cursorLocation.X, 2) == L"\r\n")
+								m_text = m_text.erase(m_cursorLocation.X, 2);
+							else
+								m_text = m_text.erase(m_cursorLocation.X, 1);
 
-						changed = true;
+							changed = true;
+						}
 					}
-					else if (m_multiline)
+					else 
 					{
 						if (m_cursorLocation.X < (int)m_lines[m_cursorLocation.Y].size())
 						{
@@ -575,14 +570,13 @@ namespace Apoc3D
 							}
 						}
 					}
-				}
 					break;
+				}
 				case KEY_HOME:
 					m_cursorLocation.X = 0;
 					if (m_multiline && e.ControlDown)
 					{
 						m_cursorLocation.Y = 0;
-						m_cursorLocation.X = 0;
 					}
 					break;
 				case KEY_END:
@@ -626,278 +620,234 @@ namespace Apoc3D
 				}
 				case KEY_SPACE:
 					Add(L" ");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_DECIMAL:
 					Add(L".");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_DIVIDE:
 					Add(L"/");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_BACKSLASH:
 					Add(e.ShiftDown ? L"|" : L"\\");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 					// " ~
 				case KEY_COMMA:
 					Add(e.ShiftDown ? L"<" : L",");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_MINUS:
 					Add(e.ShiftDown ? L"_" : L"-");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_LBRACKET:
 					Add(e.ShiftDown ? L"{" : L"[");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_RBRACKET:
 					Add(e.ShiftDown ? L"}" : L"]");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_PERIOD:
 					Add(e.ShiftDown ? L">" : L".");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_ADD:
 					Add(e.ShiftDown ? L"+" : L"=");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_SLASH:
 					Add(e.ShiftDown ? L"?" : L"/");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_SEMICOLON:
 					Add(e.ShiftDown ? L":" : L";");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_SUBTRACT:
 					Add(L"-");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_MULTIPLY:
 					Add(L"*");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_TAB:
 					Add(L"      ");
-					m_cursorLocation.X += 6;
 					changed = true;
 					break;
 				case KEY_NUMPAD0:
 				case KEY_0:
 					Add(e.ShiftDown ? L")" : L"0");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_NUMPAD1:
 				case KEY_1:
 					Add(e.ShiftDown ? L"!" : L"1");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_NUMPAD2:
 				case KEY_2:
 					Add(e.ShiftDown ? L"@" : L"2");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_NUMPAD3:
 				case KEY_3:
 					Add(e.ShiftDown ? L"#" : L"3");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_NUMPAD4:
 				case KEY_4:
 					Add(e.ShiftDown ? L"$" : L"4");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_NUMPAD5:
 				case KEY_5:
 					Add(e.ShiftDown ? L"%" : L"5");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_NUMPAD6:
 				case KEY_6:
 					Add(e.ShiftDown ? L"^" : L"6");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_NUMPAD7:
 				case KEY_7:
 					Add(e.ShiftDown ? L"&" : L"7");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_NUMPAD8:
 				case KEY_8:
 					Add(e.ShiftDown ? L"*" : L"8");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_NUMPAD9:
 				case KEY_9:
 					Add(e.ShiftDown ? L"(" : L"9");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 
 				case KEY_A:
 					Add(e.ShiftDown || e.CapsLock ? L"A" : L"a");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_B:
 					Add(e.ShiftDown || e.CapsLock ? L"B" : L"b");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_C:
 					Add(e.ShiftDown || e.CapsLock ? L"C" : L"c");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_D:
 					Add(e.ShiftDown || e.CapsLock ? L"D" : L"d");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_E:
 					Add(e.ShiftDown || e.CapsLock ? L"E" : L"e");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_F:
 					Add(e.ShiftDown || e.CapsLock ? L"F" : L"f");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_G:
 					Add(e.ShiftDown || e.CapsLock ? L"G" : L"g");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 
 				case KEY_H:
 					Add(e.ShiftDown || e.CapsLock ? L"H" : L"h");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_I:
 					Add(e.ShiftDown || e.CapsLock ? L"I" : L"i");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_J:
 					Add(e.ShiftDown || e.CapsLock ? L"J" : L"j");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_K:
 					Add(e.ShiftDown || e.CapsLock ? L"K" : L"k");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_L:
 					Add(e.ShiftDown || e.CapsLock ? L"L" : L"l");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_M:
 					Add(e.ShiftDown || e.CapsLock ? L"M" : L"m");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_N:
 					Add(e.ShiftDown || e.CapsLock ? L"N" : L"n");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 
 				case KEY_O:
 					Add(e.ShiftDown || e.CapsLock ? L"O" : L"o");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_P:
 					Add(e.ShiftDown || e.CapsLock ? L"P" : L"p");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_Q:
 					Add(e.ShiftDown || e.CapsLock ? L"Q" : L"q");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_R:
 					Add(e.ShiftDown || e.CapsLock ? L"R" : L"r");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_S:
 					Add(e.ShiftDown || e.CapsLock ? L"S" : L"s");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_T:
 					Add(e.ShiftDown || e.CapsLock ? L"T" : L"t");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 
 				case KEY_U:
 					Add(e.ShiftDown || e.CapsLock ? L"U" : L"u");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_V:
 					Add(e.ShiftDown || e.CapsLock ? L"V" : L"v");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_W:
 					Add(e.ShiftDown || e.CapsLock ? L"W" : L"w");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_X:
 					Add(e.ShiftDown || e.CapsLock ? L"X" : L"x");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_Y:
 					Add(e.ShiftDown || e.CapsLock ? L"Y" : L"y");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 				case KEY_Z:
 					Add(e.ShiftDown || e.CapsLock ? L"Z" : L"z");
-					m_cursorLocation.X++;
 					changed = true;
 					break;
 
 				default:
 					break;
 			}
+
+			ClampCursorPos(m_cursorLocation);
+			ClampCursorPos(m_selectionStart);
+			ClampCursorPos(m_selectionEnd);
+
+			if (isKeyboardSelecting() && (code == KEY_LEFT || code == KEY_RIGHT || code == KEY_UP || code == KEY_DOWN))
+				SetSelectionEndFromCursor();
 
 			if (changed)
 			{
@@ -920,14 +870,29 @@ namespace Apoc3D
 		void TextEditState::MoveCursorTo(const Point& cp)
 		{
 			m_cursorLocation = cp;
-			m_cursorLocation.Y = m_lines.ClampIndexInRange(m_cursorLocation.Y);
+			ClampCursorPos(m_cursorLocation);
+		}
 
-			const String& line = m_lines[m_cursorLocation.Y];
-			if (m_cursorLocation.X > (int32)line.size())
-				m_cursorLocation.X = (int32)line.size();
+		void TextEditState::ClampCursorPos(Point& cp)
+		{
+			if (!m_multiline)
+			{
+				cp.Y = 0;
 
-			if (m_cursorLocation.X < 0)
-				m_cursorLocation.X = 0;
+				if (cp.X > (int32)m_text.size())
+					cp.X = (int32)m_text.size();
+			}
+			else
+			{
+				cp.Y = m_lines.ClampIndexInRange(cp.Y);
+
+				const String& line = m_lines[cp.Y];
+				if (cp.X > (int32)line.size())
+					cp.X = (int32)line.size();
+
+				if (cp.X < 0)
+					cp.X = 0;
+			}
 		}
 
 		void TextEditState::StartSelection()
@@ -939,14 +904,49 @@ namespace Apoc3D
 		{
 			m_isSelecting = false;
 		}
-		void TextEditState::SetSelectionEndFromCurrent()
+		void TextEditState::SetSelectionEndFromCursor()
 		{
 			m_selectionEnd = m_cursorLocation;
+		}
+		void TextEditState::SetSelectionFromCursorWord()
+		{
+			const String& line = getCurrentLine();
+
+			size_t spos = line.find_last_of(' ', m_cursorLocation.X);
+			size_t epos = line.find_first_of(' ', m_cursorLocation.X + 1);
+
+			m_selectionStart.Y = m_selectionEnd.Y = m_cursorLocation.Y;
+
+			if (spos == String::npos)
+				spos = 0;
+			else
+				spos++;
+
+			if (epos == String::npos)
+				epos = line.size();
+
+			if (spos >= epos)
+			{
+				// in the middle of a blank
+				spos = line.find_last_not_of(' ', m_cursorLocation.X);
+				epos = line.find_first_not_of(' ', m_cursorLocation.X + 1);
+
+				if (spos == String::npos)
+					spos = 0;
+				else
+					spos++;
+
+				if (epos == String::npos)
+					epos = line.size();
+			}
+
+			m_selectionStart.X = spos;
+			m_selectionEnd.X = epos;
 		}
 
 		bool TextEditState::GetLineSelectionRegion(int32 line, int32& start, int32& end)
 		{
-			if (!m_isSelecting)
+			if (!hasSelection())
 				return false;
 
 			Point fixedStart;
@@ -990,13 +990,5 @@ namespace Apoc3D
 			return true;
 		}
 
-		void TextEditState::SetText(const String& text)
-		{
-			m_text = L"";
-			m_lines.Clear();
-			m_cursorLocation.X = 0;
-			m_cursorLocation.Y = 0;
-			Add(text);
-		}
 	}
 }

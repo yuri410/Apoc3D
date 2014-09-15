@@ -46,6 +46,15 @@ namespace Apoc3D
 {
 	namespace UI
 	{
+		class DoubleClickChecker
+		{
+		public:
+			void Update(const GameTime* time);
+			bool Check(Input::Mouse* mouse = nullptr);
+		private:
+			float m_timeSinceLastClick = FLT_MAX;
+		};
+
 		class APAPI Control
 		{
 			RTTI_BASE;

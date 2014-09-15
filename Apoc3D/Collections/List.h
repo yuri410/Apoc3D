@@ -543,14 +543,7 @@ namespace Apoc3D
 
 			void Insert(int32 index, const T& item)
 			{
-				if (m_count == m_length)
-				{
-					Resize(m_length * 2);
-				}
-				else
-				{
-					EnsureElements();
-				}
+				EnsureElementIncrSize();
 
 				if (index < m_count)
 				{
@@ -561,6 +554,26 @@ namespace Apoc3D
 				}
 				m_elements[index] = item;
 				m_count++;
+			}
+
+			void InsertArray(int32 index, const T* item, int32 count)
+			{
+				EnsureElementIncrSize(count);
+
+				if (index < m_count)
+				{
+					for (int32 i = m_count + count - 1; i > index; i--)
+					{
+						m_elements[i] = m_elements[i - count];
+					}
+				}
+
+				for (int32 i = 0; i < count;i++)
+				{
+					m_elements[index + i] = item[i];
+				}
+
+				m_count += count;
 			}
 
 			

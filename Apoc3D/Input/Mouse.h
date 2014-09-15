@@ -108,6 +108,21 @@ namespace Apoc3D
 			Mouse();
 
 		};
+
+		class APAPI MouseMoveDistanceTracker
+		{
+		public:
+			MouseMoveDistanceTracker();
+			~MouseMoveDistanceTracker();
+
+			void Reset(Mouse* mouse = nullptr);
+			void Track(Mouse* mouse = nullptr);
+
+			float getDistance() const { return m_distance; }
+		private:
+			float m_distance;
+			Point m_previousPos;
+		};
 	}
 }
 

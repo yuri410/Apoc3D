@@ -183,6 +183,7 @@ namespace Apoc3D
 			bool HasMouseHoverGraphic = false;
 			bool HasMouseDownGraphic = false;
 			bool HasOverlayIcon = false;
+			bool HasDisabledOverlayIcon = false;
 			bool HasHotZonePadding = false;
 
 			UIGraphic DisabledGraphic;
@@ -191,6 +192,8 @@ namespace Apoc3D
 			UIGraphic MouseDownGraphic;
 
 			UIGraphicSimple OverlayIcon;
+			UIGraphicSimple DisabledOverlayIcon;
+
 			ControlBounds ContentPadding;
 		};
 
