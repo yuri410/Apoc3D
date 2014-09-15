@@ -101,11 +101,17 @@ namespace Apoc3D
 			void MoveCursorToEnd();
 			void MoveCursorTo(const Point& cp);
 
-			void StartSelection();
-			void EndSelection();
+			void StartExternalSelection();
+			void EndExternalSelection();
+
+			void ClearSelectionRegion();
+
 			void SetSelectionEndFromCursor();
 			void SetSelectionFromCursorWord();
-			bool isSelecting() const { return m_isSelecting; }
+
+			void GetFixedSelectionRegion(Point& fixedStart, Point& fixedEnd);
+
+			bool isExternalSelecting() const { return m_isExternalSelecting; }
 			bool hasSelection() const { return m_selectionStart != m_selectionEnd; }
 			
 			KeyboardEventHandler& eventKeyPress() { return m_keyboard.eventKeyPress; }
@@ -123,12 +129,17 @@ namespace Apoc3D
 		private:
 			bool isKeyboardSelecting() const { return m_keyboard.isShiftDown(); }
 
-			void AddFirstLine(const String& line);
 			void ClampCursorPos();
 			void ClampCursorPos(Point& cp);
 
 			void Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e);
 			void Keyboard_OnPaste(String value);
+
+			void EraseSelectedText();
+
+			String& GetLines(String*& prevLine, String*& nextLine);
+
+			void Sync();
 
 			KeyboardHelper m_keyboard;
 
@@ -138,7 +149,7 @@ namespace Apoc3D
 			Point m_cursorLocation;
 			bool m_multiline = false;
 			
-			bool m_isSelecting = false;
+			bool m_isExternalSelecting = false;
 			Point m_selectionStart;
 			Point m_selectionEnd;
 

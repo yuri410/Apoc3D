@@ -257,16 +257,16 @@ namespace Apoc3D
 			m_keyboard.eventKeyPress.Bind(this, &TextEditState::Keyboard_OnPress);
 			m_keyboard.eventKeyPaste.Bind(this, &TextEditState::Keyboard_OnPaste);
 
-			m_keyboard.eventKeyboardSelectionStart.Bind(this, &TextEditState::StartSelection);
-			m_keyboard.eventKeyboardSelectionEnd.Bind(this, &TextEditState::EndSelection);
+			m_keyboard.eventKeyboardSelectionStart.Bind(this, &TextEditState::StartExternalSelection);
+			m_keyboard.eventKeyboardSelectionEnd.Bind(this, &TextEditState::EndExternalSelection);
 
 			m_lines.Add(L"");
 		}
 
 		TextEditState::~TextEditState()
 		{
-			m_keyboard.eventKeyboardSelectionStart.Unbind(this, &TextEditState::StartSelection);
-			m_keyboard.eventKeyboardSelectionEnd.Unbind(this, &TextEditState::EndSelection);
+			m_keyboard.eventKeyboardSelectionStart.Unbind(this, &TextEditState::StartExternalSelection);
+			m_keyboard.eventKeyboardSelectionEnd.Unbind(this, &TextEditState::EndExternalSelection);
 
 			m_keyboard.eventKeyPress.Unbind(this, &TextEditState::Keyboard_OnPress);
 			m_keyboard.eventKeyPaste.Unbind(this, &TextEditState::Keyboard_OnPaste);
@@ -294,44 +294,38 @@ namespace Apoc3D
 
 		void TextEditState::SetText(const String& text)
 		{
-			m_lines.Clear();
-
 			if (!m_multiline)
 			{
 				m_text = text;
-
-				m_lines.Add(m_text);
 			}
 			else
 			{
+				m_lines.Clear();
 				StringUtils::Split(text, m_lines, L"\n\r");
 				ReplaceTabs(m_lines);
-
-				m_text.clear();
-
-				for (const String& l : m_lines)
-					m_text.append(l);
 			}
+
+			Sync();
 
 			m_cursorLocation.X = 0;
 			m_cursorLocation.Y = 0;
 			
-			m_selectionStart = m_selectionEnd = Point::Zero;
-
+			ClearSelectionRegion();
 		}
+
 		void TextEditState::Add(const String& newText)
 		{
 			ClampCursorPos(m_cursorLocation);
 			ClampCursorPos(m_selectionStart);
 			ClampCursorPos(m_selectionEnd);
 
+			if (hasSelection())
+				EraseSelectedText();
+
 			if (!m_multiline)
 			{
 				m_text = m_text.insert(m_cursorLocation.X, newText);
 				m_cursorLocation.X += newText.size();
-
-				m_lines.Clear();
-				m_lines.Add(m_text);
 			}
 			else
 			{
@@ -364,21 +358,13 @@ namespace Apoc3D
 					m_lines[m_cursorLocation.Y] = m_lines[m_cursorLocation.Y].insert(m_cursorLocation.X, newText);
 					m_cursorLocation.X += newText.size();
 				}
-
-				m_text.clear();
-
-				for (const String& l : m_lines)
-					m_text.append(l);
 			}
+
+			Sync();
 
 			ClampCursorPos(m_cursorLocation);
 			ClampCursorPos(m_selectionStart);
 			ClampCursorPos(m_selectionEnd);
-		}
-
-		void TextEditState::AddFirstLine(const String& line)
-		{
-			m_lines[m_cursorLocation.Y] = m_lines[m_cursorLocation.Y].insert(m_cursorLocation.X, line);
 		}
 
 
@@ -394,22 +380,25 @@ namespace Apoc3D
 		void TextEditState::Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e)
 		{
 			bool changed = false;
+			bool checkKeyboardSelection = false;
 
-			String* previousLine = m_cursorLocation.Y > 0 ? &m_lines[m_cursorLocation.Y - 1] : nullptr;
-			String& currentLine = m_lines[m_cursorLocation.Y];
-			String* nextLine = m_cursorLocation.Y < m_lines.getCount() - 1 ? &m_lines[m_lines.getCount() - 1] : nullptr;
-
+			
 			switch (code)
 			{
 				case KEY_LEFT:
 				{
+					checkKeyboardSelection = true;
+
+					String* previousLine, *nextLine;
+					String& currentLine = GetLines(previousLine, nextLine);
+
 					if (e.ControlDown)
 					{
 						size_t spacePos = String::npos;
-						if (m_lines.getCount() > 0 && m_cursorLocation.X > 1)
+						if (m_cursorLocation.X > 1)
 							spacePos = currentLine.find_last_of(' ', m_cursorLocation.X - 2);
 
-						if (spacePos != String::npos)
+						if (spacePos == String::npos)
 						{
 							if (m_cursorLocation.X != 0)
 								m_cursorLocation.X = 0;
@@ -420,7 +409,7 @@ namespace Apoc3D
 							}
 						}
 						else
-							m_cursorLocation.X = spacePos;
+							m_cursorLocation.X = spacePos+1;
 					}
 					else
 					{
@@ -442,13 +431,16 @@ namespace Apoc3D
 				}
 				case KEY_RIGHT:
 				{
+					checkKeyboardSelection = true;
+
+					String* previousLine, *nextLine;
+					String& currentLine = GetLines(previousLine, nextLine);
+
 					if (e.ControlDown)
 					{
-						size_t spacePos = String::npos;
-						if (m_lines.getCount() > 0)
-							spacePos = currentLine.find_first_of(' ', m_cursorLocation.X);
+						size_t spacePos = currentLine.find_first_of(' ', m_cursorLocation.X + 1);
 
-						if (spacePos != String::npos)
+						if (spacePos == String::npos)
 						{
 							if (m_cursorLocation.X != (int)currentLine.size())
 								m_cursorLocation.X = (int)currentLine.size();
@@ -459,7 +451,7 @@ namespace Apoc3D
 							}
 						}
 						else
-							m_cursorLocation.X = spacePos;
+							m_cursorLocation.X = spacePos+1;
 					}
 					else
 					{
@@ -480,126 +472,179 @@ namespace Apoc3D
 					break;
 				}
 				case KEY_UP:
+				{
+					checkKeyboardSelection = true;
+
 					if (!m_multiline)
 						eventUpPressedSingleline.Invoke();
 
 					m_cursorLocation.Y--;
 
 					break;
+				}
 				case KEY_DOWN:
+				{
+					checkKeyboardSelection = true;
+
 					if (!m_multiline)
 						eventDownPressedSingleline.Invoke();
 
 					m_cursorLocation.Y++;
 
 					break;
+				}
 				case KEY_BACK:
 				{
-					if (!m_multiline) 
+					if (hasSelection())
 					{
-						if (m_cursorLocation.X > 0 && m_cursorLocation.X <= (int32)m_text.size())
-						{
-							if (m_cursorLocation.X > 1 && m_text.substr(m_cursorLocation.X - 2, 2) == L"\r\n")
-							{
-								m_text = m_text.erase(m_cursorLocation.X - 2, 2);
-								m_cursorLocation.X -= 2;
-							}
-							else
-							{
-								m_text = m_text.erase(m_cursorLocation.X - 1, 1);
-								m_cursorLocation.X--;
-							}
-							changed = true;
-						}
+						EraseSelectedText();
+						changed = true;
 					}
 					else
 					{
-						if (m_cursorLocation.X > 0)
+						if (!m_multiline)
 						{
-							m_lines[m_cursorLocation.Y] = m_lines[m_cursorLocation.Y].erase(m_cursorLocation.X - 1, 1);
-							m_cursorLocation.X -= 1;
-
-							changed = true;
-						}
-						else
-						{
-							if (m_cursorLocation.Y > 0)
+							if (m_cursorLocation.X > 0 && m_cursorLocation.X <= (int32)m_text.size())
 							{
-								m_cursorLocation.X = (int)m_lines[m_cursorLocation.Y - 1].size();
-								m_lines[m_cursorLocation.Y - 1] += m_lines[m_cursorLocation.Y];
-								m_lines.RemoveAt(m_cursorLocation.Y);
-								m_cursorLocation.Y -= 1;
-
+								if (m_cursorLocation.X > 1 && m_text.substr(m_cursorLocation.X - 2, 2) == L"\r\n")
+								{
+									m_text = m_text.erase(m_cursorLocation.X - 2, 2);
+									m_cursorLocation.X -= 2;
+								}
+								else
+								{
+									m_text = m_text.erase(m_cursorLocation.X - 1, 1);
+									m_cursorLocation.X--;
+								}
 								changed = true;
 							}
 						}
+						else
+						{
+							String* previousLine, *nextLine;
+							String& currentLine = GetLines(previousLine, nextLine);
+
+							if (m_cursorLocation.X > 0)
+							{
+								currentLine = currentLine.erase(m_cursorLocation.X - 1, 1);
+								m_cursorLocation.X -= 1;
+
+								changed = true;
+							}
+							else
+							{
+								if (previousLine)
+								{
+									m_cursorLocation.X = (int)previousLine->size();
+									*previousLine += currentLine;
+									m_lines.RemoveAt(m_cursorLocation.Y);
+									m_cursorLocation.Y -= 1;
+
+									changed = true;
+								}
+							}
+						}
 					}
+
+					if (changed) Sync();
 					break;
 				}
 				case KEY_DELETE:
 				{
-					if (!m_multiline)
+					if (hasSelection())
 					{
-						if (m_cursorLocation.X < (int)m_text.size())
-						{
-							if (m_cursorLocation.X < (int)m_text.size() - 1 && m_text.substr(m_cursorLocation.X, 2) == L"\r\n")
-								m_text = m_text.erase(m_cursorLocation.X, 2);
-							else
-								m_text = m_text.erase(m_cursorLocation.X, 1);
-
-							changed = true;
-						}
+						EraseSelectedText();
+						changed = true;
 					}
-					else 
+					else
 					{
-						if (m_cursorLocation.X < (int)m_lines[m_cursorLocation.Y].size())
+						if (!m_multiline)
 						{
-							m_lines[m_cursorLocation.Y] = m_lines[m_cursorLocation.Y].erase(m_cursorLocation.X, 1);
-
-							changed = true;
-						}
-						else if (m_cursorLocation.X == (int)m_lines[m_cursorLocation.Y].size())
-						{
-							if (m_cursorLocation.Y < m_lines.getCount() - 1)
+							if (m_cursorLocation.X < (int)m_text.size())
 							{
-								if (m_lines[m_cursorLocation.Y + 1].size() > 0)
-									m_lines[m_cursorLocation.Y] += m_lines[m_cursorLocation.Y + 1];
-								m_lines.RemoveAt(m_cursorLocation.Y + 1);
+								if (m_cursorLocation.X < (int)m_text.size() - 1 && m_text.substr(m_cursorLocation.X, 2) == L"\r\n")
+									m_text = m_text.erase(m_cursorLocation.X, 2);
+								else
+									m_text = m_text.erase(m_cursorLocation.X, 1);
 
 								changed = true;
 							}
 						}
+						else
+						{
+							String* previousLine, *nextLine;
+							String& currentLine = GetLines(previousLine, nextLine);
+
+							if (m_cursorLocation.X < (int)currentLine.size())
+							{
+								currentLine = currentLine.erase(m_cursorLocation.X, 1);
+
+								changed = true;
+							}
+							else if (m_cursorLocation.X == (int)currentLine.size())
+							{
+								if (nextLine)
+								{
+									currentLine += *nextLine;
+									m_lines.RemoveAt(m_cursorLocation.Y + 1);
+
+									changed = true;
+								}
+							}
+						}
 					}
+					
+					if (changed) Sync();
 					break;
 				}
 				case KEY_HOME:
+				{
+					checkKeyboardSelection = true;
+
 					m_cursorLocation.X = 0;
 					if (m_multiline && e.ControlDown)
 					{
 						m_cursorLocation.Y = 0;
 					}
 					break;
+				}
 				case KEY_END:
+				{
+					checkKeyboardSelection = true;
+					
 					if (!m_multiline)
 						m_cursorLocation.X = (int)m_text.size();
 					else
 					{
+						String* previousLine, *nextLine;
+						String& currentLine = GetLines(previousLine, nextLine);
+
 						if (e.ControlDown)
 						{
 							m_cursorLocation.Y = m_lines.getCount() - 1;
-							m_cursorLocation.X = (int)m_lines[m_cursorLocation.Y].size();
+							m_cursorLocation.X = (int)currentLine.size();
 						}
 						else
-							m_cursorLocation.X = (int)m_lines[m_cursorLocation.Y].size();
+							m_cursorLocation.X = (int)currentLine.size();
 					}
 					break;
+				}
+
 				case KEY_NUMPADENTER:
 				case KEY_RETURN:
 				{
+					if (hasSelection())
+					{
+						EraseSelectedText();
+						changed = true;
+					}
+
 					if (m_multiline)
 					{
-						String lineEnd = L"";
+						String* previousLine, *nextLine;
+						String& currentLine = GetLines(previousLine, nextLine);
 
+						String lineEnd;
 						if ((int)currentLine.size() > m_cursorLocation.X)
 						{
 							lineEnd = currentLine.substr(m_cursorLocation.X, currentLine.size() - m_cursorLocation.X);
@@ -608,7 +653,7 @@ namespace Apoc3D
 
 						m_lines.Insert(m_cursorLocation.Y + 1, lineEnd);
 						m_cursorLocation.X = 0;
-						m_cursorLocation.Y += 1;
+						m_cursorLocation.Y++;
 
 						changed = true;
 					}
@@ -616,6 +661,8 @@ namespace Apoc3D
 					{
 						eventEnterPressed.Invoke();
 					}
+
+					if (changed) Sync();
 					break;
 				}
 				case KEY_SPACE:
@@ -846,8 +893,19 @@ namespace Apoc3D
 			ClampCursorPos(m_selectionStart);
 			ClampCursorPos(m_selectionEnd);
 
-			if (isKeyboardSelecting() && (code == KEY_LEFT || code == KEY_RIGHT || code == KEY_UP || code == KEY_DOWN))
-				SetSelectionEndFromCursor();
+			if (checkKeyboardSelection)
+			{
+				if (!isKeyboardSelecting())
+				{
+					if (hasSelection())
+						ClearSelectionRegion();
+				}
+				else
+				{
+					SetSelectionEndFromCursor();
+				}
+			}
+			
 
 			if (changed)
 			{
@@ -895,14 +953,14 @@ namespace Apoc3D
 			}
 		}
 
-		void TextEditState::StartSelection()
+		void TextEditState::StartExternalSelection()
 		{
-			m_selectionStart = m_selectionEnd = m_cursorLocation;
-			m_isSelecting = true;
+			ClearSelectionRegion();
+			m_isExternalSelecting = true;
 		}
-		void TextEditState::EndSelection()
+		void TextEditState::EndExternalSelection()
 		{
-			m_isSelecting = false;
+			m_isExternalSelecting = false;
 		}
 		void TextEditState::SetSelectionEndFromCursor()
 		{
@@ -944,15 +1002,57 @@ namespace Apoc3D
 			m_selectionEnd.X = epos;
 		}
 
-		bool TextEditState::GetLineSelectionRegion(int32 line, int32& start, int32& end)
+		void TextEditState::EraseSelectedText()
 		{
-			if (!hasSelection())
-				return false;
+			Point fixedStart, fixedEnd;
+			GetFixedSelectionRegion(fixedStart, fixedEnd);
+			ClearSelectionRegion();
 
-			Point fixedStart;
-			Point fixedEnd;
+			if (m_multiline)
+			{
+				if (fixedStart.Y == fixedEnd.Y)
+				{
+					String& line = m_lines[fixedStart.Y];
+					line = line.erase(fixedStart.X, fixedEnd.X - fixedStart.X);
+				}
+				else
+				{
+					String& firstLine = m_lines[fixedStart.Y];
+					String& lastLine = m_lines[fixedEnd.Y];
 
-			if (m_selectionStart.Y < m_selectionEnd.Y)
+					if (fixedStart.X < (int32)firstLine.size())
+						firstLine = firstLine.erase(fixedStart.X, firstLine.size() - fixedStart.X);
+
+					lastLine = lastLine.erase(0, fixedEnd.X);
+
+					firstLine.append(lastLine);
+
+					if (fixedEnd.Y - fixedStart.Y > 0)
+						m_lines.RemoveRange(fixedStart.Y + 1, fixedEnd.Y - fixedStart.Y);
+				}
+			}
+			else
+			{
+				m_text = m_text.erase(fixedStart.X, fixedEnd.X - fixedStart.X);
+			}
+
+			m_cursorLocation = fixedStart;
+		}
+		void TextEditState::ClearSelectionRegion()
+		{
+			m_selectionStart = m_selectionEnd = m_cursorLocation;
+		}
+		
+		void TextEditState::GetFixedSelectionRegion(Point& fixedStart, Point& fixedEnd)
+		{
+			if (m_selectionStart.Y == m_selectionEnd.Y)
+			{
+				fixedStart.Y = fixedEnd.Y = m_selectionStart.Y;
+
+				fixedStart.X = Math::Min(m_selectionStart.X, m_selectionEnd.X);
+				fixedEnd.X = Math::Max(m_selectionStart.X, m_selectionEnd.X);
+			}
+			else if (m_selectionStart.Y < m_selectionEnd.Y)
 			{
 				fixedStart = m_selectionStart;
 				fixedEnd = m_selectionEnd;
@@ -962,6 +1062,15 @@ namespace Apoc3D
 				fixedStart = m_selectionEnd;
 				fixedEnd = m_selectionStart;
 			}
+		}
+
+		bool TextEditState::GetLineSelectionRegion(int32 line, int32& start, int32& end)
+		{
+			if (!hasSelection())
+				return false;
+
+			Point fixedStart, fixedEnd;
+			GetFixedSelectionRegion(fixedStart, fixedEnd);
 
 			if (fixedStart.Y == fixedEnd.Y && line == fixedStart.Y)
 			{
@@ -990,5 +1099,27 @@ namespace Apoc3D
 			return true;
 		}
 
+		String& TextEditState::GetLines(String*& previousLine, String*& nextLine)
+		{
+			previousLine = m_cursorLocation.Y > 0 ? &m_lines[m_cursorLocation.Y - 1] : nullptr;
+			nextLine = m_cursorLocation.Y < m_lines.getCount() - 1 ? &m_lines[m_cursorLocation.Y + 1] : nullptr;
+
+			return m_lines[m_cursorLocation.Y];
+		}
+
+		void TextEditState::Sync()
+		{
+			if (m_multiline)
+			{
+				m_text.clear();
+				for (const String& l : m_lines)
+					m_text.append(l);
+			}
+			else
+			{
+				m_lines.Clear();
+				m_lines.Add(m_text);
+			}
+		}
 	}
 }

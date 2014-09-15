@@ -322,8 +322,8 @@ namespace Apoc3D
 			{
 				if (m_clickChecker.Check(mouse))
 				{
-					if (m_textEdit.isSelecting())
-						m_textEdit.EndSelection();
+					if (m_textEdit.isExternalSelecting())
+						m_textEdit.EndExternalSelection();
 
 					// double click : select word around current position
 					m_textEdit.SetSelectionFromCursorWord();
@@ -346,16 +346,16 @@ namespace Apoc3D
 
 					if (mouse->IsLeftPressed())
 					{
-						m_textEdit.StartSelection();
+						m_textEdit.StartExternalSelection();
 					}
-					else if (m_textEdit.isSelecting())
+					else if (m_textEdit.isExternalSelecting())
 					{
 						m_textEdit.SetSelectionEndFromCursor();
 					}
 				}
-				else if (m_textEdit.isSelecting() && mouse->IsLeftUp())
+				else if (m_textEdit.isExternalSelecting() && mouse->IsLeftUp())
 				{
-					m_textEdit.EndSelection();
+					m_textEdit.EndExternalSelection();
 				}
 			}
 
