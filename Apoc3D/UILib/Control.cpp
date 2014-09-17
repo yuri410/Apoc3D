@@ -54,7 +54,7 @@ namespace Apoc3D
 
 			if (mouse->IsLeftPressed())
 			{
-				if (m_timeSinceLastClick < 0.2f)
+				if (m_timeSinceLastClick < SystemUI::DoubleClickInterval)
 				{
 					m_timeSinceLastClick = 0;
 					return true;

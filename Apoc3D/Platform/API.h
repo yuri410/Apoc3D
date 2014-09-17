@@ -62,6 +62,8 @@ namespace Apoc3D
 		};
 
 		APAPI uint64 GetInstalledSystemMemorySizeInKB();
+
+		APAPI int32 GetSystemDoubleClickIntervalInMS();
 	}
 }
 

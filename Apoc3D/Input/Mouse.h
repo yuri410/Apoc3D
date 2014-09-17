@@ -46,6 +46,7 @@ namespace Apoc3D
 			const Point& GetPosition() const { return m_currentPos; }
 			virtual void SetPosition(const Point& loc);
 
+			
 			int getX() const { return m_currentPos.X; }
 			int getY() const { return m_currentPos.Y; }
 
@@ -94,18 +95,19 @@ namespace Apoc3D
 
 			void Serialize(Apoc3D::IO::BinaryWriter* bw);
 			void Deserialize(Apoc3D::IO::BinaryReader* br);
+
 		protected:
+			Mouse();
 
 			bool m_lastBtnState[3];
 			bool m_btnState[3];
+			bool m_buttonSwapped = false;
 
 			Point m_lastPosition;
 			Point m_currentPos;
 
-			int m_z;
-			int m_lastZ;
-
-			Mouse();
+			int m_z = 0;
+			int m_lastZ = 0;
 
 		};
 
@@ -121,7 +123,7 @@ namespace Apoc3D
 			float getDistance() const { return m_distance; }
 		private:
 			float m_distance;
-			Point m_previousPos;
+			Point m_startingPos;
 		};
 	}
 }

@@ -27,8 +27,10 @@
 
 #include "Apoc3D/Graphics/RenderSystem/Sprite.h"
 #include "apoc3d/Graphics/RenderSystem/Texture.h"
+#include "apoc3d/Platform/API.h"
 #include "FontManager.h"
 #include "SystemUIImpl.h"
+
 
 namespace Apoc3D
 {
@@ -359,6 +361,8 @@ namespace Apoc3D
 		MenuBar*& SystemUI::MainMenu = sysUI.m_mainMenu;
 		Form*& SystemUI::TopMostForm = sysUI.m_topMostForm;
 		Form*& SystemUI::ModalForm = sysUI.m_modalForm;
+
+		float SystemUI::DoubleClickInterval = Platform::GetSystemDoubleClickIntervalInMS() / 1000.0f;
 
 		void SystemUI::Initialize(RenderDevice* device) { sysUI.Initialize(device); }
 		void SystemUI::Finalize() { sysUI.Finalize(); }

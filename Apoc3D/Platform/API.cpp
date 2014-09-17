@@ -24,5 +24,16 @@ namespace Apoc3D
 			return status.ullTotalPhys;
 #endif
 		}
+
+		int32 GetSystemDoubleClickIntervalInMS()
+		{
+
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+			UINT result = GetDoubleClickTime();
+			return static_cast<int32>(result);
+#else
+			return 200;
+#endif
+		}
 	}
 }

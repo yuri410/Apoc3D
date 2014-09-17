@@ -35,7 +35,6 @@ namespace Apoc3D
 	namespace Input
 	{
 		Mouse::Mouse()
-			: m_z(0), m_lastZ(0), m_currentPos(0,0), m_lastPosition(0,0)
 		{
 			memset(m_lastBtnState, 0, sizeof(m_lastBtnState));
 			memset(m_btnState, 0, sizeof(m_btnState));
@@ -106,7 +105,7 @@ namespace Apoc3D
 				mouse = InputAPIManager::getSingleton().getMouse();
 			}
 
-			m_previousPos = mouse->GetPosition();
+			m_startingPos = mouse->GetPosition();
 		}
 		void MouseMoveDistanceTracker::Track(Mouse* mouse)
 		{
@@ -115,9 +114,9 @@ namespace Apoc3D
 				mouse = InputAPIManager::getSingleton().getMouse();
 			}
 
-			float di = Point::Distance(m_previousPos, mouse->GetPosition());
+			float di = Point::Distance(m_startingPos, mouse->GetPosition());
 			m_distance += di;
-			m_previousPos = mouse->GetPosition();
+			m_startingPos = mouse->GetPosition();
 		}
 	}
 }

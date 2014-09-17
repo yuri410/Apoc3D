@@ -263,6 +263,8 @@ namespace Apoc3D
 			APAPI extern MenuBar*& MainMenu;
 			APAPI extern Form*& TopMostForm;
 			APAPI extern Form*& ModalForm;
+
+			APAPI extern float DoubleClickInterval;
 		}
 
 		namespace GUIUtils

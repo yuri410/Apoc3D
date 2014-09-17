@@ -41,10 +41,11 @@ namespace Apoc3D
 	{
 		struct InputCreationParameters
 		{
-			bool UseMouse;
-			bool UseKeyboard;
-			int PreferredGamepadCount;
+			bool UseMouse = false;
+			bool UseKeyboard = false;
+			int PreferredGamepadCount = 0;
 		};
+
 		class APAPI InputAPIFactory
 		{
 		public:
@@ -70,11 +71,7 @@ namespace Apoc3D
 		{
 			SINGLETON_DECL(InputAPIManager);
 		public:
-			InputAPIManager()
-				: m_mouse(0), m_keyboard(0), m_selectedAPI(0)
-			{
-			}
-
+			InputAPIManager();
 			virtual ~InputAPIManager();
 		
 			void RegisterInputAPI(InputAPIFactory* fac);
@@ -83,30 +80,30 @@ namespace Apoc3D
 
 			void InitializeInput(RenderWindow* window, const InputCreationParameters& params);
 			void FinalizeInput();
-			void Update(const GameTime* time);
 
+			void Update(const GameTime* time);
 
 			Mouse* getMouse() const { return m_mouse; }
 			Keyboard* getKeyboard() const { return m_keyboard; }
 
 		private:
+			Mouse* CreateMouse();
+			Keyboard* CreateKeyboard();
+
 			struct Entry
 			{
 				InputAPIFactory* Factory;
 				int PlatformMark;
-
 			};
+
 			typedef List<Entry> APIList;
 			typedef HashMap<String, APIList*> PlatformTable;
 			PlatformTable m_factories;
 
-			InputAPIFactory* m_selectedAPI;
+			InputAPIFactory* m_selectedAPI = nullptr;
 
-			Mouse* m_mouse;
-			Keyboard* m_keyboard;
-
-			virtual Mouse* CreateMouse();
-			virtual Keyboard* CreateKeyboard();
+			Mouse* m_mouse = nullptr;
+			Keyboard* m_keyboard = nullptr;
 		};
 
 	}

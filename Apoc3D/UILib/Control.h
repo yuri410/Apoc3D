@@ -51,6 +51,7 @@ namespace Apoc3D
 		public:
 			void Update(const GameTime* time);
 			bool Check(Input::Mouse* mouse = nullptr);
+
 		private:
 			float m_timeSinceLastClick = FLT_MAX;
 		};

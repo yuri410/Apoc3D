@@ -36,7 +36,11 @@ namespace Apoc3D
 	namespace Input
 	{
 		SINGLETON_IMPL(InputAPIManager);
+		
+		InputAPIManager::InputAPIManager()
+		{
 
+		}
 		InputAPIManager::~InputAPIManager()
 		{
 			m_factories.DeleteValuesAndClear();
@@ -50,7 +54,7 @@ namespace Apoc3D
 			}
 			const List<PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
 
-			for (int32 i = 0; i<plats.getCount();i++)
+			for (int32 i = 0; i < plats.getCount(); i++)
 			{
 				APIList* facList;
 
@@ -63,7 +67,7 @@ namespace Apoc3D
 					m_factories.Add(pName, facList);
 				}
 
-				const Entry ent ={ fac, plats[i].Score };
+				const Entry ent = { fac, plats[i].Score };
 				facList->Add(ent);
 			}
 		}
@@ -71,12 +75,9 @@ namespace Apoc3D
 		{
 			bool passed = false;
 
-			for (PlatformTable::Enumerator e = m_factories.GetEnumerator();
-				e.MoveNext(); )
+			for (APIList* list : m_factories.getValueAccessor())
 			{
-				APIList* list = e.getCurrentValue();
-
-				for (int32 i=list->getCount()-1; i>=0;i--)
+				for (int32 i = list->getCount() - 1; i >= 0; i--)
 				{
 					if (list->operator[](i).Factory->getName() == name)
 					{
@@ -98,7 +99,6 @@ namespace Apoc3D
 			const List<PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
 			for (int32 i = 0; i < plats.getCount(); i++)
 			{
-
 				String pName = plats[i].PlatformName;
 				StringUtils::ToLowerCase(pName);
 
@@ -161,11 +161,8 @@ namespace Apoc3D
 		}
 		void InputAPIManager::FinalizeInput()
 		{
-			if (m_mouse)
-				delete m_mouse;
-			if (m_keyboard)
-				delete m_keyboard;
-
+			DELETE_AND_NULL(m_mouse);
+			DELETE_AND_NULL(m_keyboard);
 		}
 		Mouse* InputAPIManager::CreateMouse()
 		{

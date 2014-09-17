@@ -420,8 +420,8 @@ namespace Apoc3D
 
 		static Point Limit(Point d)
 		{
-			if (d.X > 5) d.X /= 5;
-			if (d.Y > 5) d.Y /= 5;
+			if (d.X > 5 || d.X < -5) d.X /= 5;
+			if (d.Y > 5 || d.Y < -5) d.Y /= 5;
 			return d;
 		}
 
@@ -439,7 +439,7 @@ namespace Apoc3D
 					Position = m_previousPosition;
 				}
 
-				if (Point::Distance(m_size, m_previousSize)>2.0f)
+				if (Point::Distance(m_size, m_previousSize) > 2.0f)
 				{
 					m_size += Limit(m_previousSize - m_size);
 				}
@@ -454,14 +454,14 @@ namespace Apoc3D
 					m_isMinimized = false;
 
 					Focus();
-					
+
 					eventResized.Invoke(this);
 				}
 			}
-			 //Minimize the window
+			//Minimize the window
 			else if (m_state == FWS_Minimized && !m_isMinimized)
 			{
-				if (Point::Distance(Position, m_minimizedPos)>2.0f)
+				if (Point::Distance(Position, m_minimizedPos) > 2.0f)
 				{
 					Position += Limit(m_minimizedPos - Position);
 				}
@@ -470,7 +470,7 @@ namespace Apoc3D
 					Position = m_minimizedPos;
 				}
 
-				if (Point::Distance(m_size, m_minimizedSize)>2.0f)
+				if (Point::Distance(m_size, m_minimizedSize) > 2.0f)
 				{
 					m_size += Limit(m_minimizedSize - m_size);
 				}
@@ -484,7 +484,7 @@ namespace Apoc3D
 					m_isMinimized = true;
 					m_isMaximized = false;
 					m_isMinimizing = false;
-					
+
 					eventResized.Invoke(this);
 				}
 			}
@@ -499,8 +499,8 @@ namespace Apoc3D
 				{
 					Position = m_maximizedPos;
 				}
-				
-				if (Point::Distance(m_size, m_maximumSize)>2.0f)
+
+				if (Point::Distance(m_size, m_maximumSize) > 2.0f)
 				{
 					m_size += Limit(m_maximumSize - m_size);
 				}
@@ -513,7 +513,7 @@ namespace Apoc3D
 				{
 					m_isMinimized = false;
 					m_isMaximized = true;
-					
+
 					eventResized.Invoke(this);
 				}
 			}
