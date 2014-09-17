@@ -32,7 +32,7 @@ namespace Apoc3D
 			UINT result = GetDoubleClickTime();
 			return static_cast<int32>(result);
 #else
-			return 400;
+			return 500;
 #endif
 		}
 	}
