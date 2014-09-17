@@ -67,6 +67,11 @@ namespace Apoc3D
 					m_btnState[0] = !!GetAsyncKeyState(VK_LBUTTON);
 					m_btnState[1] = !!GetAsyncKeyState(VK_MBUTTON);
 					m_btnState[2] = !!GetAsyncKeyState(VK_RBUTTON);
+
+					if (m_buttonSwapped)
+					{
+						std::swap(m_btnState[0], m_btnState[2]);
+					}
 				}
 			}
 			void OldSchoolMouse::SetPosition(const Point& loc)

@@ -80,17 +80,6 @@ namespace Apoc3D
 			private:
 				OIS::InputManager* m_inpMgr;
 				OIS::Mouse* m_mouse;
-
-
-				//int32 m_x;
-				//int32 m_y;
-				//int32 m_z;
-
-				//int32 m_lastX;
-				//int32 m_lastY;
-				//int32 m_lastZ;
-				//bool m_buttons[3];
-				//bool m_lastButtons[3];
 			};
 		}
 	}

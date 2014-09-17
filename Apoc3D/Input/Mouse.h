@@ -46,7 +46,8 @@ namespace Apoc3D
 			const Point& GetPosition() const { return m_currentPos; }
 			virtual void SetPosition(const Point& loc);
 
-			
+			void SwapButton(bool swapped);
+
 			int getX() const { return m_currentPos.X; }
 			int getY() const { return m_currentPos.Y; }
 

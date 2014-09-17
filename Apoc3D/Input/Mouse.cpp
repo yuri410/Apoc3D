@@ -44,6 +44,11 @@ namespace Apoc3D
 
 		}
 
+		void Mouse::SwapButton(bool swapped)
+		{
+			m_buttonSwapped = swapped;
+		}
+
 		void Mouse::SetPosition(const Point& loc)
 		{
 			m_currentPos = loc;
@@ -54,9 +59,10 @@ namespace Apoc3D
 			const int32 lastCount = sizeof(m_lastBtnState) / sizeof(*m_lastBtnState);
 			const int32 count = sizeof(m_btnState) / sizeof(*m_btnState);
 
-			bool packedBools[lastCount + count];
+			bool packedBools[lastCount + count + 1];
 			memcpy(packedBools, m_lastBtnState, sizeof(bool)*lastCount);
 			memcpy(packedBools+lastCount, m_btnState, sizeof(bool)*count);
+			packedBools[lastCount + count] = m_buttonSwapped;
 
 			bw->WriteBooleanBits(packedBools, lastCount+count);
 			
@@ -73,18 +79,19 @@ namespace Apoc3D
 			const int32 lastCount = sizeof(m_lastBtnState) / sizeof(*m_lastBtnState);
 			const int32 count = sizeof(m_btnState) / sizeof(*m_btnState);
 
-			bool packedBools[lastCount + count];
+			bool packedBools[lastCount + count + 1];
 
-			br->ReadBooleanBits(packedBools, lastCount+count);
+			br->ReadBooleanBits(packedBools, countof(packedBools));
 
 			memcpy(m_lastBtnState, packedBools, sizeof(bool)*lastCount);
-			memcpy(m_btnState, packedBools+lastCount, sizeof(bool)*count);
+			memcpy(m_btnState, packedBools + lastCount, sizeof(bool)*count);
+			m_buttonSwapped = packedBools[lastCount + count];
 
 			m_lastPosition.X = br->ReadInt16();
 			m_lastPosition.Y = br->ReadInt16();
 			m_currentPos.X = br->ReadInt16();
 			m_currentPos.Y = br->ReadInt16();
-			
+
 			m_z = br->ReadInt32();
 			m_lastZ = br->ReadInt32();
 		}
