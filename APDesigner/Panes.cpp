@@ -261,7 +261,7 @@ namespace APDesigner
 
 		{
 			TreeView* treeview = new TreeView(m_skin, Point(5, 25), 200, 300);
-			treeview->EnableHScrollBar = true;
+			treeview->EnableVScrollBar = true;
 
 			TreeViewNode* node1 = new TreeViewNode(L"No project opened");
 			treeview->getNodes().Add(node1);

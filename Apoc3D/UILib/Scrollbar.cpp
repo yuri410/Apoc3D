@@ -310,7 +310,7 @@ namespace Apoc3D
 				int32 scrH = GetScrollableLength() - handleArea.Height;
 
 				if (IsInverted)
-					handleArea.Y = m_decrButton->getAbsoluteArea().getBottom() + Maximum - m_value * scrH / Maximum;
+					handleArea.Y = m_incrButton->getAbsoluteArea().getTop() - handleArea.Height - m_value * scrH / Maximum;
 				else
 					handleArea.Y = m_decrButton->getAbsoluteArea().getBottom() + m_value * scrH / Maximum;
 
@@ -327,7 +327,7 @@ namespace Apoc3D
 				int32 scrW = GetScrollableLength() - handleArea.Width;
 
 				if (IsInverted)
-					handleArea.X = m_decrButton->getAbsoluteArea().getRight() + Maximum - m_value * scrW / Maximum;
+					handleArea.X = m_incrButton->getAbsoluteArea().getLeft() - handleArea.Height - m_value * scrW / Maximum;
 				else
 					handleArea.X = m_decrButton->getAbsoluteArea().getRight() + m_value * scrW / Maximum;
 

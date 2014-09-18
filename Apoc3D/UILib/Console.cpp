@@ -56,21 +56,18 @@ namespace Apoc3D
 			m_form = new Form(skin, device, FBS_Sizable, L"Console");
 			m_form->Position = position;
 			m_form->setSize(size);
-			//m_form->SetSkin(skin);
 
 			int32 lineHeight = skin->ContentTextFont->getLineHeightInt();
 
 			m_inputText = new TextBox(skin, Point(10, size.Y - 40), size.X - 100, L"");
-			//m_inputText->SetSkin(skin);
 			m_inputText->eventEnterPressed.Bind(this, &Console::TextBox_ReturnPressed);
 			m_inputText->eventUpPressedSingleline.Bind(this, &Console::TextBox_UpPressed);
 			m_inputText->eventDownPressedSingleline.Bind(this, &Console::TextBox_DownPressed);
 			m_form->getControls().Add(m_inputText);
 
 			m_submit = new Button(skin, size - Point(100, 32), L"Submit");
-			//m_submit->SetSkin(skin);
 			m_submit->SetSizeY(lineHeight);
-			m_submit->eventRelease.Bind(this,&Console::Submit_Pressed);
+			m_submit->eventRelease.Bind(this, &Console::Submit_Pressed);
 			
 
 			m_form->getControls().Add(m_submit);
@@ -79,14 +76,13 @@ namespace Apoc3D
 			m_pictureBox->eventPictureDraw.Bind(this, &Console::PictureBox_Draw);
 			m_form->getControls().Add(m_pictureBox);
 
-			m_scrollBar = new ScrollBar(skin, Point(m_pictureBox->Position.X + m_pictureBox->getWidth(), m_pictureBox->Position.Y),
+			m_scrollBar = new ScrollBar(skin, m_pictureBox->Position + Point(m_pictureBox->getWidth(), 0),
 				ScrollBar::SCRBAR_Vertical, m_pictureBox->getHeight());
 			
 			m_scrollBar->IsInverted = true;
 			m_form->getControls().Add(m_scrollBar);
 
 			m_form->setMinimumSize(Point(400,300));
-			//m_form->Initialize(device);
 			m_form->eventResized.Bind(this, &Console::Form_Resized);
 
 			RegisterCommands();
@@ -124,11 +120,11 @@ namespace Apoc3D
 			m_inputText->Position.Y = size.Y - 35;
 			m_inputText->setWidth(size.X - 100);
 			
-			m_submit->Position = Point(size.X - 75, size.Y - 35);
+			m_submit->Position = size - Point(75, 35);
 			m_pictureBox->setSize(size - Point(20, 75));
 
 			//m_scrollBar->Position = Point(m_pictureBox->Position.X + m_pictureBox->Size.X - 14, m_pictureBox->Position.Y);
-			m_scrollBar->Position = Point(m_pictureBox->Position.X + m_pictureBox->getWidth() - m_scrollBar->getWidth(), m_pictureBox->Position.Y);
+			m_scrollBar->Position = m_pictureBox->Position + Point(m_pictureBox->getWidth() - m_scrollBar->getWidth(), 0);
 			m_scrollBar->SetLength(m_pictureBox->getHeight());
 
 			m_logLock->lock();
@@ -251,8 +247,7 @@ namespace Apoc3D
 			Font* font = m_form->getFont();
 			float lineSpacing = font->getLineHeight() + font->getLineGap();
 
-			int textWidth = dstRect->Width - 5;// -m_scrollBar->GetLength() - 15;
-			textWidth -= m_scrollBar->getWidth();
+			int textWidth = dstRect->Width - 5 - m_scrollBar->getWidth();
 
 			if (m_needsUpdateLineInfo)
 			{
