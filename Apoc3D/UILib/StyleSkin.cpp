@@ -52,32 +52,42 @@ namespace Apoc3D
 			FileLocation fl = FileSystem::getSingleton().Locate(L"skin.xml", rule);
 			Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 			
-			String packTexName;
-
 			ConfigurationSection* basicSect = config->get(L"Basic");
 			String contentTextFontName = basicSect->getValue(L"TextFont");
 			String titleTextFontName = basicSect->getValue(L"TitleFont");
-			packTexName = basicSect->getValue(L"Pack");
+			String texturePackName = basicSect->getValue(L"TexturePack");
 
-			TextColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"TextColor"));
-			ControlFaceColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"ControlFaceColor"));
-			ControlDarkShadeColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"ControlDarkShadeColor"));
-			ControlLightShadeColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"ControlLightShadeColor"));
+			TextColor = ParseColorValue(basicSect->getValue(L"TextColor"));
+			TextColorDisabled = ParseColorValue(basicSect->getValue(L"TextColorDisabled"));
+			TextSelectionColor = ParseColorValue(basicSect->getValue(L"TextSelectionColor"));
+			TextSelectionColorDisabled = ParseColorValue(basicSect->getValue(L"TextSelectionColorDisabled"));
 
-			//ButtonDisabledColorMod = StringUtils::ParseUInt32Hex(basicSect->getValue(L"ButtonDisabledColorMod"));
-			MIDBackgroundColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"MIDBackgroundColor"));
+			ControlFaceColor = ParseColorValue(basicSect->getValue(L"ControlFaceColor"));
+			ControlDarkShadeColor = ParseColorValue(basicSect->getValue(L"ControlDarkShadeColor"));
+			ControlLightShadeColor = ParseColorValue(basicSect->getValue(L"ControlLightShadeColor"));
 
-			BorderColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"BorderColor"));
+			MIDBackgroundColor = ParseColorValue(basicSect->getValue(L"MIDBackgroundColor"));
+
+			BorderColor = ParseColorValue(basicSect->getValue(L"BorderColor"));
 
 			if (!FontManager::getSingleton().hasFont(contentTextFontName))
 			{
 				fl = FileSystem::getSingleton().Locate(contentTextFontName + L".fnt", rule);
 				ContentTextFont = FontManager::getSingleton().LoadFont(device, contentTextFontName, fl);
 			}
+			else
+			{
+				ContentTextFont = FontManager::getSingleton().getFont(contentTextFontName);
+			}
+
 			if (!FontManager::getSingleton().hasFont(titleTextFontName))
 			{
 				fl = FileSystem::getSingleton().Locate(titleTextFontName + L".fnt", rule);
 				TitleTextFont = FontManager::getSingleton().LoadFont(device, titleTextFontName, fl);
+			}
+			else
+			{
+				TitleTextFont = FontManager::getSingleton().getFont(titleTextFontName);
 			}
 
 
@@ -446,7 +456,7 @@ namespace Apoc3D
 
 			delete config;
 
-			fl = FileSystem::getSingleton().Locate(packTexName, rule);
+			fl = FileSystem::getSingleton().Locate(texturePackName, rule);
 			SkinTexture = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl);
 		}
 
@@ -573,6 +583,15 @@ namespace Apoc3D
 					result = StringUtils::ParseUInt32Hex(exp);
 				}
 			}
+		}
+		ColorValue StyleSkin::ParseColorValue(const String& txt)
+		{
+			ColorValue result;
+			if (!ColorValueConverter.TryParse(txt, result))
+			{
+				result = StringUtils::ParseUInt32Hex(txt);
+			}
+			return result;
 		}
 
 		void StyleSkin::Offset9Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[9])

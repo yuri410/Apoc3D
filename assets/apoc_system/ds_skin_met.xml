@@ -2,11 +2,15 @@
 <UIElementsSkin>
   <Basic>
     <Name>Dark</Name>
-    <Pack>ds_skin.tex</Pack>
+    <TexturePack>ds_skin.tex</TexturePack>
     <TextFont>english</TextFont>
     <TitleFont>ds_title</TitleFont>
     
     <TextColor>0xfff0f0f0</TextColor>
+    <TextColorDisabled>0x7ff0f0f0</TextColorDisabled>
+    <TextSelectionColor>0xffadd8e6</TextSelectionColor>
+    <TextSelectionColorDisabled>0x7fadd8e6</TextSelectionColorDisabled>
+
     <ControlFaceColor>0xff535353</ControlFaceColor>
     <ControlDarkShadeColor>0xff363636</ControlDarkShadeColor>
     <ControlLightShadeColor>0xff656565</ControlLightShadeColor>

@@ -71,6 +71,7 @@ namespace Apoc3D
 
 			ItemSettings.HorizontalAlignment = TextHAlign::Left;
 			ItemSettings.TextColor = skin->TextColor;
+			ItemSettings.TextColorDisabled = skin->TextColor; // same color
 
 			AlignHeight();
 
@@ -85,6 +86,7 @@ namespace Apoc3D
 
 			ItemSettings.HorizontalAlignment = TextHAlign::Left;
 			ItemSettings.TextColor = settings.TextColor;
+			ItemSettings.TextColorDisabled = settings.TextColorDisabled.isSet() ? settings.TextColorDisabled : settings.TextColor;
 
 			AlignHeight();
 
@@ -211,7 +213,7 @@ namespace Apoc3D
 				if (ParentFocused)
 					RenderSelectionBox(sprite, i, textOffset);
 
-				ItemSettings.Draw(sprite, m_fontRef, m_items[i], textOffset, Point(m_size.X, getItemHeight()), 0xff);
+				ItemSettings.Draw(sprite, m_fontRef, m_items[i], textOffset, Point(m_size.X, getItemHeight()), Enabled);
 			}
 			sprite->Flush();
 			if (shouldRestoreScissorTest)
@@ -291,6 +293,7 @@ namespace Apoc3D
 			Margin = skin->ListBoxMargin;
 
 			ItemSettings.TextColor = skin->TextColor;
+			ItemSettings.TextColorDisabled = skin->TextColor; // same color
 			ItemSettings.HorizontalAlignment = TextHAlign::Left;
 
 			m_visisbleItems = (int)ceilf((float)m_size.Y / GetItemHeight());
@@ -407,7 +410,7 @@ namespace Apoc3D
 					itemOffset.X += nde->getIcon()->getWidth();
 				}
 
-				ItemSettings.Draw(sprite, m_fontRef, nde->getText(), itemOffset, Point(0, GetItemHeight()), 0xff);
+				ItemSettings.Draw(sprite, m_fontRef, nde->getText(), itemOffset, Point(0, GetItemHeight()), Enabled);
 				//m_fontRef->DrawString(sprite, nodes[i]->getText(), to, m_skin->TextColor);
 
 				if (nde->isExpanded() && nde->getNodes().getCount())
@@ -1009,7 +1012,7 @@ namespace Apoc3D
 							guiOmitLineText(m_fontRef, cellArea.Width, text);
 
 							//m_fontRef->DrawString(sprite, text, cellArea.getTopLeft(), CV_Black);
-							TextSettings.Draw(sprite, m_fontRef, text, cellArea, 0xff);
+							TextSettings.Draw(sprite, m_fontRef, text, cellArea, Enabled);
 						}
 					}
 					cellArea.X += cellArea.Width;

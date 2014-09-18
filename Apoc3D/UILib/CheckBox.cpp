@@ -54,6 +54,8 @@ namespace Apoc3D
 		{
 			TextSpacing = skin->CheckBoxTextSpacing;
 			TextSettings.TextColor = skin->TextColor;
+			TextSettings.TextColorDisabled = skin->TextColorDisabled;
+
 			TextSettings.HorizontalAlignment = TextHAlign::Left;
 
 			NormalGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxNormalRegion, skin->CheckBoxNormalColor);
@@ -72,17 +74,19 @@ namespace Apoc3D
 		}
 		void CheckBox::Initialize(const CheckboxVisualSettings& settings)
 		{
-			if (settings.FontRef)
-				SetFont(settings.FontRef);
+			if (settings.TextSpacing.isSet())
+				TextSpacing = settings.TextSpacing;
 
+			TextSettings.TextColor = settings.TextColor;
+			TextSettings.TextColorDisabled = settings.TextColorDisabled.isSet() ? settings.TextColorDisabled : settings.TextColor;
+			TextSettings.HorizontalAlignment = TextHAlign::Left;
+			
 			NormalGraphic = settings.NormalGraphic;
 
 			if (settings.HoverGraphic.isSet())
 				HoverGraphic = settings.HoverGraphic;
-
 			if (settings.DownGraphic.isSet())
 				DownGraphic = settings.DownGraphic;
-
 			if (settings.DisabledGraphic.isSet())
 				DisabledGraphic = settings.DisabledGraphic;
 
@@ -94,7 +98,8 @@ namespace Apoc3D
 			if (settings.Margin.isSet())
 				Margin = settings.Margin;
 
-			TextSettings.HorizontalAlignment = TextHAlign::Left;
+			if (settings.FontRef)
+				SetFont(settings.FontRef);
 
 			UpdateSize();
 		}
@@ -120,15 +125,6 @@ namespace Apoc3D
 				if (AutosizeY)
 					m_size.Y = Math::Max(textSize.Y, NormalGraphic.getHeight()) + Margin.getVerticalSum();
 			}
-			
-			// gui_ControlAssets.CheckBoxNormalRegion.Width - gui_ControlAssets.CheckBoxPad.getHorizontalSum() + 5;
-			// gui_ControlAssets.CheckBoxNormalRegion.Height - gui_ControlAssets.CheckBoxPad.getVerticalSum();
-
-			/*int32 hozMg = m_skin->CheckBoxMargin.getHorizontalSum();
-			int32 vertMg = m_skin->CheckBoxMargin.getVerticalSum();
-			m_size.X = m_skin->CheckBoxNormal.Width - hozMg + m_fontRef->MeasureString(Text).X + m_skin->CheckBoxTextSpacing;
-			m_size.Y = Math::Max(m_skin->CheckBoxNormal.Height, m_fontRef->getLineHeightInt()) - vertMg;
-			*/
 		}
 
 		void CheckBox::Toggle()
@@ -186,7 +182,7 @@ namespace Apoc3D
 
 			//m_fontRef->DrawString(sprite, Text, Position + m_textOffset, m_skin->TextColor);
 			Point textPos = drawPos + textOffset;
-			TextSettings.Draw(sprite, m_fontRef, m_text, textPos, Point(m_size.X - textOffset.X, m_size.Y), 0xff);
+			TextSettings.Draw(sprite, m_fontRef, m_text, textPos, Point(m_size.X - textOffset.X, m_size.Y), Enabled);
 		}
 
 		void CheckBox::SetFont(Font* fontRef)

@@ -39,6 +39,9 @@ namespace Apoc3D
 		{
 			Font* FontRef = nullptr;
 
+			ColorValue TextColor = CV_Black;
+			OptionalSetting<ColorValue> TextColorDisabled;
+
 			UIGraphicSimple NormalGraphic;
 			OptionalSetting<UIGraphicSimple> HoverGraphic;
 			OptionalSetting<UIGraphicSimple> DownGraphic;
@@ -48,6 +51,7 @@ namespace Apoc3D
 			OptionalSetting<UIGraphicSimple> DisabledTickGraphic;
 			
 			OptionalSetting<ControlBounds> Margin;
+			OptionalSetting<int> TextSpacing;
 		};
 
 		class APAPI CheckBox : public Control

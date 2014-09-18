@@ -152,19 +152,24 @@ namespace Apoc3D
 
 			Point TextShadowOffset = Point(2, 1);
 			ColorValue TextShadowColor = CV_White;
-
 			ColorValue TextColor = CV_Black;
+			ColorValue TextSelectionColor = CV_LightBlue;
+
+			ColorValue TextShadowColorDisabled = CV_RepackAlpha(CV_White, 0x7f);
+			ColorValue TextColorDisabled = CV_RepackAlpha(CV_Black, 0x7f);
+			ColorValue TextSelectionColorDisabled = CV_RepackAlpha(CV_LightBlue, 0x7f);
+
 
 			TextHAlign HorizontalAlignment = TextHAlign::Center;
 			TextVAlign VerticalAlignment = TextVAlign::Middle;
 
 			ControlBounds TextPadding;
 
-			void Draw(Sprite* sprite, Font* font, const String& text, const Point& pos, const Point& size, int32 alpha) const;
-			void Draw(Sprite* sprite, Font* font, const String& text, const Apoc3D::Math::Rectangle& area, int32 alpha) const;
+			void Draw(Sprite* sprite, Font* font, const String& text, const Point& pos, const Point& size, bool enabled) const;
+			void Draw(Sprite* sprite, Font* font, const String& text, const Apoc3D::Math::Rectangle& area, bool enabled) const;
 
-			void DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Point& pos, const Point& size, ColorValue bgcv) const;
-			void DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Apoc3D::Math::Rectangle& area, ColorValue bgcv) const;
+			void DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Point& pos, const Point& size, bool enabled) const;
+			void DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Apoc3D::Math::Rectangle& area, bool enabled) const;
 
 		private:
 			Point GetTextOffset(const Point& textSize, const Point& areaSize) const;
@@ -199,6 +204,7 @@ namespace Apoc3D
 			Font* FontRef = nullptr;
 
 			OptionalSetting<ColorValue> TextColor;
+			OptionalSetting<ColorValue> TextColorDisabled;
 
 			UIGraphic NormalGraphic;
 
@@ -230,7 +236,12 @@ namespace Apoc3D
 		struct TextBoxVisualSettings
 		{
 			Font* FontRef = nullptr;
+
 			ColorValue TextColor = CV_Black;
+			OptionalSetting<ColorValue> TextColorDisabled;
+
+			ColorValue TextSelectionColor = CV_LightBlue;
+			OptionalSetting<ColorValue> TextSelectionColorDisabled;
 
 			UIGraphic BackgroundGraphic;
 			OptionalSetting<UIGraphic> DisabledGraphic;
@@ -248,7 +259,9 @@ namespace Apoc3D
 		struct ListBoxVisualSettings
 		{
 			Font* FontRef = nullptr;
+
 			ColorValue TextColor = CV_Black;
+			OptionalSetting<ColorValue> TextColorDisabled;
 
 			UIGraphic BackgroundGraphic;
 

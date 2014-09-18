@@ -119,6 +119,7 @@ namespace Apoc3D
 				DisabledGraphic = UIGraphic(skin->SkinTexture, skin->ButtonDisabledRegions, skin->ButtonDisabledColor);
 
 				TextSettings.TextColor = skin->TextColor;
+				TextSettings.TextColorDisabled = skin->TextColorDisabled;
 
 				TextSettings.TextPadding = skin->ButtonPadding;
 				Margin = skin->ButtonMargin;
@@ -134,6 +135,9 @@ namespace Apoc3D
 
 			if (settings.TextColor.isSet())
 				TextSettings.TextColor = settings.TextColor;
+
+			if (settings.TextColorDisabled.isSet())
+				TextSettings.TextColorDisabled = settings.TextColorDisabled;
 
 
 			if (settings.ContentPadding.isSet())
@@ -235,7 +239,7 @@ namespace Apoc3D
 
 			if (m_text.size())
 			{
-				TextSettings.Draw(sprite, m_fontRef, m_text, dstRect, Enabled ? 0xff : 0x7f);
+				TextSettings.Draw(sprite, m_fontRef, m_text, dstRect, Enabled);
 			}
 
 		}
@@ -378,6 +382,7 @@ namespace Apoc3D
 			DisabledGraphic = UIGraphic(skin->SkinTexture, skin->ButtonDisabledRegions, skin->ButtonDisabledColor);
 
 			TextSettings.TextColor = skin->TextColor;
+			TextSettings.TextColorDisabled = skin->TextColorDisabled;
 
 			SeparationLineColor = skin->MIDBackgroundColor;
 		}
@@ -457,7 +462,7 @@ namespace Apoc3D
 						nullptr, SeparationLineColor);
 				}
 
-				TextSettings.Draw(sprite, m_fontRef, m_titles[i], m_buttonDstRect[i], 0xff);
+				TextSettings.Draw(sprite, m_fontRef, m_titles[i], m_buttonDstRect[i], Enabled);
 				//m_fontRef->DrawString(sprite, m_titles[i], m_textPos[i], m_skin->TextColor);
 			}
 		}

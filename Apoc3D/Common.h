@@ -146,7 +146,6 @@ namespace Apoc3D
 		memcpy(dst, dataPtr, sizeof(X)*N);
 	}
 
-
 	void DebugBreak();
 
 	class Project;

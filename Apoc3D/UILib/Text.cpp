@@ -82,7 +82,10 @@ namespace Apoc3D
 		void Label::Initialize(const StyleSkin* skin)
 		{
 			if (skin)
+			{
 				TextSettings.TextColor = skin->TextColor;
+				TextSettings.TextColorDisabled = skin->TextColorDisabled;
+			}
 			
 			TextSettings.HorizontalAlignment = TextHAlign::Left;
 			TextSettings.VerticalAlignment = TextVAlign::Top;
@@ -168,13 +171,13 @@ namespace Apoc3D
 			Point drawPos = GetAbsolutePosition();
 			if (m_lines.getCount() <= 1)
 			{
-				TextSettings.Draw(sprite, m_fontRef, m_text, drawPos, m_size, 0xff);
+				TextSettings.Draw(sprite, m_fontRef, m_text, drawPos, m_size, Enabled);
 			}
 			else
 			{
 				for (const String& line : m_lines)
 				{
-					TextSettings.Draw(sprite, m_fontRef, line, drawPos, m_size, 0xff);
+					TextSettings.Draw(sprite, m_fontRef, line, drawPos, m_size, Enabled);
 
 					drawPos.Y += m_fontRef->getLineHeightInt();
 				}
@@ -269,6 +272,10 @@ namespace Apoc3D
 			SetFont(skin->TextBoxFont);
 
 			TextSettings.TextColor = skin->TextColor;
+			TextSettings.TextColorDisabled = skin->TextColorDisabled;
+
+			TextSettings.TextSelectionColor = skin->TextSelectionColor;
+			TextSettings.TextSelectionColorDisabled = skin->TextSelectionColorDisabled;
 
 			ContentPadding = skin->TextBoxPadding;
 
@@ -289,19 +296,22 @@ namespace Apoc3D
 
 			if (settings.DisabledGraphic.isSet())
 				DisabledGraphic = settings.DisabledGraphic;
-
+			
 			if (settings.AlwaysShowHS.isSet())
 				m_alwaysShowVS = settings.AlwaysShowVS;
-
 			if (settings.AlwaysShowVS.isSet())
 				m_alwaysShowVS = settings.AlwaysShowVS;
-
-			if (settings.ContentPadding.isSet())
-				ContentPadding = settings.ContentPadding;
 
 			SetFont(settings.FontRef);
 
 			TextSettings.TextColor = settings.TextColor;
+			TextSettings.TextColorDisabled = settings.TextColorDisabled.isSet() ? settings.TextColorDisabled : settings.TextColor;
+
+			TextSettings.TextSelectionColor = settings.TextSelectionColor;
+			TextSettings.TextSelectionColorDisabled = settings.TextSelectionColorDisabled.isSet() ? settings.TextSelectionColorDisabled : settings.TextSelectionColor;
+
+			if (settings.ContentPadding.isSet())
+				ContentPadding = settings.ContentPadding;
 
 			PostInitialize();
 
@@ -581,12 +591,12 @@ namespace Apoc3D
 					TextSettings.DrawBG(sprite, m_fontRef, text, lss, lse, contentArea.getTopLeft() - m_scrollOffset, contentArea.getSize(), CV_LightBlue);
 				}
 				
-				TextSettings.Draw(sprite, m_fontRef, text, contentArea.getTopLeft() - m_scrollOffset, contentArea.getSize(), 0xff);
+				TextSettings.Draw(sprite, m_fontRef, text, contentArea.getTopLeft() - m_scrollOffset, contentArea.getSize(), Enabled);
 
 				if (canShowCursor)
 				{
 					//m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset + baseOffset, m_skin->TextColor);
-					TextSettings.Draw(sprite, m_fontRef, L"|", contentArea.getTopLeft() + m_cursorOffset - m_scrollOffset, contentArea.getSize(), 0xff);
+					TextSettings.Draw(sprite, m_fontRef, L"|", contentArea.getTopLeft() + m_cursorOffset - m_scrollOffset, contentArea.getSize(), Enabled);
 				}
 			}
 			else
@@ -605,7 +615,7 @@ namespace Apoc3D
 						TextSettings.DrawBG(sprite, m_fontRef, line, lss, lse, lineOffset - m_scrollOffset + contentArea.getTopLeft(), contentArea.getSize(), CV_LightBlue);
 					}
 
-					TextSettings.Draw(sprite, m_fontRef, line, lineOffset - m_scrollOffset + contentArea.getTopLeft(), contentArea.getSize(), 0xff);
+					TextSettings.Draw(sprite, m_fontRef, line, lineOffset - m_scrollOffset + contentArea.getTopLeft(), contentArea.getSize(), Enabled);
 					//m_fontRef->DrawString(sprite, line, m_textOffset + m_lineOffset - m_scrollOffset + baseOffset, m_skin->TextColor);
 
 					lineOffset.Y += m_fontRef->getLineHeightInt();
@@ -621,7 +631,7 @@ namespace Apoc3D
 					m_cursorOffset.Y = m_fontRef->getLineHeightInt() * cursorPos.Y + 1;
 
 					//m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset + baseOffset, m_skin->TextColor);
-					TextSettings.Draw(sprite, m_fontRef, L"|", m_cursorOffset - m_scrollOffset + contentArea.getTopLeft(), contentArea.getSize(), 0xff);
+					TextSettings.Draw(sprite, m_fontRef, L"|", m_cursorOffset - m_scrollOffset + contentArea.getTopLeft(), contentArea.getSize(), Enabled);
 				}
 			}
 		}

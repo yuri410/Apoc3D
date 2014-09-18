@@ -255,9 +255,12 @@ namespace Apoc3D
 		/* TextRenderSettings                                                   */
 		/************************************************************************/
 		
-		void TextRenderSettings::Draw(Sprite* sprite, Font* font, const String& text, const Apoc3D::Math::Rectangle& area, int32 alpha) const
+		void TextRenderSettings::Draw(Sprite* sprite, Font* font, const String& text, const Apoc3D::Math::Rectangle& area, bool enabled) const
 		{
-			if (CV_GetColorA(TextColor) == 0 && (!HasTextShadow || CV_GetColorA(TextShadowColor) == 0))
+			ColorValue textColor = enabled ? TextColor : TextColorDisabled;
+			ColorValue textShadowColor = enabled ? TextShadowColor : TextShadowColorDisabled;
+
+			if (CV_GetColorA(textColor) == 0 && (!HasTextShadow || CV_GetColorA(textShadowColor) == 0))
 				return;
 
 			Apoc3D::Math::Rectangle modArea = TextPadding.ShrinkRect(area);
@@ -271,19 +274,18 @@ namespace Apoc3D
 			if (HasTextShadow)
 			{
 				Point shdTextPos = textPos + TextShadowOffset;
-				font->DrawString(sprite, text, shdTextPos, alpha != -1 ? CV_RepackAlpha(TextShadowColor, alpha) : TextShadowColor);
+				font->DrawString(sprite, text, shdTextPos, textShadowColor);
 			}
 
-			ColorValue textColor = alpha != -1 ? CV_RepackAlpha(TextColor, alpha) : TextColor;
 			font->DrawString(sprite, text, textPos, textColor);
 		}
 
-		void TextRenderSettings::Draw(Sprite* sprite, Font* font, const String& text, const Point& pos, const Point& size, int32 alpha) const
+		void TextRenderSettings::Draw(Sprite* sprite, Font* font, const String& text, const Point& pos, const Point& size, bool enabled) const
 		{
-			Draw(sprite, font, text, Apoc3D::Math::Rectangle(pos, size), alpha);
+			Draw(sprite, font, text, Apoc3D::Math::Rectangle(pos, size), enabled);
 		}
 
-		void TextRenderSettings::DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Apoc3D::Math::Rectangle& area, ColorValue bgcv) const
+		void TextRenderSettings::DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Apoc3D::Math::Rectangle& area, bool enabled) const
 		{
 			Apoc3D::Math::Rectangle modArea = TextPadding.ShrinkRect(area);
 
@@ -302,11 +304,11 @@ namespace Apoc3D
 
 			textPos.X += preX;
 
-			sprite->Draw(SystemUI::GetWhitePixel(), Apoc3D::Math::Rectangle(textPos, bgSize), bgcv);
+			sprite->Draw(SystemUI::GetWhitePixel(), Apoc3D::Math::Rectangle(textPos, bgSize), enabled ? TextSelectionColor : TextSelectionColorDisabled);
 		}
-		void TextRenderSettings::DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Point& pos, const Point& size, ColorValue bgcv) const
+		void TextRenderSettings::DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Point& pos, const Point& size, bool enabled) const
 		{
-			DrawBG(sprite, font, text, selStart, selEnd, Apoc3D::Math::Rectangle(pos, size), bgcv);
+			DrawBG(sprite, font, text, selStart, selEnd, Apoc3D::Math::Rectangle(pos, size), enabled);
 		}
 
 		Point TextRenderSettings::GetTextOffset(Font* font, const String& text, const Point& areaSize) const

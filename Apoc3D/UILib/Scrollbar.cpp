@@ -53,6 +53,11 @@ namespace Apoc3D
 			if (settings.DisabledBackgroundGraphic.isSet())
 				DisabledBackgroundGraphic = settings.DisabledBackgroundGraphic;
 
+			if (settings.BorderPadding.isSet())
+				BorderPadding = settings.BorderPadding;
+			if (settings.HandlePadding.isSet())
+				HandlePadding = settings.HandlePadding;
+
 			PostInit(length);
 		}
 

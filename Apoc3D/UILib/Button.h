@@ -36,7 +36,6 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-
 		class APAPI Button : public Control
 		{
 			RTTI_DERIVED(Button, Control);

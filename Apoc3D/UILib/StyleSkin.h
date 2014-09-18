@@ -48,6 +48,10 @@ namespace Apoc3D
 			Font* ContentTextFont = nullptr;
 			Font* TitleTextFont = nullptr;
 			ColorValue TextColor;
+			ColorValue TextColorDisabled;
+			ColorValue TextSelectionColor;
+			ColorValue TextSelectionColorDisabled;
+
 			ColorValue ControlFaceColor;
 			ColorValue ControlDarkShadeColor;
 			ColorValue ControlLightShadeColor;
@@ -73,6 +77,7 @@ namespace Apoc3D
 			ControlBounds TextBoxMargin;
 			Apoc3D::Math::Rectangle TextBoxRegions[3];
 			ColorValue TextBoxColor = CV_White;
+			
 
 			ControlBounds TextBoxExMargin;
 			Apoc3D::Math::Rectangle TextBoxExRegions[9];
@@ -201,6 +206,7 @@ namespace Apoc3D
 			void Parse3Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[3], Apoc3D::Collections::HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions);
 			void ParseRegion(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle& srcRect, Apoc3D::Collections::HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions);
 
+			ColorValue ParseColorValue(const String& txt);
 			void ParseColorValue(Apoc3D::Config::ConfigurationSection* sect, ColorValue& result);
 			void ParsePoint(Apoc3D::Config::ConfigurationSection* sect, Point& result);
 			
