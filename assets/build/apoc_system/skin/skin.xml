@@ -28,7 +28,7 @@
     </Normal>
 		<Down Coord="63,3" RegionRef="Normal" />
 		<Hover Coord="123,3" RegionRef="Normal" />
-    <Disabled RegionRef="Normal" Color="0x7fffffff" />
+    <Disabled Coord="3,3" RegionRef="Normal" Color="0x7fffffff" />
 	</Button>
   
   <TextBox Font="Text" Margin="1,1,1,1" Padding="1,1,1,1">
@@ -51,7 +51,7 @@
     <Hover Coord="38, 190"  RegionRef="Disabled" />
     <Down Coord="56, 190"  RegionRef="Disabled" />
     <Checked Coord="74, 190"  RegionRef="Disabled" />
-    <DisabledChecked RegionRef="Disabled" Color="0x7fffffff" />
+    <DisabledChecked Coord="74, 190" RegionRef="Disabled" Color="0x7fffffff" />
 	</CheckBox>
 	<RadioButton Font="Text" TextSpacing="5">
     <Disabled Coord="4, 207">[0,0,16,15]</Disabled>
@@ -59,7 +59,7 @@
     <Hover Coord="39, 207" RegionRef="Disabled" />
     <Down Coord="57, 207" RegionRef="Disabled" />
     <Checked Coord="75, 207" RegionRef="Disabled" />
-    <DisabledChecked RegionRef="Disabled" Color="0x7fffffff" />
+    <DisabledChecked Coord="75, 207" RegionRef="Disabled" Color="0x7fffffff" />
 	</RadioButton>
 
   <DropdownButton Offset="1,0">

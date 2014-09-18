@@ -73,7 +73,6 @@ namespace Apoc3D
 			UIGraphic BackgroundGraphic;
 			UIGraphic HandleGraphic;
 			UIGraphic DisabledBackgroundGraphic;
-			UIGraphic DisabledHandleGraphic;
 
 			ControlBounds BorderPadding;
 			ControlBounds HandlePadding;

@@ -224,8 +224,7 @@ namespace Apoc3D
 			UIGraphic BackgroundGraphic;
 			UIGraphic HandleGraphic;
 			OptionalSetting<UIGraphic> DisabledBackgroundGraphic;
-			OptionalSetting<UIGraphic> DisabledHandleGraphic;
-
+			
 			ButtonVisualSettings DecrButton;
 			ButtonVisualSettings IncrButton;
 

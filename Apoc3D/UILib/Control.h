@@ -47,7 +47,7 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		class MultiClickChecker
+		class APAPI MultiClickChecker
 		{
 		public:
 			void Update(const GameTime* time, Input::Mouse* mouse = nullptr);
@@ -184,11 +184,10 @@ namespace Apoc3D
 			ControlList& getControls() { return m_controls; }
 
 			MenuBar* MenuBar = nullptr;
+			bool ReleaseControls = false;
+
 		protected:
 			ControlList m_controls;
-			
-			//Point m_menuOffset;
-
 		};
 	}
 }

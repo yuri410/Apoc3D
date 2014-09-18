@@ -47,11 +47,7 @@ namespace Apoc3D
 			
 			HandleGraphic = settings.HandleGraphic;
 			BackgroundGraphic = settings.BackgroundGraphic;
-
-			if (settings.DisabledHandleGraphic.isSet())
-				DisabledHandleGraphic = settings.DisabledHandleGraphic;
-			if (settings.DisabledBackgroundGraphic.isSet())
-				DisabledBackgroundGraphic = settings.DisabledBackgroundGraphic;
+			DisabledBackgroundGraphic = settings.DisabledBackgroundGraphic.isSet() ? settings.DisabledBackgroundGraphic : BackgroundGraphic;
 
 			if (settings.BorderPadding.isSet())
 				BorderPadding = settings.BorderPadding;
@@ -113,6 +109,8 @@ namespace Apoc3D
 				BackgroundGraphic = UIGraphic(skin->SkinTexture, skin->HScrollBarBG);
 			}
 
+			DisabledBackgroundGraphic = BackgroundGraphic;
+
 			PostInit(length);
 		}
 		ScrollBar::~ScrollBar()
@@ -148,20 +146,19 @@ namespace Apoc3D
 			if (!Visible)
 				return;
 
+			bool isEnabled = m_decrButton->Enabled && Maximum > 0;
 			{
-				UIGraphic* g = Enabled ? &BackgroundGraphic : &DisabledBackgroundGraphic;
+				UIGraphic* g = isEnabled ? &BackgroundGraphic : &DisabledBackgroundGraphic;
 
 				g->Draw(sprite, getAbsoluteArea(), m_type == SCRBAR_Vertical);
 			}
 
-			if (m_decrButton->Enabled && Maximum > 0)
+			if (isEnabled)
 			{
 				Apoc3D::Math::Rectangle handleArea = CalculateHandleArea();
 				handleArea = HandlePadding.InflateRect(handleArea);
 
-				UIGraphic* g = Enabled ? &HandleGraphic : &DisabledHandleGraphic;
-
-				g->Draw(sprite, handleArea, m_type == SCRBAR_Vertical);
+				HandleGraphic.Draw(sprite, handleArea, m_type == SCRBAR_Vertical);
 			}
 
 
@@ -174,13 +171,12 @@ namespace Apoc3D
 
 			if (m_value > Maximum)
 				m_value = Maximum;
-			
+
 			UpdateButtonPosition();
 
 			if (!Enabled || !Visible)
 				return;
 
-			int32 scrLen = GetScrollableLength();
 			if (Maximum > 0)
 			{
 				m_decrButton->Enabled = true;
@@ -193,6 +189,7 @@ namespace Apoc3D
 
 				if (m_isDragging)
 				{
+					int32 scrLen = GetScrollableLength();
 					if (handleLen < scrLen)
 					{
 						int32 dm = m_type == SCRBAR_Horizontal ? mouse->getDX() : mouse->getDY();

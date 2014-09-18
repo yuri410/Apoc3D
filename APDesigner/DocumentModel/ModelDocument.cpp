@@ -374,15 +374,9 @@ namespace APDesigner
 
 		delete m_sceneRenderer;
 		delete m_camera;
-		for (int i=0;i<m_labels.getCount();i++)
-		{
-			delete m_labels[i];
-		}
-		for (int i=0;i<m_mtrlPanelLabels.getCount();i++)
-		{
-			delete m_mtrlPanelLabels[i];
-		}
-		
+
+		m_labels.DeleteAndClear();
+		m_mtrlPanelLabels.DeleteAndClear();
 
 		delete m_pbTime;
 		delete m_tbMKeyTime;
