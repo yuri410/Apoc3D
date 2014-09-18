@@ -578,7 +578,7 @@ namespace Apoc3D
 					ToggleWindowState();
 				}
 			}
-			m_clickChecker.Update(time);
+			m_clickChecker.Update(time, mouse);
 		}
 
 		void Form::CheckResize()

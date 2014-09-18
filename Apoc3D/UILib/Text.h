@@ -149,7 +149,7 @@ namespace Apoc3D
 			bool m_timerStarted = false;
 			float m_timer = 0.5f;
 
-			DoubleClickChecker m_clickChecker;
+			MultiClickChecker m_clickChecker;
 		};
 	}
 }

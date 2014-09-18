@@ -42,25 +42,36 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		void DoubleClickChecker::Update(const GameTime* time)
+		void MultiClickChecker::Update(const GameTime* time, Input::Mouse* mouse)
 		{
 			m_timeSinceLastClick += time->getElapsedTime();
+			
+			if (m_clickCount > 0 && m_timeSinceLastClick >= SystemUI::DoubleClickInterval)
+				m_clickCount = 0;
+
+			if (m_clickCount > 0)
+			{
+				m_distance.Track(mouse);
+				if (m_distance.getDistance() > 7)
+					m_clickCount = 0;
+			}
 		}
 
-		bool DoubleClickChecker::Check(Mouse* mouse)
+		bool MultiClickChecker::Check(Mouse* mouse, int32 clickCount)
 		{
 			if (mouse == nullptr)
 				mouse = InputAPIManager::getSingleton().getMouse();
 
 			if (mouse->IsLeftPressed())
 			{
-				if (m_timeSinceLastClick < SystemUI::DoubleClickInterval)
-				{
-					m_timeSinceLastClick = 0;
+				if (m_clickCount == clickCount - 1)
 					return true;
-				}
+
+				if (m_clickCount == 0)
+					m_distance.Reset(mouse);
 
 				m_timeSinceLastClick = 0;
+				m_clickCount++;
 			}
 			return false;
 		}

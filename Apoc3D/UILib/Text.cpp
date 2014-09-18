@@ -407,15 +407,7 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle textArea = GetTextArea();
 			if (!ReadOnly && textArea.Contains(mouse->GetPosition()))
 			{
-				if (m_clickChecker.Check(mouse))
-				{
-					if (m_textEdit.isExternalSelecting())
-						m_textEdit.EndExternalSelection();
-
-					// double click : select word around current position
-					m_textEdit.SetSelectionFromCursorWord();
-				}
-				else if (mouse->IsLeftPressedState())
+				if (mouse->IsLeftPressedState())
 				{
 					Point mp = mouse->GetPosition() + m_scrollOffset;
 
@@ -431,13 +423,24 @@ namespace Apoc3D
 					m_cursorVisible = true;
 					m_timer = 0.5f;
 
-					if (mouse->IsLeftPressed())
+					if (m_clickChecker.Check(mouse))
 					{
-						m_textEdit.StartExternalSelection();
+						if (m_textEdit.isExternalSelecting())
+							m_textEdit.EndExternalSelection();
+
+						// double click : select word around current position
+						m_textEdit.SetSelectionFromCursorWord();
 					}
-					else if (m_textEdit.isExternalSelecting())
+					else
 					{
-						m_textEdit.SetSelectionEndFromCursor();
+						if (mouse->IsLeftPressed())
+						{
+							m_textEdit.StartExternalSelection();
+						}
+						else if (m_textEdit.isExternalSelecting())
+						{
+							m_textEdit.SetSelectionEndFromCursor();
+						}
 					}
 				}
 				else if (m_textEdit.isExternalSelecting() && mouse->IsLeftUp())
@@ -461,7 +464,7 @@ namespace Apoc3D
 				}
 			}
 
-			m_clickChecker.Update(time);
+			m_clickChecker.Update(time, mouse);
 		}
 		void TextBox::UpdateScrollbars(const GameTime* time)
 		{

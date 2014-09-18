@@ -30,8 +30,9 @@
 #include "UICommon.h"
 
 #include "apoc3d/Math/Point.h"
-#include "apoc3d/math/Rectangle.h"
+#include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Collections/List.h"
+#include "apoc3d/Input/Mouse.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Core;
@@ -46,14 +47,17 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		class DoubleClickChecker
+		class MultiClickChecker
 		{
 		public:
-			void Update(const GameTime* time);
-			bool Check(Input::Mouse* mouse = nullptr);
+			void Update(const GameTime* time, Input::Mouse* mouse = nullptr);
+			bool Check(Input::Mouse* mouse = nullptr, int32 clickCount = 2);
 
 		private:
 			float m_timeSinceLastClick = FLT_MAX;
+			int32 m_clickCount = 0;
+
+			Input::MouseMoveDistanceTracker m_distance;
 		};
 
 		class APAPI Control
