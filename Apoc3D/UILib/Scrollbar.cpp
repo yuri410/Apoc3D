@@ -45,14 +45,12 @@ namespace Apoc3D
 			m_decrButton = new Button(settings.DecrButton, Point(0, 0), settings.DecrButton.NormalGraphic.getSize(), L"");
 			m_incrButton = new Button(settings.IncrButton, Point(0, 0), m_decrButton->getSize(), L"");
 			
-			if (settings.HasHandleGraphic)
-				HandleGraphic = settings.HandleGraphic;
-			if (settings.HasBackgroundGraphic)
-				BackgroundGraphic = settings.BackgroundGraphic;
+			HandleGraphic = settings.HandleGraphic;
+			BackgroundGraphic = settings.BackgroundGraphic;
 
-			if (settings.HasDisabledHandleGraphic)
+			if (settings.DisabledHandleGraphic.isSet())
 				DisabledHandleGraphic = settings.DisabledHandleGraphic;
-			if (settings.HasDisabledBackgroundGraphic)
+			if (settings.DisabledBackgroundGraphic.isSet())
 				DisabledBackgroundGraphic = settings.DisabledBackgroundGraphic;
 
 			PostInit(length);
@@ -64,7 +62,6 @@ namespace Apoc3D
 			if (type == SCRBAR_Vertical)
 			{
 				ButtonVisualSettings bvs;
-				bvs.HasNormalGraphic = true;
 				bvs.NormalGraphic = UIGraphic(skin->SkinTexture, skin->VScrollBarUp);
 
 				m_decrButton = new Button(bvs, Point(0, 0), skin->VScrollBarUp.getSize(), L"");
@@ -89,7 +86,6 @@ namespace Apoc3D
 			else
 			{
 				ButtonVisualSettings bvs;
-				bvs.HasNormalGraphic = true;
 				bvs.NormalGraphic = UIGraphic(skin->SkinTexture, skin->HScrollBarLeft);
 
 				m_decrButton = new Button(bvs, Point(0, 0), skin->HScrollBarLeft.getSize(), L"");
@@ -275,7 +271,6 @@ namespace Apoc3D
 			if (result < 0)
 				result = 0;
 			return result;
-			//return Height - m_upButton->getSize().Y - m_downButton->getSize().Y;
 		}
 
 		int32 ScrollBar::CalculateBarLength() const
@@ -299,8 +294,8 @@ namespace Apoc3D
 			{
 				Apoc3D::Math::Rectangle handleArea;
 
-				handleArea.X = pos.X + BorderPadding.Left;// +1;
-				handleArea.Width = BackgroundGraphic.getWidth() - BorderPadding.getHorizontalSum();// -2;
+				handleArea.X = pos.X + BorderPadding.Left;
+				handleArea.Width = BackgroundGraphic.getWidth() - BorderPadding.getHorizontalSum();
 
 				handleArea.Height = CalculateBarLength();
 				int32 scrH = GetScrollableLength() - handleArea.Height;
@@ -357,7 +352,6 @@ namespace Apoc3D
 		int32 ScrollBar::GetLength() const
 		{
 			return m_type != SCRBAR_Vertical ? m_size.X : m_size.Y;
-			//return 
 		}
 #pragma endregion
 

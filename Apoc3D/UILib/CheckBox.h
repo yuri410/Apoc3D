@@ -39,24 +39,15 @@ namespace Apoc3D
 		{
 			Font* FontRef = nullptr;
 
-			bool HasNormalGraphic = false;
-			bool HasHoverGraphic = false;
-			bool HasDownGraphic = false;
-			bool HasDisabledGraphic = false;
-
-			bool HasTickGraphic = false;
-			bool HasDisabledTickGraphic = false;
-			bool HasMargin = false;
-
 			UIGraphicSimple NormalGraphic;
-			UIGraphicSimple HoverGraphic;
-			UIGraphicSimple DownGraphic;
-			UIGraphicSimple DisabledGraphic;
+			OptionalSetting<UIGraphicSimple> HoverGraphic;
+			OptionalSetting<UIGraphicSimple> DownGraphic;
+			OptionalSetting<UIGraphicSimple> DisabledGraphic;
 
 			UIGraphicSimple TickGraphic;
-			UIGraphicSimple DisabledTickGraphic;
-
-			ControlBounds Margin;
+			OptionalSetting<UIGraphicSimple> DisabledTickGraphic;
+			
+			OptionalSetting<ControlBounds> Margin;
 		};
 
 		class APAPI CheckBox : public Control

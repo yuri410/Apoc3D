@@ -61,9 +61,7 @@ namespace Apoc3D
 				m_size = Point(texture->getWidth(), texture->getHeight());
 
 				Graphic = UIGraphicSimple(texture);
-				//m_srcRect = Apoc3D::Math::Rectangle(0, 0, m_texture->getWidth(), m_texture->getHeight());
 			}
-
 		}
 
 		PictureBox::~PictureBox()
@@ -94,7 +92,6 @@ namespace Apoc3D
 			}
 			if (Graphic.isSet())
 			{
-				//sprite->Draw(m_texture, destRect, &m_srcRect, CV_White);
 				Graphic.Draw(sprite, destRect);
 			}
 

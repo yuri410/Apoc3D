@@ -18,10 +18,12 @@ namespace Apoc3D
 			Label(Font* font, const Point& position, const String& text);
 			Label(Font* font, const Point& position, const String& text, int width, TextHAlign alignment = TextHAlign::Left);
 			Label(Font* font, const Point& position, const String& text, int width, int height, TextHAlign alignment = TextHAlign::Left);
+			Label(Font* font, const Point& position, const String& text, const Point& size, TextHAlign alignment = TextHAlign::Left);
 
 			Label(const StyleSkin* skin, const Point& position, const String& text);
 			Label(const StyleSkin* skin, const Point& position, const String& text, int width, TextHAlign alignment = TextHAlign::Left);
 			Label(const StyleSkin* skin, const Point& position, const String& text, int width, int height, TextHAlign alignment = TextHAlign::Left);
+			Label(const StyleSkin* skin, const Point& position, const String& text, const Point& size, TextHAlign alignment = TextHAlign::Left);
 
 			virtual ~Label();
 
@@ -47,6 +49,7 @@ namespace Apoc3D
 
 		private:
 			void Initialize(const StyleSkin* skin);
+			void Initialize(Font* font);
 
 			void UpdateText();
 			void UpdateEvents();
@@ -70,8 +73,14 @@ namespace Apoc3D
 		public:
 			typedef EventDelegate1<TextBox*> TextBoxEvent;
 
+			TextBox(const TextBoxVisualSettings& settings, const Point& position, int width);
+			TextBox(const TextBoxVisualSettings& settings, const Point& position, int width, const String& text);
+			TextBox(const TextBoxVisualSettings& settings, const Point& position, const Point& size, const String& text);
+			TextBox(const TextBoxVisualSettings& settings, const Point& position, int width, int height, const String& text);
+
 			TextBox(const StyleSkin* skin, const Point& position, int width);
 			TextBox(const StyleSkin* skin, const Point& position, int width, const String& text);
+			TextBox(const StyleSkin* skin, const Point& position, const Point& size, const String& text);
 			TextBox(const StyleSkin* skin, const Point& position, int width, int height, const String& text);
 			virtual ~TextBox();
 
@@ -94,7 +103,7 @@ namespace Apoc3D
 			UIGraphic NormalGraphic;
 			UIGraphic DisabledGraphic;
 
-			ControlBounds Magin;
+			ControlBounds Margin;
 			ControlBounds ContentPadding;
 
 			TextBoxEvent eventEnterPressed;
@@ -104,15 +113,11 @@ namespace Apoc3D
 
 		private:
 			void Initialize(const StyleSkin* skin);
+			void Initialize(const TextBoxVisualSettings& settings);
+			void PostInitialize();
+			
+			void InitText(const String& text);
 
-			//void InitScrollbars(const StyleSkin* skin);
-
-			void Add(const String& text);
-			void Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e);
-			void Keyboard_OnPaste(String value);
-			void vScrollbar_OnChangeValue(ScrollBar* ctrl);
-			void hScrollbar_OnChangeValue(ScrollBar* ctrl);
-			//void UpdateScrollPosition();
 			void UpdateScrollbars(const GameTime* time);
 
 			void CheckFocus();
@@ -127,7 +132,11 @@ namespace Apoc3D
 			void TextEditState_UpPressedSingleline();
 			void TextEditState_DownPressedSingleline();
 
-			//Point m_textOffset;
+			void Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e);
+			void Keyboard_OnPaste(String value);
+			void vScrollbar_OnChangeValue(ScrollBar* ctrl);
+			void hScrollbar_OnChangeValue(ScrollBar* ctrl);
+
 			TextEditState m_textEdit;
 
 			Point m_cursorOffset;

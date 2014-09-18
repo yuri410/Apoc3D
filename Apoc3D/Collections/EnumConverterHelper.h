@@ -53,7 +53,6 @@ namespace Apoc3D
 			typedef typename InverseCastTable::ValueAccessor NameAccessor;
 			typedef typename CastTable::ValueAccessor ValueAccessor;
 
-
 			explicit EnumDualConversionHelper(int32 capacity)
 				: m_cast(capacity), m_invCast(capacity) { }
 
@@ -76,6 +75,8 @@ namespace Apoc3D
 
 			T Parse(const String& name) const { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast[n]; }
 			T ParseFlags(const String& combo, const String& delim) const;
+
+			bool TryParse(const String& name, T& r) const { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast.TryGetValue(n, r); }
 
 			const String& ToString(T e) const { return m_invCast[e]; }
 			String ToStringFlags(T flags, const String& delim) const;
@@ -111,14 +112,8 @@ namespace Apoc3D
 		template <typename T>
 		class EnumToStringConversionHelper
 		{
-			struct EnumEqualityComparer
-			{
-				static bool Equals(const T& x, const T& y) { return x == y; }
-				static int32 GetHashCode(const T& obj) { return static_cast<int32>(obj); }
-			};
-
 		public:
-			typedef HashMap<T, String, EnumEqualityComparer> CastTable;
+			typedef HashMap<T, String> CastTable;
 			typedef typename CastTable::Iterator Iterator;
 			typedef typename CastTable::KeyAccessor NameAccessor;
 			typedef typename CastTable::ValueAccessor ValueAccessor;
@@ -132,11 +127,16 @@ namespace Apoc3D
 				for (const auto& e : list)
 					m_cast.Add(e.first, e.second);
 			}
-			
+			EnumToStringConversionHelper(std::initializer_list<std::pair<String, T>> list)
+				: m_cast(list.size())
+			{
+				for (const auto& e : list)
+					m_cast.Add(e.first, e.second);
+			}
+
 			const String& ToString(T e) const { return m_cast[e]; }
 			const String& operator[](T e) const { return m_cast[e]; }
 			String ToStringFlags(T flags, const String& delim) const;
-
 
 			void DumpNames(List<String>& names) const { m_cast.FillValues(names); }
 			void DumpValues(List<T>& values) const { m_cast.FillKeys(values); }
@@ -152,7 +152,44 @@ namespace Apoc3D
 			CastTable m_cast;
 		};
 
+		template <typename T>
+		class TypeParseConverter
+		{
+		public:
+			typedef HashMap<String, T> CastTable;
+			typedef typename CastTable::Iterator Iterator;
+			typedef typename CastTable::KeyAccessor NameAccessor;
+			typedef typename CastTable::ValueAccessor ValueAccessor;
 
+			explicit TypeParseConverter(int32 capacity)
+				: m_cast(capacity) { }
+
+			TypeParseConverter(std::initializer_list<std::pair<T, String>> list)
+				: m_cast(list.size())
+			{
+				for (const auto& e : list)
+					m_cast.Add(e.second, e.first);
+			}
+
+			bool SupportsName(const String& name) { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast.Contains(n); }
+
+			T Parse(const String& name) const { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast[n]; }
+			T ParseFlags(const String& combo, const String& delim) const;
+			bool TryParse(const String& name, T& r) const { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast.TryGetValue(name, r); }
+
+			//void DumpNames(List<String>& names) const { m_cast.FillValues(names); }
+			void DumpValues(List<T>& values) const { m_cast.FillKeys(values); }
+
+			//NameAccessor getNameAccessor() const { return m_cast.getKeyAccessor(); }
+			ValueAccessor getValueAccessor() const { return m_cast.getValueAccessor(); }
+
+			Iterator begin() const { return m_cast.begin(); }
+			Iterator end() const { return m_cast.end(); }
+
+			int32 getEntryCount() const { return m_cast.getCount(); }
+		private:
+			CastTable m_cast;
+		};
 
 		template <typename T, typename H>
 		String FlagFieldsToString(T flags, H& helper, const String& delim)
@@ -174,8 +211,8 @@ namespace Apoc3D
 			return result;
 		}
 
-		template <typename T>
-		T EnumDualConversionHelper<T>::ParseFlags(const String& combo, const String& delim) const 
+		template <typename T, typename H, T (*Parse)(const String&)>
+		T ParseFlags(const String& combo, H* obj, const String& delim) 
 		{
 			String v = combo;
 			StringUtils::ToLowerCase(v);
@@ -186,10 +223,24 @@ namespace Apoc3D
 
 			for (const String& e : vals)
 			{
-				result |= Parse(e);
+				result |= (obj->*Parse(e));
 			}
 
 			return static_cast<T>(result);
+		}
+
+
+
+		template <typename T>
+		T EnumDualConversionHelper<T>::ParseFlags(const String& combo, const String& delim) const 
+		{
+			return ParseFlags<T, EnumDualConversionHelper<T>, &EnumDualConversionHelper<T>::Parse>(combo, this, delim);
+		}
+
+		template <typename T>
+		T TypeParseConverter<T>::ParseFlags(const String& combo, const String& delim) const
+		{
+			return ParseFlags<T, TypeParseConverter<T>, &TypeParseConverter<T>::Parse>(combo, this, delim);
 		}
 
 		template <typename T>

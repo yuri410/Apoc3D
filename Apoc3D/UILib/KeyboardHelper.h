@@ -82,7 +82,7 @@ namespace Apoc3D
 		class APAPI TextEditState
 		{
 		public:
-			TextEditState(const Point& cursorPos, bool multiline);
+			TextEditState(bool multiline, const Point& cursorPos = Point::Zero);
 			~TextEditState();
 
 			void Update(const GameTime* time);

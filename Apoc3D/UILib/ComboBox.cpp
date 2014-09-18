@@ -17,13 +17,15 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		ComboBox::ComboBox(const Point& position, int width, const List<String>& items)
-			: ComboBox(nullptr, position, width, items) { }
+		ComboBox::ComboBox(const ComboBoxVisualSettings& settings, const Point& position, int width, const List<String>& items)
+			: Control(nullptr, position, width), m_items(items)
+		{
+			Initialize(settings);
+		}
 
 		ComboBox::ComboBox(const StyleSkin* skin, const Point& position, int width, const List<String>& items)
-			: Control(skin, position), m_items(items)
+			: Control(skin, position, width), m_items(items)
 		{
-			m_size.X = width;
 			Initialize(skin);
 		}
 
@@ -35,59 +37,67 @@ namespace Apoc3D
 			DELETE_AND_NULL(m_listBox);
 		}
 
-		//void ComboBox::Initialize(RenderDevice* device)
+		Point ComboBox::CalculateDropButtonPos(TextBox* ctb, int32 btnWidth)
+		{
+			Point dropButtonPos = Position + DropdownButtonOffset;
+			dropButtonPos.X += m_size.X - btnWidth - ctb->Margin.Right;
+			dropButtonPos.Y += -ctb->Margin.Top;
+			return dropButtonPos;
+		}
+
 		void ComboBox::Initialize(const StyleSkin* skin)
 		{
-			//Control::Initialize(device);
-
 			m_textbox = new TextBox(skin, Position, m_size.X);
-			//m_textbox->SetSkin(m_skin);
-			//m_textbox->setOwner(getOwner());
-			m_textbox->ReadOnly = true;
-			//m_textbox->Initialize(device);
-
-			ButtonVisualSettings bvs;
-			bvs.HasNormalGraphic = true;
-			bvs.HasMouseHoverGraphic = true;
-			bvs.HasMouseDownGraphic = true;
-
-			bvs.NormalGraphic = UIGraphic(skin->SkinTexture, skin->DropDownButtonNormal); //m_skin->ComboButton);
-			bvs.MouseHoverGraphic = UIGraphic(skin->SkinTexture, skin->DropDownButtonHover);
-			bvs.MouseDownGraphic = UIGraphic(skin->SkinTexture, skin->DropDownButtonDown);
-
-			m_button = new Button(bvs, Position + Point(m_size.X - skin->DropDownButtonNormal.Width, 0), L"");
-			//m_button->setOwner(getOwner());
 			
+			ButtonVisualSettings bvs;
+			bvs.NormalGraphic = UIGraphic(skin->SkinTexture, skin->DropdownButtonNormalRegion);
+			bvs.MouseHoverGraphic = UIGraphic(skin->SkinTexture, skin->DropdownButtonHoverRegion);
+			bvs.MouseDownGraphic = UIGraphic(skin->SkinTexture, skin->DropdownButtonDownRegion);
+			bvs.Margin = skin->DropdownButtonMargin;
 
-			//m_button->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->DropDownButtonNormal); //m_skin->ComboButton);
-			//m_button->MouseOverTexture = UIGraphic(m_skin->SkinTexture, m_skin->DropDownButtonHover); 
-			//m_button->MouseDownTexture = UIGraphic(m_skin->SkinTexture, m_skin->DropDownButtonDown); 
+			Point dropButtonPos = CalculateDropButtonPos(m_textbox, skin->DropdownButtonNormalRegion.Width);
+			m_button = new Button(bvs, dropButtonPos, L"");
+			m_listBox = new ListBox(skin, Position + Point(0,19), m_size.X, 8*m_fontRef->getLineHeightInt(), m_items);
+
+			DropdownButtonOffset = skin->DropdownButtonOffset;
+
+			PostInit();
+		}
+		void ComboBox::Initialize(const ComboBoxVisualSettings& settings)
+		{
+			m_textbox = new TextBox(settings.ContentTextBox, Position, m_size.X);
+			
+			Point dropButtonPos = CalculateDropButtonPos(m_textbox, settings.DropdownButton.NormalGraphic.getWidth());
+			m_button = new Button(settings.DropdownButton, dropButtonPos, L"");
+			m_listBox = new ListBox(settings.DropdownList, Position + Point(0, m_textbox->getHeight()), m_size.X, 8 * m_fontRef->getLineHeightInt(), m_items);
+
+			if (settings.DropdownButtonOffset.isSet())
+				DropdownButtonOffset = settings.DropdownButtonOffset;
+
+			PostInit();
+		}
+
+		void ComboBox::PostInit()
+		{
+			m_textbox->ReadOnly = true;
 
 			m_button->eventPress.Bind(this, &ComboBox::Button_OnPress);
-			//m_button->Initialize(device);
-			
 
-			m_listBox = new ListBox(skin, Position + Point(0,19), m_size.X, 8*m_fontRef->getLineHeightInt(), m_items);
-			//m_listBox->SetSkin(m_skin);
-			//m_listBox->setOwner(getOwner());
 			m_listBox->Visible = false;
 			m_listBox->eventSelectionChanged.Bind(this, &ComboBox::ListBox_SelectionChanged);
 			m_listBox->eventPress.Bind(this, &ComboBox::ListBox_OnPress);
-			//m_listBox->Initialize(device);
 		}
+
+
 		void ComboBox::Update(const GameTime* time)
 		{
 			m_textbox->Position = Position;
-			m_button->Position = Position + Point(m_size.X-16,0);
-			m_listBox->Position = Position + Point(0,19);
+			m_button->Position = CalculateDropButtonPos(m_textbox, m_button->getWidth());
+			m_listBox->Position = Position + Point(0, m_textbox->getHeight());
 
 			m_textbox->ParentFocused = m_button->ParentFocused = m_listBox->ParentFocused = ParentFocused;
 			m_textbox->BaseOffset = m_button->BaseOffset = m_listBox->BaseOffset = BaseOffset;
 
-
-			//m_textbox->setOwner(getOwner());
-			//m_button->setOwner(getOwner());
-			//m_listBox->setOwner(getOwner());
 
 			m_textbox->Update(time);
 			m_button->Update(time);
@@ -123,7 +133,7 @@ namespace Apoc3D
 
 		List<String>& ComboBox::getItems() const { return m_listBox->getItems(); }
 
-		bool ComboBox::getOpened() const { return m_listBox->Visible; }
+		bool ComboBox::isOpened() const { return m_listBox->Visible; }
 		bool ComboBox::getLocked() const { return m_textbox->ReadOnly; }
 		void ComboBox::setLocked(bool value) const { m_textbox->ReadOnly = value; }
 

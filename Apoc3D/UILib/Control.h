@@ -62,21 +62,20 @@ namespace Apoc3D
 		public:
 			Control();
 			Control(const Point& position);
+			Control(const Point& position, int32 width);
 			Control(const Point& position, const Point& size);
 
 			Control(const StyleSkin* skin);
 			Control(const StyleSkin* skin, const Point& position);
+			Control(const StyleSkin* skin, const Point& position, int32 width);
 			Control(const StyleSkin* skin, const Point& position, const Point& size);
 
 			virtual ~Control();
 
-			//virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* time) { }
 			virtual void Draw(Sprite* sprite) = 0;
 			virtual void DrawOverlay(Sprite* sprite) { }
-
-			//virtual void SetSkin(const StyleSkin* skin) { m_skin = skin; }
-
+			
 			Point GetAbsolutePosition() const { return Position + BaseOffset; }
 
 			/**
@@ -104,8 +103,8 @@ namespace Apoc3D
 			 *	This coordinate is relative to owner containers. 
 			 *	Except those have no owner or root containers.
 			 */
-			Point Position = Point(0,0);
-			Point BaseOffset = Point(0,0);
+			Point Position;
+			Point BaseOffset;
 
 			String Name;
 			String TooltipText;
@@ -130,7 +129,6 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(ScrollableControl, Control);
 		public:
-
 			Apoc3D::Math::Rectangle GetContentArea() const;
 
 			void EnableAllScrollBars() { EnableHScrollBar = EnableVScrollBar = true; }
@@ -138,20 +136,21 @@ namespace Apoc3D
 			bool EnableVScrollBar = false;
 			bool EnableHScrollBar = false;
 
-			
 		protected:
 			ScrollableControl();
 			ScrollableControl(const Point& position);
+			ScrollableControl(const Point& position, int32 width);
 			ScrollableControl(const Point& position, const Point& size);
 
 			ScrollableControl(const StyleSkin* skin);
 			ScrollableControl(const StyleSkin* skin, const Point& position);
+			ScrollableControl(const StyleSkin* skin, const Point& position, int32 width);
 			ScrollableControl(const StyleSkin* skin, const Point& position, const Point& size);
 
 			virtual ~ScrollableControl();
 
 			void InitScrollbars(const StyleSkin* skin);
-			void InitScrollBars(const ScrollBarVisualSettings& hss, const ScrollBarVisualSettings& vss);
+			void InitScrollbars(const ScrollBarVisualSettings& hss, const ScrollBarVisualSettings& vss);
 
 			void UpdateScrollBarsLength(const Apoc3D::Math::Rectangle& area);
 			void UpdateScrollBarsGeneric(const Apoc3D::Math::Rectangle& area, const GameTime* time);

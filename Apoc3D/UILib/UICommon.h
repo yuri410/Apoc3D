@@ -115,7 +115,6 @@ namespace Apoc3D
 			Point getSize() const;
 		};
 
-
 		struct APAPI ControlBounds
 		{
 			enum SideIndex
@@ -131,7 +130,7 @@ namespace Apoc3D
 			int32 Top = 0;
 			int32 Bottom = 0;
 
-			ControlBounds()  { }
+			ControlBounds() { }
 			ControlBounds(int32 left, int32 right, int32 top, int32 bottom) : Left(left), Right(right), Top(top), Bottom(bottom) { }
 			ControlBounds(const Apoc3D::Math::Rectangle& graphicalArea, const Apoc3D::Math::Rectangle& hotArea);
 
@@ -167,58 +166,97 @@ namespace Apoc3D
 			void DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Point& pos, const Point& size, ColorValue bgcv) const;
 			void DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Apoc3D::Math::Rectangle& area, ColorValue bgcv) const;
 
-			//void Draw(Sprite* sprite, Font* font, const List<String>& lines, const Point& pos, const Point& size, int32 alpha) const;
-			//void Draw(Sprite* sprite, Font* font, const List<String>& lines, const Apoc3D::Math::Rectangle& area, int32 alpha) const;
 		private:
 			Point GetTextOffset(const Point& textSize, const Point& areaSize) const;
 			Point GetTextOffset(Font* font, const String& text, const Point& size) const;
+		};
+
+		template <typename T>
+		class OptionalSetting
+		{
+		public:
+			OptionalSetting() : m_data() { }
+			OptionalSetting(const T& data) : m_data(data), m_isSet(true) { }
+			~OptionalSetting() { }
+
+			OptionalSetting& operator=(const T& other)
+			{
+				m_data = other;
+				m_isSet = true;
+				return *this;
+			}
+
+			bool isSet() const { return m_isSet; }
+			operator T() { return m_data; }
+			operator T() const { return m_data; }
+		private:
+			T m_data;
+			bool m_isSet = false;
 		};
 
 		struct ButtonVisualSettings
 		{
 			Font* FontRef = nullptr;
 
-			bool HasDisabledGraphic = false;
-			bool HasNormalGraphic = false;
-			bool HasMouseHoverGraphic = false;
-			bool HasMouseDownGraphic = false;
-			bool HasOverlayIcon = false;
-			bool HasDisabledOverlayIcon = false;
-			bool HasHotZonePadding = false;
+			OptionalSetting<ColorValue> TextColor;
 
-			UIGraphic DisabledGraphic;
 			UIGraphic NormalGraphic;
-			UIGraphic MouseHoverGraphic;
-			UIGraphic MouseDownGraphic;
 
-			UIGraphicSimple OverlayIcon;
-			UIGraphicSimple DisabledOverlayIcon;
+			OptionalSetting<UIGraphic> DisabledGraphic;
+			OptionalSetting<UIGraphic> MouseHoverGraphic;
+			OptionalSetting<UIGraphic> MouseDownGraphic;
 
-			ControlBounds ContentPadding;
+			OptionalSetting<UIGraphicSimple> OverlayIcon;
+			OptionalSetting<UIGraphicSimple> DisabledOverlayIcon;
+
+			OptionalSetting<ControlBounds> ContentPadding;
+			OptionalSetting<ControlBounds> Margin;
 		};
 
 		struct ScrollBarVisualSettings
 		{
-			bool HasBackgroundGraphic = false;
-			bool HasHandleGraphic = false;
-			bool HasDisabledBackgroundGraphic = false;
-			bool HasDisabledHandleGraphic = false;
-			bool HasBorderPadding = false;
-			bool HasHandlePadding = false;
-
 			UIGraphic BackgroundGraphic;
 			UIGraphic HandleGraphic;
-			UIGraphic DisabledBackgroundGraphic;
-			UIGraphic DisabledHandleGraphic;
+			OptionalSetting<UIGraphic> DisabledBackgroundGraphic;
+			OptionalSetting<UIGraphic> DisabledHandleGraphic;
 
 			ButtonVisualSettings DecrButton;
 			ButtonVisualSettings IncrButton;
 
-			ControlBounds BorderPadding;
-			ControlBounds HandlePadding;
-
+			OptionalSetting<ControlBounds> BorderPadding;
+			OptionalSetting<ControlBounds> HandlePadding;
 		};
 
+		struct TextBoxVisualSettings
+		{
+			Font* FontRef = nullptr;
+			ColorValue TextColor = CV_Black;
+
+			UIGraphic BackgroundGraphic;
+			OptionalSetting<UIGraphic> DisabledGraphic;
+
+			OptionalSetting<bool> AlwaysShowVS;
+			OptionalSetting<bool> AlwaysShowHS;
+
+			OptionalSetting<ControlBounds> Magin;
+			OptionalSetting<ControlBounds> ContentPadding;
+
+			OptionalSetting<ScrollBarVisualSettings> HScrollBar;
+			OptionalSetting<ScrollBarVisualSettings> VScrollBar;
+		};
+
+		struct ListBoxVisualSettings
+		{
+			Font* FontRef = nullptr;
+			ColorValue TextColor = CV_Black;
+
+			UIGraphic BackgroundGraphic;
+
+			ScrollBarVisualSettings HScrollBar;
+			ScrollBarVisualSettings VScrollBar;
+
+			OptionalSetting<ControlBounds> Margin;
+		};
 
 		/**
 		 *  The interfaces for System Forms and Panels. And it is also responsible

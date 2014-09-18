@@ -37,6 +37,7 @@ namespace Apoc3D
 		{
 			Initialize(skin);
 		}
+
 		CheckBox::CheckBox(const StyleSkin* skin, const Point& position, const String& text, const Point& sz, bool checked)
 			: Control(skin, position), m_text(text), Checked(checked)
 		{
@@ -55,15 +56,14 @@ namespace Apoc3D
 			TextSettings.TextColor = skin->TextColor;
 			TextSettings.HorizontalAlignment = TextHAlign::Left;
 
-			NormalGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxNormal);
-			HoverGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxHover);
-			DownGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxDown);
-			DisabledGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxDisable);
+			NormalGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxNormalRegion, skin->CheckBoxNormalColor);
+			HoverGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxHoverRegion, skin->CheckBoxHoverColor);
+			DownGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxDownRegion, skin->CheckBoxDownColor);
+			DisabledGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxDisabledRegion, skin->CheckBoxDisabledColor);
 			
-			TickGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxChecked);
-			DisabledTickGraphic = TickGraphic;
-			DisabledTickGraphic.ModColor = CV_RepackAlpha(DisabledTickGraphic.ModColor, 0x7f);
-
+			TickGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxCheckedRegion, skin->CheckBoxCheckedColor);
+			DisabledTickGraphic = UIGraphicSimple(skin->SkinTexture, skin->CheckBoxDisabledCheckedRegion, skin->CheckBoxDisableCheckedColor);
+			
 			Margin = skin->CheckBoxMargin;
 
 			SetFont(skin->CheckBoxFont);
@@ -72,29 +72,27 @@ namespace Apoc3D
 		}
 		void CheckBox::Initialize(const CheckboxVisualSettings& settings)
 		{
-			if (settings.HasNormalGraphic)
-				NormalGraphic = settings.NormalGraphic;
-
-			if (settings.HasHoverGraphic)
-				HoverGraphic = settings.HoverGraphic;
-
-			if (settings.HasDownGraphic)
-				DownGraphic = settings.DownGraphic;
-
-			if (settings.HasDisabledGraphic)
-				DisabledGraphic = settings.DisabledGraphic;
-
-			if (settings.HasTickGraphic)
-				TickGraphic = settings.TickGraphic;
-
-			if (settings.HasDisabledTickGraphic)
-				DisabledTickGraphic = settings.DisabledTickGraphic;
-
-			if (settings.HasMargin)
-				Margin = settings.Margin;
-
 			if (settings.FontRef)
 				SetFont(settings.FontRef);
+
+			NormalGraphic = settings.NormalGraphic;
+
+			if (settings.HoverGraphic.isSet())
+				HoverGraphic = settings.HoverGraphic;
+
+			if (settings.DownGraphic.isSet())
+				DownGraphic = settings.DownGraphic;
+
+			if (settings.DisabledGraphic.isSet())
+				DisabledGraphic = settings.DisabledGraphic;
+
+			TickGraphic = settings.TickGraphic;
+
+			if (settings.DisabledTickGraphic.isSet())
+				DisabledTickGraphic = settings.DisabledTickGraphic;
+
+			if (settings.Margin.isSet())
+				Margin = settings.Margin;
 
 			TextSettings.HorizontalAlignment = TextHAlign::Left;
 

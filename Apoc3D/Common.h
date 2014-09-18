@@ -139,6 +139,14 @@ namespace Apoc3D
 		memcpy(dst, src, sizeof(X)*N1); 
 	}
 
+	template <typename X, typename Y, int32 N>
+	void FillArray(X(&dst)[N], const Y* dataPtr)
+	{
+		static_assert(std::is_trivially_copyable<X>::value, "Type not suitable");
+		memcpy(dst, dataPtr, sizeof(X)*N);
+	}
+
+
 	void DebugBreak();
 
 	class Project;

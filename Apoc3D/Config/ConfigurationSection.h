@@ -151,7 +151,12 @@ namespace Apoc3D
 			void Get##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; Get##typeName(key, v, expectedCount, &actuallCount); assert(actuallCount == expectedCount); } \
 			void GetAttribute##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; GetAttribute##typeName(key, v, expectedCount, &actuallCount); assert(actuallCount == expectedCount); } \
 			bool TryGet##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; bool r = TryGet##typeName(key, v, expectedCount, &actuallCount); if (r) assert(actuallCount == expectedCount); return r; } \
-			bool TryGetAttribute##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; bool r = TryGetAttribute##typeName(key, v, expectedCount, &actuallCount); if (r) assert(actuallCount == expectedCount); return r; } 
+			bool TryGetAttribute##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; bool r = TryGetAttribute##typeName(key, v, expectedCount, &actuallCount); if (r) assert(actuallCount == expectedCount); return r; } \
+			template <int32 N> void Get##typeName##Checked(type (&v)[N]) const { Get##typeName##Checked(v, N); } \
+			template <int32 N> void Get##typeName##Checked(const String& key, type (&v)[N]) const { Get##typeName##Checked(key, v, N); } \
+			template <int32 N> void GetAttribute##typeName##Checked(const String& key, type (&v)[N]) const { GetAttribute##typeName##Checked(key, v, N); }  \
+			template <int32 N> bool TryGet##typeName##Checked(const String& key, type (&v)[N]) const { return TryGet##typeName##Checked(key, v, N); } \
+			template <int32 N> bool TryGetAttribute##typeName##Checked(const String& key, type (&v)[N]) const { return TryGetAttribute##typeName##Checked(key, v, N); } 
 
 			CONFIG_SECT_SPLITER_ARR_DECL(float, Singles);
 			CONFIG_SECT_SPLITER_ARR_DECL(float, Percentages);

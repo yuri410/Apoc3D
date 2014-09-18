@@ -43,9 +43,22 @@ namespace Apoc3D
 	namespace UI
 	{
 		ListBox::ListBox(const StyleSkin* skin, const Point& position, int width, int height, const List<String>& items)
-			: ScrollableControl(skin, position, Point(width, height)),  m_items(items)
+			: ListBox(skin, position, Point(width, height), items) { }
+
+		ListBox::ListBox(const ListBoxVisualSettings& settings, const Point& position, int width, int height, const List<String>& items)
+			: ListBox(nullptr, position, Point(width, height), items) { }
+
+
+		ListBox::ListBox(const StyleSkin* skin, const Point& position, const Point& size, const List<String>& items)
+			: ScrollableControl(skin, position, size), m_items(items)
 		{
 			Initialize(skin);
+		}
+
+		ListBox::ListBox(const ListBoxVisualSettings& settings, const Point& position, const Point& size, const List<String>& items)
+			: ScrollableControl(nullptr, position, size), m_items(items)
+		{
+			Initialize(settings);
 		}
 
 		ListBox::~ListBox()
@@ -59,10 +72,29 @@ namespace Apoc3D
 			ItemSettings.HorizontalAlignment = TextHAlign::Left;
 			ItemSettings.TextColor = skin->TextColor;
 
-			m_visisbleItems = (int)ceilf((float)m_size.Y / getItemHeight());
-			m_size.Y = m_visisbleItems * getItemHeight();
+			AlignHeight();
 
 			InitScrollbars(skin);
+		}
+		void ListBox::Initialize(const ListBoxVisualSettings& settings)
+		{
+			BackgroundGraphic = settings.BackgroundGraphic;
+
+			if (settings.Margin.isSet())
+				Margin = settings.Margin;
+
+			ItemSettings.HorizontalAlignment = TextHAlign::Left;
+			ItemSettings.TextColor = settings.TextColor;
+
+			AlignHeight();
+
+			InitScrollbars(settings.HScrollBar, settings.VScrollBar);
+		}
+
+		void ListBox::AlignHeight()
+		{
+			m_visisbleItems = (int)ceilf((float)m_size.Y / getItemHeight());
+			m_size.Y = m_visisbleItems * getItemHeight();
 		}
 
 		void ListBox::Update(const GameTime* time)
@@ -240,7 +272,10 @@ namespace Apoc3D
 		const int TreeViewIntent = 20;
 
 		TreeView::TreeView(const StyleSkin* skin, const Point& position, int width, int height)
-			: ScrollableControl(skin, position, Point(width, height))
+			: TreeView(skin, position, Point(width, height)) { }
+
+		TreeView::TreeView(const StyleSkin* skin, const Point& position, const Point& size)
+			: ScrollableControl(skin, position, size)
 		{
 			Initialize(skin);
 		}

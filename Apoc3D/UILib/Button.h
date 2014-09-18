@@ -90,7 +90,6 @@ namespace Apoc3D
 
 			TextRenderSettings TextSettings;
 
-			ControlBounds ContentPadding;
 			ControlBounds Margin;
 
 			ButtonEvent eventMouseHover;

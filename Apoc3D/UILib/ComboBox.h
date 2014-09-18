@@ -35,13 +35,22 @@ namespace Apoc3D
 {
 	namespace UI
 	{
+		struct ComboBoxVisualSettings
+		{
+			TextBoxVisualSettings ContentTextBox;
+			ButtonVisualSettings DropdownButton;
+			ListBoxVisualSettings DropdownList;
+
+			OptionalSetting<Point> DropdownButtonOffset;
+		};
+
 		class APAPI ComboBox : public Control
 		{
 			RTTI_DERIVED(ComboBox, Control);
 		public:
 			typedef EventDelegate1<ComboBox*> ComboBoxEvent;
 
-			ComboBox(const Point& position, int width, const List<String>& items);
+			ComboBox(const ComboBoxVisualSettings& settings, const Point& position, int width, const List<String>& items);
 			ComboBox(const StyleSkin* skin, const Point& position, int width, const List<String>& items);
 			virtual ~ComboBox();
 
@@ -52,7 +61,8 @@ namespace Apoc3D
 
 			List<String>& getItems() const;
 
-			bool getOpened() const;
+			bool isOpened() const;
+
 			bool getLocked() const;
 			void setLocked(bool value) const;
 			//const String& getText() const;
@@ -65,14 +75,21 @@ namespace Apoc3D
 			String* getSelectedItem() const;
 
 			ComboBoxEvent eventSelectionChanged;
+
+			Point DropdownButtonOffset;
 		private:
 			void Initialize(const StyleSkin* skin);
+			void Initialize(const ComboBoxVisualSettings& settings);
+			void PostInit();
+			
+			Point CalculateDropButtonPos(TextBox* ctb, int32 btnWidth);
+
+			void Open();
+			void Close();
 
 			void ListBox_SelectionChanged(ListBox* ctrl);
 			void ListBox_OnPress(ListBox* ctrl);
 			void Button_OnPress(Button* ctrl);
-			void Open();
-			void Close();
 
 			TextBox* m_textbox = nullptr;
 			Button* m_button = nullptr;

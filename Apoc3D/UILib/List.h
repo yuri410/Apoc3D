@@ -33,6 +33,11 @@ namespace Apoc3D
 			typedef EventDelegate1<ListBox*> ListBoxEvent;
 
 			ListBox(const StyleSkin* skin, const Point& position, int width, int height, const List<String>& items);
+			ListBox(const ListBoxVisualSettings& settings, const Point& position, int width, int height, const List<String>& items);
+
+			ListBox(const StyleSkin* skin, const Point& position, const Point& size, const List<String>& items);
+			ListBox(const ListBoxVisualSettings& settings, const Point& position, const Point& size, const List<String>& items);
+
 			~ListBox();
 
 			virtual void Update(const GameTime* time);
@@ -40,7 +45,6 @@ namespace Apoc3D
 
 			int32 FindEntry(const String& v);
 
-			
 			List<String>& getItems() { return m_items; }
 
 			int32 getItemHeight() const;
@@ -61,6 +65,9 @@ namespace Apoc3D
 
 		private:
 			void Initialize(const StyleSkin* skin);
+			void Initialize(const ListBoxVisualSettings& settings);
+
+			void AlignHeight();
 
 			void UpdateHScrollbar();
 			void RenderSelectionBox(Sprite* sprite, int index, const Point& txtPos);
@@ -125,7 +132,9 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(TreeView, ScrollableControl);
 		public:
+			
 			TreeView(const StyleSkin* skin, const Point& position, int width, int height);
+			TreeView(const StyleSkin* skin, const Point& position, const Point& size);
 			virtual ~TreeView();
 
 			virtual void Update(const GameTime* time);

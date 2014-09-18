@@ -112,43 +112,49 @@ namespace Apoc3D
 		{
 			if (skin)
 			{
-				NormalGraphic = UIGraphic(skin->SkinTexture, skin->ButtonRegionsNormal);
-				MouseDownGraphic = UIGraphic(skin->SkinTexture, skin->ButtonRegionsDown);
-				MouseHoverGraphic = UIGraphic(skin->SkinTexture, skin->ButtonRegionsHover);
+				NormalGraphic = UIGraphic(skin->SkinTexture, skin->ButtonNormalRegions, skin->ButtonNormalColor);
+				MouseDownGraphic = UIGraphic(skin->SkinTexture, skin->ButtonDownRegions, skin->ButtonDownColor);
+				MouseHoverGraphic = UIGraphic(skin->SkinTexture, skin->ButtonHoverRegions, skin->ButtonHoverColor);
 
-				DisabledGraphic = UIGraphic(skin->SkinTexture, skin->ButtonRegionsNormal, skin->ButtonDisabledColorMod);
+				DisabledGraphic = UIGraphic(skin->SkinTexture, skin->ButtonDisabledRegions, skin->ButtonDisabledColor);
 
 				TextSettings.TextColor = skin->TextColor;
 
-				ContentPadding = skin->ButtonPadding;
+				TextSettings.TextPadding = skin->ButtonPadding;
 				Margin = skin->ButtonMargin;
 			}
 		}
 
 		void Button::Initialize(const ButtonVisualSettings& settings)
 		{
+			NormalGraphic = settings.NormalGraphic;
+			
 			if (settings.FontRef)
 				SetFont(settings.FontRef);
 
-			if (settings.HasHotZonePadding)
-				ContentPadding = settings.ContentPadding;
+			if (settings.TextColor.isSet())
+				TextSettings.TextColor = settings.TextColor;
 
-			if (settings.HasDisabledGraphic)
+
+			if (settings.ContentPadding.isSet())
+				TextSettings.TextPadding = settings.ContentPadding;
+
+			if (settings.Margin.isSet())
+				Margin = settings.Margin;
+
+			if (settings.DisabledGraphic.isSet())
 				DisabledGraphic = settings.DisabledGraphic;
 
-			if (settings.HasNormalGraphic)
-				NormalGraphic = settings.NormalGraphic;
-
-			if (settings.HasMouseHoverGraphic)
+			if (settings.MouseHoverGraphic.isSet())
 				MouseHoverGraphic = settings.MouseHoverGraphic;
 
-			if (settings.HasMouseDownGraphic)
+			if (settings.MouseDownGraphic.isSet())
 				MouseDownGraphic = settings.MouseDownGraphic;
 
-			if (settings.HasOverlayIcon)
+			if (settings.OverlayIcon.isSet())
 				OverlayIcon = settings.OverlayIcon;
 
-			if (settings.HasDisabledOverlayIcon)
+			if (settings.DisabledOverlayIcon.isSet())
 				DisabledOverlayIcon = settings.DisabledOverlayIcon;
 
 			UpdateSize();
@@ -253,8 +259,8 @@ namespace Apoc3D
 
 		void Button::UpdateSize()
 		{
-			int32 vertPad = ContentPadding.getVerticalSum();
-			int32 hozPad = ContentPadding.getHorizontalSum();
+			int32 vertPad = TextSettings.TextPadding.getVerticalSum();
+			int32 hozPad = TextSettings.TextPadding.getHorizontalSum();
 
 			if (m_fontRef)
 			{
@@ -365,12 +371,11 @@ namespace Apoc3D
 			m_fontRef = skin->TitleTextFont;
 
 			ButtonMargin = skin->ButtonMargin;
-			NormalGraphic = UIGraphic(skin->SkinTexture, skin->ButtonRegionsNormal);
+			NormalGraphic = UIGraphic(skin->SkinTexture, skin->ButtonNormalRegions, skin->ButtonNormalColor);
 
-			MouseHoverGraphic = UIGraphic(skin->SkinTexture, skin->ButtonRegionsHover);
-			MouseDownGraphic = UIGraphic(skin->SkinTexture, skin->ButtonRegionsDown);
-			DisabledGraphic = NormalGraphic;
-			DisabledGraphic.ModColor = skin->ButtonDisabledColorMod;
+			MouseHoverGraphic = UIGraphic(skin->SkinTexture, skin->ButtonHoverRegions, skin->ButtonHoverColor);
+			MouseDownGraphic = UIGraphic(skin->SkinTexture, skin->ButtonDownRegions, skin->ButtonDownColor);
+			DisabledGraphic = UIGraphic(skin->SkinTexture, skin->ButtonDisabledRegions, skin->ButtonDisabledColor);
 
 			TextSettings.TextColor = skin->TextColor;
 
@@ -382,20 +387,13 @@ namespace Apoc3D
 			m_size.X = width;
 			m_rowHeight = 0;
 
-			//m_textPos = new Point[m_count];
-			//m_textSize = new Point[m_count];
 			m_titles = titles.AllocateArrayCopy();
 			m_buttonDstRect = new Apoc3D::Math::Rectangle[m_count];
 
-			int32 vertPadding = ButtonMargin.getVerticalSum();// m_skin->ButtonMargin.getVerticalSum();
+			int32 vertPadding = ButtonMargin.getVerticalSum();
 			m_rowHeight = m_fontRef->getLineHeightInt() + vertPadding;
 
 			m_size.Y = m_rowHeight * m_numRows;
-
-			/*for (int i = 0; i < m_count; i++)
-			{
-				m_textSize[i] = m_fontRef->MeasureString(m_titles[i]);
-			}*/
 
 			UpdatePositions();
 		}
@@ -405,16 +403,16 @@ namespace Apoc3D
 			for (int i = 0; i < m_count; i++)
 			{
 				Texture* tex = NormalGraphic.Graphic;
-				const Apoc3D::Math::Rectangle* btnSrcRect = NormalGraphic.SourceRects.getElements();// m_skin->ButtonRegionsNormal;
+				const Apoc3D::Math::Rectangle* btnSrcRect = NormalGraphic.SourceRects.getElements();
 
 				if (i == m_selectedIndex)
 				{
-					btnSrcRect = MouseDownGraphic.SourceRects.getElements();// m_skin->ButtonRegionsDown;
+					btnSrcRect = MouseDownGraphic.SourceRects.getElements();
 					tex = MouseDownGraphic.Graphic;
 				}
 				else if (i == m_hoverIndex)
 				{
-					btnSrcRect = MouseHoverGraphic.SourceRects.getElements();// m_skin->ButtonRegionsHover;
+					btnSrcRect = MouseHoverGraphic.SourceRects.getElements();
 					tex = MouseHoverGraphic.Graphic;
 				}
 

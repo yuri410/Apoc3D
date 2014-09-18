@@ -74,26 +74,28 @@ namespace Apoc3D
 		Control::Control(const Point& position)
 			: Control(nullptr, position) { }
 
+		Control::Control(const Point& position, int32 width)
+			: Control(nullptr, position, width) { }
+
 		Control::Control(const Point& position, const Point& size)
 			: Control(nullptr, position, size) { }
 
+
 		Control::Control(const StyleSkin* skin)
-			: Position(Point::Zero), m_size(0, 0)
-		{
-			Initialze(skin);
-		}
+			: Control(skin, Point::Zero, Point(0,0)) { }
 
 		Control::Control(const StyleSkin* skin, const Point& position)
-			: Position(position), m_size(0, 0)
-		{
-			Initialze(skin);
-		}
+			: Control(skin, position, Point(0,0)) { }
+
+		Control::Control(const StyleSkin* skin, const Point& position, int32 width)
+			: Control(skin, position, Point(width, 0)) { }
 
 		Control::Control(const StyleSkin* skin, const Point& position, const Point& size)
 			: Position(position), m_size(size)
 		{
 			Initialze(skin);
 		}
+
 
 		Control::~Control()
 		{
@@ -176,6 +178,10 @@ namespace Apoc3D
 		ScrollableControl::ScrollableControl(const Point& position, const Point& size)
 			: Control(position, size) { }
 
+		ScrollableControl::ScrollableControl( const Point& position, int32 width)
+			: Control(position, width) { }
+
+
 		ScrollableControl::ScrollableControl(const StyleSkin* skin)
 			: Control(skin) { }
 
@@ -184,6 +190,10 @@ namespace Apoc3D
 
 		ScrollableControl::ScrollableControl(const StyleSkin* skin, const Point& position, const Point& size)
 			: Control(skin, position, size) { }
+
+		ScrollableControl::ScrollableControl(const StyleSkin* skin, const Point& position, int32 width)
+			: Control(skin, position, width) { }
+
 
 		ScrollableControl::~ScrollableControl()
 		{
@@ -202,21 +212,9 @@ namespace Apoc3D
 			GUIUtils::CalculateScrollBarPositions(getArea(), &vs, &hs);
 			m_hscrollbar = new ScrollBar(skin, hs.Position, ScrollBar::SCRBAR_Horizontal, hs.Length);
 			m_vscrollbar = new ScrollBar(skin, vs.Position, ScrollBar::SCRBAR_Vertical, vs.Length);
-
-			/*m_hscrollbar->Visible = useHS;
-			m_vscrollbar->Visible = useVS;
-
-			if (useHS && !useVS)
-			{
-				m_hscrollbar->SetLength(hs.Length + vs.Width);
-			}
-			else if (useVS && !useHS)
-			{
-				m_vscrollbar->SetLength(vs.Length + hs.Width);
-			}*/
 		}
 
-		void ScrollableControl::InitScrollBars(const ScrollBarVisualSettings& hss, const ScrollBarVisualSettings& vss)
+		void ScrollableControl::InitScrollbars(const ScrollBarVisualSettings& hss, const ScrollBarVisualSettings& vss)
 		{
 			DELETE_AND_NULL(m_vscrollbar);
 			DELETE_AND_NULL(m_hscrollbar);

@@ -89,11 +89,10 @@ namespace Apoc3D
 
 			int contentHozPadding = 25;
 			m_content = new Label(skin, Point(contentHozPadding, 14 + vertPadding), text, m_form->getWidth() - contentHozPadding * 2);
-			//m_content->SetSkin(skin);
 			m_form->getControls().Add(m_content);
 
 			int buttonPosY = orginalContentSize.Y + vertPadding * 4;
-			for (Button* btn : m_controlButtons) //int i=0;i<m_controlButtons.getCount();i++)
+			for (Button* btn : m_controlButtons)
 			{
 				btn->Position = Point(0, buttonPosY);
 				m_form->getControls().Add(btn);
@@ -101,9 +100,6 @@ namespace Apoc3D
 
 			m_form->Position = (rect.getSize() - m_form->getSize()) / 2;
 
-			//m_form->SetSkin(skin);
-
-			//m_form->Initialize(device);
 
 			int buttonPosX = (m_form->getWidth() - buttonsWidth - btnHozPadding * 2) / 2;
 			for (int i = 0; i < m_controlButtons.getCount(); i++)
@@ -133,7 +129,6 @@ namespace Apoc3D
 		void MessageDialogBox::AddButton(const String& caption, const StyleSkin* skin, DialogResult dr)
 		{
 			Button* btn = new Button(skin, Point(0,0), singleFixedButtonWidth, caption);
-			//btn->SetSkin(skin);
 			btn->eventRelease.Bind(this, &MessageDialogBox::Button_Release);
 
 			m_controlButtons.Add(btn);
@@ -161,16 +156,13 @@ namespace Apoc3D
 			m_form->setSize(Point(500, !multiline ? 150 : 400));
 
 			m_content = new Label(skin, Point(15, skin->FormTitle->Height + 10), text, m_form->getWidth() - 30);
-			//m_content->SetSkin(skin);
 			m_form->getControls().Add(m_content);
 
 			m_btnOk = new Button(skin, Point(315, m_form->getHeight() - 50), singleFixedButtonWidth, L"OK");
-			//m_btnOk->SetSkin(skin);
 			m_btnOk->eventRelease.Bind(this, &InputDialogBox::Button_OkRelease);
 			m_form->getControls().Add(m_btnOk);
 
 			m_btnCancel = new Button(skin, Point(400, m_form->getHeight() - 50), singleFixedButtonWidth, L"Cancel");
-			//m_btnCancel->SetSkin(skin);
 			m_btnCancel->eventRelease.Bind(this, &InputDialogBox::Button_CancelRelease);
 			m_form->getControls().Add(m_btnCancel);
 
@@ -178,19 +170,13 @@ namespace Apoc3D
 				m_inputField = new TextBox(skin, Point(15, 60), m_form->getWidth() - 30, m_form->getHeight() - 140, L"");
 			else
 				m_inputField = new TextBox(skin, Point(15, 60), m_form->getWidth() - 30, L"");
-			//m_inputField->SetSkin(skin);
-			//m_inputField->setScrollbarType(TextBox::SBT_Vertical);
 			m_inputField->EnableHScrollBar = m_inputField->EnableVScrollBar = true;
 
-			//m_inputField->eventRelease.Bind(this, &InputDialogBox::Button_CancelRelease);
 			m_form->getControls().Add(m_inputField);
 
 			Apoc3D::Math::Rectangle rect = SystemUI::GetUIArea(device);
 			m_form->Position = (rect.getSize() - m_form->getSize()) / 2;
 			
-			//m_form->SetSkin(skin);
-
-			//m_form->Initialize(device);
 			SystemUI::Add(m_form);
 		}
 

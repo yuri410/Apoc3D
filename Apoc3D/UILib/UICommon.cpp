@@ -137,7 +137,6 @@ namespace Apoc3D
 			SourceRects.Add(srcRect);
 		}
 		
-
 		void UIGraphicSimple::Draw(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect) const
 		{
 			if (isSet() && CV_GetColorA(ModColor))
@@ -256,8 +255,6 @@ namespace Apoc3D
 		/* TextRenderSettings                                                   */
 		/************************************************************************/
 		
-
-
 		void TextRenderSettings::Draw(Sprite* sprite, Font* font, const String& text, const Apoc3D::Math::Rectangle& area, int32 alpha) const
 		{
 			if (CV_GetColorA(TextColor) == 0 && (!HasTextShadow || CV_GetColorA(TextShadowColor) == 0))

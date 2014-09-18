@@ -217,11 +217,6 @@ namespace Apoc3D
 		void Form::InitializeButtons()
 		{
 			ButtonVisualSettings bvs;
-			bvs.HasNormalGraphic = true;
-			bvs.HasMouseHoverGraphic = true;
-			bvs.HasMouseDownGraphic = true;
-			bvs.HasOverlayIcon = true;
-
 			bvs.NormalGraphic = UIGraphic(m_skin->SkinTexture, m_skin->FormCBCloseNormal);
 			bvs.MouseHoverGraphic = UIGraphic(m_skin->SkinTexture, m_skin->FormCBCloseHover);
 			bvs.MouseDownGraphic = UIGraphic(m_skin->SkinTexture, m_skin->FormCBCloseDown);
@@ -287,7 +282,7 @@ namespace Apoc3D
 				return;
 
 			if (MenuBar)
-				MenuBar->Position = Point(0, m_skin->FormTitle->Height); // m_menuOffset;
+				MenuBar->Position = Point(0, m_skin->FormTitle->Height);
 
 			UpdateState();
 			UpdateTopMost();
@@ -311,9 +306,12 @@ namespace Apoc3D
 				m_btMinimize->BaseOffset = subOffset;
 				m_btMaximize->BaseOffset = subOffset;
 				m_btRestore->BaseOffset = subOffset;
+
+				bool isFocus = SystemUI::TopMostForm == this || SystemUI::ActiveForm == this;
+
 				for (Control* ct : m_controls)
 				{
-					ct->ParentFocused = SystemUI::TopMostForm == this || SystemUI::ActiveForm == this;
+					ct->ParentFocused = isFocus;
 					ct->BaseOffset = subOffset;
 				}
 			}

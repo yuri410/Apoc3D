@@ -28,6 +28,7 @@
 
 
 #include "apoc3d/Common.h"
+#include "apoc3d/Collections/EnumConverterHelper.h"
 
 namespace Apoc3D
 {
@@ -194,6 +195,8 @@ namespace Apoc3D
 		const ColorValue CV_WhiteSmoke = 0xfff5f5f5;
 		const ColorValue CV_Yellow = 0xffffff00;
 		const ColorValue CV_YellowGreen = 0xff9acd32;
+
+		extern const Apoc3D::Collections::TypeParseConverter<ColorValue> ColorValueConverter;
 	}
 }
 

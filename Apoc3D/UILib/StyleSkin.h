@@ -45,57 +45,114 @@ namespace Apoc3D
 			StyleSkin(RenderDevice* device, const FileLocateRule& rule);
 			~StyleSkin();
 
-			Font* ContentTextFont;
-			Font* TitleTextFont;
+			Font* ContentTextFont = nullptr;
+			Font* TitleTextFont = nullptr;
 			ColorValue TextColor;
 			ColorValue ControlFaceColor;
 			ColorValue ControlDarkShadeColor;
 			ColorValue ControlLightShadeColor;
-			ColorValue ButtonDisabledColorMod;
+
 			ColorValue MIDBackgroundColor;
 			ColorValue BorderColor;
 
+
+			Font* ButtonFont = nullptr;
 			ControlBounds ButtonPadding;
 			ControlBounds ButtonMargin;
-			Font* ButtonFont;
-			Apoc3D::Math::Rectangle ButtonRegionsNormal[9];
-			Apoc3D::Math::Rectangle ButtonRegionsHover[9];
-			Apoc3D::Math::Rectangle ButtonRegionsDown[9];
-			
+			Apoc3D::Math::Rectangle ButtonNormalRegions[9];
+			Apoc3D::Math::Rectangle ButtonHoverRegions[9];
+			Apoc3D::Math::Rectangle ButtonDownRegions[9];
+			Apoc3D::Math::Rectangle ButtonDisabledRegions[9];
+			ColorValue ButtonNormalColor = CV_White;
+			ColorValue ButtonHoverColor = CV_White;
+			ColorValue ButtonDownColor = CV_White;
+			ColorValue ButtonDisabledColor = CV_White;
 
-
-			Font* TextBoxFont;
+			Font* TextBoxFont = nullptr;
 			ControlBounds TextBoxPadding;
 			ControlBounds TextBoxMargin;
-			Apoc3D::Math::Rectangle TextBox[3];
+			Apoc3D::Math::Rectangle TextBoxRegions[3];
+			ColorValue TextBoxColor = CV_White;
 
 			ControlBounds TextBoxExMargin;
-			Apoc3D::Math::Rectangle TextBoxEx[9];
+			Apoc3D::Math::Rectangle TextBoxExRegions[9];
+			ColorValue TextBoxExColor = CV_White;
 
+			Font* CheckBoxFont = nullptr;
 			ControlBounds CheckBoxMargin;
-			Font* CheckBoxFont;
-			Apoc3D::Math::Rectangle CheckBoxDisable;
-			Apoc3D::Math::Rectangle CheckBoxNormal;
-			Apoc3D::Math::Rectangle CheckBoxHover;
-			Apoc3D::Math::Rectangle CheckBoxDown;
-			Apoc3D::Math::Rectangle CheckBoxChecked;
+			Apoc3D::Math::Rectangle CheckBoxDisabledRegion;
+			Apoc3D::Math::Rectangle CheckBoxNormalRegion;
+			Apoc3D::Math::Rectangle CheckBoxHoverRegion;
+			Apoc3D::Math::Rectangle CheckBoxDownRegion;
+			Apoc3D::Math::Rectangle CheckBoxCheckedRegion;
+			Apoc3D::Math::Rectangle CheckBoxDisabledCheckedRegion;
 			int32 CheckBoxTextSpacing;
+			ColorValue CheckBoxDisabledColor = CV_White;
+			ColorValue CheckBoxNormalColor = CV_White;
+			ColorValue CheckBoxHoverColor = CV_White;
+			ColorValue CheckBoxDownColor = CV_White;
+			ColorValue CheckBoxCheckedColor = CV_White;
+			ColorValue CheckBoxDisableCheckedColor = CV_White;
+			
 
+			Font* RadioButtonFont = nullptr;
 			ControlBounds RadioButtonMargin;
-			Font* RadioButtonFont;
-			Apoc3D::Math::Rectangle RadioButtonDisable;
-			Apoc3D::Math::Rectangle RadioButtonNormal;
-			Apoc3D::Math::Rectangle RadioButtonHover;
-			Apoc3D::Math::Rectangle RadioButtonDown;
-			Apoc3D::Math::Rectangle RadioButtonChecked;
+			Apoc3D::Math::Rectangle RadioButtonDisabledRegion;
+			Apoc3D::Math::Rectangle RadioButtonNormalRegion;
+			Apoc3D::Math::Rectangle RadioButtonHoverRegion;
+			Apoc3D::Math::Rectangle RadioButtonDownRegion;
+			Apoc3D::Math::Rectangle RadioButtonCheckedRegion;
+			Apoc3D::Math::Rectangle RadioButtonDisabledCheckedRegion;
 			int32 RadioButtonTextSpacing;
+			ColorValue RadioButtonDisabledColor = CV_White;
+			ColorValue RadioButtonNormalColor = CV_White;
+			ColorValue RadioButtonHoverColor = CV_White;
+			ColorValue RadioButtonDownColor = CV_White;
+			ColorValue RadioButtonCheckedColor = CV_White;
+			ColorValue RadioButtonDisabledCheckedColor = CV_White;
 
-			ControlBounds DropDownButtonMargin;
-			Apoc3D::Math::Rectangle DropDownButtonNormal;
-			Apoc3D::Math::Rectangle DropDownButtonHover;
-			Apoc3D::Math::Rectangle DropDownButtonDown;
 
-			Font* FormFont;
+			ControlBounds DropdownButtonMargin;
+			Point DropdownButtonOffset;
+			Apoc3D::Math::Rectangle DropdownButtonNormalRegion;
+			Apoc3D::Math::Rectangle DropdownButtonHoverRegion;
+			Apoc3D::Math::Rectangle DropdownButtonDownRegion;
+			ColorValue DropdownButtonNormalColor = CV_White;
+			ColorValue DropdownButtonHoverColor = CV_White;
+			ColorValue DropdownButtonDownColor = CV_White;
+
+
+			Apoc3D::Math::Rectangle ProgressBarBG[3];
+			Apoc3D::Math::Rectangle ProgressBarFilled[3];
+			ColorValue ProgressBarBGColor = CV_White;
+			ColorValue ProgressBarFilledColor = CV_White;
+
+
+			Apoc3D::Math::Rectangle HSilderBG[3];
+			Apoc3D::Math::Rectangle HSilderFilled[3];
+			Apoc3D::Math::Rectangle HSliderHandle;
+
+
+
+			Apoc3D::Math::Rectangle VScrollBarCursor[3];
+			Apoc3D::Math::Rectangle VScrollBarBG;
+			Apoc3D::Math::Rectangle VScrollBarUp;
+			Apoc3D::Math::Rectangle VScrollBarDown;
+
+			Apoc3D::Math::Rectangle HScrollBarCursor[3];
+			Apoc3D::Math::Rectangle HScrollBarBG;
+			Apoc3D::Math::Rectangle HScrollBarLeft;
+			Apoc3D::Math::Rectangle HScrollBarRight;
+
+			Font* ListBoxFont = nullptr;
+			ControlBounds ListBoxMargin;
+			ControlBounds ListBoxPadding;
+			Apoc3D::Math::Rectangle ListBoxBackground[9];
+
+
+
+
+			Font* FormFont = nullptr;
 			ControlBounds FormTitlePadding;
 			Apoc3D::Math::Rectangle FormTitle[3];
 			Apoc3D::Math::Rectangle FormBody[9];
@@ -127,37 +184,13 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle FormCBRestoreDown;
 
 			
-			Apoc3D::Math::Rectangle ProgressBarBG[3];
-			Apoc3D::Math::Rectangle ProgressBarFilled[3];
-
-
-			Apoc3D::Math::Rectangle HSilderBG[3];
-			Apoc3D::Math::Rectangle HSilderFilled[3];
-			Apoc3D::Math::Rectangle HSliderHandle;
-
-
-
-			Apoc3D::Math::Rectangle VScrollBarCursor[3];
-			Apoc3D::Math::Rectangle VScrollBarBG;
-			Apoc3D::Math::Rectangle VScrollBarUp;
-			Apoc3D::Math::Rectangle VScrollBarDown;
-
-			Apoc3D::Math::Rectangle HScrollBarCursor[3];
-			Apoc3D::Math::Rectangle HScrollBarBG;
-			Apoc3D::Math::Rectangle HScrollBarLeft;
-			Apoc3D::Math::Rectangle HScrollBarRight;
-
-			ControlBounds ListBoxMargin;
-			ControlBounds ListBoxPadding;
-			Font* ListBoxFont;
-			Apoc3D::Math::Rectangle ListBoxBackground[9];
-
+			
 
 			Apoc3D::Math::Rectangle SubMenuArrow;
 
 			Apoc3D::Math::Rectangle HShade;
 
-			Texture* SkinTexture;
+			Texture* SkinTexture = nullptr;
 
 		private:
 			Font* GetFontName(const String& alias);
@@ -168,9 +201,13 @@ namespace Apoc3D
 			void Parse3Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[3], Apoc3D::Collections::HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions);
 			void ParseRegion(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle& srcRect, Apoc3D::Collections::HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions);
 
-			void Push9Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[9]);
-			void Push3Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[3]);
-			void PushRegion(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle& srcRect);
+			void ParseColorValue(Apoc3D::Config::ConfigurationSection* sect, ColorValue& result);
+			void ParsePoint(Apoc3D::Config::ConfigurationSection* sect, Point& result);
+			
+
+			void Offset9Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[9]);
+			void Offset3Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[3]);
+			void OffsetRegion(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle& srcRect);
 		};
 	}
 }

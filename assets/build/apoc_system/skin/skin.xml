@@ -1,2 +1,171 @@
 <?xml version="1.0" ?>
-<UIElementsSkin>  <Basic>    <Name>Dark</Name>    <Pack>ds_skin.tex</Pack>    <TextFont>english</TextFont>    <TitleFont>ds_title</TitleFont>        <TextColor>0xfff0f0f0</TextColor>    <ControlFaceColor>0xff535353</ControlFaceColor>    <ControlDarkShadeColor>0xff363636</ControlDarkShadeColor>    <ControlLightShadeColor>0xff656565</ControlLightShadeColor>        <BorderColor>0xff202020</BorderColor>        <ButtonDisabledColorMod>0x7fffffff</ButtonDisabledColorMod>    <MIDBackgroundColor>0xff282828</MIDBackgroundColor>  </Basic>  	<Button Font="Title" Margin="1,1,1,1" Padding="7,1,7,1">		<Normal Type="9region" Coord="3,3">      [0, 0,4, 3], [4, 0,49, 3],  [53, 0,4, 3],      [0, 3,4,23], [4, 3,49,23],  [53, 3,4,23],      [0,26,4, 3], [4,26,49, 3],  [53,26,4, 3]    </Normal>		<Down Type="9region_ref" Coord="63,3" RegionRef="Normal" />		<Hover Type="9region_ref" Coord="123,3" RegionRef="Normal" />	</Button>    <TextBox Font="Text" Margin="1,1,1,1" Padding="1,1,1,1">    <Normal Type="3region" Coord="3,38">      [0, 0,3, 20], [3, 0,51, 20],  [54, 0,3, 20]    </Normal>  </TextBox>  <TextFieldMultiline Font="Text" >    <Normal Type="9region" Coord="4,64">      [0,  0, 2,  5], [2,  0,51,  5],  [53,  0, 2,  5],      [0,  5, 2, 12], [2,  0,51, 12],  [53,  0, 2, 12],      [0, 17, 2,  2], [2, 17,51,  2],  [53, 17, 2,  2]    </Normal>  </TextFieldMultiline>  <CheckBox Font="Text" Margin="1,0,1,1" TextSpacing="5">    <Disabled Coord="3, 190">[0,0,16,15]</Disabled>    <Normal Coord="20, 190" RegionRef="Disabled" />    <Hover Coord="38, 190"  RegionRef="Disabled" />    <Down Coord="56, 190"  RegionRef="Disabled" />    <Checked Coord="74, 190"  RegionRef="Disabled" />	</CheckBox>	<RadioButton Font="Text" TextSpacing="5">    <Disabled Coord="4, 207">[0,0,16,15]</Disabled>    <Normal Coord="21, 207" RegionRef="Disabled" />    <Hover Coord="39, 207" RegionRef="Disabled" />    <Down Coord="57, 207" RegionRef="Disabled" />    <Checked Coord="75, 207" RegionRef="Disabled" />	</RadioButton>  <DropDownButton>    <Normal Type="3region" Coord="102,38">[0,0,17,19]</Normal>    <Hover Type="3region_ref" Coord="121,38" RegionRef="Normal" />    <Down Type="3region_ref" Coord="139,38" RegionRef="Normal" />  </DropDownButton>  <Form Font="Title" Padding="10,7,5,7" >    <TitleNormal Type="3region" Coord="4, 89" >      [0, 0, 3, 25], [3, 0, 120, 25],  [123, 0, 3, 25]    </TitleNormal>    <Background Type="9region" Coord="4,112" >      [0,  0, 3,  2],  [3,  0, 120, 2], [123,  0, 3,  2],      [0,  2, 3, 59],  [3,  2,   2, 2], [123,  2, 3, 59],      [0, 61, 3,  2],  [3, 61, 120, 2], [123, 61, 3,  2]    </Background>    <Resizer>[119, 163, 8, 8]</Resizer>    <ControlBoxIcon>      <MaxOverlay>[200, 90, 14, 15]</MaxOverlay>      <MinOverlay>[185, 90, 14, 15]</MinOverlay>      <CloseOverlay>[186, 112, 14, 15]</CloseOverlay>      <RestoreOverlay>[200, 112, 14, 15]</RestoreOverlay>    </ControlBoxIcon>    <MaximizeButton>      <Disabled Coord="151, 89">[0,0,16,18]</Disabled>      <Normal Coord="151, 89" RegionRef="Disabled" />      <Hover Coord="151, 111" RegionRef="Disabled" />      <Down Coord="151, 133" RegionRef="Disabled" />    </MaximizeButton>    <CloseButton>      <Disabled Coord="166, 89">[0,0,16,18]</Disabled>      <Normal Coord="166, 89" RegionRef="Disabled" />      <Hover Coord="166, 111" RegionRef="Disabled" />      <Down Coord="166, 133" RegionRef="Disabled" />    </CloseButton>    <MinimizeButton>      <Disabled Coord="136, 89">[0,0,16,18]</Disabled>      <Normal Coord="136, 89" RegionRef="Disabled" />      <Hover Coord="136, 111" RegionRef="Disabled" />      <Down Coord="136, 133" RegionRef="Disabled" />    </MinimizeButton>    <RestoreButton>      <Disabled Coord="151, 89">[0,0,16,18]</Disabled>      <Normal Coord="151, 89" RegionRef="Disabled" />      <Hover Coord="151, 111" RegionRef="Disabled" />      <Down Coord="151, 133" RegionRef="Disabled" />    </RestoreButton>  </Form>  <ProgressBar>    <Background Type="3region" Coord="64, 59">      [0, 0, 2, 14], [64, 0, 1, 14], [149, 0, 2, 14]    </Background>    <Filled Type="3region_ref" Coord="64, 74" RegionRef="Background" />  </ProgressBar>  <HSlider>    <Background Type="3region" Coord="4, 176">      [0, 0, 2, 6], [33, 0, 1, 6], [234, 0, 2, 6]    </Background>    <Filled Type="3region_ref" Coord="4, 183" RegionRef="Background" />    <HandleNormal>      [135, 153,11,21]    </HandleNormal>  </HSlider>  <VScrollBar>		<Cursor>      <Normal Coord="236, 19" Type="3region" >        [0,0,16,2], [0,2,16,43], [0,45,16,2]      </Normal>		</Cursor>    <Background Coord="236, 70" >[0,0,16,2]</Background>    <UpButton>      <Normal Coord="236, 3" >[0,0,16,16]</Normal>    </UpButton>    <DownButton>      <Normal Coord="236, 103" >[0,0,16,16]</Normal>		</DownButton>	</VScrollBar>	<HScrollBar>    <Cursor>      <Normal Coord="188, 189" Type="3region" >        [0,0,2,16], [2,0,43,16], [45,0,2,16]      </Normal>    </Cursor>    <Background Coord="152, 189" >[0,0,1,16]</Background>    <BackButton>      <Normal Coord="135, 189" >[0,0,16,16]</Normal>    </BackButton>    <ForwardButton>      <Normal Coord="235, 189" >[0,0,16,16]</Normal>    </ForwardButton>	  </HScrollBar>  	<ListBox Font="Text" Padding="1,1,1,1">    <Normal Type="9region" Coord="4,64">      [0,  0, 2,  5], [2,  0,51,  5],  [53,  0, 2,  5],      [0,  5, 2, 12], [2,  5,51, 12],  [53,  5, 2, 12],      [0, 17, 2,  2], [2, 17,51,  2],  [53, 17, 2,  2]    </Normal>	</ListBox>    <Menu>    <SubMenuArrow>[239,211,7,7]</SubMenuArrow>    <HShade>[15,112,1,2]</HShade>  </Menu></UIElementsSkin>
+<UIElementsSkin>
+  <Basic>
+    <Name>Dark</Name>
+    <Pack>ds_skin.tex</Pack>
+    <TextFont>english</TextFont>
+    <TitleFont>ds_title</TitleFont>
+    
+    <TextColor>0xfff0f0f0</TextColor>
+    <ControlFaceColor>0xff535353</ControlFaceColor>
+    <ControlDarkShadeColor>0xff363636</ControlDarkShadeColor>
+    <ControlLightShadeColor>0xff656565</ControlLightShadeColor>
+    
+    <BorderColor>0xff202020</BorderColor>
+    
+    <MIDBackgroundColor>0xff282828</MIDBackgroundColor>
+  </Basic>
+  
+	<Button Font="Title" Margin="1,1,1,1" Padding="7,1,7,1">
+		<Normal Coord="3,3" >
+      [0, 0,4, 3], [4, 0,49, 3],  [53, 0,4, 3],
+      [0, 3,4,23], [4, 3,49,23],  [53, 3,4,23],
+      [0,26,4, 3], [4,26,49, 3],  [53,26,4, 3]
+    </Normal>
+		<Down Coord="63,3" RegionRef="Normal" />
+		<Hover Coord="123,3" RegionRef="Normal" />
+    <Disabled RegionRef="Normal" Color="0x7fffffff" />
+	</Button>
+  
+  <TextBox Font="Text" Margin="1,1,1,1" Padding="1,1,1,1">
+    <Normal Coord="3,38">
+      [0, 0,3, 20], [3, 0,51, 20],  [54, 0,3, 20]
+    </Normal>
+  </TextBox>
+
+  <TextFieldMultiline Font="Text" >
+    <Normal Coord="4,64">
+      [0,  0, 2,  5], [2,  0, 51,  5],  [53,  0, 2,  5],
+      [0,  5, 2, 12], [2,  5, 51, 12],  [53,  5, 2, 12],
+      [0, 17, 2,  2], [2, 17, 51,  2],  [53, 17, 2,  2]
+    </Normal>
+  </TextFieldMultiline>
+
+  <CheckBox Font="Text" Margin="1,0,1,1" TextSpacing="5">
+    <Disabled Coord="3, 190">[0,0,16,15]</Disabled>
+    <Normal Coord="20, 190" RegionRef="Disabled" />
+    <Hover Coord="38, 190"  RegionRef="Disabled" />
+    <Down Coord="56, 190"  RegionRef="Disabled" />
+    <Checked Coord="74, 190"  RegionRef="Disabled" />
+    <DisabledChecked RegionRef="Disabled" Color="0x7fffffff" />
+	</CheckBox>
+	<RadioButton Font="Text" TextSpacing="5">
+    <Disabled Coord="4, 207">[0,0,16,15]</Disabled>
+    <Normal Coord="21, 207" RegionRef="Disabled" />
+    <Hover Coord="39, 207" RegionRef="Disabled" />
+    <Down Coord="57, 207" RegionRef="Disabled" />
+    <Checked Coord="75, 207" RegionRef="Disabled" />
+    <DisabledChecked RegionRef="Disabled" Color="0x7fffffff" />
+	</RadioButton>
+
+  <DropdownButton Offset="1,0">
+    <Normal Coord="102,38">[0,0,17,19]</Normal>
+    <Hover Coord="121,38" RegionRef="Normal" />
+    <Down Coord="139,38" RegionRef="Normal" />
+  </DropdownButton>
+
+  <ProgressBar>
+    <Background Coord="64, 59">
+      [0, 0, 2, 14], [64, 0, 1, 14], [149, 0, 2, 14]
+    </Background>
+    <Filled Coord="64, 74" RegionRef="Background" />
+  </ProgressBar>
+
+  <HSlider>
+    <Background Coord="4, 176">
+      [0, 0, 2, 6], [33, 0, 1, 6], [234, 0, 2, 6]
+    </Background>
+    <Filled Coord="4, 183" RegionRef="Background" />
+    <HandleNormal>
+      [135, 153,11,21]
+    </HandleNormal>
+  </HSlider>
+
+  <VScrollBar>
+		<Cursor>
+      <Normal Coord="236, 19" Type="3region" >
+        [0,0,16,2], [0,2,16,43], [0,45,16,2]
+      </Normal>
+		</Cursor>
+    <Background Coord="236, 70" >[0,0,16,2]</Background>
+    <UpButton>
+      <Normal Coord="236, 3" >[0,0,16,16]</Normal>
+    </UpButton>
+    <DownButton>
+      <Normal Coord="236, 103" >[0,0,16,16]</Normal>
+		</DownButton>
+	</VScrollBar>
+	<HScrollBar>
+    <Cursor>
+      <Normal Coord="188, 189" Type="3region" >
+        [0,0,2,16], [2,0,43,16], [45,0,2,16]
+      </Normal>
+    </Cursor>
+    <Background Coord="152, 189" >[0,0,1,16]</Background>
+    <BackButton>
+      <Normal Coord="135, 189" >[0,0,16,16]</Normal>
+    </BackButton>
+    <ForwardButton>
+      <Normal Coord="235, 189" >[0,0,16,16]</Normal>
+    </ForwardButton>
+	
+  </HScrollBar>
+  
+	<ListBox Font="Text" Padding="1,1,1,1">
+    <Normal Coord="4,64">
+      [0,  0, 2,  5], [2,  0,51,  5],  [53,  0, 2,  5],
+      [0,  5, 2, 12], [2,  5,51, 12],  [53,  5, 2, 12],
+      [0, 17, 2,  2], [2, 17,51,  2],  [53, 17, 2,  2]
+    </Normal>
+	</ListBox>
+
+
+  <Form Font="Title" Padding="10,7,5,7" >
+    <TitleNormal Coord="4, 89" >
+      [0, 0, 3, 25], [3, 0, 120, 25],  [123, 0, 3, 25]
+    </TitleNormal>
+    <Background Coord="4,112" >
+      [0,  0, 3,  2],  [3,  0, 120, 2], [123,  0, 3,  2],
+      [0,  2, 3, 59],  [3,  2,   2, 2], [123,  2, 3, 59],
+      [0, 61, 3,  2],  [3, 61, 120, 2], [123, 61, 3,  2]
+    </Background>
+    <Resizer>[119, 163, 8, 8]</Resizer>
+    <ControlBoxIcon>
+      <MaxOverlay>[200, 90, 14, 15]</MaxOverlay>
+      <MinOverlay>[185, 90, 14, 15]</MinOverlay>
+      <CloseOverlay>[186, 112, 14, 15]</CloseOverlay>
+      <RestoreOverlay>[200, 112, 14, 15]</RestoreOverlay>
+    </ControlBoxIcon>
+
+    <MaximizeButton>
+      <Disabled Coord="151, 89">[0,0,16,18]</Disabled>
+      <Normal Coord="151, 89" RegionRef="Disabled" />
+      <Hover Coord="151, 111" RegionRef="Disabled" />
+      <Down Coord="151, 133" RegionRef="Disabled" />
+    </MaximizeButton>
+    <CloseButton>
+      <Disabled Coord="166, 89">[0,0,16,18]</Disabled>
+      <Normal Coord="166, 89" RegionRef="Disabled" />
+      <Hover Coord="166, 111" RegionRef="Disabled" />
+      <Down Coord="166, 133" RegionRef="Disabled" />
+    </CloseButton>
+    <MinimizeButton>
+      <Disabled Coord="136, 89">[0,0,16,18]</Disabled>
+      <Normal Coord="136, 89" RegionRef="Disabled" />
+      <Hover Coord="136, 111" RegionRef="Disabled" />
+      <Down Coord="136, 133" RegionRef="Disabled" />
+    </MinimizeButton>
+    <RestoreButton>
+      <Disabled Coord="151, 89">[0,0,16,18]</Disabled>
+      <Normal Coord="151, 89" RegionRef="Disabled" />
+      <Hover Coord="151, 111" RegionRef="Disabled" />
+      <Down Coord="151, 133" RegionRef="Disabled" />
+    </RestoreButton>
+  </Form>
+
+  <Menu>
+    <SubMenuArrow>[239,211,7,7]</SubMenuArrow>
+    <HShade>[15,112,1,2]</HShade>
+  </Menu>
+</UIElementsSkin>
+

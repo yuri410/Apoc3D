@@ -21,18 +21,33 @@ namespace Apoc3D
 	namespace UI
 	{
 		/************************************************************************/
-		/* Label                                                                */
+		/*  Label                                                               */
 		/************************************************************************/
 
 		Label::Label(Font* font,const Point& position, const String& text)
-			: Label((const StyleSkin*)nullptr, position, text) { }
+			: Control(nullptr, position), m_text(text), AutosizeX(true), AutosizeY(true)
+		{
+			Initialize(font);
+		}
 
-		Label::Label(Font* font,const Point& position, const String& text, int width, TextHAlign alignment )
-			: Label((const StyleSkin*)nullptr, position, text, width, alignment) { }
+		Label::Label(Font* font, const Point& position, const String& text, int width, TextHAlign alignment)
+			: Control(nullptr, position, width), m_text(text), AutosizeY(true)
+		{
+			Initialize(font);
+			TextSettings.HorizontalAlignment = alignment;
+		}
+
+		Label::Label(Font* font, const Point& position, const String& text, const Point& size, TextHAlign alignment)
+			: Control(nullptr, position, size), m_text(text)
+		{
+			Initialize(font);
+			TextSettings.HorizontalAlignment = alignment;
+		}
 
 		Label::Label(Font* font, const Point& position, const String& text, int width, int height, TextHAlign alignment)
-			: Label((const StyleSkin*)nullptr, position, text, width, height, alignment) { }
+			: Label(font, position, text, Point(width, height), alignment) { }
 
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		Label::Label(const StyleSkin* skin, const Point& position, const String& text)
 			: Control(skin, position), m_text(text), AutosizeX(true), AutosizeY(true)
@@ -41,25 +56,23 @@ namespace Apoc3D
 		}
 
 		Label::Label(const StyleSkin* skin, const Point& position, const String& text, int width, TextHAlign alignment)
-			: Control(skin, position), m_text(text), AutosizeY(true)
+			: Control(skin, position, width), m_text(text), AutosizeY(true)
 		{
-			TextSettings.HorizontalAlignment = alignment;
-
-			m_size.X = width;
-
 			Initialize(skin);
+			TextSettings.HorizontalAlignment = alignment;
+		}
+
+		Label::Label(const StyleSkin* skin, const Point& position, const String& text, const Point& size, TextHAlign alignment)
+			: Control(skin, position, size), m_text(text)
+		{
+			Initialize(skin);
+			TextSettings.HorizontalAlignment = alignment;
 		}
 
 		Label::Label(const StyleSkin* skin, const Point& position, const String& text, int width, int height, TextHAlign alignment)
-			: Control(skin, position), m_text(text)
-		{
-			TextSettings.HorizontalAlignment = alignment;
+			: Label(skin, position, text, Point(width, height), alignment) { }
 
-			m_size.X = width;
-			m_size.Y = height;
-
-			Initialize(skin);
-		}
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		Label::~Label()
 		{
@@ -74,6 +87,13 @@ namespace Apoc3D
 			TextSettings.HorizontalAlignment = TextHAlign::Left;
 			TextSettings.VerticalAlignment = TextVAlign::Top;
 
+			UpdateText();
+		}
+		void Label::Initialize(Font* font)
+		{
+			m_fontRef = font;
+			TextSettings.HorizontalAlignment = TextHAlign::Left;
+			TextSettings.VerticalAlignment = TextVAlign::Top;
 			UpdateText();
 		}
 
@@ -179,33 +199,147 @@ namespace Apoc3D
 		/*   TextBox                                                            */
 		/************************************************************************/
 
-		TextBox::TextBox(const StyleSkin* skin, const Point& position, int width)
-			: ScrollableControl(skin, position), m_textEdit(Point(0,0), false)
+		TextBox::TextBox(const TextBoxVisualSettings& settings, const Point& position, int width)
+			: ScrollableControl(nullptr, position, width), m_textEdit(false)
 		{
-			m_size.X = width;
+			Initialize(settings);
+		}
+		TextBox::TextBox(const TextBoxVisualSettings& settings, const Point& position, int width, const String& text)
+			: ScrollableControl(nullptr, position, width), m_textEdit(false)
+		{
+			InitText(text);
+			m_textEdit.MoveCursorToEnd();
+			Initialize(settings);
+		}
+		TextBox::TextBox(const TextBoxVisualSettings& settings, const Point& position, const Point& size, const String& text)
+			: ScrollableControl(nullptr, position, size), m_multiline(true), m_textEdit(true)
+		{
+			InitText(text);
+			m_textEdit.MoveCursorToEnd();
+			Initialize(settings);
+		}
+		TextBox::TextBox(const TextBoxVisualSettings& settings, const Point& position, int width, int height, const String& text)
+			: TextBox(settings, position, Point(width, height), text) { }
+
+
+		TextBox::TextBox(const StyleSkin* skin, const Point& position, int width)
+			: ScrollableControl(skin, position, width), m_textEdit(false)
+		{
 			Initialize(skin);
 		}
 		TextBox::TextBox(const StyleSkin* skin, const Point& position, int width, const String& text)
-			: ScrollableControl(skin, position), m_textEdit(Point(0,0), false)
+			: ScrollableControl(skin, position, width), m_textEdit(false)
 		{
-			m_size.X = width;
-			Add(text);
+			InitText(text);
+			m_textEdit.MoveCursorToEnd();
+			Initialize(skin);
+		}
+		TextBox::TextBox(const StyleSkin* skin, const Point& position, const Point& size, const String& text)
+			: ScrollableControl(skin, position, size), m_multiline(true), m_textEdit(true)
+		{
+			InitText(text);
 			m_textEdit.MoveCursorToEnd();
 			Initialize(skin);
 		}
 		TextBox::TextBox(const StyleSkin* skin, const Point& position, int width, int height, const String& text)
-			: ScrollableControl(skin, position, Point(width, height)), m_multiline(true), m_textEdit(Point(0,0), true)
-		{
-			m_size.X = width;
-			Add(text);
-			m_textEdit.MoveCursorToEnd();
-			Initialize(skin);
-		}
+			: TextBox(skin, position, Point(width, height), text) { }
+
+
 		TextBox::~TextBox()
+		{ }
+
+
+		void TextBox::Initialize(const StyleSkin* skin)
 		{
+			m_alwaysShowVS = m_multiline;
+
+			Margin = m_multiline ? skin->TextBoxExMargin : skin->TextBoxMargin;
+
+			if (!m_multiline)
+			{
+				NormalGraphic = UIGraphic(skin->SkinTexture, skin->TextBoxRegions, skin->TextBoxColor);
+			}
+			else
+			{
+				NormalGraphic = UIGraphic(skin->SkinTexture, skin->TextBoxExRegions, skin->TextBoxExColor);
+			}
+
+			DisabledGraphic = NormalGraphic;
+
+			SetFont(skin->TextBoxFont);
+
+			TextSettings.TextColor = skin->TextColor;
+
+			ContentPadding = skin->TextBoxPadding;
+
+			PostInitialize();
+
+			if (m_multiline)
+			{
+				InitScrollbars(skin);
+			}
 		}
 
-		void TextBox::Add(const String& text)
+		void TextBox::Initialize(const TextBoxVisualSettings& settings)
+		{
+			NormalGraphic = settings.BackgroundGraphic;
+
+			if (settings.Magin.isSet())
+				Margin = settings.Magin;
+
+			if (settings.DisabledGraphic.isSet())
+				DisabledGraphic = settings.DisabledGraphic;
+
+			if (settings.AlwaysShowHS.isSet())
+				m_alwaysShowVS = settings.AlwaysShowVS;
+
+			if (settings.AlwaysShowVS.isSet())
+				m_alwaysShowVS = settings.AlwaysShowVS;
+
+			if (settings.ContentPadding.isSet())
+				ContentPadding = settings.ContentPadding;
+
+			SetFont(settings.FontRef);
+
+			TextSettings.TextColor = settings.TextColor;
+
+			PostInitialize();
+
+			if (m_multiline)
+			{
+				assert(settings.HScrollBar.isSet() && settings.VScrollBar.isSet());
+				InitScrollbars(settings.HScrollBar, settings.VScrollBar);
+			}
+		}
+
+		void TextBox::PostInitialize()
+		{
+			TextSettings.HorizontalAlignment = TextHAlign::Left;
+			TextSettings.VerticalAlignment = m_multiline ? TextVAlign::Top : TextVAlign::Middle;
+
+			if (!m_multiline)
+			{
+				m_size.Y = NormalGraphic.SourceRects[0].Height - Margin.getVerticalSum();
+			}
+			else
+			{
+				m_visibleLines = (int)ceilf((float)m_size.Y / m_fontRef->getLineHeightInt());
+
+				// fix up height
+				m_size.Y = m_visibleLines * m_fontRef->getLineHeightInt() - Margin.getVerticalSum();
+			}
+
+			m_textEdit.eventKeyPress().Bind(this, &TextBox::Keyboard_OnPress);
+			m_textEdit.eventKeyPaste().Bind(this, &TextBox::Keyboard_OnPaste);
+			m_textEdit.eventEnterPressed.Bind(this, &TextBox::TextEditState_EnterPressed);
+			m_textEdit.eventContentChanged.Bind(this, &TextBox::TextEditState_ContentChanged);
+			m_textEdit.eventUpPressedSingleline.Bind(this, &TextBox::TextEditState_UpPressedSingleline);
+			m_textEdit.eventDownPressedSingleline.Bind(this, &TextBox::TextEditState_DownPressedSingleline);
+
+			m_timerStarted = true;
+		}
+
+		void TextBox::InitText(const String& text)
 		{
 			m_textEdit.Add(text);
 
@@ -256,53 +390,6 @@ namespace Apoc3D
 			}
 		}
 
-		void TextBox::Initialize(const StyleSkin* skin)
-		{
-			m_alwaysShowVS = m_multiline;
-
-			Magin = m_multiline ? skin->TextBoxExMargin : skin->TextBoxMargin;
-
-			if (!m_multiline)
-			{
-				NormalGraphic = UIGraphic(skin->SkinTexture, skin->TextBox);
-
-				m_size.Y = NormalGraphic.SourceRects[0].Height - Magin.getVerticalSum();
-			}
-			else
-			{
-				NormalGraphic = UIGraphic(skin->SkinTexture, skin->TextBoxEx);
-
-				m_visibleLines = (int)ceilf((float)m_size.Y / m_fontRef->getLineHeightInt());
-
-				// fix up height
-				m_size.Y = m_visibleLines * m_fontRef->getLineHeightInt() - Magin.getVerticalSum();
-			}
-
-			DisabledGraphic = NormalGraphic;
-
-			SetFont(skin->TextBoxFont);
-
-			TextSettings.HorizontalAlignment = TextHAlign::Left;
-			TextSettings.TextColor = skin->TextColor;
-
-			TextSettings.VerticalAlignment = m_multiline ? TextVAlign::Top : TextVAlign::Middle;
-
-			ContentPadding = skin->TextBoxPadding;
-			
-			m_textEdit.eventKeyPress().Bind(this, &TextBox::Keyboard_OnPress);
-			m_textEdit.eventKeyPaste().Bind(this, &TextBox::Keyboard_OnPaste);
-			m_textEdit.eventEnterPressed.Bind(this, &TextBox::TextEditState_EnterPressed);
-			m_textEdit.eventContentChanged.Bind(this, &TextBox::TextEditState_ContentChanged);
-			m_textEdit.eventUpPressedSingleline.Bind(this, &TextBox::TextEditState_UpPressedSingleline);
-			m_textEdit.eventDownPressedSingleline.Bind(this, &TextBox::TextEditState_DownPressedSingleline);
-
-			if (m_multiline)
-			{
-				InitScrollbars(skin);
-			}
-			m_timerStarted = true;
-		}
-
 		void TextBox::Update(const GameTime* time)
 		{
 			Apoc3D::Math::Rectangle txtArea = GetTextArea();
@@ -315,10 +402,10 @@ namespace Apoc3D
 			{
 				m_textEdit.Update(time);
 			}
-
+			
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			Apoc3D::Math::Rectangle textArea = GetTextArea();
-			if (textArea.Contains(mouse->GetPosition()))
+			if (!ReadOnly && textArea.Contains(mouse->GetPosition()))
 			{
 				if (m_clickChecker.Check(mouse))
 				{
@@ -436,7 +523,7 @@ namespace Apoc3D
 		{
 			const UIGraphic& g = Enabled ? NormalGraphic : DisabledGraphic;
 
-			g.Draw(sprite, Magin.InflateRect(getAbsoluteArea()));
+			g.Draw(sprite, Margin.InflateRect(getAbsoluteArea()));
 
 			Apoc3D::Math::Rectangle dstRect = getAbsoluteArea();
 
@@ -459,10 +546,12 @@ namespace Apoc3D
 
 		void TextBox::_DrawText(Sprite* sprite)
 		{
+			bool canShowCursor = HasFocus && !ReadOnly && m_cursorVisible && ParentFocused;
+			bool canShowSelection = !ReadOnly;
+
 			Apoc3D::Math::Rectangle contentArea = GetTextArea();
 
 			Point cursorPos = m_textEdit.getCursorPosition();
-
 			int32 cursorLeft = - m_fontRef->MeasureString(L"|").X / 4;
 			
 			if (!m_multiline)
@@ -484,14 +573,14 @@ namespace Apoc3D
 				//m_fontRef->DrawString(sprite, text, m_textOffset - m_scrollOffset + baseOffset, m_skin->TextColor);
 
 				int32 lss, lse;
-				if (m_textEdit.GetLineSelectionRegion(0, lss, lse))
+				if (canShowSelection && m_textEdit.GetLineSelectionRegion(0, lss, lse))
 				{
 					TextSettings.DrawBG(sprite, m_fontRef, text, lss, lse, contentArea.getTopLeft() - m_scrollOffset, contentArea.getSize(), CV_LightBlue);
 				}
 				
 				TextSettings.Draw(sprite, m_fontRef, text, contentArea.getTopLeft() - m_scrollOffset, contentArea.getSize(), 0xff);
 
-				if (HasFocus && !ReadOnly && m_cursorVisible && ParentFocused)//getOwner() == UIRoot::getTopMostForm())
+				if (canShowCursor)
 				{
 					//m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset + baseOffset, m_skin->TextColor);
 					TextSettings.Draw(sprite, m_fontRef, L"|", contentArea.getTopLeft() + m_cursorOffset - m_scrollOffset, contentArea.getSize(), 0xff);
@@ -508,7 +597,7 @@ namespace Apoc3D
 					const String& line = lines[i];
 
 					int32 lss, lse;
-					if (m_textEdit.GetLineSelectionRegion(i, lss, lse))
+					if (canShowSelection && m_textEdit.GetLineSelectionRegion(i, lss, lse))
 					{
 						TextSettings.DrawBG(sprite, m_fontRef, line, lss, lse, lineOffset - m_scrollOffset + contentArea.getTopLeft(), contentArea.getSize(), CV_LightBlue);
 					}
@@ -519,7 +608,7 @@ namespace Apoc3D
 					lineOffset.Y += m_fontRef->getLineHeightInt();
 				}
 
-				if (HasFocus && !ReadOnly && m_cursorVisible && ParentFocused)// getOwner() == UIRoot::getTopMostForm())
+				if (canShowCursor)
 				{
 					if (cursorPos.X > (int)lines[cursorPos.Y].size())
 						cursorPos.X = (int)lines[cursorPos.Y].size();

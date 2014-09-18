@@ -64,7 +64,7 @@ namespace Apoc3D
 			ControlDarkShadeColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"ControlDarkShadeColor"));
 			ControlLightShadeColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"ControlLightShadeColor"));
 
-			ButtonDisabledColorMod = StringUtils::ParseUInt32Hex(basicSect->getValue(L"ButtonDisabledColorMod"));
+			//ButtonDisabledColorMod = StringUtils::ParseUInt32Hex(basicSect->getValue(L"ButtonDisabledColorMod"));
 			MIDBackgroundColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"MIDBackgroundColor"));
 
 			BorderColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"BorderColor"));
@@ -92,14 +92,22 @@ namespace Apoc3D
 				ConfigurationSection* normalSect = btnSect->getSection(L"Normal");
 				ConfigurationSection* downSect = btnSect->getSection(L"Down");
 				ConfigurationSection* hoverSect = btnSect->getSection(L"Hover");
+				ConfigurationSection* disabledSect = btnSect->getSection(L"Disabled");
 
-				Parse9Region(normalSect, ButtonRegionsNormal, cachedRegions);
-				Parse9Region(downSect, ButtonRegionsDown, cachedRegions);
-				Parse9Region(hoverSect, ButtonRegionsHover, cachedRegions);
+				Parse9Region(normalSect, ButtonNormalRegions, cachedRegions);
+				Parse9Region(downSect, ButtonDownRegions, cachedRegions);
+				Parse9Region(hoverSect, ButtonHoverRegions, cachedRegions);
+				Parse9Region(disabledSect, ButtonDisabledRegions, cachedRegions);
 
-				Push9Region(normalSect, ButtonRegionsNormal);
-				Push9Region(downSect, ButtonRegionsDown);
-				Push9Region(hoverSect, ButtonRegionsHover);
+				Offset9Region(normalSect, ButtonNormalRegions);
+				Offset9Region(downSect, ButtonDownRegions);
+				Offset9Region(hoverSect, ButtonHoverRegions);
+				Offset9Region(disabledSect, ButtonDisabledRegions);
+
+				ParseColorValue(normalSect, ButtonNormalColor);
+				ParseColorValue(downSect, ButtonHoverColor);
+				ParseColorValue(hoverSect, ButtonDownColor);
+				ParseColorValue(disabledSect, ButtonDisabledColor);
 
 				cachedRegions.Clear();
 			}
@@ -112,17 +120,21 @@ namespace Apoc3D
 				ParsePadding(textBoxSect, TextBoxPadding);
 
 				ConfigurationSection* normalSect = textBoxSect->getSection(L"Normal");
-				Parse3Region(normalSect, TextBox, cachedRegions);
-				Push3Region(normalSect, TextBox);
+				Parse3Region(normalSect, TextBoxRegions, cachedRegions);
+				Offset3Region(normalSect, TextBoxRegions);
+				ParseColorValue(normalSect, TextBoxColor);
 
 				cachedRegions.Clear();
 			}
 			{ // TextFieldEx
 				ConfigurationSection* textBoxExSect = config->get(L"TextFieldMultiline");
 				
+				ParseMargin(textBoxExSect, TextBoxExMargin);
+
 				ConfigurationSection* normalSect = textBoxExSect->getSection(L"Normal");
-				Parse9Region(normalSect, TextBoxEx, cachedRegions);
-				Push9Region(normalSect, TextBoxEx);
+				Parse9Region(normalSect, TextBoxExRegions, cachedRegions);
+				Offset9Region(normalSect, TextBoxExRegions);
+				ParseColorValue(normalSect, TextBoxExColor);
 
 				cachedRegions.Clear();
 			}
@@ -141,18 +153,28 @@ namespace Apoc3D
 				ConfigurationSection* hoverSect = checkBoxSect->getSection(L"Hover");
 				ConfigurationSection* downSect = checkBoxSect->getSection(L"Down");
 				ConfigurationSection* checkedSect = checkBoxSect->getSection(L"Checked");
+				ConfigurationSection* disabledCheckedSect = checkBoxSect->getSection(L"DisabledChecked");
 
-				ParseRegion(disabledSect, CheckBoxDisable, cachedRegions);
-				ParseRegion(normalSect, CheckBoxNormal, cachedRegions);
-				ParseRegion(hoverSect, CheckBoxHover, cachedRegions);
-				ParseRegion(downSect, CheckBoxDown, cachedRegions);
-				ParseRegion(checkedSect, CheckBoxChecked, cachedRegions);
+				ParseRegion(disabledSect, CheckBoxDisabledRegion, cachedRegions);
+				ParseRegion(normalSect, CheckBoxNormalRegion, cachedRegions);
+				ParseRegion(hoverSect, CheckBoxHoverRegion, cachedRegions);
+				ParseRegion(downSect, CheckBoxDownRegion, cachedRegions);
+				ParseRegion(checkedSect, CheckBoxCheckedRegion, cachedRegions);
+				ParseRegion(disabledCheckedSect, CheckBoxDisabledCheckedRegion, cachedRegions);
 
-				PushRegion(disabledSect, CheckBoxDisable);
-				PushRegion(normalSect, CheckBoxNormal);
-				PushRegion(hoverSect, CheckBoxHover);
-				PushRegion(downSect, CheckBoxDown);
-				PushRegion(checkedSect, CheckBoxChecked);
+				OffsetRegion(disabledSect, CheckBoxDisabledRegion);
+				OffsetRegion(normalSect, CheckBoxNormalRegion);
+				OffsetRegion(hoverSect, CheckBoxHoverRegion);
+				OffsetRegion(downSect, CheckBoxDownRegion);
+				OffsetRegion(checkedSect, CheckBoxCheckedRegion);
+				OffsetRegion(disabledCheckedSect, CheckBoxDisabledCheckedRegion);
+
+				ParseColorValue(disabledSect, CheckBoxDisabledColor);
+				ParseColorValue(normalSect, CheckBoxNormalColor);
+				ParseColorValue(hoverSect, CheckBoxHoverColor);
+				ParseColorValue(downSect, CheckBoxDownColor);
+				ParseColorValue(checkedSect, CheckBoxCheckedColor);
+				ParseColorValue(disabledCheckedSect, CheckBoxDisableCheckedColor);
 
 				cachedRegions.Clear();
 			}
@@ -169,130 +191,59 @@ namespace Apoc3D
 				ConfigurationSection* hoverSect = radioButtonSect->getSection(L"Hover");
 				ConfigurationSection* downSect = radioButtonSect->getSection(L"Down");
 				ConfigurationSection* checkedSect = radioButtonSect->getSection(L"Checked");
+				ConfigurationSection* disabledCheckedSect = radioButtonSect->getSection(L"DisabledChecked");
 
-				ParseRegion(disabledSect, RadioButtonDisable, cachedRegions);
-				ParseRegion(normalSect, RadioButtonNormal, cachedRegions);
-				ParseRegion(hoverSect, RadioButtonHover, cachedRegions);
-				ParseRegion(downSect, RadioButtonDown, cachedRegions);
-				ParseRegion(checkedSect, RadioButtonChecked, cachedRegions);
+				ParseRegion(disabledSect, RadioButtonDisabledRegion, cachedRegions);
+				ParseRegion(normalSect, RadioButtonNormalRegion, cachedRegions);
+				ParseRegion(hoverSect, RadioButtonHoverRegion, cachedRegions);
+				ParseRegion(downSect, RadioButtonDownRegion, cachedRegions);
+				ParseRegion(checkedSect, RadioButtonCheckedRegion, cachedRegions);
+				ParseRegion(disabledCheckedSect, RadioButtonDisabledCheckedRegion, cachedRegions);
 
-				PushRegion(disabledSect, RadioButtonDisable);
-				PushRegion(normalSect, RadioButtonNormal);
-				PushRegion(hoverSect, RadioButtonHover);
-				PushRegion(downSect, RadioButtonDown);
-				PushRegion(checkedSect, RadioButtonChecked);
+				OffsetRegion(disabledSect, RadioButtonDisabledRegion);
+				OffsetRegion(normalSect, RadioButtonNormalRegion);
+				OffsetRegion(hoverSect, RadioButtonHoverRegion);
+				OffsetRegion(downSect, RadioButtonDownRegion);
+				OffsetRegion(checkedSect, RadioButtonCheckedRegion);
+				OffsetRegion(disabledCheckedSect, RadioButtonDisabledCheckedRegion);
 
-				cachedRegions.Clear();
-			}
-
-			{ // DropDownButton
-				ConfigurationSection* dropDownSect = config->get(L"DropDownButton");
-
-				ParseMargin(dropDownSect, DropDownButtonMargin);
-
-				ConfigurationSection* normalSect = dropDownSect->getSection(L"Normal");
-				ConfigurationSection* hoverSect = dropDownSect->getSection(L"Hover");
-				ConfigurationSection* downSect = dropDownSect->getSection(L"Down");
-
-				ParseRegion(normalSect, DropDownButtonNormal, cachedRegions);
-				ParseRegion(hoverSect, DropDownButtonHover, cachedRegions);
-				ParseRegion(downSect, DropDownButtonDown, cachedRegions);
-
-				PushRegion(normalSect, DropDownButtonNormal);
-				PushRegion(hoverSect, DropDownButtonHover);
-				PushRegion(downSect, DropDownButtonDown);
+				ParseColorValue(disabledSect, RadioButtonDisabledColor);
+				ParseColorValue(normalSect, RadioButtonNormalColor);
+				ParseColorValue(hoverSect, RadioButtonHoverColor);
+				ParseColorValue(downSect, RadioButtonDownColor);
+				ParseColorValue(checkedSect, RadioButtonCheckedColor);
+				ParseColorValue(disabledCheckedSect, RadioButtonDisabledCheckedColor);
 
 				cachedRegions.Clear();
 			}
 
-			{ // Form
-				ConfigurationSection* formSect = config->get(L"Form");
-				FormFont = GetFontName(formSect->getAttribute(L"Font"));
+			{ // DropdownButton
+				ConfigurationSection* dropdownSect = config->get(L"DropdownButton");
 
-				ParsePadding(formSect, FormTitlePadding);
+				ParsePoint(dropdownSect, DropdownButtonOffset);
 
-				ConfigurationSection* titleNormalSect = formSect->getSection(L"TitleNormal");
-				ConfigurationSection* backgroundSect = formSect->getSection(L"Background");
-				ConfigurationSection* resizer = formSect->getSection(L"Resizer");
+				ParseMargin(dropdownSect, DropdownButtonMargin);
+
+				ConfigurationSection* normalSect = dropdownSect->getSection(L"Normal");
+				ConfigurationSection* hoverSect = dropdownSect->getSection(L"Hover");
+				ConfigurationSection* downSect = dropdownSect->getSection(L"Down");
+
+				ParseRegion(normalSect, DropdownButtonNormalRegion, cachedRegions);
+				ParseRegion(hoverSect, DropdownButtonHoverRegion, cachedRegions);
+				ParseRegion(downSect, DropdownButtonDownRegion, cachedRegions);
+
+				OffsetRegion(normalSect, DropdownButtonNormalRegion);
+				OffsetRegion(hoverSect, DropdownButtonHoverRegion);
+				OffsetRegion(downSect, DropdownButtonDownRegion);
 				
-				Parse3Region(titleNormalSect, FormTitle, cachedRegions);
-				Parse9Region(backgroundSect, FormBody, cachedRegions);
-				ParseRegion(resizer, FormResizer, cachedRegions);
+				ParseColorValue(normalSect, DropdownButtonNormalColor);
+				ParseColorValue(hoverSect, DropdownButtonHoverColor);
+				ParseColorValue(downSect, DropdownButtonDownColor);
 
-				Push3Region(titleNormalSect, FormTitle);
-				Push9Region(backgroundSect, FormBody);
-				PushRegion(resizer, FormResizer);
-
-				cachedRegions.Clear();
-
-				ConfigurationSection* iconSect = formSect->getSection(L"ControlBoxIcon");
-				{
-					ConfigurationSection* maxSect = iconSect->getSection(L"MaxOverlay");
-					ConfigurationSection* minSect = iconSect->getSection(L"MinOverlay");
-					ConfigurationSection* closeSect = iconSect->getSection(L"CloseOverlay");
-					ConfigurationSection* restoreSect = iconSect->getSection(L"RestoreOverlay");
-
-					ParseRegion(maxSect, FormCBIconMax, cachedRegions);
-					ParseRegion(minSect, FormCBIconMin, cachedRegions);
-					ParseRegion(closeSect, FormCBIconClose, cachedRegions);
-					ParseRegion(restoreSect, FormCBIconRestore, cachedRegions);
-
-					PushRegion(maxSect, FormCBIconMax);
-					PushRegion(minSect, FormCBIconMin);
-					PushRegion(closeSect, FormCBIconClose);
-					PushRegion(restoreSect, FormCBIconRestore);
-
-					cachedRegions.Clear();
-				}
-
-				ConfigurationSection* cbBtnSects[4] = 
-				{
-					formSect->getSection(L"MaximizeButton"),
-					formSect->getSection(L"CloseButton"),
-					formSect->getSection(L"MinimizeButton"),
-					formSect->getSection(L"RestoreButton")
-				};
-				struct 
-				{
-					Apoc3D::Math::Rectangle& disabled;
-					Apoc3D::Math::Rectangle& normal;
-					Apoc3D::Math::Rectangle& hover;
-					Apoc3D::Math::Rectangle& down;
-				} cbBtnRegions[4] = 
-				{
-					{ FormCBMaxDisabled, FormCBMaxNormal, FormCBMaxHover, FormCBMaxDown },
-					{ FormCBCloseDisabled, FormCBCloseNormal, FormCBCloseHover, FormCBCloseDown },
-					{ FormCBMinDisabled, FormCBMinNormal, FormCBMinHover, FormCBMinDown },
-					{ FormCBRestoreDisabled, FormCBRestoreNormal, FormCBRestoreHover, FormCBRestoreDown },
-				};
-
-				int32 cbbCount = sizeof(cbBtnSects) / sizeof(cbBtnSects[0]);
-				for (int i=0;i<cbbCount;i++)
-				{
-					ConfigurationSection* cbbSect = cbBtnSects[i];
-					{
-						ConfigurationSection* disabledSect = cbbSect->getSection(L"Disabled");
-						ConfigurationSection* normalSect = cbbSect->getSection(L"Normal");
-						ConfigurationSection* hoverSect = cbbSect->getSection(L"Hover");
-						ConfigurationSection* downSect = cbbSect->getSection(L"Down");
-
-						ParseRegion(disabledSect, cbBtnRegions[i].disabled, cachedRegions);
-						ParseRegion(normalSect, cbBtnRegions[i].normal, cachedRegions);
-						ParseRegion(hoverSect, cbBtnRegions[i].hover, cachedRegions);
-						ParseRegion(downSect, cbBtnRegions[i].down, cachedRegions);
-
-						PushRegion(disabledSect, cbBtnRegions[i].disabled);
-						PushRegion(normalSect, cbBtnRegions[i].normal);
-						PushRegion(hoverSect, cbBtnRegions[i].hover);
-						PushRegion(downSect, cbBtnRegions[i].down);
-
-						cachedRegions.Clear();
-					}
-				}
-				
 				cachedRegions.Clear();
 			}
 
+			
 			{ // ProgressBar
 				ConfigurationSection* cbbSect = config->get(L"ProgressBar");
 
@@ -302,8 +253,11 @@ namespace Apoc3D
 				Parse3Region(bgSect, ProgressBarBG, cachedRegions);
 				Parse3Region(fillSect, ProgressBarFilled, cachedRegions);
 				
-				Push3Region(bgSect, ProgressBarBG);
-				Push3Region(fillSect, ProgressBarFilled);
+				Offset3Region(bgSect, ProgressBarBG);
+				Offset3Region(fillSect, ProgressBarFilled);
+
+				ParseColorValue(bgSect, ProgressBarBGColor);
+				ParseColorValue(fillSect, ProgressBarFilledColor);
 
 				cachedRegions.Clear();
 			}
@@ -320,9 +274,9 @@ namespace Apoc3D
 				Parse3Region(fillSect, HSilderFilled, cachedRegions);
 				ParseRegion(handleSect, HSliderHandle, cachedRegions);
 
-				Push3Region(bgSect, HSilderBG);
-				Push3Region(fillSect, HSilderFilled);
-				PushRegion(handleSect, HSliderHandle);
+				Offset3Region(bgSect, HSilderBG);
+				Offset3Region(fillSect, HSilderFilled);
+				OffsetRegion(handleSect, HSliderHandle);
 
 				cachedRegions.Clear();
 			}
@@ -338,16 +292,16 @@ namespace Apoc3D
 				ParseRegion(bgSect, VScrollBarBG, cachedRegions);
 				Parse3Region(cursor, VScrollBarCursor, cachedRegions);
 
-				PushRegion(bgSect, VScrollBarBG);
-				Push3Region(cursor, VScrollBarCursor);
+				OffsetRegion(bgSect, VScrollBarBG);
+				Offset3Region(cursor, VScrollBarCursor);
 
 				cachedRegions.Clear();
 				ParseRegion(backSect, VScrollBarUp, cachedRegions);
 				cachedRegions.Clear();
 				ParseRegion(forwardSect, VScrollBarDown, cachedRegions);
 
-				PushRegion(backSect, VScrollBarUp);
-				PushRegion(forwardSect, VScrollBarDown);
+				OffsetRegion(backSect, VScrollBarUp);
+				OffsetRegion(forwardSect, VScrollBarDown);
 
 				cachedRegions.Clear();
 			}
@@ -364,16 +318,16 @@ namespace Apoc3D
 				ParseRegion(bgSect, HScrollBarBG, cachedRegions);
 				Parse3Region(cursor, HScrollBarCursor, cachedRegions);
 
-				PushRegion(bgSect, HScrollBarBG);
-				Push3Region(cursor, HScrollBarCursor);
+				OffsetRegion(bgSect, HScrollBarBG);
+				Offset3Region(cursor, HScrollBarCursor);
 
 				cachedRegions.Clear();
 				ParseRegion(backSect, HScrollBarLeft, cachedRegions);
 				cachedRegions.Clear();
 				ParseRegion(forwardSect, HScrollBarRight, cachedRegions);
 
-				PushRegion(backSect, HScrollBarLeft);
-				PushRegion(forwardSect, HScrollBarRight);
+				OffsetRegion(backSect, HScrollBarLeft);
+				OffsetRegion(forwardSect, HScrollBarRight);
 
 				cachedRegions.Clear();
 			}
@@ -389,10 +343,90 @@ namespace Apoc3D
 				ConfigurationSection* normal = listBox->getSection(L"Normal");
 				Parse9Region(normal, ListBoxBackground, cachedRegions);
 				
-				Push9Region(normal, ListBoxBackground);
+				Offset9Region(normal, ListBoxBackground);
 				cachedRegions.Clear();
 			}
 
+
+			{ // Form
+				ConfigurationSection* formSect = config->get(L"Form");
+				FormFont = GetFontName(formSect->getAttribute(L"Font"));
+
+				ParsePadding(formSect, FormTitlePadding);
+
+				ConfigurationSection* titleNormalSect = formSect->getSection(L"TitleNormal");
+				ConfigurationSection* backgroundSect = formSect->getSection(L"Background");
+				ConfigurationSection* resizer = formSect->getSection(L"Resizer");
+
+				Parse3Region(titleNormalSect, FormTitle, cachedRegions);
+				Parse9Region(backgroundSect, FormBody, cachedRegions);
+				ParseRegion(resizer, FormResizer, cachedRegions);
+
+				Offset3Region(titleNormalSect, FormTitle);
+				Offset9Region(backgroundSect, FormBody);
+				OffsetRegion(resizer, FormResizer);
+
+				cachedRegions.Clear();
+
+				ConfigurationSection* iconSect = formSect->getSection(L"ControlBoxIcon");
+				{
+					ConfigurationSection* maxSect = iconSect->getSection(L"MaxOverlay");
+					ConfigurationSection* minSect = iconSect->getSection(L"MinOverlay");
+					ConfigurationSection* closeSect = iconSect->getSection(L"CloseOverlay");
+					ConfigurationSection* restoreSect = iconSect->getSection(L"RestoreOverlay");
+
+					ParseRegion(maxSect, FormCBIconMax, cachedRegions);
+					ParseRegion(minSect, FormCBIconMin, cachedRegions);
+					ParseRegion(closeSect, FormCBIconClose, cachedRegions);
+					ParseRegion(restoreSect, FormCBIconRestore, cachedRegions);
+
+					OffsetRegion(maxSect, FormCBIconMax);
+					OffsetRegion(minSect, FormCBIconMin);
+					OffsetRegion(closeSect, FormCBIconClose);
+					OffsetRegion(restoreSect, FormCBIconRestore);
+
+					cachedRegions.Clear();
+				}
+
+				struct ButtonRef
+				{
+					ConfigurationSection* section;
+					Apoc3D::Math::Rectangle& disabled;
+					Apoc3D::Math::Rectangle& normal;
+					Apoc3D::Math::Rectangle& hover;
+					Apoc3D::Math::Rectangle& down;
+				} cbBtnRegions[4] =
+				{
+					{ formSect->getSection(L"MaximizeButton"), FormCBMaxDisabled, FormCBMaxNormal, FormCBMaxHover, FormCBMaxDown },
+					{ formSect->getSection(L"CloseButton"), FormCBCloseDisabled, FormCBCloseNormal, FormCBCloseHover, FormCBCloseDown },
+					{ formSect->getSection(L"MinimizeButton"), FormCBMinDisabled, FormCBMinNormal, FormCBMinHover, FormCBMinDown },
+					{ formSect->getSection(L"RestoreButton"), FormCBRestoreDisabled, FormCBRestoreNormal, FormCBRestoreHover, FormCBRestoreDown },
+				};
+
+				for (const ButtonRef& e : cbBtnRegions)
+				{
+					ConfigurationSection* cbbSect = e.section;
+
+					ConfigurationSection* disabledSect = cbbSect->getSection(L"Disabled");
+					ConfigurationSection* normalSect = cbbSect->getSection(L"Normal");
+					ConfigurationSection* hoverSect = cbbSect->getSection(L"Hover");
+					ConfigurationSection* downSect = cbbSect->getSection(L"Down");
+
+					ParseRegion(disabledSect, e.disabled, cachedRegions);
+					ParseRegion(normalSect, e.normal, cachedRegions);
+					ParseRegion(hoverSect, e.hover, cachedRegions);
+					ParseRegion(downSect, e.down, cachedRegions);
+
+					OffsetRegion(disabledSect, e.disabled);
+					OffsetRegion(normalSect, e.normal);
+					OffsetRegion(hoverSect, e.hover);
+					OffsetRegion(downSect, e.down);
+
+					cachedRegions.Clear();
+				}
+
+				cachedRegions.Clear();
+			}
 
 			// Menu
 			{
@@ -404,8 +438,8 @@ namespace Apoc3D
 				ParseRegion(subMenuArrow, SubMenuArrow, cachedRegions);
 				ParseRegion(hshadeSect, HShade, cachedRegions);
 
-				PushRegion(subMenuArrow, SubMenuArrow);
-				PushRegion(hshadeSect, HShade);
+				OffsetRegion(subMenuArrow, SubMenuArrow);
+				OffsetRegion(hshadeSect, HShade);
 
 				cachedRegions.Clear();
 			}
@@ -418,7 +452,7 @@ namespace Apoc3D
 
 		StyleSkin::~StyleSkin()
 		{
-			delete SkinTexture;
+			DELETE_AND_NULL(SkinTexture);
 		}
 
 		Font* StyleSkin::GetFontName(const String& alias)
@@ -429,45 +463,38 @@ namespace Apoc3D
 		void StyleSkin::ParseMargin(ConfigurationSection* sect, ControlBounds& result)
 		{
 			int32 margins[4];
-			if (sect->TryGetAttributeIntsChecked(L"Margin", margins, 4))
+			if (sect->TryGetAttributeIntsChecked(L"Margin", margins))
 			{
 				result.SetFromLeftTopRightBottom(margins);
 			}
-			else
-			{
-				result.SetZero();
-			}
 		}
-
 		void StyleSkin::ParsePadding(ConfigurationSection* sect, ControlBounds& result)
 		{
 			int32 padding[4];
-			if (sect->TryGetAttributeIntsChecked(L"Padding", padding, 4))
+			if (sect->TryGetAttributeIntsChecked(L"Padding", padding))
 			{
 				result.SetFromLeftTopRightBottom(padding);
 			}
-			else
-			{
-				result.SetZero();
-			}
 		}
+
 		void StyleSkin::Parse9Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[9], HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions)
 		{
 			String ref;
 			if (sect->tryGetAttribute(L"RegionRef", ref))
 			{
-				memcpy(srcRects, cachedRegions[ref], sizeof(Apoc3D::Math::Rectangle) * 9);
+				//assert(sect->getAttribute(L"Type") == L"9region_ref");
+				FillArray(srcRects, cachedRegions[ref]);
 				return;
 			}
 
-			List<int32> parts;
-			StringUtils::SplitParseInts(sect->getValue(), parts, L"[], ");
-			assert(parts.getCount() == 4 * 9);
-
-			for (int i=0;i<9;i++)
+			//assert(sect->getAttribute(L"Type") == L"9region");
+			int32 parts[4 * 9];
+			StringUtils::SplitParseIntsChecked(sect->getValue(), parts, L"[], ");
+			
+			for (int i = 0; i < 9; i++)
 			{
 				Apoc3D::Math::Rectangle& rect = srcRects[i];
-				
+
 				rect.X = parts[i * 4];
 				rect.Y = parts[i * 4 + 1];
 				rect.Width = parts[i * 4 + 2];
@@ -481,15 +508,17 @@ namespace Apoc3D
 			String ref;
 			if (sect->tryGetAttribute(L"RegionRef", ref))
 			{
-				memcpy(srcRects, cachedRegions[ref], sizeof(Apoc3D::Math::Rectangle) * 3);
+				//assert(sect->getAttribute(L"Type") == L"9region_ref");
+				FillArray(srcRects, cachedRegions[ref]);
 				return;
 			}
 
-			List<int32> parts;
-			StringUtils::SplitParseInts(sect->getValue(), parts, L"[], ");
-			assert(parts.getCount() == 4 * 3);
+			//assert(sect->getAttribute(L"Type") == L"9region");
 
-			for (int i=0;i<3;i++)
+			int32 parts[4 * 3];
+			StringUtils::SplitParseIntsChecked(sect->getValue(), parts, L"[], ");
+
+			for (int i = 0; i < 3; i++)
 			{
 				Apoc3D::Math::Rectangle& rect = srcRects[i];
 
@@ -506,13 +535,15 @@ namespace Apoc3D
 			String ref;
 			if (sect->tryGetAttribute(L"RegionRef", ref))
 			{
-				memcpy(&srcRect, cachedRegions[ref], sizeof(Apoc3D::Math::Rectangle));
+				//assert(sect->getAttribute(L"Type") == L"9region_ref");
+				srcRect = *cachedRegions[ref];
 				return;
 			}
 
-			List<int32> parts;
-			StringUtils::SplitParseInts(sect->getValue(), parts, L"[], ");
-			assert(parts.getCount() == 4);
+			//assert(sect->getAttribute(L"Type") == L"9region");
+			
+			int32 parts[4];
+			StringUtils::SplitParseIntsChecked(sect->getValue(), parts, L"[], ");
 
 			srcRect.X = parts[0];
 			srcRect.Y = parts[1];
@@ -522,53 +553,59 @@ namespace Apoc3D
 			cachedRegions.Add(sect->getName(), &srcRect);
 		}
 
-
-		void StyleSkin::Push9Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[9])
+		void StyleSkin::ParsePoint(Apoc3D::Config::ConfigurationSection* sect, Point& result)
 		{
-			Point coord(0,0);
-			List<int32> coordArr;
-			if (sect->TryGetAttributeInts(L"Coord", coordArr))
-			{
-				assert(coordArr.getCount()==2);
-				coord.X = coordArr[0];
-				coord.Y = coordArr[1];
-
-				for (int i=0;i<9;i++)
-				{
-					srcRects[i].X += coord.X;
-					srcRects[i].Y += coord.Y;
-				}
-			}
-		}
-		void StyleSkin::Push3Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[3])
-		{
-			Point coord(0,0);
-			List<int32> coordArr;
-			if (sect->TryGetAttributeInts(L"Coord", coordArr))
-			{
-				assert(coordArr.getCount()==2);
-				coord.X = coordArr[0];
-				coord.Y = coordArr[1];
-
-				for (int i=0;i<3;i++)
-				{
-					srcRects[i].X += coord.X;
-					srcRects[i].Y += coord.Y;
-				}
-			}
-		}
-		void StyleSkin::PushRegion(ConfigurationSection* sect, Apoc3D::Math::Rectangle& srcRect)
-		{
-			Point coord(0,0);
-			//List<int32> coordArr;
 			int32 coordArr[2];
-			if (sect->TryGetAttributeIntsChecked(L"Coord", coordArr, 2))
+			if (sect->TryGetAttributeIntsChecked(L"Offset", coordArr))
 			{
-				coord.X = coordArr[0];
-				coord.Y = coordArr[1];
+				result.X = coordArr[0];
+				result.Y = coordArr[1];
+			}
+		}
 
-				srcRect.X += coord.X;
-				srcRect.Y += coord.Y;
+		void StyleSkin::ParseColorValue(Apoc3D::Config::ConfigurationSection* sect, ColorValue& result)
+		{
+			String exp;
+			if (sect->tryGetAttribute(L"Color", exp))
+			{
+				if (!ColorValueConverter.TryParse(exp, result))
+				{
+					result = StringUtils::ParseUInt32Hex(exp);
+				}
+			}
+		}
+
+		void StyleSkin::Offset9Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[9])
+		{
+			int32 coordArr[2];
+			if (sect->TryGetAttributeIntsChecked(L"Coord", coordArr))
+			{
+				for (Apoc3D::Math::Rectangle& r : srcRects)
+				{
+					r.X += coordArr[0];
+					r.Y += coordArr[1];
+				}
+			}
+		}
+		void StyleSkin::Offset3Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle(&srcRects)[3])
+		{
+			int32 coordArr[2];
+			if (sect->TryGetAttributeIntsChecked(L"Coord", coordArr))
+			{
+				for (Apoc3D::Math::Rectangle& r : srcRects)
+				{
+					r.X += coordArr[0];
+					r.Y += coordArr[1];
+				}
+			}
+		}
+		void StyleSkin::OffsetRegion(ConfigurationSection* sect, Apoc3D::Math::Rectangle& srcRect)
+		{
+			int32 coordArr[2];
+			if (sect->TryGetAttributeIntsChecked(L"Coord", coordArr))
+			{
+				srcRect.X += coordArr[0];
+				srcRect.Y += coordArr[1];
 			}
 		}
 	}

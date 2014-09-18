@@ -250,8 +250,8 @@ namespace Apoc3D
 		/************************************************************************/
 		/* TextEditState                                                        */
 		/************************************************************************/
-
-		TextEditState::TextEditState(const Point& cursorPos, bool multiline)
+		
+		TextEditState::TextEditState(bool multiline, const Point& cursorPos)
 			: m_cursorLocation(cursorPos), m_multiline(multiline)
 		{
 			m_keyboard.eventKeyPress.Bind(this, &TextEditState::Keyboard_OnPress);
