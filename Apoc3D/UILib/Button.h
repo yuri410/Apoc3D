@@ -230,10 +230,10 @@ namespace Apoc3D
 			bool isMouseHover() const { return m_hasMouseHoverArea; }
 			const Apoc3D::Math::Rectangle& getMouseHoverArea() const { assert(m_hasMouseHoverArea); return m_mouseHoverArea; }
 
-			int32 ForceMouseDownLookIndex;
+			int32 ForceMouseDownLookIndex = -1;
 
-			bool Enabled;
-			bool Visible;
+			bool Enabled = true;
+			bool Visible = true;
 
 			Point Position;
 
@@ -258,7 +258,7 @@ namespace Apoc3D
 			bool* m_isMouseHover;
 			bool* m_isMouseDown;
 
-			bool m_hasMouseHoverArea;
+			bool m_hasMouseHoverArea = false;
 			Apoc3D::Math::Rectangle m_mouseHoverArea;
 		};
 

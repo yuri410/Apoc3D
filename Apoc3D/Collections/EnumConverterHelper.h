@@ -112,8 +112,14 @@ namespace Apoc3D
 		template <typename T>
 		class EnumToStringConversionHelper
 		{
+			struct EnumEqualityComparer
+			{
+				static bool Equals(const T& x, const T& y) { return x == y; }
+				static int32 GetHashCode(const T& obj) { return static_cast<int32>(obj); }
+			};
+
 		public:
-			typedef HashMap<T, String> CastTable;
+			typedef HashMap<T, String, EnumEqualityComparer> CastTable;
 			typedef typename CastTable::Iterator Iterator;
 			typedef typename CastTable::KeyAccessor NameAccessor;
 			typedef typename CastTable::ValueAccessor ValueAccessor;
@@ -211,8 +217,8 @@ namespace Apoc3D
 			return result;
 		}
 
-		template <typename T, typename H, T (*Parse)(const String&)>
-		T ParseFlags(const String& combo, H* obj, const String& delim) 
+		template <typename T, typename H, T (H::*parse)(const String&) const>
+		T ParseFlagFields(const String& combo, const H* obj, const String& delim) 
 		{
 			String v = combo;
 			StringUtils::ToLowerCase(v);
@@ -223,7 +229,7 @@ namespace Apoc3D
 
 			for (const String& e : vals)
 			{
-				result |= (obj->*Parse(e));
+				result |= (obj->*parse)(e);
 			}
 
 			return static_cast<T>(result);
@@ -234,13 +240,13 @@ namespace Apoc3D
 		template <typename T>
 		T EnumDualConversionHelper<T>::ParseFlags(const String& combo, const String& delim) const 
 		{
-			return ParseFlags<T, EnumDualConversionHelper<T>, &EnumDualConversionHelper<T>::Parse>(combo, this, delim);
+			return ParseFlagFields<T, EnumDualConversionHelper<T>, &EnumDualConversionHelper<T>::Parse>(combo, this, delim);
 		}
 
 		template <typename T>
 		T TypeParseConverter<T>::ParseFlags(const String& combo, const String& delim) const
 		{
-			return ParseFlags<T, TypeParseConverter<T>, &TypeParseConverter<T>::Parse>(combo, this, delim);
+			return ParseFlagFields<T, TypeParseConverter<T>, &TypeParseConverter<T>::Parse>(combo, this, delim);
 		}
 
 		template <typename T>

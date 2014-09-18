@@ -247,20 +247,27 @@ namespace Apoc3D
 		}
 		void ScrollBar::UpdateButtonPosition()
 		{
-			Point decrButtonOffset(BorderPadding.Left, BorderPadding.Top);
-			Point incrButtonOffset(BorderPadding.Left, BorderPadding.Bottom);
-
-			m_decrButton->Position = Position + decrButtonOffset;
-			m_incrButton->Position = Position + incrButtonOffset;
-
+			m_incrButton->Position = m_decrButton->Position = Position;
 			m_decrButton->BaseOffset = m_incrButton->BaseOffset = BaseOffset;
 
 			if (m_type == SCRBAR_Vertical)
 			{
+				Point decrButtonOffset(BorderPadding.Left, BorderPadding.Top);
+				Point incrButtonOffset(BorderPadding.Left, -BorderPadding.Bottom);
+
+				m_decrButton->Position += decrButtonOffset;
+				m_incrButton->Position += incrButtonOffset;
+
 				m_incrButton->Position.Y += m_size.Y - m_incrButton->getSize().Y;
 			}
 			else
 			{
+				Point decrButtonOffset(BorderPadding.Left, BorderPadding.Top);
+				Point incrButtonOffset(-BorderPadding.Right, BorderPadding.Top);
+
+				m_decrButton->Position += decrButtonOffset;
+				m_incrButton->Position += incrButtonOffset;
+
 				m_incrButton->Position.X += m_size.X - m_incrButton->getSize().X;
 			}
 		}

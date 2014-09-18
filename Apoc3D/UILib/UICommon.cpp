@@ -106,12 +106,12 @@ namespace Apoc3D
 
 		int32 UIGraphic::getWidth() const
 		{
-			assert(isSet() && (SourceRects.getCount() == 0 || SourceRects.getCount() == 1));
+			assert(isSet() && (SourceRects.getCount() == 0 || SourceRects.getCount() == 1 || SourceRects.getCount() == 3));
 			return isSimple() ? SourceRects[0].Width : Graphic->getWidth();
 		}
 		int32 UIGraphic::getHeight() const
 		{
-			assert(isSet() && (SourceRects.getCount() == 0 || SourceRects.getCount() == 1));
+			assert(isSet() && (SourceRects.getCount() == 0 || SourceRects.getCount() == 1 || SourceRects.getCount() == 3));
 			return isSimple() ? SourceRects[0].Height : Graphic->getHeight();
 		}
 		Point UIGraphic::getSize() const 

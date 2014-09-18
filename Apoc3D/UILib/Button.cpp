@@ -45,13 +45,13 @@ namespace Apoc3D
 		Button::ButtonEvent Button::eventAnyRelease;
 
 		Button::Button(const ButtonVisualSettings& settings, const Point& position, const String& text)
-			: Control(nullptr, position), m_text(text)
+			: Control(nullptr, position), m_text(text), AutoSizedX(true), AutoSizedY(true)
 		{
 			Initialize(settings);
 		}
 
 		Button::Button(const ButtonVisualSettings& settings, const Point& position, int width, const String& text)
-			: Control(nullptr, position, Point(width, 0)), m_text(text)
+			: Control(nullptr, position, Point(width, 0)), m_text(text), AutoSizedY(true)
 		{
 			Initialize(settings);
 		}
@@ -241,7 +241,6 @@ namespace Apoc3D
 			{
 				TextSettings.Draw(sprite, m_fontRef, m_text, dstRect, Enabled);
 			}
-
 		}
 
 
@@ -263,11 +262,11 @@ namespace Apoc3D
 
 		void Button::UpdateSize()
 		{
-			int32 vertPad = TextSettings.TextPadding.getVerticalSum();
-			int32 hozPad = TextSettings.TextPadding.getHorizontalSum();
-
 			if (m_fontRef)
 			{
+				int32 vertPad = TextSettings.TextPadding.getVerticalSum();
+				int32 hozPad = TextSettings.TextPadding.getHorizontalSum();
+
 				Point textSize = m_fontRef->MeasureString(m_text);
 
 				if (AutoSizedX)
@@ -297,8 +296,8 @@ namespace Apoc3D
 			}
 			else if (NormalGraphic.isSet())
 			{
-				m_size.X = NormalGraphic.getWidth() - hozPad;
-				m_size.Y = NormalGraphic.getHeight() - vertPad;
+				m_size.X = NormalGraphic.getWidth() - Margin.getHorizontalSum();
+				m_size.Y = NormalGraphic.getHeight() - Margin.getVerticalSum();
 			}
 		}
 
@@ -643,8 +642,7 @@ namespace Apoc3D
 
 		ButtonGroupTextured::ButtonGroupTextured(const Point& position, Texture* tex, const Apoc3D::Math::Rectangle& normalRegion,
 			const List<Apoc3D::Math::Rectangle>& hoverRegs, const List<Apoc3D::Math::Rectangle>& downRegs, const List<ControlBounds>& paddings)
-			: Position(position), m_graphic(tex), m_hasMouseHoverArea(false),
-			Enabled(true), Visible(true), ForceMouseDownLookIndex(-1)
+			: Position(position), m_graphic(tex)
 		{
 			m_graphicsSrcRect = normalRegion;
 
@@ -722,8 +720,8 @@ namespace Apoc3D
 
 				rect.X = Position.X + m_hotAreaPaddings[i].Left - m_hotAreaPaddings[0].Left;
 				rect.Y = Position.Y + m_hotAreaPaddings[i].Top - m_hotAreaPaddings[0].Top;
-				rect.Width -= m_hotAreaPaddings[i].Right + m_hotAreaPaddings[i].Left;
-				rect.Height -= m_hotAreaPaddings[i].Top + m_hotAreaPaddings[i].Bottom;
+				rect.Width -= m_hotAreaPaddings[i].getHorizontalSum();
+				rect.Height -= m_hotAreaPaddings[i].getVerticalSum();
 
 				if (rect.Contains(mouse->getX(), mouse->getY()))
 				{
