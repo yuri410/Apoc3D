@@ -148,6 +148,8 @@ namespace Apoc3D
 			void CheckResize();
 			void ToggleWindowState();
 
+			void ApplyBaseOffset();
+
 			void btClose_Release(Button* sender);
 			void btMinimize_Release(Button* sender);
 			void btMaximize_Release(Button* sender);

@@ -248,7 +248,7 @@ namespace Apoc3D
 			OptionalSetting<bool> AlwaysShowVS;
 			OptionalSetting<bool> AlwaysShowHS;
 
-			OptionalSetting<ControlBounds> Magin;
+			OptionalSetting<ControlBounds> Margin;
 			OptionalSetting<ControlBounds> ContentPadding;
 
 			OptionalSetting<ScrollBarVisualSettings> HScrollBar;

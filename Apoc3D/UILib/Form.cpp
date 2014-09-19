@@ -84,12 +84,17 @@ namespace Apoc3D
 		{
 			m_state = FWS_Normal;
 
-			if (m_previousPosition!= Point::Zero)
+			if (m_previousPosition != Point::Zero)
 				Position = m_previousPosition;
-			if (m_previousSize!=Point::Zero)
+			if (m_previousSize != Point::Zero)
 				m_size = m_previousSize;
 
-			Visible = true;
+			if (!Visible)
+			{
+				Visible = true;
+				ApplyBaseOffset();
+			}
+
 			Focus();
 		}
 		void Form::Hide()
@@ -256,6 +261,7 @@ namespace Apoc3D
 				m_btRestore = new Button(bvs, Point(0, 0), L"");
 				m_btRestore->eventRelease.Bind(this, &Form::btRestore_Release);
 			}
+			ApplyBaseOffset();
 		}
 
 
@@ -300,22 +306,7 @@ namespace Apoc3D
 				}
 			}
 
-			{
-				Point subOffset = GetAbsolutePosition();
-				m_btClose->BaseOffset = subOffset;
-				m_btMinimize->BaseOffset = subOffset;
-				m_btMaximize->BaseOffset = subOffset;
-				m_btRestore->BaseOffset = subOffset;
-
-				bool isFocus = SystemUI::TopMostForm == this || SystemUI::ActiveForm == this;
-
-				for (Control* ct : m_controls)
-				{
-					ct->ParentFocused = isFocus;
-					ct->BaseOffset = subOffset;
-				}
-			}
-
+			ApplyBaseOffset();
 			CheckDoubleClick(time);
 
 			if (m_state != FWS_Minimized && !m_isMinimized)
@@ -783,6 +774,27 @@ namespace Apoc3D
 
 		}
 
+		void Form::ApplyBaseOffset()
+		{
+			Point subOffset = GetAbsolutePosition();
+			if (m_btClose)
+				m_btClose->BaseOffset = subOffset;
+			if (m_btMinimize)
+				m_btMinimize->BaseOffset = subOffset;
+			if (m_btMaximize)
+				m_btMaximize->BaseOffset = subOffset;
+			if (m_btRestore)
+				m_btRestore->BaseOffset = subOffset;
+
+			bool isFocus = SystemUI::TopMostForm == this || SystemUI::ActiveForm == this;
+
+			for (Control* ct : m_controls)
+			{
+				ct->ParentFocused = isFocus;
+				ct->BaseOffset = subOffset;
+			}
+		}
+			 
 		/************************************************************************/
 		/*  Border                                                              */
 		/************************************************************************/

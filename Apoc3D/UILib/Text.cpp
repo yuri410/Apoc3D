@@ -291,8 +291,8 @@ namespace Apoc3D
 		{
 			NormalGraphic = settings.BackgroundGraphic;
 
-			if (settings.Magin.isSet())
-				Margin = settings.Magin;
+			if (settings.Margin.isSet())
+				Margin = settings.Margin;
 
 			if (settings.DisabledGraphic.isSet())
 				DisabledGraphic = settings.DisabledGraphic;
