@@ -77,7 +77,7 @@ namespace Apoc3D
 			m_form->getControls().Add(m_pictureBox);
 
 			m_scrollBar = new ScrollBar(skin, m_pictureBox->Position + Point(m_pictureBox->getWidth(), 0),
-				ScrollBar::SCRBAR_Vertical, m_pictureBox->getHeight());
+				ScrollBarType::Vertical, m_pictureBox->getHeight());
 			
 			m_scrollBar->IsInverted = true;
 			m_form->getControls().Add(m_scrollBar);

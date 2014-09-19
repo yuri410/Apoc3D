@@ -32,17 +32,18 @@ namespace Apoc3D
 {
 	namespace UI
 	{
+		enum struct ScrollBarType
+		{
+			Horizontal,
+			Vertical
+		};
+
 		class APAPI ScrollBar : public Control
 		{
 			RTTI_DERIVED(ScrollBar, Control);
 		public:
 			typedef EventDelegate1<ScrollBar*> ScrollBarEvent;
 
-			enum ScrollBarType
-			{
-				SCRBAR_Horizontal,
-				SCRBAR_Vertical
-			};
 			ScrollBar(const ScrollBarVisualSettings& settings, const Point& position, ScrollBarType type, int32 length);
 			ScrollBar(const StyleSkin* skin, const Point& position, ScrollBarType type, int32 length);
 			~ScrollBar();

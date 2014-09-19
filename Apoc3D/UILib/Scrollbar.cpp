@@ -60,26 +60,14 @@ namespace Apoc3D
 		ScrollBar::ScrollBar(const StyleSkin* skin, const Point& position, ScrollBarType type, int32 length)
 			: Control(skin, position), m_type(type)
 		{
-			if (type == SCRBAR_Vertical)
+			if (type == ScrollBarType::Vertical)
 			{
 				ButtonVisualSettings bvs;
 				bvs.NormalGraphic = UIGraphic(skin->SkinTexture, skin->VScrollBarUp);
-
 				m_decrButton = new Button(bvs, Point(0, 0), skin->VScrollBarUp.getSize(), L"");
-				//m_decrButton->NormalGraphic = UIGraphic(skin->SkinTexture, skin->VScrollBarUp);
-				//m_decrButton->MouseDownGraphic = UIGraphic(skin->SkinTexture, gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarUpD);
-				//m_decrButton->MouseOverGraphic = UIGraphic(skin->SkinTexture, gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarUpH);
-				//m_decrButton->DisabledGraphic = m_decrButton->NormalGraphic;
-				//m_decrButton->DisabledGraphic.ModColor = CV_PackColor(0xff, 0xff, 0xff, m_disabledAlpha);
 
 				bvs.NormalGraphic = UIGraphic(skin->SkinTexture, skin->VScrollBarDown);
-
 				m_incrButton = new Button(bvs, Point(0, 0), m_decrButton->getSize(), L"");
-				//m_incrButton->NormalGraphic = UIGraphic(skin->SkinTexture, skin->VScrollBarDown);
-				//m_incrButton->MouseDownGraphic = UIGraphic(gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarDownD);
-				//m_incrButton->MouseOverGraphic = UIGraphic(gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarDownH);
-				//m_incrButton->DisabledGraphic = m_incrButton->NormalGraphic;
-				//m_incrButton->DisabledGraphic.ModColor = m_incrButton->DisabledGraphic.ModColor;
 
 				HandleGraphic = UIGraphic(skin->SkinTexture, skin->VScrollBarCursor);
 				BackgroundGraphic = UIGraphic(skin->SkinTexture, skin->VScrollBarBG);
@@ -88,22 +76,10 @@ namespace Apoc3D
 			{
 				ButtonVisualSettings bvs;
 				bvs.NormalGraphic = UIGraphic(skin->SkinTexture, skin->HScrollBarLeft);
-
 				m_decrButton = new Button(bvs, Point(0, 0), skin->HScrollBarLeft.getSize(), L"");
-				//m_decrButton->NormalGraphic = UIGraphic(skin->SkinTexture, skin->HScrollBarLeft);// gui_ControlAssets.VScrollBarUpN);
-				//m_decrButton->MouseDownGraphic = UIGraphic(gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarUpD);
-				//m_decrButton->MouseOverGraphic = UIGraphic(gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarUpH);
-				//m_decrButton->DisabledGraphic = m_decrButton->NormalGraphic;
-				//m_decrButton->DisabledGraphic.ModColor = CV_PackColor(0xff, 0xff, 0xff, m_disabledAlpha);
 
 				bvs.NormalGraphic = UIGraphic(skin->SkinTexture, skin->HScrollBarRight);
 				m_incrButton = new Button(bvs, Point(0, 0), skin->HScrollBarRight.getSize(), L"");
-				//m_incrButton->NormalGraphic = UIGraphic(skin->SkinTexture, skin->HScrollBarRight); // gui_ControlAssets.VScrollBarDownN
-				//m_incrButton->MouseDownGraphic = UIGraphic(gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarDownD);
-				//m_incrButton->MouseOverGraphic = UIGraphic(gui_ControlAssets.Graphic, gui_ControlAssets.VScrollBarDownH);
-				//m_incrButton->DisabledGraphic = m_incrButton->NormalGraphic;
-				//m_incrButton->DisabledGraphic.ModColor = m_incrButton->DisabledGraphic.ModColor;
-
 
 				HandleGraphic = UIGraphic(skin->SkinTexture, skin->HScrollBarCursor);
 				BackgroundGraphic = UIGraphic(skin->SkinTexture, skin->HScrollBarBG);
@@ -129,7 +105,7 @@ namespace Apoc3D
 
 			UpdateButtonPosition();
 
-			if (m_type != SCRBAR_Vertical)
+			if (m_type != ScrollBarType::Vertical)
 			{
 				m_size.X = length;
 				m_size.Y = BackgroundGraphic.SourceRects[0].Height;
@@ -150,7 +126,7 @@ namespace Apoc3D
 			{
 				UIGraphic* g = isEnabled ? &BackgroundGraphic : &DisabledBackgroundGraphic;
 
-				g->Draw(sprite, getAbsoluteArea(), m_type == SCRBAR_Vertical);
+				g->Draw(sprite, getAbsoluteArea(), m_type == ScrollBarType::Vertical);
 			}
 
 			if (isEnabled)
@@ -158,7 +134,7 @@ namespace Apoc3D
 				Apoc3D::Math::Rectangle handleArea = CalculateHandleArea();
 				handleArea = HandlePadding.InflateRect(handleArea);
 
-				HandleGraphic.Draw(sprite, handleArea, m_type == SCRBAR_Vertical);
+				HandleGraphic.Draw(sprite, handleArea, m_type == ScrollBarType::Vertical);
 			}
 
 
@@ -185,14 +161,14 @@ namespace Apoc3D
 				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
 				Apoc3D::Math::Rectangle handleArea = CalculateHandleArea();
-				int32 handleLen = m_type == SCRBAR_Vertical ? handleArea.Height : handleArea.Width;
+				int32 handleLen = m_type == ScrollBarType::Vertical ? handleArea.Height : handleArea.Width;
 
 				if (m_isDragging)
 				{
 					int32 scrLen = GetScrollableLength();
 					if (handleLen < scrLen)
 					{
-						int32 dm = m_type == SCRBAR_Horizontal ? mouse->getDX() : mouse->getDY();
+						int32 dm = m_type == ScrollBarType::Horizontal ? mouse->getDX() : mouse->getDY();
 						int32 dv = dm * Maximum / (scrLen - handleLen);
 
 						m_value += IsInverted ? -dv : dv;
@@ -247,7 +223,7 @@ namespace Apoc3D
 			m_incrButton->Position = m_decrButton->Position = Position;
 			m_decrButton->BaseOffset = m_incrButton->BaseOffset = BaseOffset;
 
-			if (m_type == SCRBAR_Vertical)
+			if (m_type == ScrollBarType::Vertical)
 			{
 				Point decrButtonOffset(BorderPadding.Left, BorderPadding.Top);
 				Point incrButtonOffset(BorderPadding.Left, -BorderPadding.Bottom);
@@ -272,7 +248,7 @@ namespace Apoc3D
 		int32 ScrollBar::GetScrollableLength() const
 		{
 			int32 result;
-			if (m_type == SCRBAR_Vertical)
+			if (m_type == ScrollBarType::Vertical)
 				result = m_size.Y - m_decrButton->getSize().Y - m_incrButton->getSize().Y;
 			else
 				result = m_size.X - m_decrButton->getSize().X - m_incrButton->getSize().X;
@@ -299,7 +275,7 @@ namespace Apoc3D
 		{
 			Point pos = GetAbsolutePosition();
 
-			if (m_type == SCRBAR_Vertical)
+			if (m_type == ScrollBarType::Vertical)
 			{
 				Apoc3D::Math::Rectangle handleArea;
 
@@ -356,11 +332,11 @@ namespace Apoc3D
 
 		void ScrollBar::SetLength(int32 len)
 		{
-			(m_type != SCRBAR_Vertical ? m_size.X : m_size.Y) = len;
+			(m_type != ScrollBarType::Vertical ? m_size.X : m_size.Y) = len;
 		}
 		int32 ScrollBar::GetLength() const
 		{
-			return m_type != SCRBAR_Vertical ? m_size.X : m_size.Y;
+			return m_type != ScrollBarType::Vertical ? m_size.X : m_size.Y;
 		}
 #pragma endregion
 

@@ -221,8 +221,8 @@ namespace Apoc3D
 			GUIUtils::ScrollBarPositioning vs = skin->VScrollBarBG.X;
 
 			GUIUtils::CalculateScrollBarPositions(getArea(), &vs, &hs);
-			m_hscrollbar = new ScrollBar(skin, hs.Position, ScrollBar::SCRBAR_Horizontal, hs.Length);
-			m_vscrollbar = new ScrollBar(skin, vs.Position, ScrollBar::SCRBAR_Vertical, vs.Length);
+			m_hscrollbar = new ScrollBar(skin, hs.Position, ScrollBarType::Horizontal, hs.Length);
+			m_vscrollbar = new ScrollBar(skin, vs.Position, ScrollBarType::Vertical, vs.Length);
 		}
 
 		void ScrollableControl::InitScrollbars(const ScrollBarVisualSettings& hss, const ScrollBarVisualSettings& vss)
@@ -234,8 +234,8 @@ namespace Apoc3D
 			GUIUtils::ScrollBarPositioning vs = vss.BackgroundGraphic.getWidth();
 
 			GUIUtils::CalculateScrollBarPositions(getArea(), &vs, &hs);
-			m_hscrollbar = new ScrollBar(hss, hs.Position, ScrollBar::SCRBAR_Horizontal, hs.Length);
-			m_vscrollbar = new ScrollBar(vss, vs.Position, ScrollBar::SCRBAR_Vertical, vs.Length);
+			m_hscrollbar = new ScrollBar(hss, hs.Position, ScrollBarType::Horizontal, hs.Length);
+			m_vscrollbar = new ScrollBar(vss, vs.Position, ScrollBarType::Vertical, vs.Length);
 		}
 
 		void ScrollableControl::UpdateScrollBarsLength(const Apoc3D::Math::Rectangle& area)
