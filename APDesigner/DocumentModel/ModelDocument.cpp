@@ -276,9 +276,9 @@ namespace APDesigner
 			sy += 30;
 			lbl = new Label(skin, Point(sx, sy), L"Pass Flags", 120);
 			m_mtrlPanelLabels.Add(lbl);
-			m_pbPassFlag = new PictureBox(skin, Point(sx2, sy),1);
+			m_pbPassFlag = new PictureBox(skin, Point(sx2, sy), 1);
 			//m_pbPassFlag->Size.Y = getDocumentForm()->getFontRef()->getLineHeight();
-			m_pbPassFlag->setHeight(256);
+			m_pbPassFlag->setSize(256, getDocumentForm()->getFont()->getLineHeightInt());
 			m_pbPassFlag->eventPictureDraw.Bind(this, &ModelDocument::PassFlags_Draw);
 
 			m_btnPassFlag = new Button(skin, Point(sx+100+300, sy), L"Edit");

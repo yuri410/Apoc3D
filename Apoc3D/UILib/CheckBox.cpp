@@ -229,16 +229,12 @@ namespace Apoc3D
 		}
 		void CheckBox::OnPress()
 		{
-			//AudioManager::RaiseOneShotEvent(SoundEventID::ButtonClick_Down);
-			//eventMousePress.Invoke(this); 
 			eventPress.Invoke(this);
 			eventAnyPress.Invoke(this);
 		}
 		void CheckBox::OnRelease()
 		{
-			//AudioManager::RaiseOneShotEvent(SoundEventID::ButtonClick_Up);
-			//eventMouseRelease.Invoke(this); 
-			Checked = !Checked;
+			Toggle();
 
 			eventRelease.Invoke(this);
 			eventAnyRelease.Invoke(this);
