@@ -46,7 +46,7 @@ namespace Apoc3D
 			: ListBox(skin, position, Point(width, height), items) { }
 
 		ListBox::ListBox(const ListBoxVisualSettings& settings, const Point& position, int width, int height, const List<String>& items)
-			: ListBox(nullptr, position, Point(width, height), items) { }
+			: ListBox(settings, position, Point(width, height), items) { }
 
 
 		ListBox::ListBox(const StyleSkin* skin, const Point& position, const Point& size, const List<String>& items)
@@ -75,10 +75,13 @@ namespace Apoc3D
 
 			AlignHeight();
 
-			InitScrollbars(skin);
+			InitScrollbars(skin); 
+			EnableVScrollBar = true;
 		}
 		void ListBox::Initialize(const ListBoxVisualSettings& settings)
 		{
+			m_fontRef = settings.FontRef;
+
 			BackgroundGraphic = settings.BackgroundGraphic;
 
 			if (settings.Margin.isSet())
@@ -91,6 +94,7 @@ namespace Apoc3D
 			AlignHeight();
 
 			InitScrollbars(settings.HScrollBar, settings.VScrollBar);
+			EnableVScrollBar = true;
 		}
 
 		void ListBox::AlignHeight()
@@ -110,7 +114,7 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle cntArea = GetContentArea();
 
 			m_visisbleItems = (int)ceilf((float)cntArea.Height / getItemHeight());
-
+			m_vscrollbar->VisibleRange = m_visisbleItems;
 			m_vscrollbar->Maximum = Math::Max(0, m_items.getCount() - m_visisbleItems);
 			m_vscrollbar->Step = Math::Max(1, m_vscrollbar->Maximum / 15);
 
@@ -301,6 +305,7 @@ namespace Apoc3D
 
 			UpdateHScrollbar();
 			InitScrollbars(skin);
+			EnableVScrollBar = true;
 		}
 
 
@@ -312,6 +317,7 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle cntArea = GetContentArea();
 			m_visisbleItems = (int)ceilf((float)cntArea.Height / GetItemHeight());
 
+			m_vscrollbar->VisibleRange = m_visisbleItems;
 			m_vscrollbar->Maximum = Math::Max(0, GetAllVisibleNodeCount() - m_visisbleItems);
 			m_vscrollbar->Step = Math::Max(1, m_vscrollbar->Maximum / 15);
 
@@ -610,6 +616,7 @@ namespace Apoc3D
 		void ListView::Initialize(const StyleSkin* skin)
 		{
 			InitScrollbars(skin);
+			EnableVScrollBar = true;
 
 			m_headerHeight = m_rowHeight = m_fontRef->getLineHeightInt();
 		}
@@ -793,6 +800,7 @@ namespace Apoc3D
 
 			int rowCount = m_items.getCount();
 			int visiCount = GetVisibleItems();
+			m_vscrollbar->VisibleRange = visiCount;
 			m_vscrollbar->Maximum = Math::Max(0, rowCount - visiCount);
 		}
 

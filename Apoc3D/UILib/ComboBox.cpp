@@ -37,11 +37,17 @@ namespace Apoc3D
 			DELETE_AND_NULL(m_listBox);
 		}
 
-		Point ComboBox::CalculateDropButtonPos(TextBox* ctb, int32 btnWidth)
+		Point ComboBox::CalculateDropButtonPos(TextBox* ctb, Button* btn, int32 btnWidth)
 		{
 			Point dropButtonPos = Position + DropdownButtonOffset;
 			dropButtonPos.X += m_size.X - btnWidth - ctb->Margin.Right;
 			dropButtonPos.Y += -ctb->Margin.Top;
+
+			if (btn)
+			{
+				dropButtonPos.X += btn->Margin.Right;
+				dropButtonPos.Y += btn->Margin.Top;
+			}
 			return dropButtonPos;
 		}
 
@@ -55,21 +61,23 @@ namespace Apoc3D
 			bvs.MouseDownGraphic = UIGraphic(skin->SkinTexture, skin->DropdownButtonDownRegion);
 			bvs.Margin = skin->DropdownButtonMargin;
 
-			Point dropButtonPos = CalculateDropButtonPos(m_textbox, skin->DropdownButtonNormalRegion.Width);
+			Point dropButtonPos = CalculateDropButtonPos(m_textbox, nullptr, skin->DropdownButtonNormalRegion.Width);
 			m_button = new Button(bvs, dropButtonPos, L"");
-			m_listBox = new ListBox(skin, Position + Point(0,19), m_size.X, 8*m_fontRef->getLineHeightInt(), m_items);
-
+			m_listBox = new ListBox(skin, Position + Point(0, 19), m_size.X, 8 * m_fontRef->getLineHeightInt(), m_items);
+			
 			DropdownButtonOffset = skin->DropdownButtonOffset;
 
 			PostInit();
 		}
 		void ComboBox::Initialize(const ComboBoxVisualSettings& settings)
 		{
+			m_fontRef = settings.ContentTextBox.FontRef;
 			m_textbox = new TextBox(settings.ContentTextBox, Position, m_size.X);
 			
-			Point dropButtonPos = CalculateDropButtonPos(m_textbox, settings.DropdownButton.NormalGraphic.getWidth());
+			Point dropButtonPos = CalculateDropButtonPos(m_textbox, nullptr, settings.DropdownButton.NormalGraphic.getWidth());
 			m_button = new Button(settings.DropdownButton, dropButtonPos, L"");
-			m_listBox = new ListBox(settings.DropdownList, Position + Point(0, m_textbox->getHeight()), m_size.X, 8 * m_fontRef->getLineHeightInt(), m_items);
+			m_listBox = new ListBox(settings.DropdownList, Position + Point(0, m_textbox->getHeight()), m_size.X, 
+				8 * settings.DropdownList.FontRef->getLineHeightInt(), m_items);
 
 			if (settings.DropdownButtonOffset.isSet())
 				DropdownButtonOffset = settings.DropdownButtonOffset;
@@ -92,7 +100,7 @@ namespace Apoc3D
 		void ComboBox::Update(const GameTime* time)
 		{
 			m_textbox->Position = Position;
-			m_button->Position = CalculateDropButtonPos(m_textbox, m_button->getWidth());
+			m_button->Position = CalculateDropButtonPos(m_textbox, m_button, m_button->getWidth());
 			m_listBox->Position = Position + Point(0, m_textbox->getHeight());
 
 			m_textbox->ParentFocused = m_button->ParentFocused = m_listBox->ParentFocused = ParentFocused;

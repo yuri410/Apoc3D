@@ -170,7 +170,7 @@ namespace Apoc3D
 				m_inputField = new TextBox(skin, Point(15, 60), m_form->getWidth() - 30, m_form->getHeight() - 140, L"");
 			else
 				m_inputField = new TextBox(skin, Point(15, 60), m_form->getWidth() - 30, L"");
-			m_inputField->EnableHScrollBar = m_inputField->EnableVScrollBar = true;
+			m_inputField->EnableAllScrollBars();
 
 			m_form->getControls().Add(m_inputField);
 

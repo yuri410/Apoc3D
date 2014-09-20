@@ -240,48 +240,39 @@ namespace Apoc3D
 
 		void ScrollableControl::UpdateScrollBarsLength(const Apoc3D::Math::Rectangle& area)
 		{
-			if (m_hscrollbar)
-				m_hscrollbar->Visible = EnableHScrollBar && (m_alwaysShowHS || m_hscrollbar->Maximum > 0);
+			bool hasHSB = EnableHScrollBar && (m_alwaysShowHS || m_hscrollbar->Maximum > 0);
+			bool hasVSB = EnableVScrollBar && (m_alwaysShowVS || m_vscrollbar->Maximum > 0);
 
-			if (m_vscrollbar)
-				m_vscrollbar->Visible = EnableVScrollBar && (m_alwaysShowVS || m_vscrollbar->Maximum > 0);
+			m_hscrollbar->Visible = hasHSB;
+			m_vscrollbar->Visible = hasVSB;
 
-			bool hasVSB = m_vscrollbar && m_vscrollbar->Visible;
-			bool hasHSB = m_hscrollbar && m_hscrollbar->Visible;
-
-			GUIUtils::ScrollBarPositioning vs = hasVSB ? m_vscrollbar->getWidth() : 0;
 			GUIUtils::ScrollBarPositioning hs = hasHSB ? m_hscrollbar->getHeight() : 0;
+			GUIUtils::ScrollBarPositioning vs = hasVSB ? m_vscrollbar->getWidth() : 0;
 
 			GUIUtils::CalculateScrollBarPositions(area, hasVSB ? &vs : nullptr, hasHSB ? &hs : nullptr);
 
-			if (hasVSB)
-			{
-				m_vscrollbar->Position = vs.Position;
-				if (m_vscrollbar->GetLength() != vs.Length)
-					m_vscrollbar->SetLength(vs.Length);
-			}
-			if (hasHSB)
-			{
-				m_hscrollbar->Position = hs.Position;
-				if (m_hscrollbar->GetLength() != hs.Length)
-					m_hscrollbar->SetLength(hs.Length);
-			}
+			m_vscrollbar->Position = vs.Position;
+			m_hscrollbar->Position = hs.Position;
+
+			if (m_vscrollbar->GetLength() != vs.Length)
+				m_vscrollbar->SetLength(vs.Length);
+
+			if (m_hscrollbar->GetLength() != hs.Length)
+				m_hscrollbar->SetLength(hs.Length);
 		}
 		void ScrollableControl::UpdateScrollBarsGeneric(const Apoc3D::Math::Rectangle& area, const GameTime* time)
 		{
-			bool hasVSB = m_vscrollbar && m_vscrollbar->Visible;
-			bool hasHSB = m_hscrollbar && m_hscrollbar->Visible;
-
 			UpdateScrollBarsLength(area);
 
-			if (hasVSB)
+			m_vscrollbar->BaseOffset = BaseOffset;
+			m_hscrollbar->BaseOffset = BaseOffset;
+
+			if (m_vscrollbar->Visible)
 			{
-				m_vscrollbar->BaseOffset = BaseOffset;
 				m_vscrollbar->Update(time);
 			}
-			if (hasHSB)
+			if (m_hscrollbar->Visible)
 			{
-				m_hscrollbar->BaseOffset = BaseOffset;
 				m_hscrollbar->Update(time);
 			}
 		}

@@ -289,6 +289,7 @@ namespace Apoc3D
 
 			int windowLineCount = static_cast<int>(dstRect->Height / lineSpacing);
 			m_scrollBar->Maximum = m_contendLineCount - windowLineCount;
+			m_scrollBar->VisibleRange = windowLineCount;
 
 			int startIndex = m_logs.getCount() - 1;
 			if (startIndex >= 0)

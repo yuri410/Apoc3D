@@ -482,6 +482,7 @@ namespace Apoc3D
 
 			if (m_vscrollbar)
 			{
+				m_vscrollbar->VisibleRange = m_visibleLines;
 				m_vscrollbar->Maximum = Math::Max(0, m_textEdit.getLineCount() - m_visibleLines);
 				m_vscrollbar->Step = Math::Max(1, m_hscrollbar->Maximum / 15);
 

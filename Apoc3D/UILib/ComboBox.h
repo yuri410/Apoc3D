@@ -82,7 +82,7 @@ namespace Apoc3D
 			void Initialize(const ComboBoxVisualSettings& settings);
 			void PostInit();
 			
-			Point CalculateDropButtonPos(TextBox* ctb, int32 btnWidth);
+			Point CalculateDropButtonPos(TextBox* ctb, Button* btn, int32 btnWidth);
 
 			void Open();
 			void Close();

@@ -70,6 +70,7 @@ namespace Apoc3D
 
 			int32 Maximum = 0;
 			int32 Step = 1;
+			int32 VisibleRange = 0;
 
 			UIGraphic BackgroundGraphic;
 			UIGraphic HandleGraphic;
@@ -96,7 +97,8 @@ namespace Apoc3D
 			ScrollBarType m_type;
 
 			int32 m_value = 0;
-			
+			float m_valueFP = 0;
+
 			Button* m_decrButton = nullptr;
 			Button* m_incrButton = nullptr;
 

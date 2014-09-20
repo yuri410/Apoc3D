@@ -146,7 +146,15 @@ namespace Apoc3D
 			m_isMouseHovering = false;
 
 			if (m_value > Maximum)
+			{
 				m_value = Maximum;
+				m_valueFP = static_cast<float>(m_value);
+			}
+			if (m_value<0)
+			{
+				m_value = 0;
+				m_valueFP = 0;
+			}
 
 			UpdateButtonPosition();
 
@@ -169,10 +177,21 @@ namespace Apoc3D
 					if (handleLen < scrLen)
 					{
 						int32 dm = m_type == ScrollBarType::Horizontal ? mouse->getDX() : mouse->getDY();
+						float dv = static_cast<float>(dm) * Maximum / (scrLen - handleLen);
+
+						m_valueFP += IsInverted ? -dv : dv;
+
+						m_value = Math::Round(m_valueFP);
+						m_value = Math::Clamp(m_value, 0, Maximum);
+						m_valueFP = Math::Clamp(m_valueFP, 0.0f, static_cast<float>(Maximum));
+
+
+						/*int32 dm = m_type == ScrollBarType::Horizontal ? mouse->getDX() : mouse->getDY();
 						int32 dv = dm * Maximum / (scrLen - handleLen);
 
 						m_value += IsInverted ? -dv : dv;
 						m_value = Math::Clamp(m_value, 0, Maximum);
+						*/
 					}
 
 					if (mouse->IsLeftUp())
@@ -260,15 +279,15 @@ namespace Apoc3D
 
 		int32 ScrollBar::CalculateBarLength() const
 		{
-			int32 scrollHeight = GetScrollableLength();
-			if (Maximum + scrollHeight == 0)
-				return 100;
+			int32 scrollLength = GetScrollableLength();
+			if (scrollLength <= 0 || Maximum <= 0)
+				return 1;
 
-			int32 r = (int32)(scrollHeight * scrollHeight / (Maximum + scrollHeight));
-			if (r > scrollHeight)
-				r = scrollHeight;
-			if (r < 100)
-				r = 100;
+			int32 r = VisibleRange > 0 ? ((scrollLength*VisibleRange) / (VisibleRange + Maximum)) : ((scrollLength * scrollLength) / (Maximum + scrollLength));
+			if (r > scrollLength)
+				r = scrollLength;
+			if (r < scrollLength / 10)
+				r = scrollLength / 10;
 			return r;
 		}
 		Apoc3D::Math::Rectangle ScrollBar::CalculateHandleArea() const
@@ -286,9 +305,9 @@ namespace Apoc3D
 				int32 scrH = GetScrollableLength() - handleArea.Height;
 
 				if (IsInverted)
-					handleArea.Y = m_incrButton->getAbsoluteArea().getTop() - handleArea.Height - m_value * scrH / Maximum;
+					handleArea.Y = m_incrButton->getAbsoluteArea().getTop() - handleArea.Height - Math::Round(m_valueFP * scrH / Maximum);
 				else
-					handleArea.Y = m_decrButton->getAbsoluteArea().getBottom() + m_value * scrH / Maximum;
+					handleArea.Y = m_decrButton->getAbsoluteArea().getBottom() + Math::Round(m_valueFP * scrH / Maximum);
 
 				return handleArea;
 			}
@@ -303,9 +322,9 @@ namespace Apoc3D
 				int32 scrW = GetScrollableLength() - handleArea.Width;
 
 				if (IsInverted)
-					handleArea.X = m_incrButton->getAbsoluteArea().getLeft() - handleArea.Height - m_value * scrW / Maximum;
+					handleArea.X = m_incrButton->getAbsoluteArea().getLeft() - handleArea.Height - Math::Round(m_valueFP * scrW / Maximum);
 				else
-					handleArea.X = m_decrButton->getAbsoluteArea().getRight() + m_value * scrW / Maximum;
+					handleArea.X = m_decrButton->getAbsoluteArea().getRight() + Math::Round(m_valueFP * scrW / Maximum);
 
 				return handleArea;
 			}
@@ -324,15 +343,22 @@ namespace Apoc3D
 		{
 			m_value += chg;
 			m_value = Math::Clamp(m_value, 0, Maximum);
+			m_valueFP = static_cast<float>(m_value);
 		}
 		void ScrollBar::SetValue(int32 val)
 		{
 			m_value = Math::Clamp(val, 0, Maximum);
+			m_valueFP = static_cast<float>(m_value);
 		}
 
 		void ScrollBar::SetLength(int32 len)
 		{
-			(m_type != ScrollBarType::Vertical ? m_size.X : m_size.Y) = len;
+			int32& lenDst = (m_type != ScrollBarType::Vertical ? m_size.X : m_size.Y);
+
+			if (lenDst != len)
+			{
+				lenDst = len;
+			}
 		}
 		int32 ScrollBar::GetLength() const
 		{

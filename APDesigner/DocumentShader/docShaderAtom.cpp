@@ -64,7 +64,7 @@ namespace APDesigner
 			m_cbProfile = new ComboBox(skin, Point(100, 66), 120, items);
 
 			m_tbCode = new TextBox(skin, Point(33, 100),500,500,L"");
-			m_tbCode->EnableVScrollBar = m_tbCode->EnableHScrollBar = true;
+			m_tbCode->EnableAllScrollBars();
 		}
 		{
 			List2D<String> emptyList(3, 2);
