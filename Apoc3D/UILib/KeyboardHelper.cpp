@@ -947,10 +947,10 @@ namespace Apoc3D
 				const String& line = m_lines[cp.Y];
 				if (cp.X > (int32)line.size())
 					cp.X = (int32)line.size();
-
-				if (cp.X < 0)
-					cp.X = 0;
 			}
+
+			if (cp.X < 0)
+				cp.X = 0;
 		}
 
 		void TextEditState::StartExternalSelection()

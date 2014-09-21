@@ -21,7 +21,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "Scrollbar.h"
+#include "Bar.h"
 #include "FontManager.h"
 #include "StyleSkin.h"
 #include "Button.h"
@@ -38,8 +38,11 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-#pragma region FormVScrollBar
-		ScrollBar::ScrollBar(const ScrollBarVisualSettings& settings, const Point& position, ScrollBarType type, int32 length)
+		/************************************************************************/
+		/* ScrollBar                                                            */
+		/************************************************************************/
+
+		ScrollBar::ScrollBar(const ScrollBarVisualSettings& settings, const Point& position, BarDirection type, int32 length)
 			: Control(nullptr, position), m_type(type)
 		{
 			m_decrButton = new Button(settings.DecrButton, Point(0, 0), settings.DecrButton.NormalGraphic.getSize(), L"");
@@ -57,10 +60,10 @@ namespace Apoc3D
 			PostInit(length);
 		}
 
-		ScrollBar::ScrollBar(const StyleSkin* skin, const Point& position, ScrollBarType type, int32 length)
+		ScrollBar::ScrollBar(const StyleSkin* skin, const Point& position, BarDirection type, int32 length)
 			: Control(skin, position), m_type(type)
 		{
-			if (type == ScrollBarType::Vertical)
+			if (type == BarDirection::Vertical)
 			{
 				ButtonVisualSettings bvs;
 				bvs.NormalGraphic = UIGraphic(skin->SkinTexture, skin->VScrollBarUp);
@@ -105,7 +108,7 @@ namespace Apoc3D
 
 			UpdateButtonPosition();
 
-			if (m_type != ScrollBarType::Vertical)
+			if (m_type != BarDirection::Vertical)
 			{
 				m_size.X = length;
 				m_size.Y = BackgroundGraphic.SourceRects[0].Height;
@@ -126,7 +129,7 @@ namespace Apoc3D
 			{
 				UIGraphic* g = isEnabled ? &BackgroundGraphic : &DisabledBackgroundGraphic;
 
-				g->Draw(sprite, getAbsoluteArea(), m_type == ScrollBarType::Vertical);
+				g->Draw(sprite, getAbsoluteArea(), m_type == BarDirection::Vertical);
 			}
 
 			if (isEnabled)
@@ -134,7 +137,7 @@ namespace Apoc3D
 				Apoc3D::Math::Rectangle handleArea = CalculateHandleArea();
 				handleArea = HandlePadding.InflateRect(handleArea);
 
-				HandleGraphic.Draw(sprite, handleArea, m_type == ScrollBarType::Vertical);
+				HandleGraphic.Draw(sprite, handleArea, m_type == BarDirection::Vertical);
 			}
 
 
@@ -169,14 +172,14 @@ namespace Apoc3D
 				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
 				Apoc3D::Math::Rectangle handleArea = CalculateHandleArea();
-				int32 handleLen = m_type == ScrollBarType::Vertical ? handleArea.Height : handleArea.Width;
+				int32 handleLen = m_type == BarDirection::Vertical ? handleArea.Height : handleArea.Width;
 
 				if (m_isDragging)
 				{
 					int32 scrLen = GetScrollableLength();
 					if (handleLen < scrLen)
 					{
-						int32 dm = m_type == ScrollBarType::Horizontal ? mouse->getDX() : mouse->getDY();
+						int32 dm = m_type == BarDirection::Horizontal ? mouse->getDX() : mouse->getDY();
 						float dv = static_cast<float>(dm) * Maximum / (scrLen - handleLen);
 
 						m_valueFP += IsInverted ? -dv : dv;
@@ -242,7 +245,7 @@ namespace Apoc3D
 			m_incrButton->Position = m_decrButton->Position = Position;
 			m_decrButton->BaseOffset = m_incrButton->BaseOffset = BaseOffset;
 
-			if (m_type == ScrollBarType::Vertical)
+			if (m_type == BarDirection::Vertical)
 			{
 				Point decrButtonOffset(BorderPadding.Left, BorderPadding.Top);
 				Point incrButtonOffset(BorderPadding.Left, -BorderPadding.Bottom);
@@ -267,7 +270,7 @@ namespace Apoc3D
 		int32 ScrollBar::GetScrollableLength() const
 		{
 			int32 result;
-			if (m_type == ScrollBarType::Vertical)
+			if (m_type == BarDirection::Vertical)
 				result = m_size.Y - m_decrButton->getSize().Y - m_incrButton->getSize().Y;
 			else
 				result = m_size.X - m_decrButton->getSize().X - m_incrButton->getSize().X;
@@ -294,7 +297,7 @@ namespace Apoc3D
 		{
 			Point pos = GetAbsolutePosition();
 
-			if (m_type == ScrollBarType::Vertical)
+			if (m_type == BarDirection::Vertical)
 			{
 				Apoc3D::Math::Rectangle handleArea;
 
@@ -353,7 +356,7 @@ namespace Apoc3D
 
 		void ScrollBar::SetLength(int32 len)
 		{
-			int32& lenDst = (m_type != ScrollBarType::Vertical ? m_size.X : m_size.Y);
+			int32& lenDst = (m_type != BarDirection::Vertical ? m_size.X : m_size.Y);
 
 			if (lenDst != len)
 			{
@@ -362,10 +365,210 @@ namespace Apoc3D
 		}
 		int32 ScrollBar::GetLength() const
 		{
-			return m_type != ScrollBarType::Vertical ? m_size.X : m_size.Y;
+			return m_type != BarDirection::Vertical ? m_size.X : m_size.Y;
 		}
-#pragma endregion
+
+		/************************************************************************/
+		/* ProgressBar                                                          */
+		/************************************************************************/
+
+		ProgressBar::ProgressBar(const ProgressBarVisualSettings& settings, const Point& position, int32 width)
+			: Control(nullptr, position, width)
+		{
+			m_fontRef = settings.FontRef;
+
+			Graphic = settings.Graphic;
+			CopyArray(BackgroundRegions, settings.BackgroundRegions);
+			CopyArray(BarRegions, settings.BarRegions);
+			BackgroundColor = settings.BackgroundColor;
+			BarColor = settings.BarColor;
+
+			Margin = settings.Margin;
 
 
+			TextSettings.HasTextShadow = settings.HasTextShadow;
+
+			TextSettings.TextColor = settings.TextColor;
+			TextSettings.TextColorDisabled = settings.TextColorDisabled;
+			TextSettings.TextShadowColor = settings.TextShadowColor;
+			TextSettings.TextShadowColorDisabled = settings.TextShadowColorDisabled;
+			TextSettings.TextShadowOffset = settings.TextShadowOffset;
+
+			BarStartPad = settings.BarStartPad;
+			BarEndPad = settings.BarEndPad;
+
+			m_size.Y = settings.BackgroundRegions->Height - Margin.getVerticalSum();
+		}
+
+		ProgressBar::ProgressBar(const StyleSkin* skin, const Point& position, int32 width)
+			: ProgressBar(skin->ProgressBarVS, position, width) { }
+
+		ProgressBar::~ProgressBar()
+		{
+
+		}
+
+		void ProgressBar::Draw(Sprite* sprite)
+		{
+			Point pos = GetAbsolutePosition();
+
+			guiDrawProgressBar(sprite, pos, m_size.X, CurrentValue,
+				Graphic, BackgroundRegions, BarRegions, Margin,
+				BarStartPad, BarEndPad);
+
+			if (TextBase.size())
+			{
+				Apoc3D::Math::Rectangle dstRect = getAbsoluteArea();
+
+				TextSettings.Draw(sprite, m_fontRef, TextBase, dstRect, Enabled);
+			}
+		}
+		void ProgressBar::Update(const GameTime* time)
+		{
+
+		}
+
+		/************************************************************************/
+		/* SlideBar                                                             */
+		/************************************************************************/
+
+		SliderBar::SliderBar(const SliderBarVisualSettings& settings, const Point& position, BarDirection type, int32 length)
+			: Control(nullptr, position), m_type(type)
+		{
+			Graphic = settings.Graphic;
+			CopyArray(BackgroundRegions, settings.BackgroundRegions);
+			CopyArray(BarRegions, settings.BarRegions);
+			BackgroundColor = settings.BackgroundColor;
+			BarColor = settings.BarColor;
+
+			Margin = settings.Margin;
+
+			BarStartPad = settings.BarStartPad;
+			BarEndPad = settings.BarEndPad;
+
+			m_size.Y = settings.BackgroundRegions->Height - Margin.getVerticalSum();
+			SetLength(length);
+
+			HandleOffset = settings.HandleOffset;
+			HandleGraphic = settings.HandleNormalGraphic;
+			HandleMargin = settings.HandleMargin;
+		}
+		
+		SliderBar::SliderBar(const StyleSkin* skin, const Point& position, BarDirection type, int32 length)
+			: SliderBar(type == BarDirection::Horizontal ? skin->HSliderBar : skin->VSliderBar, position, type, length) { }
+
+		SliderBar::~SliderBar()
+		{
+
+		}
+
+		void SliderBar::Draw(Sprite* sprite)
+		{
+			Point pos = GetAbsolutePosition();
+
+			guiDrawProgressBar(sprite, pos, m_size.X, CurrentValue,
+				Graphic, BackgroundRegions, BarRegions, Margin,
+				BarStartPad, BarEndPad);
+
+			Apoc3D::Math::Rectangle handleArea = HandleMargin.InflateRect(GetHandleArea());
+			HandleGraphic.Draw(sprite, handleArea);
+		}
+		void SliderBar::Update(const GameTime* time)
+		{
+			m_isMouseHovering = false;
+
+			CurrentValue = Math::Saturate(CurrentValue);
+
+			if (!Enabled || !Visible)
+				return;
+
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+
+			Apoc3D::Math::Rectangle handleArea = GetHandleArea();
+			if (m_isDragging)
+			{
+				int32 scrLen = GetScrollableLength();
+
+				int32 dm = m_type == BarDirection::Horizontal ? mouse->getDX() : mouse->getDY();
+				float dv = static_cast<float>(dm) / scrLen;
+
+				CurrentValue += dv;
+				CurrentValue = Math::Saturate(CurrentValue);
+
+				if (mouse->IsLeftUp())
+				{
+					m_isDragging = false;
+				}
+
+				m_isMouseHovering = true;
+				m_mouseHoverArea = handleArea;
+			}
+			else
+			{
+				if (!m_isMouseHovering && handleArea.Contains(mouse->GetPosition()))
+				{
+					m_isMouseHovering = true;
+					m_mouseHoverArea = handleArea;
+
+					if (mouse->IsLeftPressed())
+					{
+						m_isDragging = true;
+					}
+				}
+			}
+		}
+		
+		void SliderBar::SetLength(int32 len)
+		{
+			(m_type != BarDirection::Vertical ? m_size.X : m_size.Y) = len;
+		}
+		int32 SliderBar::GetLength() const
+		{
+			return m_type != BarDirection::Vertical ? m_size.X : m_size.Y;
+		}
+
+		int32 SliderBar::GetScrollableLength() const
+		{
+			if (m_type == BarDirection::Vertical)
+			{
+				return Math::Max(1, m_size.Y - BarStartPad - BarEndPad);
+			}
+			return Math::Max(1, m_size.X - BarStartPad - BarEndPad);
+		}
+		Apoc3D::Math::Rectangle SliderBar::GetHandleArea() const
+		{
+			Point pos = GetAbsolutePosition();
+
+			int32 length = GetScrollableLength();
+			if (m_type == BarDirection::Vertical)
+			{
+				pos.X += m_size.X / 2;
+				pos.Y += BarStartPad;
+				
+				pos.Y += Math::Round(CurrentValue * length);
+			}
+			else
+			{
+				pos.X += BarStartPad;
+				pos.Y += m_size.Y / 2;
+
+				pos.X += Math::Round(CurrentValue * length);
+			}
+
+			pos += HandleOffset;
+
+			int32 hw = HandleGraphic.getWidth() - HandleMargin.getHorizontalSum();
+			int32 hh = HandleGraphic.getHeight() - HandleMargin.getVerticalSum();
+
+			Apoc3D::Math::Rectangle handleArea;
+
+			handleArea.X = pos.X - hw / 2;
+			handleArea.Y = pos.Y - hh / 2;
+
+			handleArea.Width = hw;
+			handleArea.Height = hh;
+
+			return handleArea;
+		}
 	}
 }

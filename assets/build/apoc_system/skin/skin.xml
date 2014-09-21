@@ -68,26 +68,9 @@
     <Down Coord="139,38" RegionRef="Normal" />
   </DropdownButton>
 
-  <ProgressBar>
-    <Background Coord="64, 59">
-      [0, 0, 2, 14], [64, 0, 1, 14], [149, 0, 2, 14]
-    </Background>
-    <Filled Coord="64, 74" RegionRef="Background" />
-  </ProgressBar>
-
-  <HSlider>
-    <Background Coord="4, 176">
-      [0, 0, 2, 6], [33, 0, 1, 6], [234, 0, 2, 6]
-    </Background>
-    <Filled Coord="4, 183" RegionRef="Background" />
-    <HandleNormal>
-      [135, 153,11,21]
-    </HandleNormal>
-  </HSlider>
-
   <VScrollBar>
 		<Cursor>
-      <Normal Coord="236, 19" Type="3region" >
+      <Normal Coord="236, 19" >
         [0,0,16,2], [0,2,16,43], [0,45,16,2]
       </Normal>
 		</Cursor>
@@ -99,9 +82,10 @@
       <Normal Coord="236, 103" >[0,0,16,16]</Normal>
 		</DownButton>
 	</VScrollBar>
+  
 	<HScrollBar>
     <Cursor>
-      <Normal Coord="188, 189" Type="3region" >
+      <Normal Coord="188, 189" >
         [0,0,2,16], [2,0,43,16], [45,0,2,16]
       </Normal>
     </Cursor>
@@ -123,7 +107,30 @@
     </Normal>
 	</ListBox>
 
+  <ProgressBar Font="Text" Margin="0,0,0,1">
+    <Text HasShadow="false" />
+    
+    <Background Coord="64, 59">
+      [0, 0, 2, 14], [64, 0, 1, 14], [149, 0, 2, 14]
+    </Background>
+    <Bar Coord="64, 74" RegionRef="Background" StartEndPadding="1,1" />
+  </ProgressBar>
 
+  <HSliderBar>
+    <Background Coord="4, 176" Margin="0,0,0,0">
+      [0, 0, 2, 6], [33, 0, 1, 6], [234, 0, 2, 6]
+    </Background>
+    
+    <Bar Coord="4, 183" RegionRef="Background" StartEndPadding="1,1" />
+    
+    <Handle Offset="0,0" >
+      <Normal Coord="135, 153">[0, 0,11,21]</Normal>
+      <Down Coord="147, 153" RegionRef="Normal" />
+      <Hover Coord="159, 153" RegionRef="Normal" />
+      <Disabled Coord="135, 153" RegionRef="Normal" Color="0x7fffffff" />
+    </Handle>
+  </HSliderBar>
+  
   <Form Font="Title" Padding="10,7,5,7" >
     <TitleNormal Coord="4, 89" >
       [0, 0, 3, 25], [3, 0, 120, 25],  [123, 0, 3, 25]

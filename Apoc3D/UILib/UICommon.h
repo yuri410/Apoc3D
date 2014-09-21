@@ -270,6 +270,53 @@ namespace Apoc3D
 			OptionalSetting<ControlBounds> Margin;
 		};
 
+		struct ProgressBarVisualSettings
+		{
+			Font* FontRef = nullptr;
+
+			Texture* Graphic = nullptr;
+			Apoc3D::Math::Rectangle BackgroundRegions[3];
+			Apoc3D::Math::Rectangle BarRegions[3];
+			ControlBounds Margin;
+
+			ColorValue BackgroundColor = CV_White;
+			ColorValue BarColor = CV_White;
+
+			bool HasTextShadow = false;
+
+			ColorValue TextColor = CV_Black;
+			ColorValue TextColorDisabled = CV_Black;
+			ColorValue TextShadowColor = CV_Black;
+			ColorValue TextShadowColorDisabled = CV_Black;
+
+			Point TextShadowOffset;
+
+			int32 BarStartPad = 0;
+			int32 BarEndPad = 0;
+		};
+
+		struct SliderBarVisualSettings
+		{
+			Texture* Graphic = nullptr;
+			Apoc3D::Math::Rectangle BackgroundRegions[3];
+			Apoc3D::Math::Rectangle BarRegions[3];
+			ControlBounds Margin;
+
+			ColorValue BackgroundColor = CV_White;
+			ColorValue BarColor = CV_White;
+
+			int32 BarStartPad = 0;
+			int32 BarEndPad = 0;
+
+			Point HandleOffset;
+			UIGraphicSimple HandleNormalGraphic;
+			UIGraphicSimple HandleHoverGraphic;
+			UIGraphicSimple HandleDownGraphic;
+			UIGraphicSimple HandleDisabledGraphic;
+
+			ControlBounds HandleMargin;
+		};
+
 		/**
 		 *  The interfaces for System Forms and Panels. And it is also responsible
 		 *  for drawing and updating them.
@@ -363,7 +410,10 @@ namespace Apoc3D
 
 		APAPI void guiOmitLineText(Font* fnt, int32 widthlimit, String& line);
 
-		
+		APAPI void guiDrawProgressBar(Sprite* sprite, const Point& position, int32 width, float value, 
+			Texture* texture, const Apoc3D::Math::Rectangle (&bgSrcRects)[3], const Apoc3D::Math::Rectangle (&barSrcRects)[3],
+			const ControlBounds& margin, int32 barStartPad, int32 barEndPad);
+
 	}
 }
 

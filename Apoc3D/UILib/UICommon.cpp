@@ -814,5 +814,30 @@ namespace Apoc3D
 				line = textToDraw;
 			}
 		}
+
+		void guiDrawProgressBar(Sprite* sprite, const Point& position, int32 width, float value,
+			Texture* texture, const Apoc3D::Math::Rectangle(&bgSrcRects)[3], const Apoc3D::Math::Rectangle(&barSrcRects)[3],
+			const ControlBounds& margin, int32 barStartPad, int32 barEndPad)
+		{
+			int32 graphicalWidth = width + margin.getHorizontalSum();
+
+			int32 prgStartCap = margin.Left + barStartPad;
+			int32 prgEndCap = margin.Right + barEndPad;
+
+			int32 filledPartWidth = Math::Round((graphicalWidth - prgStartCap - prgEndCap) * value) + prgStartCap;
+
+			Point pos = position;
+			pos.X -= margin.Left;
+			pos.Y -= margin.Top;
+
+			guiDrawRegion3(sprite, pos, graphicalWidth, CV_White, texture, bgSrcRects);
+
+			if (filledPartWidth>prgStartCap)
+			{
+				guiDrawRegion3Clipped(sprite, pos, graphicalWidth, filledPartWidth, CV_White, texture, barSrcRects);
+			}
+
+		}
+
 	}
 }

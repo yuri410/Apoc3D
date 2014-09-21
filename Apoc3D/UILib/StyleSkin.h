@@ -127,12 +127,6 @@ namespace Apoc3D
 			ColorValue DropdownButtonDownColor = CV_White;
 
 
-			Apoc3D::Math::Rectangle ProgressBarBG[3];
-			Apoc3D::Math::Rectangle ProgressBarFilled[3];
-			ColorValue ProgressBarBGColor = CV_White;
-			ColorValue ProgressBarFilledColor = CV_White;
-
-
 			Apoc3D::Math::Rectangle HSilderBG[3];
 			Apoc3D::Math::Rectangle HSilderFilled[3];
 			Apoc3D::Math::Rectangle HSliderHandle;
@@ -154,8 +148,9 @@ namespace Apoc3D
 			ControlBounds ListBoxPadding;
 			Apoc3D::Math::Rectangle ListBoxBackground[9];
 
-
-
+			ProgressBarVisualSettings ProgressBarVS;
+			SliderBarVisualSettings HSliderBar;
+			SliderBarVisualSettings VSliderBar;
 
 			Font* FormFont = nullptr;
 			ControlBounds FormTitlePadding;
@@ -208,7 +203,8 @@ namespace Apoc3D
 
 			ColorValue ParseColorValue(const String& txt);
 			void ParseColorValue(Apoc3D::Config::ConfigurationSection* sect, ColorValue& result);
-			void ParsePoint(Apoc3D::Config::ConfigurationSection* sect, Point& result);
+			void ParseColorValue(Apoc3D::Config::ConfigurationSection* sect, const String& attName, ColorValue& result);
+			void ParseOffset(Apoc3D::Config::ConfigurationSection* sect, Point& result);
 			
 
 			void Offset9Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[9]);

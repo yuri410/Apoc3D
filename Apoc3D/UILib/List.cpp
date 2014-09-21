@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "FontManager.h"
 #include "StyleSkin.h"
 #include "Button.h"
-#include "Scrollbar.h"
+#include "Bar.h"
 #include "Form.h"
 
 #include "apoc3d/Input/Mouse.h"

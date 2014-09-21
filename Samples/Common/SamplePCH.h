@@ -151,7 +151,7 @@
 #include "apoc3d/UILib/List.h"
 #include "apoc3d/UILib/Menu.h"
 #include "apoc3d/UILib/PictureBox.h"
-#include "apoc3d/UILib/Scrollbar.h"
+#include "apoc3d/UILib/Bar.h"
 #include "apoc3d/UILib/StyleSkin.h"
 #include "apoc3d/UILib/Dialogs.h"
 #include "apoc3d/UILib/UICommon.h"

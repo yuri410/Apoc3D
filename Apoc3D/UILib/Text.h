@@ -124,8 +124,7 @@ namespace Apoc3D
 
 			void CursorScrolling();
 			void _DrawText(Sprite* sprite);
-			void DrawMonoline(Sprite* sprite);
-			void DrawMultiline(Sprite* sprite);
+			void DrawCursor(Sprite* sprite);
 
 			void TextEditState_EnterPressed();
 			void TextEditState_ContentChanged();

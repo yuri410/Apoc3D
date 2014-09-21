@@ -230,7 +230,7 @@ namespace Apoc3D
 			{ // DropdownButton
 				ConfigurationSection* dropdownSect = config->get(L"DropdownButton");
 
-				ParsePoint(dropdownSect, DropdownButtonOffset);
+				ParseOffset(dropdownSect, DropdownButtonOffset);
 
 				ParseMargin(dropdownSect, DropdownButtonMargin);
 
@@ -249,44 +249,6 @@ namespace Apoc3D
 				ParseColorValue(normalSect, DropdownButtonNormalColor);
 				ParseColorValue(hoverSect, DropdownButtonHoverColor);
 				ParseColorValue(downSect, DropdownButtonDownColor);
-
-				cachedRegions.Clear();
-			}
-
-			
-			{ // ProgressBar
-				ConfigurationSection* cbbSect = config->get(L"ProgressBar");
-
-				ConfigurationSection* bgSect = cbbSect->getSection(L"Background");
-				ConfigurationSection* fillSect = cbbSect->getSection(L"Filled");
-				
-				Parse3Region(bgSect, ProgressBarBG, cachedRegions);
-				Parse3Region(fillSect, ProgressBarFilled, cachedRegions);
-				
-				Offset3Region(bgSect, ProgressBarBG);
-				Offset3Region(fillSect, ProgressBarFilled);
-
-				ParseColorValue(bgSect, ProgressBarBGColor);
-				ParseColorValue(fillSect, ProgressBarFilledColor);
-
-				cachedRegions.Clear();
-			}
-
-
-			{ // HSlider
-				ConfigurationSection* sdrSect = config->get(L"HSlider");
-
-				ConfigurationSection* bgSect = sdrSect->getSection(L"Background");
-				ConfigurationSection* fillSect = sdrSect->getSection(L"Filled");
-				ConfigurationSection* handleSect = sdrSect->getSection(L"HandleNormal");
-
-				Parse3Region(bgSect, HSilderBG, cachedRegions);
-				Parse3Region(fillSect, HSilderFilled, cachedRegions);
-				ParseRegion(handleSect, HSliderHandle, cachedRegions);
-
-				Offset3Region(bgSect, HSilderBG);
-				Offset3Region(fillSect, HSilderFilled);
-				OffsetRegion(handleSect, HSliderHandle);
 
 				cachedRegions.Clear();
 			}
@@ -354,6 +316,111 @@ namespace Apoc3D
 				Parse9Region(normal, ListBoxBackground, cachedRegions);
 				
 				Offset9Region(normal, ListBoxBackground);
+				cachedRegions.Clear();
+			}
+
+
+			{ // ProgressBar
+				ConfigurationSection* pbSect = config->get(L"ProgressBar");
+
+				ProgressBarVS.Graphic = SkinTexture;
+				ProgressBarVS.FontRef = GetFontName(pbSect->getAttribute(L"Font"));
+
+				ParseMargin(pbSect, ProgressBarVS.Margin);
+
+				ConfigurationSection* textSect = pbSect->getSection(L"Text");
+				textSect->TryGetAttributeBool(L"HasShadow", ProgressBarVS.HasTextShadow);
+				ParseColorValue(textSect, L"TextColor", ProgressBarVS.TextColor);
+				ParseColorValue(textSect, L"TextColorDisabled", ProgressBarVS.TextColorDisabled);
+				ParseColorValue(textSect, L"TextShadowColor", ProgressBarVS.TextShadowColor);
+				ParseColorValue(textSect, L"TextShadowColorDisabled", ProgressBarVS.TextShadowColorDisabled);
+
+				ConfigurationSection* bgSect = pbSect->getSection(L"Background");
+				ConfigurationSection* barSect = pbSect->getSection(L"Bar");
+
+				Parse3Region(bgSect, ProgressBarVS.BackgroundRegions, cachedRegions);
+				Parse3Region(barSect, ProgressBarVS.BarRegions, cachedRegions);
+
+				Offset3Region(bgSect, ProgressBarVS.BackgroundRegions);
+				Offset3Region(barSect, ProgressBarVS.BarRegions);
+
+				ParseColorValue(bgSect, ProgressBarVS.BackgroundColor);
+				ParseColorValue(barSect, ProgressBarVS.BarColor);
+
+				cachedRegions.Clear();
+
+				int32 temp[2];
+				barSect->GetAttributeIntsChecked(L"StartEndPadding", temp);
+				ProgressBarVS.BarStartPad = temp[0];
+				ProgressBarVS.BarEndPad = temp[1];
+			}
+
+			{ // HSliderBar
+				ConfigurationSection* pbSect = config->get(L"HSliderBar");
+
+				HSliderBar.Graphic = SkinTexture;
+				ParseMargin(pbSect, HSliderBar.Margin);
+
+				ConfigurationSection* bgSect = pbSect->getSection(L"Background");
+				ConfigurationSection* barSect = pbSect->getSection(L"Bar");
+				
+				Apoc3D::Math::Rectangle handleRect;
+
+				Parse3Region(bgSect, HSliderBar.BackgroundRegions, cachedRegions);
+				Parse3Region(barSect, HSliderBar.BarRegions, cachedRegions);
+				
+				Offset3Region(bgSect, HSliderBar.BackgroundRegions);
+				Offset3Region(barSect, HSliderBar.BarRegions);
+				
+				ParseColorValue(bgSect, HSliderBar.BackgroundColor);
+				ParseColorValue(barSect, HSliderBar.BarColor);
+
+				cachedRegions.Clear();
+
+				ConfigurationSection* handleSect = pbSect->getSection(L"Handle");
+				{
+					ConfigurationSection* normalSect = handleSect->getSection(L"Normal");
+					ConfigurationSection* downSect = handleSect->getSection(L"Down");
+					ConfigurationSection* hoverSect = handleSect->getSection(L"Hover");
+					ConfigurationSection* disabledSect = handleSect->getSection(L"Disabled");
+
+					Apoc3D::Math::Rectangle normalRect, downRect, hoverRect, disabledRect;
+					ColorValue normalColor, downColor, hoverColor, disabledColor;
+
+					ParseRegion(normalSect, normalRect, cachedRegions);
+					ParseRegion(downSect, downRect, cachedRegions);
+					ParseRegion(hoverSect, hoverRect, cachedRegions);
+					ParseRegion(disabledSect, disabledRect, cachedRegions);
+
+					OffsetRegion(normalSect, normalRect);
+					OffsetRegion(downSect, downRect);
+					OffsetRegion(hoverSect, hoverRect);
+					OffsetRegion(disabledSect, disabledRect);
+
+					ParseColorValue(normalSect, normalColor);
+					ParseColorValue(downSect, downColor);
+					ParseColorValue(hoverSect, hoverColor);
+					ParseColorValue(disabledSect, disabledColor);
+
+					HSliderBar.HandleNormalGraphic = UIGraphicSimple(SkinTexture, normalRect, normalColor);
+					HSliderBar.HandleHoverGraphic = UIGraphicSimple(SkinTexture, hoverRect, hoverColor);
+					HSliderBar.HandleDownGraphic = UIGraphicSimple(SkinTexture, downRect, downColor);
+					HSliderBar.HandleDisabledGraphic = UIGraphicSimple(SkinTexture, disabledRect, disabledColor);
+				}
+
+				cachedRegions.Clear();
+
+				int32 temp[2];
+				barSect->GetAttributeIntsChecked(L"StartEndPadding", temp);
+				HSliderBar.BarStartPad = temp[0];
+				HSliderBar.BarEndPad = temp[1];
+
+				ParseOffset(handleSect, HSliderBar.HandleOffset);
+			}
+
+			{ // VSliderBar
+
+
 				cachedRegions.Clear();
 			}
 
@@ -563,7 +630,7 @@ namespace Apoc3D
 			cachedRegions.Add(sect->getName(), &srcRect);
 		}
 
-		void StyleSkin::ParsePoint(Apoc3D::Config::ConfigurationSection* sect, Point& result)
+		void StyleSkin::ParseOffset(Apoc3D::Config::ConfigurationSection* sect, Point& result)
 		{
 			int32 coordArr[2];
 			if (sect->TryGetAttributeIntsChecked(L"Offset", coordArr))
@@ -573,10 +640,11 @@ namespace Apoc3D
 			}
 		}
 
-		void StyleSkin::ParseColorValue(Apoc3D::Config::ConfigurationSection* sect, ColorValue& result)
+		void StyleSkin::ParseColorValue(Apoc3D::Config::ConfigurationSection* sect, ColorValue& result) { ParseColorValue(sect, L"Color", result); }
+		void StyleSkin::ParseColorValue(Apoc3D::Config::ConfigurationSection* sect, const String& attName, ColorValue& result)
 		{
 			String exp;
-			if (sect->tryGetAttribute(L"Color", exp))
+			if (sect->tryGetAttribute(attName, exp))
 			{
 				if (!ColorValueConverter.TryParse(exp, result))
 				{

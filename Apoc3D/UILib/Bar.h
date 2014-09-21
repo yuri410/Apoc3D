@@ -1,6 +1,6 @@
 #pragma once
-#ifndef APOC3D_SCROLLBAR_H
-#define APOC3D_SCROLLBAR_H
+#ifndef APOC3D_UI_BARS_SCROLLBAR_H
+#define APOC3D_UI_BARS_SCROLLBAR_H
 
 /**
  * -----------------------------------------------------------------------------
@@ -32,7 +32,7 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		enum struct ScrollBarType
+		enum struct BarDirection
 		{
 			Horizontal,
 			Vertical
@@ -44,8 +44,8 @@ namespace Apoc3D
 		public:
 			typedef EventDelegate1<ScrollBar*> ScrollBarEvent;
 
-			ScrollBar(const ScrollBarVisualSettings& settings, const Point& position, ScrollBarType type, int32 length);
-			ScrollBar(const StyleSkin* skin, const Point& position, ScrollBarType type, int32 length);
+			ScrollBar(const ScrollBarVisualSettings& settings, const Point& position, BarDirection type, int32 length);
+			ScrollBar(const StyleSkin* skin, const Point& position, BarDirection type, int32 length);
 			~ScrollBar();
 
 			void Draw(Sprite* sprite);
@@ -94,7 +94,7 @@ namespace Apoc3D
 
 			bool m_isMouseHovering = false;
 			bool m_isDragging = false;
-			ScrollBarType m_type;
+			BarDirection m_type;
 
 			int32 m_value = 0;
 			float m_valueFP = 0;
@@ -106,7 +106,90 @@ namespace Apoc3D
 
 		};
 
-	
+		class APAPI ProgressBar : public Control
+		{
+			RTTI_DERIVED(ProgressBar, Control);
+		public:
+			ProgressBar(const ProgressBarVisualSettings& settings, const Point& position, int32 width);
+			ProgressBar(const StyleSkin* skin, const Point& position, int32 width);
+			~ProgressBar();
+
+			void Draw(Sprite* sprite);
+			void Update(const GameTime* time);
+
+			void setWidth(int32 width) { m_size.X = width; }
+
+			Texture* Graphic = nullptr;
+			Apoc3D::Math::Rectangle BackgroundRegions[3];
+			Apoc3D::Math::Rectangle BarRegions[3];
+			ColorValue BackgroundColor = CV_White;
+			ColorValue BarColor = CV_White;
+
+			ControlBounds Margin;
+
+			float CurrentValue = 0;
+
+			int32 BarStartPad = 0;
+			int32 BarEndPad = 0;
+
+			TextRenderSettings TextSettings;
+			String TextBase;
+			
+		};
+
+
+		class APAPI SliderBar : public Control
+		{
+			RTTI_DERIVED(SliderBar, Control);
+		public:
+			typedef EventDelegate1<SliderBar*> SliderBarEvent;
+
+			SliderBar(const SliderBarVisualSettings& settings, const Point& position, BarDirection type, int32 length);
+			SliderBar(const StyleSkin* skin, const Point& position, BarDirection type, int32 length);
+			~SliderBar();
+
+			virtual void Draw(Sprite* sprite) override;
+			virtual void Update(const GameTime* time) override;
+
+			void SetLength(int32 len);
+			int32 GetLength() const;
+
+			bool isMouseHover() const { return m_isMouseHovering; }
+			const Apoc3D::Math::Rectangle& getMouseHoverArea() const { assert(m_isMouseHovering); return m_mouseHoverArea; }
+
+			float CurrentValue = 0;
+
+			Texture* Graphic = nullptr;
+			Apoc3D::Math::Rectangle BackgroundRegions[3];
+			Apoc3D::Math::Rectangle BarRegions[3];
+			ColorValue BackgroundColor = CV_White;
+			ColorValue BarColor = CV_White;
+
+			ControlBounds Margin;
+
+			int32 BarStartPad = 0;
+			int32 BarEndPad = 0;
+			
+			Point HandleOffset;
+			UIGraphicSimple HandleGraphic;
+			ControlBounds HandleMargin;
+
+			SliderBarEvent eventValueChanging;
+			SliderBarEvent eventValueChanged;
+		private:
+			int32 GetScrollableLength() const;
+			Apoc3D::Math::Rectangle GetHandleArea() const;
+
+			bool m_isMouseHovering = false;
+			bool m_isDragging = false;
+
+			BarDirection m_type;
+
+			Apoc3D::Math::Rectangle m_mouseHoverArea;
+
+		};
+
+		
 	}
 }
 

@@ -10,7 +10,7 @@
 #include "apoc3d/Utility/StringUtils.h"
 #include "StyleSkin.h"
 
-#include "Scrollbar.h"
+#include "Bar.h"
 
 using namespace Apoc3D::Input;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -560,32 +560,15 @@ namespace Apoc3D
 
 		void TextBox::_DrawText(Sprite* sprite)
 		{
-			bool canShowCursor = HasFocus && !ReadOnly && m_cursorVisible && ParentFocused;
+			//bool canShowCursor = HasFocus && !ReadOnly && m_cursorVisible && ParentFocused;
 			bool canShowSelection = !ReadOnly;
 
 			Apoc3D::Math::Rectangle contentArea = GetTextArea();
 
-			Point cursorPos = m_textEdit.getCursorPosition();
-			int32 cursorLeft = - m_fontRef->MeasureString(L"|").X / 4;
-			
 			if (!m_multiline)
 			{
 				const String& text = m_textEdit.getText();
-				if (cursorPos.X > 0)
-				{
-					m_cursorOffset.X = m_fontRef->MeasureString(
-						text.substr(0, cursorPos.X)).X + cursorLeft;
-				}
-				else
-				{
-					m_cursorOffset.X = cursorLeft;
-				}
-
-				m_cursorOffset.Y = 0;// m_textOffset.Y;
-
-				//Point pos(m_textOffset.X - m_scrollOffset.X, m_textOffset.Y - m_scrollOffset.Y);
-				//m_fontRef->DrawString(sprite, text, m_textOffset - m_scrollOffset + baseOffset, m_skin->TextColor);
-
+				
 				int32 lss, lse;
 				if (canShowSelection && m_textEdit.GetLineSelectionRegion(0, lss, lse))
 				{
@@ -593,19 +576,12 @@ namespace Apoc3D
 				}
 				
 				TextSettings.Draw(sprite, m_fontRef, text, contentArea.getTopLeft() - m_scrollOffset, contentArea.getSize(), Enabled);
-
-				if (canShowCursor)
-				{
-					//m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset + baseOffset, m_skin->TextColor);
-					TextSettings.Draw(sprite, m_fontRef, L"|", contentArea.getTopLeft() + m_cursorOffset - m_scrollOffset, contentArea.getSize(), Enabled);
-				}
 			}
 			else
 			{
 				const List<String>& lines = m_textEdit.getLines();
 
 				Point lineOffset = Point(0, 0);
-				int maxWidth = 0;
 				for (int32 i = 0; i < lines.getCount(); i++)
 				{
 					const String& line = lines[i];
@@ -617,23 +593,68 @@ namespace Apoc3D
 					}
 
 					TextSettings.Draw(sprite, m_fontRef, line, lineOffset - m_scrollOffset + contentArea.getTopLeft(), contentArea.getSize(), Enabled);
-					//m_fontRef->DrawString(sprite, line, m_textOffset + m_lineOffset - m_scrollOffset + baseOffset, m_skin->TextColor);
 
 					lineOffset.Y += m_fontRef->getLineHeightInt();
 				}
+			}
+
+			DrawCursor(sprite);
+		}
+		void TextBox::DrawCursor(Sprite* sprite)
+		{
+			Apoc3D::Math::Rectangle contentArea = GetTextArea();
+
+			bool canShowCursor = HasFocus && !ReadOnly && m_cursorVisible && ParentFocused;
+
+			Point cursorPos = m_textEdit.getCursorPosition();
+
+			Apoc3D::Math::Rectangle cursorDstRect;
+			cursorDstRect.Width = 1;
+			cursorDstRect.Height = Math::Min(m_fontRef->getLineHeightInt(), contentArea.Height);
+			
+			if (!m_multiline)
+			{
+				const String& text = m_textEdit.getText();
+				if (cursorPos.X > 0)
+				{
+					m_cursorOffset.X = m_fontRef->MeasureString(text.substr(0, cursorPos.X)).X;
+				}
+				else
+				{
+					m_cursorOffset.X = 0;
+				}
+
+				m_cursorOffset.Y = 0;
 
 				if (canShowCursor)
 				{
-					if (cursorPos.X > (int)lines[cursorPos.Y].size())
-						cursorPos.X = (int)lines[cursorPos.Y].size();
+					//TextSettings.Draw(sprite, m_fontRef, L"|", contentArea.getTopLeft() + m_cursorOffset - m_scrollOffset, contentArea.getSize(), Enabled);
 
-					m_cursorOffset.X = m_fontRef->MeasureString(
-						lines[cursorPos.Y].substr(0, cursorPos.X)).X + cursorLeft;
-					m_cursorOffset.Y = m_fontRef->getLineHeightInt() * cursorPos.Y + 1;
+					cursorDstRect.setPosition(contentArea.getTopLeft() + m_cursorOffset - m_scrollOffset);
 
-					//m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset + baseOffset, m_skin->TextColor);
-					TextSettings.Draw(sprite, m_fontRef, L"|", m_cursorOffset - m_scrollOffset + contentArea.getTopLeft(), contentArea.getSize(), Enabled);
+					// vertical center 
+					cursorDstRect.Y += (contentArea.Height - cursorDstRect.Height) / 2;
 				}
+
+			}
+			else
+			{
+				const List<String>& lines = m_textEdit.getLines();
+
+				m_cursorOffset.X = m_fontRef->MeasureString(
+					lines[cursorPos.Y].substr(0, cursorPos.X)).X;
+				m_cursorOffset.Y = m_fontRef->getLineHeightInt() * cursorPos.Y + 1;
+
+				if (canShowCursor)
+				{
+					cursorDstRect.setPosition(m_cursorOffset - m_scrollOffset + contentArea.getTopLeft());
+					//TextSettings.Draw(sprite, m_fontRef, L"|", m_cursorOffset - m_scrollOffset + contentArea.getTopLeft(), contentArea.getSize(), Enabled);
+				}
+			}
+
+			if (canShowCursor)
+			{
+				sprite->Draw(SystemUI::GetWhitePixel(), cursorDstRect, nullptr, TextSettings.TextColor);
 			}
 		}
 

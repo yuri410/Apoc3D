@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Button.h"
 #include "PictureBox.h"
 #include "FontManager.h"
-#include "Scrollbar.h"
+#include "Bar.h"
 #include "StyleSkin.h"
 
 #include "apoc3d/Core/CommandInterpreter.h"
@@ -77,7 +77,7 @@ namespace Apoc3D
 			m_form->getControls().Add(m_pictureBox);
 
 			m_scrollBar = new ScrollBar(skin, m_pictureBox->Position + Point(m_pictureBox->getWidth(), 0),
-				ScrollBarType::Vertical, m_pictureBox->getHeight());
+				BarDirection::Vertical, m_pictureBox->getHeight());
 			
 			m_scrollBar->IsInverted = true;
 			m_form->getControls().Add(m_scrollBar);
