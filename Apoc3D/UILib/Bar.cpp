@@ -416,11 +416,11 @@ namespace Apoc3D
 				Graphic, BackgroundRegions, BarRegions, Margin,
 				BarStartPad, BarEndPad);
 
-			if (TextBase.size())
+			if (Text.size())
 			{
 				Apoc3D::Math::Rectangle dstRect = getAbsoluteArea();
 
-				TextSettings.Draw(sprite, m_fontRef, TextBase, dstRect, Enabled);
+				TextSettings.Draw(sprite, m_fontRef, Text, dstRect, Enabled);
 			}
 		}
 		void ProgressBar::Update(const GameTime* time)

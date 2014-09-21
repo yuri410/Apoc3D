@@ -57,6 +57,9 @@ namespace Apoc3D
 			String titleTextFontName = basicSect->getValue(L"TitleFont");
 			String texturePackName = basicSect->getValue(L"TexturePack");
 
+			fl = FileSystem::getSingleton().Locate(texturePackName, rule);
+			SkinTexture = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl);
+
 			TextColor = ParseColorValue(basicSect->getValue(L"TextColor"));
 			TextColorDisabled = ParseColorValue(basicSect->getValue(L"TextColorDisabled"));
 			TextSelectionColor = ParseColorValue(basicSect->getValue(L"TextSelectionColor"));
@@ -334,6 +337,7 @@ namespace Apoc3D
 				ParseColorValue(textSect, L"TextColorDisabled", ProgressBarVS.TextColorDisabled);
 				ParseColorValue(textSect, L"TextShadowColor", ProgressBarVS.TextShadowColor);
 				ParseColorValue(textSect, L"TextShadowColorDisabled", ProgressBarVS.TextShadowColorDisabled);
+				ParsePoint(textSect, L"TextShadowOffset", ProgressBarVS.TextShadowOffset);
 
 				ConfigurationSection* bgSect = pbSect->getSection(L"Background");
 				ConfigurationSection* barSect = pbSect->getSection(L"Bar");
@@ -522,9 +526,6 @@ namespace Apoc3D
 			}
 
 			delete config;
-
-			fl = FileSystem::getSingleton().Locate(texturePackName, rule);
-			SkinTexture = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl);
 		}
 
 		StyleSkin::~StyleSkin()
@@ -630,10 +631,11 @@ namespace Apoc3D
 			cachedRegions.Add(sect->getName(), &srcRect);
 		}
 
-		void StyleSkin::ParseOffset(Apoc3D::Config::ConfigurationSection* sect, Point& result)
+		void StyleSkin::ParseOffset(Apoc3D::Config::ConfigurationSection* sect, Point& result) { return ParsePoint(sect, L"Offset", result); }
+		void StyleSkin::ParsePoint(Apoc3D::Config::ConfigurationSection* sect, const String& attName, Point& result)
 		{
 			int32 coordArr[2];
-			if (sect->TryGetAttributeIntsChecked(L"Offset", coordArr))
+			if (sect->TryGetAttributeIntsChecked(attName, coordArr))
 			{
 				result.X = coordArr[0];
 				result.Y = coordArr[1];

@@ -108,7 +108,9 @@
 	</ListBox>
 
   <ProgressBar Font="Text" Margin="0,0,0,1">
-    <Text HasShadow="false" />
+    <Text HasShadow="true" TextColor="White" TextColorDisabled="White" 
+          TextShadowColor="Black" TextShadowColorDisabled="Black"
+          TextShadowOffset="2,1" />
     
     <Background Coord="64, 59">
       [0, 0, 2, 14], [64, 0, 1, 14], [149, 0, 2, 14]
@@ -116,8 +118,8 @@
     <Bar Coord="64, 74" RegionRef="Background" StartEndPadding="1,1" />
   </ProgressBar>
 
-  <HSliderBar>
-    <Background Coord="4, 176" Margin="0,0,0,0">
+  <HSliderBar Margin="0,0,0,1">
+    <Background Coord="4, 176" >
       [0, 0, 2, 6], [33, 0, 1, 6], [234, 0, 2, 6]
     </Background>
     

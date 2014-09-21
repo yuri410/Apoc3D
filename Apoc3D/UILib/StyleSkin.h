@@ -205,6 +205,7 @@ namespace Apoc3D
 			void ParseColorValue(Apoc3D::Config::ConfigurationSection* sect, ColorValue& result);
 			void ParseColorValue(Apoc3D::Config::ConfigurationSection* sect, const String& attName, ColorValue& result);
 			void ParseOffset(Apoc3D::Config::ConfigurationSection* sect, Point& result);
+			void ParsePoint(Apoc3D::Config::ConfigurationSection* sect, const String& attName, Point& result);
 			
 
 			void Offset9Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[9]);

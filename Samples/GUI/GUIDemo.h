@@ -33,6 +33,8 @@ namespace Sample_GUI
 		Form* m_aboutDlg;
 
 		MenuBar* m_mainMenu;
+		ProgressBar* m_testPB;
+		SliderBar* m_testSB;
 
 		Sprite* m_sprite;
     };

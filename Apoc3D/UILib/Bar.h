@@ -133,7 +133,7 @@ namespace Apoc3D
 			int32 BarEndPad = 0;
 
 			TextRenderSettings TextSettings;
-			String TextBase;
+			String Text;
 			
 		};
 
