@@ -126,13 +126,7 @@ namespace Apoc3D
 			ColorValue DropdownButtonHoverColor = CV_White;
 			ColorValue DropdownButtonDownColor = CV_White;
 
-
-			Apoc3D::Math::Rectangle HSilderBG[3];
-			Apoc3D::Math::Rectangle HSilderFilled[3];
-			Apoc3D::Math::Rectangle HSliderHandle;
-
-
-
+		
 			Apoc3D::Math::Rectangle VScrollBarCursor[3];
 			Apoc3D::Math::Rectangle VScrollBarBG;
 			Apoc3D::Math::Rectangle VScrollBarUp;
