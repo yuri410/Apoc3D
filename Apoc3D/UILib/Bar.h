@@ -171,7 +171,10 @@ namespace Apoc3D
 			int32 BarEndPad = 0;
 			
 			Point HandleOffset;
-			UIGraphicSimple HandleGraphic;
+			UIGraphicSimple HandleNormalGraphic;
+			UIGraphicSimple HandleHoverGraphic;
+			UIGraphicSimple HandleDownGraphic;
+			UIGraphicSimple HandleDisabledGraphic;
 			ControlBounds HandleMargin;
 
 			SliderBarEvent eventValueChanging;

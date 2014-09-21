@@ -389,7 +389,10 @@ namespace Apoc3D
 					ConfigurationSection* disabledSect = handleSect->getSection(L"Disabled");
 
 					Apoc3D::Math::Rectangle normalRect, downRect, hoverRect, disabledRect;
-					ColorValue normalColor, downColor, hoverColor, disabledColor;
+					ColorValue normalColor = CV_White;
+					ColorValue downColor = CV_White;
+					ColorValue hoverColor = CV_White;
+					ColorValue disabledColor = CV_White;
 
 					ParseRegion(normalSect, normalRect, cachedRegions);
 					ParseRegion(downSect, downRect, cachedRegions);

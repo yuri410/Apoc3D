@@ -450,7 +450,11 @@ namespace Apoc3D
 			SetLength(length);
 
 			HandleOffset = settings.HandleOffset;
-			HandleGraphic = settings.HandleNormalGraphic;
+			HandleNormalGraphic = settings.HandleNormalGraphic;
+			HandleHoverGraphic = settings.HandleHoverGraphic;
+			HandleDownGraphic = settings.HandleDownGraphic;
+			HandleDisabledGraphic = settings.HandleDisabledGraphic;
+
 			HandleMargin = settings.HandleMargin;
 		}
 		
@@ -471,7 +475,25 @@ namespace Apoc3D
 				BarStartPad, BarEndPad);
 
 			Apoc3D::Math::Rectangle handleArea = HandleMargin.InflateRect(GetHandleArea());
-			HandleGraphic.Draw(sprite, handleArea);
+
+			UIGraphicSimple* g = &HandleNormalGraphic;
+			if (Enabled)
+			{
+				if (m_isDragging)
+				{
+					g = &HandleDownGraphic;
+				}
+				else if (m_isMouseHovering)
+				{
+					g = &HandleHoverGraphic;
+				}
+			}
+			else
+			{
+				g = &HandleDisabledGraphic;
+			}
+
+			g->Draw(sprite, handleArea);
 		}
 		void SliderBar::Update(const GameTime* time)
 		{
@@ -557,8 +579,8 @@ namespace Apoc3D
 
 			pos += HandleOffset;
 
-			int32 hw = HandleGraphic.getWidth() - HandleMargin.getHorizontalSum();
-			int32 hh = HandleGraphic.getHeight() - HandleMargin.getVerticalSum();
+			int32 hw = HandleNormalGraphic.getWidth() - HandleMargin.getHorizontalSum();
+			int32 hh = HandleNormalGraphic.getHeight() - HandleMargin.getVerticalSum();
 
 			Apoc3D::Math::Rectangle handleArea;
 
