@@ -41,29 +41,16 @@ namespace Apoc3D
 		/************************************************************************/
 
 		UIGraphic::UIGraphic(Texture* tex) : UIGraphic(tex, CV_White) { }
-		UIGraphic::UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect) : UIGraphic(tex, srcRect, CV_White) { }
-		UIGraphic::UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[3]) : UIGraphic(tex, srcRect, CV_White) { }
-		UIGraphic::UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[9]) : UIGraphic(tex, srcRect, CV_White) { }
+		UIGraphic::UIGraphic(Texture* tex, std::initializer_list<Apoc3D::Math::Rectangle> srcRect) : UIGraphic(tex, srcRect, CV_White) { }
 
 		UIGraphic::UIGraphic(Texture* tex, ColorValue color)
 			: Graphic(tex), ModColor(color) { }
 
-		UIGraphic::UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect, ColorValue color)
-			: Graphic(tex), ModColor(color) 
-		{
-			SourceRects.Add(srcRect);
-		}
-
-		UIGraphic::UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[3], ColorValue color)
+		UIGraphic::UIGraphic(Texture* tex, std::initializer_list<Apoc3D::Math::Rectangle> srcRect, ColorValue color)
 			: Graphic(tex), ModColor(color)
 		{
-			SourceRects.AddArray(srcRect);
-		}
-
-		UIGraphic::UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[9], ColorValue color)
-			: Graphic(tex), ModColor(color)
-		{
-			SourceRects.AddArray(srcRect);
+			assert(srcRect.size() == 0 || srcRect.size() == 1 || srcRect.size() == 3 || srcRect.size() == 9);
+			SourceRects.AddList(srcRect);
 		}
 
 		void UIGraphic::Draw(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, bool vertical) const

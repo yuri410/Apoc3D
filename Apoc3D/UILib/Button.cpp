@@ -653,6 +653,8 @@ namespace Apoc3D
 
 			m_isMouseHover = new bool[m_buttonCount];
 			m_isMouseDown = new bool[m_buttonCount];
+			memset(m_isMouseHover, 0, sizeof(bool) * m_buttonCount);
+			memset(m_isMouseDown, 0, sizeof(bool) * m_buttonCount);
 
 			m_graphicsSrcRectHover = new Apoc3D::Math::Rectangle[m_buttonCount];
 			m_graphicsSrcRectDown = new Apoc3D::Math::Rectangle[m_buttonCount];
@@ -663,9 +665,6 @@ namespace Apoc3D
 				m_graphicsSrcRectDown[i] = downRegs[i];
 				m_graphicsSrcRectHover[i] = hoverRegs[i];
 			}
-
-			memset(m_isMouseHover, 0, sizeof(bool) * m_buttonCount);
-			memset(m_isMouseDown, 0, sizeof(bool) * m_buttonCount);
 		}
 		ButtonGroupTextured::~ButtonGroupTextured()
 		{

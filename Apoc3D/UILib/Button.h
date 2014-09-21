@@ -215,13 +215,47 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle* m_buttonDstRect;
 		};
 
+		template <int32 N>
+		struct ButtonGroupTexturedVisualSettings
+		{
+			Texture* Graphic;
+
+			Apoc3D::Math::Rectangle NormalRegion;
+			Apoc3D::Math::Rectangle HoverRegions[N];
+			Apoc3D::Math::Rectangle DownRegions[N];
+			ControlBounds Paddings[N];
+		};
+
 		class APAPI ButtonGroupTextured
 		{
 		public:
 			typedef EventDelegate2<ButtonGroupTextured*, int32> ButtonEvent;
 
+			template <int32 N>
+			ButtonGroupTextured(const Point& position, const ButtonGroupTexturedVisualSettings<N>& settings)
+				: Position(position), m_graphic(settings.Graphic), m_buttonCount(N)
+			{
+				m_graphicsSrcRect = settings.NormalRegion;
+
+				m_isMouseHover = new bool[N];
+				m_isMouseDown = new bool[N];
+				memset(m_isMouseHover, 0, sizeof(bool) * N);
+				memset(m_isMouseDown, 0, sizeof(bool) * N);
+
+				m_graphicsSrcRectHover = new Apoc3D::Math::Rectangle[N];
+				m_graphicsSrcRectDown = new Apoc3D::Math::Rectangle[N];
+				m_hotAreaPaddings = new ControlBounds[N];
+				for (int32 i = 0; i < N; i++)
+				{
+					m_hotAreaPaddings[i] = settings.Paddings[i];
+					m_graphicsSrcRectDown[i] = settings.DownRegions[i];
+					m_graphicsSrcRectHover[i] = settings.HoverRegions[i];
+				}
+			}
+
 			ButtonGroupTextured(const Point& position, Texture* tex, const Apoc3D::Math::Rectangle& normalRegion,
 				const List<Apoc3D::Math::Rectangle>& hoverRegs, const List<Apoc3D::Math::Rectangle>& downRegs, const List<ControlBounds>& paddings);
+
 			~ButtonGroupTextured();
 
 			void Draw(Sprite* sprite);

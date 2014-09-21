@@ -64,16 +64,37 @@ namespace Apoc3D
 			UIGraphic() { }
 
 			UIGraphic(Texture* tex);
-			UIGraphic(Texture* tex, ColorValue modColor);
+			UIGraphic(Texture* tex, ColorValue color);
 
-			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect);
-			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect, ColorValue modColor);
+			template <typename = void>
+			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect) : UIGraphic(tex, srcRect, CV_White) { }
+			template <typename = void>
+			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect, ColorValue color)
+				: Graphic(tex), ModColor(color)
+			{
+				SourceRects.Add(srcRect);
+			}
 
-			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[3]);
-			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[3], ColorValue modColor);
+			template <typename = void>
+			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[3]) : UIGraphic(tex, srcRect, CV_White) { }
+			template <typename = void>
+			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[3], ColorValue color) 
+				: Graphic(tex), ModColor(color)
+			{
+				SourceRects.AddArray(srcRect);
+			}
 
-			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[9]);
-			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[9], ColorValue modColor);
+			template <typename = void>
+			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[9]) : UIGraphic(tex, srcRect, CV_White) { }
+			template <typename = void>
+			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle(&srcRect)[9], ColorValue color)
+				: Graphic(tex), ModColor(color)
+			{
+				SourceRects.AddArray(srcRect);
+			}
+
+			UIGraphic(Texture* tex, std::initializer_list<Apoc3D::Math::Rectangle> srcRect);
+			UIGraphic(Texture* tex, std::initializer_list<Apoc3D::Math::Rectangle> srcRect, ColorValue modColor);
 
 			void Draw(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, bool vertical) const;
 			void Draw(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect) const;
@@ -194,6 +215,8 @@ namespace Apoc3D
 			bool isSet() const { return m_isSet; }
 			operator T() { return m_data; }
 			operator T() const { return m_data; }
+
+			T& getContent() { return m_data; }
 		private:
 			T m_data;
 			bool m_isSet = false;
