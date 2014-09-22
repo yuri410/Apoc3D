@@ -31,6 +31,7 @@ namespace Apoc3D
 			RTTI_DERIVED(ListBox, ScrollableControl);
 		public:
 			typedef EventDelegate1<ListBox*> ListBoxEvent;
+			typedef EventDelegate3<ListBox*, int32, const Apoc3D::Math::Rectangle&> ListBoxItemEvent;
 
 			ListBox(const StyleSkin* skin, const Point& position, int width, int height, const List<String>& items);
 			ListBox(const ListBoxVisualSettings& settings, const Point& position, int width, int height, const List<String>& items);
@@ -57,12 +58,17 @@ namespace Apoc3D
 			UIGraphic BackgroundGraphic;
 			
 			ControlBounds Margin;
+			ControlBounds Padding;
+
+			ColorValue HoverBGColor = CV_Silver;
+			ColorValue SelectionBGColor = CV_LightGray;
 
 			ListBoxEvent eventSelect;
 			ListBoxEvent eventSelectionChanged;
 			ListBoxEvent eventPress;
 			ListBoxEvent eventRelease;
 
+			ListBoxItemEvent eventItemRender;
 		private:
 			void Initialize(const StyleSkin* skin);
 			void Initialize(const ListBoxVisualSettings& settings);
@@ -70,7 +76,7 @@ namespace Apoc3D
 			void AlignHeight();
 
 			void UpdateHScrollbar();
-			void RenderSelectionBox(Sprite* sprite, int index, const Point& txtPos);
+			void RenderSelectionBox(Sprite* sprite, int index, int itemY);
 			void DrawBackground(Sprite* sprite);
 			
 			void OnMouseHover();

@@ -291,6 +291,7 @@ namespace Apoc3D
 			ScrollBarVisualSettings VScrollBar;
 
 			OptionalSetting<ControlBounds> Margin;
+			OptionalSetting<ControlBounds> Padding;
 		};
 
 		struct ProgressBarVisualSettings

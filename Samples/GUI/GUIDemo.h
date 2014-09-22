@@ -35,6 +35,7 @@ namespace Sample_GUI
 		MenuBar* m_mainMenu;
 		ProgressBar* m_testPB;
 		SliderBar* m_testSB;
+		ComboBox* m_testCB;
 
 		Sprite* m_sprite;
     };

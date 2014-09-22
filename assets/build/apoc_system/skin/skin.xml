@@ -99,7 +99,7 @@
 	
   </HScrollBar>
   
-	<ListBox Font="Text" Padding="1,1,1,1">
+	<ListBox Font="Text" Margin="0,0,0,0" Padding="1,1,1,1">
     <Normal Coord="4,64">
       [0,  0, 2,  5], [2,  0,51,  5],  [53,  0, 2,  5],
       [0,  5, 2, 12], [2,  5,51, 12],  [53,  5, 2, 12],

@@ -527,6 +527,8 @@ namespace Apoc3D
 			}
 			else
 			{
+				Apoc3D::Math::Rectangle area = getAbsoluteArea();
+
 				if (!m_isMouseHovering && handleArea.Contains(mouse->GetPosition()))
 				{
 					m_isMouseHovering = true;
@@ -535,6 +537,18 @@ namespace Apoc3D
 					if (mouse->IsLeftPressed())
 					{
 						m_isDragging = true;
+					}
+				}
+				else if (area.Contains(mouse->GetPosition()))
+				{
+					int32 dist = m_type == BarDirection::Horizontal ? (mouse->getX() - area.X) : (mouse->getY() - area.Y);
+
+					if (mouse->IsLeftPressed())
+					{
+						int32 len = GetLength();
+						if (len <= 0)
+							len = 1;
+						CurrentValue = Math::Saturate(static_cast<float>(dist) / GetLength());
 					}
 				}
 			}

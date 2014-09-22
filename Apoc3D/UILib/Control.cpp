@@ -289,7 +289,7 @@ namespace Apoc3D
 		Apoc3D::Math::Rectangle ScrollableControl::GetContentArea() const
 		{
 			Apoc3D::Math::Rectangle rect = getAbsoluteArea();
-
+			
 			if (m_vscrollbar && (m_alwaysShowVS || (m_vscrollbar->Visible && m_vscrollbar->Maximum > 0)))
 			{
 				rect.Width -= m_vscrollbar->getWidth();
