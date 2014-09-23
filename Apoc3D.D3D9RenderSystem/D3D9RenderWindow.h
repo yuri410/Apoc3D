@@ -159,8 +159,11 @@ namespace Apoc3D
 
 				const String& getHardwareName() const { return m_hardwareName; }
 
-				virtual void SetVisible(bool v);
+				virtual void SetVisible(bool v) override;
 
+				virtual void Minimize() override;
+				virtual void Restore() override;
+				virtual void Maximize() override;
 			private:
 				D3D9Game* m_game;
 				D3D9DeviceContext* m_dc;

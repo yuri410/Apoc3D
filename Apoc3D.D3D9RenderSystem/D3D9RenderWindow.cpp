@@ -227,6 +227,23 @@ namespace Apoc3D
 
 				m_visisble = v;
 			}
+
+
+			void D3D9RenderWindow::Minimize()
+			{
+				if (m_visisble)
+					ShowWindow(m_game->getWindow()->getHandle(), SW_MINIMIZE);
+			}
+			void D3D9RenderWindow::Restore()
+			{
+				if (m_visisble)
+					ShowWindow(m_game->getWindow()->getHandle(), SW_RESTORE);
+			}
+			void D3D9RenderWindow::Maximize()
+			{
+				if (m_visisble)
+					ShowWindow(m_game->getWindow()->getHandle(), SW_MAXIMIZE);
+			}
 		}
 	}
 }

@@ -110,9 +110,6 @@ namespace Apoc3D
 			class APAPI RenderWindow : public RenderView
 			{
 				RTTI_DERIVED(RenderWindow, RenderView);
-			private:
-				RenderWindowHandler* m_evtHandler;
-				bool m_isExiting;
 			public:
 				/**
 				 *  Quit the rendering app
@@ -141,18 +138,16 @@ namespace Apoc3D
 				bool getVisisble() const { return m_visisble; }
 				virtual void SetVisible(bool v) = 0;
 
+				virtual void Minimize() = 0;
+				virtual void Restore() = 0;
+				virtual void Maximize() = 0;
 			protected:
 
 				RenderWindow(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm, RenderTarget* rt)
-					: RenderView(dc, rd, pm, rt), m_evtHandler(0), m_isExiting(false), m_visisble(true)
-				{
+					: RenderView(dc, rd, pm, rt) { }
 
-				}
 				RenderWindow(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm)
-					: RenderView(dc, rd, pm), m_evtHandler(0), m_isExiting(false), m_visisble(true)
-				{
-
-				}
+					: RenderView(dc, rd, pm) { }
 				
 				void OnFrameStart();
 				void OnFrameEnd();
@@ -164,7 +159,10 @@ namespace Apoc3D
 				void OnUpdate(const GameTime* time);
 				void OnDraw(const GameTime* time);
 
-				bool m_visisble;
+				RenderWindowHandler* m_evtHandler = nullptr;
+				bool m_isExiting = false;
+
+				bool m_visisble = true;
 			};
 
 		}
