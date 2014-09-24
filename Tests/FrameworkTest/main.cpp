@@ -76,8 +76,8 @@ void main()
 	TestXml();
 
 	//TestRandom();
-	//TestIterator();
-	TestHalfFloat();
+	TestIterator();
+	//TestHalfFloat();
 	
 }
 
@@ -467,6 +467,12 @@ NO_INLINE void OptimizationBlocker(volatile const T& e)
 	//for (int32 i = 0; i < sizeof(T); i++)
 		//r[i] = *(reinterpret_cast<const char*>(&e) + i);
 }
+template<typename T, typename S>
+NO_INLINE void OptimizationBlocker(volatile const T& e, volatile const S& f)
+{
+	(void)e;
+	(void)f;
+}
 
 NO_INLINE int64 getTimeDiff(const volatile std::chrono::high_resolution_clock::time_point& t1,
 	const volatile std::chrono::high_resolution_clock::time_point& t2)
@@ -476,12 +482,48 @@ NO_INLINE int64 getTimeDiff(const volatile std::chrono::high_resolution_clock::t
 	return duration_cast<milliseconds>(const_cast<high_resolution_clock::time_point&>(t2)-const_cast<high_resolution_clock::time_point&>(t1)).count();
 }
 
+template <typename T>
+struct LargerListIter
+{
+	explicit LargerListIter(List<T>& list)
+		: m_list(list) { }
+
+	LargerListIter& operator++()
+	{
+		if (m_index < 0)
+			return *this;
+
+		m_index++;
+
+		if (m_index >= m_list.getCount())
+			m_index = -1;
+
+		return *this;
+	}
+	//LargerListIter operator++(int) { LargerListIter result = *this; ++(*this); return result; }
+
+	bool operator==(const LargerListIter& rhs) const { return &m_list == &rhs.m_list && m_index == rhs.m_index; }
+	bool operator!=(const LargerListIter& rhs) const { return &m_list != &rhs.m_list || m_index != rhs.m_index; }
+
+	const T& operator*() const { return m_list[m_index]; }
+
+	static LargerListIter ssend(List<T>& list) { return LargerListIter(list, -1); }
+private:
+	LargerListIter(List<T>& list, int32 idx)
+		: m_list(list), m_index(idx) { }
+
+	List<T>& m_list;
+	int32 m_index = 0;
+};
+
+
+
 void TestIterator()
 {
 	using namespace std::chrono;
 
-	const int Count = 10000000;
-	const int Iterations = 10;
+	const int Count = 100000;
+	const int Iterations = 1000;
 
 	HashMap<int, int> test1(Count);
 	HashSet<int> test2(Count);
@@ -503,7 +545,7 @@ void TestIterator()
 	{
 		{
 			volatile auto t1 = high_resolution_clock::now();
-			for (int i = 0; i < Iterations;i++)
+			for (int k = 0; k < Iterations; k++)
 			{
 				for (auto e = test1.GetEnumerator(); e.MoveNext();)
 					OptimizationBlocker(e);
@@ -513,7 +555,7 @@ void TestIterator()
 		}
 		{
 			volatile auto t1 = high_resolution_clock::now();
-			for (int i = 0; i < Iterations; i++)
+			for (int k = 0; k < Iterations; k++)
 			{
 				for (const auto& e : test1)
 					OptimizationBlocker(e);
@@ -521,14 +563,14 @@ void TestIterator()
 			volatile auto t2 = high_resolution_clock::now();
 			iterTime = getTimeDiff(t1, t2);
 		}
-		printf("HashMap: %lld,%lld\n", iterTime, eterTime);
+		printf("HashMap:\tIter=%lld,\tEnum=%lld\n", iterTime, eterTime);
 	}
 
 	if (1)
 	{
 		{
 			volatile auto t1 = high_resolution_clock::now();
-			for (int i = 0; i < Iterations; i++)
+			for (int k = 0; k < Iterations; k++)
 			{
 				for (const auto& e : test2)
 					OptimizationBlocker(e);
@@ -538,7 +580,7 @@ void TestIterator()
 		}
 		{
 			volatile auto t1 = high_resolution_clock::now();
-			for (int i = 0; i < Iterations; i++)
+			for (int k = 0; k < Iterations; k++)
 			{
 				for (auto e = test2.GetEnumerator(); e.MoveNext();)
 					OptimizationBlocker(e);
@@ -546,14 +588,14 @@ void TestIterator()
 			volatile auto t2 = high_resolution_clock::now();
 			eterTime = getTimeDiff(t1, t2);
 		}
-		printf("HashSet: %lld,%lld\n", iterTime, eterTime);
+		printf("HashSet:\tIter=%lld,\tEnum=%lld\n", iterTime, eterTime);
 	}
 
 	if (1)
 	{
 		{
 			volatile auto t1 = high_resolution_clock::now();
-			for (int i = 0; i < Iterations; i++)
+			for (int k = 0; k < Iterations; k++)
 			{
 				for (const auto& e : test3)
 					OptimizationBlocker(e);
@@ -563,7 +605,7 @@ void TestIterator()
 		}
 		{
 			volatile auto t1 = high_resolution_clock::now();
-			for (int i = 0; i < Iterations; i++)
+			for (int k = 0; k < Iterations; k++)
 			{
 				for (int32 i = 0; i < test3.getCount(); i++)
 					OptimizationBlocker(test3[i]);
@@ -571,14 +613,26 @@ void TestIterator()
 			volatile auto t2 = high_resolution_clock::now();
 			eterTime = getTimeDiff(t1, t2);
 		}
-		printf("List: %lld,%lld\n", iterTime, eterTime);
+
+		volatile int64 largeIterTime;
+		{
+			volatile auto t1 = high_resolution_clock::now();
+			for (int k = 0; k < Iterations; k++)
+			{
+				for (LargerListIter<int> i = LargerListIter<int>(test3); i != LargerListIter<int>::ssend(test3); ++i)
+					OptimizationBlocker(*i);
+			}
+			volatile auto t2 = high_resolution_clock::now();
+			largeIterTime = getTimeDiff(t1, t2);
+		}
+		printf("List:\t\tIter=%lld,\tIndex=%lld,\tBigIter=%lld\n", iterTime, eterTime, largeIterTime);
 	}
 
 	if (1)
 	{
 		{
 			volatile auto t1 = high_resolution_clock::now();
-			for (int i = 0; i < Iterations; i++)
+			for (int k = 0; k < Iterations; k++)
 			{
 				for (const auto& e : test4)
 					OptimizationBlocker(e);
@@ -588,7 +642,7 @@ void TestIterator()
 		}
 		{
 			volatile auto t1 = high_resolution_clock::now();
-			for (int i = 0; i < Iterations; i++)
+			for (int k = 0; k < Iterations; k++)
 			{
 				for (size_t i = 0; i < test4.size(); i++)
 					OptimizationBlocker(test4[i]);
@@ -596,7 +650,7 @@ void TestIterator()
 			volatile auto t2 = high_resolution_clock::now();
 			eterTime = getTimeDiff(t1, t2);
 		}
-		printf("vector: %lld,%lld\n", iterTime, eterTime);
+		printf("vector:\t\tIter=%lld,\tIndex=%lld\n", iterTime, eterTime);
 	}
 }
 

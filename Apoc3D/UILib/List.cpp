@@ -218,7 +218,12 @@ namespace Apoc3D
 					RenderSelectionBox(sprite, i, textOffset.Y);
 
 				textOffset += cntArea.getPosition();
-				ItemSettings.Draw(sprite, m_fontRef, m_items[i], textOffset, Point(m_size.X, getItemHeight()), Enabled);
+
+				Apoc3D::Math::Rectangle itemArea = { textOffset, Point(m_size.X, getItemHeight()) };
+
+				ItemSettings.Draw(sprite, m_fontRef, m_items[i], itemArea, Enabled);
+
+				eventItemRender.Invoke(this, i, itemArea);
 			}
 			sprite->Flush();
 			
