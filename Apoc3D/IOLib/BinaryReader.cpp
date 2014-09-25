@@ -541,10 +541,11 @@ namespace Apoc3D
 			}
 		}
 
-		void BinaryReader::ReadSingle(float* data, int32 count)	{ for (int32 i=0;i<count;i++) data[i] = ReadSingle(); }
-		void BinaryReader::ReadDouble(double* data, int32 count)	{ for (int32 i=0;i<count;i++) data[i] = ReadDouble(); }
-		void BinaryReader::ReadInt32(int32* data, int32 count)		{ for (int32 i=0;i<count;i++) data[i] = ReadInt32(); }
-		void BinaryReader::ReadBoolean(bool* data, int32 count)	{ for (int32 i=0;i<count;i++) data[i] = ReadBoolean(); }
+		void BinaryReader::ReadSingle(float* data, int32 count)	 { for (int32 i = 0; i < count; i++) data[i] = ReadSingle(); }
+		void BinaryReader::ReadDouble(double* data, int32 count) { for (int32 i = 0; i < count; i++) data[i] = ReadDouble(); }
+		void BinaryReader::ReadInt32(int32* data, int32 count)	 { for (int32 i = 0; i < count; i++) data[i] = ReadInt32(); }
+		void BinaryReader::ReadUInt32(uint32* data, int32 count) { for (int32 i = 0; i < count; i++) data[i] = ReadUInt32(); }
+		void BinaryReader::ReadBoolean(bool* data, int32 count)	 { for (int32 i = 0; i < count; i++) data[i] = ReadBoolean(); }
 
 		void BinaryReader::ReadBooleanBits(bool* arr, int32 count)
 		{

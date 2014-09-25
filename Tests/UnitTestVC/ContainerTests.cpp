@@ -767,7 +767,6 @@ namespace UnitTestVC
 
 	};
 
-
 	TEST_CLASS(HashSetTest)
 	{
 		MEM_Variables;
@@ -826,6 +825,40 @@ namespace UnitTestVC
 				int32 idx = StringUtils::ParseInt32(e.getCurrent());
 				Assert::IsTrue(added[idx]);
 			}
+		}
+
+	};
+
+	TEST_CLASS(BitArrayTest)
+	{
+	public:
+		TEST_METHOD(BitArray_Setting)
+		{
+			const int amount = 1000;
+			bool bit[amount] = { 0 };
+			BitArray<amount> bitArray;
+			for (int32 i = 0; i < amount; i++)
+			{
+				bit[i] = Randomizer::NextBool();
+				bitArray.Set(i, bit[i]);
+			}
+
+			for (int32 i = 0; i < amount; i++)
+			{
+				Assert::AreEqual(bit[i], !!bitArray[i]);
+			}
+
+			for (int32 i = 0; i < amount;i++)
+			{
+				bit[i] = (i & 1) != 0;
+				bitArray.Set(i, bit[i]);
+			}
+
+			for (int32 i = 0; i < amount; i++)
+			{
+				Assert::AreEqual(bit[i], !!bitArray[i]);
+			}
+
 		}
 
 	};

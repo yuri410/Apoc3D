@@ -28,6 +28,7 @@
 
 
 #include "apoc3d/Common.h"
+#include "apoc3d/Collections/BitArray.h"
 
 using namespace Apoc3D::Core;
 
@@ -192,16 +193,19 @@ namespace Apoc3D
 			/**
 			 *  Is the specified key just pressed
 			 */
-			bool IsKeyDown(KeyboardKeyCode code) const { return m_keyState[(int)code] && !m_lastKeyState[(int)code]; }
+			bool IsKeyDown(KeyboardKeyCode code) const { return m_keyState[code] && !m_lastKeyState[(int)code]; }
 			/**
 			 *  Is the specified key just released
 			 */
-			bool IsKeyUp(KeyboardKeyCode code) const { return !m_keyState[(int)code] && m_lastKeyState[(int)code]; }
+			bool IsKeyUp(KeyboardKeyCode code) const { return !m_keyState[code] && m_lastKeyState[(int)code]; }
 
 			/**
 			 *  Is the specified key currently pressing
 			 */
-			bool IsPressing(KeyboardKeyCode code) const { return m_keyState[(int)code]; }
+			bool IsPressing(KeyboardKeyCode code) const { return m_keyState[code]; }
+
+			bool WasPressing(KeyboardKeyCode code) const { return m_lastKeyState[code]; }
+
 			/**
 			 *  Update keyboard state
 			 */
@@ -209,11 +213,13 @@ namespace Apoc3D
 
 			void Serialize(Apoc3D::IO::BinaryWriter* bw);
 			void Deserialize(Apoc3D::IO::BinaryReader* br);
-		protected:
-			bool m_keyState[KEYCODE_MAX];
-			bool m_lastKeyState[KEYCODE_MAX];
 
+		protected:
 			Keyboard();
+
+			Collections::BitArray<KEYCODE_MAX> m_keyState;
+			Collections::BitArray<KEYCODE_MAX> m_lastKeyState;
+
 		};
 	}
 }

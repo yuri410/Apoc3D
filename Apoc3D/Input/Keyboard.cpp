@@ -35,43 +35,22 @@ namespace Apoc3D
 	{
 		Keyboard::Keyboard()
 		{
-			memset(m_keyState,0,sizeof(m_keyState));
+
 		}
 		Keyboard::~Keyboard()
 		{
 
 		}
 
-		void WriteBoolArray(Apoc3D::IO::BinaryWriter* bw, const bool* arr, int32 count)
-		{
-			assert((count % 8) == 0);
-			for (int32 i=0;i<count;i+=8)
-			{
-				byte bits = 0;
-
-				for (int32 j=0;j<8 && i+j<count;j++)
-					if (arr[i+j])
-						bits |= (byte)(1 << j);
-
-				bw->WriteByte((char)bits);
-			}
-		}
-
 		void Keyboard::Serialize(Apoc3D::IO::BinaryWriter* bw)
 		{
-			int32 count = sizeof(m_keyState) / sizeof(*m_keyState);
-			bw->WriteBooleanBits(m_keyState, count);
-
-			count = sizeof(m_lastKeyState) / sizeof(*m_lastKeyState);
-			bw->WriteBooleanBits(m_lastKeyState, count);
+			bw->WriteUInt32(m_keyState.getData());
+			bw->WriteUInt32(m_lastKeyState.getData());
 		}
 		void Keyboard::Deserialize(Apoc3D::IO::BinaryReader* br)
 		{
-			int32 count = sizeof(m_keyState) / sizeof(*m_keyState);
-			br->ReadBooleanBits(m_keyState, count);
-
-			count = sizeof(m_lastKeyState) / sizeof(*m_lastKeyState);
-			br->ReadBooleanBits(m_lastKeyState, count);
+			br->ReadUInt32(m_keyState.getData());
+			br->ReadUInt32(m_lastKeyState.getData());
 		}
 	}
 }

@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ApocMacros.h" />
+    <ClInclude Include="Collections\BitArray.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="Collections\EnumConverterHelper.h" />
     <ClInclude Include="Collections\List2D.h" />

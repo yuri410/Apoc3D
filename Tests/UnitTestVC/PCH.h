@@ -18,6 +18,7 @@
 #include "apoc3d/EventDelegate.h"
 
 #include "apoc3d/Collections/CollectionsCommon.h"
+#include "apoc3d/Collections/BitArray.h"
 #include "apoc3d/Collections/EnumConverterHelper.h"
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Collections/LinkedList.h"

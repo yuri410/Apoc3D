@@ -47,7 +47,7 @@ namespace Apoc3D
 
 			void Win32Keyboard::Update(const GameTime* time)
 			{
-				memcpy(m_lastKeyState, m_keyState, sizeof(m_keyState));
+				m_lastKeyState = m_keyState;
 
 				m_keyboard->capture();
 			}
@@ -55,31 +55,13 @@ namespace Apoc3D
 			bool Win32Keyboard::keyPressed( const OIS::KeyEvent &arg )
 			{
 				m_keyState[arg.key] = true;
-
-				//String msg = L" KeyPressed: ";
-				//msg.append(StringUtils::toWString(((OIS::Keyboard*)(arg.device))->getAsString(arg.key)));
-				//
-				//ApocLog(LOG_CommandResponse, msg);
-
-				//std::cout << " KeyPressed {" << arg.key
-					//<< ", " << ((OIS::Keyboard*)(arg.device))->getAsString(arg.key)
-					//<< "} || Character (" << (char)arg.text << ")" << std::endl;
-
-
+				
 				return true;
 			}
 			bool Win32Keyboard::keyReleased( const OIS::KeyEvent &arg )
 			{
 				m_keyState[arg.key] = false;
-				//if( arg.key == OIS::KC_ESCAPE || arg.key == OIS::KC_Q )
-					//appRunning = false;
-				//std::cout << "KeyReleased {" << ((OIS::Keyboard*)(arg.device))->getAsString(arg.key) << "}\n";
 
-				//String msg = L" KeyReleased: ";
-				//msg.append(StringUtils::toWString(((OIS::Keyboard*)(arg.device))->getAsString(arg.key)));
-
-				//ApocLog(LOG_CommandResponse, msg);
-				//
 				return true;
 			}
 		}

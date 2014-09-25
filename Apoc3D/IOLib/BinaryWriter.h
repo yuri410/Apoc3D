@@ -81,9 +81,20 @@ namespace Apoc3D
 			void WriteSingle(const float* data, int32 count) const;
 			void WriteDouble(const double* data, int32 count) const;
 			void WriteInt32(const int32* data, int32 count) const;
+			void WriteUInt32(const uint32* data, int32 count) const;
 			void WriteBoolean(const bool* data, int32 count) const;
 
 			void WriteBooleanBits(const bool* arr, int32 count) const;
+
+
+			template <int32 N> void WriteSingle(const float(&data)[N]) { return WriteSingle(data, N); }
+			template <int32 N> void WriteDouble(const double(&data)[N]) { return WriteDouble(data, N); }
+			template <int32 N> void WriteInt32(const int32(&data)[N]) { return WriteInt32(data, N); }
+			template <int32 N> void WriteUInt32(const uint32(&data)[N]) { return WriteUInt32(data, N); }
+			template <int32 N> void WriteBoolean(const bool(&data)[N]) { return WriteBoolean(data, N); }
+			template <int32 N> void WriteBooleanBits(const bool(&data)[N]) { return WriteBooleanBits(data, N); }
+
+
 
 			void Close() const;
 

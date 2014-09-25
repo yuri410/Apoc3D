@@ -88,10 +88,17 @@ namespace Apoc3D
 			void ReadSingle(float* data, int32 count);
 			void ReadDouble(double* data, int32 count);
 			void ReadInt32(int32* data, int32 count);
+			void ReadUInt32(uint32* data, int32 count);
 			void ReadBoolean(bool* data, int32 count);
 
 			void ReadBooleanBits(bool* arr, int32 count);
 
+			template <int32 N> void ReadSingle(float(&data)[N]) { return ReadSingle(data, N); }
+			template <int32 N> void ReadDouble(double (&data)[N]) { return ReadDouble(data, N); }
+			template <int32 N> void ReadInt32(int32 (&data)[N]) { return ReadInt32(data, N); }
+			template <int32 N> void ReadUInt32(uint32 (&data)[N]) { return ReadUInt32(data, N); }
+			template <int32 N> void ReadBoolean(bool (&data)[N]) { return ReadBoolean(data, N); }
+			template <int32 N> void ReadBooleanBits(bool (&data)[N]) { return ReadBooleanBits(data, N); }
 
 
 
