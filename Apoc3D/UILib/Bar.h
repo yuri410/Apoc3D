@@ -48,8 +48,8 @@ namespace Apoc3D
 			ScrollBar(const StyleSkin* skin, const Point& position, BarDirection type, int32 length);
 			~ScrollBar();
 
-			void Draw(Sprite* sprite);
-			void Update(const GameTime* time);
+			void Update(const GameTime* time) override;
+			void Draw(Sprite* sprite) override;
 
 			void UpdateButtonPosition();
 			void Reset() { m_value = 0; }
@@ -114,8 +114,8 @@ namespace Apoc3D
 			ProgressBar(const StyleSkin* skin, const Point& position, int32 width);
 			~ProgressBar();
 
-			void Draw(Sprite* sprite);
-			void Update(const GameTime* time);
+			void Update(const GameTime* time) override;
+			void Draw(Sprite* sprite) override;
 
 			void setWidth(int32 width) { m_size.X = width; }
 
@@ -148,8 +148,8 @@ namespace Apoc3D
 			SliderBar(const StyleSkin* skin, const Point& position, BarDirection type, int32 length);
 			~SliderBar();
 
-			virtual void Draw(Sprite* sprite) override;
 			virtual void Update(const GameTime* time) override;
+			virtual void Draw(Sprite* sprite) override;
 
 			void SetLength(int32 len);
 			int32 GetLength() const;

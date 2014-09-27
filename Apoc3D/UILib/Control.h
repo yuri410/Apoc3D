@@ -177,8 +177,8 @@ namespace Apoc3D
 		class APAPI ControlCollection : public List<Control*>
 		{
 		public:
-			void Update(const GameTime* time);
-			void Draw(Sprite* sprite);
+			void Update(const GameTime* time) override;
+			void Draw(Sprite* sprite) override;
 
 			void SetElementsBaseOffset(Point bo);
 			void SetElementsInteractive(bool isInteractive);
@@ -193,10 +193,8 @@ namespace Apoc3D
 			ControlContainer(const StyleSkin* skin);
 			virtual ~ControlContainer();
 
-			//virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* time);
-
-			virtual void Draw(Sprite* sprite);
+			virtual void Update(const GameTime* time) override;
+			virtual void Draw(Sprite* sprite) override;
 
 			ControlCollection& getControls() { return m_controls; }
 

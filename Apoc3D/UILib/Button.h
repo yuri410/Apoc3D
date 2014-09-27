@@ -53,11 +53,10 @@ namespace Apoc3D
 			Button(const StyleSkin* skin, const Point& position, const Point& size, const String& text);
 			virtual ~Button();
 
-			virtual void Draw(Sprite* sprite);
-			virtual void Update(const GameTime* time);
+			virtual void Update(const GameTime* time) override;
+			virtual void Draw(Sprite* sprite) override;
 
 		
-
 			void SetFont(Font* fontRef);
 			void SetText(const String& text);
 
@@ -141,8 +140,8 @@ namespace Apoc3D
 			ButtonRow(const StyleSkin* skin, const Point& position, int32 width, int32 colCount, const List<String>& titles);
 			~ButtonRow();
 
-			virtual void Update(const GameTime* time);
-			virtual void Draw(Sprite* sprite);
+			virtual void Update(const GameTime* time) override;
+			virtual void Draw(Sprite* sprite) override;
 
 			int getSelectedIndex() const { return m_selectedIndex; }
 
@@ -304,8 +303,8 @@ namespace Apoc3D
 			ButtonGroup(const StyleSkin* skin, const List<Button*>& buttons, int selected);
 			~ButtonGroup();
 
-			virtual void Update(const GameTime* time);
-			virtual void Draw(Sprite* sprite);
+			virtual void Update(const GameTime* time) override;
+			virtual void Draw(Sprite* sprite) override;
 
 			int getSelectedIndex() const { return m_selectedIndex; }
 
@@ -331,8 +330,8 @@ namespace Apoc3D
 			RadioButton(const StyleSkin* skin, const Point& position, const String& text, bool checked);
 			~RadioButton() { }
 
-			virtual void Update(const GameTime* time);
-			virtual void Draw(Sprite* sprite);
+			virtual void Update(const GameTime* time) override;
+			virtual void Draw(Sprite* sprite) override;
 
 			void Toggle();
 

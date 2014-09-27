@@ -27,8 +27,8 @@ namespace Apoc3D
 
 			virtual ~Label();
 
-			virtual void Draw(Sprite* sprite);
-			virtual void Update(const GameTime* time);
+			virtual void Update(const GameTime* time) override;
+			virtual void Draw(Sprite* sprite) override;
 
 			const String& getText() const { return m_text; }
 			void SetText(const String& txt);
@@ -83,8 +83,8 @@ namespace Apoc3D
 			TextBox(const StyleSkin* skin, const Point& position, int width, int height, const String& text);
 			virtual ~TextBox();
 
-			virtual void Update(const GameTime* time);
-			virtual void Draw(Sprite* sprite);
+			virtual void Update(const GameTime* time) override;
+			virtual void Draw(Sprite* sprite) override;
 
 			Apoc3D::Math::Rectangle GetTextArea() const;
 

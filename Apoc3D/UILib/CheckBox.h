@@ -67,8 +67,8 @@ namespace Apoc3D
 			CheckBox(const StyleSkin* skin, const Point& position, const String& text, const Point& sz, bool checked);
 			virtual ~CheckBox();
 
-			virtual void Update(const GameTime* time);
-			virtual void Draw(Sprite* sprite);
+			virtual void Update(const GameTime* time) override;
+			virtual void Draw(Sprite* sprite) override;
 
 			void Toggle();
 
@@ -130,8 +130,8 @@ namespace Apoc3D
 			CheckboxGroup(const List<CheckBox*>& checkbox);
 			virtual ~CheckboxGroup();
 
-			virtual void Update(const GameTime* time);
-			virtual void Draw(Sprite* sprite);
+			virtual void Update(const GameTime* time) override;
+			virtual void Draw(Sprite* sprite) override;
 
 			int getSelectedIndex() const { return m_selectedIndex; }
 			CheckBox* getSubCheckbox(int i) { return m_checkbox[i]; }

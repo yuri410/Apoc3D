@@ -40,8 +40,8 @@ namespace Apoc3D
 
 			~ListBox();
 
-			virtual void Update(const GameTime* time);
-			virtual void Draw(Sprite* sprite);
+			virtual void Update(const GameTime* time) override;
+			virtual void Draw(Sprite* sprite) override;
 
 			int32 FindEntry(const String& v);
 
@@ -143,8 +143,8 @@ namespace Apoc3D
 			TreeView(const StyleSkin* skin, const Point& position, const Point& size);
 			virtual ~TreeView();
 
-			virtual void Update(const GameTime* time);
-			virtual void Draw(Sprite* sprite);
+			virtual void Update(const GameTime* time) override;
+			virtual void Draw(Sprite* sprite) override;
 
 			void SetSize(const Point& newSize);
 
@@ -228,8 +228,8 @@ namespace Apoc3D
 			ListView(const StyleSkin* skin, const Point& position, const Point& size, const List2D<String>& items);
 			virtual ~ListView();
 
-			virtual void Update(const GameTime* time);
-			virtual void Draw(Sprite* sprite);
+			virtual void Update(const GameTime* time) override;
+			virtual void Draw(Sprite* sprite) override;
 
 			List2D<String>& getItems() { return m_items; }
 			List<Header>& getColumnHeader() { return m_columnHeader; }
