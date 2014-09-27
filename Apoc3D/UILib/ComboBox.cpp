@@ -89,12 +89,11 @@ namespace Apoc3D
 		{
 			m_textbox->ReadOnly = true;
 
-			
 			m_button->eventPress.Bind(this, &ComboBox::Button_OnPress);
 			
 			m_listBox->Visible = false;
 			m_listBox->eventSelectionChanged.Bind(this, &ComboBox::ListBox_SelectionChanged);
-			m_listBox->eventPress.Bind(this, &ComboBox::ListBox_OnPress);
+			m_listBox->eventPress.Bind(this, &ComboBox::ListBox_Press);
 		}
 
 
@@ -183,7 +182,7 @@ namespace Apoc3D
 			return nullptr;
 		}
 
-		void ComboBox::ListBox_OnPress(ListBox* ctrl) {  }
+		void ComboBox::ListBox_Press(ListBox* ctrl) { Close(); }
 		void ComboBox::ListBox_SelectionChanged(ListBox* ctrl)
 		{
 			//String previousItem = m_textbox->Text;
@@ -193,10 +192,7 @@ namespace Apoc3D
 				m_textbox->SetText(m_listBox->getItems()[m_listBox->getSelectedIndex()]);
 
 				eventSelectionChanged.Invoke(this);
-				
-				Close();
 			}
-			
 		}
 		void ComboBox::Button_OnPress(Button* ctrl)
 		{

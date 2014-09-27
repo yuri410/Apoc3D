@@ -177,8 +177,8 @@ namespace Apoc3D
 		class APAPI ControlCollection : public List<Control*>
 		{
 		public:
-			void Update(const GameTime* time) override;
-			void Draw(Sprite* sprite) override;
+			void Update(const GameTime* time);
+			void Draw(Sprite* sprite);
 
 			void SetElementsBaseOffset(Point bo);
 			void SetElementsInteractive(bool isInteractive);
