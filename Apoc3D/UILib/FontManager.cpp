@@ -324,10 +324,49 @@ namespace Apoc3D
 
 			m_customCharacters.Add(utf16code, cg);
 		}
+		void Font::RegisterCustomGlyphAligned(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, int32 padLeft, int32 padRight, CustomGlyphAlignment vertAlignment, int32 vaValue)
+		{
+			short left = -padLeft;
+			float advX = static_cast<float>(srcRect.Width - padLeft - padRight);
+
+			if (vertAlignment == CGA_Center)
+			{
+				int32 top = (getLineHeightInt() - static_cast<int32>(m_descender)-srcRect.Height) / 2 + vaValue;
+				RegisterCustomGlyph(charCode, graphic, srcRect, left, top, advX);
+			}
+			else if (vertAlignment == CGA_Bottom)
+			{
+				// bottom to baseline
+				int32 adjustedContentHeight = srcRect.Height - vaValue;
+				int32 top = getLineHeightInt() - static_cast<int32>(m_descender)-adjustedContentHeight;
+				RegisterCustomGlyph(charCode, graphic, srcRect, left, top, advX);
+			}
+			else if (vertAlignment == CGA_Top)
+			{
+				RegisterCustomGlyph(charCode, graphic, srcRect, left, vaValue, advX);
+			}
+		}
+
 		void Font::UnregisterCustomGlyph(int32 utf16code) { m_customCharacters.Remove(utf16code); }
 		void Font::ClearCustomGlyph() { m_customCharacters.Clear(); }
 
-		float PositionalNoise(int32 x)
+		// UTF-16 BMP(0) private range: U+E000..U+F8FF
+		// U+F8E0..U+F8F0 for font system control codes
+		const uint16 ColorControlCode = 0xF8E0;
+		const uint16 FontControlCode = 0xF8E1;
+
+		String Font::MakeColorControl(uint32 cv)
+		{
+			String r;
+			r.append(1, ColorControlCode);
+			char16_t ar = (char16_t)((cv >> 16) & 0xffff);
+			char16_t gb = (char16_t)(cv & 0xffff);
+			r.append(1, ar);
+			r.append(1, gb);
+			return r;
+		}
+
+		static float PositionalNoise(int32 x)
 		{
 			x = (x<<13) ^ x;
 			return (float)( 1.0 - ( (x * (x * x * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0);
@@ -591,6 +630,7 @@ namespace Apoc3D
 			for (size_t i = 0; i < len; i++)
 			{
 				wchar_t ch = text[i];
+				ScanColorControlCodes(text, ch, i, &color);
 				DrawCharacter(sprite, ch, x, y, color, hozShrink, extLineSpace, 0, xOrigin, true);
 			}
 			if (suffix)
@@ -613,7 +653,9 @@ namespace Apoc3D
 
 			for (size_t i = 0; i < text.length(); i++)
 			{
-				DrawCharacter(sprite, text[i], x, y, color, 0, 0, static_cast<float>(width), xOrig, true);
+				wchar_t ch = text[i];
+				ScanColorControlCodes(text, ch, i, &color);
+				DrawCharacter(sprite, ch, x, y, color, 0, 0, static_cast<float>(width), xOrig, true);
 			}
 		}
 
@@ -641,6 +683,7 @@ namespace Apoc3D
 			for (size_t i = 0; i < len; i++)
 			{
 				wchar_t ch = text[i];
+				ScanColorControlCodes(text, ch, i, &color);
 				DrawCharacter(sprite, ch, x, y, color, hozShrink, extLineSpace, 0, xOrig, true);
 			}
 			if (suffix)
@@ -664,7 +707,8 @@ namespace Apoc3D
 			for (size_t i = 0; i < text.length(); i++)
 			{
 				wchar_t ch = text[i];
-				DrawCharacter(sprite, ch, x, y, color, 0,0,static_cast<float>(width), xOrig, true);
+				ScanColorControlCodes(text, ch, i, &color);
+				DrawCharacter(sprite, ch, x, y, color, 0, 0, static_cast<float>(width), xOrig, true);
 			}
 		}
 
@@ -807,6 +851,36 @@ namespace Apoc3D
 			}
 		}
 		
+		template <typename SizeType>
+		FORCE_INLINE bool Font::ScanColorControlCodes(const String& str, wchar_t& cur, SizeType& i, SizeType len, uint* color)
+		{
+			if (cur == ColorControlCode)
+			{
+				if (i + 3 < len)
+				{
+					if (color)
+					{
+						uint32 ar = str[i + 1];
+						uint32 gb = str[i + 2];
+
+						*color = (ar << 16) | gb;
+					}
+					i += 3;
+					cur = str[i];
+				}
+				return true;
+			}
+			return false;
+		}
+
+		FORCE_INLINE bool Font::ScanColorControlCodes(const String& str, wchar_t& cur, size_t& i, uint* color)
+		{
+			return ScanColorControlCodes<size_t>(str, cur, i, str.length(), color);
+		}
+
+		template bool Font::ScanColorControlCodes<size_t>(const String& str, wchar_t& cur, size_t& i, size_t len, uint* color);
+		template bool Font::ScanColorControlCodes<int32>(const String& str, wchar_t& cur, int32& i, int32 len, uint* color);
+
 
 		int Font::CalculateLineCount(const String& text, int width)
 		{
@@ -814,7 +888,9 @@ namespace Apoc3D
 			float x = 0;
 			for (size_t i = 0; i < text.length(); i++)
 			{
-				wchar_t ch = text[i];
+				wchar_t ch = text[i]; 
+				ScanColorControlCodes(text, ch, i, nullptr);
+
 				if (ch != '\n')
 				{
 					if (x>=width)
@@ -854,6 +930,8 @@ namespace Apoc3D
 			for (size_t i = 0; i < text.length(); i++)
 			{
 				wchar_t ch = text[i];
+				ScanColorControlCodes(text, ch, i, nullptr);
+
 				if (ch != '\n')
 				{
 					if (IgnoreCharDrawing(ch))
@@ -900,7 +978,8 @@ namespace Apoc3D
 			for (size_t i = 0; i < text.length(); i++)
 			{
 				wchar_t ch = text[i];
-				
+				ScanColorControlCodes(text, ch, i, nullptr);
+
 				if (IgnoreCharDrawing(ch))
 					continue;
 
@@ -947,6 +1026,7 @@ namespace Apoc3D
 				for (int32 i = 0; i < len; i++)
 				{
 					wchar_t ch = text[i];
+					ScanColorControlCodes(text, ch, i, len, nullptr);
 
 					bool isBlankCh = ch == ' ' || ch == '\t';
 					if (isBlankCh)
@@ -1008,7 +1088,9 @@ namespace Apoc3D
 
 				for (int32 i = 0; i < len; i++)
 				{
-					wchar_t ch = text[i];
+					wchar_t ch = text[i]; 
+					ScanColorControlCodes(text, ch, i, len, nullptr);
+
 					wchar_t nch = text[i+1];
 
 					Character chdef;

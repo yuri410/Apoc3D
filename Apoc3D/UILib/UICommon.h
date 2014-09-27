@@ -355,8 +355,8 @@ namespace Apoc3D
 			APAPI void Remove(ControlContainer* cc);
 			APAPI void RemoveForm(const String& name);
 			APAPI void RemoveContainer(const String& name);
-			APAPI void BringToFirst(ControlContainer* cc);
-
+			APAPI void ScheduleBringFront(ControlContainer* cc);
+				 
 			APAPI void Draw();
 			APAPI void Update(const Core::GameTime* time);
 
@@ -377,13 +377,14 @@ namespace Apoc3D
 			APAPI extern RectangleF& MaximizedArea;
 			
 			/**
-			 *  The active form is the one that is currently being dragged/clicked.
+			 *  InteractingForm is the one that is currently being mouse hovered.
 			 *  Used to mark the first form being touched.
 			 */
-			APAPI extern Form*& ActiveForm;
-			APAPI extern MenuBar*& MainMenu;
-			APAPI extern Form*& TopMostForm;
+			APAPI extern Form*& InteractingForm;
 			APAPI extern Form*& ModalForm;
+			APAPI extern Form*& TopMostForm;
+
+			APAPI extern MenuBar*& MainMenu;
 
 			APAPI extern float DoubleClickInterval;
 		}

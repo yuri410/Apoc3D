@@ -89,8 +89,9 @@ namespace Apoc3D
 		{
 			m_textbox->ReadOnly = true;
 
+			
 			m_button->eventPress.Bind(this, &ComboBox::Button_OnPress);
-
+			
 			m_listBox->Visible = false;
 			m_listBox->eventSelectionChanged.Bind(this, &ComboBox::ListBox_SelectionChanged);
 			m_listBox->eventPress.Bind(this, &ComboBox::ListBox_OnPress);
@@ -99,31 +100,42 @@ namespace Apoc3D
 
 		void ComboBox::Update(const GameTime* time)
 		{
+			SetControlBasicStates({ m_textbox, m_button, m_listBox });
+
+			if (!Enabled || !Visible)
+				return;
+
 			m_textbox->Position = Position;
 			m_button->Position = CalculateDropButtonPos(m_textbox, m_button, m_button->getWidth());
 			m_listBox->Position = Position + Point(0, m_textbox->getHeight());
 
-			m_textbox->ParentFocused = m_button->ParentFocused = m_listBox->ParentFocused = ParentFocused;
-			m_textbox->BaseOffset = m_button->BaseOffset = m_listBox->BaseOffset = BaseOffset;
-
-
 			m_textbox->Update(time);
 			m_button->Update(time);
+
+			if (!m_button->isMouseHover())
+			{
+				// also check area mouse down
+				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+				if (mouse->IsLeftPressed() && m_textbox->GetTextArea().Contains(mouse->GetPosition()))
+				{
+					Button_OnPress(m_button);
+				}
+			}
 
 			if (m_listBox->Visible)
 			{
 				m_listBox->Update(time);
 
 				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-				if (!m_justOpened && mouse->IsLeftPressed() &&
-					!m_listBox->getAbsoluteArea().Contains(mouse->GetPosition()))
+				if (!IsInteractive || 
+					(!m_justOpened && mouse->IsLeftPressed() && !m_listBox->getAbsoluteArea().Contains(mouse->GetPosition())))
 				{
 					Close();
 				}
-
-				if (mouse->IsLeftPressed())
-					m_justOpened = true;
 			}
+
+			if (m_justOpened)
+				m_justOpened = false;
 		}
 		void ComboBox::Draw(Sprite* sprite)
 		{
@@ -193,6 +205,7 @@ namespace Apoc3D
 			else
 				Close();
 		}
+
 		void ComboBox::Open()
 		{
 			m_justOpened = true;

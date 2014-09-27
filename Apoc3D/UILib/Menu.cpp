@@ -146,6 +146,19 @@ namespace Apoc3D
 			}
 			m_state = MENU_Closed;
 		}
+
+		bool MenuBar::HasItemOpen() const
+		{
+			for (MenuItem* m : m_items)
+			{
+				if (m->getSubMenu() && m->getSubMenu()->getState() == MENU_Open)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
 		void MenuBar::Update(const GameTime* time)
 		{
 			CheckSelection();

@@ -78,42 +78,7 @@ namespace Apoc3D
 				RegisterCustomGlyph(charCode, graphic, srcRect, 0, 0, static_cast<float>(srcRect.Width));
 			}
 
-			void RegisterCustomGlyphAligned(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, int32 padLeft, int32 padRight, CustomGlyphAlignment vertAlignment, int32 vaValue) 
-			{
-				short left = -padLeft;
-				float advX = static_cast<float>(srcRect.Width - padLeft - padRight);
-
-				if (vertAlignment == CGA_Center)
-				{
-					int32 top = (getLineHeightInt() - static_cast<int32>(m_descender) - srcRect.Height) / 2 + vaValue;
-					RegisterCustomGlyph(charCode, graphic, srcRect, left, top, advX);
-				}
-				else if (vertAlignment == CGA_Bottom)
-				{
-					// bottom to baseline
-					int32 adjustedContentHeight = srcRect.Height - vaValue;
-					int32 top = getLineHeightInt() - static_cast<int32>(m_descender) - adjustedContentHeight;
-					RegisterCustomGlyph(charCode, graphic, srcRect, left, top, advX);
-				}
-				else if (vertAlignment == CGA_Top)
-				{
-					RegisterCustomGlyph(charCode, graphic, srcRect, left, vaValue, advX);
-				}
-			}
-
-			/*void RegisterCustomGlyphYCenter(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, float advanceX) 
-			{
-				int32 top = (getLineHeightInt() - m_descender - srcRect.Height) / 2;
-				RegisterCustomGlyph(charCode, graphic, srcRect, left, top, advanceX);
-			}
-			void RegisterCustomGlyphYCenter(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, int32 height, float advanceX) 
-			{
-				int32 top = (height - srcRect.Height) / 2;
-				RegisterCustomGlyph(charCode, graphic, srcRect, left, top, advanceX);
-			}*/
-
-
-
+			void RegisterCustomGlyphAligned(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, int32 padLeft, int32 padRight, CustomGlyphAlignment vertAlignment, int32 vaValue);
 			void UnregisterCustomGlyph(int32 utf16code);
 			void ClearCustomGlyph();
 
@@ -158,6 +123,8 @@ namespace Apoc3D
 
 			Texture* getInternalTexture() const { return m_font; }
 
+			static String MakeColorControl(uint32 argb);
+			
 		private:
 			static const int MaxFreq = 10;
 			struct Character
@@ -213,6 +180,10 @@ namespace Apoc3D
 				int32 seed, const Apoc3D::Math::RectangleF& srcRect, int32 glyphLeft, int32 glyphTop, int32 glyphWidth, int32 glyphHeight, uint32 color,
 				const Point& dissolvePatchSize, float progress);
 
+			bool ScanColorControlCodes(const String& str, wchar_t& cur, size_t& i, uint* color);
+
+			template <typename SizeType>
+			bool ScanColorControlCodes(const String& str, wchar_t& cur, SizeType& i, SizeType len, uint* color);
 
 			Texture* m_font;
 			float m_height;

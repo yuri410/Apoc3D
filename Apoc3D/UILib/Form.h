@@ -140,15 +140,16 @@ namespace Apoc3D
 			void DrawTitle(Sprite* sprite);
 			void DrawButtons(Sprite* sprite);
 
-			void UpdateTopMost();
-			void UpdateActive();
-			void UpdateState();
+			void UpdateFocus();
+			void UpdateStateAnimation();
 			void CheckDragging();
-			void CheckDoubleClick(const GameTime* time);
+			void CheckClick(const GameTime* time);
 			void CheckResize();
 			void ToggleWindowState();
 
-			void ApplyBaseOffset();
+			void SetElementsBasicStates();
+
+			Apoc3D::Math::Rectangle GetDragArea() const;
 
 			void btClose_Release(Button* sender);
 			void btMinimize_Release(Button* sender);
@@ -188,14 +189,6 @@ namespace Apoc3D
 			bool m_hasMinimizeButton = true;
 			bool m_hasMaximizeButton = true;
 
-			/**
-			 *  Specify the form's drag area, where can be dragged to move the form
-			 */
-			Apoc3D::Math::Rectangle m_dragArea;
-			/**
-			 *  Specify the form's resize area, where can be dragged to resize the form
-			 */
-			Apoc3D::Math::Rectangle m_resizeArea;
 			
 			bool m_isDragging = false;
 			bool m_isResizeing = false;
@@ -213,9 +206,7 @@ namespace Apoc3D
 			*/
 			Point m_posOffset;
 			Point m_oldSize;
-
-			bool m_initialized;
-
+			
 			MultiClickChecker m_clickChecker;
 
 			BorderStyle m_borderStyle;

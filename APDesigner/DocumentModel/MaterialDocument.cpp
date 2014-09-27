@@ -640,13 +640,7 @@ namespace APDesigner
 		m_btnAmbient->Position = Position + Point(160, 0);
 		m_btnAmbient->Position.Y += (m_lblAmbient->getHeight() - m_btnAmbient->getHeight())/2;
 
-		m_lblAmbient->BaseOffset = BaseOffset;
-		m_pbAmbient->BaseOffset = BaseOffset;
-		m_btnAmbient->BaseOffset = BaseOffset;
-
-		m_lblAmbient->ParentFocused = ParentFocused;
-		m_pbAmbient->ParentFocused = ParentFocused;
-		m_btnAmbient->ParentFocused = ParentFocused;
+		SetControlBasicStates({m_lblAmbient, m_pbAmbient, m_btnAmbient});
 
 		m_lblAmbient->Update(time);
 		m_pbAmbient->Update(time);

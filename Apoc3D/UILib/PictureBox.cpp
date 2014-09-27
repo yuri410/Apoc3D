@@ -71,9 +71,6 @@ namespace Apoc3D
 
 		void PictureBox::Update(const GameTime* time)
 		{
-			if (!Visible)
-				return;
-
 			UpdateEvents_StandardButton(m_mouseHover, m_mouseDown, getAbsoluteArea(),
 				&PictureBox::OnMouseHover, &PictureBox::OnMouseOut, &PictureBox::OnPress, &PictureBox::OnRelease);
 		}

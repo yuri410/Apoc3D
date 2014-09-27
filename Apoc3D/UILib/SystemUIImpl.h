@@ -23,8 +23,7 @@ namespace Apoc3D
 			void Remove(ControlContainer* cc);
 			void RemoveForm(const String& name);
 			void RemoveContainer(const String& name);
-
-			void BringToFirst(ControlContainer* cc);
+			void ScheduleBringFront(ControlContainer* cc);
 
 			void Draw();
 			void Update(const GameTime* time);
@@ -43,16 +42,12 @@ namespace Apoc3D
 
 			Texture* getWhitePixel() const { return m_white1x1; }
 
-			/**
-			 *  The active form is the one that is currently being dragged/clicked.
-			 *  Used to mark the first form being touched when multiple overlapping layer exists.
-			 */
-			Form* m_activeForm = nullptr;
-			MenuBar* m_mainMenu = nullptr;
-			Form* m_topMostForm = nullptr;
+			Form* InteractingForm = nullptr;
+			Form* TopMostForm = nullptr;
 			Form* m_modalForm = nullptr;
 
-
+			MenuBar* m_mainMenu = nullptr;
+			
 			/** Specifies the area to display UI in the viewport. In unified coordinates. */
 			RectangleF UIArea = RectangleF(0, 0, 1, 1);
 
@@ -63,6 +58,9 @@ namespace Apoc3D
 
 			List<Form*> m_forms;
 			List<ControlContainer*> m_containers;
+
+			List<ControlContainer*> m_bringFrontSchedules;
+
 			SubMenu* m_contextMenu = nullptr;
 			Sprite* m_sprite = nullptr;
 			int m_modalAnim = 0;

@@ -344,10 +344,12 @@ namespace Apoc3D
 		RectangleF& SystemUI::UIArea = sysUI.UIArea;
 		RectangleF& SystemUI::MaximizedArea = sysUI.MaximizedArea;
 
-		Form*& SystemUI::ActiveForm = sysUI.m_activeForm;
-		MenuBar*& SystemUI::MainMenu = sysUI.m_mainMenu;
-		Form*& SystemUI::TopMostForm = sysUI.m_topMostForm;
+		Form*& SystemUI::InteractingForm = sysUI.InteractingForm;
+		Form*& SystemUI::TopMostForm = sysUI.TopMostForm;
 		Form*& SystemUI::ModalForm = sysUI.m_modalForm;
+
+		MenuBar*& SystemUI::MainMenu = sysUI.m_mainMenu;
+		
 
 		float SystemUI::DoubleClickInterval = Platform::GetSystemDoubleClickIntervalInMS() / 1000.0f;
 
@@ -358,7 +360,7 @@ namespace Apoc3D
 		void SystemUI::Remove(ControlContainer* cc) { sysUI.Remove(cc); }
 		void SystemUI::RemoveForm(const String& name) { sysUI.RemoveForm(name); }
 		void SystemUI::RemoveContainer(const String& name) { sysUI.RemoveContainer(name); }
-		void SystemUI::BringToFirst(ControlContainer* cc) { sysUI.BringToFirst(cc); }
+		void SystemUI::ScheduleBringFront(ControlContainer* cc) { sysUI.ScheduleBringFront(cc); }
 
 		void SystemUI::Draw() { sysUI.Draw(); }
 		void SystemUI::Update(const GameTime* time) { sysUI.Update(time); }

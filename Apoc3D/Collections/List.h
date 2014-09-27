@@ -202,6 +202,11 @@ namespace Apoc3D
 				}
 			}
 
+			void Swap(int32 i, int32 j)
+			{
+				std::swap(m_elements[i], m_elements[j]);
+			}
+
 			T* AllocateArrayCopy() const
 			{
 				T* result = new T[m_count];

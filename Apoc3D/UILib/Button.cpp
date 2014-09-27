@@ -253,9 +253,6 @@ namespace Apoc3D
 		
 		void Button::UpdateEvents()
 		{
-			if (!Visible)
-				return;
-
 			UpdateEvents_StandardButton(m_mouseOver, m_mouseDown, getAbsoluteArea(),
 				&Button::OnMouseHover, &Button::OnMouseOut, &Button::OnPress, &Button::OnRelease);
 		}
@@ -558,9 +555,10 @@ namespace Apoc3D
 
 		void ButtonRow::Update(const GameTime* time)
 		{
-			if (!Visible)
+			m_hoverIndex = -1;
+
+			if (!Visible || !Enabled)
 			{
-				m_hoverIndex = -1;
 				m_mouseDown = false;
 				return;
 			}
@@ -569,29 +567,34 @@ namespace Apoc3D
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
-			m_hoverIndex = -1;
-
-			for (int i=0;i<m_count;i++)
+			if (IsInteractive)
 			{
-				Apoc3D::Math::Rectangle rect = m_buttonDstRect[i];
-				
-				if (rect.Contains(mouse->GetPosition().X, mouse->GetPosition().Y))
+				for (int i = 0; i < m_count; i++)
 				{
-					m_hoverIndex = i;
-					if (mouse->IsLeftPressed())
+					Apoc3D::Math::Rectangle rect = m_buttonDstRect[i];
+
+					if (rect.Contains(mouse->GetPosition().X, mouse->GetPosition().Y))
 					{
-						m_mouseDown = true;
-						OnPress();
-					}
-					else if (m_mouseDown && mouse->IsLeftUp())
-					{
-						m_mouseDown = false;
-						eventSelectedChanging.Invoke(i);
-						m_selectedIndex = i;
-						//Text = m_titles[i];
-						OnRelease();
+						m_hoverIndex = i;
+						if (mouse->IsLeftPressed())
+						{
+							m_mouseDown = true;
+							OnPress();
+						}
+						else if (m_mouseDown && mouse->IsLeftUp())
+						{
+							m_mouseDown = false;
+							eventSelectedChanging.Invoke(i);
+							m_selectedIndex = i;
+							//Text = m_titles[i];
+							OnRelease();
+						}
 					}
 				}
+			}
+			else
+			{
+				m_mouseDown = false;
 			}
 
 			if (m_hoverIndex == -1 && m_mouseDown)
@@ -602,23 +605,20 @@ namespace Apoc3D
 
 		void ButtonRow::UpdatePositions()
 		{
-			float cellWidth = (float)m_size.X / m_countPerRow;
+			int32 cellWidth = m_size.X / m_countPerRow;
 			Apoc3D::Math::Rectangle area = getAbsoluteArea();
 
-			for (int i=0;i<m_count;i++)
+			for (int i = 0; i < m_count; i++)
 			{
 				int32 rowIndex = i / m_countPerRow;
 				int32 idxInRow = i % m_countPerRow;
 
-				//const Point& textSize = m_textSize[i];
-				Apoc3D::Math::Rectangle& dstRect = m_buttonDstRect[i];
-
-				dstRect = Apoc3D::Math::Rectangle(
-					area.X + (int)(cellWidth*idxInRow), area.Y + rowIndex*(m_rowHeight+1), 
-					(int)cellWidth, m_rowHeight);
-
-				//m_textPos[i] = Point((int)(dstRect.X + (dstRect.Width - textSize.X) * 0.5f),
-				//	(int)(dstRect.Y + (dstRect.Height - textSize.Y) * 0.5f));
+				m_buttonDstRect[i] =
+				{
+					area.X + cellWidth*idxInRow, 
+					area.Y + rowIndex*(m_rowHeight + 1),
+					cellWidth, m_rowHeight
+				};
 			}
 		}
 

@@ -135,7 +135,7 @@ namespace Apoc3D
 
 			T* obj = static_cast<T*>(this);
 
-			if (Visible && Enabled && area.Contains(cursorPos))
+			if (Visible && Enabled && IsInteractive && area.Contains(cursorPos))
 			{
 				if (!mouseHover)
 				{
@@ -175,6 +175,39 @@ namespace Apoc3D
 
 		template void Control::UpdateEvents_StandardButton<TreeView>(bool& mouseHover, bool& mouseDown, const Apoc3D::Math::Rectangle area,
 			void (TreeView::*onMouseHover)(), void (TreeView::*onMouseOut)(), void (TreeView::*onPress)(), void (TreeView::*onRelease)());
+
+		void Control::SetControlBasicStates(std::initializer_list<Control*> ptrs, Point baseOffset, bool parentFocused)
+		{
+			for (Control* c : ptrs)
+			{
+				if (c == nullptr)
+					continue;
+
+				c->BaseOffset = baseOffset;
+				c->IsInteractive = parentFocused;
+			}
+		}
+		void Control::SetControlBasicStates(std::initializer_list<Control*> ptrs, Point baseOffset, Point pos, bool parentFocused)
+		{
+			for (Control* c : ptrs)
+			{
+				if (c == nullptr)
+					continue;
+
+				c->Position = pos;
+				c->BaseOffset = baseOffset;
+				c->IsInteractive = parentFocused;
+			}
+		}
+
+		void Control::SetControlBasicStates(std::initializer_list<Control*> ptrs)
+		{
+			SetControlBasicStates(ptrs, BaseOffset, IsInteractive);
+		}
+		void Control::SetControlBasicStates(std::initializer_list<Control*> ptrs, Point pos)
+		{
+			SetControlBasicStates(ptrs, BaseOffset, pos, IsInteractive);
+		}
 
 		/************************************************************************/
 		/* ScrollableControl                                                    */
@@ -242,7 +275,7 @@ namespace Apoc3D
 		{
 			bool hasHSB = EnableHScrollBar && (m_alwaysShowHS || m_hscrollbar->Maximum > 0);
 			bool hasVSB = EnableVScrollBar && (m_alwaysShowVS || m_vscrollbar->Maximum > 0);
-
+			
 			m_hscrollbar->Visible = hasHSB;
 			m_vscrollbar->Visible = hasVSB;
 
@@ -264,8 +297,7 @@ namespace Apoc3D
 		{
 			UpdateScrollBarsLength(area);
 
-			m_vscrollbar->BaseOffset = BaseOffset;
-			m_hscrollbar->BaseOffset = BaseOffset;
+			SetControlBasicStates({ m_hscrollbar, m_vscrollbar });
 
 			if (m_vscrollbar->Visible)
 			{
@@ -308,11 +340,90 @@ namespace Apoc3D
 		/* ControlCollection                                                    */
 		/************************************************************************/
 
-		ControlContainer::ControlContainer(const StyleSkin* skin)
-			: Control(skin)
+		void ControlCollection::SetElementsBaseOffset(Point bo)
 		{
-
+			for (int32 i = 0; i < m_count; i++)
+			{
+				Control* ctrl = m_elements[i];
+				ctrl->BaseOffset = bo;
+			}
 		}
+		void ControlCollection::SetElementsInteractive(bool isInteractive)
+		{
+			for (int32 i = 0; i < m_count; i++)
+			{
+				Control* ctrl = m_elements[i];
+				ctrl->IsInteractive = isInteractive;
+			}
+		}
+		void ControlCollection::SetElementsBasicStates(Point baseOffset, bool isInteractive)
+		{
+			for (int32 i = 0; i < m_count; i++)
+			{
+				Control* ctrl = m_elements[i];
+				ctrl->BaseOffset = baseOffset;
+				ctrl->IsInteractive = isInteractive;
+			}
+		}
+
+		void ControlCollection::Update(const GameTime* time)
+		{
+			Control* overridingControl = nullptr;
+			for (int32 i = 0; i < m_count; i++)
+			{
+				Control* ctrl = m_elements[i];
+				if (ctrl->IsOverriding())
+				{
+					ctrl->Update(time);
+					overridingControl = ctrl;
+				}
+			}
+
+			if (overridingControl)
+			{
+				SetElementsInteractive(false);
+			}
+
+			for (int32 i = 0; i < m_count; i++)
+			{
+				Control* ctrl = m_elements[i];
+
+				if (ctrl != overridingControl && ctrl->Enabled)
+				{
+					ctrl->Update(time);
+				}
+			}
+		}
+		void ControlCollection::Draw(Sprite* sprite)
+		{
+			Control* overridingControl = nullptr;
+
+			for (int32 i = 0; i < m_count;i++)
+			{
+				Control* ctrl = m_elements[i];
+				if (ctrl->IsOverriding())
+				{
+					overridingControl = ctrl;
+				}
+				if (ctrl->Enabled)
+				{
+					ctrl->Draw(sprite);
+				}
+			}
+
+			if (overridingControl)
+			{
+				overridingControl->DrawOverlay(sprite);
+			}
+		}
+
+		/************************************************************************/
+		/* ControlContainer                                                     */
+		/************************************************************************/
+
+		ControlContainer::ControlContainer(const StyleSkin* skin)
+			: Control(skin) { }
+
 		ControlContainer::~ControlContainer()
 		{
 			if (ReleaseControls)
@@ -321,25 +432,8 @@ namespace Apoc3D
 
 		void ControlContainer::Draw(Sprite* sprite)
 		{
-			Control* overlayControl = nullptr;
-
-			for (Control* ctrl : m_controls)
-			{
-				if (ctrl->IsOverriding())
-				{
-					overlayControl = ctrl;
-				}
-				if (ctrl->Enabled)
-				{
-					ctrl->Draw(sprite);
-				}
-			}
-
-			if (overlayControl)
-			{
-				overlayControl->DrawOverlay(sprite);
-			}
-
+			m_controls.Draw(sprite);
+			
 			if (MenuBar && MenuBar->Visible)
 			{
 				MenuBar->Draw(sprite);
@@ -348,29 +442,13 @@ namespace Apoc3D
 
 		void ControlContainer::Update(const GameTime* time)
 		{
-			for (Control* ctrl : m_controls)
-			{
-				ctrl->BaseOffset = GetAbsolutePosition();
-			}
+			m_controls.SetElementsBaseOffset(GetAbsolutePosition());
+			
+			m_controls.Update(time);
 
-			bool skip = false;
-			for (Control* ctrl : m_controls)
+			if (MenuBar && MenuBar->Visible)
 			{
-				if (ctrl->IsOverriding())
-				{
-					ctrl->Update(time);
-					skip = true;
-				}
-			}
-			if (!skip)
-			{
-				for (Control* ctrl : m_controls)
-				{
-					if (ctrl->Enabled)
-					{
-						ctrl->Update(time);
-					}
-				}
+				MenuBar->Update(time);
 			}
 		}
 

@@ -46,6 +46,7 @@ namespace Apoc3D
 			int32 FindEntry(const String& v);
 
 			List<String>& getItems() { return m_items; }
+			void RemeasureItemWidth();
 
 			int32 getItemHeight() const;
 
@@ -74,7 +75,6 @@ namespace Apoc3D
 
 			void AlignHeight();
 
-			void UpdateHScrollbar();
 			void RenderSelectionBox(Sprite* sprite, int index, int itemY);
 			void DrawBackground(Sprite* sprite);
 			
@@ -84,6 +84,7 @@ namespace Apoc3D
 			void OnRelease();
 
 			List<String> m_items;
+			int m_previousItemCount = 0;
 			bool m_mouseHover = false;
 
 			int m_visisbleItems = 0;
@@ -92,7 +93,7 @@ namespace Apoc3D
 			int m_selectedIndex = -1;
 
 			int m_hScrollWidth = 0;
-
+			
 		};
 
 		class APAPI TreeViewNode
@@ -195,7 +196,7 @@ namespace Apoc3D
 			TreeViewNode* m_anyHoverNode = nullptr;
 			
 			int m_hScrollWidth = 0;
-			bool m_mouseOver = false;
+			bool m_mouseHover = false;
 		};
 
 		typedef EventDelegate2<int, int> ListViewSelectionHandler;

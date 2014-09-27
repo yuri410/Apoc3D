@@ -106,9 +106,6 @@ namespace Apoc3D
 
 		void CheckBox::Update(const GameTime* time)
 		{
-			if (!Visible)
-				return;
-
 			return UpdateEvents_StandardButton(m_mouseOver, m_mouseDown, getAbsoluteArea(),
 				&CheckBox::OnMouseHover, &CheckBox::OnMouseOut, &CheckBox::OnPress, &CheckBox::OnRelease);
 		}

@@ -154,18 +154,10 @@ namespace Apoc3D
 
 		void Label::Update(const GameTime* time)
 		{
-			UpdateEvents();
-		}
-
-		void Label::UpdateEvents()
-		{
-			if (!Visible)
-				return;
-
 			UpdateEvents_StandardButton(m_mouseHover, m_mouseDown, getAbsoluteArea(),
 				&Label::OnMouseHover, &Label::OnMouseOut, &Label::OnPress, &Label::OnRelease);
 		}
-
+		
 		void Label::Draw(Sprite* sprite)
 		{
 			Point drawPos = GetAbsolutePosition();
@@ -415,7 +407,7 @@ namespace Apoc3D
 			
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			Apoc3D::Math::Rectangle textArea = GetTextArea();
-			if (!ReadOnly && textArea.Contains(mouse->GetPosition()))
+			if (HasFocus && !ReadOnly && textArea.Contains(mouse->GetPosition()))
 			{
 				if (mouse->IsLeftPressedState())
 				{
@@ -515,24 +507,32 @@ namespace Apoc3D
 
 			UpdateScrollBarsGeneric(getArea(), time);
 		}
+
 		void TextBox::CheckFocus()
 		{
-			Apoc3D::Math::Rectangle area = getAbsoluteArea();
-
-			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			if (mouse->IsLeftPressed())
+			if (m_textEdit.isExternalSelecting())
 			{
-				if (area.Contains(mouse->GetPosition()))
-				{
-					HasFocus = true;
-				}
-				else
-				{
-					HasFocus = false;
-				}
+				// allow dragging out of area
+				HasFocus = true;
+				return;
 			}
 
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			if (IsInteractive)
+			{
+				if (mouse->IsLeftPressed())
+				{
+					Apoc3D::Math::Rectangle area = getAbsoluteArea();
+
+					HasFocus = area.Contains(mouse->GetPosition());
+				}
+			}
+			else
+			{
+				HasFocus = false;
+			}
 		}
+
 		void TextBox::Draw(Sprite* sprite)
 		{
 			const UIGraphic& g = Enabled ? NormalGraphic : DisabledGraphic;
@@ -604,7 +604,7 @@ namespace Apoc3D
 		{
 			Apoc3D::Math::Rectangle contentArea = GetTextArea();
 
-			bool canShowCursor = HasFocus && !ReadOnly && m_cursorVisible && ParentFocused;
+			bool canShowCursor = HasFocus && !ReadOnly && m_cursorVisible && IsInteractive;
 
 			Point cursorPos = m_textEdit.getCursorPosition();
 

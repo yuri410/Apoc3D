@@ -153,7 +153,7 @@ namespace Apoc3D
 				m_value = Maximum;
 				m_valueFP = static_cast<float>(m_value);
 			}
-			if (m_value<0)
+			if (m_value < 0)
 			{
 				m_value = 0;
 				m_valueFP = 0;
@@ -166,8 +166,7 @@ namespace Apoc3D
 
 			if (Maximum > 0)
 			{
-				m_decrButton->Enabled = true;
-				m_incrButton->Enabled = true;
+				m_decrButton->Enabled = m_incrButton->Enabled = true;
 
 				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
@@ -221,29 +220,35 @@ namespace Apoc3D
 						m_mouseHoverArea = m_incrButton->getAbsoluteArea();
 					}
 
-					if (!m_isMouseHovering && handleArea.Contains(mouse->getX(), mouse->getY()))
+					if (IsInteractive)
 					{
-						m_isMouseHovering = true;
-						m_mouseHoverArea = handleArea;
-
-						if (mouse->IsLeftPressed())
+						if (!m_isMouseHovering && handleArea.Contains(mouse->getX(), mouse->getY()))
 						{
-							m_isDragging = true;
+							m_isMouseHovering = true;
+							m_mouseHoverArea = handleArea;
+
+							if (mouse->IsLeftPressed())
+							{
+								m_isDragging = true;
+							}
 						}
+					}
+					else
+					{
+						m_isDragging = false;
 					}
 				}
 
 			}
 			else
 			{
-				m_decrButton->Enabled = false;
-				m_incrButton->Enabled = false;
+				m_isDragging = false;
+				m_decrButton->Enabled = m_incrButton->Enabled = false;
 			}
 		}
 		void ScrollBar::UpdateButtonPosition()
 		{
-			m_incrButton->Position = m_decrButton->Position = Position;
-			m_decrButton->BaseOffset = m_incrButton->BaseOffset = BaseOffset;
+			SetControlBasicStates({ m_decrButton, m_incrButton }, Position);
 
 			if (m_type == BarDirection::Vertical)
 			{
@@ -527,29 +532,36 @@ namespace Apoc3D
 			}
 			else
 			{
-				Apoc3D::Math::Rectangle area = getAbsoluteArea();
-
-				if (!m_isMouseHovering && handleArea.Contains(mouse->GetPosition()))
+				if (IsInteractive)
 				{
-					m_isMouseHovering = true;
-					m_mouseHoverArea = handleArea;
+					Apoc3D::Math::Rectangle area = getAbsoluteArea();
 
-					if (mouse->IsLeftPressed())
+					if (!m_isMouseHovering && handleArea.Contains(mouse->GetPosition()))
 					{
-						m_isDragging = true;
+						m_isMouseHovering = true;
+						m_mouseHoverArea = handleArea;
+
+						if (mouse->IsLeftPressed())
+						{
+							m_isDragging = true;
+						}
+					}
+					else if (area.Contains(mouse->GetPosition()))
+					{
+						int32 dist = m_type == BarDirection::Horizontal ? (mouse->getX() - area.X) : (mouse->getY() - area.Y);
+
+						if (mouse->IsLeftPressed())
+						{
+							int32 len = GetLength();
+							if (len <= 0)
+								len = 1;
+							CurrentValue = Math::Saturate(static_cast<float>(dist) / GetLength());
+						}
 					}
 				}
-				else if (area.Contains(mouse->GetPosition()))
+				else
 				{
-					int32 dist = m_type == BarDirection::Horizontal ? (mouse->getX() - area.X) : (mouse->getY() - area.Y);
-
-					if (mouse->IsLeftPressed())
-					{
-						int32 len = GetLength();
-						if (len <= 0)
-							len = 1;
-						CurrentValue = Math::Saturate(static_cast<float>(dist) / GetLength());
-					}
+					m_isDragging = false;
 				}
 			}
 		}

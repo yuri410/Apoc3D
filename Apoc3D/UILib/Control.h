@@ -100,7 +100,7 @@ namespace Apoc3D
 			bool Enabled = true;
 			bool Visible = true;
 
-			bool ParentFocused = true;
+			bool IsInteractive = true;
 
 			/** 
 			 *  Specifies the position of the control in screen coordinate.
@@ -124,6 +124,13 @@ namespace Apoc3D
 			template <typename T>
 			void UpdateEvents_StandardButton(bool& mouseHover, bool& mouseDown, const Apoc3D::Math::Rectangle area,
 				void (T::*onMouseHover)(), void (T::*onMouseOut)(), void (T::*onPress)(), void (T::*onRelease)());
+
+			void SetControlBasicStates(std::initializer_list<Control*> ptrs);
+			void SetControlBasicStates(std::initializer_list<Control*> ptrs, Point pos);
+
+			static void SetControlBasicStates(std::initializer_list<Control*> ptrs, Point baseOffset, bool parentFocused);
+			static void SetControlBasicStates(std::initializer_list<Control*> ptrs, Point baseOffset, Point pos, bool parentFocused);
+			
 
 		private:
 			void Initialze(const StyleSkin* skin);
@@ -167,7 +174,17 @@ namespace Apoc3D
 			bool m_alwaysShowVS = false;
 		};
 
-		typedef List<Control*> ControlList;
+		class APAPI ControlCollection : public List<Control*>
+		{
+		public:
+			void Update(const GameTime* time);
+			void Draw(Sprite* sprite);
+
+			void SetElementsBaseOffset(Point bo);
+			void SetElementsInteractive(bool isInteractive);
+			void SetElementsBasicStates(Point baseOffset, bool isInteractive);
+		};
+
 
 		class APAPI ControlContainer : public Control
 		{
@@ -181,13 +198,13 @@ namespace Apoc3D
 
 			virtual void Draw(Sprite* sprite);
 
-			ControlList& getControls() { return m_controls; }
+			ControlCollection& getControls() { return m_controls; }
 
 			MenuBar* MenuBar = nullptr;
 			bool ReleaseControls = false;
 
 		protected:
-			ControlList m_controls;
+			ControlCollection m_controls;
 		};
 	}
 }

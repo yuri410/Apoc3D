@@ -78,6 +78,8 @@ namespace Apoc3D
 
 			InitScrollbars(skin); 
 			EnableVScrollBar = true;
+
+			RemeasureItemWidth();
 		}
 		void ListBox::Initialize(const ListBoxVisualSettings& settings)
 		{
@@ -100,6 +102,8 @@ namespace Apoc3D
 
 			InitScrollbars(settings.HScrollBar, settings.VScrollBar);
 			EnableVScrollBar = true;
+
+			RemeasureItemWidth();
 		}
 
 		void ListBox::AlignHeight()
@@ -114,7 +118,9 @@ namespace Apoc3D
 				m_selectedIndex = -1;
 
 			UpdateScrollBarsGeneric(getArea(), time);
-			UpdateHScrollbar();
+
+			if (m_previousItemCount != m_items.getCount())
+				RemeasureItemWidth();
 
 			Apoc3D::Math::Rectangle cntArea = GetContentArea();
 
@@ -123,10 +129,10 @@ namespace Apoc3D
 			m_vscrollbar->Maximum = Math::Max(0, m_items.getCount() - m_visisbleItems);
 			m_vscrollbar->Step = Math::Max(1, m_vscrollbar->Maximum / 15);
 
-			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-
-			if (ParentFocused)
+			if (IsInteractive)
 			{
+				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+
 				if (m_hoverIndex != -1 && mouse->IsLeftPressed())
 				{
 					int previousIndex = m_selectedIndex;
@@ -162,9 +168,14 @@ namespace Apoc3D
 					OnMouseOut();
 				}
 			}
+			else
+			{
+				m_mouseHover = false;
+				m_hoverIndex = -1;
+			}
 		}
 
-		void ListBox::UpdateHScrollbar()
+		void ListBox::RemeasureItemWidth()
 		{
 			// measure the max width among all the item
 			int ew = 0;
@@ -183,6 +194,8 @@ namespace Apoc3D
 			m_hScrollWidth = ew;
 			if (m_hscrollbar)
 				m_hscrollbar->Maximum = m_hScrollWidth;
+
+			m_previousItemCount = m_items.getCount();
 		}
 
 		void ListBox::Draw(Sprite* sprite)
@@ -214,7 +227,7 @@ namespace Apoc3D
 
 				textOffset.Y = (i - m_vscrollbar->getValue()) * getItemHeight();
 
-				if (ParentFocused)
+				if (IsInteractive)
 					RenderSelectionBox(sprite, i, textOffset.Y);
 
 				textOffset += cntArea.getPosition();
@@ -327,7 +340,7 @@ namespace Apoc3D
 			m_vscrollbar->Step = Math::Max(1, m_vscrollbar->Maximum / 15);
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			if (ParentFocused)
+			if (IsInteractive)
 			{
 				if (m_hoverNode && mouse->IsLeftPressed())
 				{
@@ -341,9 +354,9 @@ namespace Apoc3D
 
 				if (getAbsoluteArea().Contains(mouse->GetPosition()))
 				{
-					if (!m_mouseOver)
+					if (!m_mouseHover)
 					{
-						m_mouseOver = true;
+						m_mouseHover = true;
 						OnMouseHover();
 					}
 					
@@ -368,12 +381,16 @@ namespace Apoc3D
 						}
 					}
 				}
-				else if (m_mouseOver)
+				else if (m_mouseHover)
 				{
-					m_mouseOver = false;
+					m_mouseHover = false;
 					OnMouseOut();
-				}
-				
+				}	
+			}
+			else
+			{
+				m_mouseHover = false;
+				m_hoverNode = nullptr;
 			}
 		}
 
@@ -410,8 +427,7 @@ namespace Apoc3D
 
 				itemOffset += cntArea.getTopLeft();
 
-				if (ParentFocused)
-					RenderSelectionBox(sprite, nde, cntArea, itemOffset);
+				RenderSelectionBox(sprite, nde, cntArea, itemOffset);
 
 				if (nde->getIcon())
 				{
@@ -472,25 +488,21 @@ namespace Apoc3D
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
+			
 			Apoc3D::Math::Rectangle selectionRect;
 
 			selectionRect.X = txtPos.X;
 			selectionRect.Y = txtPos.Y;
 			selectionRect.Height = GetItemHeight();
+			selectionRect.Width = contentArea.Width;
 
-			if (m_vscrollbar->Maximum>0)
-				selectionRect.Width = m_size.X - 13;
-			else
-				selectionRect.Width = m_size.X - 1;
-
-			
 			if (node == m_selectedNode)
 				sprite->Draw(whitePix, selectionRect, CV_LightGray);
 			if (contentArea.Contains(mouse->GetPosition()) &&
 				selectionRect.Contains(mouse->GetPosition()))
 			{
 				m_anyHoverNode = node;
-				if (node != m_selectedNode)
+				if (node != m_selectedNode && IsInteractive)
 				{
 					m_hoverNode = node;
 					sprite->Draw(whitePix, selectionRect, CV_Silver);
@@ -629,20 +641,27 @@ namespace Apoc3D
 		void ListView::Update(const GameTime* time)
 		{
 			UpdateScrollBarsGeneric(getArea(), time);
-			
+
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
-			if (m_isResizingHeaders && mouse->IsLeftReleasedState())
-				m_isResizingHeaders = false;
-
-			if (getAbsoluteArea().Contains(mouse->GetPosition()))
+			if (IsInteractive)
 			{
-				if (mouse->getDZ())
+				if (m_isResizingHeaders && mouse->IsLeftReleasedState())
+					m_isResizingHeaders = false;
+
+				if (getAbsoluteArea().Contains(mouse->GetPosition()))
 				{
-					m_vscrollbar->SetValue(m_vscrollbar->getValue() - mouse->getDZ() / 60);
+					if (mouse->getDZ())
+					{
+						m_vscrollbar->SetValue(m_vscrollbar->getValue() - mouse->getDZ() / 60);
+					}
 				}
 			}
-
+			else
+			{
+				m_isResizingHeaders = false;
+			}
+			
 			m_contentArea = GetContentArea();
 
 			if (m_headerStyle != LHSTYLE_None)
@@ -656,10 +675,13 @@ namespace Apoc3D
 			
 			UpdateSelection();
 
-			if (m_headerStyle == LHSTYLE_Clickable && m_headerHoverIndex != -1 &&
-				mouse->IsLeftUp())
+			if (IsInteractive)
 			{
-				m_columnHeader[m_headerHoverIndex].enentRelease.Invoke(this);
+				if (m_headerStyle == LHSTYLE_Clickable && m_headerHoverIndex != -1 &&
+					mouse->IsLeftUp())
+				{
+					m_columnHeader[m_headerHoverIndex].enentRelease.Invoke(this);
+				}
 			}
 		}
 
@@ -670,7 +692,7 @@ namespace Apoc3D
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
-			if (!ParentFocused || !m_contentArea.Contains(mouse->GetPosition()))
+			if (!IsInteractive || !m_contentArea.Contains(mouse->GetPosition()))
 				return;
 
 			if (FullRowSelect)
@@ -743,7 +765,7 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle maxPossibleArea = getAbsoluteArea();
 			maxPossibleArea.Width = m_contentArea.Width;// excluding possible VScrollBar
 
-			if (ParentFocused && maxPossibleArea.Contains(mousePos))
+			if (IsInteractive && maxPossibleArea.Contains(mousePos))
 			{
 				Point absP = GetAbsolutePosition();
 

@@ -54,6 +54,8 @@ namespace Apoc3D
 
 			void Close();
 
+			bool HasItemOpen() const;
+
 			MenuItem* operator [](int index) const;
 
 			const List<MenuItem*>& getItems() const { return m_items; }

@@ -52,7 +52,6 @@ namespace Apoc3D
 			void Initialize(Font* font);
 
 			void UpdateText();
-			void UpdateEvents();
 
 			void OnMouseHover();
 			void OnMouseOut();

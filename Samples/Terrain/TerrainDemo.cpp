@@ -262,7 +262,7 @@ namespace SampleTerrain
 
 		if (!m_isLoading)
 		{
-			if (SystemUI::ActiveForm == nullptr && SystemUI::TopMostForm == nullptr)
+			if (SystemUI::TopMostForm == nullptr)
 			{
 				Keyboard* kb = InputAPIManager::getSingleton().getKeyboard();
 				if (kb->IsPressing(KEY_W))

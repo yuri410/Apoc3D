@@ -222,16 +222,16 @@ namespace Apoc3D
 			for (int i = m_forms.getCount() - 1; i > -1; i--)
 			{
 				Form* frm = m_forms[i];
-				if (frm->Visible && frm != m_topMostForm &&
+				if (frm->Visible && frm != TopMostForm &&
 					frm->getState() != Form::FWS_Minimized && !frm->IsBackgroundForm)
 				{
 					frm->Draw(m_sprite);
 				}
 			}
 
-			if (m_topMostForm && m_topMostForm->Visible && !m_topMostForm->IsBackgroundForm)
+			if (TopMostForm && TopMostForm->Visible && !TopMostForm->IsBackgroundForm)
 			{
-				m_topMostForm->Draw(m_sprite);
+				TopMostForm->Draw(m_sprite);
 			}
 
 			// minimized always last
@@ -239,7 +239,7 @@ namespace Apoc3D
 			{
 				Form* frm = m_forms[i];
 				if (frm->getState() == Form::FWS_Minimized &&
-					frm->Visible && frm != m_topMostForm)
+					frm->Visible && frm != TopMostForm)
 				{
 					frm->Draw(m_sprite);
 				}
@@ -272,8 +272,11 @@ namespace Apoc3D
 			// cursor
 			m_sprite->End();
 		}
+
 		void SystemUIImpl::Update(const GameTime* time)
 		{
+			InteractingForm = nullptr;
+
 			if (m_modalForm)
 			{
 				m_modalForm->Update(time);
@@ -282,73 +285,78 @@ namespace Apoc3D
 			}
 
 			m_modalAnim = 0;
+
+
 			bool menuOverriden = false;
-			if (m_mainMenu)
-			{
-				for (MenuItem* m : m_mainMenu->getItems())
-				{
-					if (m->getSubMenu() && m->getSubMenu()->getState() == MENU_Open)
-					{
-						menuOverriden = true;
-					}
-				}
-			}
-
-			if (!menuOverriden)
-			{
-				Form* alreadyUpdatedForm = nullptr;
-				if (m_activeForm)
-				{
-					alreadyUpdatedForm = m_activeForm;
-					m_activeForm->Update(time);
-				}
-				else if (m_topMostForm && !m_topMostForm->IsBackgroundForm)
-				{
-					alreadyUpdatedForm = m_topMostForm;
-					m_topMostForm->Update(time);
-				}
-				//else if (!m_topMostForm && m_forms.getCount())
-				//{
-				//	m_topMostForm = m_forms[0];
-				//	m_topMostForm->Focus();
-				//}
-
-				for (Form* frm : m_forms)
-				{
-					if (frm->Enabled && frm != alreadyUpdatedForm)
-					{
-						frm->Update(time);
-					}
-				}
-
-				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-				if (mouse->IsLeftPressedState())
-				{
-					if (!m_activeForm && m_topMostForm)
-					{
-						// empty selection
-						m_topMostForm->Unfocus();
-					}
-					if (m_topMostForm && m_topMostForm->IsBackgroundForm && m_topMostForm != m_activeForm)
-					{
-						// deselect background form
-						m_topMostForm->Unfocus();
-						m_activeForm->Focus();
-					}
-				}
-			}
-
-
-			//Update Context Menu
 			if (m_contextMenu && m_contextMenu->getState() != MENU_Closed &&
 				m_contextMenu->Visible)
 			{
 				m_contextMenu->Update(time);
+				menuOverriden = true;
 			}
 			if (m_mainMenu && m_mainMenu->Visible)
 			{
 				m_mainMenu->Update(time);
+				menuOverriden = m_mainMenu->getState() == MENU_Open;
 			}
+
+			if (menuOverriden)
+			{
+				for (Form* frm : m_forms)
+					frm->IsInteractive = false;
+			}
+			else
+			{
+				for (Form* frm : m_forms)
+					frm->IsInteractive = true;
+			}
+
+
+			Form* alreadyUpdatedForm = nullptr;
+			if (TopMostForm)
+			{
+				alreadyUpdatedForm = TopMostForm;
+				TopMostForm->Update(time);
+			}
+
+			for (Form* frm : m_forms)
+			{
+				if (frm->Enabled && frm != alreadyUpdatedForm)
+				{
+					frm->Update(time);
+				}
+			}
+			
+			// execute bring to front request
+			for (ControlContainer* cc : m_bringFrontSchedules)
+			{
+				int32 idx = m_forms.IndexOf(reinterpret_cast<Form*>(cc));
+				if (idx == -1)
+					idx = m_containers.IndexOf(cc);
+
+				if (idx == -1)
+					continue; // invalid pointer
+
+				Form* form = up_cast<Form*>(cc);
+				if (form)
+				{
+					if (m_forms.getCount() > 0 && m_forms[0] != form)
+					{
+						m_forms.RemoveAt(idx);
+						m_forms.Insert(0, form);
+					}
+				}
+				else
+				{
+					if (m_containers.getCount() > 0 && m_containers[0] != cc)
+					{
+						m_containers.RemoveAt(idx);
+						m_containers.Insert(0, form);
+					}
+				}
+			}
+			m_bringFrontSchedules.Clear();
+
 		}
 
 
@@ -399,20 +407,11 @@ namespace Apoc3D
 			}
 		}
 
-		void SystemUIImpl::BringToFirst(ControlContainer* cc)
+
+		void SystemUIImpl::ScheduleBringFront(ControlContainer* cc)
 		{
-			Form* form = up_cast<Form*>(cc);
-			if (form)
-			{
-				m_forms.Remove(form);
-				m_forms.Insert(0, form);
-			}
-			else
-			{
-				m_containers.Remove(form);
-				m_containers.Insert(0, form);
-			}
-			
+			m_bringFrontSchedules.Add(cc);
 		}
+
 	}
 }
