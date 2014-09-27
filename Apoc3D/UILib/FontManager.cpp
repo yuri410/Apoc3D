@@ -310,11 +310,29 @@ namespace Apoc3D
 			return false;
 		}
 
+		// UTF-16 BMP(0) private range: U+E000..U+F8FF
+		// U+F8E0..U+F8F0 for font system control codes
+		const uint16 ColorControlCode = 0xF8E0;
+		const uint16 FontControlCode = 0xF8E1;
 
-		void Font::RegisterCustomGlyph(int32 utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, short top, float advanceX)
+		String Font::MakeColorControl(uint32 cv)
 		{
+			String r;
+			r.append(1, ColorControlCode);
+			char16_t ar = (char16_t)((cv >> 16) & 0xffff);
+			char16_t gb = (char16_t)(cv & 0xffff);
+			r.append(1, ar);
+			r.append(1, gb);
+			return r;
+		}
+
+		void Font::RegisterCustomGlyph(int32 code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, short top, float advanceX)
+		{
+			assert(code != ColorControlCode);
+			assert(code != FontControlCode);
+
 			CustomGlyph cg;
-			cg._Character = utf16code;
+			cg._Character = code;
 			cg.Graphic = graphic;
 			cg.AdvanceX = advanceX;
 			cg.Left = left;
@@ -322,7 +340,7 @@ namespace Apoc3D
 			cg.SrcRect = srcRect;
 			cg.SrcRectF = srcRect;
 
-			m_customCharacters.Add(utf16code, cg);
+			m_customCharacters.Add(code, cg);
 		}
 		void Font::RegisterCustomGlyphAligned(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, int32 padLeft, int32 padRight, CustomGlyphAlignment vertAlignment, int32 vaValue)
 		{
@@ -350,21 +368,6 @@ namespace Apoc3D
 		void Font::UnregisterCustomGlyph(int32 utf16code) { m_customCharacters.Remove(utf16code); }
 		void Font::ClearCustomGlyph() { m_customCharacters.Clear(); }
 
-		// UTF-16 BMP(0) private range: U+E000..U+F8FF
-		// U+F8E0..U+F8F0 for font system control codes
-		const uint16 ColorControlCode = 0xF8E0;
-		const uint16 FontControlCode = 0xF8E1;
-
-		String Font::MakeColorControl(uint32 cv)
-		{
-			String r;
-			r.append(1, ColorControlCode);
-			char16_t ar = (char16_t)((cv >> 16) & 0xffff);
-			char16_t gb = (char16_t)(cv & 0xffff);
-			r.append(1, ar);
-			r.append(1, gb);
-			return r;
-		}
 
 		static float PositionalNoise(int32 x)
 		{

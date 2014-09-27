@@ -59,10 +59,13 @@ namespace Apoc3D
 			virtual void DrawOverlay(Sprite* sprite);
 			virtual bool IsOverriding();
 
+			bool isMouseHover() const;
+			Apoc3D::Math::Rectangle getMouseHoverArea() const;
+
 			List<String>& getItems() const;
 
 			bool isOpened() const;
-
+			
 			bool getLocked() const;
 			void setLocked(bool value) const;
 			//const String& getText() const;
@@ -73,6 +76,8 @@ namespace Apoc3D
 			void SetSelectionByName(const String& n);
 
 			String* getSelectedItem() const;
+
+			
 
 			ComboBoxEvent eventSelectionChanged;
 

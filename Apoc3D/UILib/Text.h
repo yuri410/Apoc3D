@@ -37,6 +37,8 @@ namespace Apoc3D
 			void setHeight(int v) { m_size.Y = v; }
 			void setWidth(int v) { m_size.X = v; }
 
+			bool isMouseHover() const { return m_mouseHover; }
+
 			TextRenderSettings TextSettings;
 
 			bool AutosizeX = false;
@@ -94,6 +96,8 @@ namespace Apoc3D
 			void setWidth(int w) { m_size.X = w; }
 			void setHeight(int h) { m_size.Y = h; }
 
+			bool isMouseHover() const { return m_mouseHover; }
+
 			bool ReadOnly = false;
 			bool HasFocus = false;
 
@@ -143,6 +147,7 @@ namespace Apoc3D
 			int m_visibleLines = 0;
 			bool m_multiline = false;
 
+			bool m_mouseHover = false;
 			bool m_cursorVisible = false;
 			bool m_timerStarted = false;
 			float m_timer = 0.5f;

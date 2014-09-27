@@ -66,6 +66,8 @@ namespace Apoc3D
 
 		void ListBox::Initialize(const StyleSkin* skin)
 		{
+			m_itemHeight = m_fontRef->getLineHeightInt();
+
 			BackgroundGraphic = UIGraphic(skin->SkinTexture, skin->ListBoxBackground);
 			Margin = skin->ListBoxMargin;
 			Padding = skin->ListBoxPadding;
@@ -85,6 +87,11 @@ namespace Apoc3D
 		{
 			m_fontRef = settings.FontRef;
 
+			if (settings.ItemHeight.isSet())
+				m_itemHeight = settings.ItemHeight;
+			else
+				m_itemHeight = m_fontRef->getLineHeightInt();
+
 			BackgroundGraphic = settings.BackgroundGraphic;
 
 			if (settings.Margin.isSet())
@@ -92,7 +99,7 @@ namespace Apoc3D
 
 			if (settings.Padding.isSet())
 				Padding = settings.Padding;
-			
+
 
 			ItemSettings.HorizontalAlignment = TextHAlign::Left;
 			ItemSettings.TextColor = settings.TextColor;
@@ -132,6 +139,20 @@ namespace Apoc3D
 			if (IsInteractive)
 			{
 				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+
+				cntArea = Padding.ShrinkRect(cntArea);
+
+				m_hoverIndex = -1;
+				for (int i = m_vscrollbar->getValue();
+					i < Math::Min(m_items.getCount(), m_vscrollbar->getValue() + m_visisbleItems); i++)
+				{
+					Apoc3D::Math::Rectangle itemArea = GetItemArea(cntArea, i);
+					if (itemArea.Contains(mouse->GetPosition()))
+					{
+						m_hoverIndex = i;
+						break;
+					}
+				}
 
 				if (m_hoverIndex != -1 && mouse->IsLeftPressed())
 				{
@@ -202,62 +223,42 @@ namespace Apoc3D
 		{
 			DrawBackground(sprite);
 
-			sprite->Flush();
-
-			Apoc3D::Math::Rectangle oldScissorRect;
-			RenderDevice* dev = sprite->getRenderDevice();
-			bool shouldRestoreScissorTest = dev->getRenderState()->getScissorTestEnabled();
-			if (shouldRestoreScissorTest)
-			{
-				oldScissorRect = dev->getRenderState()->getScissorTestRect();
-			}
 			Apoc3D::Math::Rectangle scissorRect = getAbsoluteArea();
-			dev->getRenderState()->setScissorTest(true, &scissorRect);
 
-			Apoc3D::Math::Rectangle cntArea = Padding.ShrinkRect(GetContentArea());
-
-			m_hoverIndex = -1;
-			for (int i = m_vscrollbar->getValue();
-				i < Math::Min(m_items.getCount(), m_vscrollbar->getValue() + m_visisbleItems); i++)
 			{
-				Point textOffset;
+				ScissorTestScope sts(scissorRect, sprite);
 
-				if (m_hscrollbar)
-					textOffset.X = -m_hscrollbar->getValue();
+				if (!sts.isEmpty())
+				{
+					Apoc3D::Math::Rectangle cntArea = Padding.ShrinkRect(GetContentArea());
 
-				textOffset.Y = (i - m_vscrollbar->getValue()) * getItemHeight();
+					for (int i = m_vscrollbar->getValue();
+						i < Math::Min(m_items.getCount(), m_vscrollbar->getValue() + m_visisbleItems); i++)
+					{
+						Apoc3D::Math::Rectangle itemArea = GetItemArea(cntArea, i);
 
-				if (IsInteractive)
-					RenderSelectionBox(sprite, i, textOffset.Y);
+						RenderSelectionBox(sprite, i, itemArea);
 
-				textOffset += cntArea.getPosition();
+						if (m_hscrollbar)
+							itemArea.X -= m_hscrollbar->getValue();
 
-				Apoc3D::Math::Rectangle itemArea = { textOffset, Point(m_size.X, getItemHeight()) };
+						ItemSettings.Draw(sprite, m_fontRef, m_items[i], itemArea, Enabled);
 
-				ItemSettings.Draw(sprite, m_fontRef, m_items[i], itemArea, Enabled);
-
-				eventItemRender.Invoke(this, i, itemArea);
+						eventItemRender.Invoke(this, i, itemArea);
+					}
+				}
 			}
-			sprite->Flush();
-			
-			dev->getRenderState()->setScissorTest(shouldRestoreScissorTest, shouldRestoreScissorTest ? &oldScissorRect : nullptr);
 
 			DrawScrollBars(sprite);
 		}
 
-		void ListBox::RenderSelectionBox(Sprite* sprite, int index, int itemY)
+		void ListBox::RenderSelectionBox(Sprite* sprite, int index, const Apoc3D::Math::Rectangle& area)
 		{
 			Texture* whitePix = SystemUI::GetWhitePixel();
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
-			Apoc3D::Math::Rectangle cntArea = Padding.ShrinkRect(GetContentArea());
-
-			Apoc3D::Math::Rectangle selectionRect;
-			selectionRect.X = cntArea.X;
-			selectionRect.Y = itemY + cntArea.Y;
-			selectionRect.Height = getItemHeight();
-			selectionRect.Width = cntArea.Width;
+			Apoc3D::Math::Rectangle selectionRect = area;
 
 			if (m_vscrollbar && (m_alwaysShowVS || (m_vscrollbar->Visible && m_vscrollbar->Maximum > 0)))
 				selectionRect.Width += Padding.Right;
@@ -266,9 +267,8 @@ namespace Apoc3D
 			{
 				sprite->Draw(whitePix, selectionRect, SelectionBGColor);
 			}
-			else if (selectionRect.Contains(mouse->GetPosition()))
+			else if (index == m_hoverIndex)
 			{
-				m_hoverIndex = index;
 				sprite->Draw(whitePix, selectionRect, HoverBGColor);
 			}
 		}
@@ -280,9 +280,26 @@ namespace Apoc3D
 
 			BackgroundGraphic.Draw(sprite, graphicalArea);
 		}
-		
+
+		Apoc3D::Math::Rectangle ListBox::GetItemArea(const Apoc3D::Math::Rectangle& cntArea, int32 i) const
+		{
+			int32 itemY = (i - m_vscrollbar->getValue()) * getItemHeight();
+
+			Apoc3D::Math::Rectangle selectionRect;
+			selectionRect.X = cntArea.X;
+			selectionRect.Y = itemY + cntArea.Y;
+			selectionRect.Height = getItemHeight();
+			selectionRect.Width = cntArea.Width;
+
+			return selectionRect;
+		}
+		Apoc3D::Math::Rectangle ListBox::GetItemArea(int32 i) const
+		{
+			return GetItemArea(Padding.ShrinkRect(GetContentArea()), i);
+		}
+
 		int32 ListBox::FindEntry(const String& v) { return m_items.IndexOf(v); }
-		int32 ListBox::getItemHeight() const { return m_fontRef->getLineHeightInt(); }
+		int32 ListBox::getItemHeight() const { return m_itemHeight; }
 
 		void ListBox::OnMouseHover() { }
 		void ListBox::OnMouseOut() { }
@@ -451,32 +468,18 @@ namespace Apoc3D
 		{
 			DrawBackground(sprite);
 
-			sprite->Flush();
-
-			bool shouldRestoreScissorTest = false;
-			Apoc3D::Math::Rectangle oldScissorRect;
-			RenderDevice* dev = sprite->getRenderDevice();
-			if (dev->getRenderState()->getScissorTestEnabled())
-			{
-				shouldRestoreScissorTest = true;
-				oldScissorRect = dev->getRenderState()->getScissorTestRect();
-			}
-			Apoc3D::Math::Rectangle scissorRect = getAbsoluteArea();
-			dev->getRenderState()->setScissorTest(true, &scissorRect);
-
 			m_hoverNode = 0;
 			m_anyHoverNode = 0;
-			int counter = 0;
-			DrawNodes(sprite, m_nodes, 0, counter, m_visisbleItems + m_vscrollbar->getValue());
 
-			sprite->Flush();
-			if (shouldRestoreScissorTest)
 			{
-				dev->getRenderState()->setScissorTest(true, &oldScissorRect);
-			}
-			else
-			{
-				dev->getRenderState()->setScissorTest(false, 0);
+				Apoc3D::Math::Rectangle scissorRect = getAbsoluteArea();
+				ScissorTestScope sts(scissorRect, sprite);
+
+				if (!sts.isEmpty())
+				{
+					int counter = 0;
+					DrawNodes(sprite, m_nodes, 0, counter, m_visisbleItems + m_vscrollbar->getValue());
+				}
 			}
 
 			DrawScrollBars(sprite);
@@ -837,33 +840,15 @@ namespace Apoc3D
 			DrawBackground(sprite);
 
 			{
-				sprite->Flush();
-
-				bool shouldRestoreScissorTest = false;
-				Apoc3D::Math::Rectangle oldScissorRect;
-				RenderDevice* dev = sprite->getRenderDevice();
-				if (dev->getRenderState()->getScissorTestEnabled())
-				{
-					shouldRestoreScissorTest = true;
-					oldScissorRect = dev->getRenderState()->getScissorTestRect();
-				}
 				Apoc3D::Math::Rectangle scissorRect = getAbsoluteArea();
-				dev->getRenderState()->setScissorTest(true, &scissorRect);
+				ScissorTestScope sts(scissorRect, sprite);
 
-				// draw content
-				DrawColumnHeaders(sprite);
-				DrawItems(sprite);
-				DrawGridLines(sprite);
-
-
-				sprite->Flush();
-				if (shouldRestoreScissorTest)
+				if (!sts.isEmpty())
 				{
-					dev->getRenderState()->setScissorTest(true, &oldScissorRect);
-				}
-				else
-				{
-					dev->getRenderState()->setScissorTest(false, 0);
+					// draw content
+					DrawColumnHeaders(sprite);
+					DrawItems(sprite);
+					DrawGridLines(sprite);
 				}
 			}
 			

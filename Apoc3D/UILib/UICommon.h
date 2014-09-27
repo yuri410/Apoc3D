@@ -292,6 +292,8 @@ namespace Apoc3D
 
 			OptionalSetting<ControlBounds> Margin;
 			OptionalSetting<ControlBounds> Padding;
+
+			OptionalSetting<int32> ItemHeight;
 		};
 
 		struct ProgressBarVisualSettings
@@ -339,6 +341,20 @@ namespace Apoc3D
 			UIGraphicSimple HandleDisabledGraphic;
 
 			ControlBounds HandleMargin;
+		};
+
+		struct ScissorTestScope
+		{
+		public:
+			ScissorTestScope(const Apoc3D::Math::Rectangle& region, Sprite* sprite);
+			~ScissorTestScope();
+
+			bool isEmpty() const { return m_isEmpty; }
+		private:
+			Sprite* m_sprite;
+			Apoc3D::Math::Rectangle m_oldScissorRect;
+			bool m_oldScissorTest;
+			bool m_isEmpty = false;
 		};
 
 		/**

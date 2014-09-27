@@ -106,7 +106,7 @@ namespace Apoc3D
 
 		void CheckBox::Update(const GameTime* time)
 		{
-			return UpdateEvents_StandardButton(m_mouseOver, m_mouseDown, getAbsoluteArea(),
+			return UpdateEvents_StandardButton(m_mouseHover, m_mouseDown, getAbsoluteArea(),
 				&CheckBox::OnMouseHover, &CheckBox::OnMouseOut, &CheckBox::OnPress, &CheckBox::OnRelease);
 		}
 
@@ -154,7 +154,7 @@ namespace Apoc3D
 			{
 				if (m_mouseDown)
 					DownGraphic.Draw(sprite, gfxRect);
-				else if (m_mouseOver)
+				else if (m_mouseHover)
 					HoverGraphic.Draw(sprite, gfxRect);
 				else
 					NormalGraphic.Draw(sprite, gfxRect);

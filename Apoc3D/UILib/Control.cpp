@@ -335,6 +335,18 @@ namespace Apoc3D
 			return rect;
 		}
 
+		bool ScrollableControl::isMouseHoverScrollBar() const
+		{
+			return (m_vscrollbar && m_vscrollbar->isMouseHover()) || (m_hscrollbar && m_hscrollbar->isMouseHover());
+		}
+		const Apoc3D::Math::Rectangle& ScrollableControl::getScrollbarMouseHoverArea() const
+		{
+			assert(isMouseHoverScrollBar());
+			if (m_vscrollbar && m_vscrollbar->isMouseHover())
+				return m_vscrollbar->getMouseHoverArea();
+
+			return m_hscrollbar->getMouseHoverArea();
+		}
 
 		/************************************************************************/
 		/* ControlCollection                                                    */

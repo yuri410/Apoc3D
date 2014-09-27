@@ -80,6 +80,8 @@ namespace Apoc3D
 			void SetSizeX(int32 v);
 			void SetSizeY(int32 v);
 
+			bool isMouseHover() const { return m_mouseHover; }
+
 			TextRenderSettings TextSettings;
 
 			bool Checked = false;
@@ -118,7 +120,7 @@ namespace Apoc3D
 			void OnMouseOut();
 
 			bool m_mouseDown = false;
-			bool m_mouseOver = false;
+			bool m_mouseHover = false;
 
 			String m_text;
 		};

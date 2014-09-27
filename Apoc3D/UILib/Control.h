@@ -142,6 +142,9 @@ namespace Apoc3D
 		public:
 			Apoc3D::Math::Rectangle GetContentArea() const;
 
+			bool isMouseHoverScrollBar() const;
+			const Apoc3D::Math::Rectangle& getScrollbarMouseHoverArea() const;
+
 			void EnableAllScrollBars() { EnableHScrollBar = EnableVScrollBar = true; }
 
 			bool EnableVScrollBar = false;

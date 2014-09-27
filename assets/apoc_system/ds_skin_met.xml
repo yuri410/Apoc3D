@@ -125,7 +125,7 @@
     
     <Bar Coord="4, 183" RegionRef="Background" StartEndPadding="1,1" />
     
-    <Handle Offset="0,0" >
+    <Handle Offset="0,0" Margin="1,0,1,2" >
       <Normal Coord="135, 153">[0, 0,11,21]</Normal>
       <Hover Coord="147, 153" RegionRef="Normal" />
       <Down Coord="159, 153" RegionRef="Normal" />

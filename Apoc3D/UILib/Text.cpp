@@ -394,8 +394,8 @@ namespace Apoc3D
 
 		void TextBox::Update(const GameTime* time)
 		{
-			Apoc3D::Math::Rectangle txtArea = GetTextArea();
-			m_visibleLines = (int)ceilf((float)txtArea.Height / m_fontRef->getLineHeightInt());
+			Apoc3D::Math::Rectangle textArea = GetTextArea();
+			m_visibleLines = (int)ceilf((float)textArea.Height / m_fontRef->getLineHeightInt());
 
 			CheckFocus();
 			Point cursorPos = m_textEdit.getCursorPosition();
@@ -406,7 +406,8 @@ namespace Apoc3D
 			}
 			
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			Apoc3D::Math::Rectangle textArea = GetTextArea();
+			m_mouseHover = IsInteractive && getAbsoluteArea().Contains(mouse->GetPosition());
+
 			if (HasFocus && !ReadOnly && textArea.Contains(mouse->GetPosition()))
 			{
 				if (mouse->IsLeftPressedState())
@@ -537,24 +538,16 @@ namespace Apoc3D
 		{
 			const UIGraphic& g = Enabled ? NormalGraphic : DisabledGraphic;
 
-			g.Draw(sprite, Margin.InflateRect(getAbsoluteArea()));
-
 			Apoc3D::Math::Rectangle dstRect = getAbsoluteArea();
+			g.Draw(sprite, Margin.InflateRect(dstRect));
 
-			RenderStateManager* stMgr = sprite->getRenderDevice()->getRenderState();
-			bool oldScissorTest = stMgr->getScissorTestEnabled();
-			Apoc3D::Math::Rectangle oldScissorRect;
-			if (oldScissorTest)
 			{
-				oldScissorRect = stMgr->getScissorTestRect();
+				ScissorTestScope sts(dstRect, sprite);
+
+				if (!sts.isEmpty())
+					_DrawText(sprite);
 			}
-
-			sprite->Flush();
-			stMgr->setScissorTest(true, &dstRect);
-			_DrawText(sprite);
-			sprite->Flush();
-			stMgr->setScissorTest(oldScissorTest, &oldScissorRect);
-
+			
 			DrawScrollBars(sprite);
 		}
 

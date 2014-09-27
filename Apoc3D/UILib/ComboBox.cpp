@@ -94,6 +94,8 @@ namespace Apoc3D
 			m_listBox->Visible = false;
 			m_listBox->eventSelectionChanged.Bind(this, &ComboBox::ListBox_SelectionChanged);
 			m_listBox->eventPress.Bind(this, &ComboBox::ListBox_Press);
+
+			m_size.Y = m_textbox->getHeight();
 		}
 
 
@@ -153,6 +155,26 @@ namespace Apoc3D
 		List<String>& ComboBox::getItems() const { return m_listBox->getItems(); }
 
 		bool ComboBox::isOpened() const { return m_listBox->Visible; }
+
+		bool ComboBox::isMouseHover() const 
+		{
+			return m_button->isMouseHover() || m_textbox->isMouseHover() || 
+				(m_listBox->Visible && m_listBox->getHoverIndex() != -1) || 
+				m_listBox->isMouseHoverScrollBar(); 
+		}
+
+		Apoc3D::Math::Rectangle ComboBox::getMouseHoverArea() const
+		{
+			if (m_button->isMouseHover())
+				return m_button->getAbsoluteArea();
+			if (m_textbox->isMouseHover())
+				return m_textbox->getAbsoluteArea();
+
+			if (m_listBox->getHoverIndex() != -1)
+				return Apoc3D::Math::Rectangle::Intersect(m_listBox->GetContentArea(), m_listBox->GetItemArea(m_listBox->getHoverIndex()));
+			return m_listBox->getScrollbarMouseHoverArea();
+		}
+
 		bool ComboBox::getLocked() const { return m_textbox->ReadOnly; }
 		void ComboBox::setLocked(bool value) const { m_textbox->ReadOnly = value; }
 

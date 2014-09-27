@@ -52,6 +52,12 @@ namespace Apoc3D
 
 			int getSelectedIndex() const { return m_selectedIndex; }
 			void setSelectedIndex(int i) { m_selectedIndex = i; }
+			int32 getHoverIndex() const { return m_hoverIndex; }
+
+			bool isMouseHover() const { return m_mouseHover; }
+			
+			Apoc3D::Math::Rectangle GetItemArea(int32 i) const;
+			Apoc3D::Math::Rectangle GetItemArea(const Apoc3D::Math::Rectangle& cntArea, int32 i) const;
 
 			TextRenderSettings ItemSettings;
 
@@ -75,7 +81,7 @@ namespace Apoc3D
 
 			void AlignHeight();
 
-			void RenderSelectionBox(Sprite* sprite, int index, int itemY);
+			void RenderSelectionBox(Sprite* sprite, int index, const Apoc3D::Math::Rectangle& area);
 			void DrawBackground(Sprite* sprite);
 			
 			void OnMouseHover();
@@ -93,7 +99,7 @@ namespace Apoc3D
 			int m_selectedIndex = -1;
 
 			int m_hScrollWidth = 0;
-			
+			int32 m_itemHeight;
 		};
 
 		class APAPI TreeViewNode

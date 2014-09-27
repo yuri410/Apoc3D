@@ -421,8 +421,9 @@ namespace Apoc3D
 				barSect->GetAttributeIntsChecked(L"StartEndPadding", temp);
 				HSliderBar.BarStartPad = temp[0];
 				HSliderBar.BarEndPad = temp[1];
-
+				
 				ParseOffset(handleSect, HSliderBar.HandleOffset);
+				ParseMargin(handleSect, HSliderBar.HandleMargin);
 			}
 
 			{ // VSliderBar

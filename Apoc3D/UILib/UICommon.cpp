@@ -25,8 +25,10 @@
 
 #include "UICommon.h"
 
-#include "Apoc3D/Graphics/RenderSystem/Sprite.h"
+#include "apoc3d/Graphics/RenderSystem/Sprite.h"
 #include "apoc3d/Graphics/RenderSystem/Texture.h"
+#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
+#include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
 #include "apoc3d/Platform/API.h"
 #include "FontManager.h"
 #include "SystemUIImpl.h"
@@ -334,6 +336,44 @@ namespace Apoc3D
 			}
 			return textOffset;
 		}
+
+		/************************************************************************/
+		/*  ScissorTestState                                                    */
+		/************************************************************************/
+
+		ScissorTestScope::ScissorTestScope(const Apoc3D::Math::Rectangle& region, Sprite* sprite)
+			: m_sprite(sprite)
+		{
+			Apoc3D::Math::Rectangle dstRect = region;
+
+			RenderStateManager* stMgr = sprite->getRenderDevice()->getRenderState();
+			m_oldScissorTest = stMgr->getScissorTestEnabled();
+
+			if (m_oldScissorTest)
+			{
+				m_oldScissorRect = stMgr->getScissorTestRect();
+				dstRect = Apoc3D::Math::Rectangle::Intersect(dstRect, m_oldScissorRect);
+			}
+
+			m_isEmpty = dstRect.Width == 0 || dstRect.Height == 0;
+
+			if (!m_isEmpty)
+			{
+				sprite->Flush();
+				stMgr->setScissorTest(true, &dstRect);
+			}
+		}
+		ScissorTestScope::~ScissorTestScope()
+		{
+			if (!m_isEmpty)
+			{
+				RenderStateManager* stMgr = m_sprite->getRenderDevice()->getRenderState();
+
+				m_sprite->Flush();
+				stMgr->setScissorTest(m_oldScissorTest, m_oldScissorTest ? &m_oldScissorRect : nullptr);
+			}
+		}
+
 
 		/************************************************************************/
 		/*  SystemUI                                                            */

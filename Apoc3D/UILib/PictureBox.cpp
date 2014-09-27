@@ -94,8 +94,6 @@ namespace Apoc3D
 
 			if (eventPictureDraw.getCount())
 			{
-				sprite->Flush();
-
 				Apoc3D::Math::Rectangle uiArea = SystemUI::GetUIArea(m_device);
 
 				Apoc3D::Math::Rectangle rect = getAbsoluteArea();
@@ -107,12 +105,15 @@ namespace Apoc3D
 				{
 					rect.Width -= rect.getRight() - uiArea.getRight();
 				}
-				m_device->getRenderState()->setScissorTest(true, &rect);
 
-				eventPictureDraw.Invoke(sprite, &destRect);
+				{
+					ScissorTestScope sts(rect, sprite);
 
-				sprite->Flush();
-				m_device->getRenderState()->setScissorTest(false, 0);
+					if (!sts.isEmpty())
+					{
+						eventPictureDraw.Invoke(sprite, &destRect);
+					}
+				}
 			}
 		}
 
