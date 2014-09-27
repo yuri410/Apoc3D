@@ -144,6 +144,8 @@ namespace SampleFont
 
 		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, m_window->getClientSize().Height-70.0f, CV_White, 1-Math::Saturate(allDisProgress), 0, Point(3,3), 0.3f);
 
+		english->DrawString(m_sprite, L"Color Control Code: " + Font::MakeColorControl(CV_Red) + L"Red " + Font::MakeColorControl(CV_Green) + L"Green", 
+			Point(200, m_window->getClientSize().Height-110), CV_White);
 
 		m_sprite->End();
 
