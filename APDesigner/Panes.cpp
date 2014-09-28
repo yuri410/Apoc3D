@@ -296,7 +296,7 @@ namespace APDesigner
 	}
 	ResourcePane::~ResourcePane()
 	{
-		NukePropertyList();
+		NukePropertyList(false);
 		delete m_form;
 		delete m_infoDisplay;
 		delete m_addItem;
@@ -403,11 +403,11 @@ namespace APDesigner
 		BuildTreeViewNodes(0, items);
 	}
 
-	void ResourcePane::NukePropertyList()
+	void ResourcePane::NukePropertyList(bool deferred)
 	{
 		for (int i=0;i<m_proplist.getCount();i++)
 		{
-			m_proplist[i].Destory(m_form);
+			m_proplist[i].Destory(m_form, deferred);
 		}
 		m_proplist.Clear();
 
@@ -417,7 +417,6 @@ namespace APDesigner
 	{
 		int top = getPropertyFieldTop() + m_proplist.getCount() * PropFieldSpacing;
 		
-
 		int lw = getPropertyLabelWidth();
 		int fw = getPropertyFieldWidth();
 
@@ -425,10 +424,9 @@ namespace APDesigner
 		TextBox* tb = new TextBox(m_skin, Point(PropFieldMargin*2+lw, top), fw, b);
 
 		PropItem item(a, label, tb, nullptr);
+		
+		item.Add(m_form, true);
 		m_proplist.Add(item);
-
-		m_form->getControls().Add(label);
-		m_form->getControls().Add(tb);
 	}
 	void ResourcePane::AddPropertyPath(const String& a, const String& b, bool isLoad)
 	{
@@ -444,16 +442,15 @@ namespace APDesigner
 
 		PropItem item(a, label, tb, bb);
 		item.LoadOrSave = isLoad;
-		m_proplist.Add(item);
 
 		if (isLoad)
 			bb->eventRelease.Bind(this, &ResourcePane::BtnBrowseOpen_Release);
 		else
 			bb->eventRelease.Bind(this, &ResourcePane::BtnBrowseSave_Release);
 
-		m_form->getControls().Add(label);
-		m_form->getControls().Add(tb);
-		m_form->getControls().Add(bb);
+		item.Add(m_form, true);
+		m_proplist.Add(item);
+
 	}
 	void ResourcePane::AddPropertyDropdown(const String& name, const List<String>& list, int selectedIndex)
 	{
@@ -466,13 +463,12 @@ namespace APDesigner
 		ComboBox* combo = new ComboBox(m_skin, Point(PropFieldMargin*2+lw, top), fw, list);
 		
 		PropItem item(name, label, combo, nullptr);
-		m_proplist.Add(item);
 		
 		if (selectedIndex != -1)
 			combo->setSelectedIndex(selectedIndex);
 
-		m_form->getControls().Add(label);
-		m_form->getControls().Add(combo);
+		item.Add(m_form, true);
+		m_proplist.Add(item);
 	}
 	void ResourcePane::AddPropertyCheckbox(const String& name, bool checked)
 	{
@@ -484,13 +480,13 @@ namespace APDesigner
 		CheckBox* cb = new CheckBox(m_skin, Point(PropFieldMargin*2+lw, top), name, checked);
 		
 		PropItem item(name, nullptr, cb, nullptr);
+		
+		item.Add(m_form, true);
 		m_proplist.Add(item);
-
-		m_form->getControls().Add(cb);
 	}
 	void ResourcePane::ListNewProperties(ProjectItemData* data)
 	{
-		NukePropertyList();
+		NukePropertyList(true);
 		switch (data->getType())
 		{
 		case ProjectItemType::Texture:
@@ -737,7 +733,7 @@ namespace APDesigner
 				item->NotifyModified();
 			}
 		}
-		NukePropertyList();
+		NukePropertyList(true);
 	}
 	void ResourcePane::BtnBrowseOpen_Release(Button* ctrl)
 	{
@@ -860,25 +856,63 @@ namespace APDesigner
 		return m_infoDisplay->Position.Y + 80;
 	}
 
-	
-	void ResourcePane::PropItem::Destory(Form* pane)
+	void ResourcePane::PropItem::Add(Form* pane, bool deferred)
 	{
-		if (Desc)
+		if (deferred)
 		{
-			pane->getControls().Remove(Desc);
-			delete Desc;
-		}
+			if (Desc)
+				pane->getControls().DeferredAdd(Desc);
 
-		if (Editor)
-		{
-			pane->getControls().Remove(Editor);
-			delete Editor;
+			if (Editor)
+				pane->getControls().DeferredAdd(Editor);
+
+			if (ExtraButton)
+				pane->getControls().DeferredAdd(ExtraButton);
 		}
-		
-		if (ExtraButton)
+		else
 		{
-			pane->getControls().Remove(ExtraButton);
-			delete ExtraButton;
+			if (Desc)
+				pane->getControls().Add(Desc);
+
+			if (Editor)
+				pane->getControls().Add(Editor);
+
+			if (ExtraButton)
+				pane->getControls().Add(ExtraButton);
+		}
+	}
+	void ResourcePane::PropItem::Destory(Form* pane, bool deferred)
+	{
+		if (deferred)
+		{
+			if (Desc)
+				pane->getControls().DeferredRemoval(Desc, true);
+
+			if (Editor)
+				pane->getControls().DeferredRemoval(Editor, true);
+
+			if (ExtraButton)
+				pane->getControls().DeferredRemoval(ExtraButton, true);
+		}
+		else
+		{
+			if (Desc)
+			{
+				pane->getControls().Remove(Desc);
+				delete Desc;
+			}
+
+			if (Editor)
+			{
+				pane->getControls().Remove(Editor);
+				delete Editor;
+			}
+
+			if (ExtraButton)
+			{
+				pane->getControls().Remove(ExtraButton);
+				delete ExtraButton;
+			}
 		}
 	}
 

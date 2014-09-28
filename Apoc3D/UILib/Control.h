@@ -186,6 +186,22 @@ namespace Apoc3D
 			void SetElementsBaseOffset(Point bo);
 			void SetElementsInteractive(bool isInteractive);
 			void SetElementsBasicStates(Point baseOffset, bool isInteractive);
+
+			void DeferredAdd(Control* ctl);
+			void DeferredRemoval(Control* ctl, bool deleteAfter);
+
+		private:
+			struct DeferredAction 
+			{
+				Control* Subject = nullptr;
+				bool AddOrRemove = false;
+				bool DestroyAfterRemoval = false;
+
+				DeferredAction() {}
+				DeferredAction(Control* sub, bool addOrRemove, bool destoryAfterRemoval)
+					: Subject(sub), AddOrRemove(addOrRemove), DestroyAfterRemoval(destoryAfterRemoval) { }
+			};
+			List<DeferredAction> m_deferredRemoval;
 		};
 
 

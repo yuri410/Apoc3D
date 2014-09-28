@@ -74,7 +74,6 @@ namespace APDesigner
 	class ResourcePane
 	{
 	public:
-
 		ResourcePane(MainWindow* window);
 		~ResourcePane();
 
@@ -100,7 +99,7 @@ namespace APDesigner
 
 		void TreeView_SelectionChanged(Control* ctrl);
 
-		void NukePropertyList();
+		void NukePropertyList(bool deferred);
 		void AddPropertyPair(const String& name, const String& b);
 		void AddPropertyPath(const String& name, const String& b, bool isLoad);
 		void AddPropertyDropdown(const String& name, const List<String>& list, int selectedIndex = -1);
@@ -153,7 +152,8 @@ namespace APDesigner
 			bool getAsCombo(String& val) const;
 			bool getAsCheckBox(bool& val) const;
 
-			void Destory(Form* pane);
+			void Add(Form* pane, bool deferred);
+			void Destory(Form* pane, bool deferred);
 		};
 		
 		List<PropItem> m_proplist;

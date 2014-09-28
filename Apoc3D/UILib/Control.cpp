@@ -405,6 +405,22 @@ namespace Apoc3D
 					ctrl->Update(time);
 				}
 			}
+
+			for (const DeferredAction& da : m_deferredRemoval)
+			{
+				if (da.AddOrRemove)
+				{
+					Add(da.Subject);
+				}
+				else
+				{
+					if (Remove(da.Subject) && da.DestroyAfterRemoval)
+					{
+						delete da.Subject;
+					}
+				}
+			}
+			m_deferredRemoval.Clear();
 		}
 		void ControlCollection::Draw(Sprite* sprite)
 		{
@@ -427,6 +443,15 @@ namespace Apoc3D
 			{
 				overridingControl->DrawOverlay(sprite);
 			}
+		}
+
+		void ControlCollection::DeferredAdd(Control* ctl)
+		{
+			m_deferredRemoval.Add({ ctl, true, false });
+		}
+		void ControlCollection::DeferredRemoval(Control* ctl, bool deleteAfter)
+		{
+			m_deferredRemoval.Add({ ctl, false, deleteAfter });
 		}
 
 		/************************************************************************/
