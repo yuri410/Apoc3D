@@ -185,6 +185,8 @@ namespace Apoc3D
 
 			Point getSize() const { return Point(Width, Height); }
 
+			float getAspectRatio() const { return static_cast<float>(Width) / Height; }
+
 			bool IsEmpty() const { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
 
 			/** Changes the position of the Rectangle. */
