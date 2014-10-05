@@ -158,6 +158,7 @@ namespace Apoc3D
 			const Apoc3D::Math::Rectangle& getMouseHoverArea() const { assert(m_isMouseHovering); return m_mouseHoverArea; }
 
 			float CurrentValue = 0;
+			int32 LargeTickDivisionCount = 0;
 
 			Texture* Graphic = nullptr;
 			Apoc3D::Math::Rectangle BackgroundRegions[3];
@@ -177,11 +178,14 @@ namespace Apoc3D
 			UIGraphicSimple HandleDisabledGraphic;
 			ControlBounds HandleMargin;
 
+			UIGraphicSimple LargeTick;
+
 			SliderBarEvent eventValueChanging;
 			SliderBarEvent eventValueChanged;
 		private:
 			int32 GetScrollableLength() const;
 			Apoc3D::Math::Rectangle GetHandleArea() const;
+			bool hasLargeTicks() const { return LargeTickDivisionCount > 1; }
 
 			bool m_isMouseHovering = false;
 			bool m_isDragging = false;

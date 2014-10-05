@@ -368,7 +368,6 @@ namespace Apoc3D
 				ConfigurationSection* bgSect = pbSect->getSection(L"Background");
 				ConfigurationSection* barSect = pbSect->getSection(L"Bar");
 				
-				Apoc3D::Math::Rectangle handleRect;
 
 				Parse3Region(bgSect, HSliderBar.BackgroundRegions, cachedRegions);
 				Parse3Region(barSect, HSliderBar.BarRegions, cachedRegions);
@@ -413,9 +412,24 @@ namespace Apoc3D
 					HSliderBar.HandleHoverGraphic = UIGraphicSimple(SkinTexture, hoverRect, hoverColor);
 					HSliderBar.HandleDownGraphic = UIGraphicSimple(SkinTexture, downRect, downColor);
 					HSliderBar.HandleDisabledGraphic = UIGraphicSimple(SkinTexture, disabledRect, disabledColor);
+
+					cachedRegions.Clear();
 				}
 
-				cachedRegions.Clear();
+				ConfigurationSection* largeTickSect = pbSect->getSection(L"LargeTick");
+				if (largeTickSect)
+				{
+					Apoc3D::Math::Rectangle temp;
+					ColorValue modColor = CV_White;
+
+					ParseRegion(largeTickSect, temp, cachedRegions);
+					OffsetRegion(largeTickSect, temp);
+					ParseColorValue(largeTickSect, modColor);
+
+					HSliderBar.LargeTickGraphic = UIGraphicSimple(SkinTexture, temp, modColor);
+
+					cachedRegions.Clear();
+				}
 
 				int32 temp[2];
 				barSect->GetAttributeIntsChecked(L"StartEndPadding", temp);

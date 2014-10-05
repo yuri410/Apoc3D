@@ -340,6 +340,8 @@ namespace Apoc3D
 			UIGraphicSimple HandleDownGraphic;
 			UIGraphicSimple HandleDisabledGraphic;
 
+			UIGraphicSimple LargeTickGraphic;
+
 			ControlBounds HandleMargin;
 		};
 

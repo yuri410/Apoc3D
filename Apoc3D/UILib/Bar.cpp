@@ -461,6 +461,8 @@ namespace Apoc3D
 			HandleDisabledGraphic = settings.HandleDisabledGraphic;
 
 			HandleMargin = settings.HandleMargin;
+
+			LargeTick = settings.LargeTickGraphic;
 		}
 		
 		SliderBar::SliderBar(const StyleSkin* skin, const Point& position, BarDirection type, int32 length)
@@ -478,6 +480,34 @@ namespace Apoc3D
 			guiDrawProgressBar(sprite, pos, m_size.X, CurrentValue,
 				Graphic, BackgroundRegions, BarRegions, Margin,
 				BarStartPad, BarEndPad);
+
+			if (hasLargeTicks() && LargeTick.isSet())
+			{
+				Point dpos = pos;
+				dpos.X -= Margin.Left;
+				dpos.Y -= Margin.Top;
+				
+				Point largeSegmentOffset = { 0, 0 };
+				if (m_type == BarDirection::Vertical)
+				{
+					dpos.Y += BarStartPad;
+					largeSegmentOffset.Y = GetScrollableLength() / LargeTickDivisionCount;
+				}
+				else
+				{
+					dpos.X += BarStartPad;
+					largeSegmentOffset.X = GetScrollableLength() / LargeTickDivisionCount;
+				}
+
+				Point tickSize = LargeTick.getSize();
+				for (int32 i = 0; i < LargeTickDivisionCount - 1; i++)
+				{
+					Apoc3D::Math::Rectangle dstRect = { dpos, tickSize };
+					LargeTick.Draw(sprite, dstRect);
+
+					dpos += largeSegmentOffset;
+				}
+			}
 
 			Apoc3D::Math::Rectangle handleArea = HandleMargin.InflateRect(GetHandleArea());
 

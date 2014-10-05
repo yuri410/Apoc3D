@@ -131,6 +131,8 @@
       <Down Coord="159, 153" RegionRef="Normal" />
       <Disabled Coord="135, 153" RegionRef="Normal" Color="0x7fffffff" />
     </Handle>
+    
+    <LargeTick>[117,193,3,6]</LargeTick>
   </HSliderBar>
   
   <Form Font="Title" Padding="10,7,5,7" >
