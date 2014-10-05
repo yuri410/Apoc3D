@@ -37,6 +37,8 @@ namespace Sample_GUI
 		SliderBar* m_testSB;
 		ComboBox* m_testCB;
 
+
+
 		Sprite* m_sprite;
     };
 }

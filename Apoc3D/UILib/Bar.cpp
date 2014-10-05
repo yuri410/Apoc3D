@@ -462,7 +462,7 @@ namespace Apoc3D
 
 			HandleMargin = settings.HandleMargin;
 
-			LargeTick = settings.LargeTickGraphic;
+			LargeTickGraphic = settings.LargeTickGraphic;
 		}
 		
 		SliderBar::SliderBar(const StyleSkin* skin, const Point& position, BarDirection type, int32 length)
@@ -481,7 +481,7 @@ namespace Apoc3D
 				Graphic, BackgroundRegions, BarRegions, Margin,
 				BarStartPad, BarEndPad);
 
-			if (hasLargeTicks() && LargeTick.isSet())
+			if (hasLargeTicks() && LargeTickGraphic.isSet())
 			{
 				Point dpos = pos;
 				dpos.X -= Margin.Left;
@@ -499,11 +499,14 @@ namespace Apoc3D
 					largeSegmentOffset.X = GetScrollableLength() / LargeTickDivisionCount;
 				}
 
-				Point tickSize = LargeTick.getSize();
-				for (int32 i = 0; i < LargeTickDivisionCount - 1; i++)
+				Point tickSize = LargeTickGraphic.getSize();
+				for (int32 i = 0; i < LargeTickDivisionCount; i++)
 				{
-					Apoc3D::Math::Rectangle dstRect = { dpos, tickSize };
-					LargeTick.Draw(sprite, dstRect);
+					if (i >0)
+					{
+						Apoc3D::Math::Rectangle dstRect = { dpos, tickSize };
+						LargeTickGraphic.Draw(sprite, dstRect);
+					}
 
 					dpos += largeSegmentOffset;
 				}

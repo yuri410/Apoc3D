@@ -178,7 +178,7 @@ namespace Apoc3D
 			UIGraphicSimple HandleDisabledGraphic;
 			ControlBounds HandleMargin;
 
-			UIGraphicSimple LargeTick;
+			UIGraphicSimple LargeTickGraphic;
 
 			SliderBarEvent eventValueChanging;
 			SliderBarEvent eventValueChanged;
