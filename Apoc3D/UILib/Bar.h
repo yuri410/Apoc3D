@@ -185,6 +185,9 @@ namespace Apoc3D
 		private:
 			int32 GetScrollableLength() const;
 			Apoc3D::Math::Rectangle GetHandleArea() const;
+
+			void SetValueFromCurrentPosition(Apoc3D::Input::Mouse* mouse, const Apoc3D::Math::Rectangle& area);
+
 			bool hasLargeTicks() const { return LargeTickDivisionCount > 1; }
 
 			bool m_isMouseHovering = false;

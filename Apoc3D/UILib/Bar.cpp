@@ -547,13 +547,21 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle handleArea = GetHandleArea();
 			if (m_isDragging)
 			{
-				int32 scrLen = GetScrollableLength();
+				if (hasLargeTicks())
+				{
+					Apoc3D::Math::Rectangle area = getAbsoluteArea();
+					SetValueFromCurrentPosition(mouse, area);
+				}
+				else
+				{
+					int32 scrLen = GetScrollableLength();
 
-				int32 dm = m_type == BarDirection::Horizontal ? mouse->getDX() : mouse->getDY();
-				float dv = static_cast<float>(dm) / scrLen;
+					int32 dm = m_type == BarDirection::Horizontal ? mouse->getDX() : mouse->getDY();
+					float dv = static_cast<float>(dm) / scrLen;
 
-				CurrentValue += dv;
-				CurrentValue = Math::Saturate(CurrentValue);
+					CurrentValue += dv;
+					CurrentValue = Math::Saturate(CurrentValue);
+				}
 
 				if (mouse->IsLeftUp())
 				{
@@ -581,14 +589,9 @@ namespace Apoc3D
 					}
 					else if (area.Contains(mouse->GetPosition()))
 					{
-						int32 dist = m_type == BarDirection::Horizontal ? (mouse->getX() - area.X) : (mouse->getY() - area.Y);
-
 						if (mouse->IsLeftPressed())
 						{
-							int32 len = GetLength();
-							if (len <= 0)
-								len = 1;
-							CurrentValue = Math::Saturate(static_cast<float>(dist) / GetLength());
+							SetValueFromCurrentPosition(mouse, area);
 						}
 					}
 				}
@@ -598,7 +601,7 @@ namespace Apoc3D
 				}
 			}
 		}
-		
+
 		void SliderBar::SetLength(int32 len)
 		{
 			(m_type != BarDirection::Vertical ? m_size.X : m_size.Y) = len;
@@ -650,6 +653,22 @@ namespace Apoc3D
 			handleArea.Height = hh;
 
 			return handleArea;
+		}
+
+		void SliderBar::SetValueFromCurrentPosition(Mouse* mouse, const Apoc3D::Math::Rectangle& area)
+		{
+			int32 dist = m_type == BarDirection::Horizontal ? (mouse->getX() - area.X) : (mouse->getY() - area.Y);
+
+			int32 len = GetLength();
+			if (len <= 0)
+				len = 1;
+
+			CurrentValue = Math::Saturate(static_cast<float>(dist) / GetLength());
+
+			if (hasLargeTicks())
+			{
+				CurrentValue = Math::Round(CurrentValue * LargeTickDivisionCount) / static_cast<float>(LargeTickDivisionCount);
+			}
 		}
 	}
 }
