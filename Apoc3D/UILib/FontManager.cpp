@@ -354,7 +354,7 @@ namespace Apoc3D
 
 		void Font::RegisterCustomGlyph(int32 code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, short top, float advanceX)
 		{
-			assert(isControlCode(code));
+			assert(!isControlCode(code));
 
 			CustomGlyph cg;
 			cg._Character = code;
