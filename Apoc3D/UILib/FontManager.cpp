@@ -372,7 +372,8 @@ namespace Apoc3D
 			RegisterCustomGlyph(charCode, graphic, srcRect, 0, 0, static_cast<float>(srcRect.Width));
 		}
 
-		void Font::RegisterCustomGlyphAligned(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, int32 padLeft, int32 padRight, CustomGlyphAlignment vertAlignment, int32 vaValue)
+		void Font::RegisterCustomGlyphAligned(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect,
+			int32 padLeft, int32 padRight, CustomGlyphAlignment vertAlignment, int32 vaValue)
 		{
 			short left = -padLeft;
 			float advX = static_cast<float>(srcRect.Width - padLeft - padRight);
@@ -639,80 +640,27 @@ namespace Apoc3D
 				dissolvingCount, dissolvePatchSize, maxDissolvingScale);
 		}
 
+		static size_t GetLength(const String& text, int32 length)
+		{
+			return length != -1 ? Math::Min((size_t)length, text.length()) : text.length();
+		}
+
 		void Font::DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length, float extLineSpace, wchar_t suffix, float hozShrink)
 		{
-			const size_t len = length != -1 ? Math::Min((size_t)length, text.length()) : text.length();
-
-			const PointF orig = GetOrigin(x, y);
-			PointF pos = orig;
-
-			for (size_t i = 0; i < len; i++)
-			{
-				wchar_t ch = text[i];
-				ScanColorControlCodes(text, ch, i, len, &color);
-				ScanMoveControlCode(text, ch, i, len, &orig, &pos);
-
-				DrawCharacter(sprite, ch, pos, color, hozShrink, extLineSpace, 0, orig.X, true);
-			}
-			if (suffix)
-			{
-				DrawCharacter(sprite, suffix, pos, color, hozShrink, extLineSpace, 0, orig.X, true);
-			}
+			DrawStringExT(sprite, text, x, y, color, 0, length, extLineSpace, suffix, hozShrink);
 		}
+		void Font::DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length, int extLineSpace, wchar_t suffix, float hozShrink)
+		{
+			DrawStringExT(sprite, text, x, y, color, 0, length, extLineSpace, suffix, hozShrink);
+		}
+
 		void Font::DrawString(Sprite* sprite, const String& text, float x, float y, int width, uint color)
 		{
-			const size_t len = text.length();
-
-			const PointF orig = GetOrigin(x, y);
-			PointF pos = orig;
-
-			for (size_t i = 0; i < len; i++)
-			{
-				wchar_t ch = text[i];
-				ScanColorControlCodes(text, ch, i, len, &color);
-				ScanMoveControlCode(text, ch, i, len, &orig, &pos);
-
-				DrawCharacter(sprite, ch, pos, color, 0, 0, static_cast<float>(width), orig.X, true);
-			}
+			DrawStringExT(sprite, text, x, y, color, width);
 		}
-
-		void Font::DrawStringEx(Sprite* sprite, const String& text, int _x, int _y, uint color, int length, int _extLineSpace, wchar_t suffix, float hozShrink)
+		void Font::DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color)
 		{
-			const size_t len = length != -1 ? Math::Min((size_t)length, text.length()) : text.length();
-
-			const PointF orig = GetOrigin(_x, _y);
-			PointF pos = orig;
-
-			float extLineSpace = static_cast<float>(_extLineSpace);
-
-			for (size_t i = 0; i < len; i++)
-			{
-				wchar_t ch = text[i];
-				ScanColorControlCodes(text, ch, i, len, &color);
-				ScanMoveControlCode(text, ch, i, len, &orig, &pos);
-				DrawCharacter(sprite, ch, pos, color, hozShrink, extLineSpace, 0, orig.X, true);
-			}
-			if (suffix)
-			{
-				wchar_t ch = suffix;
-				DrawCharacter(sprite, ch, pos, color, hozShrink, extLineSpace, 0, orig.X, true);
-			}
-		}
-		void Font::DrawString(Sprite* sprite, const String& text, int _x, int _y, int width, uint color)
-		{
-			const size_t len = text.length();
-
-			const PointF orig = GetOrigin(_x, _y);
-			PointF pos = orig;
-
-			for (size_t i = 0; i < text.length(); i++)
-			{
-				wchar_t ch = text[i];
-				ScanColorControlCodes(text, ch, i, len, &color);
-				ScanMoveControlCode(text, ch, i, len, &orig, &pos);
-
-				DrawCharacter(sprite, ch, pos, color, 0, 0, static_cast<float>(width), orig.X, true);
-			}
+			DrawStringExT(sprite, text, x, y, color, width);
 		}
 
 		void Font::DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, float hozShrink)
@@ -723,6 +671,35 @@ namespace Apoc3D
 		{
 			DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, 0.0f, 0, hozShrink);
 		}
+
+		template <typename UnitType>
+		void Font::DrawStringExT(Sprite* sprite, const String& text, UnitType x, UnitType y, uint color, 
+			int _width, int length, UnitType _extLineSpace, wchar_t suffix, float hozShrink)
+		{
+			const float extLineSpace = static_cast<float>(_extLineSpace);
+			const float width = static_cast<float>(_width);
+
+			const size_t len = GetLength(text, length);
+			const PointF orig = GetOrigin(x, y);
+			PointF pos = orig;
+
+			for (size_t i = 0; i < len; i++)
+			{
+				wchar_t ch = text[i];
+				ScanColorControlCodes(text, ch, i, len, &color);
+				ScanMoveControlCode(text, ch, i, len, &orig, &pos);
+
+				DrawCharacter(sprite, ch, pos, color, hozShrink, extLineSpace, width, orig.X, true);
+			}
+
+			if (suffix)
+				DrawCharacter(sprite, suffix, pos, color, hozShrink, extLineSpace, width, orig.X, true);
+		}
+
+		template void Font::DrawStringExT<int32>(Sprite* sprite, const String& text, int32 x, int32 y, uint color, 
+			int width, int length, int32 extLineSpace, wchar_t suffix, float hozShrink);
+		template void Font::DrawStringExT<float>(Sprite* sprite, const String& text, float x, float y, uint color, 
+			int width, int length, float extLineSpace, wchar_t suffix, float hozShrink);
 
 
 		void Font::DrawStringGradient(Sprite* sprite, const String& text, int _x, int _y, uint _startColor, uint _endColor)
@@ -750,7 +727,7 @@ namespace Apoc3D
 
 		FORCE_INLINE void Font::DrawCharacter(Sprite* sprite, int32 ch, PointF& pos, uint color, float hozShrink, float extLineSpace, float widthCap, float xOrig, bool pixelAligned)
 		{
-			const float lineSpacing = extLineSpace ? 
+			const float lineSpacing = extLineSpace != 0 ? 
 				(pixelAligned ? floorf(extLineSpace) : extLineSpace) : 
 				(pixelAligned ? floorf(m_height + m_lineGap) : (m_height + m_lineGap));
 		
@@ -1507,9 +1484,8 @@ namespace Apoc3D
 		}
 		void FontManager::StartFrame()
 		{
-			for (HashMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
+			for (Font* fnt : m_fontTable.getValueAccessor())
 			{
-				Font* fnt = iter.getCurrentValue();
 				fnt->FrameStartReset();
 			}
 		}

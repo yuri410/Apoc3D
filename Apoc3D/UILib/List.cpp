@@ -712,6 +712,7 @@ namespace Apoc3D
 					{
 						m_hoverColumnIndex = 0;
 						m_hoverRowIndex = y;
+						break;
 					}
 				}
 			}
@@ -732,8 +733,9 @@ namespace Apoc3D
 						{
 							if (cellArea.Contains(mouse->GetPosition()))
 							{
-								m_hoverColumnIndex = 0;
+								m_hoverColumnIndex = x;
 								m_hoverRowIndex = y;
+								break;
 							}
 						}
 

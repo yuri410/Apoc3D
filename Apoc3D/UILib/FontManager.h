@@ -82,11 +82,11 @@ namespace Apoc3D
 			void DrawStringDissolving(Sprite* sprite, const String& text, float x, float y, uint color, float length, int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale);
 			void DrawStringDissolving(Sprite* sprite, const String& text, const Point& pos, uint color, float length, int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale);
 
-			void DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length=-1, float lineSpace = 0, wchar_t suffix=0, float hozShrink = 0);
 			void DrawString(Sprite* sprite, const String& text, float x, float y, int width, uint color);
-
-			void DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length=-1, int lineSpace = 0, wchar_t suffix=0, float hozShrink = 0);
 			void DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color);
+
+			void DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length = -1, float lineSpace = 0, wchar_t suffix = 0, float hozShrink = 0);
+			void DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length = -1, int lineSpace = 0, wchar_t suffix = 0, float hozShrink = 0);
 
 			void DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, float hozShrink = 0);
 			void DrawString(Sprite* sprite, const String& text, const PointF& pt, uint color, float hozShrink = 0);
@@ -162,7 +162,10 @@ namespace Apoc3D
 				int BucketIndex;
 			};
 
-			void DrawCharacter(Sprite* sprite, int32 ch, float& x, float& y, uint color, float hozShrink, float extLineSpace, float widthCap, float xOrig, bool pixelAligned);
+			template <typename UnitType>
+			void DrawStringExT(Sprite* sprite, const String& text, UnitType x, UnitType y, uint color, int width = 0,
+				int length = -1, UnitType extLineSpace = 0, wchar_t suffix = 0, float hozShrink = 0);
+			
 			void DrawCharacter(Sprite* sprite, int32 ch, PointF& pos, uint color, float hozShrink, float extLineSpace, float widthCap, float xOrig, bool pixelAligned);
 			
 			void DrawDisolvingCharacter(Sprite* sprite, float x, float y,
