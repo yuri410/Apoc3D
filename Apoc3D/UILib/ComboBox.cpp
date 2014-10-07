@@ -93,7 +93,7 @@ namespace Apoc3D
 			
 			m_listBox->Visible = false;
 			m_listBox->eventSelectionChanged.Bind(this, &ComboBox::ListBox_SelectionChanged);
-			m_listBox->eventPress.Bind(this, &ComboBox::ListBox_Press);
+			m_listBox->eventSelect.Bind(this, &ComboBox::ListBox_Select);
 
 			m_size.Y = m_textbox->getHeight();
 		}
@@ -159,8 +159,7 @@ namespace Apoc3D
 		bool ComboBox::isMouseHover() const 
 		{
 			return m_button->isMouseHover() || m_textbox->isMouseHover() || 
-				(m_listBox->Visible && m_listBox->getHoverIndex() != -1) || 
-				m_listBox->isMouseHoverScrollBar(); 
+				(m_listBox->Visible && (m_listBox->getHoverIndex() != -1 || m_listBox->isMouseHoverScrollBar()));
 		}
 
 		Apoc3D::Math::Rectangle ComboBox::getMouseHoverArea() const
@@ -204,7 +203,7 @@ namespace Apoc3D
 			return nullptr;
 		}
 
-		void ComboBox::ListBox_Press(ListBox* ctrl) { Close(); }
+		void ComboBox::ListBox_Select(ListBox* ctrl) { Close(); }
 		void ComboBox::ListBox_SelectionChanged(ListBox* ctrl)
 		{
 			//String previousItem = m_textbox->Text;
@@ -214,6 +213,7 @@ namespace Apoc3D
 				m_textbox->SetText(m_listBox->getItems()[m_listBox->getSelectedIndex()]);
 
 				eventSelectionChanged.Invoke(this);
+				Close();
 			}
 		}
 		void ComboBox::Button_OnPress(Button* ctrl)

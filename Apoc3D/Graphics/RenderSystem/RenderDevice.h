@@ -48,6 +48,7 @@ namespace Apoc3D
 			 */
 			class APAPI RenderDevice
 			{
+				RTTI_BASE;
 			public:
 				static bool HasBatchReportRequest;
 

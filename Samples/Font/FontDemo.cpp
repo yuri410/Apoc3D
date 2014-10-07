@@ -80,13 +80,14 @@ namespace SampleFont
 
 		m_sprite->Begin((Sprite::SpriteSettings)(Sprite::SPR_AlphaBlended | Sprite::SPR_RestoreState));
 		
+		Size areaSize = m_window->getClientSize();
 		Font* uming14 = FontManager::getSingleton().getFont(L"uming14");
 		//Font* uming22 = FontManager::getSingleton().getFont(L"uming22");
 
-		uming14->DrawString(m_sprite, mlText, 5,5, m_window->getClientSize().Width, CV_White);
+		uming14->DrawString(m_sprite, mlText, 5, 5, areaSize.Width, CV_White);
 
 		
-		Apoc3D::Math::Rectangle dstRect(getWindow()->getClientSize().Width - 512,30,512, 512);
+		Apoc3D::Math::Rectangle dstRect(areaSize.Width - 512, 30, 512, 512);
 		uming14->DrawString(m_sprite, L"Glyph Cache Map(dynamic):", Point(dstRect.X, 10), CV_White);
 		m_sprite->Draw(uming14->getInternalTexture(), dstRect, nullptr, CV_White);
 		
@@ -99,7 +100,7 @@ namespace SampleFont
 		for (int i=0;i<24;i++)
 		{
 			wchar_t randomText[32];
-			memset(randomText, 0, sizeof(randomText));
+			ZeroArray(randomText);
 
 			for (int j=0;j<31;j++)
 			{
@@ -122,30 +123,39 @@ namespace SampleFont
 
 
 		Font* english = FontManager::getSingleton().getFont(L"english");
-		english->DrawString(m_sprite, L"FPS: " + StringUtils::SingleToString(time->getFPS(), StrFmt::fp<2>::val), Point(0, m_window->getClientSize().Height-50), CV_White);
+		english->DrawString(m_sprite, L"FPS: " + StringUtils::SingleToString(time->getFPS(), StrFmt::fp<2>::val), Point(0, areaSize.Height - 50), CV_White);
 
 		static int32 disCurLen = 0;
 		disCurLen++;
 		if (disCurLen>200)
 			disCurLen = 0;
-		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, m_window->getClientSize().Height-110.0f, CV_White, disCurLen*0.5f, 10, Point(3,3), 0.3f);
+		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, areaSize.Height - 110.0f, CV_White, disCurLen*0.5f, 10, Point(3, 3), 0.3f);
 
 		static float wordDisProgress = 0;
 		wordDisProgress += time->getElapsedTime()*5;
 		if (wordDisProgress>5)
 			wordDisProgress = 0;
 
-		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, m_window->getClientSize().Height-90.0f, CV_White, wordDisProgress, -2, Point(3,3), 0.3f);
+		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, areaSize.Height - 90.0f, CV_White, wordDisProgress, -2, Point(3, 3), 0.3f);
 
 		static float allDisProgress = 0;
 		allDisProgress += time->getElapsedTime();
 		if (allDisProgress>2)
 			allDisProgress = 0;
 
-		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, m_window->getClientSize().Height-70.0f, CV_White, 1-Math::Saturate(allDisProgress), 0, Point(3,3), 0.3f);
+		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, areaSize.Height - 70.0f, CV_White, 1 - Math::Saturate(allDisProgress), 0, Point(3, 3), 0.3f);
 
-		english->DrawString(m_sprite, L"Color Control Code: " + Font::MakeColorControl(CV_Red) + L"Red " + Font::MakeColorControl(CV_Green) + L"Green", 
-			Point(200, m_window->getClientSize().Height-110), CV_White);
+		english->DrawString(m_sprite, L"Color Control Code: " + Font::MakeColorControl(CV_Red) + L"Red " + Font::MakeColorControl(CV_Green) + L"Green",
+			Point(200, areaSize.Height - 110), CV_White);
+
+		english->DrawString(m_sprite, L"Move Control Code: " + Font::MakeMoveControl({ 115, 0 }, false) + L"[P]",
+			Point(200, areaSize.Height - 90), CV_White);
+
+		english->DrawString(m_sprite, L"Move Control Code: " + Font::MakeMoveControl({ 115, 0 }, true) + L"[P]",
+			Point(200, areaSize.Height - 70), CV_White);
+
+		english->DrawString(m_sprite, L"Move Control Code: " + Font::MakeMoveControl({ 15, 0 }, false, true) + L"[P]",
+			Point(200, areaSize.Height - 50), CV_White);
 
 		m_sprite->End();
 

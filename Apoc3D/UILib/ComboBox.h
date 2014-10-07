@@ -93,7 +93,7 @@ namespace Apoc3D
 			void Close();
 
 			void ListBox_SelectionChanged(ListBox* ctrl);
-			void ListBox_Press(ListBox* ctrl);
+			void ListBox_Select(ListBox* ctrl);
 			void Button_OnPress(Button* ctrl);
 			
 			TextBox* m_textbox = nullptr;

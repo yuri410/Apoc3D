@@ -312,24 +312,49 @@ namespace Apoc3D
 
 		// UTF-16 BMP(0) private range: U+E000..U+F8FF
 		// U+F8E0..U+F8F0 for font system control codes
-		const uint16 ColorControlCode = 0xF8E0;
-		const uint16 FontControlCode = 0xF8E1;
+		const uint16 ControlCode_Color = 0xF8E0;
+		const uint16 ControlCode_Font = 0xF8E1;
+		const uint16 ControlCode_Move = 0xF8E2;		// move drawing position
+
+		static bool isControlCode(int32 code) { return code >= 0xF8E0 && code <= 0xF8F0; }
 
 		String Font::MakeColorControl(uint32 cv)
 		{
 			String r;
-			r.append(1, ColorControlCode);
+			r.append(1, ControlCode_Color);
 			char16_t ar = (char16_t)((cv >> 16) & 0xffff);
 			char16_t gb = (char16_t)(cv & 0xffff);
 			r.append(1, ar);
 			r.append(1, gb);
 			return r;
 		}
+		String Font::MakeMoveControl(const Point& position, bool passConditionCheck, bool relative)
+		{
+			String r;
+			r.append(1, ControlCode_Move);
+
+			uint32 flags = passConditionCheck ? 1 : 0;
+			flags |= (relative ? 1 : 0) << 1;
+
+			uint16 x = (uint16)position.X;
+			uint16 y = (uint16)position.Y;
+
+			// 15 bit
+			x &= 0x7FFF;
+			y &= 0x7FFF;
+
+			uint32 data = (flags << 30) | (x << 15) | y;
+
+			char16_t ch1 = (char16_t)((data >> 16) & 0xffff);
+			char16_t ch2 = (char16_t)(data & 0xffff);
+			r.append(1, ch1);
+			r.append(1, ch2);
+			return r;
+		}
 
 		void Font::RegisterCustomGlyph(int32 code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, short top, float advanceX)
 		{
-			assert(code != ColorControlCode);
-			assert(code != FontControlCode);
+			assert(isControlCode(code));
 
 			CustomGlyph cg;
 			cg._Character = code;
@@ -342,6 +367,11 @@ namespace Apoc3D
 
 			m_customCharacters.Add(code, cg);
 		}
+		void Font::RegisterCustomGlyph(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect)
+		{
+			RegisterCustomGlyph(charCode, graphic, srcRect, 0, 0, static_cast<float>(srcRect.Width));
+		}
+
 		void Font::RegisterCustomGlyphAligned(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, int32 padLeft, int32 padRight, CustomGlyphAlignment vertAlignment, int32 vaValue)
 		{
 			short left = -padLeft;
@@ -374,7 +404,6 @@ namespace Apoc3D
 			x = (x<<13) ^ x;
 			return (float)( 1.0 - ( (x * (x * x * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0);
 		}
-
 
 		void Font::DrawDisolvingCharacter(Sprite* sprite, float x, float y,
 			int32 seed, const Apoc3D::Math::RectangleF& _srcRect, int32 glyphLeft, int32 glyphTop, int32 glyphWidth, int32 glyphHeight, uint32 color, 
@@ -422,19 +451,13 @@ namespace Apoc3D
 			}
 		}
 
-		void Font::DrawStringDissolving(Sprite* sprite, const String& text, float _x, float y, uint color, 
-			float length, int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale)
+		void Font::DrawStringDissolving(Sprite* sprite, const String& text, float x, float y, uint color, float length,
+			int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale)
 		{
-			if (m_hasDrawOffset)
-			{
-				_x -= m_drawOffset.X;
-				y -= m_drawOffset.Y;
-			}
+			const PointF origin = GetOrigin(x, y);
 
-			float std = _x;
-			float x = std;
-
-			y += m_descender;
+			x = origin.X;
+			y = origin.Y;
 
 			size_t maxLen = text.length();
 			int32 loopCount;
@@ -599,7 +622,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					x = std;
+					x = origin.X;
 					y += lineSpacing;
 				}
 
@@ -609,144 +632,131 @@ namespace Apoc3D
 			}
 		}
 
-
-		void Font::DrawStringEx(Sprite* sprite, const String& text, float _x, float y, uint color, int length, float extLineSpace, wchar_t suffix, float hozShrink)
+		void Font::DrawStringDissolving(Sprite* sprite, const String& text, const Point& pos, uint color, float length, 
+			int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale)
 		{
-			if (m_hasDrawOffset)
-			{
-				_x -= m_drawOffset.X;
-				y -= m_drawOffset.Y;
-			}
+			DrawStringDissolving(sprite, text, static_cast<float>(pos.X), static_cast<float>(pos.Y), color, length, 
+				dissolvingCount, dissolvePatchSize, maxDissolvingScale);
+		}
 
-			float xOrigin = _x;
-			float x = _x;
+		void Font::DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length, float extLineSpace, wchar_t suffix, float hozShrink)
+		{
+			const size_t len = length != -1 ? Math::Min((size_t)length, text.length()) : text.length();
 
-			y += m_descender;
-
-			size_t len = text.length();
-			if (length !=-1)
-			{
-				if ((size_t)length<len)
-					len = (size_t)length;
-			}
+			const PointF orig = GetOrigin(x, y);
+			PointF pos = orig;
 
 			for (size_t i = 0; i < len; i++)
 			{
 				wchar_t ch = text[i];
-				ScanColorControlCodes(text, ch, i, &color);
-				DrawCharacter(sprite, ch, x, y, color, hozShrink, extLineSpace, 0, xOrigin, true);
+				ScanColorControlCodes(text, ch, i, len, &color);
+				ScanMoveControlCode(text, ch, i, len, &orig, &pos);
+
+				DrawCharacter(sprite, ch, pos, color, hozShrink, extLineSpace, 0, orig.X, true);
 			}
 			if (suffix)
 			{
-				DrawCharacter(sprite, suffix, x, y, color, hozShrink, extLineSpace, 0, xOrigin, true);
+				DrawCharacter(sprite, suffix, pos, color, hozShrink, extLineSpace, 0, orig.X, true);
 			}
 		}
-		void Font::DrawString(Sprite* sprite, const String& text, float _x, float y, int width, uint color)
+		void Font::DrawString(Sprite* sprite, const String& text, float x, float y, int width, uint color)
 		{
-			if (m_hasDrawOffset)
-			{
-				_x -= m_drawOffset.X;
-				y -= m_drawOffset.Y;
-			}
+			const size_t len = text.length();
 
-			float xOrig = _x;
-			float x = _x;
+			const PointF orig = GetOrigin(x, y);
+			PointF pos = orig;
 
-			y += m_descender;
-
-			for (size_t i = 0; i < text.length(); i++)
+			for (size_t i = 0; i < len; i++)
 			{
 				wchar_t ch = text[i];
-				ScanColorControlCodes(text, ch, i, &color);
-				DrawCharacter(sprite, ch, x, y, color, 0, 0, static_cast<float>(width), xOrig, true);
+				ScanColorControlCodes(text, ch, i, len, &color);
+				ScanMoveControlCode(text, ch, i, len, &orig, &pos);
+
+				DrawCharacter(sprite, ch, pos, color, 0, 0, static_cast<float>(width), orig.X, true);
 			}
 		}
 
 		void Font::DrawStringEx(Sprite* sprite, const String& text, int _x, int _y, uint color, int length, int _extLineSpace, wchar_t suffix, float hozShrink)
 		{
-			if (m_hasDrawOffset)
-			{
-				_x -= static_cast<int32>(m_drawOffset.X);
-				_y -= static_cast<int32>(m_drawOffset.Y);
-			}
+			const size_t len = length != -1 ? Math::Min((size_t)length, text.length()) : text.length();
 
-			float xOrig = static_cast<float>(_x);
-			float x = xOrig;
-			float y = _y + m_descender;
-
-			size_t len = text.length();
-			if (length !=-1)
-			{
-				if ((size_t)length<len)
-					len = (size_t)length;
-			}
+			const PointF orig = GetOrigin(_x, _y);
+			PointF pos = orig;
 
 			float extLineSpace = static_cast<float>(_extLineSpace);
 
 			for (size_t i = 0; i < len; i++)
 			{
 				wchar_t ch = text[i];
-				ScanColorControlCodes(text, ch, i, &color);
-				DrawCharacter(sprite, ch, x, y, color, hozShrink, extLineSpace, 0, xOrig, true);
+				ScanColorControlCodes(text, ch, i, len, &color);
+				ScanMoveControlCode(text, ch, i, len, &orig, &pos);
+				DrawCharacter(sprite, ch, pos, color, hozShrink, extLineSpace, 0, orig.X, true);
 			}
 			if (suffix)
 			{
 				wchar_t ch = suffix;
-				DrawCharacter(sprite, ch, x, y, color, hozShrink, extLineSpace, 0, xOrig, true);
+				DrawCharacter(sprite, ch, pos, color, hozShrink, extLineSpace, 0, orig.X, true);
 			}
 		}
 		void Font::DrawString(Sprite* sprite, const String& text, int _x, int _y, int width, uint color)
 		{
-			if (m_hasDrawOffset)
-			{
-				_x -= static_cast<int32>(m_drawOffset.X);
-				_y -= static_cast<int32>(m_drawOffset.Y);
-			}
+			const size_t len = text.length();
 
-			float xOrig = static_cast<float>(_x);
-			float x = xOrig;
-			float y = _y + m_descender;
+			const PointF orig = GetOrigin(_x, _y);
+			PointF pos = orig;
 
 			for (size_t i = 0; i < text.length(); i++)
 			{
 				wchar_t ch = text[i];
-				ScanColorControlCodes(text, ch, i, &color);
-				DrawCharacter(sprite, ch, x, y, color, 0, 0, static_cast<float>(width), xOrig, true);
+				ScanColorControlCodes(text, ch, i, len, &color);
+				ScanMoveControlCode(text, ch, i, len, &orig, &pos);
+
+				DrawCharacter(sprite, ch, pos, color, 0, 0, static_cast<float>(width), orig.X, true);
 			}
 		}
 
+		void Font::DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, float hozShrink)
+		{
+			DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, 0, 0, hozShrink);
+		}
+		void Font::DrawString(Sprite* sprite, const String& text, const PointF& pt, uint color, float hozShrink)
+		{
+			DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, 0.0f, 0, hozShrink);
+		}
+
+
 		void Font::DrawStringGradient(Sprite* sprite, const String& text, int _x, int _y, uint _startColor, uint _endColor)
 		{
-			if (m_hasDrawOffset)
+			const size_t len = text.length();
+
+			const Color4 startColor(_startColor);
+			const Color4 endColor(_endColor);
+
+			const PointF orig = GetOrigin(_x, _y);
+			PointF pos = orig;
+
+			for (size_t i = 0; i < len; i++)
 			{
-				_x -= static_cast<int32>(m_drawOffset.X);
-				_y -= static_cast<int32>(m_drawOffset.Y);
-			}
-
-			float xOrig = static_cast<float>(_x);
-			float x = xOrig;
-			float y = _y + m_descender;
-
-			Color4 startColor(_startColor);
-			Color4 endColor(_endColor);
-
-			for (size_t i = 0; i < text.length(); i++)
-			{
-				float lerpAmount = text.length() > 1 ? (i / (float)(text.length()-1)) : 0;
+				float lerpAmount = len > 1 ? (i / (float)(len - 1)) : 0;
 
 				Color4 curColor = Color4::Lerp(startColor, endColor, lerpAmount);
 
 				wchar_t ch = text[i];
-				DrawCharacter(sprite, ch, x, y, curColor.ToArgb(), 0,0,0, xOrig, true);
+				ScanMoveControlCode(text, ch, i, len, &orig, &pos);
+
+				DrawCharacter(sprite, ch, pos, curColor.ToArgb(), 0, 0, 0, orig.X, true);
 			}
 		}
 
-		FORCE_INLINE void Font::DrawCharacter(Sprite* sprite, int32 ch, float& x, float& y, uint color, float hozShrink, float extLineSpace, float widthCap, float xOrig, bool pixelAligned)
+		FORCE_INLINE void Font::DrawCharacter(Sprite* sprite, int32 ch, PointF& pos, uint color, float hozShrink, float extLineSpace, float widthCap, float xOrig, bool pixelAligned)
 		{
 			const float lineSpacing = extLineSpace ? 
 				(pixelAligned ? floorf(extLineSpace) : extLineSpace) : 
 				(pixelAligned ? floorf(m_height + m_lineGap) : (m_height + m_lineGap));
-			
+		
+			float& x = pos.X;
+			float& y = pos.Y;
+
 			if (ch != '\n')
 			{
 				if (IgnoreCharDrawing(ch))
@@ -857,7 +867,7 @@ namespace Apoc3D
 		template <typename SizeType>
 		FORCE_INLINE bool Font::ScanColorControlCodes(const String& str, wchar_t& cur, SizeType& i, SizeType len, uint* color)
 		{
-			if (cur == ColorControlCode)
+			if (cur == ControlCode_Color)
 			{
 				if (i + 3 < len)
 				{
@@ -876,23 +886,98 @@ namespace Apoc3D
 			return false;
 		}
 
-		FORCE_INLINE bool Font::ScanColorControlCodes(const String& str, wchar_t& cur, size_t& i, uint* color)
-		{
-			return ScanColorControlCodes<size_t>(str, cur, i, str.length(), color);
-		}
-
 		template bool Font::ScanColorControlCodes<size_t>(const String& str, wchar_t& cur, size_t& i, size_t len, uint* color);
 		template bool Font::ScanColorControlCodes<int32>(const String& str, wchar_t& cur, int32& i, int32 len, uint* color);
+
+		template <typename SizeType>
+		FORCE_INLINE bool Font::ScanMoveControlCode(const String& str, wchar_t& cur, SizeType& i, SizeType len, const PointF* orig, PointF* pos)
+		{
+			if (cur == ControlCode_Move)
+			{
+				if (i + 3 < len)
+				{
+					if (orig && pos)
+					{
+						uint32 ch1 = str[i + 1];
+						uint32 ch2 = str[i + 2];
+
+						uint32 data = ch1 << 16 | ch2;
+
+						uint32 flags = data >> 30;
+
+						uint16 dstxi = (data >> 15) & 0x7FFF;
+						uint16 dstyi = data & 0x7FFF;
+
+						float dstx = static_cast<float>(dstxi);
+						float dsty = static_cast<float>(dstyi);
+
+						bool passConditionCheck = flags & 1;
+						bool relative = (flags & 2) != 0;
+
+						if (relative)
+						{
+							pos->X += dstx;
+							pos->Y += dsty;
+						}
+						else
+						{
+							if (passConditionCheck)
+							{
+								float curx = pos->X - orig->X;
+								float cury = pos->Y - orig->Y;
+
+								if (curx * (dstx - curx) < 0)
+									dstx = curx;
+								if (cury * (dsty - cury) < 0)
+									dsty = cury;
+							}
+
+							pos->X = orig->X + dstx;
+							pos->Y = orig->Y + dsty;
+						}
+					}
+					i += 3;
+					cur = str[i];
+				}
+				return true;
+			}
+			return false;
+		}
+
+		template bool Font::ScanMoveControlCode<size_t>(const String& str, wchar_t& cur, size_t& i, size_t len, const PointF* orig, PointF* pos);
+		template bool Font::ScanMoveControlCode<int32>(const String& str, wchar_t& cur, int32& i, int32 len, const PointF* orig, PointF* pos);
+
+
+		PointF Font::GetOrigin(int32 x, int32 y) const
+		{
+			PointF r = { static_cast<float>(x), static_cast<float>(y) + m_descender };
+			if (m_hasDrawOffset)
+			{
+				r.X -= static_cast<int32>(m_drawOffset.X);
+				r.Y -= static_cast<int32>(m_drawOffset.Y);
+			}
+			return r;
+		}
+		PointF Font::GetOrigin(float x, float y) const
+		{
+			PointF r = { x, y + m_descender };
+			if (m_hasDrawOffset)
+				r -= m_drawOffset;
+			return r;
+		}
 
 
 		int Font::CalculateLineCount(const String& text, int width)
 		{
-			int lineCount=1;
+			const size_t len = text.length();
+
+			int lineCount = 1;
 			float x = 0;
-			for (size_t i = 0; i < text.length(); i++)
+			for (size_t i = 0; i < len; i++)
 			{
 				wchar_t ch = text[i]; 
-				ScanColorControlCodes(text, ch, i, nullptr);
+				ScanColorControlCodes(text, ch, i, len, nullptr);
+				ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
 
 				if (ch != '\n')
 				{
@@ -927,13 +1012,15 @@ namespace Apoc3D
 		Point Font::MeasureString(const String& text)
 		{
 			PointF result = PointF(0, m_height);
+			const size_t len = text.length();
 
 			float x = 0.f;
 			float y = m_height + m_lineGap + m_descender;
-			for (size_t i = 0; i < text.length(); i++)
+			for (size_t i = 0; i < len; i++)
 			{
 				wchar_t ch = text[i];
-				ScanColorControlCodes(text, ch, i, nullptr);
+				ScanColorControlCodes(text, ch, i, len, nullptr);
+				ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
 
 				if (ch != '\n')
 				{
@@ -973,15 +1060,17 @@ namespace Apoc3D
 			int chCount = 0;
 
 			PointF result = PointF(0, m_height);
-			
+			const size_t len = text.length();
+
 			int lineSpacing = static_cast<int>(m_height + m_lineGap+0.5f);
 
 			float x = 0.f;
 			float y = lineSpacing + m_descender;
-			for (size_t i = 0; i < text.length(); i++)
+			for (size_t i = 0; i < len; i++)
 			{
 				wchar_t ch = text[i];
-				ScanColorControlCodes(text, ch, i, nullptr);
+				ScanColorControlCodes(text, ch, i, len, nullptr);
+				ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
 
 				if (IgnoreCharDrawing(ch))
 					continue;
@@ -1030,6 +1119,7 @@ namespace Apoc3D
 				{
 					wchar_t ch = text[i];
 					ScanColorControlCodes(text, ch, i, len, nullptr);
+					ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
 
 					bool isBlankCh = ch == ' ' || ch == '\t';
 					if (isBlankCh)
@@ -1093,6 +1183,7 @@ namespace Apoc3D
 				{
 					wchar_t ch = text[i]; 
 					ScanColorControlCodes(text, ch, i, len, nullptr);
+					ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
 
 					wchar_t nch = text[i+1];
 

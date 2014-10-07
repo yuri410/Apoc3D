@@ -176,10 +176,21 @@ namespace Apoc3D
 
 		inline int32 Round(float x)
 		{
-			return x>=0 ? (int32)(x+0.5) : (int32)(x-0.5);
+			return x >= 0 ? (int32)(x + 0.5) : (int32)(x - 0.5);
 		}
 
-
+		inline int32 Gcd(int32 a, int32 b)
+		{
+			assert(a >= 0 && b >= 0);
+			int32 c;
+			while (a != 0)
+			{
+				c = a;
+				a = b%a;
+				b = c;
+			}
+			return b;
+		}
 
 		inline int32 RoundUp2(int32 x)
 		{

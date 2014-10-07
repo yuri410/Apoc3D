@@ -67,13 +67,6 @@ namespace Apoc3D
 			Point operator/(int32 v) const { return Point(X / v, Y / v); }
 			Point operator*(int32 v) const { return Point(X * v, Y * v); }
 
-			static float Distance(const Point& a, const Point& b)
-			{
-				int32 dx = b.X - a.X;
-				int32 dy = b.Y - a.Y;
-				return sqrtf(static_cast<float>(dx*dx + dy*dy));
-			}
-
 			Point& operator +=(const Point& rhs)
 			{
 				X += rhs.X;
@@ -96,6 +89,13 @@ namespace Apoc3D
 			{
 				X /= v; Y /= v;
 				return *this;
+			}
+
+			static float Distance(const Point& a, const Point& b)
+			{
+				int32 dx = b.X - a.X;
+				int32 dy = b.Y - a.Y;
+				return sqrtf(static_cast<float>(dx*dx + dy*dy));
 			}
 
 			static const Point Zero;
@@ -128,6 +128,24 @@ namespace Apoc3D
 				X -= rhs.X;
 				Y -= rhs.Y;
 				return *this;
+			}
+
+			PointF& operator *=(float v)
+			{
+				X *= v; Y *= v;
+				return *this;
+			}
+			PointF& operator /=(float v)
+			{
+				X /= v; Y /= v;
+				return *this;
+			}
+
+			static float Distance(const PointF& a, const PointF& b)
+			{
+				float dx = b.X - a.X;
+				float dy = b.Y - a.Y;
+				return sqrtf(dx*dx + dy*dy);
 			}
 
 			static const PointF Zero;

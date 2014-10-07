@@ -51,12 +51,12 @@ Derived up_cast(Base* o)
 		static uintptr _getTypeID() { static char dummy; return (uintptr)&dummy; } \
 		virtual bool CheckRuntimeType(uintptr id) const { return id == _getTypeID(); }
 
-#define RTTI_DERIVED(Type, ParentType) \
+#define RTTI_DERIVED(Type, BaseType) \
 	private: \
-		static_assert(_InheritCheck<ParentType, Type>::isDerivedFrom, "BaseType is not the base."); \
+		static_assert(_InheritCheck<BaseType, Type>::isDerivedFrom, "BaseType is not the base."); \
 	public: \
 		static uintptr _getTypeID() { static char dummy; return (uintptr)&dummy; } \
-		virtual bool CheckRuntimeType(uintptr id) const override { return id == Type::_getTypeID() || ParentType::CheckRuntimeType(id); }
+		virtual bool CheckRuntimeType(uintptr id) const override { return id == Type::_getTypeID() || BaseType::CheckRuntimeType(id); }
 
 #define _SINGLETON_DECL(T) \
 	public: \

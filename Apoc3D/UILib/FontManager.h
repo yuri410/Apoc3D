@@ -73,20 +73,14 @@ namespace Apoc3D
 			bool LookupCharacterSetting(int32 ch, short& left, short& top, float& adcanceX);
 
 			void RegisterCustomGlyph(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, short top, float advanceX);
-			void RegisterCustomGlyph(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect) 
-			{
-				RegisterCustomGlyph(charCode, graphic, srcRect, 0, 0, static_cast<float>(srcRect.Width));
-			}
+			void RegisterCustomGlyph(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect);
 
 			void RegisterCustomGlyphAligned(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, int32 padLeft, int32 padRight, CustomGlyphAlignment vertAlignment, int32 vaValue);
 			void UnregisterCustomGlyph(int32 utf16code);
 			void ClearCustomGlyph();
 
 			void DrawStringDissolving(Sprite* sprite, const String& text, float x, float y, uint color, float length, int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale);
-			void DrawStringDissolving(Sprite* sprite, const String& text, const Point& pos, uint color, float length, int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale)
-			{
-				DrawStringDissolving(sprite, text, static_cast<float>(pos.X), static_cast<float>(pos.Y), color, length, dissolvingCount, dissolvePatchSize, maxDissolvingScale);
-			}
+			void DrawStringDissolving(Sprite* sprite, const String& text, const Point& pos, uint color, float length, int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale);
 
 			void DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length=-1, float lineSpace = 0, wchar_t suffix=0, float hozShrink = 0);
 			void DrawString(Sprite* sprite, const String& text, float x, float y, int width, uint color);
@@ -94,14 +88,8 @@ namespace Apoc3D
 			void DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length=-1, int lineSpace = 0, wchar_t suffix=0, float hozShrink = 0);
 			void DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color);
 
-			void DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, float hozShrink = 0)
-			{
-				DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, 0, 0, hozShrink);
-			}
-			void DrawString(Sprite* sprite, const String& text, const PointF& pt, uint color, float hozShrink = 0)
-			{
-				DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, 0.0f, 0, hozShrink);
-			}
+			void DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, float hozShrink = 0);
+			void DrawString(Sprite* sprite, const String& text, const PointF& pt, uint color, float hozShrink = 0);
 
 			void DrawStringGradient(Sprite* sprite, const String& text, int x, int y, uint startColor, uint endColor);
 
@@ -124,7 +112,7 @@ namespace Apoc3D
 			Texture* getInternalTexture() const { return m_font; }
 
 			static String MakeColorControl(uint32 argb);
-			
+			static String MakeMoveControl(const Point& position, bool passConditionCheck = false, bool relative = false);
 		private:
 			static const int MaxFreq = 10;
 			struct Character
@@ -175,15 +163,21 @@ namespace Apoc3D
 			};
 
 			void DrawCharacter(Sprite* sprite, int32 ch, float& x, float& y, uint color, float hozShrink, float extLineSpace, float widthCap, float xOrig, bool pixelAligned);
+			void DrawCharacter(Sprite* sprite, int32 ch, PointF& pos, uint color, float hozShrink, float extLineSpace, float widthCap, float xOrig, bool pixelAligned);
 			
 			void DrawDisolvingCharacter(Sprite* sprite, float x, float y,
 				int32 seed, const Apoc3D::Math::RectangleF& srcRect, int32 glyphLeft, int32 glyphTop, int32 glyphWidth, int32 glyphHeight, uint32 color,
 				const Point& dissolvePatchSize, float progress);
 
-			bool ScanColorControlCodes(const String& str, wchar_t& cur, size_t& i, uint* color);
+			template <typename SizeType>
+			static bool ScanMoveControlCode(const String& str, wchar_t& cur, SizeType& i, SizeType len, const PointF* orig, PointF* pos);
 
 			template <typename SizeType>
-			bool ScanColorControlCodes(const String& str, wchar_t& cur, SizeType& i, SizeType len, uint* color);
+			static bool ScanColorControlCodes(const String& str, wchar_t& cur, SizeType& i, SizeType len, uint* color);
+
+			PointF GetOrigin(int32 x, int32 y) const;
+			PointF GetOrigin(float x, float y) const;
+
 
 			Texture* m_font;
 			float m_height;

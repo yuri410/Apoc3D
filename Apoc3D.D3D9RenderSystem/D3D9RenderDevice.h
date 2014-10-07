@@ -44,47 +44,47 @@ namespace Apoc3D
 
 			class D3D9RenderDevice final : public RenderDevice
 			{
+				RTTI_DERIVED(D3D9RenderDevice, RenderDevice);
 			public:
-				D3DDevice* getDevice() const;
-				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_devManager; } 
-
-				
-				bool isInitialized() const { return !!m_stateManager; }
-
 				D3D9RenderDevice(GraphicsDeviceManager* devManager);
 				~D3D9RenderDevice();
 				
 				void OnDeviceReset();
 				void OnDeviceLost();
 
-
-				virtual void Initialize();
+				virtual void Initialize() override;
 				
-				virtual void BeginFrame();
-				virtual void EndFrame();
-				virtual void Clear(ClearFlags flags, uint color, float depth, int stencil);
+				virtual void BeginFrame() override;
+				virtual void EndFrame() override;
+				virtual void Clear(ClearFlags flags, uint color, float depth, int stencil) override;
 
-				virtual void SetRenderTarget(int index, RenderTarget* rt);
+				virtual void SetRenderTarget(int index, RenderTarget* rt) override;
 
-				virtual RenderTarget* GetRenderTarget(int index);
+				virtual RenderTarget* GetRenderTarget(int index) override;
 
-				virtual PixelFormat GetDefaultRTFormat();
-				virtual DepthFormat GetDefaultDepthStencilFormat();
+				virtual PixelFormat GetDefaultRTFormat() override;
+				virtual DepthFormat GetDefaultDepthStencilFormat() override;
 				//virtual void SetTexture(int index, Texture* texture);
 				//virtual Texture* GetTexture(int index);
 
-				virtual void BindVertexShader(Shader* shader);
-				virtual void BindPixelShader(Shader* shader);
+				virtual void BindVertexShader(Shader* shader) override;
+				virtual void BindPixelShader(Shader* shader) override;
 
-				virtual void Render(Material* mtrl, const RenderOperation* op, int count, int passSelID);
+				virtual void Render(Material* mtrl, const RenderOperation* op, int count, int passSelID) override;
 
-				virtual Viewport getViewport();
-				virtual void setViewport(const Viewport& vp);
+				virtual Viewport getViewport() override;
+				virtual void setViewport(const Viewport& vp) override;
 
-				virtual Capabilities* const getCapabilities() const;
+				virtual Capabilities* const getCapabilities() const override;
 
 				D3D9Capabilities* getD3D9Capabilities() const { return m_caps; }
 				NativeD3DStateManager* getNativeStateManager() const { return m_nativeState; }
+
+				D3DDevice* getDevice() const;
+				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_devManager; }
+
+				bool isInitialized() const { return m_stateManager != nullptr; }
+
 			private:
 				friend class VolatileResource;
 
