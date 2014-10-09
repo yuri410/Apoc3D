@@ -170,7 +170,7 @@ namespace Apoc3D
 				return m_textbox->getAbsoluteArea();
 
 			if (m_listBox->getHoverIndex() != -1)
-				return Apoc3D::Math::Rectangle::Intersect(m_listBox->GetContentArea(), m_listBox->GetItemArea(m_listBox->getHoverIndex()));
+				return m_listBox->GetItemArea(m_listBox->getHoverIndex());
 			return m_listBox->getScrollbarMouseHoverArea();
 		}
 

@@ -157,6 +157,9 @@ namespace Apoc3D
 			bool isMouseHover() const { return m_isMouseHovering; }
 			const Apoc3D::Math::Rectangle& getMouseHoverArea() const { assert(m_isMouseHovering); return m_mouseHoverArea; }
 
+			int32 getTickValue() const { return static_cast<int32>(CurrentValue * LargeTickDivisionCount + 0.5f); }
+			void setTickValue(int32 v) { assert(LargeTickDivisionCount > 0); CurrentValue = static_cast<float>(v) / LargeTickDivisionCount; }
+
 			float CurrentValue = 0;
 			int32 LargeTickDivisionCount = 0;
 
