@@ -139,6 +139,14 @@ namespace Apoc3D
 			if (IsInteractive)
 			{
 				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+				Apoc3D::Math::Rectangle absArea = getAbsoluteArea();
+				if (absArea.Contains(mouse->GetPosition()))
+				{
+					if (mouse->getDZ())
+					{
+						m_vscrollbar->SetValue(m_vscrollbar->getValue() - mouse->getDZ() / 60);
+					}
+				}
 
 				cntArea = Padding.ShrinkRect(cntArea);
 
@@ -165,17 +173,12 @@ namespace Apoc3D
 						eventSelectionChanged.Invoke(this);
 				}
 
-				if (getAbsoluteArea().Contains(mouse->GetPosition()))
+				if (absArea.Contains(mouse->GetPosition()))
 				{
 					if (!m_mouseHover)
 					{
 						m_mouseHover = true;
 						OnMouseHover();
-					}
-
-					if (mouse->getDZ())
-					{
-						m_vscrollbar->SetValue(m_vscrollbar->getValue() - mouse->getDZ() / 60);
 					}
 
 					if (mouse->IsLeftPressed())
