@@ -245,18 +245,17 @@ namespace Apoc3D
 			 *  Includes all global scene render resources such as the current camera, lighting that could 
 			 *  be used in effects.
 			 */
-			class APAPI RendererEffectParams
+			namespace RendererEffectParams
 			{
-			public:
-				static Camera* CurrentCamera;
-				static Vector3 LightDirection;
-				static Color4 LightAmbient;
-				static Color4 LightDiffuse;
-				static Color4 LightSpecular;
+				extern Camera* CurrentCamera;
+				extern Vector3 LightDirection;
+				extern Color4 LightAmbient;
+				extern Color4 LightDiffuse;
+				extern Color4 LightSpecular;
 
-				static void Reset()
+				inline void Reset()
 				{
-					CurrentCamera = 0;
+					CurrentCamera = nullptr;
 				}
 			};
 
@@ -291,21 +290,21 @@ namespace Apoc3D
 			{	
 			public:
 				String Name;
-				EffectParamUsage Usage;
+				EffectParamUsage Usage = EPUSAGE_Unknown;
 
 				String CustomMaterialParamName;
-				int32 InstanceBlobIndex;
+				int32 InstanceBlobIndex = -1;
 
-				ShaderType ProgramType;
+				ShaderType ProgramType = SHDT_Vertex;
 
-				int32 RegisterIndex;
+				int32 RegisterIndex = -1;
 				
-				int32 SamplerIndex;
+				int32 SamplerIndex = -1;
 				ShaderSamplerState SamplerState;
 
-				EffectParameter() : RegisterIndex(-1), SamplerIndex(-1) { }
+				EffectParameter() { }
 				EffectParameter(const String& name);
-				~EffectParameter(void);
+				~EffectParameter();
 
 				static EffectParamUsage ParseParamUsage(const String& val);
 				static String ToString(EffectParamUsage usage);
@@ -321,42 +320,40 @@ namespace Apoc3D
 
 			struct InstanceInfoBlobValue
 			{
-				/**
-				*  The data type of the value.
-				*/
+				/** The data type of the value. */
 				CustomEffectParameterType Type;
 				uint Value[16];
-				void* RefValue;
+				void* RefValue = nullptr;
 
 				InstanceInfoBlobValue()
 				{ }
 
 				InstanceInfoBlobValue(float val)
-					: RefValue(nullptr), Type(CEPT_Float)
+					: Type(CEPT_Float)
 				{
 					AsSingle() = val;
 				}
 
 				InstanceInfoBlobValue(const Vector2& val)
-					: RefValue(nullptr), Type(CEPT_Vector2)
+					: Type(CEPT_Vector2)
 				{
 					AsVector2() = val;
 				}
 
 				InstanceInfoBlobValue(const Vector4& val)
-					: RefValue(nullptr), Type(CEPT_Vector4)
+					: Type(CEPT_Vector4)
 				{
 					AsVector4() = val;
 				}
 
 				InstanceInfoBlobValue(bool val)
-					: RefValue(nullptr), Type(CEPT_Boolean)
+					: Type(CEPT_Boolean)
 				{
 					AsBoolean() = val;
 				}
 
 				InstanceInfoBlobValue(int val)
-					: RefValue(nullptr), Type(CEPT_Integer)
+					: Type(CEPT_Integer)
 				{
 					AsInteger() = val;
 				}

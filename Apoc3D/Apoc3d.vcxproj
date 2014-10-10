@@ -158,7 +158,6 @@
     <ClInclude Include="ApocMacros.h" />
     <ClInclude Include="Collections\BitArray.h" />
     <ClInclude Include="Exception.h" />
-    <ClInclude Include="Collections\EnumConverterHelper.h" />
     <ClInclude Include="Collections\List2D.h" />
     <ClInclude Include="Collections\CollectionsCommon.h" />
     <ClInclude Include="Collections\List.h" />
@@ -286,6 +285,7 @@
     <ClInclude Include="Math\Vector.h" />
     <ClInclude Include="Math\Viewport.h" />
     <ClInclude Include="Platform\Library.h" />
+    <ClInclude Include="Utility\TypeConverter.h" />
     <ClInclude Include="Vfs\Archive.h" />
     <ClInclude Include="FastDelegate\FastDelegate.h" />
     <ClInclude Include="FastDelegate\FastDelegateBind.h" />

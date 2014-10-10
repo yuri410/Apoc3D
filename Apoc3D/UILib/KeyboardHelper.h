@@ -41,14 +41,14 @@ namespace Apoc3D
 	{
 		struct APAPI KeyboardEventsArgs
 		{
-			bool ShiftDown;
-			bool ControlDown;
-			bool AltDown;
-			bool CapsLock;
+			bool ShiftDown = false;
+			bool ControlDown = false;
+			bool AltDown = false;
 
-			KeyboardEventsArgs()
-				: ShiftDown(false), ControlDown(false), AltDown(false), CapsLock(false)
-			{ }
+			bool CapsLock = false;
+			bool NumLock = false;
+
+			KeyboardEventsArgs() { }
 		};
 		
 		typedef EventDelegate1<String> PasteEventHandler;
@@ -148,7 +148,8 @@ namespace Apoc3D
 
 			Point m_cursorLocation;
 			bool m_multiline = false;
-			
+			bool m_changed = false;
+
 			bool m_isExternalSelecting = false;
 			Point m_selectionStart;
 			Point m_selectionEnd;

@@ -1,8 +1,8 @@
 
 #include "Exception.h"
 #include "Core/Logging.h"
-#include "Collections/EnumConverterHelper.h"
 #include "Utility/StringUtils.h"
+#include "Utility/TypeConverter.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
@@ -10,25 +10,21 @@ using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
-	class Apoc3DExceptionTypeConverter : public EnumDualConversionHelper<ExceptID>
+	const TypeDualConverter<ExceptID> exceptTypeConverter = 
 	{
-	public:
-		Apoc3DExceptionTypeConverter()
-			: EnumDualConversionHelper(25)
-		{
-			AddPair(L"Default", ExceptID::Default);
-			AddPair(L"InvalidData", ExceptID::InvalidData);
-			AddPair(L"InvalidOperation", ExceptID::InvalidOperation);
-			AddPair(L"NotSupported", ExceptID::NotSupported);
-			AddPair(L"KeyNotFound", ExceptID::KeyNotFound);
-			AddPair(L"FormatException", ExceptID::FormatException);
-			AddPair(L"EndOfStream", ExceptID::EndOfStream);
-			AddPair(L"FileNotFound", ExceptID::FileNotFound);
-			AddPair(L"Argument", ExceptID::Argument);
-			AddPair(L"Duplicate", ExceptID::Duplicate);
-			AddPair(L"ScriptCompileError", ExceptID::ScriptCompileError);
-		}
-	} exceptTypeConverter;
+		{ L"Default", ExceptID::Default },
+		{ L"InvalidData", ExceptID::InvalidData },
+		{ L"InvalidOperation", ExceptID::InvalidOperation },
+		{ L"NotSupported", ExceptID::NotSupported },
+		{ L"KeyNotFound", ExceptID::KeyNotFound },
+		{ L"FormatException", ExceptID::FormatException },
+		{ L"EndOfStream", ExceptID::EndOfStream },
+		{ L"FileNotFound", ExceptID::FileNotFound },
+		{ L"Argument", ExceptID::Argument },
+		{ L"Duplicate", ExceptID::Duplicate },
+		{ L"ScriptCompileError", ExceptID::ScriptCompileError },
+	};
+
 
 	Exception Exception::CreateException(ExceptID type, const String& msg, const wchar_t* file, int line)
 	{

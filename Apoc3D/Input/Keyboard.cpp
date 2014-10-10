@@ -52,5 +52,7 @@ namespace Apoc3D
 			br->ReadUInt32(m_keyState.getData());
 			br->ReadUInt32(m_lastKeyState.getData());
 		}
+
+	
 	}
 }

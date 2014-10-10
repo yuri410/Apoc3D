@@ -19,7 +19,6 @@
 
 #include "apoc3d/Collections/CollectionsCommon.h"
 #include "apoc3d/Collections/BitArray.h"
-#include "apoc3d/Collections/EnumConverterHelper.h"
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Collections/LinkedList.h"
 #include "apoc3d/Collections/List.h"
@@ -162,6 +161,7 @@
 
 #include "apoc3d/Utility/StringTable.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Utility/TypeConverter.h"
 
 #include "apoc3d/Vfs/Archive.h"
 #include "apoc3d/Vfs/File.h"

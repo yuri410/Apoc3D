@@ -49,37 +49,22 @@ namespace Apoc3D
 			KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T,
 			KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z,
 
+			KEY_DIVIDE, KEY_MULTIPLY, KEY_SUBTRACT, KEY_ADD, KEY_DECIMAL, KEY_NUMPADEQUALS,
+
+			KEY_MINUS, KEY_EQUALS,
+			KEY_LBRACKET, KEY_RBRACKET, KEY_BACKSLASH,
+			KEY_SEMICOLON, KEY_APOSTROPHE,
+			KEY_PERIOD, KEY_COMMA, KEY_SLASH,
+
+			KEY_GRAVE, KEY_TAB,
+
 			KEY_SPACE,
-			KEY_HOME,
-			KEY_END,
-			KEY_LEFT,
-			KEY_RIGHT,
-			KEY_UP,
-			KEY_DOWN,
-			KEY_BACK,
-			KEY_DELETE,
+			KEY_HOME, KEY_END,
 
-			KEY_RETURN,
-			KEY_NUMPADENTER,
+			KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN,
+			KEY_BACK, KEY_DELETE,
 
-			KEY_ADD,
-			KEY_NUMPADEQUALS,
-			KEY_DECIMAL,
-			KEY_SUBTRACT,
-			KEY_MULTIPLY,
-			KEY_DIVIDE,
-			KEY_COMMA,
-			KEY_PERIOD,
-			KEY_SLASH,
-			KEY_BACKSLASH,
-			KEY_MINUS,
-			KEY_LBRACKET,
-			KEY_RBRACKET,
-			KEY_SEMICOLON,
-			KEY_GRAVE,
-
-			KEY_TAB
-
+			KEY_RETURN, KEY_NUMPADENTER
 		};
 
 		void KeyboardHelper::Update(const GameTime* time)
@@ -188,7 +173,8 @@ namespace Apoc3D
 					eventArg.ControlDown = true;
 				}
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-				eventArg.CapsLock =  (GetKeyState(VK_CAPITAL) & 0x8001) != 0;
+				eventArg.CapsLock =  (GetKeyState(VK_CAPITAL) & 0x1) != 0;
+				eventArg.NumLock = (GetKeyState(VK_NUMLOCK) & 0x1) != 0;
 #endif
 				eventArg.ShiftDown |= m_shiftDown;
 
@@ -198,7 +184,7 @@ namespace Apoc3D
 					{
 						if (m_pasting && testKey == KEY_V)
 						{
-							return;
+							continue;
 						}
 						
 						eventKeyPress.Invoke(testKey, eventArg);
@@ -236,14 +222,15 @@ namespace Apoc3D
 							eventKeyPress.Invoke(m_currentKey, eventArg);
 						}
 					}
-					
 				}
-
-
 			}
 			else
 			{
-				m_shiftDown = false;
+				m_shiftDown = false; 
+				m_pasting = false;
+				m_timerStarted = false;
+
+				m_currentKey = m_previousKey = KEY_UNASSIGNED;
 			}
 		}
 
@@ -379,15 +366,14 @@ namespace Apoc3D
 		}
 		void TextEditState::Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e)
 		{
-			bool changed = false;
-			bool checkKeyboardSelection = false;
+			m_changed = false;
+			bool processKeyboardSelection = false;
 
-			
 			switch (code)
 			{
 				case KEY_LEFT:
 				{
-					checkKeyboardSelection = true;
+					processKeyboardSelection = true;
 
 					String* previousLine, *nextLine;
 					String& currentLine = GetLines(previousLine, nextLine);
@@ -431,7 +417,7 @@ namespace Apoc3D
 				}
 				case KEY_RIGHT:
 				{
-					checkKeyboardSelection = true;
+					processKeyboardSelection = true;
 
 					String* previousLine, *nextLine;
 					String& currentLine = GetLines(previousLine, nextLine);
@@ -473,7 +459,7 @@ namespace Apoc3D
 				}
 				case KEY_UP:
 				{
-					checkKeyboardSelection = true;
+					processKeyboardSelection = true;
 
 					if (!m_multiline)
 						eventUpPressedSingleline.Invoke();
@@ -484,7 +470,7 @@ namespace Apoc3D
 				}
 				case KEY_DOWN:
 				{
-					checkKeyboardSelection = true;
+					processKeyboardSelection = true;
 
 					if (!m_multiline)
 						eventDownPressedSingleline.Invoke();
@@ -498,7 +484,7 @@ namespace Apoc3D
 					if (hasSelection())
 					{
 						EraseSelectedText();
-						changed = true;
+						Sync();
 					}
 					else
 					{
@@ -516,7 +502,7 @@ namespace Apoc3D
 									m_text = m_text.erase(m_cursorLocation.X - 1, 1);
 									m_cursorLocation.X--;
 								}
-								changed = true;
+								Sync();
 							}
 						}
 						else
@@ -529,7 +515,7 @@ namespace Apoc3D
 								currentLine = currentLine.erase(m_cursorLocation.X - 1, 1);
 								m_cursorLocation.X -= 1;
 
-								changed = true;
+								Sync();
 							}
 							else
 							{
@@ -540,13 +526,12 @@ namespace Apoc3D
 									m_lines.RemoveAt(m_cursorLocation.Y);
 									m_cursorLocation.Y -= 1;
 
-									changed = true;
+									Sync();
 								}
 							}
 						}
 					}
 
-					if (changed) Sync();
 					break;
 				}
 				case KEY_DELETE:
@@ -554,7 +539,7 @@ namespace Apoc3D
 					if (hasSelection())
 					{
 						EraseSelectedText();
-						changed = true;
+						Sync();
 					}
 					else
 					{
@@ -567,7 +552,7 @@ namespace Apoc3D
 								else
 									m_text = m_text.erase(m_cursorLocation.X, 1);
 
-								changed = true;
+								Sync();
 							}
 						}
 						else
@@ -579,7 +564,7 @@ namespace Apoc3D
 							{
 								currentLine = currentLine.erase(m_cursorLocation.X, 1);
 
-								changed = true;
+								Sync();
 							}
 							else if (m_cursorLocation.X == (int)currentLine.size())
 							{
@@ -588,18 +573,17 @@ namespace Apoc3D
 									currentLine += *nextLine;
 									m_lines.RemoveAt(m_cursorLocation.Y + 1);
 
-									changed = true;
+									Sync();
 								}
 							}
 						}
 					}
 					
-					if (changed) Sync();
 					break;
 				}
 				case KEY_HOME:
 				{
-					checkKeyboardSelection = true;
+					processKeyboardSelection = true;
 
 					m_cursorLocation.X = 0;
 					if (m_multiline && e.ControlDown)
@@ -610,7 +594,7 @@ namespace Apoc3D
 				}
 				case KEY_END:
 				{
-					checkKeyboardSelection = true;
+					processKeyboardSelection = true;
 					
 					if (!m_multiline)
 						m_cursorLocation.X = (int)m_text.size();
@@ -631,12 +615,14 @@ namespace Apoc3D
 				}
 
 				case KEY_NUMPADENTER:
+					if (!e.NumLock) break;
+
 				case KEY_RETURN:
 				{
 					if (hasSelection())
 					{
 						EraseSelectedText();
-						changed = true;
+						Sync();
 					}
 
 					if (m_multiline)
@@ -655,235 +641,91 @@ namespace Apoc3D
 						m_cursorLocation.X = 0;
 						m_cursorLocation.Y++;
 
-						changed = true;
+						Sync();
 					}
 					else
 					{
 						eventEnterPressed.Invoke();
 					}
 
-					if (changed) Sync();
 					break;
 				}
-				case KEY_SPACE:
-					Add(L" ");
-					changed = true;
-					break;
-				case KEY_DECIMAL:
-					Add(L".");
-					changed = true;
-					break;
-				case KEY_DIVIDE:
-					Add(L"/");
-					changed = true;
-					break;
-				case KEY_BACKSLASH:
-					Add(e.ShiftDown ? L"|" : L"\\");
-					changed = true;
-					break;
-					// " ~
-				case KEY_COMMA:
-					Add(e.ShiftDown ? L"<" : L",");
-					changed = true;
-					break;
-				case KEY_MINUS:
-					Add(e.ShiftDown ? L"_" : L"-");
-					changed = true;
-					break;
-				case KEY_LBRACKET:
-					Add(e.ShiftDown ? L"{" : L"[");
-					changed = true;
-					break;
-				case KEY_RBRACKET:
-					Add(e.ShiftDown ? L"}" : L"]");
-					changed = true;
-					break;
-				case KEY_PERIOD:
-					Add(e.ShiftDown ? L">" : L".");
-					changed = true;
-					break;
-				case KEY_ADD:
-					Add(e.ShiftDown ? L"+" : L"=");
-					changed = true;
-					break;
-				case KEY_SLASH:
-					Add(e.ShiftDown ? L"?" : L"/");
-					changed = true;
-					break;
-				case KEY_SEMICOLON:
-					Add(e.ShiftDown ? L":" : L";");
-					changed = true;
-					break;
-				case KEY_SUBTRACT:
-					Add(L"-");
-					changed = true;
-					break;
-				case KEY_MULTIPLY:
-					Add(L"*");
-					changed = true;
-					break;
-				case KEY_TAB:
-					Add(L"      ");
-					changed = true;
-					break;
-				case KEY_NUMPAD0:
-				case KEY_0:
-					Add(e.ShiftDown ? L")" : L"0");
-					changed = true;
-					break;
-				case KEY_NUMPAD1:
-				case KEY_1:
-					Add(e.ShiftDown ? L"!" : L"1");
-					changed = true;
-					break;
-				case KEY_NUMPAD2:
-				case KEY_2:
-					Add(e.ShiftDown ? L"@" : L"2");
-					changed = true;
-					break;
-				case KEY_NUMPAD3:
-				case KEY_3:
-					Add(e.ShiftDown ? L"#" : L"3");
-					changed = true;
-					break;
-				case KEY_NUMPAD4:
-				case KEY_4:
-					Add(e.ShiftDown ? L"$" : L"4");
-					changed = true;
-					break;
-				case KEY_NUMPAD5:
-				case KEY_5:
-					Add(e.ShiftDown ? L"%" : L"5");
-					changed = true;
-					break;
-				case KEY_NUMPAD6:
-				case KEY_6:
-					Add(e.ShiftDown ? L"^" : L"6");
-					changed = true;
-					break;
-				case KEY_NUMPAD7:
-				case KEY_7:
-					Add(e.ShiftDown ? L"&" : L"7");
-					changed = true;
-					break;
-				case KEY_NUMPAD8:
-				case KEY_8:
-					Add(e.ShiftDown ? L"*" : L"8");
-					changed = true;
-					break;
-				case KEY_NUMPAD9:
-				case KEY_9:
-					Add(e.ShiftDown ? L"(" : L"9");
-					changed = true;
-					break;
+				case KEY_SPACE: Add(L" "); break;
 
-				case KEY_A:
-					Add(e.ShiftDown || e.CapsLock ? L"A" : L"a");
-					changed = true;
-					break;
-				case KEY_B:
-					Add(e.ShiftDown || e.CapsLock ? L"B" : L"b");
-					changed = true;
-					break;
-				case KEY_C:
-					Add(e.ShiftDown || e.CapsLock ? L"C" : L"c");
-					changed = true;
-					break;
-				case KEY_D:
-					Add(e.ShiftDown || e.CapsLock ? L"D" : L"d");
-					changed = true;
-					break;
-				case KEY_E:
-					Add(e.ShiftDown || e.CapsLock ? L"E" : L"e");
-					changed = true;
-					break;
-				case KEY_F:
-					Add(e.ShiftDown || e.CapsLock ? L"F" : L"f");
-					changed = true;
-					break;
-				case KEY_G:
-					Add(e.ShiftDown || e.CapsLock ? L"G" : L"g");
-					changed = true;
-					break;
+				// num pad
+				case KEY_NUMPAD0: if (e.NumLock) Add(L"0"); break;
+				case KEY_NUMPAD1: if (e.NumLock) Add(L"1"); break;
+				case KEY_NUMPAD2: if (e.NumLock) Add(L"2"); break;
+				case KEY_NUMPAD3: if (e.NumLock) Add(L"3"); break;
+				case KEY_NUMPAD4: if (e.NumLock) Add(L"4"); break;
+				case KEY_NUMPAD5: if (e.NumLock) Add(L"5"); break;
+				case KEY_NUMPAD6: if (e.NumLock) Add(L"6"); break;
+				case KEY_NUMPAD7: if (e.NumLock) Add(L"7"); break;
+				case KEY_NUMPAD8: if (e.NumLock) Add(L"8"); break;
+				case KEY_NUMPAD9: if (e.NumLock) Add(L"9"); break;
+				case KEY_DIVIDE: if (e.NumLock) Add(L"/"); break;
+				case KEY_MULTIPLY: if (e.NumLock) Add(L"*"); break;
+				case KEY_SUBTRACT: if (e.NumLock) Add(L"-"); break;
+				case KEY_ADD: if (e.NumLock) Add(L"+"); break;
+				case KEY_DECIMAL: if (e.NumLock) Add(L"."); break;
 
-				case KEY_H:
-					Add(e.ShiftDown || e.CapsLock ? L"H" : L"h");
-					changed = true;
-					break;
-				case KEY_I:
-					Add(e.ShiftDown || e.CapsLock ? L"I" : L"i");
-					changed = true;
-					break;
-				case KEY_J:
-					Add(e.ShiftDown || e.CapsLock ? L"J" : L"j");
-					changed = true;
-					break;
-				case KEY_K:
-					Add(e.ShiftDown || e.CapsLock ? L"K" : L"k");
-					changed = true;
-					break;
-				case KEY_L:
-					Add(e.ShiftDown || e.CapsLock ? L"L" : L"l");
-					changed = true;
-					break;
-				case KEY_M:
-					Add(e.ShiftDown || e.CapsLock ? L"M" : L"m");
-					changed = true;
-					break;
-				case KEY_N:
-					Add(e.ShiftDown || e.CapsLock ? L"N" : L"n");
-					changed = true;
-					break;
+				case KEY_0: Add(e.ShiftDown ? L")" : L"0"); break;
+				case KEY_1: Add(e.ShiftDown ? L"!" : L"1"); break;
+				case KEY_2: Add(e.ShiftDown ? L"@" : L"2"); break;
+				case KEY_3: Add(e.ShiftDown ? L"#" : L"3"); break;
+				case KEY_4: Add(e.ShiftDown ? L"$" : L"4"); break;
+				case KEY_5: Add(e.ShiftDown ? L"%" : L"5"); break;
+				case KEY_6: Add(e.ShiftDown ? L"^" : L"6"); break;
+				case KEY_7: Add(e.ShiftDown ? L"&" : L"7"); break;
+				case KEY_8: Add(e.ShiftDown ? L"*" : L"8"); break;
+				case KEY_9: Add(e.ShiftDown ? L"(" : L"9"); break;
 
-				case KEY_O:
-					Add(e.ShiftDown || e.CapsLock ? L"O" : L"o");
-					changed = true;
-					break;
-				case KEY_P:
-					Add(e.ShiftDown || e.CapsLock ? L"P" : L"p");
-					changed = true;
-					break;
-				case KEY_Q:
-					Add(e.ShiftDown || e.CapsLock ? L"Q" : L"q");
-					changed = true;
-					break;
-				case KEY_R:
-					Add(e.ShiftDown || e.CapsLock ? L"R" : L"r");
-					changed = true;
-					break;
-				case KEY_S:
-					Add(e.ShiftDown || e.CapsLock ? L"S" : L"s");
-					changed = true;
-					break;
-				case KEY_T:
-					Add(e.ShiftDown || e.CapsLock ? L"T" : L"t");
-					changed = true;
-					break;
+				case KEY_MINUS: Add(e.ShiftDown ? L"_" : L"-"); break;
+				case KEY_EQUALS: Add(e.ShiftDown ? L"+" : L"="); break;
 
-				case KEY_U:
-					Add(e.ShiftDown || e.CapsLock ? L"U" : L"u");
-					changed = true;
-					break;
-				case KEY_V:
-					Add(e.ShiftDown || e.CapsLock ? L"V" : L"v");
-					changed = true;
-					break;
-				case KEY_W:
-					Add(e.ShiftDown || e.CapsLock ? L"W" : L"w");
-					changed = true;
-					break;
-				case KEY_X:
-					Add(e.ShiftDown || e.CapsLock ? L"X" : L"x");
-					changed = true;
-					break;
-				case KEY_Y:
-					Add(e.ShiftDown || e.CapsLock ? L"Y" : L"y");
-					changed = true;
-					break;
-				case KEY_Z:
-					Add(e.ShiftDown || e.CapsLock ? L"Z" : L"z");
-					changed = true;
-					break;
+				case KEY_LBRACKET: Add(e.ShiftDown ? L"{" : L"["); break;
+				case KEY_RBRACKET: Add(e.ShiftDown ? L"}" : L"]"); break;
+				case KEY_BACKSLASH: Add(e.ShiftDown ? L"|" : L"\\"); break;
+					
+				case KEY_SEMICOLON: Add(e.ShiftDown ? L":" : L";"); break;
+				case KEY_APOSTROPHE: Add(e.ShiftDown ? L"\"" : L"'"); break;
+
+				case KEY_PERIOD: Add(e.ShiftDown ? L">" : L"."); break;
+				case KEY_COMMA: Add(e.ShiftDown ? L"<" : L","); break;
+				case KEY_SLASH: Add(e.ShiftDown ? L"?" : L"/"); break;
+
+				case KEY_GRAVE: Add(e.ShiftDown ? L"~" : L"`"); break;
+				case KEY_TAB: Add(L"      "); break;
+				
+				case KEY_A: Add(e.ShiftDown || e.CapsLock ? L"A" : L"a"); break;
+				case KEY_B: Add(e.ShiftDown || e.CapsLock ? L"B" : L"b"); break;
+				case KEY_C: Add(e.ShiftDown || e.CapsLock ? L"C" : L"c"); break;
+				case KEY_D: Add(e.ShiftDown || e.CapsLock ? L"D" : L"d"); break;
+				case KEY_E: Add(e.ShiftDown || e.CapsLock ? L"E" : L"e"); break;
+				case KEY_F: Add(e.ShiftDown || e.CapsLock ? L"F" : L"f"); break;
+				case KEY_G: Add(e.ShiftDown || e.CapsLock ? L"G" : L"g"); break;
+
+				case KEY_H: Add(e.ShiftDown || e.CapsLock ? L"H" : L"h"); break;
+				case KEY_I: Add(e.ShiftDown || e.CapsLock ? L"I" : L"i"); break;
+				case KEY_J: Add(e.ShiftDown || e.CapsLock ? L"J" : L"j"); break;
+				case KEY_K: Add(e.ShiftDown || e.CapsLock ? L"K" : L"k"); break;
+				case KEY_L: Add(e.ShiftDown || e.CapsLock ? L"L" : L"l"); break;
+				case KEY_M: Add(e.ShiftDown || e.CapsLock ? L"M" : L"m"); break;
+				case KEY_N: Add(e.ShiftDown || e.CapsLock ? L"N" : L"n"); break;
+
+				case KEY_O: Add(e.ShiftDown || e.CapsLock ? L"O" : L"o"); break;
+				case KEY_P: Add(e.ShiftDown || e.CapsLock ? L"P" : L"p"); break;
+				case KEY_Q: Add(e.ShiftDown || e.CapsLock ? L"Q" : L"q"); break;
+				case KEY_R: Add(e.ShiftDown || e.CapsLock ? L"R" : L"r"); break;
+				case KEY_S: Add(e.ShiftDown || e.CapsLock ? L"S" : L"s"); break;
+				case KEY_T: Add(e.ShiftDown || e.CapsLock ? L"T" : L"t"); break;
+
+				case KEY_U: Add(e.ShiftDown || e.CapsLock ? L"U" : L"u"); break;
+				case KEY_V: Add(e.ShiftDown || e.CapsLock ? L"V" : L"v"); break;
+				case KEY_W: Add(e.ShiftDown || e.CapsLock ? L"W" : L"w"); break;
+				case KEY_X: Add(e.ShiftDown || e.CapsLock ? L"X" : L"x"); break;
+				case KEY_Y: Add(e.ShiftDown || e.CapsLock ? L"Y" : L"y"); break;
+				case KEY_Z: Add(e.ShiftDown || e.CapsLock ? L"Z" : L"z"); break;
 
 				default:
 					break;
@@ -893,7 +735,7 @@ namespace Apoc3D
 			ClampCursorPos(m_selectionStart);
 			ClampCursorPos(m_selectionEnd);
 
-			if (checkKeyboardSelection)
+			if (processKeyboardSelection)
 			{
 				if (!isKeyboardSelecting())
 				{
@@ -907,7 +749,7 @@ namespace Apoc3D
 			}
 			
 
-			if (changed)
+			if (m_changed)
 			{
 				eventContentChanged.Invoke();
 			}
@@ -1120,6 +962,7 @@ namespace Apoc3D
 				m_lines.Clear();
 				m_lines.Add(m_text);
 			}
+			m_changed = true;
 		}
 	}
 }

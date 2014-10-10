@@ -27,17 +27,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "CollectionsCommon.h"
-#include "HashMap.h"
-#include "List.h"
-#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Collections/HashMap.h"
+#include "apoc3d/Collections/List.h"
+#include "StringUtils.h"
 
 namespace Apoc3D
 {
-	namespace Collections
+	namespace Utility
 	{
 		template <typename T>
-		class EnumDualConversionHelper
+		class TypeDualConverter
 		{
 			struct EnumEqualityComparer
 			{
@@ -46,24 +45,26 @@ namespace Apoc3D
 			};
 
 		public:
-			typedef HashMap<String, T> CastTable;
-			typedef HashMap<T, String, EnumEqualityComparer> InverseCastTable;
-
+			typedef Apoc3D::Collections::HashMap<String, T> CastTable;
+			typedef Apoc3D::Collections::HashMap<T, String, EnumEqualityComparer> InverseCastTable;
+			typedef Apoc3D::Collections::List<String> NameList;
+			typedef Apoc3D::Collections::List<T> ValueList;
+			
 			typedef typename InverseCastTable::Iterator Iterator;
 			typedef typename InverseCastTable::ValueAccessor NameAccessor;
 			typedef typename CastTable::ValueAccessor ValueAccessor;
 
-			explicit EnumDualConversionHelper(int32 capacity)
+			explicit TypeDualConverter(int32 capacity)
 				: m_cast(capacity), m_invCast(capacity) { }
 
-			EnumDualConversionHelper(std::initializer_list<std::pair<T, String>> list)
+			TypeDualConverter(std::initializer_list<std::pair<T, String>> list)
 				: m_cast(list.size()), m_invCast(list.size())
 			{
 				for (const auto& e : list)
 					AddPair(e.first, e.second);
 			}
 
-			EnumDualConversionHelper(std::initializer_list<std::pair<String, T>> list)
+			TypeDualConverter(std::initializer_list<std::pair<String, T>> list)
 				: m_cast(list.size()), m_invCast(list.size())
 			{
 				for (const auto& e : list)
@@ -71,18 +72,20 @@ namespace Apoc3D
 			}
 
 
-			bool SupportsName(const String& name) { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast.Contains(n); }
+			bool SupportsName(const String& name) const { String n = name; StringUtils::ToLowerCase(n); return m_cast.Contains(n); }
 
-			T Parse(const String& name) const { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast[n]; }
+			T Parse(const String& name) const { String n = name; StringUtils::ToLowerCase(n); return m_cast[n]; }
 			T ParseFlags(const String& combo, const String& delim) const;
 
-			bool TryParse(const String& name, T& r) const { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast.TryGetValue(n, r); }
+			bool TryParse(const String& name, T& r) const { String n = name; StringUtils::ToLowerCase(n); return m_cast.TryGetValue(n, r); }
 
 			const String& ToString(T e) const { return m_invCast[e]; }
 			String ToStringFlags(T flags, const String& delim) const;
 
-			void DumpNames(List<String>& names) const { m_invCast.FillValues(names); }
-			void DumpValues(List<T>& values) const { m_cast.FillValues(values); }
+			bool TryToString(T e, String& r) const { return m_invCast.TryGetValue(e, r); }
+			
+			void DumpNames(NameList& names) const { m_invCast.FillValues(names); }
+			void DumpValues(ValueList& values) const { m_cast.FillValues(values); }
 
 
 			NameAccessor getNameAccessor() const { return m_invCast.getValueAccessor(); }
@@ -97,7 +100,7 @@ namespace Apoc3D
 			void AddPair(const String& name, T v)
 			{
 				String cpy = name;
-				Apoc3D::Utility::StringUtils::ToLowerCase(cpy);
+				StringUtils::ToLowerCase(cpy);
 				m_cast.Add(cpy, v);
 				m_invCast.Add(v, name);
 			}
@@ -110,7 +113,7 @@ namespace Apoc3D
 		};
 
 		template <typename T>
-		class EnumToStringConversionHelper
+		class TypeToStringConverter
 		{
 			struct EnumEqualityComparer
 			{
@@ -119,21 +122,24 @@ namespace Apoc3D
 			};
 
 		public:
-			typedef HashMap<T, String, EnumEqualityComparer> CastTable;
+			typedef Apoc3D::Collections::HashMap<T, String, EnumEqualityComparer> CastTable;
+			typedef Apoc3D::Collections::List<String> NameList;
+			typedef Apoc3D::Collections::List<T> ValueList;
+
 			typedef typename CastTable::Iterator Iterator;
 			typedef typename CastTable::KeyAccessor NameAccessor;
 			typedef typename CastTable::ValueAccessor ValueAccessor;
-
-			explicit EnumToStringConversionHelper(int32 capacity)
+			
+			explicit TypeToStringConverter(int32 capacity)
 				: m_cast(capacity) { }
 
-			EnumToStringConversionHelper(std::initializer_list<std::pair<T, String>> list)
+			TypeToStringConverter(std::initializer_list<std::pair<T, String>> list)
 				: m_cast(list.size())
 			{
 				for (const auto& e : list)
 					m_cast.Add(e.first, e.second);
 			}
-			EnumToStringConversionHelper(std::initializer_list<std::pair<String, T>> list)
+			TypeToStringConverter(std::initializer_list<std::pair<String, T>> list)
 				: m_cast(list.size())
 			{
 				for (const auto& e : list)
@@ -144,8 +150,10 @@ namespace Apoc3D
 			const String& operator[](T e) const { return m_cast[e]; }
 			String ToStringFlags(T flags, const String& delim) const;
 
-			void DumpNames(List<String>& names) const { m_cast.FillValues(names); }
-			void DumpValues(List<T>& values) const { m_cast.FillKeys(values); }
+			bool TryToString(T e, String& r) const { return m_invCast.TryGetValue(e); }
+
+			void DumpNames(NameList& names) const { m_cast.FillValues(names); }
+			void DumpValues(ValueList& values) const { m_cast.FillKeys(values); }
 
 			NameAccessor getNameAccessor() const { return m_cast.getKeyAccessor(); }
 			ValueAccessor getValueAccessor() const { return m_cast.getValueAccessor(); }
@@ -162,7 +170,9 @@ namespace Apoc3D
 		class TypeParseConverter
 		{
 		public:
-			typedef HashMap<String, T> CastTable;
+			typedef Apoc3D::Collections::HashMap<String, T> CastTable;
+			typedef Apoc3D::Collections::List<T> ValueList;
+
 			typedef typename CastTable::Iterator Iterator;
 			typedef typename CastTable::KeyAccessor NameAccessor;
 			typedef typename CastTable::ValueAccessor ValueAccessor;
@@ -177,16 +187,14 @@ namespace Apoc3D
 					m_cast.Add(e.second, e.first);
 			}
 
-			bool SupportsName(const String& name) { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast.Contains(n); }
+			bool SupportsName(const String& name) const { String n = name; StringUtils::ToLowerCase(n); return m_cast.Contains(n); }
 
-			T Parse(const String& name) const { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast[n]; }
+			T Parse(const String& name) const { String n = name; StringUtils::ToLowerCase(n); return m_cast[n]; }
 			T ParseFlags(const String& combo, const String& delim) const;
-			bool TryParse(const String& name, T& r) const { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast.TryGetValue(name, r); }
+			bool TryParse(const String& name, T& r) const { String n = name; StringUtils::ToLowerCase(n); return m_cast.TryGetValue(name, r); }
 
-			//void DumpNames(List<String>& names) const { m_cast.FillValues(names); }
-			void DumpValues(List<T>& values) const { m_cast.FillKeys(values); }
+			void DumpValues(ValueList& values) const { m_cast.FillKeys(values); }
 
-			//NameAccessor getNameAccessor() const { return m_cast.getKeyAccessor(); }
 			ValueAccessor getValueAccessor() const { return m_cast.getValueAccessor(); }
 
 			Iterator begin() const { return m_cast.begin(); }
@@ -238,9 +246,9 @@ namespace Apoc3D
 
 
 		template <typename T>
-		T EnumDualConversionHelper<T>::ParseFlags(const String& combo, const String& delim) const 
+		T TypeDualConverter<T>::ParseFlags(const String& combo, const String& delim) const 
 		{
-			return ParseFlagFields<T, EnumDualConversionHelper<T>, &EnumDualConversionHelper<T>::Parse>(combo, this, delim);
+			return ParseFlagFields<T, TypeDualConverter<T>, &TypeDualConverter<T>::Parse>(combo, this, delim);
 		}
 
 		template <typename T>
@@ -250,10 +258,10 @@ namespace Apoc3D
 		}
 
 		template <typename T>
-		String EnumDualConversionHelper<T>::ToStringFlags(T flags, const String& delim) const { return FlagFieldsToString(flags, *this, delim); }
+		String TypeDualConverter<T>::ToStringFlags(T flags, const String& delim) const { return FlagFieldsToString(flags, *this, delim); }
 
 		template <typename T>
-		String EnumToStringConversionHelper<T>::ToStringFlags(T flags, const String& delim) const { return FlagFieldsToString(flags, *this, delim); }
+		String TypeToStringConverter<T>::ToStringFlags(T flags, const String& delim) const { return FlagFieldsToString(flags, *this, delim); }
 
 	}
 }

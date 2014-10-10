@@ -221,6 +221,7 @@ namespace Apoc3D
 			Collections::BitArray<KEYCODE_MAX> m_lastKeyState;
 
 		};
+
 	}
 }
 #endif

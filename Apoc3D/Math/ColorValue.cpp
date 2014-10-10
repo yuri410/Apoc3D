@@ -1,4 +1,5 @@
 #include "ColorValue.h"
+#include "apoc3d/Utility/TypeConverter.h"
 
 namespace Apoc3D
 {
@@ -6,7 +7,7 @@ namespace Apoc3D
 	{
 #define CVE(x) { x, String(L#x + 3) } // remove prefix CV_
 
-		const Apoc3D::Collections::TypeParseConverter<ColorValue> ColorValueConverter = 
+		const Apoc3D::Utility::TypeParseConverter<ColorValue> ColorValueConverter = 
 		{
 			{ CVE(CV_TransparentBlack) },
 			{ CVE(CV_TransparentWhite) },

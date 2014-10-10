@@ -25,8 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Config/ABCConfigurationFormat.h"
 #include "apoc3d/Config/XmlConfigurationFormat.h"
-#include "apoc3d/Collections/EnumConverterHelper.h"
-#include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
 #include "apoc3d/Graphics/VertexFormats.h"
 #include "apoc3d/Vfs/File.h"
@@ -34,7 +32,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/Math/RandomUtils.h"
-
+#include "apoc3d/Utility/TypeConverter.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 #include <ctime>
 
@@ -1426,86 +1425,54 @@ namespace Apoc3D
 	void ProjectItem::NotifyModified() { m_timeStamp = time(0); }
 
 	//////////////////////////////////////////////////////////////////////////
-	struct ProjectItemTypeConv : public EnumDualConversionHelper<ProjectItemType>
-	{
-		ProjectItemTypeConv() 
-			: EnumDualConversionHelper<ProjectItemType>(10)
-		{
-			AddPair(L"Custom", ProjectItemType::Custom);
-			AddPair(L"Folder", ProjectItemType::Folder);
-			AddPair(L"Material", ProjectItemType::Material);
-			AddPair(L"MaterialSet", ProjectItemType::MaterialSet);
-			AddPair(L"Texture", ProjectItemType::Texture);
-			AddPair(L"Model", ProjectItemType::Model);
-			AddPair(L"tanim", ProjectItemType::TransformAnimation);
-			AddPair(L"manim", ProjectItemType::MaterialAnimation);
-			AddPair(L"Effect", ProjectItemType::Effect);
-			AddPair(L"EffectList", ProjectItemType::EffectList);
-			AddPair(L"CustomEffect", ProjectItemType::CustomEffect);
-			AddPair(L"ShaderNetwork", ProjectItemType::ShaderNetwork);
-			AddPair(L"Font", ProjectItemType::Font);
-			AddPair(L"FontGlyphDist", ProjectItemType::FontGlyphDist);
-			AddPair(L"UILayout", ProjectItemType::UILayout);
-			AddPair(L"Copy", ProjectItemType::Copy);
-		}
-	} static ProjectItemTypeConvInst;
 
-	struct TextureFilterTypeConv : public EnumDualConversionHelper<TextureFilterType>
+	const TypeDualConverter<ProjectItemType> ProjectItemTypeConvInst =
 	{
-		TextureFilterTypeConv() 
-			: EnumDualConversionHelper<TextureFilterType>(10)
-		{
-			AddPair(L"Nearest", TextureFilterType::Nearest);
-			AddPair(L"BSpline", TextureFilterType::BSpline);
-			AddPair(L"Box", TextureFilterType::Box);
-		}
-	} static TextureFilterTypeConvInst;
+		{ L"Custom", ProjectItemType::Custom },
+		{ L"Folder", ProjectItemType::Folder },
+		{ L"Material", ProjectItemType::Material },
+		{ L"MaterialSet", ProjectItemType::MaterialSet },
+		{ L"Texture", ProjectItemType::Texture },
+		{ L"Model", ProjectItemType::Model },
+		{ L"tanim", ProjectItemType::TransformAnimation },
+		{ L"manim", ProjectItemType::MaterialAnimation },
+		{ L"Effect", ProjectItemType::Effect },
+		{ L"EffectList", ProjectItemType::EffectList },
+		{ L"CustomEffect", ProjectItemType::CustomEffect },
+		{ L"ShaderNetwork", ProjectItemType::ShaderNetwork },
+		{ L"Font", ProjectItemType::Font },
+		{ L"FontGlyphDist", ProjectItemType::FontGlyphDist },
+		{ L"UILayout", ProjectItemType::UILayout },
+		{ L"Copy", ProjectItemType::Copy },
+	};
 
-	struct TextureBuildMethodConv : public EnumDualConversionHelper<TextureBuildMethod>
+	const TypeDualConverter<TextureFilterType> TextureFilterTypeConvInst = 
 	{
-		TextureBuildMethodConv() 
-			: EnumDualConversionHelper<TextureBuildMethod>(10)
-		{
-			AddPair(L"Default", TextureBuildMethod::BuiltIn);
-			AddPair(L"D3D", TextureBuildMethod::D3D);
-			AddPair(L"Devil", TextureBuildMethod::Devil);
-		}
-	} static TextureBuildMethodConvInst;
+		{ L"Nearest", TextureFilterType::Nearest },
+		{ L"BSpline", TextureFilterType::BSpline },
+		{ L"Box", TextureFilterType::Box }
+	};
 
-	struct TextureCompressionTypeConv : public EnumDualConversionHelper<TextureCompressionType>
+	const TypeDualConverter<TextureBuildMethod> TextureBuildMethodConvInst =
 	{
-		TextureCompressionTypeConv() 
-			: EnumDualConversionHelper<TextureCompressionType>(10)
-		{
-			AddPair(L"None", TextureCompressionType::None);
-			AddPair(L"LZ4", TextureCompressionType::LZ4);
-			AddPair(L"RLE", TextureCompressionType::RLE);
-		}
-	} static TextureCompressionTypeConvInst;
+		{ L"Default", TextureBuildMethod::BuiltIn },
+		{ L"D3D", TextureBuildMethod::D3D },
+		{ L"Devil", TextureBuildMethod::Devil }
+	};
 
-	struct MeshBuildMethodConv : public EnumDualConversionHelper<MeshBuildMethod>
+	const TypeDualConverter<TextureCompressionType> TextureCompressionTypeConvInst =
 	{
-		MeshBuildMethodConv() 
-			: EnumDualConversionHelper<MeshBuildMethod>(10)
-		{
-			AddPair(L"Ass", MeshBuildMethod::ASS);
-			AddPair(L"FBX", MeshBuildMethod::FBX);
-			AddPair(L"D3D", MeshBuildMethod::D3D);
-		}
-	} static MeshBuildMethodConvInst;
+		{ L"None", TextureCompressionType::None },
+		{ L"LZ4", TextureCompressionType::LZ4 },
+		{ L"RLE", TextureCompressionType::RLE }
+	};
 
-	/*struct FontStyleConv : public EnumDualConversionHelper<FontStyle>
+	const TypeDualConverter<MeshBuildMethod> MeshBuildMethodConvInst =
 	{
-		FontStyleConv() 
-			: EnumDualConversionHelper<FontStyle>(10)
-		{
-			AddPair(L"Regular", FontStyle::Regular);
-			AddPair(L"Bold", FontStyle::Bold);
-			AddPair(L"Italic", FontStyle::Italic);
-			AddPair(L"BoldItalic", FontStyle::BoldItalic);
-			AddPair(L"Strikeout", FontStyle::Strikeout);
-		}
-	} static FontStyleConvInst;*/
+		{ L"Ass", MeshBuildMethod::ASS },
+		{ L"FBX", MeshBuildMethod::FBX },
+		{ L"D3D", MeshBuildMethod::D3D }
+	};
 
 
 	ProjectItemType ProjectTypeUtils::ParseProjectItemType(const String& str) { return ProjectItemTypeConvInst.Parse(str); }
@@ -1529,7 +1496,4 @@ namespace Apoc3D
 	String ProjectTypeUtils::ToString(MeshBuildMethod method) { return MeshBuildMethodConvInst.ToString(method); }
 	void ProjectTypeUtils::FillModelBuildMethodNames(List<String>& names) { MeshBuildMethodConvInst.DumpNames(names); }
 
-	/*FontStyle ProjectTypeUtils::ParseFontStyle(const String& str) { return FontStyleConvInst.Parse(str); }
-	String ProjectTypeUtils::ToString(FontStyle type) { return FontStyleConvInst.ToString(type); }
-	void ProjectTypeUtils::FillFontStyleNames(List<String>& names) { return FontStyleConvInst.DumpNames(names); }*/
 }

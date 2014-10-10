@@ -34,6 +34,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Math/ColorValue.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Utility/TypeConverter.h"
 #include "FontManager.h"
 
 using namespace Apoc3D::Config;

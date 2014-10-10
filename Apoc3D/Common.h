@@ -167,7 +167,6 @@ namespace Apoc3D
 		template<typename T> class Queue;
 		template<typename T> class Stack;
 
-		template<typename T> class EnumDualConversionHelper;
 	}
 	namespace Core
 	{		
@@ -447,6 +446,13 @@ namespace Apoc3D
 		class InputDialogBox;
 	}
 
+	namespace Utility
+	{
+		template <typename T> class TypeDualConverter;
+		template <typename T> class TypeToStringConverter;
+		template <typename T> class TypeParseConverter;
+
+	}
 };
 
 #endif

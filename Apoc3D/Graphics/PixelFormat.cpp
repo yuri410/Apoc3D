@@ -4,15 +4,16 @@
 #include "apoc3d/Math/MathCommon.h"
 #include "apoc3d/Math/Color.h"
 #include "apoc3d/Collections/HashMap.h"
-#include "apoc3d/Collections/EnumConverterHelper.h"
+#include "apoc3d/Utility/TypeConverter.h"
 
 using namespace Apoc3D::Math;
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		const Apoc3D::Collections::EnumDualConversionHelper<PixelFormat> PixelFormatEnumConverter = 
+		const TypeDualConverter<PixelFormat> PixelFormatEnumConverter =
 		{
 			{ L"L8", FMT_Luminance8 },
 			{ L"L16", FMT_Luminance16 },
@@ -68,7 +69,7 @@ namespace Apoc3D
 			{ L"Unknown", FMT_Unknown }
 		};
 
-		const Apoc3D::Collections::EnumDualConversionHelper<DepthFormat> DepthFormatEnumConveter =
+		const TypeDualConverter<DepthFormat> DepthFormatEnumConveter =
 		{
 			{ L"D15S1", DEPFMT_Depth15Stencil1 },
 			{ L"D16", DEPFMT_Depth16 },
@@ -105,7 +106,7 @@ namespace Apoc3D
 			void createPixelFormatSizeTable(int st[]);
 			void createDepthFormatSizeTable(int st[]);
 			void createChannelCountTable(int st[]);
-			void createChannelBit(int st[FMT_Count][4]);
+			void createChannelBit(int (&st)[FMT_Count][4]);
 
 		} static FormatSizeTable;
 		
@@ -284,15 +285,15 @@ namespace Apoc3D
 			st[(int)FMT_Palette8Alpha8] = 2;
 		}
 
-		void setArr(int arr[4], int a, int b, int c, int d)
+		static void setArr(int (&arr)[4], int a, int b, int c, int d)
 		{
 			arr[0] = a; arr[1] = b; arr[2] = c; arr[3] = d;
 		}
-		void setArr(int arr[4], int a)
+		static void setArr(int(&arr)[4], int a)
 		{
 			arr[0] = arr[1] = arr[2] = arr[3] = a;
 		}
-		void SizeTable::createChannelBit(int st[][4])
+		void SizeTable::createChannelBit(int (&st)[FMT_Count][4])
 		{
 			setArr(st[(int)FMT_Unknown], 0);
 			setArr(st[(int)FMT_Luminance8], 8,0,0,0);
