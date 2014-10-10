@@ -49,7 +49,10 @@ namespace Apoc3D
 			KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T,
 			KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z,
 
-			KEY_DIVIDE, KEY_MULTIPLY, KEY_SUBTRACT, KEY_ADD, KEY_DECIMAL, KEY_NUMPADEQUALS,
+			KEY_DIVIDE, KEY_MULTIPLY, KEY_SUBTRACT, KEY_ADD, KEY_DECIMAL,
+			KEY_NUMPADCOMMA, KEY_NUMPADEQUALS,
+
+			KEY_RETURN, KEY_NUMPADENTER,
 
 			KEY_MINUS, KEY_EQUALS,
 			KEY_LBRACKET, KEY_RBRACKET, KEY_BACKSLASH,
@@ -62,9 +65,7 @@ namespace Apoc3D
 			KEY_HOME, KEY_END,
 
 			KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN,
-			KEY_BACK, KEY_DELETE,
-
-			KEY_RETURN, KEY_NUMPADENTER
+			KEY_BACK, KEY_DELETE
 		};
 
 		void KeyboardHelper::Update(const GameTime* time)
@@ -668,6 +669,8 @@ namespace Apoc3D
 				case KEY_SUBTRACT: if (e.NumLock) Add(L"-"); break;
 				case KEY_ADD: if (e.NumLock) Add(L"+"); break;
 				case KEY_DECIMAL: if (e.NumLock) Add(L"."); break;
+				case KEY_NUMPADCOMMA: if (e.NumLock) Add(L","); break;
+				case KEY_NUMPADEQUALS: if (e.NumLock) Add(L"="); break;
 
 				case KEY_0: Add(e.ShiftDown ? L")" : L"0"); break;
 				case KEY_1: Add(e.ShiftDown ? L"!" : L"1"); break;
