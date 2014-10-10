@@ -191,7 +191,7 @@ namespace Apoc3D
 
 			void SetValueFromCurrentPosition(Apoc3D::Input::Mouse* mouse, const Apoc3D::Math::Rectangle& area);
 
-			bool hasLargeTicks() const { return LargeTickDivisionCount > 1; }
+			bool hasLargeTicks() const { return LargeTickDivisionCount > 0; }
 
 			bool m_isMouseHovering = false;
 			bool m_isDragging = false;
