@@ -59,6 +59,9 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle GetItemArea(int32 i) const;
 			Apoc3D::Math::Rectangle GetItemArea(const Apoc3D::Math::Rectangle& cntArea, int32 i) const;
 
+			void setWidth(int w) { m_size.X = w; }
+			void setHeight(int h) { m_size.Y = h; }
+
 			TextRenderSettings ItemSettings;
 
 			UIGraphic BackgroundGraphic;

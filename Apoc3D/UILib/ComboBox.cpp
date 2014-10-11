@@ -197,10 +197,15 @@ namespace Apoc3D
 		{
 			int32 idx = m_listBox->getSelectedIndex();
 			if (idx != -1)
-			{
 				return &m_items[idx];
-			}
 			return nullptr;
+		}
+
+		void ComboBox::setWidth(int32 w)
+		{
+			m_textbox->setWidth(w);
+			m_listBox->setWidth(w);
+			m_size.X = w;
 		}
 
 		void ComboBox::ListBox_Select(ListBox* ctrl) { Close(); }

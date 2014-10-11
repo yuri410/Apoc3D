@@ -77,6 +77,7 @@ namespace Apoc3D
 
 			String* getSelectedItem() const;
 
+			void setWidth(int32 w);
 			
 
 			ComboBoxEvent eventSelectionChanged;
