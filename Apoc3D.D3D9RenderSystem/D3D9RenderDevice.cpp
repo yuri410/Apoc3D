@@ -38,6 +38,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9VertexDeclaration.h"
 #include "D3D9Sprite.h"
 #include "VolatileResource.h"
+#include "RawSettings.h"
 
 #include "apoc3d/Exception.h"
 
@@ -559,23 +560,23 @@ namespace Apoc3D
 				{
 					GraphicsDeviceManager* devMgr = m_device->getGraphicsDeviceManager();
 					IDirect3D9* d3d9 = devMgr->getDirect3D();
-					const DeviceSettings* setting = devMgr->getCurrentSetting();
+					const RawSettings* setting = devMgr->getCurrentSetting();
 
 					if (depthFormat == DEPFMT_Count)
 					{
-						HRESULT hr = d3d9->CheckDeviceFormat(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType, setting->D3D9.AdapterFormat, 
+						HRESULT hr = d3d9->CheckDeviceFormat(setting->AdapterOrdinal, setting->DeviceType, setting->AdapterFormat, 
 							D3DUSAGE_RENDERTARGET, D3DRTYPE_SURFACE, D3D9Utils::ConvertPixelFormat(pixFormat) );
 						return hr == S_OK;
 					}
 					else
 					{
-						HRESULT hr = d3d9->CheckDeviceFormat( setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType, setting->D3D9.AdapterFormat,
+						HRESULT hr = d3d9->CheckDeviceFormat( setting->AdapterOrdinal, setting->DeviceType, setting->AdapterFormat,
 							D3DUSAGE_DEPTHSTENCIL, D3DRTYPE_SURFACE, D3D9Utils::ConvertDepthFormat(depthFormat));
 
 						if (FAILED(hr))
 							return false;
 
-						hr = d3d9->CheckDeviceFormat(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType, setting->D3D9.AdapterFormat, 
+						hr = d3d9->CheckDeviceFormat(setting->AdapterOrdinal, setting->DeviceType, setting->AdapterFormat, 
 							D3DUSAGE_RENDERTARGET, D3DRTYPE_SURFACE, D3D9Utils::ConvertPixelFormat(pixFormat) );
 						return hr == S_OK;
 					}
@@ -659,7 +660,7 @@ namespace Apoc3D
 			D3D9Capabilities::ProfileTable* D3D9Capabilities::EnsureCurrentAAModes(PixelFormat pixFormat, DepthFormat depthFormat)
 			{
 				GraphicsDeviceManager* devMgr = m_device->getGraphicsDeviceManager();
-				const DeviceSettings* setting = devMgr->getCurrentSetting();
+				const RawSettings* setting = devMgr->getCurrentSetting();
 
 				uint32 tableCode = packAAProfileTableHash(setting->AdapterOrdinal, pixFormat, depthFormat);
 				ProfileTable* profileTable = nullptr;
@@ -670,7 +671,7 @@ namespace Apoc3D
 				}
 				return profileTable;
 			}
-			D3D9Capabilities::ProfileTable* D3D9Capabilities::GenerateSupportedAAModes(const DeviceSettings* setting, PixelFormat pixFormat, DepthFormat depthFormat)
+			D3D9Capabilities::ProfileTable* D3D9Capabilities::GenerateSupportedAAModes(const RawSettings* setting, PixelFormat pixFormat, DepthFormat depthFormat)
 			{
 				GraphicsDeviceManager* devMgr = m_device->getGraphicsDeviceManager();
 				IDirect3D9* d3d9 = devMgr->getDirect3D();
@@ -756,7 +757,7 @@ namespace Apoc3D
 					if (depthFormat == DEPFMT_Count)
 					{
 						HRESULT hr = d3d9->CheckDeviceMultiSampleType(setting->AdapterOrdinal, setting->DeviceType, 
-							D3D9Utils::ConvertPixelFormat(pixFormat), setting->Windowed, type, &qualityCount);
+							D3D9Utils::ConvertPixelFormat(pixFormat), setting->PresentParameters.Windowed, type, &qualityCount);
 						supported = SUCCEEDED(hr);
 					}
 					else
@@ -765,9 +766,9 @@ namespace Apoc3D
 						DWORD quality2;
 
 						HRESULT hr1 = d3d9->CheckDeviceMultiSampleType(setting->AdapterOrdinal, setting->DeviceType, 
-							D3D9Utils::ConvertPixelFormat(pixFormat), setting->Windowed, type, &quality);
+							D3D9Utils::ConvertPixelFormat(pixFormat), setting->PresentParameters.Windowed, type, &quality);
 						HRESULT hr2 = d3d9->CheckDeviceMultiSampleType(setting->AdapterOrdinal, setting->DeviceType, 
-							D3D9Utils::ConvertDepthFormat(depthFormat), setting->Windowed, type, &quality2);
+							D3D9Utils::ConvertDepthFormat(depthFormat), setting->PresentParameters.Windowed, type, &quality2);
 
 						if (SUCCEEDED(hr1) && SUCCEEDED(hr2) && quality2 == quality && quality > 0)
 						{
@@ -877,12 +878,12 @@ namespace Apoc3D
 			{
 				GraphicsDeviceManager* devMgr = m_device->getGraphicsDeviceManager();
 				IDirect3D9* d3d9 = devMgr->getDirect3D();
-				const DeviceSettings* setting = devMgr->getCurrentSetting();
+				const RawSettings* setting = devMgr->getCurrentSetting();
 
 				if (format == FMT_Unknown)
 					format = FMT_A8R8G8B8;
 
-				HRESULT hr = d3d9->CheckDeviceFormat(setting->AdapterOrdinal, setting->DeviceType, setting->D3D9.AdapterFormat,
+				HRESULT hr = d3d9->CheckDeviceFormat(setting->AdapterOrdinal, setting->DeviceType, setting->AdapterFormat,
 					0, D3DRTYPE_TEXTURE, D3D9Utils::ConvertPixelFormat(format));
 				if (FAILED(hr))
 				{
@@ -914,7 +915,7 @@ namespace Apoc3D
 						if (!allow24bits && curBpp==3)
 							continue;
 
-						hr = d3d9->CheckDeviceFormat(setting->AdapterOrdinal, setting->DeviceType, setting->D3D9.AdapterFormat, 
+						hr = d3d9->CheckDeviceFormat(setting->AdapterOrdinal, setting->DeviceType, setting->AdapterFormat, 
 							0, D3DRTYPE_TEXTURE, D3D9Utils::ConvertPixelFormat(curFmt));
 						if (FAILED(hr))
 							continue;

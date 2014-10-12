@@ -109,19 +109,23 @@ namespace Apoc3D
 			{
 				static bool Equals(const RenderDisplayMode& x, const RenderDisplayMode& y)
 				{
-					return x.AdapterOrdinal == y.AdapterOrdinal && 
-						x.FSAASampleCount == y.FSAASampleCount && 
-						x.FullScreen == y.FullScreen && 
-						x.Width == y.Width && x.Height == y.Height;
+					return x.AdapterIndex == y.AdapterIndex &&
+						x.Width == y.Width && x.Height == y.Height &&
+						x.FSAASampleCount == y.FSAASampleCount &&
+						x.RefreshRate == y.RefreshRate &&
+						x.FullScreen == y.FullScreen;
 				}
 				static int64 GetHashCode(const RenderDisplayMode& obj)
 				{
 					FNVHash32 h;
-					h.Accumulate(&obj.AdapterOrdinal, sizeof(obj.AdapterOrdinal));
-					h.Accumulate(&obj.FSAASampleCount, sizeof(obj.FSAASampleCount));
-					h.Accumulate(&obj.FullScreen, sizeof(obj.FullScreen));
-					h.Accumulate(&obj.Height, sizeof(obj.Height));
+					h.Accumulate(&obj.AdapterIndex, sizeof(obj.AdapterIndex));
 					h.Accumulate(&obj.Width, sizeof(obj.Width));
+					h.Accumulate(&obj.Height, sizeof(obj.Height));
+
+					h.Accumulate(&obj.FSAASampleCount, sizeof(obj.FSAASampleCount));
+					h.Accumulate(&obj.RefreshRate, sizeof(obj.RefreshRate));
+
+					h.Accumulate(&obj.FullScreen, sizeof(obj.FullScreen));
 					return h.GetResult();
 				}
 			};
@@ -133,46 +137,40 @@ namespace Apoc3D
 
 				const List<AdapterInfo*>& adpInfos = Enumeration::getAdapters();
 
-				HashSet<RenderDisplayMode, RenderDisplayModeEqualityComparer> modeTabls(adpInfos.getCount()*2);
-				for (int i=0;i<adpInfos.getCount();i++)
+				HashSet<RenderDisplayMode, RenderDisplayModeEqualityComparer> modeTabls(adpInfos.getCount() * 2);
+				for (const AdapterInfo* ai : adpInfos)
 				{
-					const AdapterInfo* ai = adpInfos[i];
-					
 					RenderDisplayMode mode;
 					mode.AdapterName = ai->Description;
-					mode.AdapterOrdinal = ai->AdapterOrdinal;
+					mode.AdapterIndex = ai->AdapterIndex;
 
-					for (int j=0;j<ai->DisplayModes.getCount();j++)
+					for (D3DDISPLAYMODE d3dmode : ai->DisplayModes)
 					{
-						mode.Height = ai->DisplayModes[j].Height;
-						mode.Width = ai->DisplayModes[j].Width;
+						mode.Height = d3dmode.Height;
+						mode.Width = d3dmode.Width;
+						mode.RefreshRate = d3dmode.RefreshRate;
 
-						for (int k=0;k<ai->Devices.getCount();k++)
+						for (const DeviceInfo* di : ai->Devices)
 						{
-							const DeviceInfo* di = ai->Devices[k];
 							if (di->DeviceType == D3DDEVTYPE_HAL)
 							{
-								for (int m =0;m<di->DeviceSettings.getCount();m++)
+								for (SettingsCombo* sc : di->SettingCombos)
 								{
-									SettingsCombo* sc = di->DeviceSettings[m];
-									for (int n=0;n<sc->MultisampleTypes.getCount();n++)
+									for (int n = 0; n < sc->MultisampleTypes.getCount(); n++)
 									{
 										mode.FSAASampleCount = D3D9Utils::ConvertBackMultiSample(sc->MultisampleTypes[n]);
 										if (!modeTabls.Contains(mode))
 											modeTabls.Add(mode);
 									}
 								}
-								
 							}
 						}
 					}
 				}
 
 				List<RenderDisplayMode> result;
-				for (HashSet<RenderDisplayMode, RenderDisplayModeEqualityComparer>::Enumerator e = modeTabls.GetEnumerator(); e.MoveNext();)
-				{
-					result.Add(e.getCurrent());
-				}
+				for (const RenderDisplayMode& rdm : modeTabls)
+					result.Add(rdm);
 				return result;
 			}
 

@@ -40,13 +40,9 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 			GraphicsDeviceManager::GraphicsDeviceManager(Game* game, IDirect3D9* d3d9)
-				: m_currentSetting(0),m_device(0),
-				m_deviceLost(false), m_ignoreSizeChanges(false),
-				m_direct3D9(d3d9), m_userIgnoreMoniorChanges(false)
+				: m_direct3D9(d3d9), m_game(game)
 			{
 				assert(game);
-
-				m_game = game;
 
 				m_game->eventFrameStart()->Bind(this, &GraphicsDeviceManager::game_FrameStart);
 				m_game->eventFrameEnd()->Bind(this, &GraphicsDeviceManager::game_FrameEnd);
@@ -56,20 +52,19 @@ namespace Apoc3D
 				m_windowedStyle = GetWindowLong(m_game->getWindow()->getHandle(), GWL_STYLE);
 			}
 
-			GraphicsDeviceManager::~GraphicsDeviceManager(void)
+			GraphicsDeviceManager::~GraphicsDeviceManager()
 			{
 				m_game->eventFrameStart()->Unbind(this, &GraphicsDeviceManager::game_FrameStart);
 				m_game->eventFrameEnd()->Unbind(this, &GraphicsDeviceManager::game_FrameEnd);
 				m_game->getWindow()->eventUserResized()->Unbind(this, &GraphicsDeviceManager::Window_UserResized);
 				m_game->getWindow()->eventMonitorChanged()->Unbind(this, &GraphicsDeviceManager::Window_MonitorChanged);
 
-				if (m_currentSetting)
-					delete m_currentSetting;
+				DELETE_AND_NULL(m_currentSetting);
 			}
 
 			void GraphicsDeviceManager::PropogateSettings()
 			{
-				m_currentSetting->BackBufferCount = m_currentSetting->D3D9.PresentParameters.BackBufferCount;
+				/*m_currentSetting->BackBufferCount = m_currentSetting->D3D9.PresentParameters.BackBufferCount;
 				m_currentSetting->BackBufferWidth = m_currentSetting->D3D9.PresentParameters.BackBufferWidth;
 				m_currentSetting->BackBufferHeight = m_currentSetting->D3D9.PresentParameters.BackBufferHeight;
 				m_currentSetting->BackBufferFormat = m_currentSetting->D3D9.PresentParameters.BackBufferFormat;
@@ -79,18 +74,17 @@ namespace Apoc3D
 				m_currentSetting->MultiSampleType = m_currentSetting->D3D9.PresentParameters.MultiSampleType;
 				m_currentSetting->RefreshRate = m_currentSetting->D3D9.PresentParameters.FullScreen_RefreshRateInHz;
 				m_currentSetting->Windowed = m_currentSetting->D3D9.PresentParameters.Windowed ? true : false;
-
+				*/
 			}
-			bool GraphicsDeviceManager::CanDeviceBeReset(const DeviceSettings* const oldset,
-				const DeviceSettings* const newset) const
+			bool GraphicsDeviceManager::CanDeviceBeReset(const RawSettings* oldset, const RawSettings* newset) const
 			{
 				if (!oldset)
 					return false;
 
 				return m_device &&
-					oldset->D3D9.AdapterOrdinal == newset->D3D9.AdapterOrdinal &&
-					oldset->D3D9.DeviceType == newset->D3D9.DeviceType &&
-					oldset->D3D9.CreationFlags == newset->D3D9.CreationFlags;
+					oldset->AdapterOrdinal == newset->AdapterOrdinal &&
+					oldset->DeviceType == newset->DeviceType &&
+					oldset->CreationFlags == newset->CreationFlags;
 			}
 
 			HRESULT GraphicsDeviceManager::ResetDevice()
@@ -101,7 +95,7 @@ namespace Apoc3D
 
 				m_game->OnDeviceLost();
 
-				HRESULT hr = m_device->Reset(&m_currentSetting->D3D9.PresentParameters);
+				HRESULT hr = m_device->Reset(&m_currentSetting->PresentParameters);
 				
 				PropogateSettings();
 
@@ -133,7 +127,7 @@ namespace Apoc3D
 				const List<AdapterInfo*> adInfo = Enumeration::getAdapters();
 				for (int32 i=0;i<adInfo.getCount();i++)
 				{
-					if (m_direct3D9->GetAdapterMonitor(adInfo[i]->AdapterOrdinal) == mon)
+					if (m_direct3D9->GetAdapterMonitor(adInfo[i]->AdapterIndex) == mon)
 					{
 						adapter = adInfo[i];
 						break;
@@ -142,7 +136,7 @@ namespace Apoc3D
 
 				if (adapter)
 				{
-					return adapter->AdapterOrdinal;
+					return adapter->AdapterIndex;
 				}
 
 				return -1;
@@ -208,7 +202,7 @@ namespace Apoc3D
 				if (m_ignoreSizeChanges || !EnsureDevice()) // || (m_currentSetting->Windowed)
 					return;
 
-				DeviceSettings newSettings = *m_currentSetting;
+				RawSettings newSettings = *m_currentSetting;
 
 				RECT rect;
 				GetClientRect(m_game->getWindow()->getHandle(), &rect);
@@ -216,18 +210,18 @@ namespace Apoc3D
 				int32 width = rect.right - rect.left;
 				int32 height = rect.bottom - rect.top;
 
-				if (width != newSettings.BackBufferWidth || height != newSettings.BackBufferHeight)
+				if (width != newSettings.PresentParameters.BackBufferWidth || height != newSettings.PresentParameters.BackBufferHeight)
 				{
-					newSettings.BackBufferWidth = 0;
-					newSettings.BackBufferHeight = 0;
-					newSettings.D3D9.PresentParameters.BackBufferWidth = 0;
-					newSettings.D3D9.PresentParameters.BackBufferHeight = 0;
+					//newSettings.BackBufferWidth = 0;
+					//newSettings.BackBufferHeight = 0;
+					newSettings.PresentParameters.BackBufferWidth = 0;
+					newSettings.PresentParameters.BackBufferHeight = 0;
 					CreateDevice(newSettings);
 				}
 			}
 			void GraphicsDeviceManager::Window_MonitorChanged()
 			{
-				if (!EnsureDevice() || !m_currentSetting->Windowed || m_ignoreSizeChanges)
+				if (!EnsureDevice() || !m_currentSetting->PresentParameters.Windowed || m_ignoreSizeChanges)
 					return;
 
 				if (m_userIgnoreMoniorChanges)
@@ -235,13 +229,13 @@ namespace Apoc3D
 
 				HMONITOR windowMonitor = MonitorFromWindow(m_game->getWindow()->getHandle(), MONITOR_DEFAULTTOPRIMARY);
 
-				DeviceSettings newSettings = *m_currentSetting;
+				RawSettings newSettings = *m_currentSetting;
 				int adapterOrdinal = GetAdapterOrdinal(windowMonitor);
 
 				if (adapterOrdinal == -1)
 					return;
 
-				newSettings.D3D9.AdapterOrdinal = adapterOrdinal;
+				newSettings.AdapterOrdinal = adapterOrdinal;
 
 				CreateDevice(newSettings);
 			}
@@ -249,9 +243,9 @@ namespace Apoc3D
 			void GraphicsDeviceManager::InitializeDevice()
 			{
 				HWND sss = m_game->getWindow()->getHandle();
-				HRESULT result = m_direct3D9->CreateDevice(m_currentSetting->D3D9.AdapterOrdinal,
-					m_currentSetting->D3D9.DeviceType, sss ,
-					m_currentSetting->D3D9.CreationFlags, &m_currentSetting->D3D9.PresentParameters, &m_device);
+				HRESULT result = m_direct3D9->CreateDevice(m_currentSetting->AdapterOrdinal,
+					m_currentSetting->DeviceType, sss ,
+					m_currentSetting->CreationFlags, &m_currentSetting->PresentParameters, &m_device);
 
 				if (result == D3DERR_DEVICELOST)
 				{
@@ -265,23 +259,23 @@ namespace Apoc3D
 				{
 					std::wstringstream wss;
 
-					if (m_currentSetting->D3D9.DeviceType == D3DDEVTYPE_HAL)
+					if (m_currentSetting->DeviceType == D3DDEVTYPE_HAL)
 						wss << L"HAL";
-					else if (m_currentSetting->D3D9.DeviceType == D3DDEVTYPE_REF)
+					else if (m_currentSetting->DeviceType == D3DDEVTYPE_REF)
 						wss << L"REF";
-					else if (m_currentSetting->D3D9.DeviceType == D3DDEVTYPE_SW)
+					else if (m_currentSetting->DeviceType == D3DDEVTYPE_SW)
 						wss << L"SW";
 
-					if (m_currentSetting->D3D9.CreationFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING)
+					if (m_currentSetting->CreationFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING)
 					{
-						if (m_currentSetting->D3D9.DeviceType == D3DDEVTYPE_HAL)
+						if (m_currentSetting->DeviceType == D3DDEVTYPE_HAL)
 							wss << L" (hw vp)";
 						else
 							wss << L" (simulated hw vp)";
 					}
-					else if (m_currentSetting->D3D9.CreationFlags & D3DCREATE_MIXED_VERTEXPROCESSING)
+					else if (m_currentSetting->CreationFlags & D3DCREATE_MIXED_VERTEXPROCESSING)
 					{
-						if (m_currentSetting->D3D9.DeviceType == D3DDEVTYPE_HAL)
+						if (m_currentSetting->DeviceType == D3DDEVTYPE_HAL)
 							wss << L" (mixed vp)";
 						else
 							wss << L" (simulated mixed vp)";
@@ -292,13 +286,12 @@ namespace Apoc3D
 					}
 
 					const List<AdapterInfo*> adapters = Enumeration::getAdapters();
-					for (int32 i=0;i<adapters.getCount();i++)
+					for (const AdapterInfo* adp : adapters)
 					{
-						if (adapters[i]->AdapterOrdinal
-							== (int32)m_currentSetting->D3D9.AdapterOrdinal)
+						if (adp->AdapterIndex == (int32)m_currentSetting->AdapterOrdinal)
 						{
 							wss << L": ";
-							wss << adapters[i]->Description;
+							wss << adp->Description;
 							break;
 						}
 					}
@@ -311,16 +304,16 @@ namespace Apoc3D
  				m_game->Initialize();
 				m_game->LoadContent();
 			}
-			void GraphicsDeviceManager::CreateDevice(const DeviceSettings& settings)
+			void GraphicsDeviceManager::CreateDevice(const RawSettings& settings)
 			{
-				DeviceSettings* oldSettings = m_currentSetting;
-				m_currentSetting = new DeviceSettings(settings);
+				RawSettings* oldSettings = m_currentSetting;
+				m_currentSetting = new RawSettings(settings);
 
 				m_ignoreSizeChanges = true;
 
 				bool keepCurrentWindowSize = false;
-				if (settings.BackBufferWidth == 0 &&
-					settings.BackBufferHeight == 0)
+				if (settings.PresentParameters.BackBufferWidth == 0 &&
+					settings.PresentParameters.BackBufferHeight == 0)
 					keepCurrentWindowSize = true;
 
 				GameWindow* wnd = m_game->getWindow();
@@ -329,14 +322,14 @@ namespace Apoc3D
 
 
 				// check if we are going to windowed or fullscreen mode
-				if (settings.Windowed)
+				if (settings.PresentParameters.Windowed)
 				{
-					if (oldSettings && !oldSettings->Windowed)
+					if (oldSettings && !oldSettings->PresentParameters.Windowed)
 						SetWindowLong(wnd->getHandle(), GWL_STYLE, (uint32)m_windowedStyle);
 				}
 				else
 				{
-					if (!oldSettings || oldSettings->Windowed)
+					if (!oldSettings || oldSettings->PresentParameters.Windowed)
 					{
 						//m_savedTopmost = wnd->getTopMost();
 						long style = GetWindowLong(wnd->getHandle(), GWL_STYLE);
@@ -368,20 +361,20 @@ namespace Apoc3D
 				}
 
 
-				if (settings.Windowed)
+				if (settings.PresentParameters.Windowed)
 				{
-					if (oldSettings && !oldSettings->Windowed)
+					if (oldSettings && !oldSettings->PresentParameters.Windowed)
 					{
-						m_fullscreenWindowWidth = oldSettings->BackBufferWidth;
-						m_fullscreenWindowHeight = oldSettings->BackBufferHeight;
+						m_fullscreenWindowWidth = oldSettings->PresentParameters.BackBufferWidth;
+						m_fullscreenWindowHeight = oldSettings->PresentParameters.BackBufferHeight;
 					}
 				}
 				else
 				{
-					if (oldSettings && oldSettings->Windowed)
+					if (oldSettings && oldSettings->PresentParameters.Windowed)
 					{
-						m_windowedWindowWidth = oldSettings->BackBufferWidth;
-						m_windowedWindowHeight = oldSettings->BackBufferHeight;
+						m_windowedWindowWidth = oldSettings->PresentParameters.BackBufferWidth;
+						m_windowedWindowHeight = oldSettings->PresentParameters.BackBufferHeight;
 					}
 				}
 
@@ -409,14 +402,14 @@ namespace Apoc3D
 				UpdateDeviceInformation();
 
 				// check if we changed from fullscreen to windowed mode
-				if (oldSettings && !oldSettings->Windowed && settings.Windowed)
+				if (oldSettings && !oldSettings->PresentParameters.Windowed && settings.PresentParameters.Windowed)
 				{
 					SetWindowPlacement(wnd->getHandle(), &m_windowedPlacement);
 					//wnd->setTopMost(m_savedTopmost);
 				}
 
 				// check if we need to resize
-				if (settings.Windowed && !keepCurrentWindowSize)
+				if (settings.PresentParameters.Windowed && !keepCurrentWindowSize)
 				{
 					int width;
 					int height;
@@ -459,8 +452,8 @@ namespace Apoc3D
 					}
 
 					// check if we have a different desired size
-					if (width != settings.BackBufferWidth ||
-						height != settings.BackBufferHeight)
+					if (width != settings.PresentParameters.BackBufferWidth ||
+						height != settings.PresentParameters.BackBufferHeight)
 					{
 						if (IsIconic(wnd->getHandle()))
 							ShowWindow(wnd->getHandle(), SW_RESTORE);
@@ -468,8 +461,8 @@ namespace Apoc3D
 							ShowWindow(wnd->getHandle(), SW_RESTORE);
 
 						RECT rect = RECT();
-						rect.right = settings.BackBufferWidth;
-						rect.bottom = settings.BackBufferHeight;
+						rect.right = settings.PresentParameters.BackBufferWidth;
+						rect.bottom = settings.PresentParameters.BackBufferHeight;
 						AdjustWindowRect(& rect,
 							GetWindowLong(wnd->getHandle(), GWL_STYLE), false);
 
@@ -494,12 +487,12 @@ namespace Apoc3D
 						clientHeight = r.bottom - r.top;
 
 						// check if the size was modified by Windows
-						if (clientWidth != settings.BackBufferWidth ||
-							clientHeight != settings.BackBufferHeight)
+						if (clientWidth != settings.PresentParameters.BackBufferWidth ||
+							clientHeight != settings.PresentParameters.BackBufferHeight)
 						{
-							DeviceSettings newSettings = settings;
-							newSettings.BackBufferWidth = 0;
-							newSettings.BackBufferHeight = 0;
+							RawSettings newSettings = settings;
+							newSettings.PresentParameters.BackBufferWidth = 0;
+							newSettings.PresentParameters.BackBufferHeight = 0;
 
 							CreateDevice(newSettings);
 						}
@@ -511,7 +504,7 @@ namespace Apoc3D
 					ShowWindow(wnd->getHandle(), SW_SHOW);
 
 				// set the execution state of the thread
-				if (!m_currentSetting->Windowed)
+				if (!m_currentSetting->PresentParameters.Windowed)
 					SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
 				else
 					SetThreadExecutionState(ES_CONTINUOUS);
@@ -521,46 +514,54 @@ namespace Apoc3D
 				if (oldSettings)
 					delete oldSettings;
 			}
-			void GraphicsDeviceManager::ChangeDevice(const DeviceSettings& settings, const DeviceSettings* minimumSettings)
+			void GraphicsDeviceManager::ChangeDevice(const RenderParameters& settings, const RenderParameters* minimumSettings)
 			{
 				if (minimumSettings)
 				{
-					Enumeration::setMinimumSettings(*minimumSettings);
+					Enumeration::MinimumSettings.Set(*minimumSettings);
 				}
 				else
 				{
-					Enumeration::ClearMinimumSetting();
+					Enumeration::MinimumSettings.IsSet = false;
 				}
-				DeviceSettings validSettings;
+				RawSettings validSettings;
 				Enumeration::FindValidSettings(m_direct3D9, settings, validSettings);
-				validSettings.D3D9.PresentParameters.hDeviceWindow = m_game->getWindow()->getHandle();
+				validSettings.PresentParameters.hDeviceWindow = m_game->getWindow()->getHandle();
 				CreateDevice(validSettings);
 			}
 			void GraphicsDeviceManager::ChangeDevice(bool windowed, int desiredWidth, int desiredHeight)
 			{
-				DeviceSettings desiredSettings = DeviceSettings();
-				desiredSettings.Windowed = (windowed);
-				desiredSettings.BackBufferWidth = (desiredWidth);
-				desiredSettings.BackBufferHeight = (desiredHeight);
+				RenderParameters desiredSettings;
+				desiredSettings.IsWindowed = windowed;
+				desiredSettings.BackBufferWidth = desiredWidth;
+				desiredSettings.BackBufferHeight = desiredHeight;
 
 				ChangeDevice(desiredSettings, 0);
 			}
-			void GraphicsDeviceManager::ChangeDevice(const DeviceSettings &prefer)
+			void GraphicsDeviceManager::ChangeDevice(const RenderParameters &prefer)
 			{
 				ChangeDevice(prefer, 0);
 			}
+			void GraphicsDeviceManager::ChangeDevice(const RawSettings& settings)
+			{
+				RawSettings validSettings;
+				Enumeration::FindValidSettings(m_direct3D9, settings, validSettings);
+				validSettings.PresentParameters.hDeviceWindow = m_game->getWindow()->getHandle();
+				CreateDevice(validSettings);
+			}
+
 			void GraphicsDeviceManager::ToggleFullScreen()
 			{
 				assert(EnsureDevice());
 
-				DeviceSettings newSettings = *m_currentSetting;
-				newSettings.Windowed =  !newSettings.Windowed;
+				RawSettings newSettings = *m_currentSetting;
+				newSettings.PresentParameters.Windowed = !newSettings.PresentParameters.Windowed;
 
-				int width = newSettings.Windowed ? m_windowedWindowWidth :  m_fullscreenWindowWidth;
-				int height = newSettings.Windowed ?  m_windowedWindowHeight :  m_fullscreenWindowHeight;
+				int width = newSettings.PresentParameters.Windowed ? m_windowedWindowWidth : m_fullscreenWindowWidth;
+				int height = newSettings.PresentParameters.Windowed ? m_windowedWindowHeight : m_fullscreenWindowHeight;
 
-				newSettings.BackBufferWidth =  width;
-				newSettings.BackBufferHeight =  height;
+				newSettings.PresentParameters.BackBufferWidth = width;
+				newSettings.PresentParameters.BackBufferHeight = height;
 
 				ChangeDevice(newSettings);
 			}

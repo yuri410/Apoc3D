@@ -157,7 +157,7 @@ namespace Apoc3D
 				typedef HashMap<uint32, ProfileTable*> ProfileCacheTable;
 
 				ProfileTable* EnsureCurrentAAModes(PixelFormat pixFormat, DepthFormat depthFormat);
-				ProfileTable* GenerateSupportedAAModes(const DeviceSettings* setting, PixelFormat pixFormat, DepthFormat depthFormat);
+				ProfileTable* GenerateSupportedAAModes(const RawSettings* setting, PixelFormat pixFormat, DepthFormat depthFormat);
 
 				void RefreshCaps();
 				

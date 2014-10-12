@@ -162,7 +162,7 @@ namespace Apoc3D
 				else
 				{
 					GraphicsDeviceManager* dmgr = m_device->getGraphicsDeviceManager();
-					const DeviceSettings* sets = dmgr->getCurrentSetting();
+					const RawSettings* sets = dmgr->getCurrentSetting();
 
 					D3D9Capabilities* caps = m_device->getD3D9Capabilities();
 					const D3D9Capabilities::AAProfile* aamode = caps->LookupAAProfile(getMultisampleMode(), getColorFormat(), getDepthFormat());
@@ -178,14 +178,14 @@ namespace Apoc3D
 					if (m_hasColor)
 					{
 						HRESULT hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
-							sets->D3D9.AdapterOrdinal, sets->D3D9.DeviceType, D3D9Utils::ConvertPixelFormat(getColorFormat()), sets->D3D9.PresentParameters.Windowed, aamode->SampleType, &quality);
+							sets->AdapterOrdinal, sets->DeviceType, D3D9Utils::ConvertPixelFormat(getColorFormat()), sets->PresentParameters.Windowed, aamode->SampleType, &quality);
 						if (hr != S_OK || quality == 0)
 							throw AP_EXCEPTION(ExceptID::NotSupported, L"");
 					}
 					if (m_hasDepth)
 					{
 						HRESULT hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
-							sets->D3D9.AdapterOrdinal, sets->D3D9.DeviceType, D3D9Utils::ConvertDepthFormat(getDepthFormat()), sets->D3D9.PresentParameters.Windowed, aamode->SampleType, &quality2);
+							sets->AdapterOrdinal, sets->DeviceType, D3D9Utils::ConvertDepthFormat(getDepthFormat()), sets->PresentParameters.Windowed, aamode->SampleType, &quality2);
 						if (hr != S_OK || quality2 == 0)
 							throw AP_EXCEPTION(ExceptID::NotSupported, L"");
 					}
@@ -331,18 +331,18 @@ namespace Apoc3D
 					}
 
 					GraphicsDeviceManager* dmgr = m_device->getGraphicsDeviceManager();
-					const DeviceSettings* sets = dmgr->getCurrentSetting();
+					const RawSettings* sets = dmgr->getCurrentSetting();
 					DWORD quality;
 					DWORD quality2;
 					HRESULT hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
-						sets->D3D9.AdapterOrdinal, sets->D3D9.DeviceType, D3D9Utils::ConvertPixelFormat(format), sets->D3D9.PresentParameters.Windowed, aamode->SampleType, &quality);
+						sets->AdapterOrdinal, sets->DeviceType, D3D9Utils::ConvertPixelFormat(format), sets->PresentParameters.Windowed, aamode->SampleType, &quality);
 					if (hr != S_OK || quality == 0)
 					{
 						logRTFailure(format, depthFormat, multisampleMode);
 						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
 					}
 					hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
-						sets->D3D9.AdapterOrdinal, sets->D3D9.DeviceType, D3D9Utils::ConvertDepthFormat(depthFormat), sets->D3D9.PresentParameters.Windowed, aamode->SampleType, &quality2);
+						sets->AdapterOrdinal, sets->DeviceType, D3D9Utils::ConvertDepthFormat(depthFormat), sets->PresentParameters.Windowed, aamode->SampleType, &quality2);
 
 					if (hr != S_OK || quality2 == 0)
 					{
@@ -400,9 +400,9 @@ namespace Apoc3D
 
 					DWORD quality;
 					GraphicsDeviceManager* dmgr = m_device->getGraphicsDeviceManager();
-					const DeviceSettings* sets = dmgr->getCurrentSetting();
+					const RawSettings* sets = dmgr->getCurrentSetting();
 					HRESULT hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
-						sets->D3D9.AdapterOrdinal, sets->D3D9.DeviceType, D3D9Utils::ConvertPixelFormat(format), sets->D3D9.PresentParameters.Windowed, aamode->SampleType, &quality);
+						sets->AdapterOrdinal, sets->DeviceType, D3D9Utils::ConvertPixelFormat(format), sets->PresentParameters.Windowed, aamode->SampleType, &quality);
 					if (hr != S_OK || quality == 0)
 					{
 						logRTFailure(format, DEPFMT_Count, multisampleMode);

@@ -22,16 +22,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "Enumeration.h"
+#include "D3D9Utils.h"
 
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Math/MathCommon.h"
 
 #include "apoc3d/Exception.h"
 
-#include <vector>
-#include <algorithm>
-
-using namespace Apoc3D::Utility;
 using namespace Apoc3D;
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -39,373 +38,529 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			static int GetDepthBits(D3DFORMAT format);
+			static int GetStencilBits(D3DFORMAT format);
+			static int GetColorBits(D3DFORMAT format);
+			static int32 CompareDisplayMode(const D3DDISPLAYMODE& x, const D3DDISPLAYMODE& y);
 
-			bool CompareDisplayMode(const D3DDISPLAYMODE& x, const D3DDISPLAYMODE& y)
+			//////////////////////////////////////////////////////////////////////////
+
+			void EnumerationMinimumSettings::Set(const RenderParameters& params)
 			{
-				if (x.Width > y.Width)
-					return true;//1;
-				if (x.Width < y.Width)
-					return false;//-1;
-				if (x.Height > y.Height)
-					return true;//1;
-				if (x.Height < y.Height)
-					return false;//-1;
-				if (x.Format > y.Format)
-					return true;//1;
-				if (x.Format < y.Format)
-					return false;//-1;
-				if (x.RefreshRate > y.RefreshRate)
-					return true;//1;
-				if (x.RefreshRate < y.RefreshRate)
-					return false;//-1;
+				IsSet = true;
+				Width = params.BackBufferWidth;
+				Height = params.BackBufferHeight;
 
-				return false;
+				ColorFormat = D3D9Utils::ConvertPixelFormat(params.ColorBufferFormat);
+				DepthFormat = D3D9Utils::ConvertDepthFormat(params.DepthBufferFormat);
+				MultisampleType = D3D9Utils::ConvertMultisample(params.FSAASampleCount);
+				RefreshRate = params.RefreshRate;;
 			}
 
-			bool Enumeration::m_hasMinimumSettings = false;
-			DeviceSettings Enumeration::m_minimumSettings;
+			EnumerationMinimumSettings Enumeration::MinimumSettings;
 			List<AdapterInfo*> Enumeration::m_adapters;
 			bool Enumeration::m_hasEnumerated = false;
+
 
 			void Enumeration::Enumerate(IDirect3D9* d3d9)
 			{
 				if (m_hasEnumerated)
 				{
-					for (int i=0;i<m_adapters.getCount();i++)
-					{
-						AdapterInfo* ai = m_adapters[i];
-						for (int j=0;j<ai->Devices.getCount();j++)
-						{
-							DeviceInfo* di = ai->Devices[j];
-							for (int k=0;k<di->DeviceSettings.getCount();k++)
-							{
-								delete di->DeviceSettings[k];
-							}
-							delete di;
-						}
-						delete ai;
-					}
-					m_adapters.Clear();
+					m_adapters.DeleteAndClear();
 				}
-				D3DFORMAT allowedAdapterFormat[] =  { D3DFMT_X8R8G8B8, D3DFMT_X1R5G5B5, D3DFMT_R5G6B5, 
-					D3DFMT_A2R10G10B10 };
-
-				List<D3DFORMAT> adapterFormats;
 
 				UINT count = d3d9->GetAdapterCount();
 
-				for (size_t i=0;i<count;i++)
+				for (size_t i = 0; i < count; i++)
 				{
-					D3DADAPTER_IDENTIFIER9 adapter;
-					HRESULT hr = d3d9->GetAdapterIdentifier(i, 0, &adapter);
-					assert(SUCCEEDED(hr));
+					AdapterInfo* adapter = new AdapterInfo(d3d9, i, MinimumSettings);
 
-					AdapterInfo* info = new AdapterInfo();
-					info->AdapterOrdinal = i;
-					info->Details = adapter;					
-
-					for (size_t j=0;j<(sizeof(allowedAdapterFormat)/sizeof(D3DFORMAT));j++)
+					if (adapter->Devices.getCount() > 0)
 					{
-						uint32 dispCount = d3d9->GetAdapterModeCount(i, allowedAdapterFormat[j]);
+						m_adapters.Add(adapter);
+					}
+					else
+					{
+						delete adapter;
+					}
+				}
 
-						for (size_t k=0;k<dispCount;k++)
+				// add subscripts to adapter description with the same name
+				bool unique = true;
+				if (m_adapters.getCount() > 0)
+				{
+					for (int32 i = 0; i < m_adapters.getCount() && !unique; i++)
+					{
+						for (int32 j = i + 1; j < m_adapters.getCount(); j++)
 						{
-							D3DDISPLAYMODE mode;
-							hr = d3d9->EnumAdapterModes(i, allowedAdapterFormat[j], k, &mode);
-							assert(SUCCEEDED(hr));
-
-							// check minimum
-							if (m_hasMinimumSettings)
+							if (m_adapters[i]->Description == m_adapters[j]->Description)
 							{
-								if ((int)mode.Width < m_minimumSettings.BackBufferWidth ||
-									(int)mode.Height < m_minimumSettings.BackBufferHeight ||
-									(int)mode.RefreshRate < m_minimumSettings.RefreshRate)
-								{
-									continue;
-								}
-							}
-
-							info->DisplayModes.Add(mode);
-
-							if (adapterFormats.IndexOf(mode.Format) == -1)
-							{
-								adapterFormats.Add(mode.Format);
+								unique = false;
+								break;
 							}
 						}
 					}
-
-					D3DDISPLAYMODE currentMode;
-					hr = d3d9->GetAdapterDisplayMode(i, &currentMode);
-					assert(SUCCEEDED(hr));
-
-					if (adapterFormats.IndexOf(currentMode.Format) == -1)
-					{
-						adapterFormats.Add(currentMode.Format);
-					}
-
-					// sort info.DisplayModes
-					//sort(info->DisplayModes.begin(), info->DisplayModes.end(), CompareDisplayMode);
-					std::vector<D3DDISPLAYMODE> dmodes(info->DisplayModes.getCount());
-					for (int32 i=0;i<info->DisplayModes.getCount();i++)
-					{
-						dmodes[i] = info->DisplayModes[i];
-					}
-					std::sort(dmodes.begin(), dmodes.end(), CompareDisplayMode);
-					for (int32 i=0;i<info->DisplayModes.getCount();i++)
-					{
-						info->DisplayModes[i] = dmodes[i];
-					}
-
-					EnumerateDevices(d3d9, info, adapterFormats);
-
-					if (info->Devices.getCount())
-					{
-						m_adapters.Add(info);
-					}
 				}
-				
-				bool unique = false;
-				for (int32 i=0;i<m_adapters.getCount() && !unique; i++)
+
+				if (!unique)
 				{
-					for (int32 j=i+1;j<m_adapters.getCount();j++)
+					HashMap<String, int32> descCounter;
+					for (AdapterInfo* ai : m_adapters)
 					{
-						if (!strcmp(m_adapters[i]->Details.Description, m_adapters[j]->Details.Description))
+						if (!unique)
 						{
-							unique = false;
-							break;
+							int32 count = 0;
+
+							if (!descCounter.TryGetValue(ai->Description, count))
+							{
+								descCounter.Add(ai->Description, count);
+							}
+							else
+							{
+								count++;
+								descCounter[ai->Description] = count;
+							}
+
+							String temp = L" [" + StringUtils::IntToString(count + 1) + L"]";
+							ai->Description.append(temp);
 						}
-					}
-				}
-				for (int32 i=0;i<m_adapters.getCount(); i++)
-				{
-					wchar_t buffer[512];
-					mbstowcs(buffer, m_adapters[i]->Details.Description, 512);
-					m_adapters[i]->Description = buffer;
-					
-					if (!unique)
-					{
-						String temp = StringUtils::IntToString(m_adapters[i]->AdapterOrdinal);
-						m_adapters[i]->Description.append(temp);
 					}
 				}
 			}
 
-			void Enumeration::EnumerateDevices(IDirect3D9* d3d9, AdapterInfo* info, List<D3DFORMAT>& adapterFormats)
-			{
-				D3DDEVTYPE devTypes[] = { D3DDEVTYPE_HAL, D3DDEVTYPE_REF };
+			//////////////////////////////////////////////////////////////////////////
 
-				for (size_t i=0;i<sizeof(devTypes)/sizeof(D3DDEVTYPE);i++)
+			AdapterInfo::AdapterInfo(IDirect3D9* d3d9, int32 index, const EnumerationMinimumSettings& minSettings)
+				: AdapterIndex(index)
+			{
+				const D3DFORMAT allowedAdapterFormat[] =
 				{
-					if (m_hasMinimumSettings && m_minimumSettings.DeviceType != devTypes[i])
+					D3DFMT_X8R8G8B8, D3DFMT_X1R5G5B5,
+					D3DFMT_R5G6B5, D3DFMT_A2R10G10B10
+				};
+				const D3DDEVTYPE allowedDevTypes[] = { D3DDEVTYPE_HAL, D3DDEVTYPE_REF };
+
+				D3DADAPTER_IDENTIFIER9 rawAdapter;
+				HRESULT hr = d3d9->GetAdapterIdentifier(index, 0, &rawAdapter);
+				assert(SUCCEEDED(hr));
+
+				Description = StringUtils::toPlatformWideString(rawAdapter.Description);
+
+
+				D3DFormatHashSet adapterFormats;
+				for (D3DFORMAT fmt : allowedAdapterFormat)
+				{
+					uint32 dispCount = d3d9->GetAdapterModeCount(index, fmt);
+
+					for (size_t k = 0; k < dispCount; k++)
+					{
+						D3DDISPLAYMODE mode;
+						hr = d3d9->EnumAdapterModes(index, fmt, k, &mode);
+						assert(SUCCEEDED(hr));
+
+						// check minimum
+						if (minSettings.IsSet)
+						{
+							if ((int)mode.Width < minSettings.Width ||
+								(int)mode.Height < minSettings.Height ||
+								(int)mode.RefreshRate < minSettings.RefreshRate)
+							{
+								continue;
+							}
+						}
+
+						DisplayModes.Add(mode);
+
+						if (!adapterFormats.Contains(mode.Format))
+							adapterFormats.Add(mode.Format);
+					}
+				}
+
+				D3DDISPLAYMODE currentMode;
+				hr = d3d9->GetAdapterDisplayMode(index, &currentMode);
+				assert(SUCCEEDED(hr));
+
+				if (!adapterFormats.Contains(currentMode.Format))
+					adapterFormats.Add(currentMode.Format);
+
+				DisplayModes.Sort(CompareDisplayMode);
+
+				for (D3DDEVTYPE devType : allowedDevTypes)
+				{
+					if (minSettings.IsSet && minSettings.DeviceType != devType)
 					{
 						continue;
 					}
 
-					DeviceInfo* devInfo = new DeviceInfo();
-					devInfo->DeviceType = devTypes[i];
+					DeviceInfo* devInfo = new DeviceInfo(d3d9, devType, this, adapterFormats, minSettings);
 
-					HRESULT hr = d3d9->GetDeviceCaps(info->AdapterOrdinal, devTypes[i], &devInfo->Capabilities);
-					assert(SUCCEEDED(hr));
-					
-					EnumerateSettingsCombos(d3d9, info, devInfo, adapterFormats);
-
-					if (devInfo->DeviceSettings.getCount())
+					if (devInfo->SettingCombos.getCount() > 0)
 					{
-						info->Devices.Add(devInfo);
+						Devices.Add(devInfo);
+					}
+					else
+					{
+						delete devInfo;
 					}
 				}
 			}
-
-			void Enumeration::EnumerateSettingsCombos(IDirect3D9* d3d9, AdapterInfo* adapterInfo, 
-				DeviceInfo* deviceInfo, List<D3DFORMAT>& adapterFormats)
+			
+			AdapterInfo::~AdapterInfo()
 			{
-				D3DFORMAT backBufferFormats[] = { D3DFMT_A8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_A2R10G10B10,
-					D3DFMT_R5G6B5, D3DFMT_A1R5G5B5, D3DFMT_X1R5G5B5 };
+				Devices.DeleteAndClear();
+			}
 
-				for (int32 i=0;i<adapterFormats.getCount();i++)
+			//////////////////////////////////////////////////////////////////////////
+
+			DeviceInfo::DeviceInfo(IDirect3D9* d3d9, D3DDEVTYPE devType, AdapterInfo* parentAdp,
+				const D3DFormatHashSet& adapterFormats, const EnumerationMinimumSettings& minSettings)
+				: DeviceType(devType)
+			{
+				HRESULT hr = d3d9->GetDeviceCaps(parentAdp->AdapterIndex, devType, &Capabilities);
+				assert(SUCCEEDED(hr));
+
+				const D3DFORMAT allowedBackBufferFormats[] =
 				{
-					for (int32 j=0;j<sizeof(backBufferFormats)/sizeof(D3DFORMAT);j++)
+					D3DFMT_A8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_A2R10G10B10,
+					D3DFMT_R5G6B5, D3DFMT_A1R5G5B5, D3DFMT_X1R5G5B5
+				};
+
+				for (D3DFORMAT adpFmt : adapterFormats)
+				{
+					for (D3DFORMAT bbfmt : allowedBackBufferFormats)
 					{
 						for (int windowed = 0; windowed < 2; windowed++)
 						{
-							if (windowed == 0 && adapterInfo->DisplayModes.getCount() == 0)
+							if (windowed == 0 && parentAdp->DisplayModes.getCount() == 0)
 								continue;
 
-							HRESULT hr = d3d9->CheckDeviceType(adapterInfo->AdapterOrdinal, deviceInfo->DeviceType,
-								adapterFormats[i], backBufferFormats[j], (windowed == 1) ? TRUE : FALSE);
+							HRESULT hr = d3d9->CheckDeviceType(parentAdp->AdapterIndex, DeviceType,
+								adpFmt, bbfmt, (windowed == 1) ? TRUE : FALSE);
 
 							if (FAILED(hr))
 								continue;
-							
 
-							hr = d3d9->CheckDeviceFormat(adapterInfo->AdapterOrdinal, deviceInfo->DeviceType,
-								adapterFormats[i], D3DUSAGE_QUERY_POSTPIXELSHADER_BLENDING, D3DRTYPE_TEXTURE, backBufferFormats[j]);
-							
+							hr = d3d9->CheckDeviceFormat(parentAdp->AdapterIndex, DeviceType,
+								adpFmt, D3DUSAGE_QUERY_POSTPIXELSHADER_BLENDING, D3DRTYPE_TEXTURE, bbfmt);
+
 							if (FAILED(hr))
 								continue;
 
 
-							SettingsCombo* combo = new SettingsCombo();
-							combo->AdapterOrdinal = adapterInfo->AdapterOrdinal;
-							combo->DeviceType = deviceInfo->DeviceType;
-							combo->AdapterFormat = adapterFormats[i];
-							combo->BackBufferFormat = backBufferFormats[j];
-							combo->Windowed = (windowed == 1);
-							combo->AdapterInfo = adapterInfo;
-							combo->DeviceInfo = deviceInfo;
+							SettingsCombo combo(d3d9,
+								parentAdp->AdapterIndex, DeviceType, adpFmt, bbfmt, windowed == 1,
+								parentAdp, this);
 
-							BuildDepthStencilFormatList(d3d9, combo);
-							BuildMultisampleTypeList(d3d9, combo);
-							BuildPresentIntervalList(d3d9, combo);
-
-							if (combo->MultisampleTypes.getCount()==0)
+							if (combo.MultisampleTypes.getCount() == 0)
 								continue;
 
-							if (m_hasMinimumSettings)
+							if (minSettings.IsSet)
 							{
-								if (m_minimumSettings.BackBufferFormat != D3DFMT_UNKNOWN &&
-									m_minimumSettings.BackBufferFormat != backBufferFormats[j])
+								if (minSettings.ColorFormat != D3DFMT_UNKNOWN &&
+									minSettings.ColorFormat != bbfmt)
 								{
 									continue;
 								}
 
 								// check depth stencil format against D3DFMT_UNKNOWN
-								if (m_minimumSettings.DepthStencilFormat != D3DFMT_UNKNOWN &&
-									combo->DepthStencilFormats.IndexOf(m_minimumSettings.DepthStencilFormat) == -1)
+								if (minSettings.DepthFormat != D3DFMT_UNKNOWN &&
+									combo.DepthStencilFormats.IndexOf(minSettings.DepthFormat) == -1)
 								{
 									continue;
 								}
 
-								if (combo->MultisampleTypes.IndexOf(m_minimumSettings.MultiSampleType) == -1)
+								if (combo.MultisampleTypes.IndexOf(minSettings.MultisampleType) == -1)
 								{
 									continue;
 								}
 							}
 
-							deviceInfo->DeviceSettings.Add(combo);
+							SettingCombos.Add(new SettingsCombo(combo));
 						}
 					}
 				}
 			}
 
-			void Enumeration::BuildDepthStencilFormatList(IDirect3D9* d3d9, SettingsCombo* combo)
+			DeviceInfo::~DeviceInfo()
 			{
-				// check every possible depth stencil format see if passes. Add valid one into the list
-
-				D3DFORMAT possibleDepthStencilFormats[] = { D3DFMT_D16, D3DFMT_D15S1, D3DFMT_D24X8,
-					D3DFMT_D24S8, D3DFMT_D24X4S4, D3DFMT_D32 };
-
-				for (size_t i=0; i<sizeof(possibleDepthStencilFormats)/sizeof(D3DFORMAT); i++)
-				{
-					const D3DFORMAT& format = possibleDepthStencilFormats[i];
-					HRESULT hr = d3d9->CheckDeviceFormat(
-						combo->AdapterOrdinal, combo->DeviceType, combo->AdapterFormat, 
-						D3DUSAGE_DEPTHSTENCIL, D3DRTYPE_SURFACE, format);
-
-					if (FAILED(hr))
-						continue;
-
-					hr = d3d9->CheckDepthStencilMatch(
-						combo->AdapterOrdinal, combo->DeviceType, combo->AdapterFormat, combo->BackBufferFormat, format);
-
-					if (FAILED(hr))
-					{
-						continue;
-					}
-					
-					combo->DepthStencilFormats.Add(format);
-				}
+				SettingCombos.DeleteAndClear();
 			}
 
-			void Enumeration::BuildMultisampleTypeList(IDirect3D9* d3d9, SettingsCombo* combo)
+			//////////////////////////////////////////////////////////////////////////
+
+			SettingsCombo::SettingsCombo(IDirect3D9* d3d9,
+				int32 adpIdx, D3DDEVTYPE devType, D3DFORMAT adpFmt, D3DFORMAT bbFmt, bool wnd,
+				AdapterInfo* parentAdp, DeviceInfo* parentDev)
+				: AdapterIndex(adpIdx), DeviceType(devType), AdapterFormat(adpFmt), BackBufferFormat(bbFmt), Windowed(wnd),
+				ParentAdapterInfo(parentAdp), ParentDeviceInfo(parentDev)
 			{
-				D3DMULTISAMPLE_TYPE possibleMultisampleTypes[] = {
-					D3DMULTISAMPLE_NONE,			D3DMULTISAMPLE_NONMASKABLE,
-					D3DMULTISAMPLE_2_SAMPLES,		D3DMULTISAMPLE_3_SAMPLES,
-					D3DMULTISAMPLE_4_SAMPLES,		D3DMULTISAMPLE_5_SAMPLES,
-					D3DMULTISAMPLE_6_SAMPLES,		D3DMULTISAMPLE_7_SAMPLES,
-					D3DMULTISAMPLE_8_SAMPLES,		D3DMULTISAMPLE_9_SAMPLES,
-					D3DMULTISAMPLE_10_SAMPLES,		D3DMULTISAMPLE_11_SAMPLES,
-					D3DMULTISAMPLE_12_SAMPLES,		D3DMULTISAMPLE_13_SAMPLES,
-					D3DMULTISAMPLE_14_SAMPLES,		D3DMULTISAMPLE_15_SAMPLES,
-					D3DMULTISAMPLE_16_SAMPLES
-				};
+				{ // depth stencil formats
+					// check every possible depth stencil format see if passes. Add valid one into the list
+					const D3DFORMAT possibleDepthStencilFormats[] = { D3DFMT_D16, D3DFMT_D15S1, D3DFMT_D24X8,
+						D3DFMT_D24S8, D3DFMT_D24X4S4, D3DFMT_D32 };
 
-				DWORD quality;
-				for (size_t i=0;i<sizeof(possibleMultisampleTypes)/sizeof(D3DMULTISAMPLE_TYPE);i++)
-				{
-					const D3DMULTISAMPLE_TYPE& type = possibleMultisampleTypes[i];
-					HRESULT hr = d3d9->CheckDeviceMultiSampleType(combo->AdapterOrdinal, combo->DeviceType, 
-						combo->AdapterFormat, combo->Windowed, type, &quality);
-
-					if (SUCCEEDED(hr))
+					for (D3DFORMAT format : possibleDepthStencilFormats)
 					{
-						combo->MultisampleTypes.Add(type);
-						combo->MultisampleQualities.Add(quality);
+						HRESULT hr = d3d9->CheckDeviceFormat(
+							AdapterIndex, DeviceType, AdapterFormat,
+							D3DUSAGE_DEPTHSTENCIL, D3DRTYPE_SURFACE, format);
+
+						if (FAILED(hr))
+							continue;
+
+						hr = d3d9->CheckDepthStencilMatch(
+							AdapterIndex, DeviceType, AdapterFormat, BackBufferFormat, format);
+
+						if (FAILED(hr))
+							continue;
+
+						DepthStencilFormats.Add(format);
 					}
 				}
 
-			}
+				{ // multisample types
+					const D3DMULTISAMPLE_TYPE possibleMultisampleTypes[] = {
+						D3DMULTISAMPLE_NONE, D3DMULTISAMPLE_NONMASKABLE,
+						D3DMULTISAMPLE_2_SAMPLES, D3DMULTISAMPLE_3_SAMPLES,
+						D3DMULTISAMPLE_4_SAMPLES, D3DMULTISAMPLE_5_SAMPLES,
+						D3DMULTISAMPLE_6_SAMPLES, D3DMULTISAMPLE_7_SAMPLES,
+						D3DMULTISAMPLE_8_SAMPLES, D3DMULTISAMPLE_9_SAMPLES,
+						D3DMULTISAMPLE_10_SAMPLES, D3DMULTISAMPLE_11_SAMPLES,
+						D3DMULTISAMPLE_12_SAMPLES, D3DMULTISAMPLE_13_SAMPLES,
+						D3DMULTISAMPLE_14_SAMPLES, D3DMULTISAMPLE_15_SAMPLES,
+						D3DMULTISAMPLE_16_SAMPLES
+					};
 
-			void Enumeration::BuildPresentIntervalList(IDirect3D9* d3d9, SettingsCombo* combo)
-			{
-				DWORD possiblePresentIntervals[] = {
-					D3DPRESENT_INTERVAL_IMMEDIATE,  D3DPRESENT_INTERVAL_DEFAULT,
-					D3DPRESENT_INTERVAL_ONE,        D3DPRESENT_INTERVAL_TWO,
-					D3DPRESENT_INTERVAL_THREE,      D3DPRESENT_INTERVAL_FOUR
-				};
-
-				for (size_t i=0;i<sizeof(possiblePresentIntervals)/sizeof(DWORD);i++)
-				{
-					const DWORD& interval = possiblePresentIntervals[i];
-
-					if (combo->Windowed && (interval == D3DPRESENT_INTERVAL_TWO || 
-						interval == D3DPRESENT_INTERVAL_THREE || interval == D3DPRESENT_INTERVAL_FOUR))
+					DWORD quality;
+					for (const D3DMULTISAMPLE_TYPE type : possibleMultisampleTypes)
 					{
-						continue;
-					}
+						HRESULT hr = d3d9->CheckDeviceMultiSampleType(AdapterIndex, DeviceType,
+							AdapterFormat, Windowed, type, &quality);
 
-					if (interval == D3DPRESENT_INTERVAL_DEFAULT || (combo->DeviceInfo->Capabilities.PresentationIntervals & interval) != 0)
-					{
-						combo->PresentIntervals.Add(interval);
+						if (SUCCEEDED(hr))
+						{
+							MultisampleTypes.Add(type);
+							MultisampleQualities.Add(quality);
+						}
 					}
 				}
 
+				{ // present intervals
+					const DWORD possiblePresentIntervals[] = {
+						D3DPRESENT_INTERVAL_IMMEDIATE, D3DPRESENT_INTERVAL_DEFAULT,
+						D3DPRESENT_INTERVAL_ONE, D3DPRESENT_INTERVAL_TWO,
+						D3DPRESENT_INTERVAL_THREE, D3DPRESENT_INTERVAL_FOUR
+					};
+
+					for (DWORD interval : possiblePresentIntervals)
+					{
+						if (Windowed &&
+							(interval == D3DPRESENT_INTERVAL_TWO ||
+							interval == D3DPRESENT_INTERVAL_THREE || interval == D3DPRESENT_INTERVAL_FOUR))
+						{
+							continue;
+						}
+
+						if (interval == D3DPRESENT_INTERVAL_DEFAULT || (ParentDeviceInfo->Capabilities.PresentationIntervals & interval) != 0)
+						{
+							PresentIntervals.Add(interval);
+						}
+					}
+				}
 			}
 
-			
-			void Enumeration::FindValidSettings(IDirect3D9* d3d9, const DeviceSettings& settings, DeviceSettings& result)
+
+			float SettingsCombo::RankSettingsCombo(const RawSettings& targetOptimal, const D3DDISPLAYMODE& desktopMode) const
+			{
+				float ranking = 0.0f;
+
+				if (AdapterIndex == (int32)targetOptimal.AdapterOrdinal)
+					ranking += 1000.0f;
+
+				if (DeviceType == targetOptimal.DeviceType)
+					ranking += 100.0f;
+
+				if (DeviceType == D3DDEVTYPE_HAL)
+					ranking += 0.1f;
+
+				if ((Windowed && targetOptimal.PresentParameters.Windowed) ||
+					(!Windowed && !targetOptimal.PresentParameters.Windowed))
+					ranking += 10.0f;
+
+				if (AdapterFormat == targetOptimal.AdapterFormat)
+					ranking += 1.0f;
+				else
+				{
+					int bitDepthDelta = abs(GetColorBits(AdapterFormat) -
+						GetColorBits(targetOptimal.AdapterFormat));
+					float scale = max(0.9f - bitDepthDelta * 0.2f, 0.0f);
+					ranking += scale;
+				}
+
+				if (!Windowed)
+				{
+					bool match;
+					if (GetColorBits(desktopMode.Format) >= 8)
+						match = (AdapterFormat == desktopMode.Format);
+					else
+						match = (AdapterFormat == D3DFMT_X8R8G8B8);
+
+					if (match)
+						ranking += 0.1f;
+				}
+
+				if ((targetOptimal.CreationFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING) != 0 &&
+					(targetOptimal.CreationFlags & D3DCREATE_MIXED_VERTEXPROCESSING) != 0)
+				{
+					if ((ParentDeviceInfo->Capabilities.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) != 0)
+						ranking += 1.0f;
+				}
+
+				if ((ParentDeviceInfo->Capabilities.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) != 0)
+					ranking += 0.1f;
+
+				const List<D3DDISPLAYMODE>& modes = ParentAdapterInfo->DisplayModes;
+
+				for (const D3DDISPLAYMODE& displayMode : modes)
+				{
+					if (displayMode.Format == AdapterFormat &&
+						displayMode.Width == targetOptimal.PresentParameters.BackBufferWidth &&
+						displayMode.Height == targetOptimal.PresentParameters.BackBufferHeight)
+					{
+						ranking += 1.0f;
+						break;
+					}
+				}
+
+				if (BackBufferFormat == targetOptimal.PresentParameters.BackBufferFormat)
+				{
+					ranking += 1.0f;
+				}
+				else
+				{
+					int bitDepthDelta = abs(GetColorBits(BackBufferFormat) -
+						GetColorBits(targetOptimal.PresentParameters.BackBufferFormat));
+					float scale = max(0.9f - bitDepthDelta * 0.2f, 0.0f);
+					ranking += scale;
+				}
+
+				if (BackBufferFormat == AdapterFormat)
+					ranking += 0.1f;
+
+				for (int32 i = 0; i < MultisampleTypes.getCount(); i++)
+				{
+					D3DMULTISAMPLE_TYPE type = MultisampleTypes[i];
+					int quality = MultisampleQualities[i];
+
+					if (type == targetOptimal.PresentParameters.MultiSampleType)
+					{
+						ranking += 1.0f + quality * 0.5f;
+						break;
+					}
+				}
+
+				if (DepthStencilFormats.IndexOf(targetOptimal.PresentParameters.AutoDepthStencilFormat) != -1)
+					ranking += 1.0f;
+
+				for (const D3DDISPLAYMODE& displayMode : modes)
+				{
+					if (displayMode.Format == AdapterFormat &&
+						displayMode.RefreshRate == targetOptimal.PresentParameters.FullScreen_RefreshRateInHz)
+					{
+						ranking += 1.0f;
+						break;
+					}
+				}
+
+				if (PresentIntervals.IndexOf(targetOptimal.PresentParameters.PresentationInterval) != -1)
+					ranking += 1.0f;
+
+				return ranking;
+			}
+
+			Point SettingsCombo::FindBestResolution(int32 optimalWidth, int32 optimalHeight) const
+			{
+				if (ParentAdapterInfo->DisplayModes.getCount() == 0)
+				{
+					throw AP_EXCEPTION(ExceptID::NotSupported, L"No device modes available");
+				}
+
+				Point result;
+
+				if (Windowed)
+				{
+					return Point(optimalWidth, optimalHeight);
+				}
+
+				int bestRanking = 100000;
+				int ranking;
+
+				for (const D3DDISPLAYMODE& mode : ParentAdapterInfo->DisplayModes)
+				{
+					if (mode.Format != AdapterFormat)
+						continue;
+
+					ranking = abs((int)mode.Width - optimalWidth) +
+						abs((int)mode.Height - optimalHeight);
+
+					if (ranking < bestRanking)
+					{
+						result.X = mode.Width;
+						result.Y = mode.Height;
+
+						bestRanking = ranking;
+
+						if (bestRanking == 0)
+							break;
+					}
+				}
+
+				if (result.X == 0)
+				{
+					result.X = optimalWidth;
+					result.Y = optimalHeight;
+				}
+
+				return result;
+			}
+
+
+
+			//////////////////////////////////////////////////////////////////////////
+
+			void Enumeration::FindValidSettings(IDirect3D9* d3d9, const RenderParameters& settings, RawSettings& result)
 			{
 				if (!hasEnumerated())
 					Enumerate(d3d9);
-				
-				DeviceSettings newSettings = DeviceSettings(settings);
 
-				Direct3D9Settings optimal;
-				BuildOptimalSettings(d3d9, settings, optimal);
+				RawSettings raw;
+				BuildRawSettings(d3d9, settings, raw);
+
+				FindValidSettings(d3d9, raw, result);
+			}
+			void Enumeration::FindValidSettings(IDirect3D9* d3d9, const RawSettings& raw, RawSettings& result)
+			{
+				if (!hasEnumerated())
+					Enumerate(d3d9);
 
 				float bestRanking = -1.0f;
-				const SettingsCombo* bestCombo = 0;
-				for (int32 i=0; i<m_adapters.getCount(); i++)
-				{
-					const AdapterInfo* adapterInfo = m_adapters[i];
+				const SettingsCombo* bestCombo = nullptr;
 
+				for (const AdapterInfo* adapterInfo : m_adapters)
+				{
 					D3DDISPLAYMODE desktopMode;
-					HRESULT hr = d3d9->GetAdapterDisplayMode(adapterInfo->AdapterOrdinal, &desktopMode);
+					HRESULT hr = d3d9->GetAdapterDisplayMode(adapterInfo->AdapterIndex, &desktopMode);
 					assert(SUCCEEDED(hr));
 
-					for (int32 j=0; j<adapterInfo->Devices.getCount(); j++)
+					for (const DeviceInfo* deviceInfo : adapterInfo->Devices)
 					{
-						const DeviceInfo* deviceInfo = adapterInfo->Devices[j];
-						for (int32 k=0; k<deviceInfo->DeviceSettings.getCount(); k++)
+						for (const SettingsCombo* combo : deviceInfo->SettingCombos)
 						{
-							const SettingsCombo* combo = deviceInfo->DeviceSettings[k];
-
 							if (combo->Windowed && combo->AdapterFormat == desktopMode.Format)
 								continue;
 
-							float ranking = RankSettingsCombo(combo, optimal, desktopMode);
-							if (ranking>bestRanking)
+							float ranking = combo->RankSettingsCombo(raw, desktopMode);
+							if (ranking > bestRanking)
 							{
 								bestCombo = combo;
 								bestRanking = ranking;
@@ -414,466 +569,313 @@ namespace Apoc3D
 					}
 				}
 
-				if (!bestCombo)
+				if (bestCombo == nullptr)
 				{
 					throw AP_EXCEPTION(ExceptID::NotSupported, L"Can not create Direct3D9 Device. No compatible Direct3D9 devices found.");
 				}
-				Direct3D9Settings inteResult;
-				BuildValidSettings(bestCombo, optimal, inteResult);
-
-				result = settings;
-				result.D3D9 = inteResult;
+				BuildValidSettings(bestCombo, raw, result);
 			}
 
-			int GetDepthBits(D3DFORMAT format)
-			{
-				switch (format)
-				{
-				case D3DFMT_D32F_LOCKABLE:
-				case D3DFMT_D32:
-					return 32;
-
-				case D3DFMT_D24X8:
-				case D3DFMT_D24S8:
-				case D3DFMT_D24X4S4:
-				case D3DFMT_D24FS8:
-					return 24;
-					
-				case D3DFMT_D16_LOCKABLE:
-				case D3DFMT_D16:
-					return 16;
-
-				case D3DFMT_D15S1:
-					return 15;
-
-				default:
-					return 0;
-				}
-			}
-			int GetStencilBits(D3DFORMAT format)
-			{
-				switch (format)
-				{
-				case D3DFMT_D15S1:
-					return 1;
-
-				case D3DFMT_D24X4S4:
-					return 4;
-
-				case D3DFMT_D24S8:
-				case D3DFMT_D24FS8:
-					return 8;
-
-				default:
-					return 0;
-				}
-			}
-			int GetColorBits(D3DFORMAT format)
-			{
-				switch (format)
-				{
-				case D3DFMT_R8G8B8:
-				case D3DFMT_A8R8G8B8:
-				case D3DFMT_A8B8G8R8:
-				case D3DFMT_X8R8G8B8:
-					return 8;
-
-				case D3DFMT_R5G6B5:
-				case D3DFMT_X1R5G5B5:
-				case D3DFMT_A1R5G5B5:
-					return 5;
-
-				case D3DFMT_A4R4G4B4:
-				case D3DFMT_X4R4G4B4:
-					return 4;
-
-				case D3DFMT_R3G3B2:
-				case D3DFMT_A8R3G3B2:
-					return 2;
-
-				case D3DFMT_A2R10G10B10:
-				case D3DFMT_A2B10G10R10:
-					return 10;
-
-				case D3DFMT_A16B16G16R16:
-					return 16;
-
-				default:
-					return 0;
-				}
-			}
-
-			void Enumeration::BuildOptimalSettings(IDirect3D9* d3d9, 
-				const DeviceSettings& settings, Direct3D9Settings& optimal)
+			void Enumeration::BuildRawSettings(IDirect3D9* d3d9, const RenderParameters& input, RawSettings& result)
 			{
 				D3DDISPLAYMODE desktopMode;
 				HRESULT hr = d3d9->GetAdapterDisplayMode(0, &desktopMode);
 				assert(SUCCEEDED(hr));
 
-
-				optimal.AdapterOrdinal = settings.AdapterOrdinal;
-				optimal.DeviceType = settings.DeviceType;
-				optimal.PresentParameters.Windowed = settings.Windowed;
-				optimal.PresentParameters.BackBufferCount = settings.BackBufferCount;
-				optimal.PresentParameters.MultiSampleType = settings.MultiSampleType;
-				optimal.PresentParameters.MultiSampleQuality = settings.MultiSampleQuality;
-				optimal.PresentParameters.FullScreen_RefreshRateInHz = settings.RefreshRate;
-
-				if (settings.Multithreaded)
-					optimal.CreationFlags |= D3DCREATE_MULTITHREADED;
-
-				if (optimal.PresentParameters.Windowed || GetColorBits(desktopMode.Format) >= 8)
-					optimal.AdapterFormat = desktopMode.Format;
-				else
-					optimal.AdapterFormat = D3DFMT_X8R8G8B8;
-
-				if (settings.BackBufferWidth == 0 || settings.BackBufferHeight == 0)
-				{
-					if (optimal.PresentParameters.Windowed)
-					{
-						optimal.PresentParameters.BackBufferWidth = 640;
-						optimal.PresentParameters.BackBufferHeight = 480;
-					}
-					else
-					{
-						optimal.PresentParameters.BackBufferWidth = desktopMode.Width;
-						optimal.PresentParameters.BackBufferHeight = desktopMode.Height;
-					}
-				}
-				else
-				{
-					optimal.PresentParameters.BackBufferWidth = settings.BackBufferWidth;
-					optimal.PresentParameters.BackBufferHeight = settings.BackBufferHeight;
-				}
-
-				if (settings.BackBufferFormat == D3DFMT_UNKNOWN)
-					optimal.PresentParameters.BackBufferFormat = optimal.AdapterFormat;
-				else
-					optimal.PresentParameters.BackBufferFormat = settings.BackBufferFormat;
-
-				if (settings.DepthStencilFormat == D3DFMT_UNKNOWN)
-				{
-					if (GetColorBits(optimal.PresentParameters.BackBufferFormat) >= 8)
-						optimal.PresentParameters.AutoDepthStencilFormat = D3DFMT_D32;
-					else
-						optimal.PresentParameters.AutoDepthStencilFormat = D3DFMT_D16;
-				}
-				else
-					optimal.PresentParameters.AutoDepthStencilFormat = settings.DepthStencilFormat;
-
-				if (!settings.EnableVSync)
-					optimal.PresentParameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-			}
-
-			float Enumeration::RankSettingsCombo(const SettingsCombo* combo, 
-				const Direct3D9Settings& optimal, const D3DDISPLAYMODE& desktopMode)
-			{
-				float ranking = 0.0f;
-
-				if(combo->AdapterOrdinal == (int32)optimal.AdapterOrdinal)
-					ranking += 1000.0f;
-
-				if(combo->DeviceType == optimal.DeviceType)
-					ranking += 100.0f;
-
-				if(combo->DeviceType == D3DDEVTYPE_HAL)
-					ranking += 0.1f;
-
-				if ((combo->Windowed && optimal.PresentParameters.Windowed) || 
-					(!combo->Windowed && !optimal.PresentParameters.Windowed))
-					ranking += 10.0f;
-
-				if(combo->AdapterFormat == optimal.AdapterFormat)
-					ranking += 1.0f;
-				else
-				{
-					int bitDepthDelta = abs(GetColorBits(combo->AdapterFormat) -
-						GetColorBits(optimal.AdapterFormat));
-					float scale = max(0.9f - bitDepthDelta * 0.2f, 0.0f);
-					ranking += scale;
-				}
 				
-				if(!(combo->Windowed))
+
+				result.AdapterOrdinal = input.AdapterIndex;
+				result.DeviceType = D3DDEVTYPE_HAL; //settings.DeviceType;
+				result.PresentParameters.Windowed = input.IsWindowed;
+				result.PresentParameters.BackBufferCount = input.TripleBuffering ? 2 : 1;// settings.BackBufferCount;
+				result.PresentParameters.MultiSampleType = D3D9Utils::ConvertMultisample(input.FSAASampleCount);
+				result.PresentParameters.MultiSampleQuality = 0;
+				result.PresentParameters.FullScreen_RefreshRateInHz = input.RefreshRate;
+
+				if (input.IsMultithreaded)
+					result.CreationFlags |= D3DCREATE_MULTITHREADED;
+
+				if (result.PresentParameters.Windowed || GetColorBits(desktopMode.Format) >= 8)
+					result.AdapterFormat = desktopMode.Format;
+				else
+					result.AdapterFormat = D3DFMT_X8R8G8B8;
+
+				if (input.BackBufferWidth == 0 || input.BackBufferHeight == 0)
 				{
-					bool match;
-					if(GetColorBits(desktopMode.Format) >= 8)
-						match = (combo->AdapterFormat == desktopMode.Format);
-					else
-						match = (combo->AdapterFormat == D3DFMT_X8R8G8B8);
-
-					if(match)
-						ranking += 0.1f;
-				}
-
-				if((optimal.CreationFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING) != 0 &&
-					(optimal.CreationFlags & D3DCREATE_MIXED_VERTEXPROCESSING) != 0)
-				{
-					if((combo->DeviceInfo->Capabilities.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) != 0)
-						ranking += 1.0f;
-				}
-
-				if((combo->DeviceInfo->Capabilities.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) != 0)
-					ranking += 0.1f;
-
-				const List<D3DDISPLAYMODE>& modes =  combo->AdapterInfo->DisplayModes;
-
-				for (int32 i=0;i<modes.getCount();i++)
-				{
-					const D3DDISPLAYMODE& displayMode = modes[i];
-					if(displayMode.Format == combo->AdapterFormat &&
-						displayMode.Width == optimal.PresentParameters.BackBufferWidth &&
-						displayMode.Height == optimal.PresentParameters.BackBufferHeight)
+					if (result.PresentParameters.Windowed)
 					{
-						ranking += 1.0f;
-						break;
+						result.PresentParameters.BackBufferWidth = 640;
+						result.PresentParameters.BackBufferHeight = 480;
 					}
-				}
-
-				if(combo->BackBufferFormat == optimal.PresentParameters.BackBufferFormat)
-				{
-					ranking += 1.0f;
+					else
+					{
+						result.PresentParameters.BackBufferWidth = desktopMode.Width;
+						result.PresentParameters.BackBufferHeight = desktopMode.Height;
+					}
 				}
 				else
 				{
-					int bitDepthDelta = abs(GetColorBits(combo->BackBufferFormat) -
-						GetColorBits(optimal.PresentParameters.BackBufferFormat));
-					float scale = max(0.9f - bitDepthDelta * 0.2f, 0.0f);
-					ranking += scale;
+					result.PresentParameters.BackBufferWidth = input.BackBufferWidth;
+					result.PresentParameters.BackBufferHeight = input.BackBufferHeight;
 				}
 
-				if(combo->BackBufferFormat == combo->AdapterFormat)
-					ranking += 0.1f;
+				if (input.ColorBufferFormat == FMT_Unknown)
+					result.PresentParameters.BackBufferFormat = result.AdapterFormat;
+				else
+					result.PresentParameters.BackBufferFormat = D3D9Utils::ConvertPixelFormat(input.ColorBufferFormat);
 
-				for(int32 i = 0; i < combo->MultisampleTypes.getCount(); i++)
+				if (input.DepthBufferFormat == FMT_Unknown)
 				{
-					D3DMULTISAMPLE_TYPE type = combo->MultisampleTypes[i];
-					int quality = combo->MultisampleQualities[i];
-
-					if(type == optimal.PresentParameters.MultiSampleType)// &&  quality == optimal.PresentParameters.MultiSampleQuality
-					{
-						ranking += 1.0f + quality * 0.5f;
-						break;
-					}
+					if (GetColorBits(result.PresentParameters.BackBufferFormat) >= 8)
+						result.PresentParameters.AutoDepthStencilFormat = D3DFMT_D32;
+					else
+						result.PresentParameters.AutoDepthStencilFormat = D3DFMT_D16;
 				}
+				else
+					result.PresentParameters.AutoDepthStencilFormat = D3D9Utils::ConvertDepthFormat(input.DepthBufferFormat);
 
-				const List<D3DFORMAT>& dsfmts = combo->DepthStencilFormats;
-				if(dsfmts.IndexOf(optimal.PresentParameters.AutoDepthStencilFormat) != -1)
-					ranking += 1.0f;
-
-				//const vector<D3DDISPLAYMODE>& modes2 =  combo->AdapterInfo->DisplayModes;
-				for (int32 i=0;i<modes.getCount();i++)
-				{
-					const D3DDISPLAYMODE& displayMode = modes[i];
-					if(displayMode.Format == combo->AdapterFormat &&
-						displayMode.RefreshRate == optimal.PresentParameters.FullScreen_RefreshRateInHz)
-					{
-						ranking += 1.0f;
-						break;
-					}
-				}
-
-				const List<uint32>& presentIntervals = combo->PresentIntervals;
-				if(presentIntervals.IndexOf(optimal.PresentParameters.PresentationInterval) != -1)
-					ranking += 1.0f;
-
-				return ranking;
+				if (!input.EnableVSync)
+					result.PresentParameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 			}
 
-			void Enumeration::BuildValidSettings(const SettingsCombo* combo, const Direct3D9Settings& input, Direct3D9Settings& settings)
+			void Enumeration::BuildValidSettings(const SettingsCombo* combo, const RawSettings& input, RawSettings& result)
 			{
-				settings.AdapterOrdinal = combo->AdapterOrdinal;
-				settings.DeviceType = combo->DeviceType;
-				settings.PresentParameters.Windowed = combo->Windowed;
-				settings.AdapterFormat = combo->AdapterFormat;
-				settings.PresentParameters.BackBufferFormat = combo->BackBufferFormat;
-				settings.PresentParameters.SwapEffect = input.PresentParameters.SwapEffect;
-				settings.PresentParameters.Flags = input.PresentParameters.Flags | D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
+				result.AdapterOrdinal = combo->AdapterIndex;
+				result.DeviceType = combo->DeviceType;
+				result.PresentParameters.Windowed = combo->Windowed;
+				result.AdapterFormat = combo->AdapterFormat;
+				result.PresentParameters.BackBufferFormat = combo->BackBufferFormat;
+				result.PresentParameters.SwapEffect = input.PresentParameters.SwapEffect;
+				result.PresentParameters.Flags = input.PresentParameters.Flags | D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
 
-				settings.CreationFlags = input.CreationFlags;
-				if((combo->DeviceInfo->Capabilities.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) == 0 &&
-					((settings.CreationFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING) != 0 ||
-					(settings.CreationFlags & D3DCREATE_MIXED_VERTEXPROCESSING) != 0))
+				result.CreationFlags = input.CreationFlags;
+				if ((combo->ParentDeviceInfo->Capabilities.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) == 0 &&
+					((result.CreationFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING) != 0 ||
+					(result.CreationFlags & D3DCREATE_MIXED_VERTEXPROCESSING) != 0))
 				{
-					settings.CreationFlags &= ~D3DCREATE_HARDWARE_VERTEXPROCESSING;
-					settings.CreationFlags &= ~D3DCREATE_MIXED_VERTEXPROCESSING;
-					settings.CreationFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+					result.CreationFlags &= ~D3DCREATE_HARDWARE_VERTEXPROCESSING;
+					result.CreationFlags &= ~D3DCREATE_MIXED_VERTEXPROCESSING;
+					result.CreationFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
 				}
 
-				if((settings.CreationFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING) == 0 &&
-					(settings.CreationFlags & D3DCREATE_MIXED_VERTEXPROCESSING) == 0 &&
-					(settings.CreationFlags & D3DCREATE_SOFTWARE_VERTEXPROCESSING) == 0)
+				if ((result.CreationFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING) == 0 &&
+					(result.CreationFlags & D3DCREATE_MIXED_VERTEXPROCESSING) == 0 &&
+					(result.CreationFlags & D3DCREATE_SOFTWARE_VERTEXPROCESSING) == 0)
 				{
-					if((combo->DeviceInfo->Capabilities.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) != 0)
-						settings.CreationFlags |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
+					if ((combo->ParentDeviceInfo->Capabilities.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) != 0)
+						result.CreationFlags |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
 					else
-						settings.CreationFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+						result.CreationFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
 				}
 
-				D3DDISPLAYMODE bestDisplayMode = FindValidResolution(combo, input);
-				settings.PresentParameters.BackBufferWidth = bestDisplayMode.Width;
-				settings.PresentParameters.BackBufferHeight = bestDisplayMode.Height;
+				Point bestResol = combo->FindBestResolution(input.PresentParameters.BackBufferWidth, input.PresentParameters.BackBufferHeight);
+				result.PresentParameters.BackBufferWidth = bestResol.X;
+				result.PresentParameters.BackBufferHeight = bestResol.Y;
 
-				settings.PresentParameters.BackBufferCount = input.PresentParameters.BackBufferCount;
-				if(settings.PresentParameters.BackBufferCount > 3)
-					settings.PresentParameters.BackBufferCount = 3;
-				if(settings.PresentParameters.BackBufferCount < 1)
-					settings.PresentParameters.BackBufferCount = 1;
+				result.PresentParameters.BackBufferCount = input.PresentParameters.BackBufferCount;
+				if (result.PresentParameters.BackBufferCount > D3DPRESENT_BACK_BUFFERS_MAX)
+					result.PresentParameters.BackBufferCount = D3DPRESENT_BACK_BUFFERS_MAX;
+				if (result.PresentParameters.BackBufferCount < 1)
+					result.PresentParameters.BackBufferCount = 1;
 
-				if(input.PresentParameters.SwapEffect != D3DSWAPEFFECT_DISCARD)
+				if (input.PresentParameters.SwapEffect != D3DSWAPEFFECT_DISCARD)
 				{
-					settings.PresentParameters.MultiSampleType = D3DMULTISAMPLE_NONE;
-					settings.PresentParameters.MultiSampleQuality = 0;
+					result.PresentParameters.MultiSampleType = D3DMULTISAMPLE_NONE;
+					result.PresentParameters.MultiSampleQuality = 0;
 				}
 				else
 				{
 					D3DMULTISAMPLE_TYPE bestType = D3DMULTISAMPLE_NONE;
 					int bestQuality = 0;
 
-					for(int32 i = 0; i < combo->MultisampleTypes.getCount(); i++)
+					for (int32 i = 0; i < combo->MultisampleTypes.getCount(); i++)
 					{
 						D3DMULTISAMPLE_TYPE type = combo->MultisampleTypes[i];
 						int quality = combo->MultisampleQualities[i];
 
-						if(abs((int32)type - (int32)input.PresentParameters.MultiSampleType) < abs((int32)bestType -
+						if (abs((int32)type - (int32)input.PresentParameters.MultiSampleType) < abs((int32)bestType -
 							(int32)input.PresentParameters.MultiSampleType))
 						{
 							bestType = type;
-							bestQuality = min(quality - 1, (int)input.PresentParameters.MultiSampleQuality);
+							bestQuality = Math::Min(quality - 1, (int)input.PresentParameters.MultiSampleQuality);
 						}
 					}
 
-					settings.PresentParameters.MultiSampleType = bestType;
-					settings.PresentParameters.MultiSampleQuality = bestQuality;
+					result.PresentParameters.MultiSampleType = bestType;
+					result.PresentParameters.MultiSampleQuality = bestQuality;
 				}
 
-				List<int> rankings;
+				List<int> dsRankings;
 				int inputDepthBitDepth = GetDepthBits(input.PresentParameters.AutoDepthStencilFormat);
 				int inputStencilBitDepth = GetStencilBits(input.PresentParameters.AutoDepthStencilFormat);
 
-				for (int32 i=0;i<combo->DepthStencilFormats.getCount();i++)
+				for (D3DFORMAT format : combo->DepthStencilFormats)
 				{
-					D3DFORMAT format = combo->DepthStencilFormats[i];
 					int currentBitDepth = GetDepthBits(format);
 					int currentStencilDepth = GetStencilBits(format);
 
 					int ranking = abs(currentBitDepth - inputDepthBitDepth);
 					ranking += abs(currentStencilDepth - inputStencilBitDepth);
-					rankings.Add(ranking);
+					dsRankings.Add(ranking);
 				}
 
 				int bestIndex = -1;
 				int bestRanking = MAXINT32;
-				for (int32 i=0;i<rankings.getCount();i++)
+				for (int32 i = 0; i < dsRankings.getCount(); i++)
 				{
-					if(rankings[i] < bestRanking)
+					if (dsRankings[i] < bestRanking)
 					{
-						bestRanking = rankings[i];
+						bestRanking = dsRankings[i];
 						bestIndex = i;
 					}
 				}
 
-				if(bestIndex >= 0)
+				if (bestIndex >= 0)
 				{
-					settings.PresentParameters.AutoDepthStencilFormat = combo->DepthStencilFormats[bestIndex];
-					settings.PresentParameters.EnableAutoDepthStencil = true;
+					result.PresentParameters.AutoDepthStencilFormat = combo->DepthStencilFormats[bestIndex];
+					result.PresentParameters.EnableAutoDepthStencil = true;
 				}
 				else
 				{
-					settings.PresentParameters.AutoDepthStencilFormat = D3DFMT_UNKNOWN;
-					settings.PresentParameters.EnableAutoDepthStencil = false;
+					result.PresentParameters.AutoDepthStencilFormat = D3DFMT_UNKNOWN;
+					result.PresentParameters.EnableAutoDepthStencil = false;
 				}
 
-				if(combo->Windowed)
-					settings.PresentParameters.FullScreen_RefreshRateInHz = 0;
+				if (combo->Windowed)
+					result.PresentParameters.FullScreen_RefreshRateInHz = 0;
 				else
 				{
-					int match = input.PresentParameters.FullScreen_RefreshRateInHz;
-					bestDisplayMode.RefreshRate = 0;
-					if(match != 0)
+					int32 targetRefreshRate = input.PresentParameters.FullScreen_RefreshRateInHz;
+					int32 resultRefreshRate = 0;
+					if (targetRefreshRate != 0)
 					{
 						bestRanking = 100000;
 
-						const List<D3DDISPLAYMODE>& displayModes = combo->AdapterInfo->DisplayModes;
-						for (int32 i=0;i<displayModes.getCount();i++)
+						for (const D3DDISPLAYMODE& mode : combo->ParentAdapterInfo->DisplayModes)
 						{
-							const D3DDISPLAYMODE& mode = displayModes[i];
-							if(mode.Format != combo->AdapterFormat ||
-								mode.Width != bestDisplayMode.Width ||
-								mode.Height != bestDisplayMode.Height)
+							if (mode.Format != combo->AdapterFormat ||
+								mode.Width != bestResol.X ||
+								mode.Height != bestResol.Y)
 								continue;
 
-							int ranking = abs(static_cast<int>(mode.RefreshRate) - match);
+							int ranking = abs(static_cast<int>(mode.RefreshRate) - targetRefreshRate);
 
-							if(ranking < bestRanking)
+							if (ranking < bestRanking)
 							{
-								bestDisplayMode.RefreshRate = mode.RefreshRate;
+								resultRefreshRate = mode.RefreshRate;
 								bestRanking = ranking;
 
-								if(bestRanking == 0)
+								if (bestRanking == 0)
 									break;
 							}
 						}
 					}
 
-					settings.PresentParameters.FullScreen_RefreshRateInHz = bestDisplayMode.RefreshRate;
+					result.PresentParameters.FullScreen_RefreshRateInHz = resultRefreshRate;
 				}
 
-				const List<uint32> prIntrvls = combo->PresentIntervals;
-				if(prIntrvls.IndexOf(input.PresentParameters.PresentationInterval) != -1)
-					settings.PresentParameters.PresentationInterval = input.PresentParameters.PresentationInterval;
+				const List<uint32>& prIntrvls = combo->PresentIntervals;
+				if (prIntrvls.IndexOf(input.PresentParameters.PresentationInterval) != -1)
+					result.PresentParameters.PresentationInterval = input.PresentParameters.PresentationInterval;
 				else
-					settings.PresentParameters.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+					result.PresentParameters.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 			}
 
-			D3DDISPLAYMODE Enumeration::FindValidResolution(const SettingsCombo* combo, const Direct3D9Settings& input)
+			//////////////////////////////////////////////////////////////////////////
+
+			static int GetDepthBits(D3DFORMAT format)
 			{
-				if (combo->AdapterInfo->DisplayModes.getCount() == 0)
+				switch (format)
 				{
-					throw AP_EXCEPTION(ExceptID::NotSupported, L"No device modes available");
+					case D3DFMT_D32F_LOCKABLE:
+					case D3DFMT_D32:
+						return 32;
+
+					case D3DFMT_D24X8:
+					case D3DFMT_D24S8:
+					case D3DFMT_D24X4S4:
+					case D3DFMT_D24FS8:
+						return 24;
+
+					case D3DFMT_D16_LOCKABLE:
+					case D3DFMT_D16:
+						return 16;
+
+					case D3DFMT_D15S1:
+						return 15;
+
+					default:
+						return 0;
 				}
-
-				D3DDISPLAYMODE bestMode;
-				bestMode.Width = 0;
-
-				if(combo->Windowed)
-				{
-					bestMode.Width = input.PresentParameters.BackBufferWidth;
-					bestMode.Height = input.PresentParameters.BackBufferHeight;
-					return bestMode;
-				}
-
-				int bestRanking = 100000;
-				int ranking;
-
-				for (int32 i=0; i<combo->AdapterInfo->DisplayModes.getCount();i++)
-				{
-					const D3DDISPLAYMODE& mode = combo->AdapterInfo->DisplayModes[i];
-
-					if(mode.Format != combo->AdapterFormat)
-						continue;
-
-					ranking = abs((int)mode.Width - (int)input.PresentParameters.BackBufferWidth) +
-						abs((int)mode.Height - (int)input.PresentParameters.BackBufferHeight);
-
-					if(ranking < bestRanking)
-					{
-						bestMode = mode;
-						bestRanking = ranking;
-
-						if(bestRanking == 0)
-							break;
-					}
-				}
-
-
-				if(bestMode.Width == 0)
-				{
-					bestMode.Width = input.PresentParameters.BackBufferWidth;
-					bestMode.Height = input.PresentParameters.BackBufferHeight;
-				}
-
-				return bestMode;
 			}
+			static int GetStencilBits(D3DFORMAT format)
+			{
+				switch (format)
+				{
+					case D3DFMT_D15S1:
+						return 1;
+
+					case D3DFMT_D24X4S4:
+						return 4;
+
+					case D3DFMT_D24S8:
+					case D3DFMT_D24FS8:
+						return 8;
+
+					default:
+						return 0;
+				}
+			}
+			static int GetColorBits(D3DFORMAT format)
+			{
+				switch (format)
+				{
+					case D3DFMT_R8G8B8:
+					case D3DFMT_A8R8G8B8:
+					case D3DFMT_A8B8G8R8:
+					case D3DFMT_X8R8G8B8:
+						return 8;
+
+					case D3DFMT_R5G6B5:
+					case D3DFMT_X1R5G5B5:
+					case D3DFMT_A1R5G5B5:
+						return 5;
+
+					case D3DFMT_A4R4G4B4:
+					case D3DFMT_X4R4G4B4:
+						return 4;
+
+					case D3DFMT_R3G3B2:
+					case D3DFMT_A8R3G3B2:
+						return 2;
+
+					case D3DFMT_A2R10G10B10:
+					case D3DFMT_A2B10G10R10:
+						return 10;
+
+					case D3DFMT_A16B16G16R16:
+						return 16;
+
+					default:
+						return 0;
+				}
+			}
+
+			static int32 CompareDisplayMode(const D3DDISPLAYMODE& x, const D3DDISPLAYMODE& y)
+			{
+				if (x.Width > y.Width) return 1;
+				if (x.Width < y.Width) return -1;
+				if (x.Height > y.Height) return 1;
+				if (x.Height < y.Height) return -1;
+				if (x.Format > y.Format) return 1;
+				if (x.Format < y.Format) return -1;
+				if (x.RefreshRate > y.RefreshRate) return 1;
+				if (x.RefreshRate < y.RefreshRate) return -1;
+
+				return 0;
+			}
+
 		}
+
 	}
 }

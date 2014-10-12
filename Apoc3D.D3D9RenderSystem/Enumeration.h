@@ -26,11 +26,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_D3D9_ENUMERATION_H
 
 #include "D3D9Common.h"
-#include "DeviceSettings.h"
+#include "RawSettings.h"
 
 #include "apoc3D/Collections/List.h"
+#include "apoc3d/Collections/HashMap.h"
+#include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
+#include "apoc3d/Math/Point.h"
 
 using namespace Apoc3D::Collections;
+using namespace Apoc3D::Math;
 
 namespace Apoc3D
 {
@@ -38,22 +42,71 @@ namespace Apoc3D
 	{ 
 		namespace D3D9RenderSystem
 		{
-			class AdapterInfo;
+			struct D3DFORMATEqualityComparer
+			{
+				static bool Equals(const D3DFORMAT& x, const D3DFORMAT& y) { return x == y; }
+				static int64 GetHashCode(const D3DFORMAT& obj) { return obj; }
+			};
+			typedef HashSet<D3DFORMAT, D3DFORMATEqualityComparer> D3DFormatHashSet;
+
+			struct EnumerationMinimumSettings
+			{
+				bool IsSet = false;
+				D3DDEVTYPE DeviceType = D3DDEVTYPE_HAL;
+				int32 Width = 0;
+				int32 Height = 0;
+				D3DFORMAT ColorFormat = D3DFMT_UNKNOWN;
+				D3DFORMAT DepthFormat = D3DFMT_UNKNOWN;
+				D3DMULTISAMPLE_TYPE MultisampleType = D3DMULTISAMPLE_NONE;
+				int32 RefreshRate = 0;
+
+				void Set(const RenderParameters& params);
+			};
+
 			class DeviceInfo;
+			class SettingsCombo;
+
+			class AdapterInfo
+			{
+			public:
+				int32 AdapterIndex;
+				String Description;
+
+				List<D3DDISPLAYMODE> DisplayModes;
+				List<DeviceInfo*> Devices;
+
+				AdapterInfo(IDirect3D9* d3d9, int32 index, const EnumerationMinimumSettings& minSettings);
+				~AdapterInfo();
+
+				AdapterInfo(const AdapterInfo& another) = delete;
+			};
+
+			class DeviceInfo
+			{
+			public:
+				D3DDEVTYPE DeviceType;
+
+				D3DCAPS9 Capabilities;
+
+				List<SettingsCombo*> SettingCombos;
+
+				DeviceInfo(IDirect3D9* d3d9, D3DDEVTYPE devType, AdapterInfo* parentAdp,
+					const D3DFormatHashSet& adapterFormats, const EnumerationMinimumSettings& minSettings);
+				~DeviceInfo();
+
+				DeviceInfo(const DeviceInfo& another) = delete;
+			};
 
 			class SettingsCombo
 			{
 			public:
-				SettingsCombo() : AdapterInfo(NULL), DeviceInfo(NULL), Windowed(true) {}
-				int32 AdapterOrdinal;
+				int32 AdapterIndex;
 
 				D3DDEVTYPE DeviceType;
-
 				D3DFORMAT AdapterFormat;
-
 				D3DFORMAT BackBufferFormat;
 
-				bool Windowed;
+				bool Windowed = true;
 
 				List<D3DFORMAT> DepthStencilFormats;
 
@@ -61,44 +114,20 @@ namespace Apoc3D
 				List<int32> MultisampleQualities;
 				List<uint32> PresentIntervals;
 
-				AdapterInfo* AdapterInfo;
+				AdapterInfo* ParentAdapterInfo = nullptr;
+				DeviceInfo* ParentDeviceInfo = nullptr;
 
-				DeviceInfo* DeviceInfo;
+				SettingsCombo(IDirect3D9* d3d9, int32 adpIdx, D3DDEVTYPE devType, D3DFORMAT adpFmt, D3DFORMAT bbFmt, bool wnd,
+					AdapterInfo* parentAdp, DeviceInfo* parentDev);
 
-			private:
-				SettingsCombo(const SettingsCombo& another) { }
+				SettingsCombo(const SettingsCombo& another) = default;
+
+				float RankSettingsCombo(const RawSettings& targetOptimal, const D3DDISPLAYMODE& desktopMode) const;
+				Point FindBestResolution(int32 optimalWidth, int32 optimalHeight) const;
+
 			};
 		
-			class DeviceInfo
-			{
-			private:
-				DeviceInfo(const DeviceInfo& another) { }
-			public:
-				DeviceInfo() {}
-				D3DDEVTYPE DeviceType;
 
-				D3DCAPS9 Capabilities;
-
-				List<SettingsCombo*> DeviceSettings;
-
-			};
-			class AdapterInfo
-			{
-			private:
-				AdapterInfo(const AdapterInfo& another) { }
-			public:
-				AdapterInfo() {}
-				int32 AdapterOrdinal;
-
-				D3DADAPTER_IDENTIFIER9 Details;
-
-				String Description;
-
-				List<D3DDISPLAYMODE> DisplayModes;
-
-				List<DeviceInfo*> Devices;
-
-			};
 
 			class Enumeration
 			{
@@ -106,44 +135,21 @@ namespace Apoc3D
 				static const List<AdapterInfo*>& getAdapters() { return m_adapters; }
 				
 				static void Enumerate(IDirect3D9* d3d9);
-				static void FindValidSettings(IDirect3D9* d3d9, const DeviceSettings& settings, DeviceSettings& result);
+				static void FindValidSettings(IDirect3D9* d3d9, const RenderParameters& settings, RawSettings& result);
+				static void FindValidSettings(IDirect3D9* d3d9, const RawSettings& settings, RawSettings& result);
 
 				static bool hasEnumerated() { return m_hasEnumerated; }
-				static const DeviceSettings& getMiniumSettings() { return m_minimumSettings; }
-				static void setMinimumSettings(const DeviceSettings& settings)
-				{
-					m_minimumSettings = settings;
-					m_hasMinimumSettings = true;
-				}
-				static void ClearMinimumSetting() { m_hasMinimumSettings = false; }
-
+				
+				static EnumerationMinimumSettings MinimumSettings;
 			private:
-				Enumeration(void){ }
-				~Enumeration(void) { }
+				Enumeration(){ }
+				~Enumeration() { }
 
-				static bool m_hasMinimumSettings;
-				static DeviceSettings m_minimumSettings;
 				static List<AdapterInfo*> m_adapters;
 				static bool m_hasEnumerated;
 
-
-				static void EnumerateDevices(IDirect3D9* d3d9, AdapterInfo* info, List<D3DFORMAT>& adapterFormats);
-
-				static void EnumerateSettingsCombos(IDirect3D9* d3d9, AdapterInfo* adapterInfo, 
-					DeviceInfo* deviceInfo, List<D3DFORMAT>& adapterFormats);
-
-				static void BuildDepthStencilFormatList(IDirect3D9* d3d9, SettingsCombo* combo);
-
-				static void BuildMultisampleTypeList(IDirect3D9* d3d9, SettingsCombo* combo);
-
-				static void BuildPresentIntervalList(IDirect3D9* d3d9, SettingsCombo* combo);
-
-
-
-				static float RankSettingsCombo(const SettingsCombo* combo, const Direct3D9Settings& optimal, const D3DDISPLAYMODE& desktopMode);
-				static void BuildValidSettings(const SettingsCombo* combo, const Direct3D9Settings& input, Direct3D9Settings& result);
-				static D3DDISPLAYMODE FindValidResolution(const SettingsCombo* combo, const Direct3D9Settings& input);
-				static void BuildOptimalSettings(IDirect3D9* d3d9, const DeviceSettings& settings, Direct3D9Settings& optimal);
+				static void BuildValidSettings(const SettingsCombo* combo, const RawSettings& input, RawSettings& result);
+				static void BuildRawSettings(IDirect3D9* d3d9, const RenderParameters& settings, RawSettings& optimal);
 			};
 		}
 		

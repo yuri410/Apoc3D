@@ -88,10 +88,11 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	params.BackBufferWidth = 1280;
 	params.ColorBufferFormat = FMT_X8R8G8B8;
 	params.DepthBufferFormat = DEPFMT_Depth24Stencil8;
-	params.EnableVSync = true;
+	params.EnableVSync = false;
+	params.TripleBuffering = true;
 	params.FSAASampleCount = 0;
 	params.IsFullForm = true;
-	params.IsWindowd = true;
+	params.IsWindowed = true;
 	params.IgnoreMonitorChange = true;
 
 	RenderView* view =  devContent->Create(params);

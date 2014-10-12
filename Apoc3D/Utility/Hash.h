@@ -14,12 +14,12 @@ namespace Apoc3D
 			FNVHash32()
 				: m_result(2166136261) { }
 
-			void Accumulate(const void* buffer, int32 count)
+			void Accumulate(const void* buffer, int32 size)
 			{
 				const int32 p = 16777619;
 				const byte* src = (const byte*)buffer;
 
-				while (--count>=0)
+				while (--size >= 0)
 				{
 					m_result = (*src++ ^ m_result) * p;
 				}

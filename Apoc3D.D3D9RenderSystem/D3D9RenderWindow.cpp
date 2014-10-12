@@ -30,7 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9DeviceContext.h"
 #include "Enumeration.h"
 #include "D3D9RenderViewSet.h"
-#include "DeviceSettings.h"
+#include "RawSettings.h"
 
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Utility/StringUtils.h"
@@ -55,21 +55,11 @@ namespace Apoc3D
 
 			void D3D9RenderView::ChangeRenderParameters(const RenderParameters& params)
 			{
-				DeviceSettings settings;
-				settings.AdapterOrdinal = 0;
-				settings.BackBufferCount = 1;
-				settings.BackBufferHeight = params.BackBufferHeight;
-				settings.BackBufferWidth = params.BackBufferWidth;
-				settings.BackBufferFormat = D3D9Utils::ConvertPixelFormat(params.ColorBufferFormat);
-				settings.DepthStencilFormat = D3D9Utils::ConvertDepthFormat(params.DepthBufferFormat);
-				settings.DeviceType = D3DDEVTYPE_HAL;
-				settings.EnableVSync = params.EnableVSync;
-				settings.MultiSampleType = D3D9Utils::ConvertMultisample(params.FSAASampleCount);
-				settings.Multithreaded = params.IsMultithreaded;
-				settings.RefreshRate = 0;
-				settings.Windowed = true;			
+				RenderParameters p2 = params;
+				p2.IsWindowed = true;
+				p2.RefreshRate = 0;
 
-				m_viewSet->ChangeDevice(settings, 0);
+				m_viewSet->ChangeDevice(params, 0);
 			}
 			void D3D9RenderView::Present(const GameTime* time)
 			{
@@ -88,7 +78,7 @@ namespace Apoc3D
 				// with this call, the RenderWindow and the Game object are created.
 				Game::Create(params);			
 				
-				DeviceSettings settings;
+				/*DeviceSettings settings;
 				settings.AdapterOrdinal = 0;
 				settings.BackBufferCount = 1;
 				settings.BackBufferHeight = params.BackBufferHeight;
@@ -100,7 +90,7 @@ namespace Apoc3D
 				settings.MultiSampleType = D3D9Utils::ConvertMultisample(params.FSAASampleCount);
 				settings.Multithreaded = params.IsMultithreaded;
 				settings.RefreshRate = 0;
-				settings.Windowed = params.IsWindowd;				
+				settings.Windowed = params.IsWindowed;	*/
 
 
 				D3D9RenderDevice* device = new D3D9RenderDevice(getGraphicsDeviceManager());
@@ -114,7 +104,7 @@ namespace Apoc3D
 				getGraphicsDeviceManager()->UserIgnoreMonitorChanges() = params.IgnoreMonitorChange;
 
 				// Initialize() and Load() are called as the device is being created.
-				getGraphicsDeviceManager()->ChangeDevice(settings);
+				getGraphicsDeviceManager()->ChangeDevice(params);
 
 				LogManager::getSingleton().Write(LOG_Graphics, 
 					L"[D3D9]Render window created. ", 
@@ -125,10 +115,10 @@ namespace Apoc3D
 			void D3D9RenderWindow::D3D9Game::Initialize()
 			{
 				D3DADAPTER_IDENTIFIER9 did;
-				getGraphicsDeviceManager()->getDirect3D()->GetAdapterIdentifier(getGraphicsDeviceManager()->getCurrentSetting()->D3D9.AdapterOrdinal, NULL, &did);
+				getGraphicsDeviceManager()->getDirect3D()->GetAdapterIdentifier(getGraphicsDeviceManager()->getCurrentSetting()->AdapterOrdinal, NULL, &did);
 				m_window->m_hardwareName = StringUtils::toPlatformWideString(did.Description);
 
-				// The window will be only initialized once, even in some cases, like device losts
+				// The window will be only initialized once, even in some cases, like device lost
 				// when this is called again.
 				if (!((D3D9RenderDevice*)m_window->getRenderDevice())->isInitialized())
 				{
@@ -156,7 +146,7 @@ namespace Apoc3D
 			{
 				RenderWindow::ChangeRenderParameters(params);
 
-				DeviceSettings settings;
+				/*DeviceSettings settings;
 				settings.AdapterOrdinal = 0;
 				settings.BackBufferCount = 1;
 				settings.BackBufferHeight = params.BackBufferHeight;
@@ -168,12 +158,12 @@ namespace Apoc3D
 				settings.MultiSampleType = D3D9Utils::ConvertMultisample(params.FSAASampleCount);
 				settings.Multithreaded = params.IsMultithreaded;
 				settings.RefreshRate = 0;
-				settings.Windowed = params.IsWindowd;				
+				settings.Windowed = params.IsWindowed;	*/			
 
 				m_game->getWindow()->MakeFixedSize(params.IsFixedWindow);
 
 				m_game->getGraphicsDeviceManager()->UserIgnoreMonitorChanges() = params.IgnoreMonitorChange;
-				m_game->getGraphicsDeviceManager()->ChangeDevice(settings);
+				m_game->getGraphicsDeviceManager()->ChangeDevice(params);
 
 			}
 

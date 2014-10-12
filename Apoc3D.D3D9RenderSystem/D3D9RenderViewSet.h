@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3D9RENDERVIEWSET
 
 #include "D3D9Common.h"
-#include "DeviceSettings.h"
+#include "RawSettings.h"
 #include "Apoc3D/Collections/List.h"
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
 
@@ -42,40 +42,12 @@ namespace Apoc3D
 		{
 			class D3D9RenderViewSet
 			{
-			private:
-				DeviceSettings* m_currentSetting;
 
-				List<D3D9RenderView*> m_views;
-				IDirect3D9* m_direct3D9;
-				D3DDevice* m_device;
-				D3D9RenderDevice* m_apiDevice;
-
-				bool m_deviceLost;
-
-				bool m_ignoreSizeChanges;
-
-
-				void Control_BeginPaint(bool* cancel);
-				void Control_EndPaint();
-
-				void Control_UserResized();
-				void Control_MonitorChanged();
-
-				int32 GetAdapterOrdinal(HMONITOR mon);
-
-				void PropogateSettings();
-				bool CanDeviceBeReset(const DeviceSettings* const oldset,
-					const DeviceSettings* const newset) const;
-
-				HRESULT ResetDevice();
-				void CreateDevice(const DeviceSettings &settings);
-				void InitializeDevice();
-				void ReleaseDevice();
 			public:
-				const DeviceSettings* getCurrentSetting() const { return m_currentSetting; }
+				const RawSettings* getCurrentSetting() const { return m_currentSetting; }
 
 				D3D9RenderViewSet(IDirect3D9* d3d9);
-				~D3D9RenderViewSet(void);
+				~D3D9RenderViewSet();
 
 				D3DDevice* getDevice() const { return m_device; }
 				IDirect3D9* getDirect3D() const { return m_direct3D9; }
@@ -96,7 +68,39 @@ namespace Apoc3D
 					@settings The settings.
 					@minimumSettings The minimum settings.
 				*/
-				void ChangeDevice(const DeviceSettings& settings, const DeviceSettings* minimumSettings);
+				void ChangeDevice(const RenderParameters& settings, const RenderParameters* minimumSettings);
+
+			private:
+				RawSettings* m_currentSetting = nullptr;
+
+				List<D3D9RenderView*> m_views;
+				IDirect3D9* m_direct3D9;
+				D3DDevice* m_device = nullptr;
+				D3D9RenderDevice* m_apiDevice;
+
+				bool m_deviceLost = false;
+				bool m_ignoreSizeChanges = false;
+
+
+				void Control_BeginPaint(bool* cancel);
+				void Control_EndPaint();
+
+				void Control_UserResized();
+				void Control_MonitorChanged();
+
+				int32 GetAdapterOrdinal(HMONITOR mon);
+
+				void PropogateSettings();
+				bool CanDeviceBeReset(const RawSettings* const oldset,
+					const RawSettings* const newset) const;
+
+				HRESULT ResetDevice();
+				void CreateDevice(const RawSettings &settings);
+				void ChangeDevice(const RawSettings& settings);
+
+				void InitializeDevice();
+				void ReleaseDevice();
+
 			};
 		}
 	}

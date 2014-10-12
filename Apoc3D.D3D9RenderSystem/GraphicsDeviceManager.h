@@ -26,7 +26,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_D3D9_GRAPHICSDEVICEMANAGER_H
 
 #include "D3D9Common.h"
-#include "DeviceSettings.h"
+#include "RawSettings.h"
+
+using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
 {
@@ -42,10 +44,10 @@ namespace Apoc3D
 			class GraphicsDeviceManager
 			{
 			public:
-				const DeviceSettings* getCurrentSetting() const { return m_currentSetting; }
+				const RawSettings* getCurrentSetting() const { return m_currentSetting; }
 
 				GraphicsDeviceManager(Game* game, IDirect3D9* d3d9);
-				~GraphicsDeviceManager(void);
+				~GraphicsDeviceManager();
 
 				bool& UserIgnoreMonitorChanges() { return m_userIgnoreMoniorChanges; }
 
@@ -61,7 +63,7 @@ namespace Apoc3D
 					@settings The settings.
 					@minimumSettings The minimum settings.
 				*/
-				void ChangeDevice(const DeviceSettings& settings, const DeviceSettings* minimumSettings);
+				void ChangeDevice(const RenderParameters& settings, const RenderParameters* minimumSettings);
 				
 				/** Changes the device.
 					param
@@ -75,10 +77,9 @@ namespace Apoc3D
 					param
 					@settings The settings.
 				*/
-				void ChangeDevice(const DeviceSettings& settings);
+				void ChangeDevice(const RenderParameters& settings);
 
-				/* Toggles between full screen and windowed mode.
-				*/
+				/* Toggles between full screen and windowed mode. */
 				void ToggleFullScreen();
 				void ReleaseDevice();
 
@@ -87,8 +88,10 @@ namespace Apoc3D
 
 			private:
 				void PropogateSettings();
-				bool CanDeviceBeReset(const DeviceSettings* const oldset, const DeviceSettings* const newset) const;
-				void CreateDevice(const DeviceSettings &settings);
+				bool CanDeviceBeReset(const RawSettings* oldset, const RawSettings* newset) const;
+				void CreateDevice(const RawSettings &settings);
+				void ChangeDevice(const RawSettings& settings);
+
 				void game_FrameStart(bool* cancel);
 				void game_FrameEnd();
 				void Window_UserResized();
@@ -100,16 +103,23 @@ namespace Apoc3D
 				int32 GetAdapterOrdinal(HMONITOR mon);
 				void UpdateDeviceInformation();
 
-				DeviceSettings* m_currentSetting;
+				/*struct GroupedSettings
+				{
+					RenderParameters Params;
+					RawSettings Raw;
+				};*/
+				
+				RawSettings* m_currentSetting = nullptr;
+
 				IDirect3D9* m_direct3D9;
-				D3DDevice* m_device;
+				D3DDevice* m_device = nullptr;
 
 				Game* m_game;
 
-				bool m_userIgnoreMoniorChanges;
+				bool m_userIgnoreMoniorChanges = false;
 
-				bool m_ignoreSizeChanges;
-				bool m_deviceLost;
+				bool m_ignoreSizeChanges = false;
+				bool m_deviceLost = false;
 
 				int32 m_fullscreenWindowWidth;
 				int32 m_fullscreenWindowHeight;

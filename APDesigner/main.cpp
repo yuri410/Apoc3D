@@ -112,7 +112,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	params.EnableVSync = true;
 	params.FSAASampleCount = 4;
 	params.IsFullForm = true;
-	params.IsWindowd = true;
+	params.IsWindowed = true;
 	params.IgnoreMonitorChange = true;
 
 	if (!startupParams.ServiceMode)

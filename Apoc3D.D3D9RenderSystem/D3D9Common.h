@@ -109,7 +109,7 @@ namespace Apoc3D
 
 			class VolatileResource;
 
-			struct DeviceSettings;
+			struct RawSettings;
 		}
 	}
 }

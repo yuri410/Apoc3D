@@ -11,24 +11,21 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 			D3D9RenderViewSet::D3D9RenderViewSet(IDirect3D9* d3d9)
-				: m_currentSetting(0),m_device(0), m_ignoreSizeChanges(false),
-				m_deviceLost(false),
-				m_direct3D9(d3d9)
+				: m_direct3D9(d3d9)
 			{
 
 			}
 
 
-			D3D9RenderViewSet::~D3D9RenderViewSet(void)
+			D3D9RenderViewSet::~D3D9RenderViewSet()
 			{
-				if (m_currentSetting)
-					delete m_currentSetting;
+				DELETE_AND_NULL(m_currentSetting);
 			}
 
 
 			void D3D9RenderViewSet::PropogateSettings()
 			{
-				m_currentSetting->BackBufferCount = m_currentSetting->D3D9.PresentParameters.BackBufferCount;
+				/*m_currentSetting->BackBufferCount = m_currentSetting->D3D9.PresentParameters.BackBufferCount;
 				m_currentSetting->BackBufferWidth = m_currentSetting->D3D9.PresentParameters.BackBufferWidth;
 				m_currentSetting->BackBufferHeight = m_currentSetting->D3D9.PresentParameters.BackBufferHeight;
 				m_currentSetting->BackBufferFormat = m_currentSetting->D3D9.PresentParameters.BackBufferFormat;
@@ -38,39 +35,39 @@ namespace Apoc3D
 				m_currentSetting->MultiSampleType = m_currentSetting->D3D9.PresentParameters.MultiSampleType;
 				m_currentSetting->RefreshRate = m_currentSetting->D3D9.PresentParameters.FullScreen_RefreshRateInHz;
 				m_currentSetting->Windowed = m_currentSetting->D3D9.PresentParameters.Windowed ? true : false;
-
+				*/
 			}
-			bool D3D9RenderViewSet::CanDeviceBeReset(const DeviceSettings* const oldset,
-				const DeviceSettings* const newset) const
+			bool D3D9RenderViewSet::CanDeviceBeReset(const RawSettings* const oldset,
+				const RawSettings* const newset) const
 			{
 				if (!oldset)
 					return false;
 
 				return m_device &&
-					oldset->D3D9.AdapterOrdinal == newset->D3D9.AdapterOrdinal &&
-					oldset->D3D9.DeviceType == newset->D3D9.DeviceType &&
-					oldset->D3D9.CreationFlags == newset->D3D9.CreationFlags;
+					oldset->AdapterOrdinal == newset->AdapterOrdinal &&
+					oldset->DeviceType == newset->DeviceType &&
+					oldset->CreationFlags == newset->CreationFlags;
 			}
 
-			void D3D9RenderViewSet::ChangeDevice(const DeviceSettings& settings, const DeviceSettings* minimumSettings)
+			void D3D9RenderViewSet::ChangeDevice(const RenderParameters& settings, const RenderParameters* minimumSettings)
 			{
 				if (minimumSettings)
 				{
-					Enumeration::setMinimumSettings(*minimumSettings);
+					Enumeration::MinimumSettings.Set(*minimumSettings);
 				}
 				else
 				{
-					Enumeration::ClearMinimumSetting();
+					Enumeration::MinimumSettings.IsSet = false;;
 				}
-				DeviceSettings validSettings;
+				RawSettings validSettings;
 				Enumeration::FindValidSettings(m_direct3D9, settings, validSettings);
-				validSettings.D3D9.PresentParameters.hDeviceWindow = 0;
+				validSettings.PresentParameters.hDeviceWindow = 0;
 				CreateDevice(validSettings);
 			}
-			void D3D9RenderViewSet::CreateDevice(const DeviceSettings& settings)
+			void D3D9RenderViewSet::CreateDevice(const RawSettings& settings)
 			{
-				DeviceSettings* oldSettings = m_currentSetting;
-				m_currentSetting = new DeviceSettings(settings);
+				RawSettings* oldSettings = m_currentSetting;
+				m_currentSetting = new RawSettings(settings);
 
 				m_ignoreSizeChanges = true;
 
@@ -98,13 +95,21 @@ namespace Apoc3D
 					delete oldSettings;
 			}
 
+			void D3D9RenderViewSet::ChangeDevice(const RawSettings& settings)
+			{
+				RawSettings validSettings;
+				Enumeration::FindValidSettings(m_direct3D9, settings, validSettings);
+				validSettings.PresentParameters.hDeviceWindow = 0;
+				CreateDevice(validSettings);
+			}
+
 			int32 D3D9RenderViewSet::GetAdapterOrdinal(HMONITOR mon)
 			{
 				const AdapterInfo* adapter = 0;
 				const List<AdapterInfo*> adInfo = Enumeration::getAdapters();
 				for (int32 i=0;i<adInfo.getCount();i++)
 				{
-					if (m_direct3D9->GetAdapterMonitor(adInfo[i]->AdapterOrdinal) == mon)
+					if (m_direct3D9->GetAdapterMonitor(adInfo[i]->AdapterIndex) == mon)
 					{
 						adapter = adInfo[i];
 						break;
@@ -113,7 +118,7 @@ namespace Apoc3D
 
 				if (adapter)
 				{
-					return adapter->AdapterOrdinal;
+					return adapter->AdapterIndex;
 				}
 
 				return -1;
@@ -136,16 +141,16 @@ namespace Apoc3D
 						return;
 					}
 
-					if (m_currentSetting->Windowed)
+					if (m_currentSetting->PresentParameters.Windowed)
 					{
 						D3DDISPLAYMODE mode;
-						HRESULT hr = m_direct3D9->GetAdapterDisplayMode(m_currentSetting->D3D9.AdapterOrdinal, &mode);
+						HRESULT hr = m_direct3D9->GetAdapterDisplayMode(m_currentSetting->AdapterOrdinal, &mode);
 						assert(SUCCEEDED(hr));
 
-						if (m_currentSetting->D3D9.AdapterFormat != mode.Format)
+						if (m_currentSetting->AdapterFormat != mode.Format)
 						{
-							DeviceSettings newSettings = *m_currentSetting;
-							ChangeDevice(newSettings, 0);
+							RawSettings newSettings = *m_currentSetting;
+							ChangeDevice(newSettings);
 							*cancel = true;
 							return;
 						}
@@ -191,18 +196,18 @@ namespace Apoc3D
 			}
 			void D3D9RenderViewSet::Control_MonitorChanged()
 			{
-				if (!EnsureDevice() || !m_currentSetting->Windowed || m_ignoreSizeChanges)
+				if (!EnsureDevice() || !m_currentSetting->PresentParameters.Windowed || m_ignoreSizeChanges)
 					return;
 
 				HMONITOR windowMonitor = MonitorFromWindow(0, MONITOR_DEFAULTTOPRIMARY);
 
-				DeviceSettings newSettings = *m_currentSetting;
+				RawSettings newSettings = *m_currentSetting;
 				int adapterOrdinal = GetAdapterOrdinal(windowMonitor);
 
 				if (adapterOrdinal == -1)
 					return;
 
-				newSettings.D3D9.AdapterOrdinal = adapterOrdinal;
+				newSettings.AdapterOrdinal = adapterOrdinal;
 
 				CreateDevice(newSettings);
 			}
@@ -210,9 +215,9 @@ namespace Apoc3D
 			void D3D9RenderViewSet::InitializeDevice()
 			{
 				HWND sss = 0;
-				HRESULT result = m_direct3D9->CreateDevice(m_currentSetting->D3D9.AdapterOrdinal,
-					m_currentSetting->D3D9.DeviceType, sss ,
-					m_currentSetting->D3D9.CreationFlags, &m_currentSetting->D3D9.PresentParameters, &m_device);
+				HRESULT result = m_direct3D9->CreateDevice(m_currentSetting->AdapterOrdinal,
+					m_currentSetting->DeviceType, sss ,
+					m_currentSetting->CreationFlags, &m_currentSetting->PresentParameters, &m_device);
 
 				if (result == D3DERR_DEVICELOST)
 				{
@@ -238,7 +243,7 @@ namespace Apoc3D
 			{
 				m_apiDevice->OnDeviceLost();
 
-				HRESULT hr = m_device->Reset(&m_currentSetting->D3D9.PresentParameters);
+				HRESULT hr = m_device->Reset(&m_currentSetting->PresentParameters);
 
 				m_apiDevice->OnDeviceReset();
 				return hr;

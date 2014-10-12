@@ -41,57 +41,56 @@ namespace Apoc3D
 		{
 			struct RenderParameters
 			{
-				bool IsWindowd;
+				int32 AdapterIndex = 0;
+
+				bool IsWindowed = false;
 
 				/**
 				 *  Can the window created be resized.
 				 */
-				bool IsFixedWindow;
+				bool IsFixedWindow = false;
 
-				bool IgnoreMonitorChange;
+				bool IgnoreMonitorChange = false;
 				
 				/** 
 				 *  Represents when IsWindowd, whether
 				 *  the engine should create a RenderWindow or(true), or
 				 *  using a user specified render area as a RenderView(false).
 				 */
-				bool IsFullForm;
+				bool IsFullForm = false;
 
-				int BackBufferWidth;
-				int BackBufferHeight;
+				int BackBufferWidth = 0;
+				int BackBufferHeight = 0;
 
-				DepthFormat DepthBufferFormat;
-				PixelFormat ColorBufferFormat;
+				DepthFormat DepthBufferFormat = DEPFMT_Depth16;
+				PixelFormat ColorBufferFormat = FMT_Unknown;
 
-				uint32 FSAASampleCount;
-				bool EnableVSync;
-				
-				bool IsMultithreaded;
+				uint32 FSAASampleCount = 0;
+				bool EnableVSync = false;
+				bool TripleBuffering = false;
+
+				bool IsMultithreaded = true;
+				int32 RefreshRate = 0;
 
 				/** 
 				 *  When IsFullForm==false, this is a platform specific handle indicating the target area for presenting the render result.
 				 */
-				uint64 TargetHandle;
+				uint64 TargetHandle = 0;
 
-				void* UserData;
+				void* UserData = 0;
 
-				RenderParameters()
-					: IsWindowd(false), IsFullForm(false), BackBufferWidth(0), BackBufferHeight(0),
-					DepthBufferFormat(DEPFMT_Depth16), ColorBufferFormat(FMT_Unknown), FSAASampleCount(0), EnableVSync(false),
-					TargetHandle(0), UserData(0), IsFixedWindow(false), IgnoreMonitorChange(false), IsMultithreaded(true)
-				{
-					
-				}
+				RenderParameters() { }
 			};
 
 			struct RenderDisplayMode
 			{
 				String AdapterName;
-				int AdapterOrdinal;
+				int AdapterIndex;
 
 				int Width;
 				int Height;
 
+				uint32 RefreshRate;
 				uint32 FSAASampleCount;
 				bool FullScreen;
 			};

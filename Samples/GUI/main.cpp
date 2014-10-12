@@ -90,7 +90,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	params.EnableVSync = true;
 	params.FSAASampleCount = 0;
 	params.IsFullForm = true;
-	params.IsWindowd = true;
+	params.IsWindowed = true;
 
 
 	RenderView* view =  devContent->Create(params);

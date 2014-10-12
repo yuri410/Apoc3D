@@ -171,7 +171,7 @@
     <ClInclude Include="D3D9Utils.h" />
     <ClInclude Include="Buffer\D3D9VertexBuffer.h" />
     <ClInclude Include="D3D9VertexDeclaration.h" />
-    <ClInclude Include="DeviceSettings.h" />
+    <ClInclude Include="RawSettings.h" />
     <ClInclude Include="Enumeration.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameClock.h" />
