@@ -539,67 +539,61 @@ namespace Apoc3D
 
 			CurrentValue = Math::Saturate(CurrentValue);
 
-			if (!Enabled || !Visible)
-				return;
-
-			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-
-			Apoc3D::Math::Rectangle handleArea = GetHandleArea();
-			if (m_isDragging)
+			if (Enabled && Visible)
 			{
-				if (hasLargeTicks())
+				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+
+				Apoc3D::Math::Rectangle handleArea = GetHandleArea();
+				if (m_isDragging)
 				{
 					Apoc3D::Math::Rectangle area = getAbsoluteArea();
 					SetValueFromCurrentPosition(mouse, area);
+
+					if (mouse->IsLeftUp())
+					{
+						m_isDragging = false;
+						if (CurrentValue != m_lastValueBeforeDrag)
+						{
+							eventValueChanged.Invoke(this);
+						}
+					}
+
+					m_isMouseHovering = true;
+					m_mouseHoverArea = handleArea;
 				}
 				else
 				{
-					int32 scrLen = GetScrollableLength();
-
-					int32 dm = m_type == BarDirection::Horizontal ? mouse->getDX() : mouse->getDY();
-					float dv = static_cast<float>(dm) / scrLen;
-
-					CurrentValue += dv;
-					CurrentValue = Math::Saturate(CurrentValue);
-				}
-
-				if (mouse->IsLeftUp())
-				{
-					m_isDragging = false;
-				}
-
-				m_isMouseHovering = true;
-				m_mouseHoverArea = handleArea;
-			}
-			else
-			{
-				if (IsInteractive)
-				{
-					Apoc3D::Math::Rectangle area = getAbsoluteArea();
-
-					if (!m_isMouseHovering && handleArea.Contains(mouse->GetPosition()))
+					if (IsInteractive)
 					{
-						m_isMouseHovering = true;
-						m_mouseHoverArea = handleArea;
+						Apoc3D::Math::Rectangle area = getAbsoluteArea();
 
-						if (mouse->IsLeftPressed())
+						if (!m_isMouseHovering && handleArea.Contains(mouse->GetPosition()))
 						{
-							m_isDragging = true;
+							m_isMouseHovering = true;
+							m_mouseHoverArea = handleArea;
+
+							if (mouse->IsLeftPressed())
+							{
+								m_isDragging = true;
+								m_lastValueBeforeDrag = CurrentValue;
+							}
+						}
+						else if (area.Contains(mouse->GetPosition()))
+						{
+							if (mouse->IsLeftPressed())
+							{
+								SetValueFromCurrentPosition(mouse, area);
+								eventValueChanged.Invoke(this);
+							}
 						}
 					}
-					else if (area.Contains(mouse->GetPosition()))
+					else
 					{
-						if (mouse->IsLeftPressed())
-						{
-							SetValueFromCurrentPosition(mouse, area);
-						}
+						m_isDragging = false;
 					}
 				}
-				else
-				{
-					m_isDragging = false;
-				}
 			}
+
 		}
 
 		void SliderBar::SetLength(int32 len)
@@ -659,15 +653,22 @@ namespace Apoc3D
 		{
 			int32 dist = m_type == BarDirection::Horizontal ? (mouse->getX() - area.X) : (mouse->getY() - area.Y);
 
-			int32 len = GetLength();
+			int32 len = GetScrollableLength();
 			if (len <= 0)
 				len = 1;
 
-			CurrentValue = Math::Saturate(static_cast<float>(dist) / GetLength());
+			float prevValue = CurrentValue;
+
+			CurrentValue = Math::Saturate(static_cast<float>(dist) / len);
 
 			if (hasLargeTicks())
 			{
 				CurrentValue = Math::Round(CurrentValue * LargeTickDivisionCount) / static_cast<float>(LargeTickDivisionCount);
+			}
+
+			if (prevValue != CurrentValue)
+			{
+				eventValueChanging.Invoke(this);
 			}
 		}
 	}

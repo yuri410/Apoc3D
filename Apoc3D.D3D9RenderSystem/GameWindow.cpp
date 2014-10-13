@@ -117,7 +117,7 @@ namespace Apoc3D
 				m_title = title;
 			}
 
-			GameWindow::~GameWindow(void)
+			GameWindow::~GameWindow()
 			{
 				if (ms_Window == this)
 					ms_Window = NULL;

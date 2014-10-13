@@ -196,6 +196,8 @@ namespace Apoc3D
 			bool m_isMouseHovering = false;
 			bool m_isDragging = false;
 
+			float m_lastValueBeforeDrag = 0;
+
 			BarDirection m_type;
 
 			Apoc3D::Math::Rectangle m_mouseHoverArea;

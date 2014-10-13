@@ -29,6 +29,9 @@ namespace Sample_GUI
 
 		void ShowAbout(MenuItem* ctrl);
 
+		void Slider_Changing(SliderBar* sb);
+		void Slider_Changed(SliderBar* sb);
+		
 
 		Form* m_aboutDlg;
 
@@ -39,7 +42,8 @@ namespace Sample_GUI
 
 		ComboBox* m_testCB;
 
-
+		float m_signal1 = 0;
+		float m_signal2 = 0;
 
 		Sprite* m_sprite;
     };

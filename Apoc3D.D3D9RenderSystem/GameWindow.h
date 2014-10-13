@@ -43,7 +43,7 @@ namespace Apoc3D
 			{
 			public:
 				GameWindow(const String& name, const String& wndTitle);
-				~GameWindow(void);
+				~GameWindow();
 				/**
 				 *  Creates a win32 window using the given parameters.
 				 */
