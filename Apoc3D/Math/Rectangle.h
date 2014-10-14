@@ -246,6 +246,11 @@ namespace Apoc3D
 					(Y < (value.Y + value.Height));
 			}
 
+			Rectangle GetCenterRegion(const Point& sz) const
+			{
+				return Rectangle(getCenter() - sz / 2, sz);
+			}
+
 			/** Creates a Rectangle defining the area where one rectangle overlaps another rectangle. */
 			static Rectangle Intersect(const Rectangle &a, const Rectangle &b)
 			{
