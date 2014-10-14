@@ -142,7 +142,7 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(SliderBar, Control);
 		public:
-			typedef EventDelegate1<SliderBar*> SliderBarEvent;
+			typedef EventDelegate2<SliderBar*, bool> SliderBarEvent;
 
 			SliderBar(const SliderBarVisualSettings& settings, const Point& position, BarDirection type, int32 length);
 			SliderBar(const StyleSkin* skin, const Point& position, BarDirection type, int32 length);
@@ -183,7 +183,6 @@ namespace Apoc3D
 
 			UIGraphicSimple LargeTickGraphic;
 
-			SliderBarEvent eventValueChanging;
 			SliderBarEvent eventValueChanged;
 		private:
 			int32 GetScrollableLength() const;

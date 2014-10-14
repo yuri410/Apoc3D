@@ -554,7 +554,7 @@ namespace Apoc3D
 						m_isDragging = false;
 						if (CurrentValue != m_lastValueBeforeDrag)
 						{
-							eventValueChanged.Invoke(this);
+							eventValueChanged.Invoke(this, true);
 						}
 					}
 
@@ -583,7 +583,7 @@ namespace Apoc3D
 							if (mouse->IsLeftPressed())
 							{
 								SetValueFromCurrentPosition(mouse, area);
-								eventValueChanged.Invoke(this);
+								eventValueChanged.Invoke(this, true);
 							}
 						}
 					}
@@ -668,7 +668,7 @@ namespace Apoc3D
 
 			if (prevValue != CurrentValue)
 			{
-				eventValueChanging.Invoke(this);
+				eventValueChanged.Invoke(this, false);
 			}
 		}
 	}

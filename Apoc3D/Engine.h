@@ -48,9 +48,7 @@ namespace Apoc3D
 		 *  later.
 		 */
 		List<String> ConfigSet;
-		///** Defines a list of effects which can be setup fully using scripts.
-		//*/
-		//List<String> EffectList;
+
 		/**
 		 *  A list of absolute directories to be used in the engine's file system.
 		 */

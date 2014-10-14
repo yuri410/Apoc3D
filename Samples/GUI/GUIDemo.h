@@ -29,8 +29,7 @@ namespace Sample_GUI
 
 		void ShowAbout(MenuItem* ctrl);
 
-		void Slider_Changing(SliderBar* sb);
-		void Slider_Changed(SliderBar* sb);
+		void Slider_Changed(SliderBar* sb, bool finishing);
 		
 
 		Form* m_aboutDlg;
