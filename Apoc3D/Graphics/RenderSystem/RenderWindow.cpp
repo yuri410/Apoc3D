@@ -34,35 +34,52 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			void FPSCounter::Step(const GameTime* time)
+			void FPSCounter::Step(float dt)
 			{
-				m_frameTimes.PushBack(time->getTotalRealTime());
+				if (m_frameTimes.getCount() == 0)
+					m_frameTimes.Enqueue(0);
 
-				if (m_frameTimes.getCount()>1)
+				m_currentWindowTimePos += dt;
+				m_frameTimes.Enqueue(m_currentWindowTimePos);
+
+
+				float begin = m_frameTimes.Head();
+				float end = m_frameTimes.Tail();
+
+				float timeLen = end - begin;
+
+				if (timeLen < 0)
 				{
-					float begin = *m_frameTimes.begin();
+					m_frameTimes.Clear();
+					m_currentWindowTimePos = 0;
+					return;
+				}
 
-					float end = m_frameTimes.Back();
+				m_fps = static_cast<float>(m_frameTimes.getCount()) / (timeLen);
 
-					float timeLen = end - begin;
-
-					if (timeLen<0)
+				if (timeLen > 1)
+				{
+					float stamp = end - 1;
+					while (m_frameTimes.getCount() > 0 && m_frameTimes.Head() < stamp)
 					{
-						m_frameTimes.Clear();
-						return;
+						m_frameTimes.Dequeue();
 					}
 
-					m_fps = static_cast<float>(m_frameTimes.getCount())/(timeLen);
-
-					if (timeLen>1)
+					// rebase to zero
+					if (m_frameTimes.Head() > 0)
 					{
-						float stamp = end - 1;
-						while (m_frameTimes.Front()<stamp && !m_frameTimes.IsEmpty())
-						{
-							m_frameTimes.PopFront();
-						}
+						float base = m_frameTimes.Head();
+						for (int32 i = 0; i < m_frameTimes.getCount(); i++)
+							m_frameTimes.Element(i) -= base;
+
+						m_currentWindowTimePos -= base;
 					}
 				}
+			}
+
+			void FPSCounter::Step(const GameTime* time)
+			{
+				Step(time->getElapsedRealTime()); 
 			}
 
 			void RenderView::Present(const GameTime* time)

@@ -45,6 +45,8 @@ namespace Apoc3D
 		{
 			class D3D9RenderTarget final : public RenderTarget, public VolatileResource
 			{
+				RTTI_DERIVED(D3D9RenderTarget, RenderTarget);
+
 			public:
 				D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt);
 				D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt, IDirect3DSurface9* depth);

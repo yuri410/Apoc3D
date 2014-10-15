@@ -26,7 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3D9RENDERWINDOW_H
 
 #include "D3D9Common.h"
-#include "Game.h"
 #include "D3D9RenderDevice.h"
 
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
@@ -82,6 +81,7 @@ namespace Apoc3D
 				virtual bool getIsActive() const { return m_active; }
 
 				virtual void SetVisible(bool v) override;
+				virtual void SetupFixedFrameTime(bool enabled, float targetTime) override;
 
 				void D3D9_Initialize();
 
@@ -94,11 +94,6 @@ namespace Apoc3D
 
 				const String& getHardwareName() const { return m_hardwareName; }
 				GameWindow* getWindow() const { return m_gameWindow; }
-
-				//void setDevice(RenderDevice* device);
-
-				float TargetElapsedTime = 1.0f / 60.0f;
-				bool UseFixedTimeStep = true;
 
 
 				CancellableEventHandler eventFrameStart;
@@ -145,8 +140,6 @@ namespace Apoc3D
 				void Window_Paint();
 
 
-
-				//Game* m_game;
 				D3D9DeviceContext* m_dc;
 				String m_hardwareName;
 
@@ -154,23 +147,17 @@ namespace Apoc3D
 				GameWindow* m_gameWindow;
 				GameClock* m_gameClock;
 
-				int m_maxSkipFrameCount = 10;
-				float m_maxElapsedTime = 0.5f;
-				float m_totalGameTime = 0;
-				float m_accumulatedElapsedGameTime = 0;
-				float m_lastFrameElapsedGameTime = 0;
-				float m_lastFrameElapsedRealTime = 0;
+				// fixed time step states
+				int32 m_maxSkipFrameCount_fixedStep = 10;
+				float m_totalGameTime_fixedStep = 0;
+				float m_accumulatedDt_fixedStep = 0;
+				int32 m_slowRenderFrameHits_fixedStep = 0;
 
-				float m_inactiveSleepTime = 20;
-				int32 m_updatesSinceRunningSlowly1 = MAXINT32;
-				int32 m_updatesSinceRunningSlowly2 = MAXINT32;
-				int64 m_lastUpdateFrame = 0;
-				float m_lastUpdateTime = 0;
-				float m_fps = 0;
+				int32 m_inactiveSleepTime = 20;
 
-				bool m_forceElapsedTimeToZero = false;
-				bool m_drawRunningSlowly = false;
+				float m_targetElapsedTime = 1.0f / 60.0f;
 
+				bool m_useFixedTimeStep = true;
 				bool m_active = false;
 
 			};

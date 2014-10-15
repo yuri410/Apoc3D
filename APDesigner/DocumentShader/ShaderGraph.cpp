@@ -374,10 +374,8 @@ namespace APDesigner
 				// when the maximum kinetic energy is low, the time step can be
 				// scaled up to increase simulation speed, getting the result
 				// in a fewer time
-				GameTime time2(time->getElapsedTime()*3 *m_adaptiveTimeScale, 
-					time->getTotalTime(), 
-					time->getElapsedRealTime(), time->getTotalRealTime(), 
-					time->getFPS(), time->isRunningSlowly());
+				GameTime time2 = *time;
+				time2.ElapsedTime *= 3 * m_adaptiveTimeScale;
 
 				// TECH_Fuzzy first calculated the center of mass of the entire graph.
 				// Then only the repulsive forces from this point and neighbor graph nodes are taken into account.

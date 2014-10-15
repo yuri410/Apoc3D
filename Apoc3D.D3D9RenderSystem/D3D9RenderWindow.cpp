@@ -148,7 +148,11 @@ namespace Apoc3D
 
 				m_visisble = v;
 			}
-
+			void D3D9RenderWindow::SetupFixedFrameTime(bool enabled, float targetTime)
+			{
+				m_targetElapsedTime = targetTime;
+				m_useFixedTimeStep = enabled;
+			}
 
 			void D3D9RenderWindow::Minimize()
 			{
@@ -254,91 +258,65 @@ namespace Apoc3D
 					return;
 
 				if (!m_active)
-					Sleep(static_cast<int>(m_inactiveSleepTime));
+					Sleep(m_inactiveSleepTime);
 
 				m_gameClock->Step();
 
-				float elapsedRealTime = (float)m_gameClock->getElapsedTime();
+				float dt = (float)m_gameClock->getElapsedTime();
 				float totalRealTime = (float)m_gameClock->getCurrentTime();
 
-				m_lastFrameElapsedRealTime += (float)m_gameClock->getElapsedTime();
+				if (dt < 0)
+					dt = 0;
 
-				float elapsedAdjustedTime = m_gameClock->getElapsedAdjustedTime();
-				if (elapsedAdjustedTime < 0)
-					elapsedAdjustedTime = 0;
+				float fps = getFPS();
 
-				if (m_forceElapsedTimeToZero)
+				if (m_useFixedTimeStep)
 				{
-					elapsedRealTime = 0;
-					m_lastFrameElapsedRealTime = elapsedAdjustedTime = 0;
-					m_forceElapsedTimeToZero = false;
-				}
+					m_accumulatedDt_fixedStep += dt;
 
-				m_accumulatedElapsedGameTime += elapsedAdjustedTime;
+					int32 maxFrameSkip = m_maxSkipFrameCount_fixedStep;
+#if _DEBUG
+					maxFrameSkip = 1;
+#endif
 
-				float targetElapsedTime = TargetElapsedTime;
-				float ratio = m_accumulatedElapsedGameTime / TargetElapsedTime;
+					bool renderingSlow = m_accumulatedDt_fixedStep > m_targetElapsedTime * 1.2f;
 
+					if (renderingSlow)
+						m_slowRenderFrameHits_fixedStep++;
+					else
+						m_slowRenderFrameHits_fixedStep--;
 
-				m_accumulatedElapsedGameTime = fmod(m_accumulatedElapsedGameTime, targetElapsedTime);
-				m_lastFrameElapsedGameTime = 0;
+					renderingSlow = m_slowRenderFrameHits_fixedStep > 5;
 
-				if (ratio == 0)
-					return;
+					int32 framesSkipped = 0;
 
+					// keep up update calls:
+					// update until it's time to draw the next frame
+					while (m_accumulatedDt_fixedStep >= m_targetElapsedTime)
+					{
+						if (framesSkipped < maxFrameSkip)
+						{
+							GameTime gt(m_targetElapsedTime, m_totalGameTime_fixedStep,
+								dt, totalRealTime, fps, renderingSlow);
+							D3D9_Update(&gt);
 
-				if (ratio > 1)
-				{
-					m_updatesSinceRunningSlowly2 = m_updatesSinceRunningSlowly1;
-					m_updatesSinceRunningSlowly1 = 0;
+							m_totalGameTime_fixedStep += m_targetElapsedTime;
+						}
+
+						framesSkipped++;
+						m_accumulatedDt_fixedStep -= m_targetElapsedTime;
+					}
+
+					GameTime gt(m_targetElapsedTime, m_totalGameTime_fixedStep,
+						dt, totalRealTime, fps, renderingSlow);
+						D3D9_DrawFrame(&gt);
 				}
 				else
 				{
-					if (m_updatesSinceRunningSlowly1 < MAXINT32)
-						m_updatesSinceRunningSlowly1++;
-					if (m_updatesSinceRunningSlowly2 < MAXINT32)
-						m_updatesSinceRunningSlowly2++;
-				}
+					GameTime gt(dt, totalRealTime, dt, totalRealTime, fps, false);
 
-				m_drawRunningSlowly = m_updatesSinceRunningSlowly2 < 20;
-
-#if _DEBUG
-				if (ratio > m_maxSkipFrameCount)
-					ratio = 1;
-#else
-				if (ratio>m_maxSkipFrameCount)
-					ratio = static_cast<float>(m_maxSkipFrameCount);
-#endif
-
-				// keep up update calls:
-				// update until it's time to draw the next frame
-				while (ratio > 1)
-				{
-					ratio -= 1;
-
-					GameTime gt(TargetElapsedTime, m_totalGameTime,
-						elapsedRealTime, totalRealTime, m_fps, m_drawRunningSlowly);
 					D3D9_Update(&gt);
-
-					m_lastFrameElapsedGameTime += targetElapsedTime;
-					m_totalGameTime += targetElapsedTime;
-
-				}
-
-				{
-					GameTime gt(TargetElapsedTime, m_totalGameTime,
-						elapsedRealTime, totalRealTime, m_fps, m_drawRunningSlowly);
 					D3D9_DrawFrame(&gt);
-				}
-
-
-				// refresh the FPS counter once per second
-				m_lastUpdateFrame++;
-				if (totalRealTime - m_lastUpdateTime > 1.0f)
-				{
-					m_fps = (float)m_lastUpdateFrame / (float)(totalRealTime - m_lastUpdateTime);
-					m_lastUpdateTime = totalRealTime;
-					m_lastUpdateFrame = 0;
 				}
 			}
 
@@ -352,9 +330,6 @@ namespace Apoc3D
 						D3D9_OnFrameEnd();
 					}
 				}
-
-				m_lastFrameElapsedGameTime = 0;
-				m_lastFrameElapsedRealTime = 0;
 			}
 
 			void D3D9RenderWindow::D3D9_Render(const GameTime* time) { OnDraw(time); }
@@ -387,11 +362,11 @@ namespace Apoc3D
 			}
 			void D3D9RenderWindow::Window_Suspend()
 			{
-				m_gameClock->Suspend();
+				//m_gameClock->Suspend();
 			}
 			void D3D9RenderWindow::Window_Resume()
 			{
-				m_gameClock->Resume();
+				//m_gameClock->Resume();
 			}
 			void D3D9RenderWindow::Window_Paint()
 			{

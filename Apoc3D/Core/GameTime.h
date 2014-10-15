@@ -35,64 +35,59 @@ namespace Apoc3D
 		/**
 		 *  Contains the current timing state of the game.
 		 */
-		class APAPI GameTime
+		struct GameTime
 		{
-		public:
-			/**
-			 *  Gets the amount of game time since the start of the game, in seconds.
-			 */
-			float getTotalTime() const { return m_totalTime; }
-			/**
-			 *  Gets the elapsed game time since last update, in seconds.
-			 */
-			float getElapsedTime() const { return m_elapsedTime; }
-			
-			float getTotalRealTime() const { return m_totalRealTime; }
-			/**
-			 * Gets the elapsed real game time since last update, in seconds.
-			 *
-			 * Why real? Sometimes(based on the config) 
-			 * more times of Update() is called in the main loop
-			 * when only drawing one frame, to keep up the Update's speed, sending a fixed
-			 * time duration as the ElapsedTime. If so, this is the place to know the
-			 * real time passed.
-			 *
-			 * The purpose of fixed update time duration is to keep the updating
-			 * smooth, rendering delay will not augment the duration.
-			 *
-			 * See the RenderWindow implementation in specific render systems for 
-			 * more information.
-			 */
-			float getElapsedRealTime() const { return m_elapsedRealTime; }
-
-			float getFPS() const { return m_fps; }
-
-			bool isRunningSlowly() const { return m_slowly; }
-
-			GameTime(float elapsedTime, float totalTime,
-				float elapsedRTime, float totalRTime,
-				float fps, bool isRunningSlow)
-			{
-				m_totalTime = totalTime;
-				m_elapsedTime = elapsedTime;
-				m_totalRealTime = totalRTime;
-				m_elapsedRealTime = elapsedRTime;
-
-				m_fps = fps;
-				m_slowly = isRunningSlow;
-			}
+			GameTime(float elapsedTime, float totalTime, float elapsedRTime, float totalRTime, 
+				float fps, bool isRenderingSlow)
+				: ElapsedTime(elapsedTime), TotalTime(totalTime), 
+				ElapsedRealTime(elapsedRTime),TotalRealTime(TotalRealTime), 
+				FPS(fps), IsRenderingSlow(isRenderingSlow) { }
 
 			~GameTime() { }
 
-		private:
-			float m_totalTime;
-			float m_elapsedTime;
+			/**
+			*  Gets the amount of game time since the start of the game, in seconds.
+			*/
+			float getTotalTime() const { return TotalTime; }
+			/**
+			*  Gets 
+			*/
+			float getElapsedTime() const { return ElapsedTime; }
 
-			float m_totalRealTime;
-			float m_elapsedRealTime;
-			float m_fps;
+			float getTotalRealTime() const { return TotalRealTime; }
+			
+			float getElapsedRealTime() const { return ElapsedRealTime; }
 
-			bool m_slowly;
+			float getFPS() const { return FPS; }
+
+			/**
+			 * The elapsed game time since last update, in seconds.
+			 *
+			 * In fixed time step system, ElapsedTime is always the intended TargetElapsedTime,
+			 * and Update is called 1 or more times to catch up with rendering.
+			 *
+			 * Otherwise this is same as ElapsedRealTime.
+			 */
+			float ElapsedTime;
+			float TotalTime;
+
+			/**
+			 * The elapsed real game time since last update, in seconds.
+			 *
+			 * This "real" version of ElapsedTime is intended for use in fixed time system configurations 
+			 * to get the real ElapsedTime instead of the TargetElapsedTime.
+			 *
+			 * In fixed time step system, Update() may be called more than one while Render() is only invoked once in a frame.
+			 * ElapsedTime is always the intended TargetElapsedTime, and Update is called 1 or more times to catch up with rendering.
+			 *
+			 */
+			float ElapsedRealTime;
+			float TotalRealTime;
+
+			float FPS;
+
+			bool IsRenderingSlow = false;
+
 		};
 	};
 };

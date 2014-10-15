@@ -50,6 +50,7 @@ namespace Apoc3D
 			 */
 			class APAPI RenderTarget
 			{
+				RTTI_BASE;
 			protected:
 				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat, const String& multiSampleMode);
 				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, const String& multiSampleMode);

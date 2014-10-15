@@ -28,7 +28,7 @@
 
 #include "DeviceContext.h"
 
-#include "apoc3d/Collections/LinkedList.h"
+#include "apoc3d/Collections/Queue.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Core;
@@ -45,17 +45,17 @@ namespace Apoc3D
 			class APAPI FPSCounter
 			{
 			public:
-				FPSCounter()
-					: m_fps(0)
-				{
-				}
+				FPSCounter() { }
+
+				void Step(const GameTime* time);
+				void Step(float dt);
 
 				float getFPS() const { return m_fps; }
-				void Step(const GameTime* time);
 
 			private:
-				LinkedList<float> m_frameTimes;
-				float m_fps;
+				Queue<float> m_frameTimes;
+				float m_fps = 0;
+				float m_currentWindowTimePos = 0;
 			};
 
 			/**
@@ -131,16 +131,18 @@ namespace Apoc3D
 				virtual String getTitle() = 0;
 				virtual void setTitle(const String& name) = 0;
 
-				void setEventHandler(RenderWindowHandler* handler) { m_evtHandler = handler; }
+				virtual void SetupFixedFrameTime(bool enabled, float targetTime = 1.0f / 60.0f) = 0;
 
-				bool getIsExiting() const { return m_isExiting; }
-				/** 
-				 *  Represents if the window is activated.
-				 */
+				virtual void SetVisible(bool v) = 0;
+
+				/** Represents if the window is activated. */
 				virtual bool getIsActive() const = 0;
 
 				bool getVisisble() const { return m_visisble; }
-				virtual void SetVisible(bool v) = 0;
+
+				bool getIsExiting() const { return m_isExiting; }
+
+				void setEventHandler(RenderWindowHandler* handler) { m_evtHandler = handler; }
 
 			protected:
 

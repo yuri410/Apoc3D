@@ -203,6 +203,7 @@
     <ClCompile Include="D3D9VertexDeclaration.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Enumeration.cpp" />
+    <ClCompile Include="GameClock.cpp" />
     <ClCompile Include="GameWindow.cpp" />
     <ClCompile Include="GraphicsDeviceManager.cpp" />
     <ClCompile Include="Plugin.cpp" />
