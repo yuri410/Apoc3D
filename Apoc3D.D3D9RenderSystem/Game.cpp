@@ -28,8 +28,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "GameWindow.h"
 
 #include "apoc3d/Exception.h"
+#include "apoc3d/Core/Logging.h"
 #include "apoc3d/Core/GameTime.h"
 #include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
+
+#include "apoc3d/Utility/StringUtils.h"
+
+#include "D3D9RenderDevice.h"
+#include "D3D9RenderWindow.h"
 
 //using namespace Apoc3D::Graphics;
 
@@ -39,10 +45,10 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			Game::Game(const String& name, IDirect3D9* d3d9)
-				: m_maxElapsedTime(0.5f), m_targetElapsedTime(1.0f / 60.0f), m_inactiveSleepTime(20),
+			Game::Game(D3D9RenderWindow* wnd, const String& name, IDirect3D9* d3d9)
+				: m_target(wnd),
+				m_maxElapsedTime(0.5f), m_inactiveSleepTime(20),
 				m_updatesSinceRunningSlowly1(MAXINT32), m_updatesSinceRunningSlowly2(MAXINT32),
-				m_exiting(false), m_active(false), 
 				m_accumulatedElapsedGameTime(0), m_lastFrameElapsedGameTime(0), m_lastFrameElapsedRealTime(0),
 				m_totalGameTime(0), m_forceElapsedTimeToZero(false), m_drawRunningSlowly(false), m_lastUpdateFrame(0),
 				m_lastUpdateTime(0), m_fps(0),
@@ -51,29 +57,21 @@ namespace Apoc3D
 				m_gameClock = new GameClock();
 
 				m_gameWindow = new GameWindow(L"d5325676b0844be1a06964bc3f6603ec", name);
-				m_gameWindow->eventApplicationActivated()->Bind(this, &Game::Window_ApplicationActivated);
-				m_gameWindow->eventApplicationDeactivated()->Bind(this, &Game::Window_ApplicationDeactivated);
-				m_gameWindow->eventPaint()->Bind(this, &Game::Window_Paint);
-				m_gameWindow->eventResume()->Bind(this, &Game::Window_Resume);
-				m_gameWindow->eventSuspend()->Bind(this, &Game::Window_Suspend);
+				m_gameWindow->eventApplicationActivated.Bind(this, &Game::Window_ApplicationActivated);
+				m_gameWindow->eventApplicationDeactivated.Bind(this, &Game::Window_ApplicationDeactivated);
+				m_gameWindow->eventPaint.Bind(this, &Game::Window_Paint);
+				m_gameWindow->eventResume.Bind(this, &Game::Window_Resume);
+				m_gameWindow->eventSuspend.Bind(this, &Game::Window_Suspend);
 
 				m_graphicsDeviceManager = new GraphicsDeviceManager(this, d3d9);
 			}
-			void Game::Release()
-			{
-				m_graphicsDeviceManager->ReleaseDevice();
-			}
-			void Game::Create(const RenderParameters& params)
-			{
-				m_gameWindow->Load(params.BackBufferWidth, params.BackBufferHeight, params.IsFixedWindow);
-			}
 			Game::~Game()
 			{
-				m_gameWindow->eventApplicationActivated()->Unbind(this, &Game::Window_ApplicationActivated);
-				m_gameWindow->eventApplicationDeactivated()->Unbind(this, &Game::Window_ApplicationDeactivated);
-				m_gameWindow->eventPaint()->Unbind(this, &Game::Window_Paint);
-				m_gameWindow->eventResume()->Unbind(this, &Game::Window_Resume);
-				m_gameWindow->eventSuspend()->Unbind(this, &Game::Window_Suspend);
+				m_gameWindow->eventApplicationActivated.Unbind(this, &Game::Window_ApplicationActivated);
+				m_gameWindow->eventApplicationDeactivated.Unbind(this, &Game::Window_ApplicationDeactivated);
+				m_gameWindow->eventPaint.Unbind(this, &Game::Window_Paint);
+				m_gameWindow->eventResume.Unbind(this, &Game::Window_Resume);
+				m_gameWindow->eventSuspend.Unbind(this, &Game::Window_Suspend);
 
 				delete m_graphicsDeviceManager;
 				delete m_gameWindow;
@@ -81,41 +79,116 @@ namespace Apoc3D
 				delete m_gameClock;
 			}
 
-			D3DDevice* Game::getDevice() const
+
+			void Game::Create(const RenderParameters& params)
 			{
-				return m_graphicsDeviceManager->getDevice();
+				m_gameWindow->Load(params.BackBufferWidth, params.BackBufferHeight, params.IsFixedWindow);
+
+				D3D9RenderDevice* device = new D3D9RenderDevice(getGraphicsDeviceManager());
+				m_target->setDevice(device);
+				//m_window->m_game->getWindow()->MakeFixedSize(params.IsFixedWindow);
+
+				LogManager::getSingleton().Write(LOG_Graphics,
+					L"[D3D9]Creating render window. ",
+					LOGLVL_Infomation);
+
+				getGraphicsDeviceManager()->UserIgnoreMonitorChanges() = params.IgnoreMonitorChange;
+
+				// Initialize() and Load() are called as the device is being created.
+				getGraphicsDeviceManager()->ChangeDevice(params);
+
+				LogManager::getSingleton().Write(LOG_Graphics,
+					L"[D3D9]Render window created. ",
+					LOGLVL_Infomation);
 			}
+
+			void Game::Release()
+			{
+				m_graphicsDeviceManager->ReleaseDevice();
+				m_target->OnFinalize();
+			}
+
+
+			void Game::Initialize()
+			{
+				D3DADAPTER_IDENTIFIER9 did;
+				getGraphicsDeviceManager()->getDirect3D()->GetAdapterIdentifier(getGraphicsDeviceManager()->getCurrentSetting()->AdapterOrdinal, NULL, &did);
+				m_target->m_hardwareName = StringUtils::toPlatformWideString(did.Description);
+
+				// The window will be only initialized once, even in some cases, like device lost
+				// when this is called again.
+				if (!((D3D9RenderDevice*)m_target->getRenderDevice())->isInitialized())
+				{
+					m_target->getRenderDevice()->Initialize();
+					m_target->OnInitialize(); // will make the event handler interface to process the event
+				}
+			}
+			void Game::LoadContent()
+			{
+				m_target->OnLoad();
+
+			}
+			void Game::UnloadContent() 
+			{
+				m_target->OnUnload();
+			}
+			void Game::OnDeviceLost() 
+			{
+				D3D9RenderDevice* device = static_cast<D3D9RenderDevice*>(m_target->getRenderDevice());
+				if (device)
+					device->OnDeviceLost();
+			}
+			void Game::OnDeviceReset()
+			{
+				D3D9RenderDevice* device = static_cast<D3D9RenderDevice*>(m_target->getRenderDevice());
+				if (device)
+					device->OnDeviceReset();
+			}
+
+
+
+			D3DDevice* Game::getDevice() const { return m_graphicsDeviceManager->getDevice(); }
 
 			bool Game::OnFrameStart()
 			{
 				bool re = false;
-				m_eFrameStart.Invoke(&re);
+				eventFrameStart.Invoke(&re);
+				if (re)
+				{
+					m_target->OnFrameStart();
+				}
 				return re;
 			}
 
 			void Game::OnFrameEnd()
 			{
-				m_eFrameEnd.Invoke();
+				m_target->OnFrameEnd();
+
+				eventFrameEnd.Invoke();
 			}
+
+			void Game::Render(const GameTime* time)
+			{
+				m_target->OnDraw(time);
+			}
+			
+			void Game::Update(const GameTime* time)
+			{
+				m_target->OnUpdate(time);
+			}
+
 
 			void Game::DrawFrame(const GameTime* time)
 			{
-				//try
+				if (!m_gameWindow->getIsMinimized())
 				{
-					if (!m_gameWindow->getIsMinimized())
+					if (!OnFrameStart())
 					{
-						if (!OnFrameStart())
-						{
-							Render(time);
-							OnFrameEnd();
-						}
+						Render(time);
+						OnFrameEnd();
 					}
 				}
-				//catch (Apoc3DException &e)
-				//{
-					//m_lastFrameElapsedGameTime = 0;
-					//m_lastFrameElapsedRealTime = 0;
-				//}
+
 				m_lastFrameElapsedGameTime = 0;
 				m_lastFrameElapsedRealTime = 0;
 			}
@@ -125,24 +198,22 @@ namespace Apoc3D
 				m_gameWindow->Close();
 			}
 
-			void Game::Run()
+			void Game::MainLoop()
 			{
 				MSG msg;
-				ZeroMemory( &msg, sizeof( msg ) );
-				while( msg.message != WM_QUIT)
-				{			
-					if( PeekMessage( &msg, NULL, 0U, 0U, PM_REMOVE ) )
+				ZeroMemory(&msg, sizeof(msg));
+				while (msg.message != WM_QUIT)
+				{
+					if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
 					{
-						TranslateMessage( &msg );
-						DispatchMessage( &msg );
+						TranslateMessage(&msg);
+						DispatchMessage(&msg);
 					}
 					else
 					{
 						Tick();
 					}
 				}
-
-
 			}
 
 			void Game::Tick()
@@ -173,8 +244,8 @@ namespace Apoc3D
 
 				m_accumulatedElapsedGameTime += elapsedAdjustedTime;
 
-				float targetElapsedTime = m_targetElapsedTime;
-				float ratio = m_accumulatedElapsedGameTime / m_targetElapsedTime;
+				float targetElapsedTime = TargetElapsedTime;
+				float ratio = m_accumulatedElapsedGameTime / TargetElapsedTime;
 
 
 				m_accumulatedElapsedGameTime = fmod(m_accumulatedElapsedGameTime, targetElapsedTime);
@@ -215,7 +286,7 @@ namespace Apoc3D
 
 					//try
 					{
-						GameTime gt(m_targetElapsedTime, m_totalGameTime,
+						GameTime gt(TargetElapsedTime, m_totalGameTime,
 							elapsedRealTime,totalRealTime, m_fps, m_drawRunningSlowly);
 						Update(&gt);
 					}
@@ -231,7 +302,7 @@ namespace Apoc3D
 				}
 
 				{
-					GameTime gt(m_targetElapsedTime, m_totalGameTime,
+					GameTime gt(TargetElapsedTime, m_totalGameTime,
 						elapsedRealTime,totalRealTime, m_fps, m_drawRunningSlowly);
 					DrawFrame(&gt);
 				}

@@ -82,10 +82,7 @@ namespace Apoc3D
 				m_slowly = isRunningSlow;
 			}
 
-			~GameTime(void)
-			{ }
-
-
+			~GameTime() { }
 
 		private:
 			float m_totalTime;

@@ -111,6 +111,8 @@ namespace Apoc3D
 			{
 				RTTI_DERIVED(RenderWindow, RenderView);
 			public:
+				virtual ~RenderWindow();
+
 				/**
 				 *  Quit the rendering app
 				 */
@@ -121,7 +123,9 @@ namespace Apoc3D
 				 */
 				virtual void Run() = 0;
 
-				virtual ~RenderWindow();
+				virtual void Minimize() = 0;
+				virtual void Restore() = 0;
+				virtual void Maximize() = 0;
 
 				virtual Size getClientSize() = 0;
 				virtual String getTitle() = 0;
@@ -138,9 +142,6 @@ namespace Apoc3D
 				bool getVisisble() const { return m_visisble; }
 				virtual void SetVisible(bool v) = 0;
 
-				virtual void Minimize() = 0;
-				virtual void Restore() = 0;
-				virtual void Maximize() = 0;
 			protected:
 
 				RenderWindow(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm, RenderTarget* rt)

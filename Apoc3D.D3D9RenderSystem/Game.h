@@ -44,20 +44,37 @@ namespace Apoc3D
 			class Game
 			{
 			public:
-				/** When derived, this method should be overrided to initialize the graphics device,
+				Game(D3D9RenderWindow* wnd, const String& name, IDirect3D9* d3d9);
+				~Game();
+
+				/** When derived, this method should be overridden to initialize the graphics device,
 				 *  with the specific parameters and settings provided.
 				 *  As GraphicsDeviceManager has creates the device, Game::LoadContent and Game::Initialize
 				 *  will be called.
 				 */
-				virtual void Create(const RenderParameters& params);
+				void Create(const RenderParameters& params);
 				
 				/** This method will ask the GraphicsDeviceManager to release resources. And 
 				 *  will cause the Game::UnloadContent to be called.
 				 */
-				virtual void Release();
+				void Release();
 
-				CancellableEventHandler* eventFrameStart() { return &m_eFrameStart; }
-				EventHandler* eventFrameEnd() { return &m_eFrameEnd; }		
+				void Initialize();
+				void LoadContent();
+				void UnloadContent();
+				void OnDeviceLost();
+				void OnDeviceReset();
+
+				/** This should be overridden to draw a frame */
+				void Render(const GameTime* time);
+				/** This should be overridden to allow the game to run logic such as updating the world,
+				 *  checking for collisions, gathering input, playing audio and etc.
+				 */
+				void Update(const GameTime* time);
+
+				/** Enters the main loop. */
+				void MainLoop();
+				void Exit();
 
 				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_graphicsDeviceManager; }
 				GameWindow* getWindow() const { return m_gameWindow; }
@@ -65,36 +82,15 @@ namespace Apoc3D
 				bool getIsExiting() const { return m_exiting; }
 				bool getIsActive() const { return m_active; }
 
-				virtual void Initialize() = 0;
-				virtual void LoadContent() = 0;
-				virtual void OnDeviceLost() = 0;
-				virtual void UnloadContent() = 0;
-				virtual void OnDeviceReset() = 0;
-				/**
-				 * This should be overrided to draw a frame
-				 */
-				virtual void Render(const GameTime* time) = 0;
-				/**
-				 * This should be overrided to allow the game to run logic such as updating the world,
-				 *  checking for collisions, gathering input, playing audio and etc.
-				 */
-				virtual void Update(const GameTime* time) = 0;
-				/**
-				 * Enters the main loop. 
-				 */
-				void Run();
-				void Exit();
+				float TargetElapsedTime = 1.0f / 60.0f;
+				bool UseFixedTimeStep = true;
 
-
-			protected:
-
-				Game(const String& name, IDirect3D9* d3d9);
-				virtual ~Game(void);
-				
-				virtual bool OnFrameStart();
-				virtual void OnFrameEnd();
+				CancellableEventHandler eventFrameStart;
+				EventHandler eventFrameEnd;
 
 			private:
+				bool OnFrameStart();
+				void OnFrameEnd();
 
 				void DrawFrame(const GameTime* time);
 
@@ -103,38 +99,34 @@ namespace Apoc3D
 				void Window_Suspend();
 				void Window_Resume();
 				void Window_Paint();
-				/**
-				 *  Run one frame, which includes one render and X updates
-				 */
+
+				/** Run one frame, which includes one render and X updates  */
 				void Tick();
 
+				D3D9RenderWindow* m_target;
 				GraphicsDeviceManager* m_graphicsDeviceManager;
 				GameWindow* m_gameWindow;
-
-				int m_maxSkipFrameCount;
 				GameClock* m_gameClock;
-				float m_maxElapsedTime;
-				float m_totalGameTime;
-				float m_accumulatedElapsedGameTime;
-				float m_lastFrameElapsedGameTime;
-				float m_lastFrameElapsedRealTime;
-				float m_targetElapsedTime;
-				float m_inactiveSleepTime;
-				int32 m_updatesSinceRunningSlowly1;
-				int32 m_updatesSinceRunningSlowly2;
-				bool m_forceElapsedTimeToZero;
-				bool m_drawRunningSlowly;
-				int64 m_lastUpdateFrame;
-				float m_lastUpdateTime;
-				float m_fps;
 
-				bool m_exiting;
-				bool m_active;
+				int m_maxSkipFrameCount = 10;
+				float m_maxElapsedTime = 0.5f;
+				float m_totalGameTime = 0;
+				float m_accumulatedElapsedGameTime = 0;
+				float m_lastFrameElapsedGameTime = 0;
+				float m_lastFrameElapsedRealTime = 0;
+				
+				float m_inactiveSleepTime = 20;
+				int32 m_updatesSinceRunningSlowly1 = MAXINT32;
+				int32 m_updatesSinceRunningSlowly2 = MAXINT32;
+				int64 m_lastUpdateFrame = 0;
+				float m_lastUpdateTime = 0;
+				float m_fps = 0;
 
+				bool m_forceElapsedTimeToZero = false;
+				bool m_drawRunningSlowly = false;
 
-				CancellableEventHandler m_eFrameStart;
-				EventHandler m_eFrameEnd;
-
+				bool m_exiting = false;
+				bool m_active = false;
 
 			};
 		}

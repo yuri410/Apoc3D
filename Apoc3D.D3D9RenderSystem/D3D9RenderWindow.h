@@ -44,10 +44,8 @@ namespace Apoc3D
 			class D3D9RenderView : public RenderView
 			{
 			public:
-
 				D3D9RenderView(D3D9RenderDevice* device, D3D9DeviceContext* dc, D3D9RenderViewSet* viewSet, IDirect3DSwapChain9* chain, const RenderParameters& pm);
 				~D3D9RenderView();
-
 
 				virtual void ChangeRenderParameters(const RenderParameters& params);
 
@@ -61,115 +59,120 @@ namespace Apoc3D
 
 			};
 
-
 			class D3D9RenderWindow final : public RenderWindow
 			{
-			private:
-				/** This Game classes and its dependent classes were once used in labtd. 
-				 *  Now they are just wrapped to fit the new render system interface. This D3D9Game is only the wrapper class.
-				 *  The Game class does the real business. It has its own GameWindow class which is the real place to
-				 *  handle the windows messages. The Game class also has the GraphicsDeviceManager class,
-				 *  which is in charge of creating suitable device and handling device lost.
-				 *
-				 *  Most overrided methods in this class are called passively by the GraphicsDeviceManager, the Game::Create() method,
-				 *  and the GameWindow class. As being said above, these classes works on their own. D3D9Game is the "implementation" but as
-				 *  a wrapper redirects the calls from Game and etc to the D3D9RenderWindow class, which is associated with the 
-				 *  client application event handler to handle the Load(), Initialize() operations.
-				 */
-				class D3D9Game : public Game
-				{
-				public:
-					D3D9Game(D3D9RenderWindow* wnd, IDirect3D9* d3d9)
-						: Game(L"", d3d9), m_window(wnd)
-					{
-					}
-					virtual void Create(const RenderParameters& params);
-					
-					virtual void Release() 
-					{
-						// First use this to make sure the Unload is handled first
-						Game::Release();
-
-						// then finalize
-						m_window->OnFinalize();
-					}
-					virtual void Initialize();
-					virtual void LoadContent()
-					{
-						m_window->OnLoad();
-					}
-					virtual void OnDeviceLost() 
-					{
-						D3D9RenderDevice* device = static_cast<D3D9RenderDevice*>(m_window->getRenderDevice());
-						if (device)
-							device->OnDeviceLost();
-					}
-					virtual void OnDeviceReset()
-					{
-						D3D9RenderDevice* device = static_cast<D3D9RenderDevice*>(m_window->getRenderDevice());
-						if (device)
-							device->OnDeviceReset();
-					}
-					virtual void UnloadContent()
-					{
-						m_window->OnUnload();
-					}
-					virtual void Render(const GameTime* time)
-					{
-						m_window->OnDraw(time);
-					}
-					virtual void Update(const GameTime* time)
-					{
-						m_window->OnUpdate(time);
-					}
-					virtual bool OnFrameStart()
-					{
-						if (!Game::OnFrameStart())
-						{
-							m_window->OnFrameStart();
-							return false;
-						}
-						return true;
-					}
-					virtual void OnFrameEnd()
-					{
-						m_window->OnFrameEnd();
-						Game::OnFrameEnd();
-					}
-				private:
-					D3D9RenderWindow* m_window;
-					D3D9RenderDevice* m_device;
-				};
 			public:
-
 				D3D9RenderWindow(D3D9RenderDevice* device, D3D9DeviceContext* dc, const RenderParameters& pm);
 				~D3D9RenderWindow();
 
-				virtual void ChangeRenderParameters(const RenderParameters& params);
+				virtual void ChangeRenderParameters(const RenderParameters& params) override;
 
-				virtual void Exit();
-				virtual void Run();
-
-				virtual String getTitle();
-				virtual void setTitle(const String& name);
-
-				virtual Size getClientSize();
-
-				virtual bool getIsActive() const;
-
-				const String& getHardwareName() const { return m_hardwareName; }
-
-				virtual void SetVisible(bool v) override;
+				virtual void Exit() override;
+				virtual void Run() override;
 
 				virtual void Minimize() override;
 				virtual void Restore() override;
 				virtual void Maximize() override;
+
+				virtual String getTitle() override;
+				virtual void setTitle(const String& name) override;
+
+				virtual Size getClientSize() override;
+
+				virtual bool getIsActive() const { return m_active; }
+
+				virtual void SetVisible(bool v) override;
+
+				void D3D9_Initialize();
+
+				void D3D9_OnDeviceLost();
+				void D3D9_OnDeviceReset();
+
+				void D3D9_LoadContent();
+				void D3D9_UnloadContent();
+
+
+				const String& getHardwareName() const { return m_hardwareName; }
+				GameWindow* getWindow() const { return m_gameWindow; }
+
+				//void setDevice(RenderDevice* device);
+
+				float TargetElapsedTime = 1.0f / 60.0f;
+				bool UseFixedTimeStep = true;
+
+
+				CancellableEventHandler eventFrameStart;
+				EventHandler eventFrameEnd;
+
 			private:
-				D3D9Game* m_game;
+
+				/** When derived, this method should be overridden to initialize the graphics device,
+				*  with the specific parameters and settings provided.
+				*  As GraphicsDeviceManager has creates the device, Game::LoadContent and Game::Initialize
+				*  will be called.
+				*/
+				void D3D9_Create(const RenderParameters& params);
+
+				/** This method will ask the GraphicsDeviceManager to release resources. And
+				*  will cause the Game::UnloadContent to be called.
+				*/
+				void D3D9_Release();
+
+				/** Enters the main loop. */
+				void D3D9_MainLoop();
+
+				/** Run one frame, which includes one render and X updates  */
+				void D3D9_Tick();
+
+				void D3D9_DrawFrame(const GameTime* time);
+
+				/** This should be overridden to draw a frame */
+				void D3D9_Render(const GameTime* time);
+				/** This should be overridden to allow the game to run logic such as updating the world,
+				*  checking for collisions, gathering input, playing audio and etc.
+				*/
+				void D3D9_Update(const GameTime* time);
+
+				
+				bool D3D9_OnFrameStart();
+				void D3D9_OnFrameEnd();
+
+				
+				void Window_ApplicationActivated();
+				void Window_ApplicationDeactivated();
+				void Window_Suspend();
+				void Window_Resume();
+				void Window_Paint();
+
+
+
+				//Game* m_game;
 				D3D9DeviceContext* m_dc;
 				String m_hardwareName;
 
-				void setDevice(RenderDevice* device);
+				GraphicsDeviceManager* m_graphicsDeviceManager;
+				GameWindow* m_gameWindow;
+				GameClock* m_gameClock;
+
+				int m_maxSkipFrameCount = 10;
+				float m_maxElapsedTime = 0.5f;
+				float m_totalGameTime = 0;
+				float m_accumulatedElapsedGameTime = 0;
+				float m_lastFrameElapsedGameTime = 0;
+				float m_lastFrameElapsedRealTime = 0;
+
+				float m_inactiveSleepTime = 20;
+				int32 m_updatesSinceRunningSlowly1 = MAXINT32;
+				int32 m_updatesSinceRunningSlowly2 = MAXINT32;
+				int64 m_lastUpdateFrame = 0;
+				float m_lastUpdateTime = 0;
+				float m_fps = 0;
+
+				bool m_forceElapsedTimeToZero = false;
+				bool m_drawRunningSlowly = false;
+
+				bool m_active = false;
+
 			};
 		}
 	}

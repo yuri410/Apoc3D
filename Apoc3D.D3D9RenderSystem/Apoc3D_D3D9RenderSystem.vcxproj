@@ -173,7 +173,6 @@
     <ClInclude Include="D3D9VertexDeclaration.h" />
     <ClInclude Include="RawSettings.h" />
     <ClInclude Include="Enumeration.h" />
-    <ClInclude Include="Game.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="GameWindow.h" />
     <ClInclude Include="GraphicsDeviceManager.h" />
@@ -204,7 +203,6 @@
     <ClCompile Include="D3D9VertexDeclaration.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Enumeration.cpp" />
-    <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameWindow.cpp" />
     <ClCompile Include="GraphicsDeviceManager.cpp" />
     <ClCompile Include="Plugin.cpp" />

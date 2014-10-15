@@ -46,17 +46,13 @@ namespace Apoc3D
 			public:
 				const RawSettings* getCurrentSetting() const { return m_currentSetting; }
 
-				GraphicsDeviceManager(Game* game, IDirect3D9* d3d9);
+				GraphicsDeviceManager(D3D9RenderWindow* game, IDirect3D9* d3d9);
 				~GraphicsDeviceManager();
 
 				bool& UserIgnoreMonitorChanges() { return m_userIgnoreMoniorChanges; }
 
-				/* Ensures that the device is properly initialized and ready to render.
-				*/
-				bool EnsureDevice() const
-				{
-					return m_device && !m_deviceLost;
-				}
+				/* Check if the device is properly initialized and ready to render. */
+				bool IsDeviceReady() const { return m_device && !m_deviceLost; }
 
 				/** Changes the device.
 					param
@@ -102,19 +98,13 @@ namespace Apoc3D
 
 				int32 GetAdapterOrdinal(HMONITOR mon);
 				void UpdateDeviceInformation();
-
-				/*struct GroupedSettings
-				{
-					RenderParameters Params;
-					RawSettings Raw;
-				};*/
-				
+								
 				RawSettings* m_currentSetting = nullptr;
 
 				IDirect3D9* m_direct3D9;
 				D3DDevice* m_device = nullptr;
 
-				Game* m_game;
+				D3D9RenderWindow* m_game;
 
 				bool m_userIgnoreMoniorChanges = false;
 

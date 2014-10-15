@@ -22,7 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "GraphicsDeviceManager.h"
-#include "Game.h"
+#include "D3D9RenderWindow.h"
 #include "GameWindow.h"
 #include "Enumeration.h"
 
@@ -39,25 +39,25 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			GraphicsDeviceManager::GraphicsDeviceManager(Game* game, IDirect3D9* d3d9)
+			GraphicsDeviceManager::GraphicsDeviceManager(D3D9RenderWindow* game, IDirect3D9* d3d9)
 				: m_direct3D9(d3d9), m_game(game)
 			{
 				assert(game);
 
-				m_game->eventFrameStart()->Bind(this, &GraphicsDeviceManager::game_FrameStart);
-				m_game->eventFrameEnd()->Bind(this, &GraphicsDeviceManager::game_FrameEnd);
-				m_game->getWindow()->eventUserResized()->Bind(this, &GraphicsDeviceManager::Window_UserResized);
-				m_game->getWindow()->eventMonitorChanged()->Bind(this, &GraphicsDeviceManager::Window_MonitorChanged);
+				m_game->eventFrameStart.Bind(this, &GraphicsDeviceManager::game_FrameStart);
+				m_game->eventFrameEnd.Bind(this, &GraphicsDeviceManager::game_FrameEnd);
+				m_game->getWindow()->eventUserResized.Bind(this, &GraphicsDeviceManager::Window_UserResized);
+				m_game->getWindow()->eventMonitorChanged.Bind(this, &GraphicsDeviceManager::Window_MonitorChanged);
 
 				m_windowedStyle = GetWindowLong(m_game->getWindow()->getHandle(), GWL_STYLE);
 			}
 
 			GraphicsDeviceManager::~GraphicsDeviceManager()
 			{
-				m_game->eventFrameStart()->Unbind(this, &GraphicsDeviceManager::game_FrameStart);
-				m_game->eventFrameEnd()->Unbind(this, &GraphicsDeviceManager::game_FrameEnd);
-				m_game->getWindow()->eventUserResized()->Unbind(this, &GraphicsDeviceManager::Window_UserResized);
-				m_game->getWindow()->eventMonitorChanged()->Unbind(this, &GraphicsDeviceManager::Window_MonitorChanged);
+				m_game->eventFrameStart.Unbind(this, &GraphicsDeviceManager::game_FrameStart);
+				m_game->eventFrameEnd.Unbind(this, &GraphicsDeviceManager::game_FrameEnd);
+				m_game->getWindow()->eventUserResized.Unbind(this, &GraphicsDeviceManager::Window_UserResized);
+				m_game->getWindow()->eventMonitorChanged.Unbind(this, &GraphicsDeviceManager::Window_MonitorChanged);
 
 				DELETE_AND_NULL(m_currentSetting);
 			}
@@ -93,13 +93,13 @@ namespace Apoc3D
 					L"[D3D9]Device lost. ", 
 					LOGLVL_Default);
 
-				m_game->OnDeviceLost();
+				m_game->D3D9_OnDeviceLost();
 
 				HRESULT hr = m_device->Reset(&m_currentSetting->PresentParameters);
 				
 				PropogateSettings();
 
-				m_game->OnDeviceReset();
+				m_game->D3D9_OnDeviceReset();
 				return hr;
 			}
 			void GraphicsDeviceManager::ReleaseDevice()
@@ -109,7 +109,7 @@ namespace Apoc3D
 
 				if (m_game)
 				{
-					m_game->UnloadContent();
+					m_game->D3D9_UnloadContent();
 				}
 
 				m_device->Release();
@@ -199,7 +199,7 @@ namespace Apoc3D
 			void GraphicsDeviceManager::Window_UserResized()
 			{
 				// TBD
-				if (m_ignoreSizeChanges || !EnsureDevice()) // || (m_currentSetting->Windowed)
+				if (m_ignoreSizeChanges || !IsDeviceReady()) // || (m_currentSetting->Windowed)
 					return;
 
 				RawSettings newSettings = *m_currentSetting;
@@ -221,7 +221,7 @@ namespace Apoc3D
 			}
 			void GraphicsDeviceManager::Window_MonitorChanged()
 			{
-				if (!EnsureDevice() || !m_currentSetting->PresentParameters.Windowed || m_ignoreSizeChanges)
+				if (!IsDeviceReady() || !m_currentSetting->PresentParameters.Windowed || m_ignoreSizeChanges)
 					return;
 
 				if (m_userIgnoreMoniorChanges)
@@ -301,8 +301,8 @@ namespace Apoc3D
 						LOGLVL_Infomation);
 				}
 
- 				m_game->Initialize();
-				m_game->LoadContent();
+ 				m_game->D3D9_Initialize();
+				m_game->D3D9_LoadContent();
 			}
 			void GraphicsDeviceManager::CreateDevice(const RawSettings& settings)
 			{
@@ -552,7 +552,7 @@ namespace Apoc3D
 
 			void GraphicsDeviceManager::ToggleFullScreen()
 			{
-				assert(EnsureDevice());
+				assert(IsDeviceReady());
 
 				RawSettings newSettings = *m_currentSetting;
 				newSettings.PresentParameters.Windowed = !newSettings.PresentParameters.Windowed;

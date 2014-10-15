@@ -31,8 +31,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Enumeration.h"
 #include "D3D9RenderViewSet.h"
 #include "RawSettings.h"
+#include "GameClock.h"
 
+#include "apoc3d/Core/GameTime.h"
 #include "apoc3d/Core/Logging.h"
+#include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
 #include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
@@ -59,7 +62,7 @@ namespace Apoc3D
 				p2.IsWindowed = true;
 				p2.RefreshRate = 0;
 
-				m_viewSet->ChangeDevice(params, 0);
+				m_viewSet->ChangeDevice(p2, 0);
 			}
 			void D3D9RenderView::Present(const GameTime* time)
 			{
@@ -67,111 +70,57 @@ namespace Apoc3D
 			}
 
 			/************************************************************************/
-			/*                                                                      */
+			/*   D3D9RenderWindow                                                   */
 			/************************************************************************/
-
-			// The implementation of the D3D9Game class is just as the way labtd once uses it to initialize D3DDevice.
-			// Despite some more features like the device enumeration were added to the GraphicsDeviceManager to 
-			// increase reliability on latency hardwares, the way to use it almost remains unchanged.
-			void D3D9RenderWindow::D3D9Game::Create(const RenderParameters& params)
-			{
-				// with this call, the RenderWindow and the Game object are created.
-				Game::Create(params);			
-				
-				/*DeviceSettings settings;
-				settings.AdapterOrdinal = 0;
-				settings.BackBufferCount = 1;
-				settings.BackBufferHeight = params.BackBufferHeight;
-				settings.BackBufferWidth = params.BackBufferWidth;
-				settings.BackBufferFormat = D3D9Utils::ConvertPixelFormat(params.ColorBufferFormat);
-				settings.DepthStencilFormat = D3D9Utils::ConvertDepthFormat(params.DepthBufferFormat);
-				settings.DeviceType = D3DDEVTYPE_HAL;
-				settings.EnableVSync = params.EnableVSync;
-				settings.MultiSampleType = D3D9Utils::ConvertMultisample(params.FSAASampleCount);
-				settings.Multithreaded = params.IsMultithreaded;
-				settings.RefreshRate = 0;
-				settings.Windowed = params.IsWindowed;	*/
-
-
-				D3D9RenderDevice* device = new D3D9RenderDevice(getGraphicsDeviceManager());
-				m_window->setDevice(device);
-				//m_window->m_game->getWindow()->MakeFixedSize(params.IsFixedWindow);
-
-				LogManager::getSingleton().Write(LOG_Graphics, 
-					L"[D3D9]Creating render window. ", 
-					LOGLVL_Infomation);
-
-				getGraphicsDeviceManager()->UserIgnoreMonitorChanges() = params.IgnoreMonitorChange;
-
-				// Initialize() and Load() are called as the device is being created.
-				getGraphicsDeviceManager()->ChangeDevice(params);
-
-				LogManager::getSingleton().Write(LOG_Graphics, 
-					L"[D3D9]Render window created. ", 
-					LOGLVL_Infomation);
-
-				//device->Initialize();
-			}
-			void D3D9RenderWindow::D3D9Game::Initialize()
-			{
-				D3DADAPTER_IDENTIFIER9 did;
-				getGraphicsDeviceManager()->getDirect3D()->GetAdapterIdentifier(getGraphicsDeviceManager()->getCurrentSetting()->AdapterOrdinal, NULL, &did);
-				m_window->m_hardwareName = StringUtils::toPlatformWideString(did.Description);
-
-				// The window will be only initialized once, even in some cases, like device lost
-				// when this is called again.
-				if (!((D3D9RenderDevice*)m_window->getRenderDevice())->isInitialized())
-				{
-					m_window->getRenderDevice()->Initialize();
-					m_window->OnInitialize(); // will make the event handler interface to process the event
-				}
-			}
-
-
+			
 			D3D9RenderWindow::D3D9RenderWindow(D3D9RenderDevice* device, D3D9DeviceContext* dc, const RenderParameters& pm)
 				: RenderWindow(dc, device, pm), m_dc(dc)
 			{
-				m_game = new D3D9Game(this, dc->getD3D());
+				m_gameClock = new GameClock();
 
-				
+				m_gameWindow = new GameWindow(L"d5325676b0844be1a06964bc3f6603ec", L"");
+				m_gameWindow->eventApplicationActivated.Bind(this, &D3D9RenderWindow::Window_ApplicationActivated);
+				m_gameWindow->eventApplicationDeactivated.Bind(this, &D3D9RenderWindow::Window_ApplicationDeactivated);
+				m_gameWindow->eventPaint.Bind(this, &D3D9RenderWindow::Window_Paint);
+				m_gameWindow->eventResume.Bind(this, &D3D9RenderWindow::Window_Resume);
+				m_gameWindow->eventSuspend.Bind(this, &D3D9RenderWindow::Window_Suspend);
+
+				m_graphicsDeviceManager = new GraphicsDeviceManager(this, dc->getD3D());
 			}
 			D3D9RenderWindow::~D3D9RenderWindow()
 			{
 				// clean up traces.
 				m_dc->NotifyWindowClosed(this);
-				delete m_game;
+				//delete m_game;
+
+				m_gameWindow->eventApplicationActivated.Unbind(this, &D3D9RenderWindow::Window_ApplicationActivated);
+				m_gameWindow->eventApplicationDeactivated.Unbind(this, &D3D9RenderWindow::Window_ApplicationDeactivated);
+				m_gameWindow->eventPaint.Unbind(this, &D3D9RenderWindow::Window_Paint);
+				m_gameWindow->eventResume.Unbind(this, &D3D9RenderWindow::Window_Resume);
+				m_gameWindow->eventSuspend.Unbind(this, &D3D9RenderWindow::Window_Suspend);
+
+				delete m_graphicsDeviceManager;
+				delete m_gameWindow;
+
+				delete m_gameClock;
 			}
 
 			void D3D9RenderWindow::ChangeRenderParameters(const RenderParameters& params)
 			{
 				RenderWindow::ChangeRenderParameters(params);
 
-				/*DeviceSettings settings;
-				settings.AdapterOrdinal = 0;
-				settings.BackBufferCount = 1;
-				settings.BackBufferHeight = params.BackBufferHeight;
-				settings.BackBufferWidth = params.BackBufferWidth;
-				settings.BackBufferFormat = D3D9Utils::ConvertPixelFormat(params.ColorBufferFormat);
-				settings.DepthStencilFormat = D3D9Utils::ConvertDepthFormat(params.DepthBufferFormat);
-				settings.DeviceType = D3DDEVTYPE_HAL;
-				settings.EnableVSync = params.EnableVSync;
-				settings.MultiSampleType = D3D9Utils::ConvertMultisample(params.FSAASampleCount);
-				settings.Multithreaded = params.IsMultithreaded;
-				settings.RefreshRate = 0;
-				settings.Windowed = params.IsWindowed;	*/			
+				m_gameWindow->MakeFixedSize(params.IsFixedWindow);
 
-				m_game->getWindow()->MakeFixedSize(params.IsFixedWindow);
-
-				m_game->getGraphicsDeviceManager()->UserIgnoreMonitorChanges() = params.IgnoreMonitorChange;
-				m_game->getGraphicsDeviceManager()->ChangeDevice(params);
-
+				m_graphicsDeviceManager->UserIgnoreMonitorChanges() = params.IgnoreMonitorChange;
+				m_graphicsDeviceManager->ChangeDevice(params);
 			}
 
 
 			void D3D9RenderWindow::Exit()
 			{
 				RenderWindow::Exit();
-				m_game->Exit();
+				
+				m_gameWindow->Close();
 			}
 
 			void D3D9RenderWindow::Run()
@@ -181,39 +130,21 @@ namespace Apoc3D
 				// needed. 
 				
 				// Creates almost every thing
-				m_game->Create(getRenderParams());
+				D3D9_Create(getRenderParams());
 
-				m_game->Run();
+				D3D9_MainLoop();
 				// Releases almost every thing
-				m_game->Release();
+				D3D9_Release();
 			}
 
-			String D3D9RenderWindow::getTitle()
-			{
-				return m_game->getWindow()->getWindowTitle();
-			}
-			void D3D9RenderWindow::setTitle(const String& name)
-			{
-				m_game->getWindow()->setWindowTitle(name);
-			}
+			String D3D9RenderWindow::getTitle() { return m_gameWindow->getWindowTitle(); }
+			void D3D9RenderWindow::setTitle(const String& name) { m_gameWindow->setWindowTitle(name); }
 
-			Size D3D9RenderWindow::getClientSize()
-			{
-				return m_game->getWindow()->getCurrentSize();
-			}
-			bool D3D9RenderWindow::getIsActive() const
-			{
-				return m_game->getIsActive();
-			}
-
-			void D3D9RenderWindow::setDevice(RenderDevice* device)
-			{
-				m_renderDevice = device;
-			}
+			Size D3D9RenderWindow::getClientSize() { return m_gameWindow->getCurrentSize(); }
 
 			void D3D9RenderWindow::SetVisible(bool v)
 			{
-				ShowWindow(m_game->getWindow()->getHandle(), v ? SW_NORMAL : SW_HIDE);
+				ShowWindow(m_gameWindow->getHandle(), v ? SW_NORMAL : SW_HIDE);
 
 				m_visisble = v;
 			}
@@ -222,17 +153,269 @@ namespace Apoc3D
 			void D3D9RenderWindow::Minimize()
 			{
 				if (m_visisble)
-					ShowWindow(m_game->getWindow()->getHandle(), SW_MINIMIZE);
+					ShowWindow(m_gameWindow->getHandle(), SW_MINIMIZE);
 			}
 			void D3D9RenderWindow::Restore()
 			{
 				if (m_visisble)
-					ShowWindow(m_game->getWindow()->getHandle(), SW_RESTORE);
+					ShowWindow(m_gameWindow->getHandle(), SW_RESTORE);
 			}
 			void D3D9RenderWindow::Maximize()
 			{
 				if (m_visisble)
-					ShowWindow(m_game->getWindow()->getHandle(), SW_MAXIMIZE);
+					ShowWindow(m_gameWindow->getHandle(), SW_MAXIMIZE);
+			}
+
+			//////////////////////////////////////////////////////////////////////////
+
+
+			void D3D9RenderWindow::D3D9_Create(const RenderParameters& params)
+			{
+				m_gameWindow->Load(params.BackBufferWidth, params.BackBufferHeight, params.IsFixedWindow);
+
+				D3D9RenderDevice* device = new D3D9RenderDevice(m_graphicsDeviceManager);
+				m_renderDevice = device;
+				//m_window->m_game->getWindow()->MakeFixedSize(params.IsFixedWindow);
+
+				LogManager::getSingleton().Write(LOG_Graphics,
+					L"[D3D9]Creating render window. ",
+					LOGLVL_Infomation);
+
+				m_graphicsDeviceManager->UserIgnoreMonitorChanges() = params.IgnoreMonitorChange;
+
+				// Initialize() and Load() are called as the device is being created.
+				m_graphicsDeviceManager->ChangeDevice(params);
+
+				LogManager::getSingleton().Write(LOG_Graphics,
+					L"[D3D9]Render window created. ",
+					LOGLVL_Infomation);
+			}
+
+			void D3D9RenderWindow::D3D9_Release()
+			{
+				m_graphicsDeviceManager->ReleaseDevice();
+				OnFinalize();
+			}
+
+
+			void D3D9RenderWindow::D3D9_Initialize()
+			{
+				D3DADAPTER_IDENTIFIER9 did;
+				m_graphicsDeviceManager->getDirect3D()->GetAdapterIdentifier(m_graphicsDeviceManager->getCurrentSetting()->AdapterOrdinal, NULL, &did);
+				m_hardwareName = StringUtils::toPlatformWideString(did.Description);
+
+				// The window will be only initialized once, even in some cases, like device lost
+				// when this is called again.
+				D3D9RenderDevice* device = static_cast<D3D9RenderDevice*>(m_renderDevice);
+
+				if (!device->isInitialized())
+				{
+					device->Initialize();
+					OnInitialize(); // will make the event handler interface to process the event
+				}
+			}
+			void D3D9RenderWindow::D3D9_LoadContent() { OnLoad(); }
+			void D3D9RenderWindow::D3D9_UnloadContent() { OnUnload(); }
+
+			void D3D9RenderWindow::D3D9_OnDeviceLost()
+			{
+				D3D9RenderDevice* device = static_cast<D3D9RenderDevice*>(m_renderDevice);
+				if (device)
+					device->OnDeviceLost();
+			}
+			void D3D9RenderWindow::D3D9_OnDeviceReset()
+			{
+				D3D9RenderDevice* device = static_cast<D3D9RenderDevice*>(m_renderDevice);
+				if (device)
+					device->OnDeviceReset();
+			}
+
+			void D3D9RenderWindow::D3D9_MainLoop()
+			{
+				MSG msg;
+				ZeroMemory(&msg, sizeof(msg));
+				while (msg.message != WM_QUIT)
+				{
+					if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
+					{
+						TranslateMessage(&msg);
+						DispatchMessage(&msg);
+					}
+					else
+					{
+						D3D9_Tick();
+					}
+				}
+			}
+
+			void D3D9RenderWindow::D3D9_Tick()
+			{
+				if (m_isExiting)
+					return;
+
+				if (!m_active)
+					Sleep(static_cast<int>(m_inactiveSleepTime));
+
+				m_gameClock->Step();
+
+				float elapsedRealTime = (float)m_gameClock->getElapsedTime();
+				float totalRealTime = (float)m_gameClock->getCurrentTime();
+
+				m_lastFrameElapsedRealTime += (float)m_gameClock->getElapsedTime();
+
+				float elapsedAdjustedTime = m_gameClock->getElapsedAdjustedTime();
+				if (elapsedAdjustedTime < 0)
+					elapsedAdjustedTime = 0;
+
+				if (m_forceElapsedTimeToZero)
+				{
+					elapsedRealTime = 0;
+					m_lastFrameElapsedRealTime = elapsedAdjustedTime = 0;
+					m_forceElapsedTimeToZero = false;
+				}
+
+				m_accumulatedElapsedGameTime += elapsedAdjustedTime;
+
+				float targetElapsedTime = TargetElapsedTime;
+				float ratio = m_accumulatedElapsedGameTime / TargetElapsedTime;
+
+
+				m_accumulatedElapsedGameTime = fmod(m_accumulatedElapsedGameTime, targetElapsedTime);
+				m_lastFrameElapsedGameTime = 0;
+
+				if (ratio == 0)
+					return;
+
+
+				if (ratio > 1)
+				{
+					m_updatesSinceRunningSlowly2 = m_updatesSinceRunningSlowly1;
+					m_updatesSinceRunningSlowly1 = 0;
+				}
+				else
+				{
+					if (m_updatesSinceRunningSlowly1 < MAXINT32)
+						m_updatesSinceRunningSlowly1++;
+					if (m_updatesSinceRunningSlowly2 < MAXINT32)
+						m_updatesSinceRunningSlowly2++;
+				}
+
+				m_drawRunningSlowly = m_updatesSinceRunningSlowly2 < 20;
+
+#if _DEBUG
+				if (ratio > m_maxSkipFrameCount)
+					ratio = 1;
+#else
+				if (ratio>m_maxSkipFrameCount)
+					ratio = static_cast<float>(m_maxSkipFrameCount);
+#endif
+
+				// keep up update calls:
+				// update until it's time to draw the next frame
+				while (ratio > 1)
+				{
+					ratio -= 1;
+
+					GameTime gt(TargetElapsedTime, m_totalGameTime,
+						elapsedRealTime, totalRealTime, m_fps, m_drawRunningSlowly);
+					D3D9_Update(&gt);
+
+					m_lastFrameElapsedGameTime += targetElapsedTime;
+					m_totalGameTime += targetElapsedTime;
+
+				}
+
+				{
+					GameTime gt(TargetElapsedTime, m_totalGameTime,
+						elapsedRealTime, totalRealTime, m_fps, m_drawRunningSlowly);
+					D3D9_DrawFrame(&gt);
+				}
+
+
+				// refresh the FPS counter once per second
+				m_lastUpdateFrame++;
+				if (totalRealTime - m_lastUpdateTime > 1.0f)
+				{
+					m_fps = (float)m_lastUpdateFrame / (float)(totalRealTime - m_lastUpdateTime);
+					m_lastUpdateTime = totalRealTime;
+					m_lastUpdateFrame = 0;
+				}
+			}
+
+			void D3D9RenderWindow::D3D9_DrawFrame(const GameTime* time)
+			{
+				if (!m_gameWindow->getIsMinimized())
+				{
+					if (!D3D9_OnFrameStart())
+					{
+						D3D9_Render(time);
+						D3D9_OnFrameEnd();
+					}
+				}
+
+				m_lastFrameElapsedGameTime = 0;
+				m_lastFrameElapsedRealTime = 0;
+			}
+
+			void D3D9RenderWindow::D3D9_Render(const GameTime* time) { OnDraw(time); }
+			void D3D9RenderWindow::D3D9_Update(const GameTime* time) { OnUpdate(time); }
+
+
+
+			bool D3D9RenderWindow::D3D9_OnFrameStart()
+			{
+				bool re = false;
+				eventFrameStart.Invoke(&re);
+				if (!re)
+					OnFrameStart();
+				return re;
+			}
+			void D3D9RenderWindow::D3D9_OnFrameEnd()
+			{
+				OnFrameEnd();
+
+				eventFrameEnd.Invoke();
+			}
+
+			void D3D9RenderWindow::Window_ApplicationActivated()
+			{
+				m_active = true;
+			}
+			void D3D9RenderWindow::Window_ApplicationDeactivated()
+			{
+				m_active = false;
+			}
+			void D3D9RenderWindow::Window_Suspend()
+			{
+				m_gameClock->Suspend();
+			}
+			void D3D9RenderWindow::Window_Resume()
+			{
+				m_gameClock->Resume();
+			}
+			void D3D9RenderWindow::Window_Paint()
+			{
+				//#if _DEBUG
+				// If WM_PAINT frame have errors when debugging in windows, the error dlgs 
+				// can not be displayed. 
+
+				// The frame fails and another WM_PAINT will arrive in attempt to render the window.
+				// And if the error can not be recovered,
+				// WM_PAINT frames will arrive and fail again and again. Causing normal loop render unable
+				// to start. And in windows error dialogs cannot display.
+				return;
+				//#endif
+				//// the paint event may be raised before device init -- just created wnd class
+				//if (getDevice())
+				//{
+
+				//	const float elapsedRealTime = (float)m_gameClock->getElapsedTime();
+				//	const float totalRealTime = (float)m_gameClock->getCurrentTime();
+
+				//	GameTime gt(m_targetElapsedTime, m_totalGameTime,
+				//		elapsedRealTime,totalRealTime, m_fps, m_drawRunningSlowly);
+				//	DrawFrame(&gt);
+				//}		
 			}
 		}
 	}

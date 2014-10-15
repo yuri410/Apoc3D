@@ -10,9 +10,9 @@ namespace Sample_GUI
 	{
 	public:
 		static const int DMCount = 8;
+
 		GUIDemo(RenderWindow* wnd);
 		~GUIDemo();
-
 
 		virtual void Initialize();
 		virtual void Finalize();

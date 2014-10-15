@@ -29,57 +29,69 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			GameWindow* GameWindow::ms_Window = 0;
+			GameWindow* GameWindow::ms_Window = nullptr;
+			
+			GameWindow::GameWindow(const String& wndClass, const String& title)
+				: m_className(wndClass), m_title(title)
+			{
+				m_hInstance = GetModuleHandle(0);
+				ms_Window = this;
+			}
 
-			ATOM GameWindow::MyRegisterClass(HINSTANCE hInstance, const TCHAR* const &wndClass)
+			GameWindow::~GameWindow()
+			{
+				if (ms_Window == this)
+					ms_Window = NULL;
+			}
+
+			void GameWindow::Load(int32 width, int32 height, bool fixed)
 			{
 				WNDCLASSEX wcex;
-
 				wcex.cbSize = sizeof(WNDCLASSEX);
+				wcex.style = CS_HREDRAW | CS_VREDRAW;
+				wcex.lpfnWndProc = (GameWindow::WndProcStatic);
+				wcex.cbClsExtra = 0;
+				wcex.cbWndExtra = 0;
+				wcex.hInstance = m_hInstance;
+				wcex.hIcon = LoadIcon(m_hInstance, L"AppIcon");
+				wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
+				wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+				wcex.lpszMenuName = 0;
+				wcex.lpszClassName = m_className.c_str();
+				wcex.hIconSm = LoadIcon(m_hInstance, L"AppSmallIcon");
+				RegisterClassEx(&wcex);
 
-				wcex.style			= CS_HREDRAW | CS_VREDRAW;
-				wcex.lpfnWndProc	= (GameWindow::WndProcStatic);
-				wcex.cbClsExtra		= 0;
-				wcex.cbWndExtra		= 0;
-				wcex.hInstance		= hInstance;
-				wcex.hIcon			= LoadIcon(hInstance, L"AppIcon");
-				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-				wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
-				wcex.lpszMenuName	= 0;
-				wcex.lpszClassName	= wndClass;
-				wcex.hIconSm		= LoadIcon(hInstance, L"AppSmallIcon"); 
-
-				return RegisterClassEx(&wcex);
+				if (!InitInstance (m_hInstance, width, height, fixed, m_className, m_title))
+				{
+					assert(FALSE);
+				}
 			}
 
 			// creates a window with the given dimension and other options
-			BOOL GameWindow::InitInstance(HINSTANCE hInstance, int32 width, int32 height, bool fixed,
-				const TCHAR* const &wndClass, const TCHAR* const &wndTitle)
+			BOOL GameWindow::InitInstance(HINSTANCE hInstance, int32 width, int32 height, bool fixed, const String& wndClass, const String& wndTitle)
 			{
-				HWND hWnd;
-				
 				m_title = wndTitle;
 
 				RECT dstRect;
 
-				int scrnWidth = GetSystemMetrics(SM_CXFULLSCREEN);   
+				int scrnWidth = GetSystemMetrics(SM_CXFULLSCREEN);
 				int scrnHeight = GetSystemMetrics(SM_CYFULLSCREEN);
 
-				dstRect.left = (scrnWidth - width)>>1;
-				dstRect.top = (scrnHeight - height)>>1;
+				dstRect.left = (scrnWidth - width) / 2;
+				dstRect.top = (scrnHeight - height) / 2;
 				dstRect.right = dstRect.left + width;
 				dstRect.bottom = dstRect.top + height;
 
 				DWORD style = WS_OVERLAPPEDWINDOW;
 				if (fixed)
 				{
-					style &= (~ WS_MAXIMIZEBOX);
-					style &= (~ WS_SIZEBOX);
+					style &= (~WS_MAXIMIZEBOX);
+					style &= (~WS_SIZEBOX);
 				}
 
 				AdjustWindowRect(&dstRect, style, FALSE);
 
-				hWnd = CreateWindow(wndClass, wndTitle, style,
+				HWND hWnd = CreateWindow(wndClass.c_str(), wndTitle.c_str(), style,
 					dstRect.left, dstRect.top, dstRect.right - dstRect.left, dstRect.bottom - dstRect.top,
 					NULL, NULL, hInstance, NULL);
 
@@ -97,7 +109,7 @@ namespace Apoc3D
 				//int clientWidth = rect.right - rect.left;
 				//int clientHeight = rect.bottom - rect.top;
 
-				
+
 
 
 				ShowWindow(hWnd, SW_NORMAL);
@@ -107,84 +119,28 @@ namespace Apoc3D
 				return TRUE;
 			}
 
-			GameWindow::GameWindow(const String& wndClass, const String& title)
-				: m_mouseWheel(0), m_inSizeMove(false), m_minimized(false), m_maximized(false)
-			{
-				m_hInstance= GetModuleHandle (0);
-				ms_Window = this;
-
-				m_className = wndClass;
-				m_title = title;
-			}
-
-			GameWindow::~GameWindow()
-			{
-				if (ms_Window == this)
-					ms_Window = NULL;
-			}
-
-			void GameWindow::Load(int32 width, int32 height, bool fixed)
-			{
-				MyRegisterClass(m_hInstance, m_className.c_str());
-
-				if (!InitInstance (m_hInstance, width, height, fixed, m_className.c_str(), m_title.c_str()))
-				{
-					assert(FALSE);
-				}
-			}
-
 			void GameWindow::UpdateMonitor()
 			{
 				HMONITOR windowMonitor = MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTOPRIMARY);
-				if (!m_currentMonitor || windowMonitor!=m_currentMonitor)
+				if (!m_currentMonitor || windowMonitor != m_currentMonitor)
 				{
-					m_currentMonitor=windowMonitor;
+					m_currentMonitor = windowMonitor;
 					if (m_currentMonitor)
 						OnMonitorChanged();
 				}
 			}
 
-			void GameWindow::OnUserResized()
-			{
-				m_eUserResized.Invoke();
-			}
-			void GameWindow::OnSuspend()
-			{
-				m_eSuspend.Invoke();
-			}
-			void GameWindow::OnResume()
-			{
-				m_eResume.Invoke();
-			}
-			void GameWindow::OnApplicationActivated()
-			{
-				m_eApplicationActivated.Invoke();
-			}
-			void GameWindow::OnApplicationDeactivated()
-			{
-				m_eApplicationDeactivated.Invoke();
-			}
-			void GameWindow::OnSystemSuspend()
-			{
-				m_eSystemSuspend.Invoke();
-			}
-			void GameWindow::OnSystemResume()
-			{
-				m_eSystemResume.Invoke();
-			}
-			void GameWindow::OnScreensaver(bool * cancel)
-			{
-				m_eScreensaver.Invoke(cancel);
-			}
+			void GameWindow::OnUserResized() { eventUserResized.Invoke(); }
+			void GameWindow::OnSuspend() { eventSuspend.Invoke(); }
+			void GameWindow::OnResume() { eventResume.Invoke(); }
+			void GameWindow::OnApplicationActivated() { eventApplicationActivated.Invoke(); }
+			void GameWindow::OnApplicationDeactivated() { eventApplicationDeactivated.Invoke(); }
+			void GameWindow::OnSystemSuspend() { eventSystemSuspend.Invoke(); }
+			void GameWindow::OnSystemResume() { eventSystemResume.Invoke(); }
+			void GameWindow::OnScreensaver(bool* cancel) { eventScreensaver.Invoke(cancel); }
 
-			void GameWindow::OnPaint()
-			{
-				m_ePaint.Invoke();
-			}
-			void GameWindow::OnMonitorChanged()
-			{
-				m_eMonitorChanged.Invoke();
-			}
+			void GameWindow::OnPaint() { eventPaint.Invoke(); }
+			void GameWindow::OnMonitorChanged() { eventMonitorChanged.Invoke(); }
 
 			Size GameWindow::getCurrentSize() const
 			{
@@ -225,21 +181,19 @@ namespace Apoc3D
 				}
 				else
 				{
-					style &= (~ WS_MAXIMIZEBOX);
-					style &= (~ WS_SIZEBOX);
+					style &= (~WS_MAXIMIZEBOX);
+					style &= (~WS_SIZEBOX);
 				}
 
 				SetWindowLong(m_hWnd, GWL_STYLE, style);
 
-				SetWindowPos(m_hWnd, 0, oldRect.left, oldRect.top, oldRect.right-oldRect.left, oldRect.bottom-oldRect.top, SWP_NOZORDER);
+				SetWindowPos(m_hWnd, 0, oldRect.left, oldRect.top, oldRect.right - oldRect.left, oldRect.bottom - oldRect.top, SWP_NOZORDER);
 			}
 
 			LRESULT CALLBACK GameWindow::WndProcStatic(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				if (ms_Window)
-				{
 					return ms_Window->WndProc(hWnd, message, wParam, lParam);
-				}
 				return 0;
 			}
 

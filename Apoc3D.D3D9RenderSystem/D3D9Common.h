@@ -77,7 +77,6 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class Game;
 			class GameClock;
 			class GameWindow;
 

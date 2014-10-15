@@ -70,16 +70,16 @@ namespace Apoc3D
 				bool getIsMinimized() const { return m_minimized; }
 				bool getIsMaximized() const { return m_maximized; }
 
-				EventHandler* eventResume() { return &m_eResume; }
-				EventHandler* eventUserResized() { return &m_eUserResized; }
-				EventHandler* eventSuspend() { return &m_eSuspend; }
-				EventHandler* eventApplicationActivated() { return &m_eApplicationActivated; }
-				EventHandler* eventApplicationDeactivated() { return &m_eApplicationDeactivated; }
-				EventHandler* eventSystemSuspend() { return &m_eSystemSuspend; }
-				EventHandler* eventSystemResume() { return &m_eSystemResume; }
-				CancellableEventHandler* eventScreensaver() { return &m_eScreensaver; }
-				EventHandler* eventPaint() { return &m_ePaint; }
-				EventHandler* eventMonitorChanged() { return &m_eMonitorChanged; }
+				EventHandler eventPaint;
+				EventHandler eventResume;
+				EventHandler eventUserResized;
+				EventHandler eventSuspend;
+				EventHandler eventApplicationActivated;
+				EventHandler eventApplicationDeactivated;
+				EventHandler eventSystemSuspend;
+				EventHandler eventSystemResume;
+				EventHandler eventMonitorChanged;
+				CancellableEventHandler eventScreensaver;
 
 			protected:
 				virtual void OnUserResized();
@@ -97,17 +97,16 @@ namespace Apoc3D
 			private:
 				static GameWindow* ms_Window;
 
-				BOOL InitInstance(HINSTANCE hInstance, int32 width, int32 height, bool fixed, const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
-				ATOM MyRegisterClass(HINSTANCE hInstance, const TCHAR* const &wndClass);
+				BOOL InitInstance(HINSTANCE hInstance, int32 width, int32 height, bool fixed, const String& wndClass, const String& wndTitle);
 
 				static LRESULT CALLBACK WndProcStatic(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 				LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 				void UpdateMonitor();
 
-				bool m_minimized;
-				bool m_maximized;
-				bool m_inSizeMove;
+				bool m_minimized = false;
+				bool m_maximized = false;
+				bool m_inSizeMove = false;
 				String m_title;
 				String m_className;
 				Size m_cachedSize;
@@ -119,18 +118,7 @@ namespace Apoc3D
 				HMONITOR m_currentMonitor;
 
 
-				EventHandler m_ePaint;
-				EventHandler m_eResume;
-				EventHandler m_eUserResized;
-				EventHandler m_eSuspend;
-				EventHandler m_eApplicationActivated;
-				EventHandler m_eApplicationDeactivated;
-				EventHandler m_eSystemSuspend;
-				EventHandler m_eSystemResume;
-				EventHandler m_eMonitorChanged;
-				CancellableEventHandler m_eScreensaver;
-
-				int32 m_mouseWheel;
+				int32 m_mouseWheel = 0;
 
 			};
 		}
