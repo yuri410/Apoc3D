@@ -190,6 +190,19 @@ namespace Apoc3D
 			}
 		}
 
+		void Label::setSize(const Point& v)
+		{
+			m_size.Y = v.Y;
+			setWidth(v.X);
+		}
+		void Label::setWidth(int v) 
+		{
+			if (m_size.X != v)
+			{
+				m_size.X = v;
+				UpdateText();
+			}
+		}
 		/************************************************************************/
 		/*   TextBox                                                            */
 		/************************************************************************/

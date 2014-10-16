@@ -33,9 +33,9 @@ namespace Apoc3D
 			const String& getText() const { return m_text; }
 			void SetText(const String& txt);
 
-			void setSize(const Point& v) { m_size = v; }
+			void setSize(const Point& v);
 			void setHeight(int v) { m_size.Y = v; }
-			void setWidth(int v) { m_size.X = v; }
+			void setWidth(int v);
 
 			bool isMouseHover() const { return m_mouseHover; }
 
