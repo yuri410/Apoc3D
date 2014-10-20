@@ -85,6 +85,7 @@ namespace Apoc3D
 			bool AutoSizedY = false;
 			bool ForceMouseDownVisual = false;
 			
+			bool RaiseGlobalEvent = true;
 
 			TextRenderSettings TextSettings;
 

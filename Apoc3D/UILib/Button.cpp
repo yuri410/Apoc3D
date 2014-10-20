@@ -322,7 +322,9 @@ namespace Apoc3D
 		void Button::OnPress() 
 		{
 			eventPress.Invoke(this);
-			eventAnyPress.Invoke(this);
+
+			if (RaiseGlobalEvent)
+				eventAnyPress.Invoke(this);
 		}
 		void Button::OnRelease() 
 		{
@@ -332,7 +334,9 @@ namespace Apoc3D
 			}
 
 			eventRelease.Invoke(this);
-			eventAnyRelease.Invoke(this);
+
+			if (RaiseGlobalEvent)
+				eventAnyRelease.Invoke(this);
 		}
 
 		/************************************************************************/
