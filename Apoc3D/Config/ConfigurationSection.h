@@ -70,23 +70,39 @@ namespace Apoc3D
 			typedef SubSectionTable::Enumerator SubSectionEnumerator;
 			typedef AttributeTable::Enumerator AttributeEnumerator;
 
+			class AttributeAccessor
+			{
+			public:
+				AttributeTable::Iterator begin() const { return m_attTable.begin(); }
+				AttributeTable::Iterator end() const { return m_attTable.end(); }
+
+				AttributeAccessor(const AttributeTable& tbl)
+					: m_attTable(tbl) { }
+
+			private:
+				const AttributeTable& m_attTable;
+			};
+
 			ConfigurationSection(const String& name, int capacity);
 			ConfigurationSection(const String& name);
 			ConfigurationSection(const ConfigurationSection& another);
 			~ConfigurationSection();
 
-			AttributeTable::Enumerator GetAttributeEnumrator() const { return m_attributes.GetEnumerator(); }
-			SubSectionTable::Enumerator GetSubSectionEnumrator() const { return m_subSection.GetEnumerator(); }
-
 			ConfigurationSection* CreateSubSection(const String& name);
 			void AddSection(ConfigurationSection* section);
 			void SetValue( const String& value);
 
-			const String& getName() const { return m_name; }
+
+			AttributeTable::Enumerator GetAttributeEnumrator() const { return m_attributes.GetEnumerator(); }
+			SubSectionTable::Enumerator GetSubSectionEnumrator() const { return m_subSection.GetEnumerator(); }
+
+			AttributeAccessor getAttributes() const { return AttributeAccessor(m_attributes); }
+			SubSectionTable::ValueAccessor getSubSections() const { return m_subSection.getValueAccessor(); }
 
 			int getAttributeCount() const { return m_attributes.getCount(); }
 			int getSubSectionCount() const { return m_subSection.getCount(); }
 
+			const String& getName() const { return m_name; }
 
 			/**
 			 *  Gets the value of the sub-section with the given name.

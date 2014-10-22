@@ -64,42 +64,25 @@ namespace Apoc3D
 		public:
 			typedef HashMap<String, ConfigurationSection*> ChildTable;
 			
-
 			Configuration(const String& name)
-				: m_name(name)
-			{
+				: m_name(name) { }
 
-			}
 			Configuration(const Configuration& another);
 			virtual ~Configuration();
 
-			const String& getName() const { return m_name; }
-
-			/**
-			 *   Gets the top level sections with a name.
-			 */
-			ConfigurationSection* get(const String& name) const
-			{
-				ConfigurationSection* result;
-				if (m_sections.TryGetValue(name, result))
-				{
-					return result;
-				}
-				return 0;
-			}
-
-			/**
-			 *  Gets the top section enumerator
-			 */
-			ChildTable::Enumerator GetEnumerator() { return m_sections.GetEnumerator(); }
-
 			void Merge(Configuration* config);
 			
-			void Add(const String& name, ConfigurationSection* sect)
-			{
-				m_sections.Add(name, sect);
-			}
+			void Add(const String& name, ConfigurationSection* sect);
 			void Add(ConfigurationSection* sect);
+
+			/** Gets the top level sections with a name. */
+			ConfigurationSection* get(const String& name) const;
+
+			const String& getName() const { return m_name; }
+
+			/** Gets the top section enumerator */
+			ChildTable::Enumerator GetEnumerator() { return m_sections.GetEnumerator(); }
+			ChildTable::ValueAccessor getSubSections() const { return m_sections.getValueAccessor(); }
 		private:
 			String m_name;
 			ChildTable m_sections;
