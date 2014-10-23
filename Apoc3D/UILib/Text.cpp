@@ -282,6 +282,9 @@ namespace Apoc3D
 			TextSettings.TextSelectionColor = skin->TextSelectionColor;
 			TextSettings.TextSelectionColorDisabled = skin->TextSelectionColorDisabled;
 
+			BackgroundTextSettings.TextColor = TextSettings.TextColor;
+			BackgroundTextSettings.TextColorDisabled = TextSettings.TextColorDisabled;
+
 			ContentPadding = skin->TextBoxPadding;
 
 			PostInitialize();
@@ -315,6 +318,9 @@ namespace Apoc3D
 			TextSettings.TextSelectionColor = settings.TextSelectionColor;
 			TextSettings.TextSelectionColorDisabled = settings.TextSelectionColorDisabled.isSet() ? settings.TextSelectionColorDisabled : settings.TextSelectionColor;
 
+			BackgroundTextSettings.TextColor = TextSettings.TextColor;
+			BackgroundTextSettings.TextColorDisabled = TextSettings.TextColorDisabled;
+
 			if (settings.ContentPadding.isSet())
 				ContentPadding = settings.ContentPadding;
 
@@ -331,6 +337,16 @@ namespace Apoc3D
 		{
 			TextSettings.HorizontalAlignment = TextHAlign::Left;
 			TextSettings.VerticalAlignment = m_multiline ? TextVAlign::Top : TextVAlign::Middle;
+
+			BackgroundTextSettings.HorizontalAlignment = TextSettings.HorizontalAlignment;
+			BackgroundTextSettings.VerticalAlignment = TextSettings.VerticalAlignment;
+
+			int32 tcAlpha = CV_GetColorA(BackgroundTextSettings.TextColor) / 3;
+			BackgroundTextSettings.TextColor = CV_RepackAlpha(BackgroundTextSettings.TextColor, tcAlpha);
+
+			tcAlpha = CV_GetColorA(BackgroundTextSettings.TextColorDisabled) / 3;
+			BackgroundTextSettings.TextColorDisabled = CV_RepackAlpha(BackgroundTextSettings.TextColorDisabled, tcAlpha);
+
 
 			if (!m_multiline)
 			{
@@ -602,6 +618,11 @@ namespace Apoc3D
 
 					lineOffset.Y += m_fontRef->getLineHeightInt();
 				}
+			}
+
+			if (!HasFocus && BackgroundText.size() && m_textEdit.getText().empty())
+			{
+				BackgroundTextSettings.Draw(sprite, m_fontRef, BackgroundText, contentArea.getTopLeft() - m_scrollOffset, contentArea.getSize(), Enabled);
 			}
 
 			DrawCursor(sprite);

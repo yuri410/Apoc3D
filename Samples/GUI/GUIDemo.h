@@ -41,6 +41,8 @@ namespace Sample_GUI
 
 		ComboBox* m_testCB;
 
+		TextBox* m_testTB;
+
 		float m_signal1 = 0;
 		float m_signal2 = 0;
 

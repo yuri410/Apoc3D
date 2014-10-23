@@ -102,6 +102,9 @@ namespace Apoc3D
 			bool HasFocus = false;
 
 			TextRenderSettings TextSettings;
+			TextRenderSettings BackgroundTextSettings;
+
+			String BackgroundText;
 
 			UIGraphic NormalGraphic;
 			UIGraphic DisabledGraphic;
