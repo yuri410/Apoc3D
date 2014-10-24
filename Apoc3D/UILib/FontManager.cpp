@@ -407,29 +407,29 @@ namespace Apoc3D
 		}
 
 		void Font::DrawDisolvingCharacter(Sprite* sprite, float x, float y,
-			int32 seed, const Apoc3D::Math::RectangleF& _srcRect, int32 glyphLeft, int32 glyphTop, int32 glyphWidth, int32 glyphHeight, uint32 color, 
+			int32 seed, const Apoc3D::Math::RectangleF& _srcRect, int32 glyphLeft, int32 glyphTop, int32 glyphWidth, int32 glyphHeight, uint32 color,
 			const Point& dissolvePatchSize, float progress)
 		{
 			int32 xDPCount = (glyphWidth + dissolvePatchSize.X - 1) / dissolvePatchSize.X;
 			int32 yDPCount = (glyphHeight + dissolvePatchSize.Y - 1) / dissolvePatchSize.Y;
 
-			for (int32 dy=0;dy<yDPCount;dy++)
+			for (int32 dy = 0; dy < yDPCount; dy++)
 			{
-				for (int32 dx=0;dx<xDPCount;dx++)
+				for (int32 dx = 0; dx < xDPCount; dx++)
 				{
-					float ang = PositionalNoise(seed+dx*yDPCount+dy) * Math::PI;
+					float ang = PositionalNoise(seed + dx*yDPCount + dy) * Math::PI;
 					Vector2 rndDir(cosf(ang), sinf(ang));
 					if (xDPCount>1)
-						rndDir.X += (float)dx/(xDPCount-1) - 0.5f;
+						rndDir.X += (float)dx / (xDPCount - 1) - 0.5f;
 					if (yDPCount>1)
-						rndDir.Y += (float)dy/(yDPCount-1) - 0.5f;
+						rndDir.Y += (float)dy / (yDPCount - 1) - 0.5f;
 					rndDir.NormalizeInPlace();
 
 
 					int32 offX = dx * dissolvePatchSize.X;
 					int32 offY = dy * dissolvePatchSize.Y;
-					int32 patchWidth = Math::Min(dissolvePatchSize.X, glyphWidth-dx*dissolvePatchSize.X);
-					int32 patchHeight = Math::Min(dissolvePatchSize.Y, glyphHeight-dy*dissolvePatchSize.Y);
+					int32 patchWidth = Math::Min(dissolvePatchSize.X, glyphWidth - dx*dissolvePatchSize.X);
+					int32 patchHeight = Math::Min(dissolvePatchSize.Y, glyphHeight - dy*dissolvePatchSize.Y);
 
 					Apoc3D::Math::RectangleF srcRect = _srcRect;
 
@@ -453,7 +453,7 @@ namespace Apoc3D
 		}
 
 		void Font::DrawStringDissolving(Sprite* sprite, const String& text, float x, float y, uint color, float length,
-			int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale)
+			int dissolvingLength, const Point& dissolvePatchSize, float maxDissolvingScale)
 		{
 			const PointF origin = GetOrigin(x, y);
 
@@ -463,7 +463,7 @@ namespace Apoc3D
 			size_t maxLen = text.length();
 			int32 loopCount;
 			
-			if (dissolvingCount <0)
+			if (dissolvingLength <0)
 			{
 				// by word
 
@@ -471,7 +471,7 @@ namespace Apoc3D
 				int32 wordCount = 0;
 				int32 maxWord = (int32)ceilf(length);
 				size_t i = 0;
-				for (i=0;i<text.size() && wordCount<maxWord;i++)
+				for (i = 0; i < text.size() && wordCount < maxWord; i++)
 				{
 					wchar_t ch = text[i];
 					if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r')
@@ -490,7 +490,7 @@ namespace Apoc3D
 
 				loopCount = Math::Min((int32)text.length(), (int32)i);
 			}
-			else if (dissolvingCount == 0)
+			else if (dissolvingLength == 0)
 			{
 				// together
 				loopCount = (int32)text.length();
@@ -505,9 +505,9 @@ namespace Apoc3D
 			bool wasSpace = false;
 
 			int32 concurrentWords = 1;
-			if (dissolvingCount<-1)
+			if (dissolvingLength<-1)
 			{
-				concurrentWords = -dissolvingCount;
+				concurrentWords = -dissolvingLength;
 			}
 
 
@@ -535,11 +535,11 @@ namespace Apoc3D
 
 					bool shouldDissolve;
 
-					if (dissolvingCount > 0)
+					if (dissolvingLength > 0)
 					{
-						shouldDissolve = i > (length - dissolvingCount);
+						shouldDissolve = i > (length - dissolvingLength);
 					}
-					else if (dissolvingCount == 0)
+					else if (dissolvingLength == 0)
 					{
 						shouldDissolve = length < 1;
 					}
@@ -551,9 +551,9 @@ namespace Apoc3D
 					float dissolveProgress = 0;
 					if (shouldDissolve)
 					{
-						if (dissolvingCount > 0)
-							dissolveProgress = maxDissolvingScale * (float)(i-length+dissolvingCount) / dissolvingCount;
-						else if (dissolvingCount == 0)
+						if (dissolvingLength > 0)
+							dissolveProgress = maxDissolvingScale * (float)(i-length+dissolvingLength) / dissolvingLength;
+						else if (dissolvingLength == 0)
 							dissolveProgress = maxDissolvingScale * length;
 						else
 							dissolveProgress = maxDissolvingScale * (1 - Math::Saturate((length - wordIndex)/concurrentWords));
@@ -628,7 +628,7 @@ namespace Apoc3D
 				}
 
 				
-				if (dissolvingCount<0 && wordIndex > length)
+				if (dissolvingLength<0 && wordIndex > length)
 					break;
 			}
 		}

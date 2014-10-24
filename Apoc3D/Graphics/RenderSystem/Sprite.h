@@ -76,27 +76,14 @@ namespace Apoc3D
 
 				virtual ~Sprite();
 
-				virtual void Begin(SpriteSettings settings)
-				{
-					assert(!m_began);
-					m_began = true;
-					m_currentSettings = settings;
-				}
-
-				virtual void End()
-				{
-					assert(m_began);
-					m_began = false;
-				}
+				virtual void Begin(SpriteSettings settings);
+				virtual void End();
 
 				void ResetBatchCount() { m_batchCount = 0; }
 
-				//virtual void DrawQuad(const GeometryData* quad, PostEffect* effect) = 0;
-				void Draw(Texture* texture, const Apoc3D::Math::Rectangle &rect, uint color)
+				void Draw(Texture* texture, const Apoc3D::Math::Rectangle& rect, uint color)
 				{
-					Draw(texture, Apoc3D::Math::RectangleF(static_cast<float>(rect.X), static_cast<float>(rect.Y), 
-						static_cast<float>(rect.Width), static_cast<float>(rect.Height)), 
-						color);
+					Draw(texture, static_cast<Apoc3D::Math::RectangleF>(rect), color);
 				}
 				void Draw(Texture* texture, const Point& pos, uint color)
 				{
@@ -106,27 +93,12 @@ namespace Apoc3D
 				{
 					Draw(texture, PointF(static_cast<float>(x), static_cast<float>(y)), color);
 				}
-				void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)
-				{
-					Apoc3D::Math::RectangleF dstRectF(static_cast<float>(dstRect.X), static_cast<float>(dstRect.Y), 
-						static_cast<float>(dstRect.Width), static_cast<float>(dstRect.Height));
-
-					if (srcRect)
-					{
-						Apoc3D::Math::RectangleF srcRectF(static_cast<float>(srcRect->X), static_cast<float>(srcRect->Y), 
-							static_cast<float>(srcRect->Width), static_cast<float>(srcRect->Height));
-
-						Draw(texture, dstRectF, &srcRectF, color);
-					}
-					else
-					{
-						Draw(texture, dstRectF, nullptr, color);
-					}
-				}
 				void Draw(Texture* texture, const Apoc3D::Math::RectangleF &rect, uint color)
 				{
 					Draw(texture, rect, nullptr, color);
 				}
+				void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color);
+				
 
 				virtual void Draw(Texture* texture, Vector2 pos, uint color) = 0;
 				virtual void Draw(Texture* texture, const PointF& pos, uint color) = 0;
@@ -136,16 +108,7 @@ namespace Apoc3D
 
 				virtual void Flush() = 0;
 
-				const Matrix& getTransform() const 
-				{
-					if (m_currentSettings & SPR_UsePostTransformStack)
-					{
-						if (m_stack.getCount())
-							return m_stack.Peek();
-						return Matrix::Identity;
-					}
-					return m_transform; 
-				}
+				const Matrix& getTransform() const;
 
 				/**
 				 *  When using matrix stack, pop the current matrix and restore to a previous transform
@@ -157,33 +120,13 @@ namespace Apoc3D
 				 *  Multiply the current transform matrix by a given matrix. If using matrix stack, push
 				 *  the result onto the stack as well.
 				 */
-				void MultiplyTransform(const Matrix& matrix)
-				{
-					Matrix result;
-					Matrix::Multiply(result, getTransform(), matrix);
-					SetTransform(result);
-				}
-				void PreMultiplyTransform(const Matrix& matrix)
-				{
-					Matrix result;
-					Matrix::Multiply(result, matrix, getTransform());
-					SetTransform(result);
-				}
+				void MultiplyTransform(const Matrix& matrix);
+				void PreMultiplyTransform(const Matrix& matrix);
 
 				/**
 				 *  Set current transform. If using matrix stack, pushes the matrix onto the stack as well.
 				 */
-				virtual void SetTransform(const Matrix& matrix)
-				{
-					if (m_currentSettings & SPR_UsePostTransformStack)
-					{
-						m_stack.PushMatrix(matrix);
-					}
-					else
-					{
-						m_transform = matrix;
-					}
-				}
+				virtual void SetTransform(const Matrix& matrix);
 
 				RenderDevice* getRenderDevice() const { return m_renderDevice; }
 				bool isUsingStack() const { return !!(m_currentSettings & SPR_UsePostTransformStack); }
@@ -194,8 +137,8 @@ namespace Apoc3D
 
 				SpriteSettings getSettings() const { return m_currentSettings; }
 
-				bool m_began;
-				int32 m_batchCount;
+				bool m_began = false;
+				int32 m_batchCount = 0;
 			private:
 				RenderDevice* m_renderDevice;
 				Matrix m_transform;

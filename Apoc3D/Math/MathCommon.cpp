@@ -5,7 +5,8 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		// Fast Half Float Conversions		// by Jeroen van der Zijp
+		// Fast Half Float Conversions
+		// by Jeroen van der Zijp
 		// ftp://www.fox-toolkit.org/pub/fasthalffloatconversion.pdf
 
 		static uint32 convertMantissa(uint32 i)

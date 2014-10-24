@@ -33,9 +33,7 @@ namespace Apoc3D
 		{
 			Sprite::Sprite(RenderDevice* rd)
 				: m_renderDevice(rd), m_transform(Matrix::Identity), m_stack(10), 
-				m_currentSettings((SpriteSettings)(SPR_ChangeState | SPR_AlphaBlended)),
-				m_began(false),
-				m_batchCount(0)
+				m_currentSettings((SpriteSettings)(SPR_ChangeState | SPR_AlphaBlended))
 			{
 				
 			}
@@ -43,6 +41,47 @@ namespace Apoc3D
 			Sprite::~Sprite()
 			{
 
+			}
+
+
+			void Sprite::Begin(SpriteSettings settings)
+			{
+				assert(!m_began);
+				m_began = true;
+				m_currentSettings = settings;
+			}
+
+			void Sprite::End()
+			{
+				assert(m_began);
+				m_began = false;
+			}
+
+
+			void Sprite::Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)
+			{
+				Apoc3D::Math::RectangleF dstRectF = dstRect;
+
+				if (srcRect)
+				{
+					Apoc3D::Math::RectangleF srcRectF = *srcRect;
+					Draw(texture, dstRectF, &srcRectF, color);
+				}
+				else
+				{
+					Draw(texture, dstRectF, nullptr, color);
+				}
+			}
+
+			const Matrix& Sprite::getTransform() const
+			{
+				if (m_currentSettings & SPR_UsePostTransformStack)
+				{
+					if (m_stack.getCount())
+						return m_stack.Peek();
+					return Matrix::Identity;
+				}
+				return m_transform;
 			}
 
 			void Sprite::PopTransform()
@@ -54,6 +93,31 @@ namespace Apoc3D
 				else
 				{
 					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"The sprite is not begun with SPR_UsePostTransformStack.");
+				}
+			}
+
+			void Sprite::MultiplyTransform(const Matrix& matrix)
+			{
+				Matrix result;
+				Matrix::Multiply(result, getTransform(), matrix);
+				SetTransform(result);
+			}
+			void Sprite::PreMultiplyTransform(const Matrix& matrix)
+			{
+				Matrix result;
+				Matrix::Multiply(result, matrix, getTransform());
+				SetTransform(result);
+			}
+
+			void Sprite::SetTransform(const Matrix& matrix)
+			{
+				if (m_currentSettings & SPR_UsePostTransformStack)
+				{
+					m_stack.PushMatrix(matrix);
+				}
+				else
+				{
+					m_transform = matrix;
 				}
 			}
 		}
