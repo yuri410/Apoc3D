@@ -1,7 +1,7 @@
 
 #include "PixelFormat.h"
 #include "LockData.h"
-#include "apoc3d/Math/MathCommon.h"
+#include "apoc3d/Math/Math.h"
 #include "apoc3d/Math/Color.h"
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Utility/TypeConverter.h"

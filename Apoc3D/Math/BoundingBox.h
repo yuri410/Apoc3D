@@ -102,22 +102,22 @@ namespace Apoc3D
 			{
 				if (Maximum.X < box.Minimum.X || Minimum.X > box.Maximum.X)
 				{
-					return CONTAIN_Disjoint;
+					return ContainmentType::Disjoint;
 				}
 				if (Maximum.Y < box.Minimum.Y || Minimum.Y > box.Maximum.Y)
 				{
-					return CONTAIN_Disjoint;
+					return ContainmentType::Disjoint;
 				}
 				if (Maximum.Z < box.Minimum.Z || Minimum.Z > box.Maximum.Z)
 				{
-					return CONTAIN_Disjoint;
+					return ContainmentType::Disjoint;
 				}
 				if (Vector3::IsLessEqual(Minimum, box.Minimum) && 
 					Vector3::IsLessEqual(box.Maximum, Maximum))
 				{
-					return CONTAIN_Contains;
+					return ContainmentType::Contains;
 				}
-				return CONTAIN_Intersects;
+				return ContainmentType::Intersects;
 			}
 			
 			/** 

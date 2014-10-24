@@ -121,12 +121,12 @@ namespace Apoc3D
 				float radius2 = sphere2.Radius;
 
 				if (radius + radius < distance)
-					return CONTAIN_Disjoint;
+					return ContainmentType::Disjoint;
 
 				if (radius - radius2 < distance)
-					return CONTAIN_Intersects;
+					return ContainmentType::Intersects;
 
-				return CONTAIN_Contains;
+				return ContainmentType::Contains;
 			}
 
 			
@@ -164,36 +164,8 @@ namespace Apoc3D
 			/**
 			 *  Constructs a BoundingSphere that is the as large as the total combined area of the two specified spheres.
 			 */
-			static void Merge(BoundingSphere& res, const BoundingSphere& sphere1, const BoundingSphere& sphere2)
-			{
-				Vector3 difference = sphere2.Center - sphere1.Center;
+			static void Merge(BoundingSphere& res, const BoundingSphere& sphere1, const BoundingSphere& sphere2);
 
-				float length = difference.Length();
-				const float& radius = sphere1.Radius;
-				const float& radius2 = sphere2.Radius;
-
-				if (radius + radius2 >= length)
-				{
-					if (radius - radius2 >= length)
-					{
-						res = sphere1;
-						return;
-					}
-
-					if (radius2 - radius >= length)
-					{
-						res = sphere2;
-						return;
-					}
-				}
-
-				Vector3 vector = difference / length;
-				float minv = Min(-radius, length - radius2);
-				float maxv = (Max(radius, length + radius2) - minv) * 0.5f;
-
-				res.Center = sphere1.Center + vector * (maxv + minv);
-				res.Radius = maxv;
-			}
 			/**
 			 *  Determines whether a sphere intersects the specified object.
 			 */

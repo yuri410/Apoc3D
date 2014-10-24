@@ -26,15 +26,36 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "Vector.h"
-#include "Matrix.h"
+#include "MathCommon.h"
 #include "Point.h"
 #include "Rectangle.h"
-#include "Color.h"
-#include "Quaternion.h"
-#include "Ray.h"
-#include "MathCommon.h"
 
+namespace Apoc3D
+{
+	namespace Math
+	{
+		uint16 R32ToR16I(uint32 value);
+		uint32 R16ToR32I(uint16 value);
+
+		inline uint16 R32ToR16(float value) { return R32ToR16I(reinterpret_cast<const uint32&>(value)); }
+
+		// once a floating point value is formed, bits maybe altered implicitly due to floating point behavior
+		inline float R16ToR32(uint16 value)
+		{
+			uint32 iv = R32ToR16I(value);
+			return reinterpret_cast<const float&>(iv);
+		}
+
+		inline Point Round(PointF p)
+		{
+			return Point(Round(p.X), Round(p.Y));
+		}
+
+		inline Apoc3D::Math::Rectangle Round(RectangleF r)
+		{
+			return Apoc3D::Math::Rectangle(Round(r.X), Round(r.Y), Round(r.Width), Round(r.Height));
+		}
+	}
+}
 
 #endif

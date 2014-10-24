@@ -17,6 +17,7 @@
 #include "apoc3d/Math/Ray.h"
 #include "apoc3d/Math/Viewport.h"
 #include "apoc3d/Math/RandomUtils.h"
+#include "apoc3d/Math/Math.h"
 #include "apoc3d/Utility/Compression.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Library/lz4.h"

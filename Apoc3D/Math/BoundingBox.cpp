@@ -41,7 +41,7 @@ namespace Apoc3D
 			const float radius = sphere.Radius;
 
 			if (dist > (radius * radius))
-				return CONTAIN_Disjoint;
+				return ContainmentType::Disjoint;
 
 			Vector3 rrr = Vector3::Set(radius);
 			Vector3 boxmax_near = Maximum - rrr;
@@ -53,10 +53,10 @@ namespace Apoc3D
 				Vector3::IsLessEqual(sphere.Center, boxmin_near) && 
 				Vector3::IsGreater(ext, rrr))
 			{
-				return CONTAIN_Contains;
+				return ContainmentType::Contains;
 			}
 				
-			return CONTAIN_Intersects;
+			return ContainmentType::Intersects;
 		}
 
 		void BoundingBox::CreateFromSphere(BoundingBox& res, const BoundingSphere& sphere)

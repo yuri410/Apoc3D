@@ -30,6 +30,7 @@
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
 #include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
 #include "apoc3d/Platform/API.h"
+
 #include "FontManager.h"
 #include "SystemUIImpl.h"
 

@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "StyleSkin.h"
 #include "Button.h"
 
-#include "apoc3d/Math/MathCommon.h"
+#include "apoc3d/Math/Math.h"
 #include "apoc3d/Input/Mouse.h"
 #include "apoc3d/Input/InputAPI.h"
 #include "apoc3d/Graphics/RenderSystem/Texture.h"

@@ -27,7 +27,7 @@
  */
 
 
-#include "MathCommon.h"
+#include "apoc3d/Common.h"
 
 namespace Apoc3D
 {
@@ -51,12 +51,11 @@ namespace Apoc3D
 		class APAPI Point
 		{
 		public:
-			int X;
-			int Y;
+			int32 X;
+			int32 Y;
 
 			Point() : X(0), Y(0) { }
-			Point(int x, int y) : X(x), Y(y) { }
-
+			Point(int32 x, int32 y) : X(x), Y(y) { }
 
 			bool operator==(const Point& other) const { return (X == other.X) && (Y == other.Y); }
 			bool operator!=(const Point& other) const { return !(*this == other); }
@@ -109,13 +108,16 @@ namespace Apoc3D
 
 			PointF() : X(0), Y(0) { }
 			PointF(float x, float y) : X(x), Y(y) { }
-
+			PointF(const Point& p) : X(static_cast<float>(p.X)), Y(static_cast<float>(p.Y)) { }
 
 			bool operator==(const PointF &other) const { return (X == other.X) && (Y == other.Y); }
 			bool operator!=(const PointF &other) const { return !(*this == other); }
 
 			PointF operator+(const PointF &other) const { return PointF(X + other.X, Y + other.Y); }
 			PointF operator-(const PointF &other) const { return PointF(X - other.X, Y - other.Y); }
+
+			PointF operator/(float v) const { return PointF(X / v, Y / v); }
+			PointF operator*(float v) const { return PointF(X * v, Y * v); }
 
 			PointF& operator +=(const PointF& rhs)
 			{

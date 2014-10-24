@@ -31,9 +31,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/Core/Logging.h"
-#include "apoc3d/Math/RandomUtils.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Math/Color.h"
+#include "apoc3d/Math/Math.h"
+#include "apoc3d/Math/RandomUtils.h"
 
 using namespace Apoc3D::IO;
 using namespace Apoc3D::Utility;

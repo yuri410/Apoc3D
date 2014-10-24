@@ -6,6 +6,7 @@
 #include "Text.h"
 #include "Button.h"
 #include "List.h"
+#include "apoc3d/Math/Math.h"
 
 #include "apoc3d/Input/InputAPI.h"
 #include "apoc3d/Input/Mouse.h"

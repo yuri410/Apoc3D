@@ -1,4 +1,5 @@
 #include "MeshSimplifier.h"
+#include "apoc3d/Math/Math.h"
 
 namespace Apoc3D
 {

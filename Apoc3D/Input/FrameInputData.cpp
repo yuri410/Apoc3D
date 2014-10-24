@@ -5,7 +5,7 @@
 #include <time.h>
 
 #include "apoc3d/Math/RandomUtils.h"
-#include "apoc3d/Math/MathCommon.h"
+#include "apoc3d/Math/Math.h"
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/IOLib/BinaryWriter.h"
 #include "apoc3d/IOLib/Streams.h"

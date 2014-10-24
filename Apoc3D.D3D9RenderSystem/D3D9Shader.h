@@ -27,6 +27,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9Common.h"
 #include "apoc3d/Math/Math.h"
+#include "apoc3d/Math/Plane.h"
+#include "apoc3d/Math/Matrix.h"
+#include "apoc3d/Math/Vector.h"
+#include "apoc3d/Math/Quaternion.h"
+
 #include "apoc3d/Graphics/RenderSystem/Shader.h"
 #include "apoc3d/Exception.h"
 #include "apoc3d/IOLib/BinaryReader.h"

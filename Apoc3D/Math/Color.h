@@ -27,7 +27,7 @@
  */
 
 
-#include "MathCommon.h"
+#include "apoc3d/Common.h"
 
 #include "Vector.h"
 #include "ColorValue.h"
@@ -104,13 +104,7 @@ namespace Apoc3D
 				return Vector3(Red, Green, Blue);
 			}
 
-			void ClampInPlace()
-			{
-				Red = Math::Saturate(Red);
-				Green = Math::Saturate(Green);
-				Blue = Math::Saturate(Blue);
-				Alpha = Math::Saturate(Alpha);
-			}
+			void ClampInPlace();
 
 			bool operator==(const Color4 &other) const
 			{

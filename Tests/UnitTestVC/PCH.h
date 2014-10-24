@@ -113,7 +113,6 @@
 #include "apoc3d/Math/Frustum.h"
 #include "apoc3d/Math/GaussBlurFilter.h"
 #include "apoc3d/Math/Math.h"
-#include "apoc3d/Math/MathCommon.h"
 #include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Math/OctreeBox.h"
 #include "apoc3d/Math/PerlinNoise.h"

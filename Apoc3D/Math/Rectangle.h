@@ -41,6 +41,8 @@ namespace Apoc3D
 			float Height;
 
 			RectangleF() : X(0), Y(0), Width(0), Height(0) { }
+			RectangleF(const PointF& pos, const PointF& size)
+				: X(pos.X), Y(pos.Y), Width(size.X), Height(size.Y) { }
 
 			RectangleF(float x, float y, float width, float height)
 				: X(x), Y(y), Width(width), Height(height) { }
@@ -50,12 +52,23 @@ namespace Apoc3D
 			float getTop() const { return Y; }
 			float getBottom() const { return Y + Height; }
 
-			//Point getCenter() { return Point(X + Width / 2, Y + Height / 2); }
+			PointF getCenter() const { return PointF(X + Width / 2, Y + Height / 2); }
+
+			PointF getTopLeft() const { return PointF(X, Y); }
+			PointF getTopRight() const { return PointF(X + Width, Y); }
+
+			PointF getBottomLeft() const { return PointF(X, Y + Height); }
+			PointF getBottomRight() const { return PointF(X + Width, Y + Height); }
+
+			PointF getPosition() const { return PointF(X, Y); }
+			void setPosition(const PointF& pt) { X = pt.X; Y = pt.Y; }
+
+			PointF getSize() const { return PointF(Width, Height); }
 
 			bool IsEmpty() const { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
 
 
-			void Offset(const Point &amount)
+			void Offset(const PointF &amount)
 			{
 				X += amount.X; Y += amount.Y;
 			}
@@ -74,7 +87,7 @@ namespace Apoc3D
 			{
 				return (X <= x) && x < (X + Width) && (Y <= y) && y < (Y + Height);
 			}
-			bool Contains(const Point &value) const
+			bool Contains(const PointF &value) const
 			{
 				return (X <= value.X) &&
 					(value.X < X + Width) &&
@@ -97,42 +110,13 @@ namespace Apoc3D
 					(Y < (value.Y + value.Height));
 			}
 
-			static RectangleF Intersect(const RectangleF &a, const RectangleF &b)
+			RectangleF GetCenterRegion(const Point& sz) const
 			{
-				RectangleF rectangle;
-				float abrp_x = a.X + a.Width;
-				float abrp_y = a.Y + a.Height;
-
-				float bbrp_x = b.X + b.Width;
-				float bbrp_y = b.Y + b.Height;
-				float maxX = Max(a.X, b.X);
-				float maxY = Max(a.Y, b.Y);
-				float minRight = Min(abrp_x, bbrp_x);
-				float minBottom = Min(abrp_y, bbrp_y);
-				if (minRight > maxX && minBottom > maxY)
-				{
-					rectangle.X = maxX;
-					rectangle.Y = maxY;
-					rectangle.Width = minRight - maxX;
-					rectangle.Height = minBottom - maxY;
-					return rectangle;
-				}
-				return rectangle;
+				return RectangleF(getCenter() - sz / 2, sz);
 			}
-			static RectangleF Union(const RectangleF &a, const RectangleF &b)
-			{
-				RectangleF result;
-				float abrp_x = a.X + a.Width;
-				float abrp_y = a.Y + a.Height;
 
-				float bbrp_x = b.X + b.Width;
-				float bbrp_y = b.Y + b.Height;
-				result.X = Min(a.X, b.X);
-				result.Y = Min(a.Y, b.Y);
-				result.Width = Max(abrp_x, bbrp_x) - result.X;
-				result.Height = Max(abrp_y, bbrp_y) - result.Y;
-				return result;
-			}
+			static RectangleF Intersect(const RectangleF &a, const RectangleF &b);
+			static RectangleF Union(const RectangleF &a, const RectangleF &b);
 
 			bool operator==(const RectangleF &other) const
 			{
@@ -252,44 +236,10 @@ namespace Apoc3D
 			}
 
 			/** Creates a Rectangle defining the area where one rectangle overlaps another rectangle. */
-			static Rectangle Intersect(const Rectangle &a, const Rectangle &b)
-			{
-				Rectangle rectangle;
-				int abrp_x = a.X + a.Width;
-				int abrp_y = a.Y + a.Height;
-
-				int bbrp_x = b.X + b.Width;
-				int bbrp_y = b.Y + b.Height;
-				int maxX = Max(a.X, b.X);
-				int maxY = Max(a.Y, b.Y);
-				int minRight = Min(abrp_x, bbrp_x);
-				int minBottom = Min(abrp_y, bbrp_y);
-				if (minRight > maxX && minBottom > maxY)
-				{
-					rectangle.X = maxX;
-					rectangle.Y = maxY;
-					rectangle.Width = minRight - maxX;
-					rectangle.Height = minBottom - maxY;
-					return rectangle;
-				}
-				return rectangle;
-			}
+			static Rectangle Intersect(const Rectangle &a, const Rectangle &b);
 
 			/** Creates a new Rectangle that exactly contains two other rectangles. */
-			static Rectangle Union(const Rectangle &a, const Rectangle &b)
-			{
-				Rectangle result;
-				int abrp_x = a.X + a.Width;
-				int abrp_y = a.Y + a.Height;
-
-				int bbrp_x = b.X + b.Width;
-				int bbrp_y = b.Y + b.Height;
-				result.X = Min(a.X, b.X);
-				result.Y = Min(a.Y, b.Y);
-				result.Width = Max(abrp_x , bbrp_x) - result.X;
-				result.Height = Max(abrp_y, bbrp_y) - result.Y;
-				return result;
-			}
+			static Rectangle Union(const Rectangle &a, const Rectangle &b);
 
 			operator RectangleF() const
 			{

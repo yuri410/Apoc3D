@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9RenderDevice.h"
 #include "D3D9Utils.h"
 #include "D3D9Texture.h"
+#include "apoc3d/Math/Math.h"
 
 namespace Apoc3D
 {

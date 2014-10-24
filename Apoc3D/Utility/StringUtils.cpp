@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "StringUtils.h"
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Library/ConvertUTF.h"
-#include "apoc3d/Math/MathCommon.h"
+#include "apoc3d/Math/Math.h"
 #include <strstream>
 #include <sstream>
 #include <algorithm>

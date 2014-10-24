@@ -33,7 +33,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Core/CommandInterpreter.h"
 #include "apoc3d/Graphics/TextureManager.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
-#include "apoc3d/Math/Math.h"
 #include "apoc3d/Input/InputAPI.h"
 #include "apoc3d/Input/Mouse.h"
 #include "apoc3d/Utility/StringUtils.h"

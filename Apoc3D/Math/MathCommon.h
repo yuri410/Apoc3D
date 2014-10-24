@@ -3,28 +3,28 @@
 #define APOC3D_MATHCOMMON_H
 
 /**
- * -----------------------------------------------------------------------------
- * This source file is part of Apoc3D Engine
- * 
- * Copyright (c) 2009+ Tao Xin
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  if not, write to the Free Software Foundation, 
- * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
- * http://www.gnu.org/copyleft/gpl.txt.
- * 
- * -----------------------------------------------------------------------------
- */
+* -----------------------------------------------------------------------------
+* This source file is part of Apoc3D Engine
+*
+* Copyright (c) 2009+ Tao Xin
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  if not, write to the Free Software Foundation,
+* Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+* http://www.gnu.org/copyleft/gpl.txt.
+*
+* -----------------------------------------------------------------------------
+*/
 
 
 #include "apoc3d/Common.h"
@@ -33,18 +33,20 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		enum ContainmentType
+		enum struct ContainmentType
 		{
-			CONTAIN_Disjoint,
-			CONTAIN_Contains,
-			CONTAIN_Intersects
+			Disjoint,
+			Contains,
+			Intersects
 		};
-		enum PlaneIntersectionType
+
+		enum struct PlaneIntersectionType
 		{
-			PLANEIT_Front,
-			PLANEIT_Back,
-			PLANEIT_Intersecting
+			Front,
+			Back,
+			Intersecting
 		};
+
 
 #define L_PIf 3.1415926535897932384626433832795f
 #define L_Two_PIf 6.283185307179586476925286766559f
@@ -64,27 +66,9 @@ namespace Apoc3D
 		const float Root2 = 1.41421f;
 		const float Root3 = 1.73205f;
 
-		
-
-		uint16 R32ToR16I(uint32 value);
-		uint32 R16ToR32I(uint16 value);
-
-		inline uint16 R32ToR16(float value) { return R32ToR16I(reinterpret_cast<const uint32&>(value)); }
-
-		// once a floating point value is formed, bits maybe altered implicitly due to floating point behavior
-		inline float R16ToR32(uint16 value)
-		{
-			uint32 iv = R32ToR16I(value);
-			return reinterpret_cast<const float&>(iv);
-		}
 
 
-		/*inline byte UnifiedToByteRange(float f)
-		{
-			return (byte)floor(f == 1.0f ? 255 : f * 256.0f);
-		}*/
-
-		inline float ToRadian(float x) { return x * (L_PIf / 180.0f); }		
+		inline float ToRadian(float x) { return x * (L_PIf / 180.0f); }
 		inline float ToRadian(int32 x) { return x * (L_PIf / 180.0f); }
 
 		inline float ToDegree(float x) { return x * (180.0f / L_PIf); }
@@ -106,26 +90,26 @@ namespace Apoc3D
 
 		inline float Frac(float value)
 		{
-			assert(value>=0);
+			assert(value >= 0);
 			return value - floorf(value);
 		}
 
 		inline float Sign(float value)
 		{
-			if (value>0)
+			if (value > 0)
 				return 1.0f;
-			return value<0 ? -1.0f : 0.0f;
+			return value < 0 ? -1.0f : 0.0f;
 		}
 		inline int32 Sign(int32 value)
 		{
-			if (value>0)
+			if (value > 0)
 				return 1;
-			return value<0 ? -1 : 0;
+			return value < 0 ? -1 : 0;
 		}
 
 		inline float Lerp(float a, float b, float amount)
 		{
-			return a + (b-a)*amount;
+			return a + (b - a)*amount;
 		}
 
 
@@ -139,10 +123,10 @@ namespace Apoc3D
 		{
 			if (v > _max)
 				return _max;
-			return (v<_min) ? _min : v;
+			return (v < _min) ? _min : v;
 		}
 
-		inline float Saturate(float v) 
+		inline float Saturate(float v)
 		{
 			const float t = v < 0 ? 0 : v;
 			return t > 1 ? 1 : t;
@@ -194,22 +178,22 @@ namespace Apoc3D
 
 		inline int32 RoundUp2(int32 x)
 		{
-			assert(x>=0);
+			assert(x >= 0);
 			return (x + 1) & ~0x01;
 		}
 		inline int32 RoundUp4(int32 x)
 		{
-			assert(x>=0);
+			assert(x >= 0);
 			return (x + 3) & ~0x03;
 		}
 		inline int32 RoundUp8(int32 x)
 		{
-			assert(x>=0);
+			assert(x >= 0);
 			return (x + 7) & ~0x07;
 		}
 		inline int32 RoundUp16(int32 x)
 		{
-			assert(x>=0);
+			assert(x >= 0);
 			return (x + 15) & ~0x0f;
 		}
 		inline int32 Pow2RoundUp(int32 x)
@@ -222,7 +206,7 @@ namespace Apoc3D
 			x |= x >> 4;
 			x |= x >> 8;
 			x |= x >> 16;
-			return x+1;
+			return x + 1;
 		}
 		inline bool IsPowerOfTwo(int32 x)
 		{
@@ -273,5 +257,4 @@ namespace Apoc3D
 		}
 	}
 }
-
 #endif

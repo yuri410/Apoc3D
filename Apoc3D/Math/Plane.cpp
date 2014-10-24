@@ -71,14 +71,14 @@ namespace Apoc3D
             float dot = plane.DotNormal(maxv);
 
             if (dot + plane.D > 0.0f)
-                return PLANEIT_Front;
+				return PlaneIntersectionType::Front;
 
             dot = plane.DotNormal(minv);
 
             if (dot + plane.D < 0.0f)
-                return PLANEIT_Back;
+				return PlaneIntersectionType::Back;
 
-            return PLANEIT_Intersecting;
+			return PlaneIntersectionType::Intersecting;
 		}
 
 

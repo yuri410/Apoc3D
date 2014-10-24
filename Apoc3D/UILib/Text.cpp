@@ -8,6 +8,7 @@
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
 #include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
 #include "apoc3d/Utility/StringUtils.h"
+
 #include "StyleSkin.h"
 
 #include "Bar.h"

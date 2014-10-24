@@ -39,7 +39,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Graphics/Material.h"
 #include "apoc3d/Graphics/GeometryData.h"
 #include "apoc3d/Math/GaussBlurFilter.h"
-#include "apoc3d/Math/Math.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Math;

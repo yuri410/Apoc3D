@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Core/GameTime.h"
 #include "apoc3d/Input/InputAPI.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Math/Math.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Utility;

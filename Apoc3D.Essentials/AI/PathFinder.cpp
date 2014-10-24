@@ -22,7 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "PathFinder.h"
-#include "apoc3d/Math/MathCommon.h"
+#include "apoc3d/Math/Math.h"
 
 namespace Apoc3DEx
 {

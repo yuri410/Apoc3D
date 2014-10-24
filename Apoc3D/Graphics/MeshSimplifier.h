@@ -4,8 +4,6 @@
 
 #include "ModelTypes.h"
 
-#include "apoc3d/Math/MathCommon.h"
-
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;
 
