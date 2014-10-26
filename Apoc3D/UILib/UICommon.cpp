@@ -339,6 +339,25 @@ namespace Apoc3D
 		}
 
 		/************************************************************************/
+		/*  ButtonVisualSettings                                                */
+		/************************************************************************/
+
+		void ButtonVisualSettings::Setup(Texture* tex, const Apoc3D::Math::Rectangle& normal, 
+			const Apoc3D::Math::Rectangle& hover, const Apoc3D::Math::Rectangle& down)
+		{
+			NormalGraphic = UIGraphic(tex, normal);
+			MouseHoverGraphic = UIGraphic(tex, hover);
+			MouseDownGraphic = UIGraphic(tex, down);
+		}
+		void ButtonVisualSettings::Setup(Texture* tex, const Apoc3D::Math::Rectangle& normal, 
+			const Apoc3D::Math::Rectangle& hover, const Apoc3D::Math::Rectangle& down, const ControlBounds& margin)
+		{
+			Setup(tex, normal, down, hover);
+			Margin = margin;
+		}
+
+
+		/************************************************************************/
 		/*  ScissorTestState                                                    */
 		/************************************************************************/
 

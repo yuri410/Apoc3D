@@ -240,6 +240,11 @@ namespace Apoc3D
 
 			OptionalSetting<ControlBounds> ContentPadding;
 			OptionalSetting<ControlBounds> Margin;
+
+			ButtonVisualSettings() { }
+
+			void Setup(Texture* tex, const Apoc3D::Math::Rectangle& normal, const Apoc3D::Math::Rectangle& hover, const Apoc3D::Math::Rectangle& down);
+			void Setup(Texture* tex, const Apoc3D::Math::Rectangle& normal, const Apoc3D::Math::Rectangle& hover, const Apoc3D::Math::Rectangle& down, const ControlBounds& margin);
 		};
 
 		struct ScrollBarVisualSettings
