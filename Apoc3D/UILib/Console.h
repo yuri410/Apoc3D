@@ -91,7 +91,7 @@ namespace Apoc3D
 			LinkedList<LogEntry> m_logs;
 			Queue<LogEntry> m_queuedNewLogs;
 
-			Queue<String> m_previousCommands;
+			List<String> m_previousCommands;
 			int32 m_currentSelectedPreviousCommands;
 
 			bool m_needsUpdateLineInfo;

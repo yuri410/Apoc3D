@@ -166,7 +166,7 @@ namespace Apoc3D
 					m_currentSelectedPreviousCommands--;
 				}
 
-				m_inputText->SetText(m_previousCommands.GetElement(m_currentSelectedPreviousCommands));
+				m_inputText->SetText(m_previousCommands[m_currentSelectedPreviousCommands]);
 			}
 			
 		}
@@ -183,7 +183,7 @@ namespace Apoc3D
 					m_currentSelectedPreviousCommands++;
 				}
 
-				m_inputText->SetText(m_previousCommands.GetElement(m_currentSelectedPreviousCommands));
+				m_inputText->SetText(m_previousCommands[m_currentSelectedPreviousCommands]);
 			}
 		}
 
@@ -225,13 +225,15 @@ namespace Apoc3D
 				CommandInterpreter::getSingleton().RunLine(c, true);
 			}
 
-			if (!m_previousCommands.Contains(c))
 			{
-				m_previousCommands.Enqueue(c);
-				while (m_previousCommands.getCount()>100)
-					m_previousCommands.DequeueOnly();
+				int32 idx = m_previousCommands.IndexOf(c);
+				if (idx != -1)
+					m_previousCommands.RemoveAt(idx);
+
+				m_previousCommands.Add(c);
+				m_currentSelectedPreviousCommands = -1;
 			}
-			m_currentSelectedPreviousCommands = -1;
+			
 			m_inputText->SetText(L"");
 		}
 
