@@ -56,6 +56,7 @@ namespace Apoc3D
 			virtual void Update(const GameTime* time) override;
 			virtual void Draw(Sprite* sprite) override;
 
+			void Resetup(const ButtonVisualSettings& settings);
 		
 			void SetFont(Font* fontRef);
 			void SetText(const String& text);

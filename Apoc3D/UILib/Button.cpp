@@ -164,6 +164,10 @@ namespace Apoc3D
 			UpdateSize();
 		}
 
+		void Button::Resetup(const ButtonVisualSettings& settings)
+		{
+			Initialize(settings);
+		}
 
 		void Button::Draw(Sprite* sprite)
 		{
