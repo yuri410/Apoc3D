@@ -1329,6 +1329,16 @@ namespace Apoc3D
 			for (size_t i = 0; i < str.size(); i++)
 				str[i] = ToUpperCase(str[i]);
 		}
+		void StringUtils::ToLowerCase(std::string& str)
+		{
+			for (size_t i = 0; i < str.size(); i++)
+				str[i] = ToLowerCase(str[i]);
+		}
+		void StringUtils::ToUpperCase(std::string& str)
+		{
+			for (size_t i = 0; i < str.size(); i++)
+				str[i] = ToUpperCase(str[i]);
+		}
 
 		/************************************************************************/
 		/*  StringUtilsLocalized                                                */

@@ -252,6 +252,8 @@ namespace Apoc3D
 
 			APAPI void ToLowerCase(String& str);
 			APAPI void ToUpperCase(String& str);
+			APAPI void ToLowerCase(std::string& str);
+			APAPI void ToUpperCase(std::string& str);
 
 			APAPI char ToLowerCase(char ch);
 			APAPI char ToUpperCase(char str);

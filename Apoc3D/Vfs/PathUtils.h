@@ -48,6 +48,8 @@ namespace Apoc3D
 			/** Returns the file name of the specified path string without the extension. */
 			APAPI String GetFileNameNoExt(const String& filePath);
 			APAPI String GetFileName(const String& filePath);
+			APAPI String GetFileExtension(const String& filePath);
+
 			/**
 			 *  Replaces AltDirectorySeparator with DirectorySeparator in a path
 			 */

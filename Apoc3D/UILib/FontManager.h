@@ -109,6 +109,8 @@ namespace Apoc3D
 			float getLineBackgroundHeight() const { return m_height + m_lineGap + m_descender; }
 			float getTextBackgroundHeight(int lineCount) const { return m_descender + (m_height+m_lineGap) * lineCount; }
 
+			void getStandardMetrics(float& ascender, float& descender) const { ascender = m_ascender; descender = m_descender; }
+
 			Texture* getInternalTexture() const { return m_font; }
 
 			static String MakeColorControl(uint32 argb);
