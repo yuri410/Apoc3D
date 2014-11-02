@@ -53,8 +53,8 @@ namespace Apoc3D
 
 				virtual void Draw(Texture* texture, const PointF& pos, uint color) override;
 				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color) override;
-				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) override;
-				virtual void Draw(Texture* texture, const PointF& pos, float uBias, float vBias, float uScale, float vScale, uint color) override;
+				virtual void DrawTiled(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) override;
+				virtual void DrawTiled(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color) override;
 
 				virtual void DrawRoundedRect(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
 					float cornerRadius, int32 div, uint color) override;

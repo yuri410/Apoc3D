@@ -182,13 +182,31 @@ namespace Apoc3D
 				}
 			}
 
-			void D3D9Sprite::Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color)
+			void D3D9Sprite::Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color)
 			{
 				assert(m_began);
 
 				DrawEntry drawE;
-				drawE.FillNormalDraw(texture, getTransform(), dstRect, NULL, color);
-				
+				drawE.FillNormalDraw(texture, getTransform(), dstRect, srcRect, color);
+				EnqueueDrawEntry(drawE);
+			}
+
+			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, uint color)
+			{
+				assert(m_began);
+
+				DrawEntry drawE;
+				drawE.FillNormalDraw(texture, getTransform(), pos.X, pos.Y, color);
+				EnqueueDrawEntry(drawE);
+			}
+
+			void D3D9Sprite::DrawTiled(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color)
+			{
+				assert(m_began);
+
+				DrawEntry drawE;
+				drawE.FillNormalDraw(texture, getTransform(), pos.X, pos.Y, color);
+
 				drawE.BL.TexCoord[0] *= uScale;
 				drawE.BR.TexCoord[0] *= uScale;
 				drawE.TL.TexCoord[0] *= uScale;
@@ -214,29 +232,12 @@ namespace Apoc3D
 				EnqueueDrawEntry(drawE);
 			}
 
-			void D3D9Sprite::Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color)
+			void D3D9Sprite::DrawTiled(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color)
 			{
 				assert(m_began);
 
 				DrawEntry drawE;
-				drawE.FillNormalDraw(texture, getTransform(), dstRect, srcRect, color);
-				EnqueueDrawEntry(drawE);
-			}
-
-			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, uint color)
-			{
-				assert(m_began);
-
-				DrawEntry drawE;
-				drawE.FillNormalDraw(texture, getTransform(), pos.X, pos.Y, color);
-				EnqueueDrawEntry(drawE);
-			}
-			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color)
-			{
-				assert(m_began);
-
-				DrawEntry drawE;
-				drawE.FillNormalDraw(texture, getTransform(), pos.X, pos.Y, color);
+				drawE.FillNormalDraw(texture, getTransform(), dstRect, NULL, color);
 
 				drawE.BL.TexCoord[0] *= uScale;
 				drawE.BR.TexCoord[0] *= uScale;
