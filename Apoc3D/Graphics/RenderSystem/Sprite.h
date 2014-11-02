@@ -56,21 +56,21 @@ namespace Apoc3D
 					/**
 					 *   Keep render states unchanged
 					 */
-					SPR_KeepState = 2,	// 10
-					/**
-					 *  Modify render states when Begin() and restore when calling End()
-					 */
-					SPR_RestoreState = 3,	// 11
-					
-					
+					 SPR_KeepState = 2,	// 10
+					 /**
+					  *  Modify render states when Begin() and restore when calling End()
+					  */
+					  SPR_RestoreState = 3,	// 11
 
 
-					SPR_AlphaBlended = 4,
-					SPR_UsePostTransformStack = 8,
 
-					SPR_AllowShading = 16,
 
-					SPRMix_RestoreStateAlphaBlended = SPR_AlphaBlended | SPR_RestoreState
+					  SPR_AlphaBlended = 4,
+					  SPR_UsePostTransformStack = 8,
+
+					  SPR_AllowShading = 16,
+
+					  SPRMix_RestoreStateAlphaBlended = SPR_AlphaBlended | SPR_RestoreState
 				};
 
 
@@ -97,10 +97,19 @@ namespace Apoc3D
 				{
 					Draw(texture, rect, nullptr, color);
 				}
+				void Draw(Texture* texture, const Vector2& pos, uint color)
+				{
+					Draw(texture, PointF(pos.X, pos.Y), color);
+				}
 				void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color);
-				
 
-				virtual void Draw(Texture* texture, Vector2 pos, uint color) = 0;
+				void DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, int32 div, uint color);
+
+				virtual void DrawRoundedRect(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
+					float cornerRadius, int32 div, uint color) = 0;
+				virtual void DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, 
+					float beginAngle, float endAngle, int32 div, uint color) = 0;
+				
 				virtual void Draw(Texture* texture, const PointF& pos, uint color) = 0;
 				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color) = 0;
 				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) = 0;

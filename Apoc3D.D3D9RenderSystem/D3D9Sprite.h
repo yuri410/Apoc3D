@@ -51,11 +51,15 @@ namespace Apoc3D
 				virtual void Begin(SpriteSettings settings) override;
 				virtual void End() override;
 
-				virtual void Draw(Texture* texture, Vector2 pos, uint color) override;
 				virtual void Draw(Texture* texture, const PointF& pos, uint color) override;
 				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color) override;
 				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) override;
 				virtual void Draw(Texture* texture, const PointF& pos, float uBias, float vBias, float uScale, float vScale, uint color) override;
+
+				virtual void DrawRoundedRect(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
+					float cornerRadius, int32 div, uint color) override;
+				virtual void DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
+					float beginAngle, float endAngle, int32 div, uint color) override;
 
 				virtual void Flush();
 
@@ -69,25 +73,27 @@ namespace Apoc3D
 				};
 				struct DrawEntry
 				{
-					D3D9Texture* Tex;
+					D3D9Texture* Tex = nullptr;
 
 					QuadVertex TL;
 					QuadVertex TR;
 					QuadVertex BL;
 					QuadVertex BR;
 
-					bool IsUVExtended;
+					bool IsUVExtended = false;
+
+					void FillNormalDraw(Texture* texture, const Matrix& baseTrans,
+						const PointF& tl_dp, const PointF& tr_dp, const PointF& bl_dp, const PointF& br_dp,
+						const PointF& tl_sp, const PointF& tr_sp, const PointF& bl_sp, const PointF& br_sp,
+						uint color);
+
+					void FillNormalDraw(Texture* texture, const Matrix& baseTrans, float x, float y, uint color);
+					void FillNormalDraw(Texture* texture, const Matrix& baseTrans, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color);
+					void FillTransformedDraw(Texture* texture, const Matrix& t, const Apoc3D::Math::RectangleF* srcRect, uint color);
 				};
 
-				void AddNormalDraw(Texture* texture, float x, float y, uint color);
-				void AddTransformedDraw(Texture* texture, const Matrix& t, const Apoc3D::Math::RectangleF* srcRect, uint color);
-				void AddUVDraw(Texture* texture, float x, float y, uint color, float uScale, float vScale, float uBias, float vBias);
-				void AddTransformedUVDraw(DrawEntry& entry, float uScale, float vScale, float uBias, float vBias);
-
-				void _DrawAsEntry(DrawEntry& result, Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color);
-				void _FillNormalDraw(DrawEntry& entry, Texture* texture, float x, float y, uint color);
-				void _FillTransformedDraw(DrawEntry& entry, Texture* texture, const Matrix& t, const Apoc3D::Math::RectangleF* srcRect, uint color);
-
+				void EnqueueDrawEntry(const DrawEntry& drawE);
+				
 				void SetRenderState();
 				void RestoreRenderState();
 

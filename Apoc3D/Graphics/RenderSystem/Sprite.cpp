@@ -24,6 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Sprite.h"
 
 #include "apoc3d/Exception.h"
+#include "apoc3d/Math/MathCommon.h"
 
 namespace Apoc3D
 {
@@ -57,6 +58,11 @@ namespace Apoc3D
 				m_began = false;
 			}
 
+			void Sprite::DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
+				int32 div, uint color)
+			{
+				DrawCircle(texture, dstRect, srcRect, 0.0f, Math::PI * 2, div, color);
+			}
 
 			void Sprite::Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)
 			{

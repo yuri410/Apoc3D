@@ -46,30 +46,33 @@ namespace Apoc3D
 				: Sprite(device), m_device(device), m_rawDevice(device->getDevice())
 			{
 				{
-					List<VertexElement> elements;
-					elements.Add(VertexElement(0, VEF_Vector4, VEU_PositionTransformed));
-					elements.Add(VertexElement(16, VEF_Color, VEU_Color));
-					elements.Add(VertexElement(20, VEF_Vector2, VEU_TextureCoordinate,0));
+					const List<VertexElement> elements = 
+					{
+						VertexElement(0, VEF_Vector4, VEU_PositionTransformed),
+						VertexElement(16, VEF_Color, VEU_Color),
+						VertexElement(20, VEF_Vector2, VEU_TextureCoordinate, 0)
+					};
 
 					m_vtxDecl = new D3D9VertexDeclaration(device, elements);
 				}
 				{
-					List<VertexElement> elements;
-					elements.Add(VertexElement(0, VEF_Vector4, VEU_Position));
-					elements.Add(VertexElement(16, VEF_Color, VEU_Color));
-					elements.Add(VertexElement(20, VEF_Vector2, VEU_TextureCoordinate,0));
+					const List<VertexElement> elements =
+					{
+						VertexElement(0, VEF_Vector4, VEU_Position),
+						VertexElement(16, VEF_Color, VEU_Color),
+						VertexElement(20, VEF_Vector2, VEU_TextureCoordinate, 0)
+					};
 
 					m_vtxDeclShadable = new D3D9VertexDeclaration(device, elements);
 				}
 
-				//int test = m_vtxDecl->GetVertexSize();
 				m_quadBuffer = new D3D9VertexBuffer(device, (MaxDeferredDraws * 4) * m_vtxDecl->GetVertexSize(), (BufferUsageFlags)(BU_Dynamic|BU_WriteOnly));
 				m_quadIndices = new D3D9IndexBuffer(device, IBT_Bit16, sizeof(uint16) * MaxDeferredDraws * 6, BU_WriteOnly);
 
 				{
 					uint16* indices = (uint16*)m_quadIndices->Lock(LOCK_None);
 
-					for (uint16 i=0;i<(uint16)MaxDeferredDraws;i++)
+					for (uint16 i = 0; i < (uint16)MaxDeferredDraws; i++)
 					{
 						uint16 base = i * 4;
 
@@ -184,144 +187,80 @@ namespace Apoc3D
 				assert(m_began);
 
 				DrawEntry drawE;
-				_DrawAsEntry(drawE, texture, dstRect, NULL, color);
-				AddTransformedUVDraw(drawE, uScale, vScale, uBias, vBias);
+				drawE.FillNormalDraw(texture, getTransform(), dstRect, NULL, color);
+				
+				drawE.BL.TexCoord[0] *= uScale;
+				drawE.BR.TexCoord[0] *= uScale;
+				drawE.TL.TexCoord[0] *= uScale;
+				drawE.TR.TexCoord[0] *= uScale;
+
+				drawE.BL.TexCoord[1] *= vScale;
+				drawE.BR.TexCoord[1] *= vScale;
+				drawE.TL.TexCoord[1] *= vScale;
+				drawE.TR.TexCoord[1] *= vScale;
+
+				drawE.BL.TexCoord[0] += uBias;
+				drawE.BR.TexCoord[0] += uBias;
+				drawE.TL.TexCoord[0] += uBias;
+				drawE.TR.TexCoord[0] += uBias;
+
+				drawE.BL.TexCoord[1] += vBias;
+				drawE.BR.TexCoord[1] += vBias;
+				drawE.TL.TexCoord[1] += vBias;
+				drawE.TR.TexCoord[1] += vBias;
+
+				drawE.IsUVExtended = true;
+
+				EnqueueDrawEntry(drawE);
 			}
 
-			struct RECTF
-			{
-				float left;
-				float top;
-				float right;
-				float bottom;
-			};
-
-			// Auto resizing to fit the target rectangle is implemented in this method.
-			// 
-			void D3D9Sprite::_DrawAsEntry(DrawEntry& result, Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color)
-			{
-				float position[3] = { dstRect.X, dstRect.Y, 0 };
-
-				Matrix tempM;
-
-				if (srcRect)
-				{
-					// RECT:
-					// LONG    left;
-					// LONG    top;
-					// LONG    right;
-					// LONG    bottom;
-					//Apoc3D::Math::RectangleF r2 = *srcRect;
-					//RECTF r = { 
-					//	(LONG)srcRect->X, 
-					//	(LONG)srcRect->Y,
-					//	(LONG)srcRect->getRight(),
-					//	(LONG)srcRect->getBottom()
-					//};
-					RECTF r = { 
-						srcRect->X, 
-						srcRect->Y,
-						srcRect->getRight(),
-						srcRect->getBottom()
-					};
-
-					// In some cases, the X,Y of the rect is not always the top-left corner,
-					// when the Width or Height is negative. Standardize it.
-					//if (r2.getLeft()>r2.getRight())
-					//{
-					//	r2.X += r2.Width;
-					//	r2.Width = -r2.Width;
-
-					//	position[0] -= r2.Width;
-					//}
-					//if (r2.getTop()>r2.getBottom())
-					//{
-					//	r2.Y += r2.Height;
-					//	r2.Height = -r2.Height;
-
-					//	position[1] -= r2.Height;
-					//}
-					if (r.left > r.right)
-					{
-						float temp = r.right;
-						r.right = r.left;
-						r.left = temp;
-						position[0] += r.right - r.left;
-					}
-					if (r.top>r.bottom)
-					{
-						float temp = r.bottom;
-						r.bottom = r.top;
-						r.top = temp;
-						position[1] += r.bottom -r.top;
-					}
-					Apoc3D::Math::RectangleF r2(r.left, r.top, r.right-r.left,r.bottom-r.top);
-
-					// calculate a scaling and translation matrix
-					Matrix trans;
-					Matrix::CreateTranslation(trans, position[0], position[1], position[2]);
-					trans.M11 = (float)dstRect.Width / (float)srcRect->Width;
-					trans.M22 = (float)dstRect.Height / (float)srcRect->Height;
-
-					// add "trans" at the the beginning for the result
-					const Matrix& baseTrans = getTransform();
-					Matrix::Multiply(tempM, trans, baseTrans);
-
-					// As the position have been added to the transform, 
-					// draw the texture at the origin
-					//AddTransformedDraw(texture, tempM, &r, color);
-					_FillTransformedDraw(result, texture, tempM, &r2, color);
-				}
-				else
-				{
-					Matrix trans;
-					Matrix::CreateTranslation(trans, position[0], position[1], position[2]);
-					trans.M11 = (float)dstRect.Width / (float)texture->getWidth();
-					trans.M22 = (float)dstRect.Height / (float)texture->getHeight();
-
-					const Matrix& baseTrans = getTransform();
-					Matrix::Multiply(tempM, trans, baseTrans);
-
-					// As the position have been added to the transform, 
-					// draw the texture at the origin
-					//AddTransformedDraw(texture, tempM, NULL, color);
-					_FillTransformedDraw(result, texture, tempM, NULL, color);
-				}
-			}
-
-			void D3D9Sprite::Draw(Texture* texture, 
-				const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color)
+			void D3D9Sprite::Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color)
 			{
 				assert(m_began);
 
 				DrawEntry drawE;
-				_DrawAsEntry(drawE, texture, dstRect, srcRect, color);
-				m_deferredDraws.Add(drawE);
-
-				if (m_deferredDraws.getCount()>FlushThreshold)
-				{
-					Flush();
-				}
+				drawE.FillNormalDraw(texture, getTransform(), dstRect, srcRect, color);
+				EnqueueDrawEntry(drawE);
 			}
 
-
-			void D3D9Sprite::Draw(Texture* texture, Vector2 pos, uint color)
-			{
-				assert(m_began);
-
-				AddNormalDraw(texture, pos.X, pos.Y, color);
-			}
 			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, uint color)
 			{
 				assert(m_began);
 
-				AddNormalDraw(texture, pos.X, pos.Y, color);
+				DrawEntry drawE;
+				drawE.FillNormalDraw(texture, getTransform(), pos.X, pos.Y, color);
+				EnqueueDrawEntry(drawE);
 			}
 			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color)
 			{
 				assert(m_began);
 
-				AddUVDraw(texture, pos.X, pos.Y, color, uScale, vScale, uBias, vBias);
+				DrawEntry drawE;
+				drawE.FillNormalDraw(texture, getTransform(), pos.X, pos.Y, color);
+
+				drawE.BL.TexCoord[0] *= uScale;
+				drawE.BR.TexCoord[0] *= uScale;
+				drawE.TL.TexCoord[0] *= uScale;
+				drawE.TR.TexCoord[0] *= uScale;
+
+				drawE.BL.TexCoord[1] *= vScale;
+				drawE.BR.TexCoord[1] *= vScale;
+				drawE.TL.TexCoord[1] *= vScale;
+				drawE.TR.TexCoord[1] *= vScale;
+
+				drawE.BL.TexCoord[0] += uBias;
+				drawE.BR.TexCoord[0] += uBias;
+				drawE.TL.TexCoord[0] += uBias;
+				drawE.TR.TexCoord[0] += uBias;
+
+				drawE.BL.TexCoord[1] += vBias;
+				drawE.BR.TexCoord[1] += vBias;
+				drawE.TL.TexCoord[1] += vBias;
+				drawE.TR.TexCoord[1] += vBias;
+
+				drawE.IsUVExtended = true;
+
+				EnqueueDrawEntry(drawE);
 			}
 
 
@@ -330,13 +269,13 @@ namespace Apoc3D
 				if (m_deferredDraws.getCount()==0)
 					return;
 
-				char* vtxData = (char*)m_quadBuffer->Lock(0, m_deferredDraws.getCount()*4*sizeof(QuadVertex), LOCK_Discard);
+				char* vtxData = (char*)m_quadBuffer->Lock(0, m_deferredDraws.getCount() * 4 * sizeof(QuadVertex), LOCK_Discard);
 
-				for (int i=0;i<m_deferredDraws.getCount();i++)
+				for (int i = 0; i < m_deferredDraws.getCount(); i++)
 				{
-					memcpy(vtxData, &m_deferredDraws[i].TL, sizeof(QuadVertex)*4);
+					memcpy(vtxData, &m_deferredDraws[i].TL, sizeof(QuadVertex) * 4);
 
-					vtxData+= sizeof(QuadVertex)*4;
+					vtxData += sizeof(QuadVertex) * 4;
 				}
 
 				m_quadBuffer->Unlock();
@@ -349,7 +288,7 @@ namespace Apoc3D
 				bool currentUVExtend = m_deferredDraws[0].IsUVExtended;
 				int32 lastIndex = 0;
 
-				for (int i=0;i<m_deferredDraws.getCount()+1;i++)
+				for (int i = 0; i < m_deferredDraws.getCount() + 1; i++)
 				{
 					bool stateChanged = false;
 					const DrawEntry* de;
@@ -370,7 +309,7 @@ namespace Apoc3D
 
 					if (de->Tex != currentTexture)
 					{
-						mgr->SetTexture(0,currentTexture);
+						mgr->SetTexture(0, currentTexture);
 						currentTexture = de->Tex;
 						stateChanged = true;
 					}
@@ -394,22 +333,22 @@ namespace Apoc3D
 						currentUVExtend = de->IsUVExtended;
 						stateChanged = true;
 					}
-					
+
 					if (stateChanged)
 					{
 						int32 startIndex = lastIndex * 6;
 						int32 startVertex = lastIndex * 4;
 						int32 dpCount = i - lastIndex; // not including i
-						
+
 						int32 vtxCount = dpCount * 4;
 
 						m_rawDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, startVertex, vtxCount, startIndex, dpCount * 2);
 						m_batchCount++;
 
 						lastIndex = i;
-					}	
+					}
 
-					
+
 					//m_rawDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i*4, 2);
 				}
 				
@@ -417,237 +356,212 @@ namespace Apoc3D
 				m_deferredDraws.Clear();
 			}
 
-			void D3D9Sprite::AddUVDraw(Texture* texture, float x, float y, uint color, float uScale, float vScale, float uBias, float vBias)
+
+			void D3D9Sprite::EnqueueDrawEntry(const DrawEntry& drawE)
 			{
-				DrawEntry drawE;
-				_FillNormalDraw(drawE, texture, x, y, color);
-				
-				drawE.BL.TexCoord[0] *= uScale;
-				drawE.BR.TexCoord[0] *= uScale;
-				drawE.TL.TexCoord[0] *= uScale;
-				drawE.TR.TexCoord[0] *= uScale;
-
-				drawE.BL.TexCoord[1] *= vScale;
-				drawE.BR.TexCoord[1] *= vScale;
-				drawE.TL.TexCoord[1] *= vScale;
-				drawE.TR.TexCoord[1] *= vScale;
-
-				drawE.BL.TexCoord[0] += uBias;
-				drawE.BR.TexCoord[0] += uBias;
-				drawE.TL.TexCoord[0] += uBias;
-				drawE.TR.TexCoord[0] += uBias;
-
-				drawE.BL.TexCoord[1] += vBias;
-				drawE.BR.TexCoord[1] += vBias;
-				drawE.TL.TexCoord[1] += vBias;
-				drawE.TR.TexCoord[1] += vBias;
-
-				drawE.IsUVExtended = true;
-
 				m_deferredDraws.Add(drawE);
 
-				if (m_deferredDraws.getCount()>FlushThreshold)
-				{
-					Flush();
-				}
-			}
-			void D3D9Sprite::AddTransformedUVDraw(DrawEntry& drawE, float uScale, float vScale, float uBias, float vBias)
-			{
-
-				drawE.BL.TexCoord[0] *= uScale;
-				drawE.BR.TexCoord[0] *= uScale;
-				drawE.TL.TexCoord[0] *= uScale;
-				drawE.TR.TexCoord[0] *= uScale;
-
-				drawE.BL.TexCoord[1] *= vScale;
-				drawE.BR.TexCoord[1] *= vScale;
-				drawE.TL.TexCoord[1] *= vScale;
-				drawE.TR.TexCoord[1] *= vScale;
-
-				drawE.BL.TexCoord[0] += uBias;
-				drawE.BR.TexCoord[0] += uBias;
-				drawE.TL.TexCoord[0] += uBias;
-				drawE.TR.TexCoord[0] += uBias;
-
-				drawE.BL.TexCoord[1] += vBias;
-				drawE.BR.TexCoord[1] += vBias;
-				drawE.TL.TexCoord[1] += vBias;
-				drawE.TR.TexCoord[1] += vBias;
-
-				drawE.IsUVExtended = true;
-
-				m_deferredDraws.Add(drawE);
-
-				if (m_deferredDraws.getCount()>FlushThreshold)
-				{
-					Flush();
-				}
-			}
-			void D3D9Sprite::AddTransformedDraw(Texture* texture, const Matrix& t, const Apoc3D::Math::RectangleF* srcRect, uint color)
-			{
-				DrawEntry drawE;
-				_FillTransformedDraw(drawE, texture, t, srcRect, color);
-				m_deferredDraws.Add(drawE);
-
-				if (m_deferredDraws.getCount()>FlushThreshold)
-				{
-					Flush();
-				}
-			}
-			void D3D9Sprite::AddNormalDraw(Texture* texture, float x, float y, uint color)
-			{
-				DrawEntry drawE;
-				_FillNormalDraw(drawE, texture, x, y, color);
-				m_deferredDraws.Add(drawE);
-
-				if (m_deferredDraws.getCount()>FlushThreshold)
+				if (m_deferredDraws.getCount() > FlushThreshold)
 				{
 					Flush();
 				}
 			}
 
-			void D3D9Sprite::_FillNormalDraw(DrawEntry& drawE, Texture* texture, float x, float y, uint color)
+			static Apoc3D::Math::RectangleF ObtainSrcRect(Texture* texture, const Apoc3D::Math::RectangleF* _srcRect)
 			{
-				float width = (float)texture->getWidth();
-				float height = (float)texture->getHeight();
-
-				const Matrix& trans = getTransform();
-
-				Vector3 tl(x,y,0);
-				Vector3 tr(width+x, y,0);
-				Vector3 bl(x, height+y,0);
-				Vector3 br(width+x, height+y, 0);
-
-				tl = Vector3::TransformCoordinate(tl, trans);
-				tr = Vector3::TransformCoordinate(tr, trans);
-				bl = Vector3::TransformCoordinate(bl, trans);
-				br = Vector3::TransformCoordinate(br, trans);
-
-
-				drawE.Tex = static_cast<D3D9Texture*>(texture);
-				drawE.TL.Position[0] = tl.X-0.5f;
-				drawE.TL.Position[1] = tl.Y-0.5f;
-				drawE.TL.Position[2] = tl.Z;
-				drawE.TL.Position[3] = 1;
-
-				drawE.TR.Position[0] = tr.X-0.5f;
-				drawE.TR.Position[1] = tr.Y-0.5f;
-				drawE.TR.Position[2] = tr.Z;
-				drawE.TR.Position[3] = 1;
-
-				drawE.BL.Position[0] = bl.X-0.5f;
-				drawE.BL.Position[1] = bl.Y-0.5f;
-				drawE.BL.Position[2] = bl.Z;
-				drawE.BL.Position[3] = 1;
-
-				drawE.BR.Position[0] = br.X-0.5f;
-				drawE.BR.Position[1] = br.Y-0.5f;
-				drawE.BR.Position[2] = br.Z;
-				drawE.BR.Position[3] = 1;
-
-				drawE.TL.Diffuse = drawE.TR.Diffuse = drawE.BL.Diffuse = drawE.BR.Diffuse = color;
-
-				drawE.TL.TexCoord[0] = 0; drawE.TL.TexCoord[1] = 0;
-				drawE.TR.TexCoord[0] = 1; drawE.TR.TexCoord[1] = 0;
-				drawE.BL.TexCoord[0] = 0; drawE.BL.TexCoord[1] = 1;
-				drawE.BR.TexCoord[0] = 1; drawE.BR.TexCoord[1] = 1;
-				drawE.IsUVExtended = false;
-			}
-			void D3D9Sprite::_FillTransformedDraw(DrawEntry& drawE, Texture* texture, const Matrix& t, const Apoc3D::Math::RectangleF* srcRect, uint color)
-			{
-				drawE.Tex = static_cast<D3D9Texture*>(texture);
-
-				drawE.TL.Diffuse = drawE.TR.Diffuse = drawE.BL.Diffuse = drawE.BR.Diffuse = color;
-
-				const Matrix& trans = t;//getTransform();
-
-				if (srcRect)
-				{
-					float width = srcRect->Width;//(float)(srcRect->right-srcRect->left);
-					float height = srcRect->Height;//(float)(srcRect->bottom-srcRect->top);
-
-					Vector3 tl(0, 0,0);
-					Vector3 tr(width, 0,0);
-					Vector3 bl(0, height,0);
-					Vector3 br(width, height, 0);
-
-					tl = Vector3::TransformCoordinate(tl, trans);
-					tr = Vector3::TransformCoordinate(tr, trans);
-					bl = Vector3::TransformCoordinate(bl, trans);
-					br = Vector3::TransformCoordinate(br, trans);
-
-					drawE.TL.Position[0] = tl.X-0.5f;
-					drawE.TL.Position[1] = tl.Y-0.5f;
-					drawE.TL.Position[2] = tl.Z;
-					drawE.TL.Position[3] = 1;
-
-					drawE.TR.Position[0] = tr.X-0.5f;
-					drawE.TR.Position[1] = tr.Y-0.5f;
-					drawE.TR.Position[2] = tr.Z;
-					drawE.TR.Position[3] = 1;
-
-					drawE.BL.Position[0] = bl.X-0.5f;
-					drawE.BL.Position[1] = bl.Y-0.5f;
-					drawE.BL.Position[2] = bl.Z;
-					drawE.BL.Position[3] = 1;
-
-					drawE.BR.Position[0] = br.X-0.5f;
-					drawE.BR.Position[1] = br.Y-0.5f;
-					drawE.BR.Position[2] = br.Z;
-					drawE.BR.Position[3] = 1;
-
-
-					width = (float)texture->getWidth();
-					height = (float)texture->getHeight();
-
-					drawE.TL.TexCoord[0] = srcRect->getLeft()/width ;		drawE.TL.TexCoord[1] = srcRect->getTop()/height;
-					drawE.TR.TexCoord[0] = srcRect->getRight()/width;		drawE.TR.TexCoord[1] = srcRect->getTop()/height;
-					drawE.BL.TexCoord[0] = srcRect->getLeft()/width ;		drawE.BL.TexCoord[1] = srcRect->getBottom()/height;
-					drawE.BR.TexCoord[0] = srcRect->getRight()/width;		drawE.BR.TexCoord[1] = srcRect->getBottom()/height;
-					drawE.IsUVExtended = false;
-				}
+				Apoc3D::Math::RectangleF srcRect;
+				if (_srcRect)
+					srcRect = *_srcRect;
 				else
+					srcRect = { 0, 0, static_cast<float>(texture->getWidth()), static_cast<float>(texture->getHeight()) };
+
+				return srcRect;
+			}
+
+			void D3D9Sprite::DrawRoundedRect(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* _srcRect,
+				float cornerRadius, int32 div, uint color)
+			{
+				assert(m_began);
+
+				float minDstEdge = Math::Min(dstRect.Width, dstRect.Height);
+				if (cornerRadius > minDstEdge) cornerRadius = minDstEdge;
+
+				Apoc3D::Math::RectangleF srcRect = ObtainSrcRect(texture, _srcRect);
+
+				float srcRectXRatio = srcRect.Width / dstRect.Width;
+				float srcRectYRatio = srcRect.Height / dstRect.Height;
+
 				{
-					float width = (float)texture->getWidth();
-					float height = (float)texture->getHeight();
+					// draw rect body
 
-					Vector3 tl(0,0,0);
-					Vector3 tr(width, 0,0);
-					Vector3 bl(0, height,0);
-					Vector3 br(width, height, 0);
+					// draw center vertical
+					Apoc3D::Math::RectangleF centerDstRect = dstRect;
+					centerDstRect.Inflate(-cornerRadius, 0);
 
-					tl = Vector3::TransformCoordinate(tl, trans);
-					tr = Vector3::TransformCoordinate(tr, trans);
-					bl = Vector3::TransformCoordinate(bl, trans);
-					br = Vector3::TransformCoordinate(br, trans);
+					Apoc3D::Math::RectangleF centerSrcRect = srcRect;
+					centerSrcRect.Inflate(-cornerRadius * srcRectXRatio, 0);
 
+					Draw(texture, centerDstRect, &centerSrcRect, color);
 
-					drawE.TL.Position[0] = tl.X-0.5f;
-					drawE.TL.Position[1] = tl.Y-0.5f;
-					drawE.TL.Position[2] = tl.Z;
-					drawE.TL.Position[3] = 1;
+					// draw left & right cap
 
-					drawE.TR.Position[0] = tr.X-0.5f;
-					drawE.TR.Position[1] = tr.Y-0.5f;
-					drawE.TR.Position[2] = tr.Z;
-					drawE.TR.Position[3] = 1;
+					Apoc3D::Math::RectangleF leftDstRect = centerDstRect;
+					leftDstRect.Inflate(0, -cornerRadius);
+					leftDstRect.X = dstRect.X;
+					leftDstRect.Width = cornerRadius;
 
-					drawE.BL.Position[0] = bl.X-0.5f;
-					drawE.BL.Position[1] = bl.Y-0.5f;
-					drawE.BL.Position[2] = bl.Z;
-					drawE.BL.Position[3] = 1;
+					Apoc3D::Math::RectangleF leftSrcRect = centerSrcRect;
+					leftSrcRect.Inflate(0, -cornerRadius * srcRectYRatio);
+					leftSrcRect.X = srcRect.X;
+					leftSrcRect.Width = cornerRadius * srcRectXRatio;
 
-					drawE.BR.Position[0] = br.X-0.5f;
-					drawE.BR.Position[1] = br.Y-0.5f;
-					drawE.BR.Position[2] = br.Z;
-					drawE.BR.Position[3] = 1;
+					Draw(texture, leftDstRect, &leftSrcRect, color);
 
+					Apoc3D::Math::RectangleF rightDstRect = leftDstRect;
+					rightDstRect.X += centerDstRect.Width + leftDstRect.Width;
 
-					drawE.TL.TexCoord[0] = 0; drawE.TL.TexCoord[1] = 0;
-					drawE.TR.TexCoord[0] = 1; drawE.TR.TexCoord[1] = 0;
-					drawE.BL.TexCoord[0] = 0; drawE.BL.TexCoord[1] = 1;
-					drawE.BR.TexCoord[0] = 1; drawE.BR.TexCoord[1] = 1;
-					drawE.IsUVExtended = false;
+					Apoc3D::Math::RectangleF rightSrcRect = leftSrcRect;
+					rightSrcRect.X += centerSrcRect.Width + leftSrcRect.Width;
+
+					Draw(texture, rightDstRect, &rightSrcRect, color);
+				}
+				
+				if (div < 1) div = 1;
+				int32 dualPieCount = div;
+				float angleStep = Math::PI*0.5f / dualPieCount;
+
+				const int32 cornerCount = 4;
+				const PointF cornerBases[cornerCount] =
+				{
+					{ cornerRadius, cornerRadius },
+					{ dstRect.Width - cornerRadius, cornerRadius },
+					{ dstRect.Width - cornerRadius, dstRect.Height - cornerRadius },
+					{ cornerRadius, dstRect.Height - cornerRadius }
+				};
+				const float cornerBaseAngles[cornerCount] =
+				{
+					Math::PI * 0.5f,
+					0,
+					-Math::PI * 0.5f,
+					-Math::PI
+				};
+
+				const PointF offset = dstRect.getPosition();
+				for (int32 j = 0; j < cornerCount; j++)
+				{
+					float baseAngle = cornerBaseAngles[j];
+					
+					PointF cornerBaseDstPos = cornerBases[j];
+					PointF cornerBaseSrcPos = cornerBases[j];
+					cornerBaseSrcPos.X *= srcRectXRatio;
+					cornerBaseSrcPos.Y *= srcRectYRatio;
+					cornerBaseSrcPos += srcRect.getPosition();
+
+					for (int32 i = 0; i < dualPieCount; i++)
+					{
+						float startAngle = angleStep * i + baseAngle;
+						float endAngle = angleStep * (i + 1) + baseAngle;
+						float centerAngle = (startAngle + endAngle)*0.5f;
+
+						PointF leftDir = { cosf(startAngle), -sinf(startAngle) };
+						PointF rightDir = { cosf(endAngle), -sinf(endAngle) };
+						PointF centerDir = { cosf(centerAngle), -sinf(centerAngle) };
+
+						leftDir *= cornerRadius;
+						rightDir *= cornerRadius;
+						centerDir *= cornerRadius;
+
+						PointF leftDstPos = cornerBaseDstPos + leftDir;
+						PointF rightDstPos = cornerBaseDstPos + rightDir;
+						PointF centerDstPos = cornerBaseDstPos + centerDir;
+						PointF baseDstPos = cornerBaseDstPos;
+
+						PointF leftSrcPos = leftDstPos;
+						PointF rightSrcPos = rightDstPos;
+						PointF centerSrcPos = centerDstPos;
+						
+						PointF* srcPosList[] = { &leftSrcPos, &rightSrcPos, &centerSrcPos };
+						for (PointF* sp : srcPosList)
+						{
+							sp->X *= srcRectXRatio;
+							sp->Y *= srcRectYRatio;
+							*sp += srcRect.getPosition();
+						}
+
+						PointF* dstPosList[] = { &leftDstPos, &rightDstPos, &centerDstPos, &baseDstPos };
+						for (PointF* dp : dstPosList)
+						{
+							*dp += offset;
+						}
+
+						DrawEntry de;
+						de.FillNormalDraw(texture, getTransform(), leftDstPos, centerDstPos, baseDstPos, rightDstPos,
+							leftSrcPos, centerSrcPos, cornerBaseSrcPos, rightSrcPos, color);
+						EnqueueDrawEntry(de);
+					}
+				}
+				
+			}
+
+			void D3D9Sprite::DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* _srcRect,
+				float beginAngle, float endAngle, int32 div, uint color)
+			{
+				assert(m_began);
+
+				float yRadius = dstRect.Height / 2;
+				float xRadius = dstRect.Width / 2;
+
+				Apoc3D::Math::RectangleF srcRect = ObtainSrcRect(texture, _srcRect);
+
+				float srcRectXRatio = srcRect.Width / dstRect.Width;
+				float srcRectYRatio = srcRect.Height / dstRect.Height;
+
+				if (div < 2) div = 2;
+				int32 dualPieCount = div;
+				float angleStep = Math::Max(0.0f, endAngle - beginAngle) / dualPieCount;
+
+				const PointF offset = dstRect.getPosition();
+
+				const PointF circleBaseDstPos = dstRect.getSize() * 0.5f;
+				const PointF circleBaseSrcPos = srcRect.getCenter();
+
+				for (int32 i = 0; i < dualPieCount; i++)
+				{
+					float startAngle = angleStep * i;
+					float endAngle = angleStep * (i + 1);
+					float centerAngle = (startAngle + endAngle)*0.5f;
+
+					PointF leftDir = { cosf(startAngle) * xRadius, -sinf(startAngle) * yRadius };
+					PointF rightDir = { cosf(endAngle) * xRadius, -sinf(endAngle) * yRadius };
+					PointF centerDir = { cosf(centerAngle) * xRadius, -sinf(centerAngle) * yRadius };
+					
+					PointF leftDstPos = circleBaseDstPos + leftDir;
+					PointF rightDstPos = circleBaseDstPos + rightDir;
+					PointF centerDstPos = circleBaseDstPos + centerDir;
+					PointF baseDstPos = circleBaseDstPos;
+
+					PointF leftSrcPos = leftDstPos;
+					PointF rightSrcPos = rightDstPos;
+					PointF centerSrcPos = centerDstPos;
+
+					PointF* srcPosList[] = { &leftSrcPos, &rightSrcPos, &centerSrcPos };
+					for (PointF* sp : srcPosList)
+					{
+						sp->X *= srcRectXRatio;
+						sp->Y *= srcRectYRatio;
+						*sp += srcRect.getPosition();
+					}
+
+					PointF* dstPosList[] = { &leftDstPos, &rightDstPos, &centerDstPos, &baseDstPos };
+					for (PointF* dp : dstPosList)
+					{
+						*dp += offset;
+					}
+
+					DrawEntry de;
+					de.FillNormalDraw(texture, getTransform(), leftDstPos, centerDstPos, baseDstPos, rightDstPos,
+						leftSrcPos, centerSrcPos, circleBaseSrcPos, rightSrcPos, color);
+					EnqueueDrawEntry(de);
 				}
 			}
 
@@ -656,6 +570,265 @@ namespace Apoc3D
 				Sprite::SetTransform(matrix);
 			}
 
+			void D3D9Sprite::DrawEntry::FillNormalDraw(Texture* texture, const Matrix& baseTrans, 
+				const PointF& tl_dp, const PointF& tr_dp, const PointF& bl_dp, const PointF& br_dp,
+				const PointF& tl_sp, const PointF& tr_sp, const PointF& bl_sp, const PointF& br_sp, uint color)
+			{
+				float invWidth = 1.0f / texture->getWidth();
+				float invHeight = 1.0f / texture->getHeight();
+
+				const Matrix& trans = baseTrans;
+
+				Vector3 tl = { tl_dp.X, tl_dp.Y, 0 };
+				Vector3 tr = { tr_dp.X, tr_dp.Y, 0 };
+				Vector3 bl = { bl_dp.X, bl_dp.Y, 0 };
+				Vector3 br = { br_dp.X, br_dp.Y, 0 };
+
+				tl = Vector3::TransformCoordinate(tl, trans);
+				tr = Vector3::TransformCoordinate(tr, trans);
+				bl = Vector3::TransformCoordinate(bl, trans);
+				br = Vector3::TransformCoordinate(br, trans);
+
+
+				Tex = static_cast<D3D9Texture*>(texture);
+				TL.Position[0] = tl.X - 0.5f;
+				TL.Position[1] = tl.Y - 0.5f;
+				TL.Position[2] = tl.Z;
+				TL.Position[3] = 1;
+
+				TR.Position[0] = tr.X - 0.5f;
+				TR.Position[1] = tr.Y - 0.5f;
+				TR.Position[2] = tr.Z;
+				TR.Position[3] = 1;
+
+				BL.Position[0] = bl.X - 0.5f;
+				BL.Position[1] = bl.Y - 0.5f;
+				BL.Position[2] = bl.Z;
+				BL.Position[3] = 1;
+
+				BR.Position[0] = br.X - 0.5f;
+				BR.Position[1] = br.Y - 0.5f;
+				BR.Position[2] = br.Z;
+				BR.Position[3] = 1;
+
+				TL.Diffuse = TR.Diffuse = BL.Diffuse = BR.Diffuse = color;
+
+				TL.TexCoord[0] = tl_sp.X * invWidth; TL.TexCoord[1] = tl_sp.Y * invHeight;
+				TR.TexCoord[0] = tr_sp.X * invWidth; TR.TexCoord[1] = tr_sp.Y * invHeight;
+				BL.TexCoord[0] = bl_sp.X * invWidth; BL.TexCoord[1] = bl_sp.Y * invHeight;
+				BR.TexCoord[0] = br_sp.X * invWidth; BR.TexCoord[1] = br_sp.Y * invHeight;
+			}
+			void D3D9Sprite::DrawEntry::FillNormalDraw(Texture* texture, const Matrix& baseTrans, float x, float y, uint color)
+			{
+				float width = (float)texture->getWidth();
+				float height = (float)texture->getHeight();
+
+				const Matrix& trans = baseTrans;
+
+				Vector3 tl = { x, y, 0 };
+				Vector3 tr = { width + x, y, 0 };
+				Vector3 bl = { x, height + y, 0 };
+				Vector3 br = { width + x, height + y, 0 };
+
+				tl = Vector3::TransformCoordinate(tl, trans);
+				tr = Vector3::TransformCoordinate(tr, trans);
+				bl = Vector3::TransformCoordinate(bl, trans);
+				br = Vector3::TransformCoordinate(br, trans);
+
+
+				Tex = static_cast<D3D9Texture*>(texture);
+				TL.Position[0] = tl.X - 0.5f;
+				TL.Position[1] = tl.Y - 0.5f;
+				TL.Position[2] = tl.Z;
+				TL.Position[3] = 1;
+
+				TR.Position[0] = tr.X - 0.5f;
+				TR.Position[1] = tr.Y - 0.5f;
+				TR.Position[2] = tr.Z;
+				TR.Position[3] = 1;
+
+				BL.Position[0] = bl.X - 0.5f;
+				BL.Position[1] = bl.Y - 0.5f;
+				BL.Position[2] = bl.Z;
+				BL.Position[3] = 1;
+
+				BR.Position[0] = br.X - 0.5f;
+				BR.Position[1] = br.Y - 0.5f;
+				BR.Position[2] = br.Z;
+				BR.Position[3] = 1;
+
+				TL.Diffuse = TR.Diffuse = BL.Diffuse = BR.Diffuse = color;
+
+				TL.TexCoord[0] = 0; TL.TexCoord[1] = 0;
+				TR.TexCoord[0] = 1; TR.TexCoord[1] = 0;
+				BL.TexCoord[0] = 0; BL.TexCoord[1] = 1;
+				BR.TexCoord[0] = 1; BR.TexCoord[1] = 1;
+			}
+
+			// Auto resizing to fit the target rectangle is implemented in this method.
+			void D3D9Sprite::DrawEntry::FillNormalDraw(Texture* texture, const Matrix& baseTrans, 
+				const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color)
+			{
+				float position[3] = { dstRect.X, dstRect.Y, 0 };
+
+				Matrix tempM;
+
+				if (srcRect)
+				{
+					struct RECTF
+					{
+						float left;
+						float top;
+						float right;
+						float bottom;
+					} r = {
+						srcRect->X,
+						srcRect->Y,
+						srcRect->getRight(),
+						srcRect->getBottom()
+					};
+
+					// In some cases, the X,Y of the rect is not always the top-left corner,
+					// when the Width or Height is negative. Standardize it.
+					if (r.left > r.right)
+					{
+						float temp = r.right;
+						r.right = r.left;
+						r.left = temp;
+						position[0] += r.right - r.left;
+					}
+					if (r.top > r.bottom)
+					{
+						float temp = r.bottom;
+						r.bottom = r.top;
+						r.top = temp;
+						position[1] += r.bottom - r.top;
+					}
+					Apoc3D::Math::RectangleF r2(r.left, r.top, r.right - r.left, r.bottom - r.top);
+
+					// calculate a scaling and translation matrix
+					Matrix trans;
+					Matrix::CreateTranslation(trans, position[0], position[1], position[2]);
+					trans.M11 = (float)dstRect.Width / (float)srcRect->Width;
+					trans.M22 = (float)dstRect.Height / (float)srcRect->Height;
+
+					// add "trans" at the the beginning for the result
+					Matrix::Multiply(tempM, trans, baseTrans);
+
+					// As the position have been added to the transform, 
+					// draw the texture at the origin
+					FillTransformedDraw(texture, tempM, &r2, color);
+				}
+				else
+				{
+					Matrix trans;
+					Matrix::CreateTranslation(trans, position[0], position[1], position[2]);
+					trans.M11 = (float)dstRect.Width / (float)texture->getWidth();
+					trans.M22 = (float)dstRect.Height / (float)texture->getHeight();
+
+					Matrix::Multiply(tempM, trans, baseTrans);
+
+					// As the position have been added to the transform, 
+					// draw the texture at the origin
+					FillTransformedDraw(texture, tempM, NULL, color);
+				}
+			}
+
+			void D3D9Sprite::DrawEntry::FillTransformedDraw(Texture* texture, const Matrix& t, const Apoc3D::Math::RectangleF* srcRect, uint color)
+			{
+				Tex = static_cast<D3D9Texture*>(texture);
+
+				TL.Diffuse = TR.Diffuse = BL.Diffuse = BR.Diffuse = color;
+
+				const Matrix& trans = t;
+
+				if (srcRect)
+				{
+					float width = srcRect->Width;
+					float height = srcRect->Height;
+
+					Vector3 tl = { 0, 0, 0 };
+					Vector3 tr = { width, 0, 0 };
+					Vector3 bl = { 0, height, 0 };
+					Vector3 br = { width, height, 0 };
+
+					tl = Vector3::TransformCoordinate(tl, trans);
+					tr = Vector3::TransformCoordinate(tr, trans);
+					bl = Vector3::TransformCoordinate(bl, trans);
+					br = Vector3::TransformCoordinate(br, trans);
+
+					TL.Position[0] = tl.X - 0.5f;
+					TL.Position[1] = tl.Y - 0.5f;
+					TL.Position[2] = tl.Z;
+					TL.Position[3] = 1;
+
+					TR.Position[0] = tr.X - 0.5f;
+					TR.Position[1] = tr.Y - 0.5f;
+					TR.Position[2] = tr.Z;
+					TR.Position[3] = 1;
+
+					BL.Position[0] = bl.X - 0.5f;
+					BL.Position[1] = bl.Y - 0.5f;
+					BL.Position[2] = bl.Z;
+					BL.Position[3] = 1;
+
+					BR.Position[0] = br.X - 0.5f;
+					BR.Position[1] = br.Y - 0.5f;
+					BR.Position[2] = br.Z;
+					BR.Position[3] = 1;
+
+
+					width = (float)texture->getWidth();
+					height = (float)texture->getHeight();
+
+					TL.TexCoord[0] = srcRect->getLeft() / width;		TL.TexCoord[1] = srcRect->getTop() / height;
+					TR.TexCoord[0] = srcRect->getRight() / width;		TR.TexCoord[1] = srcRect->getTop() / height;
+					BL.TexCoord[0] = srcRect->getLeft() / width;		BL.TexCoord[1] = srcRect->getBottom() / height;
+					BR.TexCoord[0] = srcRect->getRight() / width;		BR.TexCoord[1] = srcRect->getBottom() / height;
+				}
+				else
+				{
+					float width = (float)texture->getWidth();
+					float height = (float)texture->getHeight();
+
+					Vector3 tl = { 0, 0, 0 };
+					Vector3 tr = { width, 0, 0 };
+					Vector3 bl = { 0, height, 0 };
+					Vector3 br = { width, height, 0 };
+
+					tl = Vector3::TransformCoordinate(tl, trans);
+					tr = Vector3::TransformCoordinate(tr, trans);
+					bl = Vector3::TransformCoordinate(bl, trans);
+					br = Vector3::TransformCoordinate(br, trans);
+
+
+					TL.Position[0] = tl.X - 0.5f;
+					TL.Position[1] = tl.Y - 0.5f;
+					TL.Position[2] = tl.Z;
+					TL.Position[3] = 1;
+
+					TR.Position[0] = tr.X - 0.5f;
+					TR.Position[1] = tr.Y - 0.5f;
+					TR.Position[2] = tr.Z;
+					TR.Position[3] = 1;
+
+					BL.Position[0] = bl.X - 0.5f;
+					BL.Position[1] = bl.Y - 0.5f;
+					BL.Position[2] = bl.Z;
+					BL.Position[3] = 1;
+
+					BR.Position[0] = br.X - 0.5f;
+					BR.Position[1] = br.Y - 0.5f;
+					BR.Position[2] = br.Z;
+					BR.Position[3] = 1;
+
+
+					TL.TexCoord[0] = 0; TL.TexCoord[1] = 0;
+					TR.TexCoord[0] = 1; TR.TexCoord[1] = 0;
+					BL.TexCoord[0] = 0; BL.TexCoord[1] = 1;
+					BR.TexCoord[0] = 1; BR.TexCoord[1] = 1;
+				}
+			}
 		}
 	}
 }
