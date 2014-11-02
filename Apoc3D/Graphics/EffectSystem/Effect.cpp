@@ -102,9 +102,6 @@ namespace Apoc3D
 			template void AutomaticEffect::SetParameterValue<int>(int index, const int* value, int count);
 			template void AutomaticEffect::SetParameterValue<float>(int index, const float* value, int count);
 
-			template void AutomaticEffect::SetParameterValueByName<bool>(const String& name, const bool* value, int count);
-			template void AutomaticEffect::SetParameterValueByName<int>(const String& name, const int* value, int count);
-			template void AutomaticEffect::SetParameterValueByName<float>(const String& name, const float* value, int count);
 
 
 			AutomaticEffect::AutomaticEffect(RenderDevice* device, const ResourceLocation& rl)
@@ -536,13 +533,6 @@ namespace Apoc3D
 				return -1;
 			}
 
-			template<typename T>
-			void AutomaticEffect::SetParameterValueByName(const String& name, const T* value, int count)
-			{
-				int32 idx = FindParameterIndex(name);
-				assert(idx != -1);
-				SetParameterValue(idx, value, count);
-			}
 			void AutomaticEffect::SetParameterTextureByName(const String& name, ResourceHandle<Texture>* value)
 			{
 				int32 idx = FindParameterIndex(name);

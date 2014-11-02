@@ -133,17 +133,6 @@ namespace Apoc3D
 					if ((getSettings() & SPR_AlphaBlended) == SPR_AlphaBlended)
 						mgr->SetAlphaBlend(true, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, m_storedState.oldBlendFactor);
 
-					ShaderSamplerState state = mgr->getPixelSampler(0);
-					state.MinFilter = TFLT_Linear;
-					state.MagFilter = TFLT_Linear;
-					state.MipFilter = TFLT_None;
-					state.AddressU = TA_Clamp;
-					state.AddressV = TA_Clamp;
-					state.MaxMipLevel = 0;
-					state.MipMapLODBias = 0;
-
-					mgr->SetPixelSampler(0, state);
-
 					m_rawDevice->SetStreamSource(0, m_quadBuffer->getD3DBuffer(), 0, sizeof(QuadVertex));
 					m_rawDevice->SetIndices(m_quadIndices->getD3DBuffer());
 
@@ -153,14 +142,27 @@ namespace Apoc3D
 					}
 					else
 					{
-						m_rawDevice->SetVertexDeclaration(m_vtxDecl->getD3DDecl());
-					}
+						ShaderSamplerState state = mgr->getPixelSampler(0);
+						state.MinFilter = TFLT_Linear;
+						state.MagFilter = TFLT_Linear;
+						state.MipFilter = TFLT_None;
+						state.AddressU = TA_Clamp;
+						state.AddressV = TA_Clamp;
+						state.MaxMipLevel = 0;
+						state.MipMapLODBias = 0;
 
-					m_device->BindVertexShader(nullptr);
-					m_device->BindPixelShader(nullptr);
-					m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-					m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-					m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+						mgr->SetPixelSampler(0, state);
+
+
+						m_rawDevice->SetVertexDeclaration(m_vtxDecl->getD3DDecl());
+
+						m_device->BindVertexShader(nullptr);
+						m_device->BindPixelShader(nullptr);
+
+						m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+						m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+						m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+					}
 					//m_rawDevice->SetTexture(0,0);
 				}
 

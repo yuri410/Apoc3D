@@ -345,8 +345,9 @@ namespace Apoc3D
 			
 			GST void ShaderTT::SetValue(int reg, const float* value, int count) 
 			{
-				int regCount = count/4;
-				(m_device->getDevice()->*SetConstantF)(reg, value, regCount);
+				int regCount = count / 4;
+				if (regCount>0)
+					(m_device->getDevice()->*SetConstantF)(reg, value, regCount);
 
 				// set the remaining
 				count = count % 4;
@@ -368,7 +369,8 @@ namespace Apoc3D
 			GST void ShaderTT::SetValue(int reg, const int* value, int count) 
 			{
 				int regCount = count/4;
-				(m_device->getDevice()->*SetConstantI)(reg, value, regCount);
+				if (regCount>0)
+					(m_device->getDevice()->*SetConstantI)(reg, value, regCount);
 
 				// set the remaining
 				count = count % 4;
