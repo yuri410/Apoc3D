@@ -61,6 +61,10 @@ namespace Apoc3D
 				virtual void DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
 					float beginAngle, float endAngle, int32 div, uint color) override;
 
+				virtual void DrawCircleArc(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, float width,
+					float beginAngle, float endAngle, int32 div, uint color) override;
+
+
 				virtual void Flush();
 
 				virtual void SetTransform(const Matrix& matrix);

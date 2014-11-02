@@ -446,7 +446,6 @@ namespace Apoc3D
 					-Math::PI
 				};
 
-				const PointF offset = dstRect.getPosition();
 				for (int32 j = 0; j < cornerCount; j++)
 				{
 					float baseAngle = cornerBaseAngles[j];
@@ -491,7 +490,7 @@ namespace Apoc3D
 						PointF* dstPosList[] = { &leftDstPos, &rightDstPos, &centerDstPos, &baseDstPos };
 						for (PointF* dp : dstPosList)
 						{
-							*dp += offset;
+							*dp += dstRect.getPosition();
 						}
 
 						DrawEntry de;
@@ -520,15 +519,13 @@ namespace Apoc3D
 				int32 dualPieCount = div;
 				float angleStep = Math::Max(0.0f, endAngle - beginAngle) / dualPieCount;
 
-				const PointF offset = dstRect.getPosition();
-
 				const PointF circleBaseDstPos = dstRect.getSize() * 0.5f;
 				const PointF circleBaseSrcPos = srcRect.getCenter();
 
 				for (int32 i = 0; i < dualPieCount; i++)
 				{
-					float startAngle = angleStep * i;
-					float endAngle = angleStep * (i + 1);
+					float startAngle = angleStep * i + beginAngle;
+					float endAngle = angleStep * (i + 1) + beginAngle;
 					float centerAngle = (startAngle + endAngle)*0.5f;
 
 					PointF leftDir = { cosf(startAngle) * xRadius, -sinf(startAngle) * yRadius };
@@ -555,7 +552,7 @@ namespace Apoc3D
 					PointF* dstPosList[] = { &leftDstPos, &rightDstPos, &centerDstPos, &baseDstPos };
 					for (PointF* dp : dstPosList)
 					{
-						*dp += offset;
+						*dp += dstRect.getPosition();
 					}
 
 					DrawEntry de;
@@ -564,6 +561,74 @@ namespace Apoc3D
 					EnqueueDrawEntry(de);
 				}
 			}
+
+			void D3D9Sprite::DrawCircleArc(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* _srcRect, float lineWidth,
+				float beginAngle, float endAngle, int32 div, uint color)
+			{
+				float yRadius = dstRect.Height / 2;
+				float xRadius = dstRect.Width / 2;
+
+				Apoc3D::Math::RectangleF srcRect = ObtainSrcRect(texture, _srcRect);
+
+				float srcRectXRatio = srcRect.Width / dstRect.Width;
+				float srcRectYRatio = srcRect.Height / dstRect.Height;
+
+				if (div < 2) div = 2;
+				int32 segmentCount = div * 2;
+				float angleStep = Math::Max(0.0f, endAngle - beginAngle) / segmentCount;
+
+				const PointF circleCenter = dstRect.getSize() * 0.5f;
+
+				float minR = Math::Min(xRadius, yRadius);
+				if (lineWidth > minR) lineWidth = minR;
+
+				for (int32 i = 0; i < segmentCount; i++)
+				{
+					float startAngle = angleStep * i + beginAngle;
+					float endAngle = angleStep * (i + 1) + beginAngle;
+					
+					PointF leftDir = { cosf(startAngle), -sinf(startAngle) };
+					PointF rightDir = { cosf(endAngle), -sinf(endAngle) };
+					
+					PointF leftInnerD = { cosf(startAngle) * (xRadius - lineWidth), -sinf(startAngle) * (yRadius - lineWidth) };
+					PointF leftOutterD = { cosf(startAngle) * xRadius, -sinf(startAngle) * yRadius };
+
+					PointF rightInnerD = { cosf(endAngle) * (xRadius - lineWidth), -sinf(endAngle) * (yRadius - lineWidth) };
+					PointF rightOutterD = { cosf(endAngle) * xRadius, -sinf(endAngle) * yRadius };
+
+					PointF leftDstInnerPos = circleCenter + leftInnerD;
+					PointF rightDstInnerPos = circleCenter + rightInnerD;
+
+					PointF leftDstOutterPos = circleCenter + leftOutterD;
+					PointF rightDstOutterPos = circleCenter + rightOutterD;
+
+					PointF leftSrcInnerPos = leftDstInnerPos;
+					PointF rightSrcInnerPos = rightDstInnerPos;
+
+					PointF leftSrcOutterPos = leftDstOutterPos;
+					PointF rightSrcOutterPos = rightDstOutterPos;
+
+					PointF* srcPosList[] = { &leftSrcInnerPos, &rightSrcInnerPos, &leftSrcOutterPos, &rightSrcOutterPos };
+					for (PointF* sp : srcPosList)
+					{
+						sp->X *= srcRectXRatio;
+						sp->Y *= srcRectYRatio;
+						*sp += srcRect.getPosition();
+					}
+
+					PointF* dstPosList[] = { &leftDstInnerPos, &rightDstInnerPos, &leftDstOutterPos, &rightDstOutterPos };
+					for (PointF* dp : dstPosList)
+					{
+						*dp += dstRect.getPosition();
+					}
+
+					DrawEntry de;
+					de.FillNormalDraw(texture, getTransform(), leftDstOutterPos, rightDstOutterPos, leftDstInnerPos, rightDstInnerPos,
+						leftSrcOutterPos, rightSrcOutterPos, leftSrcInnerPos, rightSrcInnerPos, color);
+					EnqueueDrawEntry(de);
+				}
+			}
+
 
 			void D3D9Sprite::SetTransform(const Matrix& matrix)
 			{

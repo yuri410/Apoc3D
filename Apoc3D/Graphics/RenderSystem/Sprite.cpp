@@ -58,12 +58,28 @@ namespace Apoc3D
 				m_began = false;
 			}
 
-			void Sprite::DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
-				int32 div, uint color)
-			{
-				DrawCircle(texture, dstRect, srcRect, 0.0f, Math::PI * 2, div, color);
-			}
 
+
+			void Sprite::Draw(Texture* texture, const Apoc3D::Math::Rectangle& rect, uint color)
+			{
+				Draw(texture, static_cast<Apoc3D::Math::RectangleF>(rect), color);
+			}
+			void Sprite::Draw(Texture* texture, const Point& pos, uint color)
+			{
+				Draw(texture, PointF(static_cast<float>(pos.X), static_cast<float>(pos.Y)), color);
+			}
+			void Sprite::Draw(Texture* texture, int x, int y, uint color)
+			{
+				Draw(texture, PointF(static_cast<float>(x), static_cast<float>(y)), color);
+			}
+			void Sprite::Draw(Texture* texture, const Apoc3D::Math::RectangleF &rect, uint color)
+			{
+				Draw(texture, rect, nullptr, color);
+			}
+			void Sprite::Draw(Texture* texture, const Vector2& pos, uint color)
+			{
+				Draw(texture, PointF(pos.X, pos.Y), color);
+			}
 			void Sprite::Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)
 			{
 				Apoc3D::Math::RectangleF dstRectF = dstRect;
@@ -76,6 +92,77 @@ namespace Apoc3D
 				else
 				{
 					Draw(texture, dstRectF, nullptr, color);
+				}
+			}
+
+			//////////////////////////////////////////////////////////////////////////
+
+			void Sprite::DrawCircle(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, int32 div, uint color)
+			{
+				DrawCircle(texture, dstRect, srcRect, 0.0f, Math::PI * 2, div, color);
+			}
+			void Sprite::DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, int32 div, uint color)
+			{
+				DrawCircle(texture, dstRect, srcRect, 0.0f, Math::PI * 2, div, color);
+			}
+
+			void Sprite::DrawCircle(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect,
+				float beginAngle, float endAngle, int32 div, uint color)
+			{
+				Apoc3D::Math::RectangleF dstRectF = dstRect;
+
+				if (srcRect)
+				{
+					Apoc3D::Math::RectangleF srcRectF = *srcRect;
+					DrawCircle(texture, dstRectF, &srcRectF, beginAngle, endAngle, div, color);
+				}
+				else
+				{
+					DrawCircle(texture, dstRectF, nullptr, beginAngle, endAngle, div, color);
+				}
+			}
+
+			//////////////////////////////////////////////////////////////////////////
+
+			void Sprite::DrawCircleArc(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, float lineWidth, int32 div, uint color)
+			{
+				DrawCircleArc(texture, dstRect, srcRect, 0.0f, Math::PI * 2, lineWidth, div, color);
+			}
+			void Sprite::DrawCircleArc(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, float lineWidth, int32 div, uint color)
+			{
+				DrawCircleArc(texture, dstRect, srcRect, 0.0f, Math::PI * 2, lineWidth, div, color);
+			}
+			void Sprite::DrawCircleArc(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, float lineWidth,
+				float beginAngle, float endAngle, int32 div, uint color)
+			{
+				Apoc3D::Math::RectangleF dstRectF = dstRect;
+
+				if (srcRect)
+				{
+					Apoc3D::Math::RectangleF srcRectF = *srcRect;
+					DrawCircleArc(texture, dstRectF, &srcRectF, beginAngle, endAngle, lineWidth, div, color);
+				}
+				else
+				{
+					DrawCircleArc(texture, dstRectF, nullptr, beginAngle, endAngle, lineWidth, div, color);
+				}
+			}
+			
+			//////////////////////////////////////////////////////////////////////////
+
+			void Sprite::DrawRoundedRect(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect,
+				float cornerRadius, int32 div, uint color)
+			{
+				Apoc3D::Math::RectangleF dstRectF = dstRect;
+
+				if (srcRect)
+				{
+					Apoc3D::Math::RectangleF srcRectF = *srcRect;
+					DrawRoundedRect(texture, dstRectF, &srcRectF, cornerRadius, div, color);
+				}
+				else
+				{
+					DrawRoundedRect(texture, dstRectF, nullptr, cornerRadius, div, color);
 				}
 			}
 
