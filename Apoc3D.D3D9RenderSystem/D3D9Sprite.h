@@ -119,7 +119,6 @@ namespace Apoc3D
 
 				D3D9RenderDevice* m_device;
 				D3DDevice* m_rawDevice;
-				SpriteSettings m_currentSettings;
 
 				List<DrawEntry> m_deferredDraws;
 
