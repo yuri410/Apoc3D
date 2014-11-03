@@ -66,6 +66,9 @@ namespace Apoc3D
 			void SetSizeX(int32 sz) { AutoSizedX = false; m_size.X = sz; }
 			void SetSizeY(int32 sz) { AutoSizedY = false; m_size.Y = sz; }
 
+			int32 EvaluateAutoWidth() const;
+			Point EvaluateAutoSize() const;
+
 			const String& getText() const { return m_text; }
 			bool isMouseHover() const { return m_mouseOver; }
 			
@@ -87,6 +90,8 @@ namespace Apoc3D
 			bool ForceMouseDownVisual = false;
 			
 			bool RaiseGlobalEvent = true;
+
+			bool OmitsText = false;
 
 			TextRenderSettings TextSettings;
 

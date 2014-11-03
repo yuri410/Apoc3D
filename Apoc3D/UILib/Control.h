@@ -170,6 +170,9 @@ namespace Apoc3D
 			void UpdateScrollBarsGeneric(const Apoc3D::Math::Rectangle& area, const GameTime* time);
 			void DrawScrollBars(Sprite* sprite);
 
+			bool shouldHScrollVisible() const;
+			bool shouldVScrollVisible() const;
+
 			ScrollBar* m_vscrollbar = nullptr;
 			ScrollBar* m_hscrollbar = nullptr;
 

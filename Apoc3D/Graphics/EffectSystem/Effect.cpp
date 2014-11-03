@@ -254,7 +254,7 @@ namespace Apoc3D
 
 				if (hasShaderIssues)
 				{
-					ApocLog(LOG_Graphics, L"[AutomaticEffect][" + m_name + L"] Effect disable due to invalid data.", LOGLVL_Warning);
+					ApocLog(LOG_Graphics, L"[AutomaticEffect][" + m_name + L"] Effect disabled due to invalid data.", LOGLVL_Warning);
 					m_isUnsupported = true;
 				}
 			}

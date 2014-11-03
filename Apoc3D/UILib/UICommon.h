@@ -224,6 +224,8 @@ namespace Apoc3D
 
 		struct ButtonVisualSettings
 		{
+			typedef Apoc3D::Math::Rectangle ARect;
+
 			Font* FontRef = nullptr;
 
 			OptionalSetting<ColorValue> TextColor;
@@ -243,8 +245,9 @@ namespace Apoc3D
 
 			ButtonVisualSettings() { }
 
-			void Setup(Texture* tex, const Apoc3D::Math::Rectangle& normal, const Apoc3D::Math::Rectangle& hover, const Apoc3D::Math::Rectangle& down);
-			void Setup(Texture* tex, const Apoc3D::Math::Rectangle& normal, const Apoc3D::Math::Rectangle& hover, const Apoc3D::Math::Rectangle& down, const ControlBounds& margin);
+			void Setup(Texture* tex, const ARect& normal, const ARect& hover, const ARect& down);
+			void Setup(Texture* tex, const ARect& normal, const ARect& hover, const ARect& down, const ControlBounds& margin);
+			void Setup(Texture* tex, const ARect& normal, const ARect& hover, const ARect& down, const ARect& disabled, const ControlBounds& margin);
 		};
 
 		struct ScrollBarVisualSettings

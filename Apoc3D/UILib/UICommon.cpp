@@ -342,20 +342,29 @@ namespace Apoc3D
 		/*  ButtonVisualSettings                                                */
 		/************************************************************************/
 
-		void ButtonVisualSettings::Setup(Texture* tex, const Apoc3D::Math::Rectangle& normal, 
-			const Apoc3D::Math::Rectangle& hover, const Apoc3D::Math::Rectangle& down)
+		void ButtonVisualSettings::Setup(Texture* tex, const ARect& normal, const ARect& hover, const ARect& down)
 		{
 			NormalGraphic = UIGraphic(tex, normal);
 			MouseHoverGraphic = UIGraphic(tex, hover);
 			MouseDownGraphic = UIGraphic(tex, down);
+			DisabledGraphic = NormalGraphic;
+			DisabledGraphic.getContent().ModColor = CV_PackLA(0xff, 0x7f);
 		}
-		void ButtonVisualSettings::Setup(Texture* tex, const Apoc3D::Math::Rectangle& normal, 
-			const Apoc3D::Math::Rectangle& hover, const Apoc3D::Math::Rectangle& down, const ControlBounds& margin)
+
+		void ButtonVisualSettings::Setup(Texture* tex, const ARect& normal, const ARect& hover, const ARect& down, const ControlBounds& margin)
 		{
 			Setup(tex, normal, down, hover);
 			Margin = margin;
 		}
 
+		void ButtonVisualSettings::Setup(Texture* tex, const ARect& normal, const ARect& hover, const ARect& down, const ARect& disabled, const ControlBounds& margin)
+		{
+			NormalGraphic = UIGraphic(tex, normal);
+			MouseHoverGraphic = UIGraphic(tex, hover);
+			MouseDownGraphic = UIGraphic(tex, down);
+			DisabledGraphic = UIGraphic(tex, disabled);
+			Margin = margin;
+		}
 
 		/************************************************************************/
 		/*  ScissorTestState                                                    */

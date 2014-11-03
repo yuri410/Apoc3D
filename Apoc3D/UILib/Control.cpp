@@ -256,6 +256,8 @@ namespace Apoc3D
 			GUIUtils::CalculateScrollBarPositions(getArea(), &vs, &hs);
 			m_hscrollbar = new ScrollBar(skin, hs.Position, BarDirection::Horizontal, hs.Length);
 			m_vscrollbar = new ScrollBar(skin, vs.Position, BarDirection::Vertical, vs.Length);
+			m_hscrollbar->Visible = shouldHScrollVisible();
+			m_vscrollbar->Visible = shouldVScrollVisible();
 		}
 
 		void ScrollableControl::InitScrollbars(const ScrollBarVisualSettings& hss, const ScrollBarVisualSettings& vss)
@@ -269,12 +271,14 @@ namespace Apoc3D
 			GUIUtils::CalculateScrollBarPositions(getArea(), &vs, &hs);
 			m_hscrollbar = new ScrollBar(hss, hs.Position, BarDirection::Horizontal, hs.Length);
 			m_vscrollbar = new ScrollBar(vss, vs.Position, BarDirection::Vertical, vs.Length);
+			m_hscrollbar->Visible = shouldHScrollVisible();
+			m_vscrollbar->Visible = shouldVScrollVisible();
 		}
 
 		void ScrollableControl::UpdateScrollBarsLength(const Apoc3D::Math::Rectangle& area)
 		{
-			bool hasHSB = EnableHScrollBar && (m_alwaysShowHS || m_hscrollbar->Maximum > 0);
-			bool hasVSB = EnableVScrollBar && (m_alwaysShowVS || m_vscrollbar->Maximum > 0);
+			bool hasHSB = shouldHScrollVisible();
+			bool hasVSB = shouldVScrollVisible();
 			
 			m_hscrollbar->Visible = hasHSB;
 			m_vscrollbar->Visible = hasVSB;
@@ -347,6 +351,9 @@ namespace Apoc3D
 
 			return m_hscrollbar->getMouseHoverArea();
 		}
+
+		bool ScrollableControl::shouldHScrollVisible() const { return EnableHScrollBar && (m_alwaysShowHS || m_hscrollbar->Maximum > 0); }
+		bool ScrollableControl::shouldVScrollVisible() const { return EnableVScrollBar && (m_alwaysShowVS || m_vscrollbar->Maximum > 0); }
 
 		/************************************************************************/
 		/* ControlCollection                                                    */

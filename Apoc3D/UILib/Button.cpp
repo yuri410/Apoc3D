@@ -22,10 +22,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "Button.h"
+#include "FontManager.h"
 #include "StyleSkin.h"
 #include "apoc3d/Graphics/RenderSystem/Texture.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
-#include "FontManager.h"
+#include "apoc3d/Math/MathCommon.h"
 
 #include "apoc3d/Input/InputAPI.h"
 #include "apoc3d/Input/Mouse.h"
@@ -243,7 +244,17 @@ namespace Apoc3D
 
 			if (m_text.size())
 			{
-				TextSettings.Draw(sprite, m_fontRef, m_text, dstRect, Enabled);
+				if (OmitsText && !AutoSizedX)
+				{
+					String txt = m_text;
+					int space = Math::Max(0, dstRect.Width - TextSettings.TextPadding.getHorizontalSum());
+					guiOmitLineText(m_fontRef, space, txt);
+					TextSettings.Draw(sprite, m_fontRef, txt, dstRect, Enabled);
+				}
+				else
+				{
+					TextSettings.Draw(sprite, m_fontRef, m_text, dstRect, Enabled);
+				}
 			}
 		}
 
@@ -265,13 +276,15 @@ namespace Apoc3D
 		{
 			if (m_fontRef)
 			{
-				int32 vertPad = TextSettings.TextPadding.getVerticalSum();
-				int32 hozPad = TextSettings.TextPadding.getHorizontalSum();
-
-				Point textSize = m_fontRef->MeasureString(m_text);
+				Point textSize;
+				
+				if (AutoSizedX || AutoSizedY)
+					textSize = m_fontRef->MeasureString(m_text);
 
 				if (AutoSizedX)
 				{
+					int32 hozPad = TextSettings.TextPadding.getHorizontalSum();
+
 					m_size.X = textSize.X + hozPad;
 					if (OverlayIcon.isSet())
 					{
@@ -284,6 +297,8 @@ namespace Apoc3D
 
 				if (AutoSizedY)
 				{
+					int32 vertPad = TextSettings.TextPadding.getVerticalSum();
+
 					m_size.Y = textSize.Y + vertPad;
 
 					if (OverlayIcon.isSet())
@@ -295,14 +310,38 @@ namespace Apoc3D
 					}
 				}
 			}
-			else if (NormalGraphic.isSet())
+			else if (NormalGraphic.isSet() && NormalGraphic.isSimple())
 			{
 				m_size.X = NormalGraphic.getWidth() - Margin.getHorizontalSum();
 				m_size.Y = NormalGraphic.getHeight() - Margin.getVerticalSum();
 			}
 		}
 
+		int32 Button::EvaluateAutoWidth() const
+		{
+			if (m_fontRef)
+			{
+				int32 hozPad = TextSettings.TextPadding.getHorizontalSum();
+
+				Point textSize = m_fontRef->MeasureString(m_text);
+				int32 w = textSize.X + hozPad;
+				if (OverlayIcon.isSet())
+				{
+					int32 cw = OverlayIcon.getWidth() + hozPad;
+
+					if (cw > m_size.X)
+						w = cw;
+				}
+				return w;
+			}
+			else if (NormalGraphic.isSet() && NormalGraphic.isSimple())
+			{
+				return NormalGraphic.getWidth() - Margin.getHorizontalSum();
+			}
+			return 0;
+		}
 		
+
 		void Button::SetFont(Font* fontRef)
 		{
 			if (fontRef != m_fontRef)
