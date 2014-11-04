@@ -267,38 +267,38 @@ namespace Apoc3D
 
 
 #define CONFIG_SECT_SPLITER_ARR_IMP(type, typeName, splitParser) \
-		void ConfigurationSection::Get##typeName(type* v, int32 expectedCount, int32* acutallCount) const \
+		void ConfigurationSection::Get##typeName(type* v, int32 maxCount, int32* acutallCount) const \
 		{ \
-			int32 actual = splitParser(m_value, v, expectedCount); \
+			int32 actual = splitParser(m_value, v, maxCount); \
 			if (acutallCount) *acutallCount = actual; \
 		} \
-		void ConfigurationSection::Get##typeName(const String& key, type* v, int32 expectedCount, int32* acutallCount) const \
+		void ConfigurationSection::Get##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount) const \
 		{ \
-			int32 actual = splitParser(getValue(key), v, expectedCount); \
+			int32 actual = splitParser(getValue(key), v, maxCount); \
 			if (acutallCount) *acutallCount = actual; \
 		} \
-		void ConfigurationSection::GetAttribute##typeName(const String& key, type* v, int32 expectedCount, int32* acutallCount) const \
+		void ConfigurationSection::GetAttribute##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount) const \
 		{ \
-			int32 actual = splitParser(getAttribute(key), v, expectedCount); \
+			int32 actual = splitParser(getAttribute(key), v, maxCount); \
 			if (acutallCount) *acutallCount = actual; \
 		} \
-		bool ConfigurationSection::TryGet##typeName(const String& key, type* v, int32 expectedCount, int32* acutallCount) const \
+		bool ConfigurationSection::TryGet##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount) const \
 		{ \
 			String str; \
 			if (tryGetValue(key, str)) \
 			{ \
-				int32 actual = splitParser(str, v, expectedCount); \
+				int32 actual = splitParser(str, v, maxCount); \
 				if (acutallCount) *acutallCount = actual; \
 				return true; \
 			} \
 			return false; \
 		} \
-		bool ConfigurationSection::TryGetAttribute##typeName(const String& key, type* v, int32 expectedCount, int32* acutallCount) const \
+		bool ConfigurationSection::TryGetAttribute##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount) const \
 		{ \
 			String str; \
 			if (tryGetAttribute(key, str)) \
 			{ \
-				int32 actual = splitParser(str, v, expectedCount); \
+				int32 actual = splitParser(str, v, maxCount); \
 				if (acutallCount) *acutallCount = actual; \
 				return true; \
 			} \

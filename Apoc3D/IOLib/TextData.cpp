@@ -117,7 +117,9 @@ namespace Apoc3D
 				if (checkBom || encoding == TEC_Unknown)
 				{
 					int32 bomLength;
-					encoding = FindEncodingByBOM(rawData, length, TEC_ASCII, &bomLength);
+					TextEncoding ec = FindEncodingByBOM(rawData, length, TEC_ASCII, &bomLength);
+					if (encoding != TEC_Unknown && ec != TEC_ASCII)
+						encoding = ec;
 
 					rawData += bomLength;
 					length -= bomLength;
