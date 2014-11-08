@@ -276,7 +276,7 @@ namespace Apoc3D
 
 					int32 maxFrameSkip = m_maxSkipFrameCount_fixedStep;
 #if _DEBUG
-					maxFrameSkip = 1;
+					maxFrameSkip = 5;
 #endif
 
 					bool renderingSlow = m_accumulatedDt_fixedStep > m_targetElapsedTime * 1.2f;
