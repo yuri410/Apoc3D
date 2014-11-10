@@ -45,20 +45,20 @@ namespace Apoc3D
 			//const String TAG_3_InvBindPoseTag = L"InvBindPose";
 			//const String TAG_3_InvBindPoseCountTag = L"InvBindPoseCount";
 
-			const String TAG_3_SkinnedAnimationClipTag = L"SkinnedAnimationClip";
-			const String TAG_3_SkinnedAnimationClipCountTag = L"SkinnedAnimationClipCount";
+			const char TAG_3_SkinnedAnimationClipTag[] = "SkinnedAnimationClip";
+			const char TAG_3_SkinnedAnimationClipCountTag[] = "SkinnedAnimationClipCount";
 
-			const String TAG_3_RigidAnimationClipTag = L"RigidAnimationClip";
-			const String TAG_3_RigidAnimationClipCountTag = L"RigidAnimationClipCount";
+			const char TAG_3_RigidAnimationClipTag[] = "RigidAnimationClip";
+			const char TAG_3_RigidAnimationClipCountTag[] = "RigidAnimationClipCount";
 
-			const String TAG_3_MaterialAnimationTag = L"MaterialAnimation3.0";
-			const String TAG_3_1_MaterialAnimationTag = L"MaterialAnimation3.1";
-			const String TAG_3_MaterialAnimationCountTag = L"MaterialAnimation3.0Count";
+			const char TAG_3_MaterialAnimationTag[] = "MaterialAnimation3.0";
+			const char TAG_3_1_MaterialAnimationTag[] = "MaterialAnimation3.1";
+			const char TAG_3_MaterialAnimationCountTag[] = "MaterialAnimation3.0Count";
 
-			const String TAG_3_RootBoneTag = L"RootBone";
-			const String TAG_3_RigidEntityCount = L"RigidEntityCount";
-			const String TAG_3_BonesTag = L"Bones";
-			const String TAG_3_BoneCountTag = L"BoneCount";
+			const char TAG_3_RootBoneTag[] = "RootBone";
+			const char TAG_3_RigidEntityCount[] = "RigidEntityCount";
+			const char TAG_3_BonesTag[] = "Bones";
+			const char TAG_3_BoneCountTag[] = "BoneCount";
 
 
 			AnimationData::~AnimationData()

@@ -60,7 +60,7 @@ namespace Apoc3D
 			/** 
 			 *  Read tagged data section recursively, while add data into ConfigurationSection
 			 */
-			void BuildNode(Configuration* config, const String& sectionName, BinaryReader* br, ConfigurationSection* parent);
+			void BuildNode(Configuration* config, const std::string& sectionName, BinaryReader* br, ConfigurationSection* parent);
 			void BuildHierarchy(Configuration* config, TaggedDataReader* doc);
 		};
 		

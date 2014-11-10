@@ -42,11 +42,11 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		const String Tag1_Width = L"Width";
-		const String Tag_Height = L"Height";
-		const String Tag_Depth = L"Depth";
-		const String Tag_Content = L"Content";
-		const String Tag_LevelSize = L"LevelSize";
+		const char Tag1_Width[] = "Width";
+		const char Tag_Height[] = "Height";
+		const char Tag_Depth[] = "Depth";
+		const char Tag_Content[] = "Content";
+		const char Tag_LevelSize[] = "LevelSize";
 		
 		void TextureLevelData::LoadData(TaggedDataReader* data, bool doNotLoadContent, int32 flags)
 		{
@@ -167,12 +167,12 @@ namespace Apoc3D
 		}
 
 		
-		const String Tag_Type = L"Type";
-		const String Tag_Format = L"Format";
-		const String Tag_ContentSize = L"ContentSize";
-		const String Tag_LevelCount = L"LevelCount";
-		const String Tag_Level = L"Level";
-		const String Tag_Flags = L"Flags";
+		const char Tag_Type[] = "Type";
+		const char Tag_Format[] = "Format";
+		const char Tag_ContentSize[] = "ContentSize";
+		const char Tag_LevelCount[] = "LevelCount";
+		const char Tag_Level[] = "Level";
+		const char Tag_Flags[] = "Flags";
 
 		void TextureData::Load(const ResourceLocation& rl, bool doNotLoadLevel, bool doNotLoadContent)
 		{
@@ -199,9 +199,8 @@ namespace Apoc3D
 				{
 					for (int32 i = 0; i < LevelCount; i++)
 					{
-						String levelName = Tag_Level;
-						const String temp = StringUtils::IntToString(i);
-						levelName.append(temp);
+						std::string levelName = Tag_Level;
+						levelName.append(StringUtils::IntToNarrowString(i));
 
 						BinaryReader* br2 = data->GetData(levelName);
 						TaggedDataReader* data2 = br2->ReadTaggedDataBlock();
@@ -283,9 +282,8 @@ namespace Apoc3D
 
 			for (int32 i = 0; i < LevelCount; i++)
 			{
-				String levelName = Tag_Level;
-				const String temp = StringUtils::IntToString(i);
-				levelName.append(temp);
+				std::string levelName = Tag_Level;
+				levelName.append(StringUtils::IntToNarrowString(i));
 
 				BinaryWriter* bw2 = data->AddEntry(levelName);
 				TaggedDataWriter* data2 = new TaggedDataWriter(strm->IsWriteEndianIndependent());

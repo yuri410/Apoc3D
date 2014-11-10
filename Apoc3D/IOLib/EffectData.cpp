@@ -195,12 +195,12 @@ namespace Apoc3D
 		const int CfxID_V3 = ((byte)'C' << 24) | ((byte)'F' << 16) | ((byte)'X' << 8) | ((byte)' ');
 		const int CfxID_V4 = 'CFX1';
 
-		const String TAG_3_ParameterCountTag = L"ParameterCount";
-		const String TAG_3_ParameterTag = L"Parameter";
-		const String TAG_3_ParameterSamplerStateTag = L"SamplerState";
-		const String TAG_3_ShaderCodeTag = L"ShaderCode";
+		const char TAG_3_ParameterCountTag[] = "ParameterCount";
+		const char TAG_3_ParameterTag[] = "Parameter";
+		const char TAG_3_ParameterSamplerStateTag[] = "SamplerState";
+		const char TAG_3_ShaderCodeTag[] = "ShaderCode";
 		
-		const String TAG_3_ShaderCodeLengthTag = L"ShaderCodeLength";
+		const char TAG_3_ShaderCodeLengthTag[] = "ShaderCodeLength";
 		
 		EffectData::EffectData() 
 			: Profiles(nullptr), ProfileCount(0), IsCFX(false)
@@ -290,7 +290,7 @@ namespace Apoc3D
 
 			for (int32 i=0;i<count;i++)
 			{
-				String tag = StringUtils::IntToString(i);
+				std::string tag = StringUtils::IntToNarrowString(i);
 				tag = TAG_3_ParameterTag + tag;
 
 				BinaryReader* br2 = data->GetData(tag);
@@ -311,7 +311,7 @@ namespace Apoc3D
 				br2->Close();
 				delete br2;
 
-				tag = StringUtils::IntToString(i);
+				tag = StringUtils::IntToNarrowString(i);
 				tag = TAG_3_ParameterSamplerStateTag + tag;
 
 				if (data->Contains(tag))
@@ -386,7 +386,7 @@ namespace Apoc3D
 
 			for (int32 i=0;i<count;i++)
 			{
-				String tag = StringUtils::IntToString(i);
+				std::string tag = StringUtils::IntToNarrowString(i);
 				tag = TAG_3_ParameterTag + tag;
 				BinaryReader* br2 = data->GetData(tag);
 
@@ -403,7 +403,7 @@ namespace Apoc3D
 				br2->Close();
 				delete br2;
 
-				tag = StringUtils::IntToString(i);
+				tag = StringUtils::IntToNarrowString(i);
 				tag = TAG_3_ParameterSamplerStateTag + tag;
 
 				if (data->Contains(tag))

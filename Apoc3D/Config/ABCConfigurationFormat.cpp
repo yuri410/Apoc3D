@@ -82,7 +82,7 @@ namespace Apoc3D
 			for (Configuration::ChildTable::Enumerator e = config->GetEnumerator(); e.MoveNext();)
 			{
 				ConfigurationSection* sect = e.getCurrentValue();
-				BinaryWriter* bw2 = root->AddEntry(sect->getName());
+				BinaryWriter* bw2 = root->AddEntry(StringUtils::UTF16toUTF8(sect->getName()));
 
 				SaveNode(sect, bw2);
 
@@ -102,11 +102,11 @@ namespace Apoc3D
 			// 2 tagged to one
 			TaggedDataWriter* localValues = new TaggedDataWriter(true);
 			{
-				localValues->AddEntryString(L"Value", section->getValue());
+				localValues->AddEntryString("Value", section->getValue());
 				
 				if (section->getAttributeCount()>0)
 				{
-					BinaryWriter* bw2 = localValues->AddEntry(L"Attributes");
+					BinaryWriter* bw2 = localValues->AddEntry("Attributes");
 					bw2->WriteInt32(static_cast<int32>(section->getAttributeCount()));
 					for (ConfigurationSection::AttributeEnumerator e = section->GetAttributeEnumrator();e.MoveNext();)
 					{
@@ -127,7 +127,7 @@ namespace Apoc3D
 				for (ConfigurationSection::SubSectionEnumerator e = section->GetSubSectionEnumrator(); e.MoveNext();)
 				{
 					ConfigurationSection* sect = e.getCurrentValue();
-					BinaryWriter* bw2 = subTreeData->AddEntry(sect->getName());
+					BinaryWriter* bw2 = subTreeData->AddEntry(StringUtils::UTF16toUTF8(sect->getName()));
 
 					SaveNode(sect, bw2);
 
@@ -143,7 +143,7 @@ namespace Apoc3D
 		void ABCConfigurationFormat::BuildHierarchy(Configuration* config, TaggedDataReader* doc)
 		{
 			// get sub section names
-			List<String> tagNames;
+			List<std::string> tagNames;
 			doc->FillTagList(tagNames); 
 
 			for (int i=0;i<tagNames.getCount();i++)
@@ -157,17 +157,18 @@ namespace Apoc3D
 			}
 		}
 
-		void ABCConfigurationFormat::BuildNode(Configuration* config, const String& sectionName, BinaryReader* br, ConfigurationSection* parent)
+		void ABCConfigurationFormat::BuildNode(Configuration* config, const std::string& sectionName, BinaryReader* br, ConfigurationSection* parent)
 		{
-			ConfigurationSection* section = new ConfigurationSection(sectionName);
+			String wSectName = StringUtils::UTF8toUTF16(sectionName);
+			ConfigurationSection* section = new ConfigurationSection(wSectName);
 
 			TaggedDataReader* localValues = br->ReadTaggedDataBlock();
 			{
 				String svalue;
-				localValues->GetDataString(L"Value", svalue);
+				localValues->GetDataString("Value", svalue);
 				section->SetValue(svalue);
 				
-				BinaryReader* br2 = localValues->TryGetData(L"Attributes");
+				BinaryReader* br2 = localValues->TryGetData("Attributes");
 				if (br2)
 				{
 					int count = br2->ReadInt32();
@@ -186,7 +187,7 @@ namespace Apoc3D
 
 			TaggedDataReader* subTreeData = br->ReadTaggedDataBlock();
 			{
-				List<String> tagNames;
+				List<std::string> tagNames;
 				subTreeData->FillTagList(tagNames); 
 
 				for (int i=0;i<tagNames.getCount();i++)
@@ -209,7 +210,7 @@ namespace Apoc3D
 			}
 			else
 			{
-				config->Add(sectionName, section);
+				config->Add(wSectName, section);
 			}
 		}
 	}

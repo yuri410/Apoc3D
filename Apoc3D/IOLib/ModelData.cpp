@@ -43,24 +43,24 @@ namespace Apoc3D
 		const int MdlId_V3 = ((byte)'M' << 24) | ((byte)'E' << 16) | ((byte)'S' << 8) | ((byte)'H');
 		const int MdlLiteID = 'LMDL';
 
-		const String TAG_3_MaterialCountTag = L"MaterialCount";
-		const String TAG_3_MaterialsTag = L"Materials";
+		const char TAG_3_MaterialCountTag[] = "MaterialCount";
+		const char TAG_3_MaterialsTag[] = "Materials";
 
 		//const String MaterialAnimationTag = L"MaterialAnimation";
-		const String TAG_3_FaceCountTag = L"FaceCount";
-		const String TAG_3_FacesTag = L"Faces";
-		const String TAG_1_VertexFormatTag = L"VertexFormat";
-		const String TAG_3_VertexDeclTag = L"VertexDeclaration";
-		const String TAG_3_VertexCountTag = L"VertexCount";
-		const String TAG_3_VertexSizeTag = L"VertexSize";
+		const char TAG_3_FaceCountTag[] = "FaceCount";
+		const char TAG_3_FacesTag[] = "Faces";
+		const char TAG_1_VertexFormatTag[] = "VertexFormat";
+		const char TAG_3_VertexDeclTag[] = "VertexDeclaration";
+		const char TAG_3_VertexCountTag[] = "VertexCount";
+		const char TAG_3_VertexSizeTag[] = "VertexSize";
 
-		const String TAG_2_MaterialAnimationTag = L"MaterialAnimation2.0";
-		const String TAG_3_VertexDataTag = L"VertexData";
+		const char TAG_2_MaterialAnimationTag[] = "MaterialAnimation2.0";
+		const char TAG_3_VertexDataTag[] = "VertexData";
 
-		const String TAG_3_NameTag = L"Name";
+		const char TAG_3_NameTag[] = "Name";
 
 		//const String TAG_3_ParentBoneTag = L"ParentBone";
-		const String TAG_3_BoundingSphereTag = L"BoundingSphere";
+		const char TAG_3_BoundingSphereTag[] = "BoundingSphere";
 
 		uint32 MeshData::ComputeVertexSize(const List<VertexElement>& elements)
 		{
@@ -356,10 +356,10 @@ namespace Apoc3D
 		//  all of it.
 
 
-		const String TAG_3_EntityCountTag = L"EntityCount";
-		const String TAG_3_EntityPrefix = L"Ent";
+		const char TAG_3_EntityCountTag[] = "EntityCount";
+		const char TAG_3_EntityPrefix[] = "Ent";
 
-		const String TAG_3_AnimationDataTag = L"AnimationData";
+		const char TAG_3_AnimationDataTag[] = "AnimationData";
 		
 
 		ModelData::~ModelData()
@@ -387,7 +387,7 @@ namespace Apoc3D
 
 			for (int32 i=0;i<entCount;i++)
 			{
-				String tag = StringUtils::IntToString(i);
+				std::string tag = StringUtils::IntToNarrowString(i);
 				tag = TAG_3_EntityPrefix + tag;
 				BinaryReader* br = data->GetData(tag);
 
@@ -459,7 +459,7 @@ namespace Apoc3D
 
 			for (int32 i=0;i<Entities.getCount();i++)
 			{
-				String tag = StringUtils::IntToString(i);
+				std::string tag = StringUtils::IntToNarrowString(i);
 				tag = TAG_3_EntityPrefix + tag;
 				BinaryWriter* bw = data->AddEntry(tag);
 

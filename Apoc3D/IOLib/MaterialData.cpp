@@ -47,36 +47,36 @@ namespace Apoc3D
 
 		// =============================================================
 
-		String TAG_3_CustomParamCount = L"CustomParamCount";
-		String TAG_3_CustomParam = L"CustomParam";
+		const char TAG_3_CustomParamCount[] = "CustomParamCount";
+		const char TAG_3_CustomParam[] = "CustomParam";
 
-		String TAG_3_HasTexture = L"HasTexture";
-		String TAG_3_Texture = L"Texture";
-		String TAG_3_HasEffect = L"HasEffect";
-		String TAG_3_Effect = L"Effect";
-
-
-		String TAG_3_RenderPriority = L"RenderPriority";
-		String TAG_3_PassFlags = L"PassFlags";
-
-		String TAG_3_IsBlendTransparent = L"IsBlendTransparent";
-		String TAG_3_SourceBlend = L"SourceBlend";
-		String TAG_3_DestinationBlend = L"DestinationBlend";
-		String TAG_3_BlendFunction = L"BlendFunction";
-
-		String TAG_3_CullMode = L"CullMode";
+		const char TAG_3_HasTexture[] = "HasTexture";
+		const char TAG_3_Texture[] = "Texture";
+		const char TAG_3_HasEffect[] = "HasEffect";
+		const char TAG_3_Effect[] = "Effect";
 
 
-		String TAG_3_AlphaReference = L"AlphaReference";
-		String TAG_3_AlphaTestEnable = L"AlphaTestEnable";
+		const char TAG_3_RenderPriority[] = "RenderPriority";
+		const char TAG_3_PassFlags[] = "PassFlags";
 
-		String TAG_3_DepthTestEnabled = L"DepthTestEnabled";
-		String TAG_3_DepthWriteEnabled = L"DepthWriteEnabled";
+		const char TAG_3_IsBlendTransparent[] = "IsBlendTransparent";
+		const char TAG_3_SourceBlend[] = "SourceBlend";
+		const char TAG_3_DestinationBlend[] = "DestinationBlend";
+		const char TAG_3_BlendFunction[] = "BlendFunction";
 
-		String TAG_3_MaterialColorTag = L"MaterialColor";
-		String TAG_3_MaterialRefName = L"MaterialRefName";
+		const char TAG_3_CullMode[] = "CullMode";
 
-		String TAG_3_UsePointSprite = L"UsePointSprite";
+
+		const char TAG_3_AlphaReference[] = "AlphaReference";
+		const char TAG_3_AlphaTestEnable[] = "AlphaTestEnable";
+
+		const char TAG_3_DepthTestEnabled[] = "DepthTestEnabled";
+		const char TAG_3_DepthWriteEnabled[] = "DepthWriteEnabled";
+
+		const char TAG_3_MaterialColorTag[] = "MaterialColor";
+		const char TAG_3_MaterialRefName[] = "MaterialRefName";
+
+		const char TAG_3_UsePointSprite[] = "UsePointSprite";
 
 
 		void MaterialData::AddCustomParameter(const MaterialCustomParameter& value)
@@ -98,7 +98,7 @@ namespace Apoc3D
 
 			for (uint32 i=0;i<cmpCount;i++)
 			{
-				String tag = StringUtils::UIntToString(i);
+				std::string tag = StringUtils::UIntToNarrowString(i);
 				tag = TAG_3_CustomParam + tag;
 
 				BinaryReader* br = data->GetData(tag);
@@ -125,7 +125,7 @@ namespace Apoc3D
 				{
 					if (hasTexture[i])
 					{
-						String tag = StringUtils::IntToString(i);
+						std::string tag = StringUtils::IntToNarrowString(i);
 						tag = tag + TAG_3_Texture;
 
 						String name;
@@ -149,7 +149,7 @@ namespace Apoc3D
 				{
 					if (hasEffect[i])
 					{
-						String tag = StringUtils::IntToString(i);
+						std::string tag = StringUtils::IntToNarrowString(i);
 						tag = tag + TAG_3_Effect;
 
 						String name;
@@ -226,7 +226,7 @@ namespace Apoc3D
 
 				if (!EffectParameter::IsReference(mcp.Type))
 				{
-					String tag = StringUtils::IntToString(index++);
+					std::string tag = StringUtils::IntToNarrowString(index++);
 					tag = TAG_3_CustomParam + tag;// tag + TAG_3_CustomParam;
 
 					BinaryWriter* bw = data->AddEntry(tag);
@@ -261,7 +261,7 @@ namespace Apoc3D
 				{
 					if (hasTexture[i])
 					{
-						String tag = StringUtils::IntToString(i);
+						std::string tag = StringUtils::IntToNarrowString(i);
 						tag = tag + TAG_3_Texture;
 
 						data->AddEntryString(tag, TextureName[i]);
@@ -289,7 +289,7 @@ namespace Apoc3D
 				{
 					if (hasEffects[i])
 					{
-						String tag = StringUtils::IntToString(i);
+						std::string tag = StringUtils::IntToNarrowString(i);
 						tag = tag + TAG_3_Effect;
 
 						data->AddEntryString(tag, EffectName[i]);
