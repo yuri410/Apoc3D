@@ -25,6 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Configuration.h"
 #include "ConfigurationSection.h"
 
+#include "apoc3d/Core/Logging.h"
+
 namespace Apoc3D
 {
 	namespace Config
@@ -61,9 +63,61 @@ namespace Apoc3D
 		}
 
 
-		void Configuration::Merge(Configuration* config)
+		void Configuration::Merge(Configuration* other)
 		{
+			for (ConfigurationSection* sect : other->getSubSections())
+			{
+				ConfigurationSection* thisSect = get(sect->getName());
+				MergeSubsection(nullptr, thisSect, sect);
+			}
+		}
 
+		void Configuration::MergeSubsection(ConfigurationSection* thisSectParent,  ConfigurationSection* thisSect, ConfigurationSection* thatSect)
+		{
+			if (thisSect)
+			{
+				// merge attributes
+				for (auto e : thatSect->getAttributes())
+				{
+					if (!thisSect->hasAttribute(e.Key))
+						thisSect->AddAttributeString(e.Key, e.Value);
+					else
+					{
+						ApocLog(LOG_System, L"[Configuration] " + getName() +
+							L": Ignoring duplicated attribute " + e.Key  + L" in " + thisSect->getName() + L".", LOGLVL_Warning);
+					}
+				}
+
+				if (thatSect->getValue().size())
+				{
+					if (thisSect->getValue().empty())
+					{
+						thisSect->SetValue(thatSect->getValue());
+					}
+					else
+					{
+						ApocLog(LOG_System, L"[Configuration] " + getName() + 
+							L": Merging section " + thisSect->getName() + L" has conflicting values.", LOGLVL_Warning);
+					}
+				}
+				
+
+				// merge sub sections
+				for (ConfigurationSection* thatSubSect : thatSect->getSubSections())
+				{
+					ConfigurationSection* thisSubSect = thisSect->getSection(thatSubSect->getName());
+
+					MergeSubsection(thisSect, thisSubSect, thatSubSect);
+				}
+			}
+			else
+			{
+				ConfigurationSection* thatSectClone = new ConfigurationSection(*thatSect);
+				if (thisSectParent)
+					thisSectParent->AddSection(thatSectClone);
+				else
+					Add(thatSectClone);
+			}
 		}
 
 	}

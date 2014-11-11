@@ -83,7 +83,10 @@ namespace Apoc3D
 			/** Gets the top section enumerator */
 			ChildTable::Enumerator GetEnumerator() { return m_sections.GetEnumerator(); }
 			ChildTable::ValueAccessor getSubSections() const { return m_sections.getValueAccessor(); }
+
 		private:
+			void MergeSubsection(ConfigurationSection* thisSectParent, ConfigurationSection* thisSect, ConfigurationSection* thatSect);
+
 			String m_name;
 			ChildTable m_sections;
 

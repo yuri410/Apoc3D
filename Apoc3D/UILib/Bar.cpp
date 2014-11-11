@@ -487,28 +487,36 @@ namespace Apoc3D
 				dpos.X -= Margin.Left;
 				dpos.Y -= Margin.Top;
 				
-				Point largeSegmentOffset = { 0, 0 };
 				if (m_type == BarDirection::Vertical)
 				{
 					dpos.Y += BarStartPad;
-					largeSegmentOffset.Y = GetScrollableLength() / LargeTickDivisionCount;
 				}
 				else
 				{
 					dpos.X += BarStartPad;
-					largeSegmentOffset.X = GetScrollableLength() / LargeTickDivisionCount;
 				}
 
 				Point tickSize = LargeTickGraphic.getSize();
 				for (int32 i = 0; i < LargeTickDivisionCount; i++)
 				{
-					if (i >0)
+					if (i > 0)
 					{
-						Apoc3D::Math::Rectangle dstRect = { dpos, tickSize };
+						Point largeSegmentOffset = { 0, 0 };
+						if (m_type == BarDirection::Vertical)
+						{
+							largeSegmentOffset.Y = i * GetScrollableLength() / LargeTickDivisionCount;
+							largeSegmentOffset.Y -= tickSize.Y / 2;
+						}
+						else
+						{
+							largeSegmentOffset.X = i * GetScrollableLength() / LargeTickDivisionCount;
+							largeSegmentOffset.X -= tickSize.X / 2;
+						}
+
+						Apoc3D::Math::Rectangle dstRect = { dpos + largeSegmentOffset, tickSize };
+
 						LargeTickGraphic.Draw(sprite, dstRect);
 					}
-
-					dpos += largeSegmentOffset;
 				}
 			}
 

@@ -59,8 +59,25 @@ namespace APBuild
 		}
 		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
 
-		FileLocation fl(config.PListFile);
-		Configuration* plist = XMLConfigurationFormat::Instance.Load(fl);
+		Configuration* plist = XMLConfigurationFormat::Instance.Load(FileLocation(config.PListFile));
+
+		// process plist include
+		if (plist->get(L"Include"))
+		{
+			String includeFile = plist->get(L"Include")->getValue();
+			
+			includeFile = PathUtils::Combine(PathUtils::GetDirectory(config.PListFile), includeFile);
+			if (!File::FileExists(includeFile))
+			{
+				BuildSystem::LogError(includeFile, L"Could not find param list include file.");
+				delete plist;
+				return;
+			}
+
+			Configuration* includeSrc = XMLConfigurationFormat::Instance.Load(FileLocation(includeFile));
+			plist->Merge(includeSrc);
+			delete includeSrc;
+		}
 
 		EffectData data;
 		data.Name = config.Name;
@@ -88,7 +105,7 @@ namespace APBuild
 				}
 
 				ShaderType shaderTypes[3] = { SHDT_Vertex, SHDT_Pixel, SHDT_Geometry };
-				ConfigurationSection* shaderParams[3];
+				ConfigurationSection* shaderParams[3] = { 0 };
 				ConfigurationSection* profContainer = plist->get(config.Targets[i]);
 				if (profContainer)
 				{

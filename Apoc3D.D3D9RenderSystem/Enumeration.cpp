@@ -534,7 +534,7 @@ namespace Apoc3D
 					Enumerate(d3d9);
 
 				RawSettings raw;
-				BuildRawSettings(d3d9, settings, raw);
+				ConvertToRawSettings(d3d9, settings, raw);
 
 				FindValidSettings(d3d9, raw, result);
 			}
@@ -576,7 +576,7 @@ namespace Apoc3D
 				BuildValidSettings(bestCombo, raw, result);
 			}
 
-			void Enumeration::BuildRawSettings(IDirect3D9* d3d9, const RenderParameters& input, RawSettings& result)
+			void Enumeration::ConvertToRawSettings(IDirect3D9* d3d9, const RenderParameters& input, RawSettings& result)
 			{
 				D3DDISPLAYMODE desktopMode;
 				HRESULT hr = d3d9->GetAdapterDisplayMode(0, &desktopMode);
@@ -693,8 +693,8 @@ namespace Apoc3D
 						D3DMULTISAMPLE_TYPE type = combo->MultisampleTypes[i];
 						int quality = combo->MultisampleQualities[i];
 
-						if (abs((int32)type - (int32)input.PresentParameters.MultiSampleType) < abs((int32)bestType -
-							(int32)input.PresentParameters.MultiSampleType))
+						if (abs((int32)type - (int32)input.PresentParameters.MultiSampleType) < 
+							abs((int32)bestType - (int32)input.PresentParameters.MultiSampleType))
 						{
 							bestType = type;
 							bestQuality = Math::Min(quality - 1, (int)input.PresentParameters.MultiSampleQuality);

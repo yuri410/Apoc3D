@@ -149,7 +149,7 @@ namespace Apoc3D
 				static bool m_hasEnumerated;
 
 				static void BuildValidSettings(const SettingsCombo* combo, const RawSettings& input, RawSettings& result);
-				static void BuildRawSettings(IDirect3D9* d3d9, const RenderParameters& settings, RawSettings& optimal);
+				static void ConvertToRawSettings(IDirect3D9* d3d9, const RenderParameters& settings, RawSettings& optimal);
 			};
 		}
 		
