@@ -126,11 +126,11 @@ namespace Apoc3D
 
 			void Sprite::DrawCircleArc(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, float lineWidth, int32 div, uint color)
 			{
-				DrawCircleArc(texture, dstRect, srcRect, 0.0f, Math::PI * 2, lineWidth, div, color);
+				DrawCircleArc(texture, dstRect, srcRect, lineWidth, 0.0f, Math::PI * 2, div, color);
 			}
 			void Sprite::DrawCircleArc(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, float lineWidth, int32 div, uint color)
 			{
-				DrawCircleArc(texture, dstRect, srcRect, 0.0f, Math::PI * 2, lineWidth, div, color);
+				DrawCircleArc(texture, dstRect, srcRect, lineWidth, 0.0f, Math::PI * 2, div, color);
 			}
 			void Sprite::DrawCircleArc(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, float lineWidth,
 				float beginAngle, float endAngle, int32 div, uint color)
@@ -140,11 +140,11 @@ namespace Apoc3D
 				if (srcRect)
 				{
 					Apoc3D::Math::RectangleF srcRectF = *srcRect;
-					DrawCircleArc(texture, dstRectF, &srcRectF, beginAngle, endAngle, lineWidth, div, color);
+					DrawCircleArc(texture, dstRectF, &srcRectF, lineWidth, beginAngle, endAngle, div, color);
 				}
 				else
 				{
-					DrawCircleArc(texture, dstRectF, nullptr, beginAngle, endAngle, lineWidth, div, color);
+					DrawCircleArc(texture, dstRectF, nullptr, lineWidth, beginAngle, endAngle, div, color);
 				}
 			}
 			

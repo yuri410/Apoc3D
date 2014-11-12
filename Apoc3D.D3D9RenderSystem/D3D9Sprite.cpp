@@ -184,6 +184,15 @@ namespace Apoc3D
 				}
 			}
 
+			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, uint color)
+			{
+				assert(m_began);
+
+				DrawEntry drawE;
+				drawE.FillNormalDraw(texture, getTransform(), pos.X, pos.Y, color);
+				EnqueueDrawEntry(drawE);
+			}
+
 			void D3D9Sprite::Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color)
 			{
 				assert(m_began);
@@ -193,14 +202,20 @@ namespace Apoc3D
 				EnqueueDrawEntry(drawE);
 			}
 
-			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, uint color)
+			void D3D9Sprite::Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
+				uint tlColor, uint trColor, uint blColor, uint brColor) 
 			{
 				assert(m_began);
 
 				DrawEntry drawE;
-				drawE.FillNormalDraw(texture, getTransform(), pos.X, pos.Y, color);
+				drawE.FillNormalDraw(texture, getTransform(), dstRect, srcRect, CV_White);
+				drawE.TL.Diffuse = tlColor;
+				drawE.TR.Diffuse = trColor;
+				drawE.BL.Diffuse = blColor;
+				drawE.BR.Diffuse = brColor;
 				EnqueueDrawEntry(drawE);
 			}
+
 
 			void D3D9Sprite::DrawTiled(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color)
 			{

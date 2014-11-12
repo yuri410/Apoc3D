@@ -156,9 +156,15 @@ namespace Apoc3D
 		inline float Max(float a, float b) { return _Max(a, b); }
 		inline float Min(float a, float b) { return _Min(a, b); }
 
+		inline double Max(double a, double b) { return _Max(a, b); }
+		inline double Min(double a, double b) { return _Min(a, b); }
 
 
 		inline int32 Round(float x)
+		{
+			return x >= 0 ? (int32)(x + 0.5) : (int32)(x - 0.5);
+		}
+		inline int32 Round(double x)
 		{
 			return x >= 0 ? (int32)(x + 0.5) : (int32)(x - 0.5);
 		}

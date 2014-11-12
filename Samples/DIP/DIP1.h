@@ -95,6 +95,8 @@ namespace dip
 		void WorkDM(MenuItem* ctrl);
 		void WorkDM_Process(Button* ctrl);
 
+		Texture* m_white16;
+
 		Texture* m_colorPhoto;
 		Texture* m_original256;
 		Texture* m_original512;

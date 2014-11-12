@@ -49,28 +49,20 @@ namespace Apoc3D
 			public:
 				enum SpriteSettings
 				{
-					/**
-					 *   Modify render states, but not restore them
-					 */
+					/** Modify render states, but not restore them  */
 					SPR_ChangeState = 1,  // 01
-					/**
-					 *   Keep render states unchanged
-					 */
-					 SPR_KeepState = 2,	// 10
-					 /**
-					  *  Modify render states when Begin() and restore when calling End()
-					  */
-					  SPR_RestoreState = 3,	// 11
+					/** Keep render states unchanged */
+					SPR_KeepState = 2,	// 10
+					/** Modify render states when Begin() and restore when calling End() */
+					SPR_RestoreState = 3,	// 11
 
 
+					SPR_AlphaBlended = 4,
+					SPR_UsePostTransformStack = 8,
 
+					SPR_AllowShading = 16,
 
-					  SPR_AlphaBlended = 4,
-					  SPR_UsePostTransformStack = 8,
-
-					  SPR_AllowShading = 16,
-
-					  SPRMix_RestoreStateAlphaBlended = SPR_AlphaBlended | SPR_RestoreState
+					SPRMix_RestoreStateAlphaBlended = SPR_AlphaBlended | SPR_RestoreState
 				};
 
 
@@ -92,24 +84,28 @@ namespace Apoc3D
 				void DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, int32 div, uint color);
 				void DrawCircle(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect,
 					float beginAngle, float endAngle, int32 div, uint color);
-				virtual void DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
-					float beginAngle, float endAngle, int32 div, uint color) = 0;
 
 				void DrawCircleArc(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, float lineWidth, int32 div, uint color);
 				void DrawCircleArc(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, float lineWidth, int32 div, uint color);
 				void DrawCircleArc(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, float lineWidth,
 					float beginAngle, float endAngle, int32 div, uint color);
+				
+				void DrawRoundedRect(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect,
+					float cornerRadius, int32 div, uint color);
+
+
+				virtual void DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
+					float beginAngle, float endAngle, int32 div, uint color) = 0;
 				virtual void DrawCircleArc(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, float lineWidth,
 					float beginAngle, float endAngle, int32 div, uint color) = 0;
 
-
-				void DrawRoundedRect(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect,
-					float cornerRadius, int32 div, uint color);
 				virtual void DrawRoundedRect(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
 					float cornerRadius, int32 div, uint color) = 0;
 				
 				virtual void Draw(Texture* texture, const PointF& pos, uint color) = 0;
 				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color) = 0;
+				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, 
+					uint tlColor, uint trColor, uint blColor, uint brColor) = 0;
 
 				virtual void DrawTiled(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color) = 0;
 				virtual void DrawTiled(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) = 0;
