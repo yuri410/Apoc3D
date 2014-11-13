@@ -153,6 +153,12 @@ namespace Apoc3D
 			static bool Equals(const Apoc3D::Math::Vector4& x, const Apoc3D::Math::Vector4& y);
 			static int32 GetHashCode(const Apoc3D::Math::Vector4& obj);
 		};
+		template <>
+		struct APAPI EqualityComparer<Apoc3D::Math::Color4>
+		{
+			static bool Equals(const Apoc3D::Math::Color4& x, const Apoc3D::Math::Color4& y);
+			static int32 GetHashCode(const Apoc3D::Math::Color4& obj);
+		};
 
 		template <typename T>
 		int32 OrderComparer(const T& a, const T& b)

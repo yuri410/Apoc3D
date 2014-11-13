@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Math/Point.h"
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Math/Vector.h"
+#include "apoc3d/Math/Color.h"
 
 using namespace std;
 using namespace Apoc3D::Utility;
@@ -74,6 +75,11 @@ namespace Apoc3D
 		
 		bool EqualityComparer<Apoc3D::Math::Vector4>::Equals(const Apoc3D::Math::Vector4& x, const Apoc3D::Math::Vector4& y) { return x == y; }
 		int32 EqualityComparer<Apoc3D::Math::Vector4>::GetHashCode(const Apoc3D::Math::Vector4& obj) { return *(const int32*)&obj.X ^ *(const int32*)&obj.Y ^ *(const int32*)&obj.Z ^ *(const int32*)&obj.W; }
+
+		bool EqualityComparer<Apoc3D::Math::Color4>::Equals(const Apoc3D::Math::Color4& x, const Apoc3D::Math::Color4& y) { return x == y; }
+		int32 EqualityComparer<Apoc3D::Math::Color4>::GetHashCode(const Apoc3D::Math::Color4& obj) { return *(const int32*)&obj.Red ^ *(const int32*)&obj.Green ^ *(const int32*)&obj.Blue ^ *(const int32*)&obj.Alpha; }
+
+
 
 		namespace Utils
 		{
