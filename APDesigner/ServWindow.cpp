@@ -195,7 +195,7 @@ namespace APDesigner
 
 		Project* prj = new Project();
 		prj->Parse(conf->get(L"Project"));
-		prj->setBasePath(PathUtils::GetDirectory(m_projectFilePath));
+		prj->SetPath(PathUtils::GetDirectory(m_projectFilePath), nullptr);
 
 		delete conf;
 

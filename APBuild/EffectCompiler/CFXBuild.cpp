@@ -35,7 +35,7 @@ using namespace Apoc3D::VFS;
 
 namespace APBuild
 {
-	void CFXBuild::Build(const ConfigurationSection* sect)
+	void CFXBuild::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		CFXBuildConfig config;
 		config.Parse(sect);
@@ -85,5 +85,7 @@ namespace APBuild
 		{
 			data.Save(fos);
 		}
+
+		BuildSystem::LogEntryProcessed(config.DestFile, hierarchyPath);
 	}
 }

@@ -65,34 +65,10 @@ namespace APDesigner
 		const List<std::pair<String, String>>& getProjectMaterialDesc() const { return m_projectMaterialNames; }
 	private:
 		void RefreshMaterialList(const List<ProjectItem*>& items);
+		void SetProjectWorkingDir(const Project* prj);
+
 		void LoadMenus();
 
-		StyleSkin* m_UIskin;
-
-		RenderWindow* m_window;
-		RenderDevice* m_device;
-
-		Sprite* m_sprite;
-
-		Document* m_currentDocument;
-		List<Document*> m_documentList;
-		Console* m_console;
-
-		MenuBar* m_mainMenu;
-		MenuItem* m_buildMemuItem;
-		MenuItem* m_savePrjMemuItem;
-		SubMenu* m_recentPrjSubMenu;
-		SubMenu* m_quickbuildSubMenu;
-
-		AtomManagerDialog* m_atomManager;
-		ResourcePane* m_resourcePane;
-		ToolsPane* m_toolsPane;
-		Project* m_project;
-		String m_projectFilePath;
-
-		Point m_lastSize;
-
-		List<std::pair<String, String>> m_projectMaterialNames;
 
 		void Menu_Tools_AtomManager(MenuItem* itm);
 
@@ -121,5 +97,36 @@ namespace APDesigner
 		void UpdateRecentProjects();
 
 		void LogBuildMessages();
+
+		StyleSkin* m_UIskin;
+
+		RenderWindow* m_window;
+		RenderDevice* m_device;
+
+		Sprite* m_sprite;
+
+		Document* m_currentDocument;
+		List<Document*> m_documentList;
+		Console* m_console;
+
+		MenuBar* m_mainMenu;
+		MenuItem* m_buildMemuItem;
+		MenuItem* m_savePrjMemuItem;
+		SubMenu* m_recentPrjSubMenu;
+		SubMenu* m_quickbuildSubMenu;
+
+		AtomManagerDialog* m_atomManager;
+		ResourcePane* m_resourcePane;
+		ToolsPane* m_toolsPane;
+		Project* m_project;
+		String m_projectFilePath;
+
+		Point m_lastSize;
+
+		List<std::pair<String, String>> m_projectMaterialNames;
+
+		int32 m_standardWorkdingDirCount;
+		FileLocateRule m_standardTextureLoc;
+		FileLocateRule m_standardMaterialLoc;
 	};
 }

@@ -66,7 +66,7 @@ namespace APBuild
 	//}
 	//
 	//
-	void PakBuild::Build(const ConfigurationSection* sect)
+	void PakBuild::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		PakBuildConfig config;
 		config.Parse(sect);
@@ -81,10 +81,8 @@ namespace APBuild
 			}
 		}
 
-		//BuildSystem::LogInformation(L"Pak builder currently only supports directory flatten build.", L"");
 
 		//PakNode* root = GetNodes(config);
-		BuildSystem::LogInformation(config.DestFile, L">");
 
 		List<String> sourceFiles;
 
@@ -185,5 +183,7 @@ namespace APBuild
 
 		bw->Close();
 		delete bw;
+
+		BuildSystem::LogEntryProcessed(config.DestFile, hierarchyPath);
 	}
 }

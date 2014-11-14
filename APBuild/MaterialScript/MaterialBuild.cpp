@@ -47,7 +47,7 @@ namespace APBuild
 	void ParseMaterialTree(HashMap<String, MaterialData*>& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const HashMap<String, Pallet*>& pallets);
 	void ParseMaterialCustomParams(MaterialData& data, const String& value, const HashMap<String, Pallet*>& pallets);
 
-	void MaterialBuild::Build(ConfigurationSection* sect)
+	void MaterialBuild::Build(const String& hierarchyPath, ConfigurationSection* sect)
 	{
 		String srcFile = sect->getAttribute(L"SourceFile");
 		String destination = sect->getAttribute(L"DestinationLocation");
@@ -107,9 +107,6 @@ namespace APBuild
 		XMLConfigurationFormat::Instance.Save(tokenFile, new FileOutStream(desinationToken));
 		delete tokenFile;
 
-		BuildSystem::LogInformation(desinationToken, L">");
-
-
 		for (HashMap<String, MaterialData*>::Enumerator e = mtrlTable.GetEnumerator();e.MoveNext();)
 		{
 			String destPath = PathUtils::Combine(destination, e.getCurrentKey());
@@ -120,11 +117,13 @@ namespace APBuild
 			md->Save(fos);
 
 			delete md;
-			BuildSystem::LogInformation(e.getCurrentKey(), L">");
+			//BuildSystem::LogInformation(e.getCurrentKey(), L">");
 		}
 		mtrlTable.Clear();
 
 		palColors.DeleteValuesAndClear();
+
+		BuildSystem::LogEntryProcessed(desinationToken, hierarchyPath);
 	}
 
 	void ParseMaterialTree(HashMap<String, MaterialData*>& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const HashMap<String, Pallet*>& pallets)

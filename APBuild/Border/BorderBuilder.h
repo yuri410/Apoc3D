@@ -32,7 +32,7 @@ namespace APBuild
 {
 	namespace BorderBuilder
 	{
-		void Build(const ConfigurationSection* sect);
+		void Build(const String& hierarchyPath, const ConfigurationSection* sect);
 	}
 }
 

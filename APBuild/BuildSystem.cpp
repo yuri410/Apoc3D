@@ -62,9 +62,11 @@ namespace APBuild
 			BuildSystem::CompileLogType Type;
 			String Location;
 			String Description;
+			
+			String DirectMessage;
 		};
 		List<CompileLogEntry> logs;
-
+		String outputRelativeBase;
 
 		int Initialize()
 		{
@@ -103,7 +105,7 @@ namespace APBuild
 			List<String> paths = PathUtils::Split(path);
 			String subPath;
 			subPath.reserve(path.size());
-			for (int32 i=0;i<paths.getCount();i++)
+			for (int32 i = 0; i < paths.getCount(); i++)
 			{
 				PathUtils::Append(subPath, paths[i]);
 
@@ -114,48 +116,53 @@ namespace APBuild
 			}
 		}
 
-		int BuildDirectCopy(ConfigurationSection* sect);
+		int BuildDirectCopy(const String& hierarchyPath, ConfigurationSection* sect);
 		int CollectBuildIssues();
 
-		int Build(ConfigurationSection* sect)
+		static String previousBuildType;
+
+		int Build(const String& hierarchyPath, ConfigurationSection* sect)
 		{
 			String buildType = sect->getAttribute(L"Type");
-			wcout << L"Building ";
-			wcout << buildType;
-			wcout << L"...\n";
+			if (!StringUtils::EqualsNoCase(buildType, previousBuildType))
+			{
+				previousBuildType = buildType;
+				wcout << L"Building ";
+				wcout << buildType;
+				wcout << L"...\n";
+			}
+			
 
 			StringUtils::ToLowerCase(buildType);
 
 			if (buildType == L"fontmap")
 			{
-				FontBuild::BuildToFontMap(sect);
+				FontBuild::BuildToFontMap(hierarchyPath, sect);
 			}
 			else if (buildType == L"fontmapst")
 			{
-				FontBuild::BuildFromFontMap(sect);
+				FontBuild::BuildFromFontMap(hierarchyPath, sect);
 			}
 			else if (buildType == L"pak")
 			{
-				PakBuild::Build(sect);
+				PakBuild::Build(hierarchyPath, sect);
 			}
 			else if (buildType == L"border")
 			{
-				BorderBuilder::Build(sect);
+				BorderBuilder::Build(hierarchyPath, sect);
 			}
 			else if (buildType == L"project" || buildType == L"folder")
 			{
 				// If the node is a project or folder node, building sub-nodes recursively
-				for (ConfigurationSection::SubSectionEnumerator iter =  sect->GetSubSectionEnumrator();
-					iter.MoveNext();)
+				for (ConfigurationSection* item : sect->getSubSections())
 				{
-					ConfigurationSection* item = iter.getCurrentValue();
-
-					Build(item);
+					String subPath = PathUtils::Combine(hierarchyPath, item->getName());
+					Build(subPath, item);
 				}
 			}
-			else if (ProjectTypeUtils::SupportsProjectItemType(buildType))
+			else if (ProjectUtils::ProjectItemTypeConv.SupportsName(buildType))
 			{
-				ProjectItemType pit = ProjectTypeUtils::ParseProjectItemType(buildType);
+				ProjectItemType pit = ProjectUtils::ProjectItemTypeConv.Parse(buildType);
 
 				switch (pit)
 				{
@@ -164,44 +171,44 @@ namespace APBuild
 				case ProjectItemType::Folder:
 					break;
 				case ProjectItemType::Material:
-					MaterialStub::Build(sect);
+					MaterialStub::Build(hierarchyPath, sect);
 					break;
 				case ProjectItemType::MaterialSet:
-					MaterialBuild::Build(sect);
+					MaterialBuild::Build(hierarchyPath, sect);
 					break;
 				case ProjectItemType::Texture:
-					TextureBuild::Build(sect);
+					TextureBuild::Build(hierarchyPath, sect);
 					break;
 				case ProjectItemType::Model:
-					MeshBuild::Build(sect);
+					MeshBuild::Build(hierarchyPath, sect);
 					break;
 				case ProjectItemType::TransformAnimation:
-					TAnimBuild::Build(sect);
+					TAnimBuild::Build(hierarchyPath, sect);
 					break;
 				case ProjectItemType::MaterialAnimation:
-					MAnimBuild::Build(sect);
+					MAnimBuild::Build(hierarchyPath, sect);
 					break;
 				case ProjectItemType::Effect:
-					AFXBuild::Build(sect);
+					AFXBuild::Build(hierarchyPath, sect);
 					break;
 				case ProjectItemType::EffectList:
-					FXListBuild::Build(sect);
+					FXListBuild::Build(hierarchyPath, sect);
 					break;
 				case ProjectItemType::CustomEffect:
-					CFXBuild::Build(sect);
+					CFXBuild::Build(hierarchyPath, sect);
 					break;
 				case ProjectItemType::ShaderNetwork:
 					break;
 				case ProjectItemType::Font:
-					FontBuild::Build(sect);
+					FontBuild::Build(hierarchyPath, sect);
 					break;
 				case ProjectItemType::FontGlyphDist:
-					FontBuild::BuildGlyphAvailabilityRanges(sect);
+					FontBuild::BuildGlyphAvailabilityRanges(hierarchyPath, sect);
 					break;
 				case ProjectItemType::UILayout:
 					break;
 				case ProjectItemType::Copy:
-					BuildDirectCopy(sect);
+					BuildDirectCopy(hierarchyPath, sect);
 					break;
 				default:
 					assert(0);
@@ -215,7 +222,21 @@ namespace APBuild
 			return CollectBuildIssues();
 		}
 
-		int BuildDirectCopy(ConfigurationSection* sect)
+		int Build(ConfigurationSection* sect, ConfigurationSection* attachmentSect)
+		{
+			previousBuildType.clear();
+
+			if (attachmentSect)
+			{
+				String baseOutputPath;
+				attachmentSect->tryGetValue(L"BaseOutputPath", baseOutputPath);
+				SetLoggingOutputPathRelativeBase(baseOutputPath);
+			}
+
+			return Build(sect->getName(), sect);
+		}
+
+		int BuildDirectCopy(const String& hierarchyPath, ConfigurationSection* sect)
 		{
 			String sourceFile = sect->getAttribute(L"SourceFile");
 			String destFile = sect->getAttribute(L"DestinationFile");
@@ -243,7 +264,8 @@ namespace APBuild
 			delete input;
 			delete output;
 
-			LogInformation(sect->getName(), L"> Copied: ");
+			LogEntryProcessed(destFile, hierarchyPath, L"Copied");
+
 			return 0;
 		}
 
@@ -251,27 +273,37 @@ namespace APBuild
 		{
 			bool thereAreWarnings = false;
 			bool thereAreErrors = false;
-			for (int32 i=0;i<logs.getCount();i++)
+			for (const CompileLogEntry& cle : logs)
 			{
-				switch (logs[i].Type)
+				switch (cle.Type)
 				{
-				case COMPILE_Warning:
-					wcout << L"[Warning]";
-					thereAreWarnings = true;
-					break;
-				case COMPILE_Information:
+					case COMPILE_Warning:
+						wcout << L"[Warning]";
+						thereAreWarnings = true;
+						break;
+					case COMPILE_Information:
 
-					break;
-				case COMPILE_Error:
-					wcout << L"[Error]";
-					thereAreErrors = true;
-					break;
+						break;
+					case COMPILE_Error:
+						wcout << L"[Error]";
+						thereAreErrors = true;
+						break;
 				}
-				wcout << logs[i].Location;
-				wcout << L" : ";
-				wcout << logs[i].Description;
-				wcout << L"\n";
+
+				if (cle.DirectMessage.size())
+				{
+					wcout << cle.DirectMessage;
+					wcout << L"\n";
+				}
+				else
+				{
+					wcout << cle.Location;
+					wcout << L" : ";
+					wcout << cle.Description;
+					wcout << L"\n";
+				}
 			}
+			wcout.flush();
 
 			LogClear();
 			if (thereAreErrors)
@@ -281,11 +313,40 @@ namespace APBuild
 			return 0;
 		}
 
+		void SetLoggingOutputPathRelativeBase(const String& basePath)
+		{
+			outputRelativeBase = basePath;
+		}
+
 		void Log(CompileLogType type, const String& message, const String& location)
 		{
 			CompileLogEntry ent = { type, location, message };
 			logs.Add(ent);
 		}
+
+		void LogEntryProcessed(const String& destFile, const String& virtualItemPath, const String& prefix)
+		{
+			String dm = L"> " + prefix;
+			if (prefix.size())
+				dm.append(1, ' ');
+			dm.append(virtualItemPath);
+			dm.append(L"  =>  ");
+
+			if (outputRelativeBase.size())
+			{
+				String temp;
+				PathUtils::GetRelativePath(outputRelativeBase, destFile, temp);
+				dm.append(temp);
+			}
+			else
+			{
+				dm.append(destFile);
+			}
+
+			CompileLogEntry ent = { COMPILE_Information, L"", L"", dm };
+			logs.Add(ent);
+		}
+
 		void LogInformation(const String& message, const String& location) { Log(COMPILE_Information, message, location); }
 		void LogError(const String& message, const String& location) { Log(COMPILE_Error, message, location); }
 		void LogWarning(const String& message, const String& location) { Log(COMPILE_Warning, message, location); }

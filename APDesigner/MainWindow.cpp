@@ -56,7 +56,9 @@ namespace APDesigner
 	MainWindow::MainWindow(RenderWindow* wnd)
 		: m_window(wnd), m_UIskin(0), m_project(0), m_currentDocument(0)
 	{
-
+		m_standardWorkdingDirCount = FileSystem::getSingleton().getNumWorkingDirectories();
+		m_standardTextureLoc = FileLocateRule::Textures;
+		m_standardMaterialLoc = FileLocateRule::Materials;
 	}
 	MainWindow::~MainWindow()
 	{
@@ -102,28 +104,16 @@ namespace APDesigner
 		cfInitializeConfig();
 
 		{
-			FileLocateRule rule;
-			LocateCheckPoint pt;
-			pt.AddPath(L"system.pak\\effects.pak");
-			rule.AddCheckPoint(pt);
+			FileLocateRule rule = { { L"system.pak\\effects.pak" } };
 			FileLocation fl = FileSystem::getSingleton().Locate(L"standard.afx", rule);
 			EffectManager::getSingleton().LoadEffect(m_device, fl);
 		}
 
 		UIResources::Initialize(m_device);
 		{
-			FileLocateRule rule;
-			LocateCheckPoint pt;
-			pt.AddPath(L"system.pak\\skin.pak");
-			rule.AddCheckPoint(pt);
-
+			FileLocateRule rule = { { L"system.pak\\skin.pak" } };
+			
 			m_UIskin = new StyleSkin(m_device, rule);
-
-			/*m_UIskin->ControlFontName = L"english";
-			FileLocation* fl = FileSystem::getSingleton().Locate(L"english.fnt", rule);
-			FontManager::getSingleton().LoadFont(m_device, L"english", fl);
-			FontManager::getSingleton().ReportComplexFonts();
-			*/
 		}
 
 		{
@@ -390,31 +380,10 @@ namespace APDesigner
 			UpdateWindowTitle();
 			
 			m_resourcePane->UpdateToNewProject(m_project);
-			m_project->setBasePath(PathUtils::GetDirectory(path));
+			m_project->SetPath(PathUtils::GetDirectory(path), nullptr);
 
-			FileSystem::getSingleton().AddWrokingDirectory(m_project->getOutputPath());
+			SetProjectWorkingDir(m_project);
 
-			// project has default texture dirs
-			// this directory is added to the FileLocateRule by APDesigner, so that
-			// textures can be correctly used
-			if (m_project->getTexturePath().size())
-			{
-				LocateCheckPoint cp;
-				cp.AddPath(m_project->getTexturePath());
-				FileLocateRule::Textures.AddCheckPoint(cp);
-				LogManager::getSingleton().Write(LOG_System, L"Adding texture dir: '" + m_project->getTexturePath() + L"'");
-			}
-			if (m_project->getMaterialPath().size())
-			{
-				LocateCheckPoint cp;
-				cp.AddPath(m_project->getMaterialPath());
-				FileLocateRule::Materials.AddCheckPoint(cp);
-				LogManager::getSingleton().Write(LOG_System, L"Adding material dir: '" + m_project->getMaterialPath() + L"'");
-			}
-			if (m_project->getOutputPath() != m_project->getBasePath())
-			{
-				LogManager::getSingleton().Write(LOG_System, L"This project is using an alternative output directory: '" + m_project->getOutputPath() + L"'");
-			}
 
 			// Once a project is loaded or built, the effects used will be registered/updated in the EffectSystem.
 			// So the editing tools using these effect will work perfectly
@@ -442,7 +411,7 @@ namespace APDesigner
 	}
 	void MainWindow::UpdateProjectEffect(const List<ProjectItem*>& items)
 	{
-		for (int i=0;i<items.getCount();i++)
+		for (int i = 0; i < items.getCount(); i++)
 		{
 			ProjectItem* itm = items[i];
 			if (itm->getType() == ProjectItemType::Effect)
@@ -450,7 +419,7 @@ namespace APDesigner
 				if (!itm->IsOutDated())
 				{
 					ProjectResEffect* eff = static_cast<ProjectResEffect*>(itm->getData());
-					String df = PathUtils::Combine(m_project->getOutputPath(), eff->DestFile);
+					String df = eff->GetAbsoluteDestinationPath(eff->DestFile);
 
 					LogManager::getSingleton().Write(LOG_Graphics, L"Updating effect " + eff->DestFile);
 
@@ -536,20 +505,19 @@ namespace APDesigner
 
 	void MainWindow::RefreshMaterialList(const List<ProjectItem*>& items)
 	{
-		for (int i=0;i<items.getCount();i++)
+		for (ProjectItem* itm : items)
 		{
-			ProjectItem* itm = items[i];
 			if (itm->getType() == ProjectItemType::MaterialSet)
 			{
 				ProjectResMaterialSet* eff = static_cast<ProjectResMaterialSet*>(itm->getData());
-				String cpath = PathUtils::Combine(m_project->getBasePath(), eff->SourceFile);
+				String cpath = PathUtils::Combine(eff->GetAbsoluteSourcePathBase(), eff->SourceFile);
 
 				LogManager::getSingleton().Write(LOG_Graphics, L"Updating material table " + itm->getName());
 
 				FileLocation fl(cpath);
 				Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 				ConfigurationSection* mSect = config->get(L"Materials");
-				
+
 				for (ConfigurationSection::SubSectionEnumerator e = mSect->GetSubSectionEnumrator(); e.MoveNext();)
 				{
 					ParseMaterialTree(L"", e.getCurrentValue(), m_projectMaterialNames);
@@ -561,6 +529,40 @@ namespace APDesigner
 				ProjectFolder* fld = static_cast<ProjectFolder*>(itm->getData());
 				RefreshMaterialList(fld->SubItems);
 			}
+		}
+	}
+
+	void MainWindow::SetProjectWorkingDir(const Project* prj)
+	{
+		while (FileSystem::getSingleton().getNumWorkingDirectories() > m_standardWorkdingDirCount)
+			FileSystem::getSingleton().PopWrokingDirectory();
+
+		FileSystem::getSingleton().AddWrokingDirectory(prj->getOutputPath());
+
+		FileLocateRule::Textures = m_standardTextureLoc;
+		FileLocateRule::Materials = m_standardMaterialLoc;
+
+		// project has default texture dirs
+		// this directory is added to the FileLocateRule by APDesigner, so that
+		// textures can be correctly used
+		if (m_project->getTexturePath().size())
+		{
+			LocateCheckPoint cp = { m_project->getTexturePath() };
+			
+			FileLocateRule::Textures.AddCheckPoint(cp);
+			LogManager::getSingleton().Write(LOG_System, L"Adding texture dir: '" + m_project->getTexturePath() + L"'");
+		}
+
+		if (m_project->getMaterialPath().size())
+		{
+			LocateCheckPoint cp = { m_project->getMaterialPath() };
+			
+			FileLocateRule::Materials.AddCheckPoint(cp);
+			LogManager::getSingleton().Write(LOG_System, L"Adding material dir: '" + m_project->getMaterialPath() + L"'");
+		}
+		if (m_project->getOutputPath() != m_project->getBasePath())
+		{
+			LogManager::getSingleton().Write(LOG_System, L"This project is using an alternative output directory: '" + m_project->getOutputPath() + L"'");
 		}
 	}
 
@@ -592,22 +594,11 @@ namespace APDesigner
 				m_projectFilePath = path;
 
 				m_resourcePane->UpdateToNewProject(m_project);
-				m_project->setBasePath(PathUtils::GetDirectory(path));
-
-				FileSystem::getSingleton().AddWrokingDirectory(m_project->getOutputPath());
-
+				m_project->SetPath(PathUtils::GetDirectory(path), nullptr);
 				m_project->setTexturePath(PathUtils::Combine(path, L"textures"));
 
-				// project has default texture dirs
-				// this directory is added to the FileLocateRule by APDesigner, so that
-				// textures can be correctly used
-				if (m_project->getTexturePath().size())
-				{
-					LocateCheckPoint cp;
-					cp.AddPath(m_project->getTexturePath());
-					FileLocateRule::Textures.AddCheckPoint(cp);
-					LogManager::getSingleton().Write(LOG_System, L"Adding texture dir: '" + m_project->getTexturePath() + L"'");
-				}
+				SetProjectWorkingDir(m_project);
+
 				// Once a project is loaded or built, the effects used will be registered/updated in the EffectSystem.
 				// So the editing tools using these effect will work perfectly
 				UpdateProjectEffect();
@@ -677,7 +668,7 @@ namespace APDesigner
 				
 				prj->Parse(conf->get(L"Project"));
 
-				prj->setBasePath(PathUtils::GetDirectory(path));
+				prj->SetPath(PathUtils::GetDirectory(path), nullptr);
 				delete conf;
 
 				BuildInterface::getSingleton().AddBuild(prj);
@@ -693,7 +684,7 @@ namespace APDesigner
 
 	void MainWindow::Menu_ToolItemOpen(MenuItem* itm)
 	{
-		MenuItem* item = itm; 
+		MenuItem* item = itm;
 
 		EditorExtension* eext = static_cast<EditorExtension*>(item->UserPointer);
 
@@ -701,34 +692,7 @@ namespace APDesigner
 		List<String> fexts = eext->GetFileExtensions();
 
 		OpenFileDialog dlg;
-
-		// make filter
-		wchar_t filter[512];
-		memset(filter, 0, sizeof(filter));
-
-					
-		String right;
-		//*.a;*.b
-		for (int32 i=0;i<fexts.getCount();i++)
-		{
-			right.append(L"*");
-			right.append(fexts[i]);
-			if (i+1<fexts.getCount())
-			{
-				right.append(L";");
-			}
-		}
-
-		String left = name;
-		left.append(L"Files (");
-		left.append(right);
-		left.append(L")");
-		memcpy(filter, left.c_str(), sizeof(wchar_t)*left.length());
-		filter[left.length()] = 0;
-
-		memcpy(filter+(left.length()+1),right.c_str(), sizeof(wchar_t)*right.length());
-
-		dlg.SetFilter(filter);
+		dlg.SetFilter(eext->GetName(), eext->GetFileExtensions());
 
 		if (dlg.ShowDialog() == DLGRES_OK)
 		{

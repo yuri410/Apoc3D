@@ -151,7 +151,7 @@ namespace Apoc3D
 	class Project;
 	class ProjectItemData;
 	class ProjectCustomItem;
-	class ProjectResource;
+	class ProjectAssetItemData;
 	class ProjectFolder;
 	class ProjectResTexture;
 	class ProjectResModel;

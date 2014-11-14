@@ -38,7 +38,7 @@ namespace APBuild
 		static void BuildByDevIL(const TextureBuildConfig& config);
 		static void BuildByD3D(const TextureBuildConfig& config);
 	public:
-		static void Build(const ConfigurationSection* sect);
+		static void Build(const String& hierarchyPath, const ConfigurationSection* sect);
 	};
 }
 #endif

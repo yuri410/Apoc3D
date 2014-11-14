@@ -72,6 +72,9 @@ namespace Apoc3D
 			 *   Duplicated dir is not checked. (TODO: check it)
 			 */
 			void AddWrokingDirectory(const String& path);
+			void PopWrokingDirectory();
+
+
 			const String& getWorkingDirectory(int i) const { return m_workingDirs[i]; }
 			int getNumWorkingDirectories() const { return m_workingDirs.getCount(); }
 

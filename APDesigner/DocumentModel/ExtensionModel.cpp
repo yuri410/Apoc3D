@@ -33,8 +33,11 @@ namespace APDesigner
 		{
 			const Project* prj = item->getProject();
 			ProjectResModel* mdl = static_cast<ProjectResModel*>(item->getData());
-			String path = PathUtils::Combine(prj->getOutputPath(), mdl->DstFile);
-			String pathAnim = PathUtils::Combine(prj->getOutputPath(), mdl->DstAnimationFile);
+
+			String destPathBase = mdl->GetAbsoluteDestinationPathBase();
+
+			String path = PathUtils::Combine(destPathBase, mdl->DstFile);
+			String pathAnim = PathUtils::Combine(destPathBase, mdl->DstAnimationFile);
 			if (File::FileExists(path))
 			{
 				ModelDocument* md = new ModelDocument(m_mainWindow, this, mdl->DstFile, path, File::FileExists(pathAnim) ? pathAnim : L"");

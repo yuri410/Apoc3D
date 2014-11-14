@@ -13,6 +13,50 @@ namespace APDesigner
 	namespace CommonDialog
 	{
 		//wchar_t FileDialog::szFile[10240];
+		void FileDialog::SetFilter(const String& fileTypeName, const List<String>& exts)
+		{
+			// make filter
+			wchar_t filter[1024] = { 0 };
+
+			String right;
+			//*.a;*.b
+			for (int32 i = 0; i < exts.getCount(); i++)
+			{
+				right.append(L"*");
+				right.append(exts[i]);
+				if (i + 1 < exts.getCount())
+				{
+					right.append(L";");
+				}
+			}
+
+			String left = fileTypeName;
+			left.append(L"Files (");
+			left.append(right);
+			left.append(L")");
+			memcpy(filter, left.c_str(), sizeof(wchar_t)*left.length());
+			filter[left.length()] = 0;
+
+			memcpy(filter + (left.length() + 1), right.c_str(), sizeof(wchar_t)*right.length());
+
+			SetFilter(filter);
+		}
+		void FileDialog::SetAllFilesFilter()
+		{
+			wchar_t filter[1024] = { 0 };
+
+			String right = L"*.*";
+
+			String left = L"All Files (";
+			left.append(right);
+			left.append(L")");
+			memcpy(filter, left.c_str(), sizeof(wchar_t)*left.length());
+			filter[left.length()] = 0;
+
+			memcpy(filter + (left.length() + 1), right.c_str(), sizeof(wchar_t)*right.length());
+
+			SetFilter(filter);
+		}
 
 		DialogResult OpenFileDialog::ShowDialog()
 		{

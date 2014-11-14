@@ -31,7 +31,7 @@ namespace APBuild
 {
 	namespace MeshBuild
 	{
-		void Build(const ConfigurationSection* sect);
+		void Build(const String& hierarchyPath, const ConfigurationSection* sect);
 
 		void ConvertVertexData(ModelData* data, const MeshBuildConfig& config);
 		void CollapseMeshs(ModelData* data, const MeshBuildConfig& config);

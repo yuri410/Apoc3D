@@ -5,11 +5,8 @@
 
 namespace APBuild
 {
-	/************************************************************************/
-	/*                                                                      */
-	/************************************************************************/
 
-	void MAnimBuild::Build(const ConfigurationSection* sect)
+	void MAnimBuild::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		MaterialAnimBuildConfig config;
 		config.Parse(sect);
@@ -92,6 +89,6 @@ namespace APBuild
 
 		delete data;
 
-		BuildSystem::LogInformation(config.SrcFile, L">");
+		BuildSystem::LogEntryProcessed(config.DstFile, hierarchyPath);
 	}
 }

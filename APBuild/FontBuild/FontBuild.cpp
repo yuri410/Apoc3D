@@ -153,7 +153,7 @@ namespace APBuild
 		List<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo);
 
 
-	void FontBuild::Build(const ConfigurationSection* sect)
+	void FontBuild::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		FontBuildConfig config;
 		config.Parse(sect);
@@ -168,10 +168,10 @@ namespace APBuild
 
 		BuildFont(config, RenderGlyphsByFreeType);
 
-		BuildSystem::LogInformation(config.SourceFile, L">");
+		BuildSystem::LogEntryProcessed(config.DestFile, hierarchyPath);
 	}
 
-	void FontBuild::BuildGlyphAvailabilityRanges(const ConfigurationSection* sect)
+	void FontBuild::BuildGlyphAvailabilityRanges(const String& hierarchyPath,  const ConfigurationSection* sect)
 	{
 		String srcFile = sect->getAttribute(L"SourceFile");
 		String dstFile = sect->getAttribute(L"DestinationFile");
@@ -224,9 +224,9 @@ namespace APBuild
 		bw->Close();
 		delete bw;
 
-		BuildSystem::LogInformation(srcFile, L">");
+		BuildSystem::LogEntryProcessed(dstFile, hierarchyPath);
 	}
-	void FontBuild::BuildToFontMap(const ConfigurationSection* sect)
+	void FontBuild::BuildToFontMap(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		FontMapBuildConfig config;
 		config.Parse(sect);
@@ -373,9 +373,9 @@ namespace APBuild
 		GetEncoderClsid(L"image/png", &pngClsid);
 		packedMap.Save(config.DestFile.c_str(), &pngClsid);
 
-		BuildSystem::LogInformation(config.SourceFile, L">");
+		BuildSystem::LogEntryProcessed(config.DestFile, hierarchyPath);
 	}
-	void FontBuild::BuildFromFontMap(const ConfigurationSection* sect)
+	void FontBuild::BuildFromFontMap(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		String sourceFile = sect->getAttribute(L"SourceFile");
 		String destFile = sect->getAttribute(L"DestinationFile");
@@ -388,7 +388,7 @@ namespace APBuild
 		// other params ignored
 		BuildFont(config, RenderGlyphsByFontMap);
 
-		BuildSystem::LogInformation(sourceFile, L">");
+		BuildSystem::LogEntryProcessed(config.DestFile, hierarchyPath);
 	}
 
 	void BuildFont(const FontBuildConfig& config, GlyphRenderHandler renderer)

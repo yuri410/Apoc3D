@@ -29,7 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace APBuild
 {
-	void FXListBuild::Build(const ConfigurationSection* sect)
+	void FXListBuild::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		FXListBuildConfig config;
 		config.Parse(sect);
@@ -47,5 +47,7 @@ namespace APBuild
 		//xml->Save(config.DestFile);
 		XMLConfigurationFormat::Instance.Save(xml, new FileOutStream(config.DestFile));
 		delete xml;
+
+		BuildSystem::LogEntryProcessed(config.DestFile, hierarchyPath);
 	}
 }

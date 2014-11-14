@@ -34,6 +34,8 @@ namespace APDesigner
 				}
 				memcpy(Filter, str, len * sizeof(wchar_t));
 			}
+			void SetFilter(const String& fileTypeName, const List<String>& exts);
+			void SetAllFilesFilter();
 		protected:
 			wchar_t szFile[10240]; 
 

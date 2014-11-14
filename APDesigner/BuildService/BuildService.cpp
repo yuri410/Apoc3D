@@ -11,18 +11,12 @@ namespace APDesigner
 	BuildInterface::BuildInterface()
 		: m_hasLastError(false), m_finished(true), m_isBuildPending(false)
 	{
-		m_resultLock = new tthread::mutex();
-		m_taskLock = new tthread::mutex();
-		m_flagLock = new tthread::mutex();
-		m_processLock = new tthread::mutex();
+
 	}
 
 	BuildInterface::~BuildInterface()
 	{
-		delete m_resultLock;
-		delete m_taskLock;
-		delete m_flagLock;
-		delete m_processLock;
+
 	}
 
 	void BuildInterface::AddSingleBuildItem(ProjectItem* item)
@@ -32,44 +26,39 @@ namespace APDesigner
 		Configuration* xml = new Configuration(L"Build");
 		xml->Add(sect);
 
-		m_taskLock->lock();
+		m_taskLock.lock();
 		m_taskList.Enqueue(xml);
-		m_taskLock->unlock();
-
-		//XMLConfigurationFormat::Instance.Save(xml, new FileOutStream(L"build.xml"));
-
-		//ExecuteBuildOperation();
+		m_taskLock.unlock();
 	}
 
 	void BuildInterface::AddBuild(Project* project)
 	{
 		//project->Save(L"build.xml", true);
-		List<ConfigurationSection*> scripts;
+		List<ProjectBuildScript> scripts;
 		project->GenerateBuildScripts(scripts);
 
-		for (int i=0;i<scripts.getCount();i++)
+		for (const ProjectBuildScript& pbs : scripts)
 		{
 			Configuration* xc = new Configuration(L"Root");
-			xc->Add(scripts[i]);
+			xc->Add(pbs.ItemTree);
 
-			m_taskLock->lock();
+			// attachment section
+			{
+				ConfigurationSection* attachmentSect = new ConfigurationSection(ProjectUtils::BuildAttachmentSectionGUID);
+				attachmentSect->AddStringValue(L"BaseOutputPath", pbs.BaseOutputDir);
+				xc->Add(attachmentSect);
+			}
+
+			m_taskLock.lock();
 			m_taskList.Enqueue(xc);
-			m_taskLock->unlock();
-			//XMLConfigurationFormat::Instance.Save(xc, new FileOutStream(L"build.xml"));
-			//delete xc;
-
-			//if (ExecuteBuildOperation())
-			//{
-			//	LogManager::getSingleton().Write(LOG_System, L"Build failed.", LOGLVL_Error);
-			//	break;
-			//}
+			m_taskLock.unlock();
 		}
 	}
 
 	bool BuildInterface::PopLastResult(String& res)
 	{
-		bool result = false;
-		m_resultLock->lock();
+		volatile bool result = false;
+		m_resultLock.lock();
 
 		result = m_lastResult.getCount()>0;
 
@@ -78,25 +67,26 @@ namespace APDesigner
 			res = m_lastResult.Dequeue();
 		}
 
-		m_resultLock->unlock();
+		m_resultLock.unlock();
 
 		return result;
 	}
 
 	void BuildInterface::Execute()
 	{
+		assert(!m_isBuildPending);
+
 		m_finished = false;
 		m_hasLastError = false;
 		m_isBuildPending = true;
 
-		m_processLock->lock();
+		m_processLock.lock();
 		m_processThread = new tthread::thread(&BuildInterface::ThreadEntry, this);
 		Apoc3D::Platform::SetThreadName(m_processThread, L"Apoc3D Designer Build Service");
 
 		LogManager::getSingleton().Write(LOG_System, L"Build Started", LOGLVL_Default);
 
-		m_processLock->unlock();
-
+		m_processLock.unlock();
 	}
 
 
@@ -194,10 +184,10 @@ namespace APDesigner
 
 	bool BuildInterface::IsRunning()
 	{
-		bool result;
-		m_flagLock->lock();
+		volatile bool result;
+		m_flagLock.lock();
 		result = !m_finished;
-		m_flagLock->unlock();
+		m_flagLock.unlock();
 
 		return result;
 	}
@@ -227,8 +217,7 @@ namespace APDesigner
 		PROCESS_INFORMATION procInfo;
 
 		wchar_t cmdLine[] = L"apbuild.exe build.xml\0";
-		result =
-			CreateProcess(0, cmdLine, 0,0,TRUE, CREATE_NO_WINDOW, 0, 0, &startUpInfo, &procInfo);
+		result = CreateProcess(0, cmdLine, 0,0,TRUE, CREATE_NO_WINDOW, 0, 0, &startUpInfo, &procInfo);
 		if (!result)
 		{
 			DWORD ecode = GetLastError();
@@ -239,12 +228,13 @@ namespace APDesigner
 		
 		CloseHandle(stdoutWrite);
 		
-		ReadPipe(stdoutRead);
-		
-		WaitForSingleObject(procInfo.hProcess, INFINITE);
-		
+		List<char> readBuffer;
+		while (WaitForSingleObject(procInfo.hProcess, 20) == WAIT_TIMEOUT)
+		{
+			ReadPipe(stdoutRead, readBuffer, false);
+		}
 
-		ReadPipe(stdoutRead);
+		ReadPipe(stdoutRead, readBuffer, true);
 		
 		DWORD procCode = 0;
 		if (!GetExitCodeProcess(procInfo.hProcess, &procCode))
@@ -265,18 +255,18 @@ namespace APDesigner
 	void BuildInterface::Thread_Main()
 	{
 		Configuration* buildScript;
-		m_processLock->lock();
+		m_processLock.lock();
 
 		for (;;) 
 		{
 			buildScript = nullptr;
 
-			m_taskLock->lock();
+			m_taskLock.lock();
 			if (m_taskList.getCount())
 			{
 				buildScript = m_taskList.Dequeue();
 			}
-			m_taskLock->unlock();
+			m_taskLock.unlock();
 
 			if (buildScript)
 			{
@@ -291,28 +281,28 @@ namespace APDesigner
 			else break;
 		}
 
-		m_taskLock->lock();
+		m_taskLock.lock();
 		while (m_taskList.getCount()>0)
 		{
 			delete m_taskList.Dequeue();
 		}
-		m_taskLock->unlock();
+		m_taskLock.unlock();
 
-		m_flagLock->lock();
+		m_flagLock.lock();
 		m_finished = true;
-		m_flagLock->unlock();
+		m_flagLock.unlock();
 
-		m_processLock->unlock();
+		m_processLock.unlock();
 	}
 
-	void BuildInterface::ReadPipe(void* stdoutRead)
+	
+
+	void BuildInterface::ReadPipe(void* stdoutRead, List<char>& readBuffer, bool finalRead)
 	{
-		String buildOutput;
 		char buffer[1024];
 
 		DWORD readSize = sizeof(buffer) - 1;
 
-		//do
 		for (;;)
 		{
 			memset(buffer, 0, sizeof(buffer));
@@ -324,28 +314,63 @@ namespace APDesigner
 
 			if (actul)
 			{
-				buildOutput.append(StringUtils::toPlatformWideString(buffer));
+				readBuffer.AddArray(buffer, actul);
+				//buildOutput.append(StringUtils::toPlatformWideString(buffer));
 			}
 
-			if (actul<readSize)
+			if (actul < readSize)
 			{
-				Apoc3D::Platform::ApocSleep(1);
+				break;
+				//Apoc3D::Platform::ApocSleep(1);
 			}
 
+			ReadBuildOutputs(readBuffer);
 		}
-		//while (procCode == STILL_ACTIVE );
+		
+		ReadBuildOutputs(readBuffer);
 
-		if (buildOutput.size())
+		if (finalRead && readBuffer.getCount()>0)
 		{
-			List<String> lines;
-			StringUtils::Split(buildOutput, lines, L"\n\r");
-			for (int32 i=0;i<lines.getCount();i++)
+			std::string line;
+			for (char c : readBuffer)
 			{
-				m_resultLock->lock();
-				m_lastResult.Enqueue(lines[i]);
-				m_resultLock->unlock();
+				if (c != '\r' && c != '\n')
+					line.append(1, c);
 			}
+
+			m_resultLock.lock();
+			m_lastResult.Enqueue(StringUtils::toPlatformWideString(line));
+			m_resultLock.unlock();
 		}
 	}
 
+	void BuildInterface::ReadBuildOutputs(List<char>& readBuffer)
+	{
+		bool done = false;
+		do
+		{
+			int32 nextRet = readBuffer.IndexOf('\n');
+
+			if (nextRet != -1)
+			{
+				std::string line;
+				for (int32 i = 0; i <= nextRet; i++)
+				{
+					char c = readBuffer[i];
+					if (c != '\r' && c != '\n')
+						line.append(1, c);
+				}
+
+				m_resultLock.lock();
+				m_lastResult.Enqueue(StringUtils::toPlatformWideString(line));
+				m_resultLock.unlock();
+
+				readBuffer.RemoveRange(0, nextRet + 1);
+			}
+			else
+			{
+				break;
+			}
+		} while (!done);
+	}
 }

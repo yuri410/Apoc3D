@@ -28,7 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace APBuild
 {
-	void MaterialStub::Build(const ConfigurationSection* sect)
+	void MaterialStub::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		MaterialBuildConfig config;
 		config.Parse(sect);
@@ -39,5 +39,7 @@ namespace APBuild
 		empty.SetDefaults();
 
 		empty.Save(new FileOutStream(config.DstFile));
+
+		BuildSystem::LogEntryProcessed(config.DstFile, hierarchyPath);
 	}
 }

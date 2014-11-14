@@ -31,7 +31,7 @@ namespace APBuild
 {
 	namespace MaterialBuild
 	{
-		void Build(ConfigurationSection* sect);
+		void Build(const String& hierarchyPath, ConfigurationSection* sect);
 	}
 }
 

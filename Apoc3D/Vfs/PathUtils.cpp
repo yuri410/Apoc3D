@@ -219,6 +219,7 @@ namespace Apoc3D
 			if (commonLevelIndex == 0)
 				return false;
 
+
 			// Build up relative path
 			// 1. Add .. from 'source' to the common base path
 			int32 baseToSourceLevelCount = CountPathLevels(source, commonLevelIndex);
@@ -229,8 +230,18 @@ namespace Apoc3D
 			}
 
 			// 2. Add sub folders to the 'target'
-			result.append( NormalizePath(target.substr(commonLevelIndex + 1)) );
-			
+
+			if (commonLevelIndex == source.size() - 1)
+			{
+				// target is in sub dir of source
+				// trim dir separators at the beginning
+				while (commonLevelIndex+1 < (int32)target.size() &&
+					isDirectorySeparatorChar(target[commonLevelIndex+1]))
+					commonLevelIndex++;
+			}
+
+			result.append(NormalizePath(target.substr(commonLevelIndex + 1)));
+
 			return true;
 		}
 		bool PathUtils::GetCommonBasePath(const String& path1, const String& path2, String& result)
@@ -298,6 +309,18 @@ namespace Apoc3D
 #endif
 
 			return StringUtils::Match(tmpStr, tmpPattern);
+		}
+
+		bool PathUtils::IsAbsolute(const String& str)
+		{
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+			if (str.size() > 1 && str[1] == ':')
+				return true;
+#endif
+
+			if (str.size() > 0 && isDirectorySeparatorChar(str[0]))
+				return true;
+			return false;
 		}
 
 		bool PathUtils::ComparePath(const String& left, const String& right, int32& commonBaseIndex)

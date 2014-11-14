@@ -34,7 +34,7 @@ namespace APBuild
 		String method = L"d3d";
 		sect->tryGetAttribute(L"Method", method);
 		
-		Method = ProjectTypeUtils::ParseTextureBuildMethod(method);
+		Method = ProjectUtils::TextureBuildMethodConv.Parse(method);
 
 		AssembleCubemap = false;
 		AssembleVolumeMap = false;
@@ -125,7 +125,7 @@ namespace APBuild
 		String flt;
 		if (sect->tryGetAttribute(L"ResizeFilter", flt))
 		{
-			ResizeFilterType = ProjectTypeUtils::ParseTextureFilterType(flt);
+			ResizeFilterType = ProjectUtils::TextureFilterTypeConv.Parse(flt);
 		}
 
 		Resize = passed;
@@ -141,7 +141,7 @@ namespace APBuild
 		String cmp;
 		if (sect->tryGetAttribute(L"Compression", cmp))
 		{
-			CompressionType = ProjectTypeUtils::ParseTextureCompressionType(cmp);
+			CompressionType = ProjectUtils::TextureCompressionTypeConv.Parse(cmp);
 		}
 	}
 
@@ -339,7 +339,7 @@ namespace APBuild
 
 		String strMethod = L"ass";
 		sect->tryGetAttribute(L"Method", strMethod);
-		Method = ProjectTypeUtils::ParseModelBuildMethod(strMethod);
+		Method = ProjectUtils::MeshBuildMethodConv.Parse(strMethod);
 
 
 		UseVertexFormatConversion = false;

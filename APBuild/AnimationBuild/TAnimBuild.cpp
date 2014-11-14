@@ -10,7 +10,7 @@ namespace APBuild
 	/*                                                                      */
 	/************************************************************************/
 
-	void TAnimBuild::Build(const ConfigurationSection* sect)
+	void TAnimBuild::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		TransformAnimBuildConfig config;
 		config.Parse(sect);
@@ -40,6 +40,6 @@ namespace APBuild
 
 		delete data;
 
-		BuildSystem::LogInformation(config.SrcFile, L">");
+		BuildSystem::LogEntryProcessed(config.DstFile, hierarchyPath);
 	}
 }

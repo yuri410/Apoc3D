@@ -61,7 +61,7 @@ namespace Apoc3D
 			APAPI void SplitFilePathNameExtension(const String& path, String& parentDir, String& noext, String& ext);
 			APAPI List<String> Split(const String& path);
 
-			APAPI bool GetRelativePath(const String& path, const String& relativeBase, String& result);
+			APAPI bool GetRelativePath(const String& source, const String& target, String& result);
 			APAPI bool GetCommonBasePath(const String& path1, const String& path2, String& result);
 			
 			/**
@@ -73,6 +73,8 @@ namespace Apoc3D
 			 */
 			APAPI void Append(String& str, const String& app);
 			APAPI bool Match(const String& str, const String& pattern);
+
+			APAPI bool IsAbsolute(const String& str);
 
 			/**
 			 *  Compare two path string in a reliable way. Returns true if equal

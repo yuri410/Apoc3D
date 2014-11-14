@@ -43,9 +43,9 @@ using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
-	void RecursivePassFolderPacks(int& startNo, List<ConfigurationSection*>& result, List<ProjectItem*>& items);
-	void ProjectParse(Project* prj, List<ProjectItem*>& parentContainer, const ConfigurationSection* sect);
-	void ProjectSave(ConfigurationSection* parentSect, List<ProjectItem*>& items, bool savingBuild);
+	void ProjectParseSubItems(Project* prj, List<ProjectItem*>& parentContainer, const ConfigurationSection* sect);
+	void ProjectSaveSubItems(ConfigurationSection* parentSect, List<ProjectItem*>& items, bool savingBuild);
+	void GenerateFolderPackaging(int& startNo, List<ConfigurationSection*>& result, List<ProjectItem*>& items);
 
 	/************************************************************************/
 	/*  ProjectFolder                                                       */
@@ -54,14 +54,21 @@ namespace Apoc3D
 	void ProjectFolder::Parse(const ConfigurationSection* sect)
 	{
 		sect->tryGetAttribute(L"Pack", PackType);
-		sect->TryGetAttributeBool(L"IncludeUnpackedSubFolderItems", IncludeUnpackedSubFolderItems);
 
 		if (PackType.size())
 		{
 			DestinationPack = sect->getAttribute(L"DestinationPack");
 		}
 
-		ProjectParse(m_project, SubItems,sect);
+		sect->tryGetAttribute(L"SubItemsSourceRelativeBase", SubItemsSourceRelativeBase);
+		sect->tryGetAttribute(L"SubItemsDestinationRelativeBase", SubItemsDestinationRelativeBase);
+
+		sect->TryGetAttributeBool(L"IncludeUnpackedSubFolderItems", IncludeUnpackedSubFolderItems);
+
+		ProjectParseSubItems(m_project, SubItems, sect);
+
+		for (ProjectItem* pi : SubItems)
+			pi->SetParent(this);
 	}
 	void ProjectFolder::Save(ConfigurationSection* sect, bool savingBuild)
 	{
@@ -71,62 +78,55 @@ namespace Apoc3D
 			sect->AddAttributeString(L"DestinationPack", DestinationPack);
 			sect->AddAttributeBool(L"IncludeUnpackedSubFolderItems", IncludeUnpackedSubFolderItems);
 		}
-		ProjectSave(sect, SubItems, savingBuild);
+
+		if (SubItemsSourceRelativeBase.size())
+			sect->AddAttributeString(L"SubItemsSourceRelativeBase", SubItemsSourceRelativeBase);
+
+		if (SubItemsDestinationRelativeBase.size())
+			sect->AddAttributeString(L"SubItemsDestinationRelativeBase", SubItemsDestinationRelativeBase);
+
+		ProjectSaveSubItems(sect, SubItems, savingBuild);
 	}
 	void ProjectFolder::SavePackBuildConfig(ConfigurationSection* sect)
 	{
 		sect->AddAttributeString(L"Type", PackType);
-		sect->AddAttributeString(L"DestinationFile", PathUtils::Combine(m_project->getOutputPath(),DestinationPack));
+		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationPack, true));
 
 		// a package file/archive build config section needs every item's path
 		int pakEntryIndex = 0;
-		AddPackageEntries(sect, pakEntryIndex);
-		/*for (int i=0;i<SubItems.getCount();i++)
-		{
-			if (SubItems[i]->getData())
-			{
-				ProjectItemData* item = SubItems[i]->getData();
-
-				List<String> itemOutputs = item->GetAllOutputFiles();
-				for (int32 j=0;j<itemOutputs.getCount();j++)
-				{
-					ConfigurationSection* e = new ConfigurationSection(L"Entry" + StringUtils::ToString(pakEntryIndex++));
-					e->AddAttributeString(L"FilePath", itemOutputs[j]);
-					sect->AddSection(e);
-				}
-			}
-		}*/
+		AddPackBuildSubItems(sect, pakEntryIndex);
 	}
-	void ProjectFolder::AddPackageEntries(ConfigurationSection* sect, int32& idx)
+
+	void ProjectFolder::AddPackBuildSubItems(ConfigurationSection* sect, int32& idx)
 	{
 		// this will also search sub folder which is not packed
-		for (int i=0;i<SubItems.getCount();i++)
+		for (ProjectItem* pi : SubItems)
 		{
-			if (SubItems[i]->getData())
+			if (pi->getData())
 			{
-				ProjectItemData* item = SubItems[i]->getData();
+				ProjectItemData* item = pi->getData();
 
 				if (item->getType() == ProjectItemType::Folder)
 				{
 					ProjectFolder* fol = static_cast<ProjectFolder*>(item);
 					if (fol->PackType.empty() && IncludeUnpackedSubFolderItems)
 					{
-						fol->AddPackageEntries(sect, idx);
+						fol->AddPackBuildSubItems(sect, idx);
 					}
 				}
 
 				List<String> itemOutputs = item->GetAllOutputFiles();
-				for (int32 j=0;j<itemOutputs.getCount();j++)
+				for (const String& itmFile : itemOutputs)
 				{
 					ConfigurationSection* e = new ConfigurationSection(L"Entry" + StringUtils::IntToString(idx++));
-					e->AddAttributeString(L"FilePath", itemOutputs[j]);
+					e->AddAttributeString(L"FilePath", itmFile);
 					sect->AddSection(e);
 				}
 			}
 		}
 	}
 
-	List<String> ProjectFolder::GetAllOutputFiles()  { return simpleGetAllOutputFiles(DestinationPack); }
+	List<String> ProjectFolder::GetAllOutputFiles()  { return GetDestFileOutput(DestinationPack); }
 
 	/************************************************************************/
 	/*  ProjectResTexture                                                   */
@@ -137,7 +137,7 @@ namespace Apoc3D
 		String method = L"d3d";
 		sect->tryGetAttribute(L"Method", method);
 
-		Method = ProjectTypeUtils::ParseTextureBuildMethod(method);
+		Method = ProjectUtils::TextureBuildMethodConv.Parse(method);
 		AssembleCubemap = false;
 		AssembleVolumeMap = false;
 
@@ -154,20 +154,15 @@ namespace Apoc3D
 				AssembleCubemap = true;
 				AssembleVolumeMap = false;
 
-				String file = sect->getAttribute(L"NegX");
-				SubMapTable.Add((uint)CUBE_NegativeX, file);
-				file = sect->getAttribute(L"NegY");
-				SubMapTable.Add((uint)CUBE_NegativeY, file);
-				file = sect->getAttribute(L"NegZ");
-				SubMapTable.Add((uint)CUBE_NegativeZ, file);
+				SubMapTable.Add((uint)CUBE_NegativeX, sect->getAttribute(L"NegX"));
+				SubMapTable.Add((uint)CUBE_NegativeY, sect->getAttribute(L"NegY"));
+				SubMapTable.Add((uint)CUBE_NegativeZ, sect->getAttribute(L"NegZ"));
 
-				file = sect->getAttribute(L"PosX");
-				SubMapTable.Add((uint)CUBE_PositiveX, file);
-				file = sect->getAttribute(L"PosY");
-				SubMapTable.Add((uint)CUBE_PositiveY, file);
-				file = sect->getAttribute(L"PosZ");
-				SubMapTable.Add((uint)CUBE_PositiveZ, file);
+				SubMapTable.Add((uint)CUBE_PositiveX, sect->getAttribute(L"PosX"));
+				SubMapTable.Add((uint)CUBE_PositiveY, sect->getAttribute(L"PosY"));
+				SubMapTable.Add((uint)CUBE_PositiveZ, sect->getAttribute(L"PosZ"));
 
+				String file;
 				if (sect->tryGetAttribute(L"NegXAlpha", file))
 					SubAlphaMapTable.Add((uint)CUBE_NegativeX, file);
 				if (sect->tryGetAttribute(L"NegYAlpha", file))
@@ -181,32 +176,24 @@ namespace Apoc3D
 					SubAlphaMapTable.Add((uint)CUBE_PositiveY, file);
 				if (sect->tryGetAttribute(L"PosZAlpha", file))
 					SubAlphaMapTable.Add((uint)CUBE_PositiveZ, file);
-
 			}
 			else
 			{
 				AssembleCubemap = false;
 				AssembleVolumeMap = true;
 
-				uint i =0;
+				uint i = 0;
 				ConfigurationSection* srcsect = sect->getSection(L"Source");
-				for (ConfigurationSection::SubSectionEnumerator iter = srcsect->GetSubSectionEnumrator();
-					iter.MoveNext();)
+				for (const ConfigurationSection* ss : srcsect->getSubSections())
 				{
-					const ConfigurationSection* ss = iter.getCurrentValue();
-
-					SubMapTable.Add(i, ss->getAttribute(L"FilePath"));
-					i++;
+					SubMapTable.Add(i++, ss->getAttribute(L"FilePath"));
 				}
-				srcsect = sect->getSection(L"AlphaSource");
-				i=0;
-				for (ConfigurationSection::SubSectionEnumerator iter = srcsect->GetSubSectionEnumrator();
-					iter.MoveNext();)
-				{
-					const ConfigurationSection* ss = iter.getCurrentValue();
 
-					SubAlphaMapTable.Add(i, ss->getAttribute(L"FilePath"));
-					i++;
+				srcsect = sect->getSection(L"AlphaSource");
+				i = 0;
+				for (const ConfigurationSection* ss : srcsect->getSubSections())
+				{
+					SubAlphaMapTable.Add(i++, ss->getAttribute(L"FilePath"));
 				}
 
 			}
@@ -227,7 +214,7 @@ namespace Apoc3D
 		String flt;
 		if (sect->tryGetAttribute(L"ResizeFilter", flt))
 		{
-			ResizeFilterType = ProjectTypeUtils::ParseTextureFilterType(flt);
+			ResizeFilterType = ProjectUtils::TextureFilterTypeConv.Parse(flt);
 		}
 
 		Resize = passed;
@@ -257,7 +244,7 @@ namespace Apoc3D
 	}
 	void ProjectResTexture::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"Method", ProjectTypeUtils::ToString(Method));
+		sect->AddAttributeString(L"Method", ProjectUtils::TextureBuildMethodConv.ToString(Method));
 
 		if (AssembleCubemap || AssembleVolumeMap)
 		{
@@ -265,70 +252,52 @@ namespace Apoc3D
 			{
 				sect->AddAttributeString(L"Assemble", L"cubemap");
 
-				sect->AddAttributeString(L"NegX", savingBuild ?
-					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_NegativeX]) : SubMapTable[CUBE_NegativeX]);
-				sect->AddAttributeString(L"NegY", savingBuild ?
-					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_NegativeY]) : SubMapTable[CUBE_NegativeY]);
-				sect->AddAttributeString(L"NegZ", savingBuild ?
-					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_NegativeZ]) :SubMapTable[CUBE_NegativeZ]);
-				sect->AddAttributeString(L"PosX", savingBuild ?
-					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_PositiveX]) :SubMapTable[CUBE_PositiveX]);
-				sect->AddAttributeString(L"PosY", savingBuild ?
-					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_PositiveY]) :SubMapTable[CUBE_PositiveY]);
-				sect->AddAttributeString(L"PosZ", savingBuild ?
-					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_PositiveZ]) :SubMapTable[CUBE_PositiveZ]);
+				sect->AddAttributeString(L"NegX", WrapSourcePath(SubMapTable[CUBE_NegativeX], savingBuild));
+				sect->AddAttributeString(L"NegY", WrapSourcePath(SubMapTable[CUBE_NegativeY], savingBuild));
+				sect->AddAttributeString(L"NegZ", WrapSourcePath(SubMapTable[CUBE_NegativeZ], savingBuild));
+				sect->AddAttributeString(L"PosX", WrapSourcePath(SubMapTable[CUBE_PositiveX], savingBuild));
+				sect->AddAttributeString(L"PosY", WrapSourcePath(SubMapTable[CUBE_PositiveY], savingBuild));
+				sect->AddAttributeString(L"PosZ", WrapSourcePath(SubMapTable[CUBE_PositiveZ], savingBuild));
 
 				if (SubAlphaMapTable.Contains(CUBE_NegativeX))
-				{
-					sect->AddAttributeString(L"NegXAlpha", savingBuild ?
-						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_NegativeX]) : SubAlphaMapTable[CUBE_NegativeX]);
-				}
+					sect->AddAttributeString(L"NegXAlpha", WrapSourcePath(SubAlphaMapTable[CUBE_NegativeX], savingBuild));
+
 				if (SubAlphaMapTable.Contains(CUBE_NegativeY))
-				{
-					sect->AddAttributeString(L"NegYAlpha", savingBuild ?
-						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_NegativeY]) : SubAlphaMapTable[CUBE_NegativeY]);
-				}
+					sect->AddAttributeString(L"NegYAlpha", WrapSourcePath(SubAlphaMapTable[CUBE_NegativeY], savingBuild));
+
 				if (SubAlphaMapTable.Contains(CUBE_NegativeZ))
-				{
-					sect->AddAttributeString(L"NegZAlpha", savingBuild ?
-						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_NegativeZ]) : SubAlphaMapTable[CUBE_NegativeZ]);
-				}
+					sect->AddAttributeString(L"NegZAlpha", WrapSourcePath(SubAlphaMapTable[CUBE_NegativeZ], savingBuild));
 
 				if (SubAlphaMapTable.Contains(CUBE_PositiveX))
-				{
-					sect->AddAttributeString(L"PosXAlpha", savingBuild ?
-						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_PositiveX]) : SubAlphaMapTable[CUBE_PositiveX]);
-				}
+					sect->AddAttributeString(L"PosXAlpha", WrapSourcePath(SubAlphaMapTable[CUBE_PositiveX], savingBuild));
+
 				if (SubAlphaMapTable.Contains(CUBE_PositiveY))
-				{
-					sect->AddAttributeString(L"PosYAlpha", savingBuild ?
-						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_PositiveY]) : SubAlphaMapTable[CUBE_PositiveY]);
-				}
+					sect->AddAttributeString(L"PosYAlpha", WrapSourcePath(SubAlphaMapTable[CUBE_PositiveY], savingBuild));
+
 				if (SubAlphaMapTable.Contains(CUBE_PositiveZ))
-				{
-					sect->AddAttributeString(L"PosZAlpha", savingBuild ?
-						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_PositiveZ]) : SubAlphaMapTable[CUBE_PositiveZ]);
-				}
+					sect->AddAttributeString(L"PosZAlpha", WrapSourcePath(SubAlphaMapTable[CUBE_PositiveZ], savingBuild));
 			}
 			else
 			{
 				sect->AddAttributeString(L"Assemble", L"volume");
 				
 				ConfigurationSection* srcsect = new ConfigurationSection(L"Source");
-				for (int32 i=0;i<SubMapTable.getCount();i++)
+				int32 idx = 0;
+				for (const String& fn : SubMapTable.getValueAccessor())
 				{
-					ConfigurationSection* es = new ConfigurationSection(String(L"Slice") + StringUtils::IntToString(i));
-					es->AddAttributeString(L"FilePath", SubMapTable[i]);
+					ConfigurationSection* es = new ConfigurationSection(L"Slice" + StringUtils::IntToString(idx++));
+					es->AddAttributeString(L"FilePath", WrapSourcePath(fn, savingBuild));
 
 					srcsect->AddSection(es);
 				}
 				sect->AddSection(srcsect);
 
 				srcsect = new ConfigurationSection(L"AlphaSource");
-				for (int32 i=0;i<SubAlphaMapTable.getCount();i++)
+				idx = 0;
+				for (const String& fn : SubAlphaMapTable.getValueAccessor())
 				{
-					ConfigurationSection* es = new ConfigurationSection(String(L"Slice") + StringUtils::IntToString(i));
-					es->AddAttributeString(L"FilePath", SubAlphaMapTable[i]);
+					ConfigurationSection* es = new ConfigurationSection(L"Slice" + StringUtils::IntToString(idx++));
+					es->AddAttributeString(L"FilePath", WrapSourcePath(fn, savingBuild));
 
 					srcsect->AddSection(es);
 				}
@@ -338,9 +307,10 @@ namespace Apoc3D
 		}
 		else
 		{
-			sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(),SourceFile) : SourceFile);
+			sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
 		}
-		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationFile) : DestinationFile);
+
+		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationFile, savingBuild));
 		if (GenerateMipmaps)
 			sect->AddAttributeString(L"GenerateMipmaps", StringUtils::BoolToString(GenerateMipmaps));
 
@@ -350,7 +320,7 @@ namespace Apoc3D
 			sect->AddAttributeString(L"Height", StringUtils::IntToString(NewHeight));
 			sect->AddAttributeString(L"Depth", StringUtils::IntToString(NewDepth));
 
-			sect->AddAttributeString(L"ResizeFilter", ProjectTypeUtils::ToString(ResizeFilterType));
+			sect->AddAttributeString(L"ResizeFilter", ProjectUtils::TextureFilterTypeConv.ToString(ResizeFilterType));
 		}
 
 		if (NewFormat != FMT_Unknown)
@@ -360,54 +330,35 @@ namespace Apoc3D
 
 		if (CompressionType != TextureCompressionType::None)
 		{
-			if (CompressionType == TextureCompressionType::RLE)
-			{
-				sect->AddAttributeString(L"Compression", L"RLE");
-			}
-			else if (CompressionType == TextureCompressionType::LZ4)
-			{
-				sect->AddAttributeString(L"Compression", L"LZ4");
-			}
+			sect->AddAttributeString(L"Compression", ProjectUtils::TextureCompressionTypeConv.ToString(CompressionType));
 		}
 	}
-	List<String> ProjectResTexture::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestinationFile); }
-	bool ProjectResTexture::IsEarlierThan(time_t t)
+	bool ProjectResTexture::IsOutdated()
 	{
-		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
-
-		if (destFileTime < t)
+		time_t destFileTime;
+		
+		if (IsSettingsNewerThan(DestinationFile, destFileTime))
 			return true;
 		
 		if (AssembleCubemap || AssembleVolumeMap)
 		{
-			for (int i=0;i<SubMapTable.getCount();i++)
+			for (const String& srcFile : SubMapTable.getValueAccessor())
 			{
-				String path = PathUtils::Combine(m_project->getBasePath(),SubMapTable[i]);
-				if (File::FileExists(path))
-				{
-					if (File::GetFileModifiyTime(path) > destFileTime)
-					{
-						return true;
-					}
-				}
+				if (IsSourceFileNewer(srcFile, destFileTime))
+					return true;
 			}
-			//File::GetFileModifiyTime(SourceFile);
 		}
 		else
 		{
-			String path = PathUtils::Combine(m_project->getBasePath(), SourceFile);
-			if (File::FileExists(path))
-			{
-				if (File::GetFileModifiyTime(path) > destFileTime)
-				{
-					return true;
-				}
-			}
+			if (IsSourceFileNewer(SourceFile, destFileTime))
+				return true;
 		}
 		return false;
 	}
-	bool ProjectResTexture::IsNotBuilt() { return simpleIsNotBuilt(DestinationFile); }
-	
+	bool ProjectResTexture::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
+
+	List<String> ProjectResTexture::GetAllOutputFiles() { return GetDestFileOutput(DestinationFile); }
+
 	/************************************************************************/
 	/*  ProjectResMaterial                                                  */
 	/************************************************************************/
@@ -418,11 +369,11 @@ namespace Apoc3D
 	}
 	void ProjectResMaterial::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationFile) : DestinationFile);
+		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationFile, savingBuild));
 	}
-	List<String> ProjectResMaterial::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestinationFile); }
-	bool ProjectResMaterial::IsEarlierThan(time_t t) { return simpleIsEarlierThan(t, DestinationFile); }
-	bool ProjectResMaterial::IsNotBuilt() { return simpleIsNotBuilt(DestinationFile); }
+	List<String> ProjectResMaterial::GetAllOutputFiles() { return GetDestFileOutput(DestinationFile); }
+	bool ProjectResMaterial::IsOutdated() { return IsSettingsNewerThan(DestinationFile); }
+	bool ProjectResMaterial::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
 
 	/************************************************************************/
 	/*   ProjectResMaterialSet                                              */
@@ -436,12 +387,12 @@ namespace Apoc3D
 	}
 	void ProjectResMaterialSet::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
-		sect->AddAttributeString(L"DestinationLocation", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationLocation) : DestinationLocation);
-		sect->AddAttributeString(L"DestinationToken", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationToken) : DestinationToken);
+		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
+		sect->AddAttributeString(L"DestinationLocation", WrapDestinationPath(DestinationLocation, savingBuild));
+		sect->AddAttributeString(L"DestinationToken", WrapDestinationPath(DestinationToken, savingBuild));
 	}
 
-	void ParseMaterialTree(List<String>& mtrlList, const String& baseMtrlName, const ConfigurationSection* sect)
+	static void ParseMaterialTree(List<String>& mtrlList, const String& baseMtrlName, const ConfigurationSection* sect)
 	{
 		String name = baseMtrlName;
 		if (name.size())
@@ -451,9 +402,9 @@ namespace Apoc3D
 		name.append(sect->getName());
 
 		// go into sub sections
-		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator(); e.MoveNext();)
+		for (ConfigurationSection* sub : sect->getSubSections())
 		{
-			ParseMaterialTree(mtrlList, name, e.getCurrentValue());
+			ParseMaterialTree(mtrlList, name, sub);
 		}
 
 		mtrlList.Add(name);
@@ -463,7 +414,7 @@ namespace Apoc3D
 	{
 		List<String> res;
 
-		String path = PathUtils::Combine(m_project->getBasePath(), SourceFile);
+		String path = WrapSourcePath(SourceFile, true);
 		if (File::FileExists(path))
 		{
 			FileLocation floc(path);
@@ -471,43 +422,27 @@ namespace Apoc3D
 			ConfigurationSection* mSect = config->get(L"Materials");
 
 			List<String> names;
-			for (ConfigurationSection::SubSectionEnumerator e = mSect->GetSubSectionEnumrator(); e.MoveNext();)
+			for (ConfigurationSection* sub : mSect->getSubSections())
 			{
-				ParseMaterialTree(names, L"", e.getCurrentValue());
+				ParseMaterialTree(names, L"", sub);
 			} 
 
 			delete config;
 
-			String basePath = PathUtils::Combine(m_project->getOutputPath(), DestinationLocation);
+			String basePath = WrapDestinationPath(DestinationLocation, true);
 
-			for (int i=0;i<names.getCount();i++)
+			for (const String& name : names)
 			{
-				res.Add(PathUtils::Combine(basePath, names[i] + L".mtrl"));
+				res.Add(PathUtils::Combine(basePath, name + L".mtrl"));
 			}
 		}
 
 		if (DestinationToken.size())
-			res.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationToken));
+			res.Add(WrapDestinationPath(DestinationToken, true));
 		return res;
 	}
-	bool ProjectResMaterialSet::IsEarlierThan(time_t t)
-	{
-		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestinationToken));
-
-		if (destFileTime < t)
-			return true;
-
-		String path = PathUtils::Combine(m_project->getBasePath(), SourceFile);
-		if (File::FileExists(path))
-		{
-			if (File::GetFileModifiyTime(path) > destFileTime)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-	bool ProjectResMaterialSet::IsNotBuilt() { return simpleIsNotBuilt(DestinationToken); }
+	bool ProjectResMaterialSet::IsOutdated() { return IsOutdatedSimple(SourceFile, DestinationToken); }
+	bool ProjectResMaterialSet::IsNotBuilt() { return IsDestFileNotBuilt(DestinationToken); }
 
 	/************************************************************************/
 	/*   ProjectResFont                                                     */
@@ -523,36 +458,34 @@ namespace Apoc3D
 		
 		DestFile = sect->getAttribute(L"DestinationFile");
 
-		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
-			iter.MoveNext();)
+		for (const ConfigurationSection* ss : sect->getSubSections())
 		{
-			const ConfigurationSection* ss = iter.getCurrentValue();
-
 			CharRange range = { ss->GetAttributeInt(L"Start"), ss->GetAttributeInt(L"End") };
 			Ranges.Add(range);
 		}
 	}
 	void ProjectResFont::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
+		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
 		sect->AddAttributeString(L"Size", StringUtils::SingleToString(Size));
 
 		sect->AddAttributeBool(L"AntiAlias", AntiAlias);
 
-		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
+		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
 
-		for (int32 i=0;i<Ranges.getCount();i++)
+		for (int32 i = 0; i < Ranges.getCount(); i++)
 		{
+			const CharRange& cr = Ranges[i];
 			ConfigurationSection* ss = new ConfigurationSection(String(L"Range") + StringUtils::IntToString(i));
-			ss->AddAttributeString(L"Start", StringUtils::IntToString( Ranges[i].MinChar));
-			ss->AddAttributeString(L"End", StringUtils::IntToString( Ranges[i].MaxChar));
+			ss->AddAttributeString(L"Start", StringUtils::IntToString(cr.MinChar));
+			ss->AddAttributeString(L"End", StringUtils::IntToString(cr.MaxChar));
 
 			sect->AddSection(ss);
 		}
 	}
-	List<String> ProjectResFont::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestFile); }
-	bool ProjectResFont::IsEarlierThan(time_t t) { return simpleIsEarlierThan(t, DestFile); }
-	bool ProjectResFont::IsNotBuilt() { return simpleIsNotBuilt(DestFile); }
+	List<String> ProjectResFont::GetAllOutputFiles() { return GetDestFileOutput(DestFile); }
+	bool ProjectResFont::IsOutdated() { return IsOutdatedSimple(SourceFile, DestFile); }
+	bool ProjectResFont::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
 	/************************************************************************/
 	/*   ProjectResFontGlyphDist                                            */
@@ -565,24 +498,13 @@ namespace Apoc3D
 	}
 	void ProjectResFontGlyphDist::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
-		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
+		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
+		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
 	}
-	List<String> ProjectResFontGlyphDist::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestFile); }
-	bool ProjectResFontGlyphDist::IsEarlierThan(time_t t)
-	{
-		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+	List<String> ProjectResFontGlyphDist::GetAllOutputFiles() { return GetDestFileOutput(DestFile); }
+	bool ProjectResFontGlyphDist::IsOutdated() { return IsOutdatedSimple(SourceFile, DestFile); }
+	bool ProjectResFontGlyphDist::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
-		if (destFileTime < t)
-			return true;
-
-		String path = PathUtils::Combine(m_project->getBasePath(), SourceFile);
-		if (File::FileExists(path))
-			if (File::GetFileModifiyTime(path) > destFileTime)
-				return true;
-		return false;
-	}
-	bool ProjectResFontGlyphDist::IsNotBuilt() { return simpleIsNotBuilt(DestFile); }
 	/************************************************************************/
 	/*   ProjectResEffect                                                   */
 	/************************************************************************/
@@ -628,7 +550,7 @@ namespace Apoc3D
 		String entryPointsDesc = sect->getAttribute(L"EntryPoints");
 		srcSets.Clear();
 		StringUtils::Split(entryPointsDesc, srcSets, L"|");
-		for (int i=0;i<srcSets.getCount();i++)
+		for (int i = 0; i < srcSets.getCount(); i++)
 		{
 			String e = srcSets[i];
 			StringUtils::Trim(e);
@@ -664,7 +586,7 @@ namespace Apoc3D
 		PListFile = sect->getAttribute(L"ParamList");
 
 		StringUtils::Split(sect->getAttribute(L"Targets"), Targets, L"|");
-		for (int i=0;i<Targets.getCount();i++)
+		for (int i = 0; i < Targets.getCount(); i++)
 		{
 			StringUtils::Trim(Targets[i]);
 			StringUtils::ToLowerCase(Targets[i]);
@@ -674,26 +596,26 @@ namespace Apoc3D
 	{
 		if (VS == PS && PS == GS)
 		{
-			sect->AddAttributeString(L"Source", L"ALL:" + (savingBuild ? PathUtils::Combine(m_project->getBasePath(), VS) : VS));
+			sect->AddAttributeString(L"Source", L"ALL:" + WrapSourcePath(VS, savingBuild));
 		}
 		else
 		{
 			String srcText = L"VS:";
-			srcText.append(savingBuild ? PathUtils::Combine(m_project->getBasePath(), VS) : VS);
+			srcText.append(WrapSourcePath(VS, savingBuild));
 
 			srcText.append(L" | PS:");
-			srcText.append(savingBuild ? PathUtils::Combine(m_project->getBasePath(), PS) : PS);
+			srcText.append(WrapSourcePath(PS, savingBuild));
 
 			if (GS.size())
 			{
 				srcText.append(L" | GS:");
-				srcText.append(savingBuild ? PathUtils::Combine(m_project->getBasePath(), GS) : GS);
+				srcText.append(WrapSourcePath(GS, savingBuild));
 			}
 			sect->AddAttributeString(L"Source", srcText);
 		}
 
-		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
-		sect->AddAttributeString(L"ParamList", savingBuild ? PathUtils::Combine(m_project->getBasePath(), PListFile) : PListFile);
+		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
+		sect->AddAttributeString(L"ParamList", WrapSourcePath(PListFile, savingBuild));
 
 		if (EntryPointVS == EntryPointPS && EntryPointGS == EntryPointPS)
 		{
@@ -716,55 +638,44 @@ namespace Apoc3D
 		}
 
 		String targetsStr;
-		for (int i=0;i<Targets.getCount();i++)
+		for (int i = 0; i < Targets.getCount(); i++)
 		{
 			targetsStr.append(Targets[i]);
-			if (i!=Targets.getCount()-1)
+			if (i != Targets.getCount() - 1)
 				targetsStr.append(L" | ");
 		}
 		sect->AddAttributeString(L"Targets", targetsStr);
 	}
-	List<String> ProjectResEffect::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestFile); }
-	bool ProjectResEffect::IsEarlierThan(time_t t)
+	List<String> ProjectResEffect::GetAllOutputFiles() { return GetDestFileOutput(DestFile); }
+	bool ProjectResEffect::IsOutdated()
 	{
-		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile));
-
-		if (destFileTime < t)
+		time_t destFileTime;
+		if (IsSettingsNewerThan(DestFile, destFileTime))
 			return true;
 
 		if (VS.size())
 		{
-			String path = PathUtils::Combine(m_project->getBasePath(), VS);
-			if (File::FileExists(path))
-				if (File::GetFileModifiyTime(path) > destFileTime)
-					return true;
+			if (IsSourceFileNewer(VS, destFileTime))
+				return true;
 		}
 		if (PS.size())
 		{
-			String path = PathUtils::Combine(m_project->getBasePath(), PS);
-			if (File::FileExists(path))
-				if (File::GetFileModifiyTime(path) > destFileTime)
-					return true;
+			if (IsSourceFileNewer(PS, destFileTime))
+				return true;
 		}
 		if (GS.size())
 		{
-			String path = PathUtils::Combine(m_project->getBasePath(), GS);
-			if (File::FileExists(path))
-				if (File::GetFileModifiyTime(path) > destFileTime)
-					return true;
+			if (IsSourceFileNewer(GS, destFileTime))
+				return true;
 		}
 		if (PListFile.size())
 		{
-			String path = PathUtils::Combine(m_project->getBasePath(), PListFile);
-			if (File::FileExists(path))
-			{
-				if (File::GetFileModifiyTime(path) > destFileTime)
-					return true;
-			}
+			if (IsSourceFileNewer(PListFile, destFileTime))
+				return true;
 		}
 		return false;
 	}
-	bool ProjectResEffect::IsNotBuilt() { return simpleIsNotBuilt(DestFile); }
+	bool ProjectResEffect::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
 	/************************************************************************/
 	/*   ProjectResCustomEffect                                             */
@@ -780,60 +691,49 @@ namespace Apoc3D
 	}
 	void ProjectResCustomEffect::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"VSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcVSFile) : SrcVSFile);
-		sect->AddAttributeString(L"PSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcPSFile) : SrcPSFile);
+		sect->AddAttributeString(L"VSSource", WrapSourcePath(SrcVSFile, savingBuild));
+		sect->AddAttributeString(L"PSSource", WrapSourcePath(SrcPSFile, savingBuild));
 
-		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
+		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
 		sect->AddAttributeString(L"EntryPointVS", EntryPointVS);
 		sect->AddAttributeString(L"EntryPointPS", EntryPointPS);
 		sect->AddAttributeString(L"Profile", Profile);
 	}
-	List<String> ProjectResCustomEffect::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestFile); }
-	bool ProjectResCustomEffect::IsEarlierThan(time_t t)
+	List<String> ProjectResCustomEffect::GetAllOutputFiles() { return GetDestFileOutput(DestFile); }
+	bool ProjectResCustomEffect::IsOutdated()
 	{
-		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile));
-
-		if (destFileTime < t)
+		time_t destFileTime;
+		if (IsSettingsNewerThan(DestFile, destFileTime))
 			return true;
 
-		String path = PathUtils::Combine(m_project->getBasePath(), SrcVSFile);
-		if (File::FileExists(path))
-		{
-			if (File::GetFileModifiyTime(path) > destFileTime)
-			{
-				return true;
-			}
-		}
-		path = PathUtils::Combine(m_project->getBasePath(), SrcPSFile);
-		if (File::FileExists(path))
-		{
-			if (File::GetFileModifiyTime(path) > destFileTime)
-			{
-				return true;
-			}
-		}
+		if (IsSourceFileNewer(SrcVSFile, destFileTime))
+			return true;
+
+		if (IsSourceFileNewer(SrcPSFile, destFileTime))
+			return true;
+		
 		return false;
 	}
-	bool ProjectResCustomEffect::IsNotBuilt() { return simpleIsNotBuilt(DestFile); }
+	bool ProjectResCustomEffect::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
 	/************************************************************************/
 	/*  ProjectResEffectList                                                */
 	/************************************************************************/
 
 	// Finds all effects in the project
-	void WalkProject(const List<ProjectItem*>& items, List<String>& effectsFound)
+	static void WalkProjectForEffects(const List<ProjectItem*>& items, List<String>& effectsFound)
 	{
-		for (int i=0;i<items.getCount();i++)
+		for (ProjectItem* pi : items)
 		{
-			if (items[i]->getType() == ProjectItemType::Effect)
+			if (pi->getType() == ProjectItemType::Effect)
 			{
-				effectsFound.Add(items[i]->getName());
+				effectsFound.Add(pi->getName());
 			}
-			else if (items[i]->getType() == ProjectItemType::Folder)
+			else if (pi->getType() == ProjectItemType::Folder)
 			{
-				ProjectFolder* folder = static_cast<ProjectFolder*>(items[i]->getData());
+				ProjectFolder* folder = static_cast<ProjectFolder*>(pi->getData());
 
-				WalkProject(folder->SubItems, effectsFound);
+				WalkProjectForEffects(folder->SubItems, effectsFound);
 			}
 		}
 	}
@@ -844,23 +744,23 @@ namespace Apoc3D
 	}
 	void ProjectResEffectList::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
+		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, true));
 
 		if (savingBuild)
 		{
 			List<String> effectList;
-			WalkProject(m_project->getItems(), effectList);
+			WalkProjectForEffects(m_project->getItems(), effectList);
 
-			for (int i=0;i<effectList.getCount();i++)
+			for (const String& fxName : effectList)
 			{
-				ConfigurationSection* ss = new ConfigurationSection(effectList[i]);
+				ConfigurationSection* ss = new ConfigurationSection(fxName);
 				sect->AddSection(ss);
 			}
 		}
 		
 	}
-	List<String> ProjectResEffectList::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestFile); }
-	bool ProjectResEffectList::IsNotBuilt() { return simpleIsNotBuilt(DestFile); }
+	List<String> ProjectResEffectList::GetAllOutputFiles() { return GetDestFileOutput(DestFile); }
+	bool ProjectResEffectList::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
 	/************************************************************************/
 	/*  ProjectResShaderNetwork                                             */
@@ -873,28 +773,12 @@ namespace Apoc3D
 	}
 	void ProjectResShaderNetwork::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcFile) : SrcFile);
-		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
+		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SrcFile, savingBuild));
+		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
 	}
-	List<String> ProjectResShaderNetwork::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestFile); }
-	bool ProjectResShaderNetwork::IsEarlierThan(time_t t)
-	{
-		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile));
-
-		if (destFileTime < t)
-			return true;
-
-		String path = PathUtils::Combine(m_project->getBasePath(), SrcFile);
-		if (File::FileExists(path))
-		{
-			if (File::GetFileModifiyTime(path) > destFileTime)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-	bool ProjectResShaderNetwork::IsNotBuilt() { return simpleIsNotBuilt(DestFile); }
+	List<String> ProjectResShaderNetwork::GetAllOutputFiles() { return GetDestFileOutput(DestFile); }
+	bool ProjectResShaderNetwork::IsOutdated() { return IsOutdatedSimple(SrcFile, DestFile); }
+	bool ProjectResShaderNetwork::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
 	/************************************************************************/
 	/*  ProjectResModel                                                     */
@@ -910,27 +794,25 @@ namespace Apoc3D
 		sect->tryGetAttribute(L"Method", method);
 		StringUtils::ToLowerCase(method);
 
-		Method = ProjectTypeUtils::ParseModelBuildMethod(method);
+		Method = ProjectUtils::MeshBuildMethodConv.Parse(method);
 
 		UseVertexFormatConversion = false;
 		ConfigurationSection* subs = sect->getSection(L"VertexFormatConversion");
 		if (subs && subs->getSubSectionCount()>0)
 		{
 			UseVertexFormatConversion = true;
-			for (ConfigurationSection::SubSectionEnumerator iter = subs->GetSubSectionEnumrator();
-				iter.MoveNext();)
+			for (const ConfigurationSection* ent : subs->getSubSections())
 			{
-				const ConfigurationSection* ent = iter.getCurrentValue();
-
 				VertexElementUsage usage = GraphicsCommonUtils::ParseVertexElementUsage(ent->getName());
 				int index = 0;
 				if (usage == VEU_TextureCoordinate)
 				{
-					index = StringUtils::ParseInt32( ent->getValue() );
+					index = StringUtils::ParseInt32(ent->getValue());
 				}
+
 				// the vertex elements here only has usage and index. 
 				// They only store info here, not for normal use in graphics
-				VertexElements.Add(VertexElement(0,VEF_Count,usage,index));
+				ConversionVertexElements.Add(VertexElement(0, VEF_Count, usage, index));
 			}
 		}
 		CollapseMeshs = false;
@@ -938,21 +820,20 @@ namespace Apoc3D
 	}
 	void ProjectResModel::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcFile) : SrcFile);
-		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DstFile) : DstFile);
+		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SrcFile, savingBuild));
+		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DstFile, savingBuild));
 		if (DstAnimationFile.size())
 		{
-			sect->AddAttributeString(L"DestinationAnimFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DstAnimationFile) :DstAnimationFile);
+			sect->AddAttributeString(L"DestinationAnimFile", WrapDestinationPath(DstAnimationFile, savingBuild));
 		}
-		sect->AddAttributeString(L"Method", ProjectTypeUtils::ToString(Method));
 
-		if (UseVertexFormatConversion && VertexElements.getCount() > 0)
+		sect->AddAttributeString(L"Method", ProjectUtils::MeshBuildMethodConv.ToString(Method));
+
+		if (UseVertexFormatConversion && ConversionVertexElements.getCount() > 0)
 		{
 			ConfigurationSection* subs = new ConfigurationSection(L"VertexFormatConversion");
-			for (int i=0;i<VertexElements.getCount();i++)
+			for (const VertexElement& ve : ConversionVertexElements)
 			{
-				const VertexElement& ve = VertexElements[i];
-
 				ConfigurationSection* vs;
 				if (ve.getUsage() == VEU_TextureCoordinate)
 				{
@@ -964,7 +845,7 @@ namespace Apoc3D
 				{
 					vs = new ConfigurationSection(GraphicsCommonUtils::ToString(ve.getUsage()));
 				}
-				
+
 				subs->AddSection(vs);
 			}
 			sect->AddSection(subs);
@@ -980,30 +861,28 @@ namespace Apoc3D
 	{
 		List<String> e;
 		if (DstAnimationFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DstAnimationFile));
+			e.Add(WrapDestinationPath(DstAnimationFile, true));
 		if (DstFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DstFile));
+			e.Add(WrapDestinationPath(DstFile, true));
 		return e;
 	}
-	bool ProjectResModel::IsEarlierThan(time_t t)
+	bool ProjectResModel::IsOutdated()
 	{
-		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DstFile));
-
-		if (destFileTime < t)
+		time_t destFileTime;
+		if (IsSettingsNewerThan(DstFile, destFileTime))
 			return true;
 
 		// check if the source file is newer than the built ones.
-		String path = PathUtils::Combine(m_project->getBasePath(), SrcFile);
+		String path = WrapSourcePath(SrcFile, true);
 		if (File::FileExists(path))
 		{
 			time_t srcTime = File::GetFileModifiyTime(path);
 			if (srcTime > destFileTime)
-			{
 				return true;
-			}
+
 			if (DstAnimationFile.size())
 			{
-				destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DstAnimationFile));
+				destFileTime = File::GetFileModifiyTime(WrapDestinationPath(DstAnimationFile, true));
 
 				if (srcTime > destFileTime)
 					return true;
@@ -1015,10 +894,10 @@ namespace Apoc3D
 	bool ProjectResModel::IsNotBuilt()
 	{
 		if (DstAnimationFile.size())
-			if (!File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DstAnimationFile)))
+			if (!File::FileExists(WrapDestinationPath(DstAnimationFile, true)))
 				return true;
 
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DstFile)) ;
+		return !File::FileExists(WrapDestinationPath(DstFile, true));
 	}
 
 	/************************************************************************/
@@ -1032,12 +911,12 @@ namespace Apoc3D
 	}
 	void ProjectResMAnim::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
-		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
+		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
+		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationFile, savingBuild));
 	}
-	List<String> ProjectResMAnim::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestinationFile); }
-	bool ProjectResMAnim::IsEarlierThan(time_t t) { return simpleIsEarlierThan(t, DestinationFile); }
-	bool ProjectResMAnim::IsNotBuilt() { return simpleIsNotBuilt(DestinationFile); }
+	List<String> ProjectResMAnim::GetAllOutputFiles() { return GetDestFileOutput(DestinationFile); }
+	bool ProjectResMAnim::IsOutdated() { return IsSettingsNewerThan(DestinationFile); }
+	bool ProjectResMAnim::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
 
 
 	/************************************************************************/
@@ -1051,11 +930,8 @@ namespace Apoc3D
 		Reverse = false;
 		sect->TryGetAttributeBool(L"Reverse", Reverse);
 
-		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
-			iter.MoveNext();)
+		for (const ConfigurationSection* ss : sect->getSubSections())
 		{
-			const ConfigurationSection* ss = iter.getCurrentValue();
-
 			String name = ss->getName();
 			int objIdx = StringUtils::ParseInt32(ss->getValue());
 
@@ -1064,38 +940,22 @@ namespace Apoc3D
 	}
 	void ProjectResTAnim::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
-		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
+		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, true));
+		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationFile, true));
 		sect->AddAttributeString(L"Reverse", StringUtils::BoolToString(Reverse));
 
-		for (HashMap<String, int>::Enumerator e = ObjectIndexMapping.GetEnumerator(); e.MoveNext(); )
+		for (auto e : ObjectIndexMapping)
 		{
-			ConfigurationSection* ss = new ConfigurationSection(e.getCurrentKey());
+			ConfigurationSection* ss = new ConfigurationSection(e.Key);
 			
-			ss->SetValue(StringUtils::IntToString(e.getCurrentValue()));
+			ss->SetValue(StringUtils::IntToString(e.Value));
 
 			sect->AddSection(ss);
 		}
 	}
-	List<String> ProjectResTAnim::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestinationFile); }
-	bool ProjectResTAnim::IsEarlierThan(time_t t)
-	{
-		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(), DestinationFile));
-
-		if (destFileTime < t)
-			return true;
-
-		String path = PathUtils::Combine(m_project->getBasePath(), SourceFile);
-		if (File::FileExists(path))
-		{
-			if (File::GetFileModifiyTime(path) > destFileTime)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-	bool ProjectResTAnim::IsNotBuilt() { return simpleIsNotBuilt(DestinationFile); }
+	List<String> ProjectResTAnim::GetAllOutputFiles() { return GetDestFileOutput(DestinationFile); }
+	bool ProjectResTAnim::IsOutdated() { return IsOutdatedSimple(SourceFile, DestinationFile); }
+	bool ProjectResTAnim::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
 
 	/************************************************************************/
 	/*   ProjectResUILayout                                                 */
@@ -1108,12 +968,12 @@ namespace Apoc3D
 	}
 	void ProjectResUILayout::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
-		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
+		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
+		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationFile, savingBuild));
 	}
-	List<String> ProjectResUILayout::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestinationFile); }
-	bool ProjectResUILayout::IsEarlierThan(time_t t) { return simpleIsEarlierThan(t, DestinationFile); }
-	bool ProjectResUILayout::IsNotBuilt() { return simpleIsNotBuilt(DestinationFile); }
+	List<String> ProjectResUILayout::GetAllOutputFiles() { return GetDestFileOutput(DestinationFile); }
+	bool ProjectResUILayout::IsOutdated() { return IsSettingsNewerThan(DestinationFile); }
+	bool ProjectResUILayout::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
 
 	/************************************************************************/
 	/*   ProjectResCopy                                                     */
@@ -1127,12 +987,12 @@ namespace Apoc3D
 	}
 	void ProjectResCopy::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
-		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
+		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
+		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationFile, savingBuild));
 	}
-	List<String> ProjectResCopy::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestinationFile); }
-	bool ProjectResCopy::IsEarlierThan(time_t t) { return simpleIsEarlierThan(t, DestinationFile); }
-	bool ProjectResCopy::IsNotBuilt() { return simpleIsNotBuilt(DestinationFile); }
+	List<String> ProjectResCopy::GetAllOutputFiles() { return GetDestFileOutput(DestinationFile); }
+	bool ProjectResCopy::IsOutdated() { return IsSettingsNewerThan(DestinationFile); }
+	bool ProjectResCopy::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
 
 
 	/************************************************************************/
@@ -1145,53 +1005,154 @@ namespace Apoc3D
 		DestFile = sect->getAttribute(L"DestinationFile");
 		sect->tryGetAttribute(L"EditorExtension", EditorExtension);
 
-		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator(); e.MoveNext();)
+		for (ConfigurationSection* ss : sect->getSubSections())
 		{
-			Properties.Add(e.getCurrentKey(), e.getCurrentValue()->getValue());
+			Properties.Add(ss->getName(), ss->getValue());
 		}
 	}
 	void ProjectCustomItem::Save(ConfigurationSection* sect, bool savingBuild)
 	{
 		//SourceFile = sect->getAttribute(L"SourceFile");
-		sect->AddAttributeString(L"SourceFile", SourceFile);
-		sect->AddAttributeString(L"DestinationFile", DestFile);
+		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
+		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
 		if (EditorExtension.size())
 		{
 			sect->AddAttributeString(L"EditorExtension", EditorExtension);
 		}
 
-		for (HashMap<String, String>::Enumerator e = Properties.GetEnumerator(); e.MoveNext();)
+		for (auto e : Properties)
 		{
-			ConfigurationSection* valSect = new ConfigurationSection(e.getCurrentKey());
-			valSect->SetValue(e.getCurrentValue());
+			ConfigurationSection* valSect = new ConfigurationSection(e.Key);
+			valSect->SetValue(e.Value);
 
 			sect->AddSection(valSect);
 		}
 	}
 
-	List<String> ProjectCustomItem::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestFile); }
-	bool ProjectCustomItem::IsEarlierThan(time_t t) { return simpleIsEarlierThan(t, DestFile); }
-	bool ProjectCustomItem::IsNotBuilt() { return simpleIsNotBuilt(DestFile); }
+	List<String> ProjectCustomItem::GetAllOutputFiles() { return GetDestFileOutput(DestFile); }
+	bool ProjectCustomItem::IsOutdated() { return IsSettingsNewerThan( DestFile); }
+	bool ProjectCustomItem::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
-	List<String> ProjectItemData::simpleGetAllOutputFiles(const String& destinationFile)
+	String ProjectItemData::GetAbsoluteSourcePathBase() const
+	{
+		ProjectFolder* pf = m_parentItem->getParentFolder();
+
+		if (pf && pf->SubItemsSourceRelativeBase != L":")
+		{
+			String basePath;
+			while (pf && pf->SubItemsSourceRelativeBase != L":")
+			{
+				if (pf->SubItemsSourceRelativeBase.size())
+					basePath = PathUtils::Combine(pf->SubItemsSourceRelativeBase, basePath);
+				
+				pf = pf->getParentItem()->getParentFolder();
+			}
+			return PathUtils::Combine(m_project->getBasePath(), basePath);
+		}
+		
+		return m_project->getBasePath();
+	}
+	String ProjectItemData::GetAbsoluteDestinationPathBase() const
+	{
+		ProjectFolder* pf = m_parentItem->getParentFolder();
+
+		while (pf && pf->SubItemsDestinationRelativeBase != L":")
+		{
+			String basePath;
+			while (pf && pf->SubItemsDestinationRelativeBase != L":")
+			{
+				if (pf->SubItemsDestinationRelativeBase.size())
+					basePath = PathUtils::Combine(pf->SubItemsDestinationRelativeBase, basePath);
+
+				pf = pf->getParentItem()->getParentFolder();
+			}
+			return PathUtils::Combine(m_project->getOutputPath(), basePath);
+		}
+
+		return m_project->getOutputPath();
+	}
+
+	String ProjectItemData::GetAbsoluteSourcePath(const String& path) const { return PathUtils::Combine(GetAbsoluteSourcePathBase(), path); }
+	String ProjectItemData::GetAbsoluteDestinationPath(const String& path) const { return PathUtils::Combine(GetAbsoluteDestinationPathBase(), path); }
+
+	bool ProjectItemData::IsSourceFileNewer(const String& srcFile, time_t t) const
+	{
+		String p = WrapSourcePath(srcFile, true);
+		return File::FileExists(p) && File::GetFileModifiyTime(p) > t;
+	}
+
+	bool ProjectItemData::IsSettingsNewerThan(const String& destinationFile) const
+	{
+		time_t t;
+		return IsSettingsNewerThan(destinationFile, t);
+	}
+	bool ProjectItemData::IsSettingsNewerThan(const String& destinationFile, time_t& dstFileTime) const
+	{
+		String p = WrapDestinationPath(destinationFile, true);
+
+		if (!File::FileExists(p))
+			return true;
+
+		dstFileTime = File::GetFileModifiyTime(p);
+		return m_parentItem->isSettingsNewerThan(dstFileTime);
+	}
+
+	bool ProjectItemData::IsOutdatedSimple(const String& srcFile, const String& destinationFile) const
+	{
+		time_t destFileTime;
+		if (IsSettingsNewerThan(destinationFile, destFileTime))
+			return true;
+
+		if (IsSourceFileNewer(srcFile, destFileTime))
+			return true;
+
+		return false;
+	}
+
+	String ProjectItemData::WrapSourcePath(const String& path, bool isAbsolute) const
+	{
+		if (isAbsolute)
+		{
+			return GetAbsoluteSourcePath(path);
+		}
+		return path;
+	}
+	String ProjectItemData::WrapDestinationPath(const String& path, bool isAbsolute) const
+	{
+		if (isAbsolute)
+		{
+			return GetAbsoluteDestinationPath(path);
+		}
+		return path;
+	}
+
+	List<String> ProjectItemData::GetDestFileOutput(const String& destinationFile)
 	{
 		List<String> e;
 		if (destinationFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),destinationFile));
+			e.Add(WrapDestinationPath(destinationFile, true));
 		return e;
 	}
-	bool ProjectItemData::simpleIsEarlierThan(time_t t, const String& destinationFile)
+
+	bool ProjectItemData::IsDestFileNotBuilt(const String& destinationFile)
 	{
-		return File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),destinationFile)) < t;
-	}
-	bool ProjectItemData::simpleIsNotBuilt(const String& destinationFile)
-	{
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),destinationFile));
+		return !File::FileExists(WrapDestinationPath(destinationFile, true));
 	}
 
 	/************************************************************************/
 	/*    ProjectItem                                                       */
 	/************************************************************************/
+
+	void ProjectItem::Rename(const String& newName)
+	{
+		m_name = newName;
+	}
+
+	void ProjectItem::SetParent(ProjectFolder* parent)
+	{
+		m_parentFolder = parent;
+	}
+
 
 	ConfigurationSection* ProjectItem::Save(bool savingBuild)
 	{
@@ -1208,7 +1169,7 @@ namespace Apoc3D
 
 		if (m_typeData)
 		{
-			sect->AddAttributeString(L"Type", ProjectTypeUtils::ToString(m_typeData->getType()));
+			sect->AddAttributeString(L"Type", ProjectUtils::ProjectItemTypeConv.ToString(m_typeData->getType()));
 			
 			m_typeData->Save(sect, savingBuild);
 		}
@@ -1219,13 +1180,14 @@ namespace Apoc3D
 		}
 		return sect;
 	}
+
 	void ProjectItem::Parse(const ConfigurationSection* sect)
 	{
 		m_name = sect->getName();
 
 		if (sect->hasAttribute(L"LastModTime"))
 		{
-			m_timeStamp = StringUtils::ParseInt64( sect->getAttribute(L"LastModTime"));
+			m_timeStamp = StringUtils::ParseInt64(sect->getAttribute(L"LastModTime"));
 		}
 		else
 		{
@@ -1233,58 +1195,57 @@ namespace Apoc3D
 		}
 		
 
-		ProjectItemType itemType = ProjectTypeUtils::ParseProjectItemType(sect->getAttribute(L"Type"));
-		//StringUtils::ToLowerCase(buildType);
-
+		ProjectItemType itemType = ProjectUtils::ProjectItemTypeConv.Parse(sect->getAttribute(L"Type"));
+		
 		switch (itemType)
 		{
 		case ProjectItemType::Custom:
-			m_typeData = new ProjectCustomItem(m_project);
+			m_typeData = new ProjectCustomItem(m_project, this);
 			break;
 		case ProjectItemType::Folder:
-			m_typeData = new ProjectFolder(m_project);
+			m_typeData = new ProjectFolder(m_project, this);
 			break;
 		case ProjectItemType::Material:
-			m_typeData = new ProjectResMaterial(m_project);
+			m_typeData = new ProjectResMaterial(m_project, this);
 			break;
 		case ProjectItemType::MaterialSet:
-			m_typeData = new ProjectResMaterialSet(m_project);
+			m_typeData = new ProjectResMaterialSet(m_project, this);
 			break;
 		case ProjectItemType::Texture:
-			m_typeData = new ProjectResTexture(m_project);
+			m_typeData = new ProjectResTexture(m_project, this);
 			break;
 		case ProjectItemType::Model:
-			m_typeData = new ProjectResModel(m_project);
+			m_typeData = new ProjectResModel(m_project, this);
 			break;
 		case ProjectItemType::TransformAnimation:
-			m_typeData = new ProjectResTAnim(m_project);
+			m_typeData = new ProjectResTAnim(m_project, this);
 			break;
 		case ProjectItemType::MaterialAnimation:
-			m_typeData = new ProjectResMAnim(m_project);
+			m_typeData = new ProjectResMAnim(m_project, this);
 			break;
 		case ProjectItemType::Effect:
-			m_typeData = new ProjectResEffect(m_project);
+			m_typeData = new ProjectResEffect(m_project, this);
 			break;
 		case ProjectItemType::EffectList:
-			m_typeData = new ProjectResEffectList(m_project);
+			m_typeData = new ProjectResEffectList(m_project, this);
 			break;
 		case ProjectItemType::CustomEffect:
-			m_typeData = new ProjectResCustomEffect(m_project);
+			m_typeData = new ProjectResCustomEffect(m_project, this);
 			break;
 		case ProjectItemType::ShaderNetwork:
-			m_typeData = new ProjectResShaderNetwork(m_project);
+			m_typeData = new ProjectResShaderNetwork(m_project, this);
 			break;
 		case ProjectItemType::Font:
-			m_typeData = new ProjectResFont(m_project);
+			m_typeData = new ProjectResFont(m_project, this);
 			break;
 		case ProjectItemType::FontGlyphDist:
-			m_typeData = new ProjectResFontGlyphDist(m_project);
+			m_typeData = new ProjectResFontGlyphDist(m_project, this);
 			break;
 		case ProjectItemType::UILayout:
-			m_typeData = new ProjectResUILayout(m_project);
+			m_typeData = new ProjectResUILayout(m_project, this);
 			break;
 		case ProjectItemType::Copy:
-			m_typeData = new ProjectResCopy(m_project);
+			m_typeData = new ProjectResCopy(m_project, this);
 			break;
 		default:
 			assert(0);
@@ -1292,6 +1253,8 @@ namespace Apoc3D
 
 		m_typeData->Parse(sect);
 	}
+
+
 
 	/************************************************************************/
 	/*    Project                                                           */
@@ -1306,7 +1269,7 @@ namespace Apoc3D
 		sect->tryGetAttribute(L"ExplicitBuildPath", m_originalOutputPath);
 		m_outputPath = m_originalOutputPath;
 
-		ProjectParse(this, m_items, sect);
+		ProjectParseSubItems(this, m_items, sect);
 	}
 	void Project::Save(const String& file)
 	{
@@ -1321,8 +1284,6 @@ namespace Apoc3D
 		delete xc;
 	}
 
-	void RecursivePassFolderPacks(int& startNo, ConfigurationSection* parentSect, List<ProjectItem*>& items);
-
 	ConfigurationSection* Project::Save()
 	{
 		ConfigurationSection* sect = new ConfigurationSection(L"Project", m_items.getCount() * 2);
@@ -1333,43 +1294,54 @@ namespace Apoc3D
 
 		if (m_originalOutputPath.size())
 			sect->AddAttributeString(L"ExplicitBuildPath", m_originalOutputPath);
-		ProjectSave(sect, m_items, false);
+		ProjectSaveSubItems(sect, m_items, false);
 
 		return sect;
 	}
-	void Project::GenerateBuildScripts(List<ConfigurationSection*>& result)
+	void Project::GenerateBuildScripts(List<ProjectBuildScript>& result)
 	{
+		List<ConfigurationSection*> subtrees;
+
 		ConfigurationSection* sect = new ConfigurationSection(L"Build", m_items.getCount() * 2);
 
 		sect->AddAttributeString(L"Name", m_name);
 
-		ProjectSave(sect, m_items, true);
+		ProjectSaveSubItems(sect, m_items, true);
 
 		sect->AddAttributeString(L"Type", L"Project");
-		result.Add(sect);
+		subtrees.Add(sect);
 		
 		int32 startNo = Randomizer::NextInclusive(65535);
-		RecursivePassFolderPacks(startNo, result, m_items);
+		GenerateFolderPackaging(startNo, subtrees, m_items);
 		
+		// pack up with settings
+		{
+			String baseOutputDir = m_outputPath;
+
+			for (ConfigurationSection* part : subtrees)
+			{
+				result.Add({ part, baseOutputDir });
+			}
+		}
 	}
-	void RecursivePassFolderPacks(int& startNo, List<ConfigurationSection*>& result, List<ProjectItem*>& items)
+
+	void GenerateFolderPackaging(int& startNo, List<ConfigurationSection*>& result, List<ProjectItem*>& items)
 	{
 		// post traversal on the project tree will make leaf folder to pack file builds comes first
-		for (int32 i=0;i<items.getCount();i++)
+		for (ProjectItem* pi : items)
 		{
-			if (items[i]->getType() == ProjectItemType::Folder)
+			if (pi->getType() == ProjectItemType::Folder)
 			{
-				ProjectFolder* fld = static_cast<ProjectFolder*>(items[i]->getData());
+				ProjectFolder* fld = static_cast<ProjectFolder*>(pi->getData());
 
 				if (fld)
 				{
-					RecursivePassFolderPacks(startNo, result, fld->SubItems);
+					GenerateFolderPackaging(startNo, result, fld->SubItems);
 
 					if (fld->PackType.size())
 					{
 						ConfigurationSection* s = new ConfigurationSection(L"Archive_" + StringUtils::IntToString(startNo++));
 						fld->SavePackBuildConfig(s);
-						//parentSect->AddSection(s);
 
 						// these packaging builds will be added to the end, as the prerequisite items should be built first
 						result.Add(s);
@@ -1380,53 +1352,61 @@ namespace Apoc3D
 	}
 
 	// this function is for parsing all sub items in a section
-	void ProjectParse(Project* prj, List<ProjectItem*>& parentContainer, const ConfigurationSection* sect)
+	void ProjectParseSubItems(Project* prj, List<ProjectItem*>& parentContainer, const ConfigurationSection* sect)
 	{
-		for (ConfigurationSection::SubSectionEnumerator iter =  sect->GetSubSectionEnumrator();
-			iter.MoveNext();)
+		for (ConfigurationSection* ss : sect->getSubSections())
 		{
-			ConfigurationSection* sect = iter.getCurrentValue();
-
 			ProjectItem* item = new ProjectItem(prj);
 
-			item->Parse(sect);
+			item->Parse(ss);
 
 			parentContainer.Add(item);
-
 		}
 	}
 
 	// this function is for saving all sub items into a section
-	void ProjectSave(ConfigurationSection* parentSect, List<ProjectItem*>& items, bool savingBuild)
+	void ProjectSaveSubItems(ConfigurationSection* parentSect, List<ProjectItem*>& items, bool savingBuild)
 	{
-		for (int i=0;i<items.getCount();i++)
+		for (ProjectItem* pi : items)
 		{
-			ConfigurationSection* sect = items[i]->Save(savingBuild);
+			ConfigurationSection* sect = pi->Save(savingBuild);
 			if (sect)
 				parentSect->AddSection(sect);
 		}
 	}
 
-	void Project::setBasePath(const String& path)
+	void Project::SetPath(const String& basePath, const String* outputPath)
 	{
-		m_basePath = path; 
-		if (m_outputPath.size() == 0)
-			m_outputPath = m_basePath;
+		m_basePath = basePath;
+
+		if (outputPath)
+		{
+			m_outputPath = *outputPath;
+		}
 		else
 		{
-			if (StringUtils::StartsWith(m_outputPath, L".."))
+			// existing m_outputPath is the explicit build path, optional
+
+			if (m_outputPath.size() == 0)
+				m_outputPath = m_basePath;
+			else
 			{
-				m_outputPath = PathUtils::Combine(m_basePath, m_outputPath);
+				// explicit build path specified
+				
+				if (!PathUtils::IsAbsolute(m_outputPath))
+				{
+					m_outputPath = PathUtils::Combine(m_basePath, m_outputPath);
+				}
 			}
+			PathUtils::Append(m_outputPath, L"build");
 		}
-		PathUtils::Append(m_outputPath, L"build");
 	}
 
 	void ProjectItem::NotifyModified() { m_timeStamp = time(0); }
 
 	//////////////////////////////////////////////////////////////////////////
 
-	const TypeDualConverter<ProjectItemType> ProjectItemTypeConvInst =
+	const TypeDualConverter<ProjectItemType> ProjectUtils::ProjectItemTypeConv =
 	{
 		{ L"Custom", ProjectItemType::Custom },
 		{ L"Folder", ProjectItemType::Folder },
@@ -1446,54 +1426,34 @@ namespace Apoc3D
 		{ L"Copy", ProjectItemType::Copy },
 	};
 
-	const TypeDualConverter<TextureFilterType> TextureFilterTypeConvInst = 
+	const TypeDualConverter<TextureFilterType> ProjectUtils::TextureFilterTypeConv =
 	{
 		{ L"Nearest", TextureFilterType::Nearest },
 		{ L"BSpline", TextureFilterType::BSpline },
 		{ L"Box", TextureFilterType::Box }
 	};
 
-	const TypeDualConverter<TextureBuildMethod> TextureBuildMethodConvInst =
+	const TypeDualConverter<TextureBuildMethod> ProjectUtils::TextureBuildMethodConv =
 	{
 		{ L"Default", TextureBuildMethod::BuiltIn },
 		{ L"D3D", TextureBuildMethod::D3D },
 		{ L"Devil", TextureBuildMethod::Devil }
 	};
 
-	const TypeDualConverter<TextureCompressionType> TextureCompressionTypeConvInst =
+	const TypeDualConverter<TextureCompressionType> ProjectUtils::TextureCompressionTypeConv =
 	{
 		{ L"None", TextureCompressionType::None },
 		{ L"LZ4", TextureCompressionType::LZ4 },
 		{ L"RLE", TextureCompressionType::RLE }
 	};
 
-	const TypeDualConverter<MeshBuildMethod> MeshBuildMethodConvInst =
+	const TypeDualConverter<MeshBuildMethod> ProjectUtils::MeshBuildMethodConv =
 	{
 		{ L"Ass", MeshBuildMethod::ASS },
 		{ L"FBX", MeshBuildMethod::FBX },
 		{ L"D3D", MeshBuildMethod::D3D }
 	};
 
-
-	ProjectItemType ProjectTypeUtils::ParseProjectItemType(const String& str) { return ProjectItemTypeConvInst.Parse(str); }
-	String ProjectTypeUtils::ToString(ProjectItemType type) { return ProjectItemTypeConvInst.ToString(type); }
-	void ProjectTypeUtils::FillProjectItemTypeNames(List<String>& names) { return ProjectItemTypeConvInst.DumpNames(names); }
-	bool ProjectTypeUtils::SupportsProjectItemType(const String& str) { return ProjectItemTypeConvInst.SupportsName(str); }
-
-	TextureFilterType ProjectTypeUtils::ParseTextureFilterType(const String& str) { return TextureFilterTypeConvInst.Parse(str); }
-	String ProjectTypeUtils::ToString(TextureFilterType flt) { return TextureFilterTypeConvInst.ToString(flt); }
-	void ProjectTypeUtils::FillTextureFilterTypeNames(List<String>& names) { TextureFilterTypeConvInst.DumpNames(names); }
-
-	TextureBuildMethod ProjectTypeUtils::ParseTextureBuildMethod(const String& str) { return TextureBuildMethodConvInst.Parse(str); }
-	String ProjectTypeUtils::ToString(TextureBuildMethod method) { return TextureBuildMethodConvInst.ToString(method); }
-	void ProjectTypeUtils::FillTextureBuildMethodNames(List<String>& names) { TextureBuildMethodConvInst.DumpNames(names); }
-
-	TextureCompressionType ProjectTypeUtils::ParseTextureCompressionType(const String& str) { return TextureCompressionTypeConvInst.Parse(str); }
-	String ProjectTypeUtils::ToString(TextureCompressionType type) { return TextureCompressionTypeConvInst.ToString(type); }
-	void ProjectTypeUtils::FillTextureCompressionTypeNames(List<String>& names) { TextureCompressionTypeConvInst.DumpNames(names); }
-
-	MeshBuildMethod ProjectTypeUtils::ParseModelBuildMethod(const String& str) { return MeshBuildMethodConvInst.Parse(str); }
-	String ProjectTypeUtils::ToString(MeshBuildMethod method) { return MeshBuildMethodConvInst.ToString(method); }
-	void ProjectTypeUtils::FillModelBuildMethodNames(List<String>& names) { MeshBuildMethodConvInst.DumpNames(names); }
+	const String ProjectUtils::BuildAttachmentSectionGUID = L"Attachment38d237b1976f42cab52e58570959a3ff";
 
 }

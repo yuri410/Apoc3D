@@ -38,7 +38,7 @@ namespace APBuild
 		}
 	};
 
-	void BorderBuilder::Build(const ConfigurationSection* sect)
+	void BorderBuilder::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		String srcFile = sect->getAttribute(L"SourceFile");
 		String dstFile = sect->getAttribute(L"DestinationFile");
@@ -311,5 +311,6 @@ namespace APBuild
 			
 		}
 
+		BuildSystem::LogEntryProcessed(dstFile, hierarchyPath);
 	}
 }

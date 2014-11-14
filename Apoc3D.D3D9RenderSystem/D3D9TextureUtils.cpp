@@ -139,7 +139,7 @@ namespace Apoc3D
 				assert(data.Levels.getCount() == 0);
 				data.ContentSize = 0;
 
-				for (int i=0;i<data.LevelCount;i++)
+				for (int i = 0; i < data.LevelCount; i++)
 				{
 					int startPos = 0;
 
@@ -150,11 +150,11 @@ namespace Apoc3D
 					lvlData.Height = (int32)desc.Width;
 					lvlData.Depth = 1;
 					lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, 1, data.Format) * 6;
-					lvlData.ContentData  = new char[lvlData.LevelSize];
-					int faceSize = data.Levels[i].LevelSize / 6;
+					lvlData.ContentData = new char[lvlData.LevelSize];
+					int faceSize = lvlData.LevelSize / 6;
 
 
-					const D3DCUBEMAP_FACES faces[] = 
+					const D3DCUBEMAP_FACES faces[] =
 					{
 						D3DCUBEMAP_FACE_POSITIVE_X, D3DCUBEMAP_FACE_NEGATIVE_X,
 						D3DCUBEMAP_FACE_POSITIVE_Y, D3DCUBEMAP_FACE_NEGATIVE_Y,
@@ -167,7 +167,7 @@ namespace Apoc3D
 						HRESULT hr = tex->LockRect(cf, i, &rect, NULL, D3DLOCK_READONLY);
 						assert(SUCCEEDED(hr));
 
-						copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+						copyData(rect.pBits, rect.Pitch, lvlData.ContentData + startPos,
 							data.Format, desc.Width, desc.Height, false);
 						startPos += faceSize;
 
@@ -186,7 +186,7 @@ namespace Apoc3D
 				assert(data.Levels.getCount() == 0);
 				data.ContentSize = 0;
 
-				for (int i=0;i<data.LevelCount;i++)
+				for (int i = 0; i < data.LevelCount; i++)
 				{
 					TextureLevelData lvlData;
 
@@ -201,7 +201,7 @@ namespace Apoc3D
 					lvlData.Height = (int32)desc.Height;
 					lvlData.Depth = 1;
 					lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, 1, data.Format);
-					lvlData.ContentData  = new char[lvlData.LevelSize];
+					lvlData.ContentData = new char[lvlData.LevelSize];
 					copyData(rect.pBits, rect.Pitch, lvlData.ContentData, data.Format, desc.Width, desc.Height, false);
 
 					hr = tex->UnlockRect(i);
@@ -216,7 +216,7 @@ namespace Apoc3D
 				assert(data.Levels.getCount() == 0);
 				data.ContentSize = 0;
 
-				for (int i=0;i<data.LevelCount;i++)
+				for (int i = 0; i < data.LevelCount; i++)
 				{
 					TextureLevelData lvlData;
 
@@ -227,14 +227,14 @@ namespace Apoc3D
 					lvlData.Height = (int32)desc.Height;
 					lvlData.Depth = (int32)desc.Depth;
 					lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, desc.Depth, data.Format);
-					lvlData.ContentData  = new char[lvlData.LevelSize];
+					lvlData.ContentData = new char[lvlData.LevelSize];
 
 					D3DLOCKED_BOX box;
 					HRESULT hr = tex->LockBox(i, &box, NULL, 0);
 					assert(SUCCEEDED(hr));
 
 					copyData(box.pBits, box.RowPitch, box.SlicePitch,
-						data.Levels[i].ContentData, data.Format,
+						lvlData.ContentData, data.Format,
 						desc.Width, desc.Height, desc.Depth, false);
 
 					hr = tex->UnlockBox(i);
@@ -246,8 +246,10 @@ namespace Apoc3D
 			{
 				for (int i=0;i<data.LevelCount;i++)
 				{
+					const TextureLevelData& lvlData = data.Levels[i];
+
 					int startPos = 0;
-					int faceSize = data.Levels[i].LevelSize / 6;
+					int faceSize = lvlData.LevelSize / 6;
 					D3DSURFACE_DESC desc;
 					tex->GetLevelDesc(i, &desc);
 
@@ -264,7 +266,7 @@ namespace Apoc3D
 						HRESULT hr = tex->LockRect(cf, i, &rect, NULL, 0);
 						assert(SUCCEEDED(hr));
 
-						copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+						copyData(rect.pBits, rect.Pitch, lvlData.ContentData + startPos,
 							data.Format, desc.Width, desc.Height, true);
 						startPos += faceSize;
 
@@ -276,8 +278,10 @@ namespace Apoc3D
 			}
 			void setData(const TextureData& data, D3DTexture2D* tex)
 			{
-				for (int i=0;i<data.LevelCount;i++)
+				for (int i = 0; i < data.LevelCount; i++)
 				{
+					const TextureLevelData& lvlData = data.Levels[i];
+
 					D3DSURFACE_DESC desc;
 					tex->GetLevelDesc(i, &desc);
 
@@ -285,7 +289,7 @@ namespace Apoc3D
 					HRESULT hr = tex->LockRect(i, &rect, NULL, 0);
 					assert(SUCCEEDED(hr));
 
-					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData, data.Format, desc.Width, desc.Height, true);
+					copyData(rect.pBits, rect.Pitch, lvlData.ContentData, data.Format, desc.Width, desc.Height, true);
 
 					hr = tex->UnlockRect(i);
 					assert(SUCCEEDED(hr));
@@ -293,8 +297,10 @@ namespace Apoc3D
 			}
 			void setData(const TextureData& data, D3DTexture3D* tex)
 			{
-				for (int i=0;i<data.LevelCount;i++)
+				for (int i = 0; i < data.LevelCount; i++)
 				{
+					const TextureLevelData& lvlData = data.Levels[i];
+
 					D3DVOLUME_DESC desc;
 					tex->GetLevelDesc(i, &desc);
 
@@ -303,7 +309,7 @@ namespace Apoc3D
 					assert(SUCCEEDED(hr));
 
 					copyData(box.pBits, box.RowPitch, box.SlicePitch,
-						data.Levels[i].ContentData, data.Format,
+						lvlData.ContentData, data.Format,
 						desc.Width, desc.Height, desc.Depth, true);
 
 					hr = tex->UnlockBox(i);

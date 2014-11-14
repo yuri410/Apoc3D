@@ -36,7 +36,6 @@ namespace APBuild
 	{
 		FbxConverter::Import(config);
 
-		BuildSystem::LogInformation(config.SrcFile, L">");
 	}
 	void BuildByASS(const MeshBuildConfig& config)
 	{
@@ -49,7 +48,6 @@ namespace APBuild
 		data->Save(fs);
 		delete data;
 
-		BuildSystem::LogInformation(config.SrcFile, L">");
 	}
 	void BuildByD3D(const MeshBuildConfig& config)
 	{
@@ -69,10 +67,9 @@ namespace APBuild
 		}
 		delete data;
 
-		BuildSystem::LogInformation(config.SrcFile, L">");
 	}
 
-	void MeshBuild::Build(const ConfigurationSection* sect)
+	void MeshBuild::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		MeshBuildConfig config;
 		config.Parse(sect);
@@ -97,6 +94,8 @@ namespace APBuild
 			BuildByD3D(config);
 			break;
 		}
+
+		BuildSystem::LogEntryProcessed(config.DstFile, hierarchyPath);
 	}
 
 	void MeshBuild::ConvertVertexData(ModelData* data, const MeshBuildConfig& config)

@@ -33,7 +33,7 @@ namespace APDesigner
 		{
 			const Project* prj = item->getProject();
 			ProjectResUILayout* mtrl = static_cast<ProjectResUILayout*>(item->getData());
-			String path = PathUtils::Combine(prj->getOutputPath(), mtrl->DestinationFile);
+			String path = mtrl->GetAbsoluteDestinationPath(mtrl->DestinationFile);
 
 			if (File::FileExists(path))
 			{

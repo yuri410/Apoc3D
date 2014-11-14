@@ -34,24 +34,25 @@ namespace APDesigner
 
 	private:
 		int ExecuteBuildOperation();
-		void ReadPipe(void* stdoutRead);
+		void ReadPipe(void* stdoutRead, List<char>& readBuffer, bool finalRead);
+		void ReadBuildOutputs(List<char>& readBuffer);
 
 		void Thread_Main();
 		static void ThreadEntry(void* arg);
 		
 		tthread::thread* m_processThread;
 
-		tthread::mutex* m_resultLock;
+		tthread::mutex m_resultLock;
 		Queue<String> m_lastResult;
 		bool m_hasLastError;
 
-		tthread::mutex* m_taskLock;
+		tthread::mutex m_taskLock;
 		Queue<Configuration*> m_taskList;
 
-		tthread::mutex* m_flagLock;
+		tthread::mutex m_flagLock;
 		volatile bool m_finished;
 		
-		tthread::mutex* m_processLock;
+		tthread::mutex m_processLock;
 
 
 		String m_buildWarningMessages;

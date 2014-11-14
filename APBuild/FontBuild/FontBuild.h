@@ -31,11 +31,11 @@ namespace APBuild
 {
 	namespace FontBuild
 	{
-		void Build(const ConfigurationSection* sect);
+		void Build(const String& hierarchyPath, const ConfigurationSection* sect);
 
-		void BuildFromFontMap(const ConfigurationSection* sect);
-		void BuildToFontMap(const ConfigurationSection* sect);
-		void BuildGlyphAvailabilityRanges(const ConfigurationSection* sect);
+		void BuildFromFontMap(const String& hierarchyPath, const ConfigurationSection* sect);
+		void BuildToFontMap(const String& hierarchyPath, const ConfigurationSection* sect);
+		void BuildGlyphAvailabilityRanges(const String& hierarchyPath, const ConfigurationSection* sect);
 	}
 }
 #endif

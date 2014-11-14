@@ -30,7 +30,7 @@ namespace APBuild
 {
 	namespace PakBuild
 	{
-		void Build(const ConfigurationSection* sect);
+		void Build(const String& hierarchyPath, const ConfigurationSection* sect);
 	}
 }
 

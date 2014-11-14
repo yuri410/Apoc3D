@@ -36,8 +36,8 @@ namespace APBuild
 		int Initialize();
 		void Finalize();
 
-		int Build(ConfigurationSection* sect);
-
+		int Build(ConfigurationSection* sect, ConfigurationSection* attachmentSect);
+		
 		void EnsureDirectory(const String& path);
 
 		enum CompileLogType
@@ -47,7 +47,12 @@ namespace APBuild
 			COMPILE_Error
 		};
 
+		void SetLoggingOutputPathRelativeBase(const String& basePath);
+
 		void Log(CompileLogType type, const String& message, const String& location);
+
+		void LogEntryProcessed(const String& destFile, const String& virtualItemPath, const String& prefix = L"");
+
 		void LogInformation(const String& message, const String& location);
 		void LogError(const String& message, const String& location);
 		void LogWarning(const String& message, const String& location);

@@ -34,6 +34,7 @@
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -86,23 +87,11 @@ namespace Apoc3D
 	enum struct MeshBuildMethod
 	{
 		ASS,
-		/** The method for importing FBX files
-		*/
+		/** The method for importing FBX files */
 		FBX,
 		D3D
 	};
-
-	/*enum struct FontStyle
-	{
-		Regular,
-		Bold,
-		Italic,
-		BoldItalic,
-		Strikeout
-	};*/
-
-
-
+	
 	/**
 	 *  Represent the build configuration for a specific type of assert in the project.
 	 */
@@ -112,48 +101,58 @@ namespace Apoc3D
 	public:
 		virtual ProjectItemType getType() const = 0;
 		
-		/**
-		 * Check if the item is not built yet
-		 */
+		/** Check if the item is not built yet */
 		virtual bool IsNotBuilt() = 0;
-		/**
-		 * Check if the item's built is earlier than the given time or not
-		 */
-		virtual bool IsEarlierThan(time_t t) = 0;
+		/** Check if the item's built is earlier than the given time or not */
+		virtual bool IsOutdated() = 0;
 
-		/** Indicates if the item's required further editing on the built file after building
-		*/
+		/** Indicates if the item's required further editing on the built file after building */
 		virtual bool RequiresPostEdit() { return false; }
 		virtual void Parse(const ConfigurationSection* sect) = 0;
+
+		ProjectItem* getParentItem() const { return m_parentItem; }
+
 		/** Save the project item as an section in the project file.
 		 *  @param savingBuild If true, build information in the section will be generated.
 		 */
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) = 0;
-		virtual List<String> GetAllOutputFiles() =0;
+		virtual List<String> GetAllOutputFiles() = 0;
 
 		virtual ~ProjectItemData() { }
 
+		String GetAbsoluteSourcePathBase() const;
+		String GetAbsoluteDestinationPathBase() const;
+
+		String GetAbsoluteSourcePath(const String& path) const;
+		String GetAbsoluteDestinationPath(const String& path) const;
+
 	protected:
 		Project* m_project;
+		ProjectItem* m_parentItem;
 
-		ProjectItemData(Project* prj)
-			: m_project(prj)
-		{
-		}
+		ProjectItemData(Project* prj, ProjectItem* item)
+			: m_project(prj), m_parentItem(item) { }
 
-		List<String> simpleGetAllOutputFiles(const String& destinationFile);
-		bool simpleIsEarlierThan(time_t t, const String& destinationFile);
-		bool simpleIsNotBuilt(const String& destinationFile);
+		String WrapSourcePath(const String& path, bool isAbsolute) const;
+		String WrapDestinationPath(const String& path, bool isAbsolute) const;
+
+		bool IsSourceFileNewer(const String& srcFile, time_t t) const;
+		bool IsSettingsNewerThan(const String& destinationFile) const;
+		bool IsSettingsNewerThan(const String& destinationFile, time_t& dstFileTime) const;
+
+		bool IsOutdatedSimple(const String& srcFile, const String& destinationFile) const;
+
+
+		List<String> GetDestFileOutput(const String& destinationFile);
+		bool IsDestFileNotBuilt(const String& destinationFile);
 	};
+
 	class APAPI ProjectCustomItem : public ProjectItemData
 	{
 		RTTI_DERIVED(ProjectCustomItem, ProjectItemData);
 	public:
-		ProjectCustomItem(Project* prj)
-			: ProjectItemData(prj)
-		{
-
-		}
+		ProjectCustomItem(Project* prj, ProjectItem* item)
+			: ProjectItemData(prj, item) { }
 
 		String EditorExtension;
 		String DestFile;
@@ -161,30 +160,29 @@ namespace Apoc3D
 
 		HashMap<String, String> Properties;
 
-		virtual bool IsNotBuilt();
+		virtual bool IsNotBuilt() override;
 
-		virtual bool IsEarlierThan(time_t t);
+		virtual bool IsOutdated() override;
 
-		virtual List<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles() override;
 
-		virtual ProjectItemType getType() const { return ProjectItemType::Custom; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		virtual ProjectItemType getType() const override { return ProjectItemType::Custom; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
+
 	};
 
 	/**
-	 *  Represents the type of resource that is natively supported by the engine.
+	 *  Represents the type of asset that is natively supported by the engine.
 	 */
-	class APAPI ProjectResource : public ProjectItemData
+	class APAPI ProjectAssetItemData : public ProjectItemData
 	{
-		RTTI_DERIVED(ProjectResource, ProjectItemData);
+		RTTI_DERIVED(ProjectAssetItemData, ProjectItemData);
 	protected:
-		ProjectResource(Project* prj)
-			: ProjectItemData(prj)
-		{
-
-		}
+		ProjectAssetItemData(Project* prj, ProjectItem* item)
+			: ProjectItemData(prj, item) { }
 	};
+
 	/** 
 	 *  Represents a project folder 
 	 *
@@ -197,29 +195,30 @@ namespace Apoc3D
 	public:
 		String PackType;
 		String DestinationPack;
-		bool IncludeUnpackedSubFolderItems;
 
-		ProjectFolder(Project* prj)
-			: ProjectItemData(prj), IncludeUnpackedSubFolderItems(false)
-		{
+		String SubItemsSourceRelativeBase;
+		String SubItemsDestinationRelativeBase;
 
-		}
+		bool IncludeUnpackedSubFolderItems = false;
+
+		ProjectFolder(Project* prj, ProjectItem* item)
+			: ProjectItemData(prj, item) { }
 
 		List<ProjectItem*> SubItems;
 
-		virtual bool IsNotBuilt() { return true; }
-		virtual bool IsEarlierThan(time_t t) { return true; }
+		virtual bool IsNotBuilt() override { return true; }
+		virtual bool IsOutdated() override { return true; }
 
 
-		virtual List<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles() override;
 		
-		virtual ProjectItemType getType() const { return ProjectItemType::Folder; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		virtual ProjectItemType getType() const override { return ProjectItemType::Folder; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 		void SavePackBuildConfig(ConfigurationSection* sect);
 
 	private:
-		void AddPackageEntries(ConfigurationSection* sect, int32& idx);
+		void AddPackBuildSubItems(ConfigurationSection* sect, int32& idx);
 	};
 
 	/**
@@ -230,92 +229,83 @@ namespace Apoc3D
 	 *   2. From image/texture files. Pixel conversion, resizing, mipmap generation can be
 	 *      accomplished by the build system when specified.
 	 */
-	class APAPI ProjectResTexture : public ProjectResource
+	class APAPI ProjectResTexture : public ProjectAssetItemData
 	{
-		RTTI_DERIVED(ProjectResTexture, ProjectResource);
+		RTTI_DERIVED(ProjectResTexture, ProjectAssetItemData);
 	public:
-		ProjectResTexture(Project* prj)
-			: ProjectResource(prj)
-		{
-
-		}
-		
+		ProjectResTexture(Project* prj, ProjectItem* item)
+			: ProjectAssetItemData(prj, item) { }
 
 		String SourceFile;
 		String DestinationFile;
-		TextureCompressionType CompressionType;
-		bool GenerateMipmaps;
-		bool Resize;
-		int NewWidth;
-		int NewHeight;
-		int NewDepth;
-		TextureFilterType ResizeFilterType;
-		Apoc3D::Graphics::PixelFormat NewFormat;
+		TextureCompressionType CompressionType = TextureCompressionType::None;
+		bool GenerateMipmaps = false;
+		bool Resize = false;
+		int NewWidth = 0;
+		int NewHeight = 0;
+		int NewDepth = 0;
+		TextureFilterType ResizeFilterType = TextureFilterType::BSpline;
+		Apoc3D::Graphics::PixelFormat NewFormat = FMT_Unknown;
 
-		bool AssembleCubemap;
-		bool AssembleVolumeMap;
+		TextureBuildMethod Method = TextureBuildMethod::D3D;
+
+		bool AssembleCubemap = false;
+		bool AssembleVolumeMap = false;
+
 
 		HashMap<uint, String> SubMapTable;
 		HashMap<uint, String> SubAlphaMapTable;
 
-		TextureBuildMethod Method;
 
-		virtual ProjectItemType getType() const { return ProjectItemType::Texture; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		virtual ProjectItemType getType() const override { return ProjectItemType::Texture; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
+		virtual List<String> GetAllOutputFiles() override;
 
-		virtual List<String> GetAllOutputFiles();
-
-		virtual bool IsNotBuilt();
-		virtual bool IsEarlierThan(time_t t);
+		virtual bool IsNotBuilt() override;
+		virtual bool IsOutdated() override;
 
 	};
 
-	class APAPI ProjectResMaterial : public ProjectResource
+	class APAPI ProjectResMaterial : public ProjectAssetItemData
 	{
-		RTTI_DERIVED(ProjectResMaterial, ProjectResource);
+		RTTI_DERIVED(ProjectResMaterial, ProjectAssetItemData);
 	public:
-		ProjectResMaterial(Project* prj)
-			: ProjectResource(prj)
-		{
-
-		}
+		ProjectResMaterial(Project* prj, ProjectItem* item)
+			: ProjectAssetItemData(prj, item) { }
 
 		String DestinationFile;
 
-		virtual ProjectItemType getType() const { return ProjectItemType::Material; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		virtual ProjectItemType getType() const override { return ProjectItemType::Material; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles() override;
 
-		virtual bool IsNotBuilt();
-		virtual bool IsEarlierThan(time_t t);
+		virtual bool IsNotBuilt() override;
+		virtual bool IsOutdated() override;
 	};
 
-	class APAPI ProjectResMaterialSet : public ProjectResource
+	class APAPI ProjectResMaterialSet : public ProjectAssetItemData
 	{
-		RTTI_DERIVED(ProjectResMaterialSet, ProjectResource);
+		RTTI_DERIVED(ProjectResMaterialSet, ProjectAssetItemData);
 	public:
-		ProjectResMaterialSet(Project* prj)
-			: ProjectResource(prj)
-		{
-
-		}
+		ProjectResMaterialSet(Project* prj, ProjectItem* item)
+			: ProjectAssetItemData(prj, item) { }
 
 		String SourceFile;
 		String DestinationLocation;
 		String DestinationToken;
 
-		virtual ProjectItemType getType() const { return ProjectItemType::MaterialSet; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		virtual ProjectItemType getType() const override { return ProjectItemType::MaterialSet; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles() override;
 
-		virtual bool IsNotBuilt();
-		virtual bool IsEarlierThan(time_t t);
+		virtual bool IsNotBuilt() override;
+		virtual bool IsOutdated() override;
 	};
 
 	/**
@@ -324,15 +314,12 @@ namespace Apoc3D
 	 *  .mesh file only contains the geometry, material information of the model, while in the anim file
 	 *  frames, bones are included.
 	 */
-	class APAPI ProjectResModel : public ProjectResource
+	class APAPI ProjectResModel : public ProjectAssetItemData
 	{
-		RTTI_DERIVED(ProjectResModel, ProjectResource);
+		RTTI_DERIVED(ProjectResModel, ProjectAssetItemData);
 	public:
-		ProjectResModel(Project* prj)
-			: ProjectResource(prj)
-		{
-
-		}
+		ProjectResModel(Project* prj, ProjectItem* item)
+			: ProjectAssetItemData(prj, item) { }
 
 		String SrcFile;
 		String DstFile;
@@ -340,31 +327,28 @@ namespace Apoc3D
 
 		MeshBuildMethod Method;
 
-		bool UseVertexFormatConversion;
-		List<VertexElement> VertexElements;
+		bool UseVertexFormatConversion = false;
+		List<VertexElement> ConversionVertexElements;
 
-		bool CollapseMeshs;
+		bool CollapseMeshs = false;
 
-		virtual bool RequiresPostEdit() { return true; }
-		virtual ProjectItemType getType() const { return ProjectItemType::Model; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		virtual bool RequiresPostEdit() override { return true; }
+		virtual ProjectItemType getType() const override { return ProjectItemType::Model; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles() override;
 
-		virtual bool IsNotBuilt();
-		virtual bool IsEarlierThan(time_t t);
+		virtual bool IsNotBuilt() override;
+		virtual bool IsOutdated() override;
 	};
 	
-	class APAPI ProjectResEffect : public ProjectResource
+	class APAPI ProjectResEffect : public ProjectAssetItemData
 	{
-		RTTI_DERIVED(ProjectResEffect, ProjectResource);
+		RTTI_DERIVED(ProjectResEffect, ProjectAssetItemData);
 	public:
-		ProjectResEffect(Project* prj)
-			: ProjectResource(prj)
-		{
-
-		}
+		ProjectResEffect(Project* prj, ProjectItem* item)
+			: ProjectAssetItemData(prj, item) { }
 
 		String VS;
 		String PS;
@@ -379,25 +363,22 @@ namespace Apoc3D
 
 		List<String> Targets;
 
-		virtual ProjectItemType getType() const { return ProjectItemType::Effect; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		virtual ProjectItemType getType() const override { return ProjectItemType::Effect; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles() override;
 
-		virtual bool IsNotBuilt();
-		virtual bool IsEarlierThan(time_t t);
+		virtual bool IsNotBuilt() override;
+		virtual bool IsOutdated() override;
 
 	};
-	class APAPI ProjectResCustomEffect : public ProjectResource
+	class APAPI ProjectResCustomEffect : public ProjectAssetItemData
 	{
-		RTTI_DERIVED(ProjectResCustomEffect, ProjectResource);
+		RTTI_DERIVED(ProjectResCustomEffect, ProjectAssetItemData);
 	public:
-		ProjectResCustomEffect(Project* prj)
-			: ProjectResource(prj)
-		{
-
-		}
+		ProjectResCustomEffect(Project* prj, ProjectItem* item)
+			: ProjectAssetItemData(prj, item) { }
 
 		String SrcVSFile;
 		String SrcPSFile;
@@ -406,58 +387,53 @@ namespace Apoc3D
 		String EntryPointPS;
 		String Profile;
 
-		virtual ProjectItemType getType() const { return ProjectItemType::CustomEffect; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		virtual ProjectItemType getType() const override { return ProjectItemType::CustomEffect; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles() override;
 
-		virtual bool IsNotBuilt();
-		virtual bool IsEarlierThan(time_t t);
+		virtual bool IsNotBuilt() override;
+		virtual bool IsOutdated() override;
 	};
-	class APAPI ProjectResEffectList : public ProjectResource
-	{
-		RTTI_DERIVED(ProjectResEffectList, ProjectResource);
-	public:
-		ProjectResEffectList(Project* prj)
-			: ProjectResource(prj)
-		{
 
-		}
+	class APAPI ProjectResEffectList : public ProjectAssetItemData
+	{
+		RTTI_DERIVED(ProjectResEffectList, ProjectAssetItemData);
+	public:
+		ProjectResEffectList(Project* prj, ProjectItem* item)
+			: ProjectAssetItemData(prj, item) { }
 
 		String DestFile;
 
-		virtual ProjectItemType getType() const { return ProjectItemType::EffectList; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		virtual ProjectItemType getType() const override { return ProjectItemType::EffectList; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles() override;
 
-		virtual bool IsNotBuilt();
-		virtual bool IsEarlierThan(time_t t) { return true; }
+		virtual bool IsNotBuilt() override;
+		virtual bool IsOutdated() override { return true; }
 	};
 
-	class APAPI ProjectResShaderNetwork : public ProjectResource
+	class APAPI ProjectResShaderNetwork : public ProjectAssetItemData
 	{
-		RTTI_DERIVED(ProjectResShaderNetwork, ProjectResource);
+		RTTI_DERIVED(ProjectResShaderNetwork, ProjectAssetItemData);
 	public:
-		ProjectResShaderNetwork(Project* prj)
-			: ProjectResource(prj)
-		{
-
-		}
+		ProjectResShaderNetwork(Project* prj, ProjectItem* item)
+			: ProjectAssetItemData(prj, item) { }
 
 		String SrcFile;
 		String DestFile;
 
-		virtual ProjectItemType getType() const { return ProjectItemType::ShaderNetwork; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		virtual ProjectItemType getType() const override { return ProjectItemType::ShaderNetwork; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles() override;
 
-		virtual bool IsNotBuilt();
-		virtual bool IsEarlierThan(time_t t);
+		virtual bool IsNotBuilt() override;
+		virtual bool IsOutdated() override;
 	};
 
 	/**
@@ -465,15 +441,13 @@ namespace Apoc3D
 	 *  Font asset can only be built from system fonts so far.
 	 *  When using languages like Chinese, Korean, the generated font file could be up to MBs in size.
 	 */
-	class APAPI ProjectResFont : public ProjectResource
+	class APAPI ProjectResFont : public ProjectAssetItemData
 	{
-		RTTI_DERIVED(ProjectResFont, ProjectResource);
+		RTTI_DERIVED(ProjectResFont, ProjectAssetItemData);
 	public:
-		ProjectResFont(Project* prj)
-			: ProjectResource(prj)
-		{
+		ProjectResFont(Project* prj, ProjectItem* item)
+			: ProjectAssetItemData(prj, item) { }
 
-		}
 		struct CharRange
 		{
 			int MinChar;
@@ -482,138 +456,124 @@ namespace Apoc3D
 
 		List<CharRange> Ranges;
 		String SourceFile;
-		float Size;
-		bool AntiAlias;
-
 		String DestFile;
 
-		virtual ProjectItemType getType() const { return ProjectItemType::Font; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		float Size = 0;
+		bool AntiAlias = false;
 
-		virtual List<String> GetAllOutputFiles();
 
-		virtual bool IsNotBuilt();
-		virtual bool IsEarlierThan(time_t t);
+		virtual ProjectItemType getType() const override { return ProjectItemType::Font; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
+
+		virtual List<String> GetAllOutputFiles() override;
+
+		virtual bool IsNotBuilt() override;
+		virtual bool IsOutdated() override;
 	};
 
-	class APAPI ProjectResFontGlyphDist : public ProjectResource
+	class APAPI ProjectResFontGlyphDist : public ProjectAssetItemData
 	{
-		RTTI_DERIVED(ProjectResFontGlyphDist, ProjectResource);
+		RTTI_DERIVED(ProjectResFontGlyphDist, ProjectAssetItemData);
 	public:
-		ProjectResFontGlyphDist(Project* prj)
-			: ProjectResource(prj)
-		{
-
-		}
+		ProjectResFontGlyphDist(Project* prj, ProjectItem* item)
+			: ProjectAssetItemData(prj, item) { }
 		
 		String SourceFile;
 		String DestFile;
 
-		virtual ProjectItemType getType() const { return ProjectItemType::FontGlyphDist; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		virtual ProjectItemType getType() const override { return ProjectItemType::FontGlyphDist; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles() override;
 
-		virtual bool IsNotBuilt();
-		virtual bool IsEarlierThan(time_t t);
+		virtual bool IsNotBuilt() override;
+		virtual bool IsOutdated() override;
 	};
 
-	class APAPI ProjectResTAnim : public ProjectResource
+	class APAPI ProjectResTAnim : public ProjectAssetItemData
 	{
-		RTTI_DERIVED(ProjectResTAnim, ProjectResource);
+		RTTI_DERIVED(ProjectResTAnim, ProjectAssetItemData);
 	public:
-		ProjectResTAnim(Project* prj)
-			: ProjectResource(prj)
-		{
-
-		}
+		ProjectResTAnim(Project* prj, ProjectItem* item)
+			: ProjectAssetItemData(prj, item) { }
 
 		String SourceFile;
 		String DestinationFile;
-		bool Reverse;
+		bool Reverse = false;
 
 		HashMap<String, int> ObjectIndexMapping;
 
-		virtual ProjectItemType getType() const { return ProjectItemType::TransformAnimation; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		virtual ProjectItemType getType() const override { return ProjectItemType::TransformAnimation; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles() override;
 
-		virtual bool IsNotBuilt();
-		virtual bool IsEarlierThan(time_t t);
+		virtual bool IsNotBuilt() override;
+		virtual bool IsOutdated() override;
 	};
 
-	class APAPI ProjectResMAnim : public ProjectResource
+	class APAPI ProjectResMAnim : public ProjectAssetItemData
 	{
-		RTTI_DERIVED(ProjectResMAnim, ProjectResource);
+		RTTI_DERIVED(ProjectResMAnim, ProjectAssetItemData);
 	public:
-		ProjectResMAnim(Project* prj)
-			: ProjectResource(prj)
-		{
-
-		}
+		ProjectResMAnim(Project* prj, ProjectItem* item)
+			: ProjectAssetItemData(prj, item) { }
 
 		String SourceFile;
 		String DestinationFile;
 
-		virtual ProjectItemType getType() const { return ProjectItemType::MaterialAnimation; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		virtual ProjectItemType getType() const override { return ProjectItemType::MaterialAnimation; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles() override;
 
-		virtual bool IsNotBuilt();
-		virtual bool IsEarlierThan(time_t t);
+		virtual bool IsNotBuilt() override;
+		virtual bool IsOutdated() override;
 	};
 
-	class APAPI ProjectResUILayout : public ProjectResource
+	class APAPI ProjectResUILayout : public ProjectAssetItemData
 	{
-		RTTI_DERIVED(ProjectResUILayout, ProjectResource);
+		RTTI_DERIVED(ProjectResUILayout, ProjectAssetItemData);
 	public:
-		ProjectResUILayout(Project* prj)
-			: ProjectResource(prj)
-		{
-
-		}
+		ProjectResUILayout(Project* prj, ProjectItem* item)
+			: ProjectAssetItemData(prj, item) { }
 
 		String SourceFile;
 		String DestinationFile;
 
-		virtual ProjectItemType getType() const { return ProjectItemType::UILayout; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		virtual ProjectItemType getType() const override { return ProjectItemType::UILayout; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles() override;
 
-		virtual bool IsNotBuilt();
-		virtual bool IsEarlierThan(time_t t);
+		virtual bool IsNotBuilt() override;
+		virtual bool IsOutdated() override;
 	};
 
 
-	class APAPI ProjectResCopy : public ProjectResource
+	class APAPI ProjectResCopy : public ProjectAssetItemData
 	{
-		RTTI_DERIVED(ProjectResCopy, ProjectResource);
+		RTTI_DERIVED(ProjectResCopy, ProjectAssetItemData);
 	public:
-		ProjectResCopy(Project* prj)
-			: ProjectResource(prj)
-		{
-
-		}
+		ProjectResCopy(Project* prj, ProjectItem* item)
+			: ProjectAssetItemData(prj, item) { }
 
 		String SourceFile;
 		String DestinationFile;
 
-		virtual ProjectItemType getType() const { return ProjectItemType::Copy; }
-		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		virtual ProjectItemType getType() const override { return ProjectItemType::Copy; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles() override;
 
-		virtual bool IsNotBuilt();
-		virtual bool IsEarlierThan(time_t t);
+		virtual bool IsNotBuilt() override;
+		virtual bool IsOutdated() override;
 	};
 
 
@@ -627,57 +587,105 @@ namespace Apoc3D
 	{
 	public:
 		ProjectItem(Project* prj)
-			: m_parent(0), m_typeData(0), m_timeStamp(0), m_project(prj)
-		{
+			: m_project(prj) { }
 
-		}
 		ProjectItem(Project* prj, const String& name, ProjectItemData* data, ProjectFolder* parent = nullptr)
-			: m_timeStamp(0), m_project(prj), m_parent(parent), m_typeData(data), m_name(name)
-		{
+			: m_project(prj), m_parentFolder(parent), m_typeData(data), m_name(name) { }
 
-		}
-
-		const String& getName() const { return m_name; }
-		ProjectItemType getType() const { return m_typeData->getType(); }
-		ProjectItemData* getData() const { return m_typeData; }
-		Project* getProject() const { return m_project; }
-		virtual void Rename(const String& newName)
-		{
-			m_name = newName;
-		}
+		virtual void Rename(const String& newName);
+		virtual void SetParent(ProjectFolder* parent);
 
 		void Parse(const ConfigurationSection* sect);
 		ConfigurationSection* Save(bool savingBuild);
 
-		/**
-		 *  Check if the item's built version is outdated
-		 */
+		/** Check if the item's built version is outdated */
 		bool IsOutDated() const 
 		{
 			if (m_typeData)
 			{
-				return m_typeData->IsNotBuilt() || m_typeData->IsEarlierThan(m_timeStamp);
+				return m_typeData->IsNotBuilt() || m_typeData->IsOutdated();
 			}
 			return false;
 		}
 		void NotifyModified();
 
-	private:
-		Project* m_project;
-		ProjectFolder* m_parent;
 
-		ProjectItemData* m_typeData;
+		const String& getName() const { return m_name; }
+		ProjectItemType getType() const { return m_typeData->getType(); }
+		ProjectItemData* getData() const { return m_typeData; }
+		ProjectFolder* getParentFolder() const { return m_parentFolder; }
+		Project* getProject() const { return m_project; }
+
+		bool isSettingsNewerThan(time_t t) const { return t < m_timeStamp; }
+	private:
+		Project* m_project = nullptr;
+		ProjectFolder* m_parentFolder = nullptr;
+
+		ProjectItemData* m_typeData = nullptr;
 
 		String m_name;
 		
-		/**
-		 *  The time of the last modification time
-		 */
-		time_t m_timeStamp;
+		/** The time of the last modification time */
+		time_t m_timeStamp = 0;
 	};
+
+	struct ProjectBuildScript
+	{
+		ConfigurationSection* ItemTree = nullptr;
+
+		String BaseOutputDir;
+
+		ProjectBuildScript() { }
+
+		ProjectBuildScript(ConfigurationSection* sect, const String& baseOutDir) 
+			: ItemTree(sect), BaseOutputDir(baseOutDir) { }
+	};
+
 	class APAPI Project
 	{
+	public:
+		void AddItem(ProjectItem* item) { m_items.Add(item); }
+
+		/**  Load the project from a ConfigurationSection */
+		void Parse(const ConfigurationSection* sect);
+		
+		/**  Saves the project into a file */
+		void Save(const String& file);
+
+		/**
+		 *  Generate a series of build action represented by ConfigurationSection object.
+		 *  The sequence is based on the dependency of project items.
+		 */
+		void GenerateBuildScripts(List<ProjectBuildScript>& result);
+
+		/**  Sets the absolute paths for the project. */
+		void SetPath(const String& basePath, const String* outputPath);
+
+
+		const String& getName() const { return m_name; }
+
+		/**  Gets the relative path for textures */
+		const String& getTexturePath() const { return m_texturePath; }
+
+		/**  Gets the relative path for materials */
+		const String& getMaterialPath() const { return m_materialPath; }
+
+
+
+		/**  Gets the absolute path for placing imported assets or project items */
+		const String& getOutputPath() const { return m_outputPath; }
+
+
+		/** Gets the absolute path for the project's source assets. */
+		const String& getBasePath() const { return m_basePath; }
+
+		const List<ProjectItem*>& getItems() const { return m_items; }
+
+		void setTexturePath(const String& path) { m_texturePath = path; }
+
 	private:
+		ConfigurationSection* Save();
+
 		List<ProjectItem*> m_items;
 		String m_name;
 
@@ -687,90 +695,19 @@ namespace Apoc3D
 		String m_basePath;
 		String m_outputPath;
 		String m_originalOutputPath;
-
-		ConfigurationSection* Save();
-	public:
-		const String& getName() const { return m_name; }
-		
-		/** 
-		 *  Gets the relative path for textures
-		 */
-		const String& getTexturePath() const { return m_texturePath; }
-		/**
-		 *  Gets the relative path for materials
-		 */
-		const String& getMaterialPath() const { return m_materialPath; }
-		
-
-
-		/**
-		 *  Gets the absolute path for placing imported assets or project items
-		 */
-		const String& getOutputPath() const { return m_outputPath; }
-
-		/**
-		 *  Sets the absolute path for the project's source assets. 
-		 *  Once this is set, OutputPath will be changed to "build" sub folder under this path
-		 */
-		void setBasePath(const String& path);
-		/**
-		 *  Gets the absolute path for the project's source assets. 
-		 */
-		const String& getBasePath() const { return m_basePath; }
-
-		const List<ProjectItem*>& getItems() const { return m_items; }
-
-		void AddItem(ProjectItem* item) { m_items.Add(item); }
-
-		/**
-		 *  Load the project from a ConfigurationSection
-		 */
-		void Parse(const ConfigurationSection* sect);
-		
-		/**
-		 *  Saves the project into a file
-		 */
-		void Save(const String& file);
-
-		/**
-		 *  Generate a series of build action represented by ConfigurationSection object.
-		 *  The sequence is based on the dependency of project items.
-		 */
-		void GenerateBuildScripts(List<ConfigurationSection*>& result);
-
-
-		void setTexturePath(const String& path) { m_texturePath = path; }
 	};
 
 
 
-	namespace ProjectTypeUtils
+	namespace ProjectUtils
 	{
-		ProjectItemType APAPI ParseProjectItemType(const String& str);
-		String APAPI ToString(ProjectItemType type);
-		void APAPI FillProjectItemTypeNames(List<String>& names);
-		bool APAPI SupportsProjectItemType(const String& str);
+		APAPI extern const TypeDualConverter<ProjectItemType> ProjectItemTypeConv;
+		APAPI extern const TypeDualConverter<TextureFilterType> TextureFilterTypeConv;
+		APAPI extern const TypeDualConverter<TextureBuildMethod> TextureBuildMethodConv;
+		APAPI extern const TypeDualConverter<TextureCompressionType> TextureCompressionTypeConv;
+		APAPI extern const TypeDualConverter<MeshBuildMethod> MeshBuildMethodConv;
 
-		TextureFilterType APAPI ParseTextureFilterType(const String& str);
-		String APAPI ToString(TextureFilterType flt);
-		void APAPI FillTextureFilterTypeNames(List<String>& names);
-
-		TextureBuildMethod APAPI ParseTextureBuildMethod(const String& str);
-		String APAPI ToString(TextureBuildMethod method);
-		void APAPI FillTextureBuildMethodNames(List<String>& names);
-
-		TextureCompressionType APAPI ParseTextureCompressionType(const String& str);
-		String APAPI ToString(TextureCompressionType ct);
-		void APAPI FillTextureCompressionTypeNames(List<String>& names);
-
-		MeshBuildMethod APAPI ParseModelBuildMethod(const String& str);
-		String APAPI ToString(MeshBuildMethod method);
-		void APAPI FillModelBuildMethodNames(List<String>& names);
-
-		/*FontStyle ParseFontStyle(const String& str);
-		String ToString(FontStyle type);
-		void FillFontStyleNames(List<String>& names);
-		*/
+		APAPI extern const String BuildAttachmentSectionGUID;
 	};
 }
 #endif

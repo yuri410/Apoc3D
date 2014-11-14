@@ -58,6 +58,12 @@ namespace Apoc3D
 			
 			m_workingDirs.Add(_path);
 		}
+		void FileSystem::PopWrokingDirectory()
+		{
+			if (m_workingDirs.getCount() > 0)
+				m_workingDirs.RemoveAt(m_workingDirs.getCount() - 1);
+		}
+
 		void FileSystem::RegisterArchiveType(ArchiveFactory* factory)
 		{
 			m_factories.Add(factory->getExtension(), factory);

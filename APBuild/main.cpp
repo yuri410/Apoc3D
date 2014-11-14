@@ -73,7 +73,7 @@ int PrepareBuild(int argc, _TCHAR* argv[])
 					}
 				}
 
-				int ret = BuildSystem::Build(sect);
+				int ret = BuildSystem::Build(sect, nullptr);
 				delete sect;
 				return ret;
 			}
@@ -98,8 +98,10 @@ int PrepareBuild(int argc, _TCHAR* argv[])
 			Configuration::ChildTable::Enumerator e = config->GetEnumerator();
 			e.MoveNext();
 		
+			ConfigurationSection* attachmentSect = config->get(ProjectUtils::BuildAttachmentSectionGUID);
+
 			// build the node
-			int ret = BuildSystem::Build(e.getCurrentValue());
+			int ret = BuildSystem::Build(e.getCurrentValue(), attachmentSect);
 			delete config;
 
 			return ret;

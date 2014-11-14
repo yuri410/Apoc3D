@@ -1445,7 +1445,7 @@ LFail:
 
 		texData.Free();
 	}
-	void TextureBuild::Build(const ConfigurationSection* sect)
+	void TextureBuild::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		TextureBuildConfig config;
 		config.Parse(sect);
@@ -1458,7 +1458,6 @@ LFail:
 
 		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestinationFile));
 
-		BuildSystem::LogInformation(config.SourceFile, L">");
 
 		switch (config.Method)
 		{
@@ -1469,6 +1468,7 @@ LFail:
 			BuildByDevIL(config);
 			break;
 		}
-			
+
+		BuildSystem::LogEntryProcessed(config.DestinationFile, hierarchyPath);
 	}
 }

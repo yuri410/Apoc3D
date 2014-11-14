@@ -9,7 +9,7 @@ namespace APDesigner
 		{
 			const Project* prj = item->getProject();
 			ProjectResFontGlyphDist* mdl = static_cast<ProjectResFontGlyphDist*>(item->getData());
-			String path = PathUtils::Combine(prj->getOutputPath(), mdl->DestFile);
+			String path = mdl->GetAbsoluteDestinationPath(mdl->DestFile);
 			if (File::FileExists(path))
 			{
 				FontDocument* md = new FontDocument(m_mainWindow, this, path);

@@ -32,7 +32,7 @@ namespace APBuild
 {
 	void Parse(const AFXBuildConfig& config, ConfigurationSection* ps, EffectParameter& ep);
 
-	void AFXBuild::Build(const ConfigurationSection* sect)
+	void AFXBuild::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		AFXBuildConfig config;
 		config.Parse(sect);
@@ -159,6 +159,7 @@ namespace APBuild
 		{
 			data.Save(fos);
 		}
+		BuildSystem::LogEntryProcessed(config.DestFile, hierarchyPath);
 	}
 
 	void Parse(const AFXBuildConfig& config, ConfigurationSection* ps, EffectParameter& ep)

@@ -94,6 +94,8 @@ namespace APDesigner
 		void BtnForceBuild_Release(Button* ctrl);
 		void BtnApplyMod_Release(Button* ctrl);
 
+		void OpenPaneFilePathBrowse(Button* ctrl,  bool load);
+
 		void BtnBrowseOpen_Release(Button* ctrl);
 		void BtnBrowseSave_Release(Button* ctrl);
 
@@ -130,7 +132,8 @@ namespace APDesigner
 
 		Button* m_applyModify;
 
-		Project* m_currentProject;
+		Project* m_currentProject = nullptr;
+		ProjectItem* m_selectedItem = nullptr;
 
 		struct PropItem
 		{

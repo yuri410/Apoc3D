@@ -499,14 +499,14 @@ namespace APDesigner
 				AddPropertyCheckbox(L"GenerateMipmaps", tex->GenerateMipmaps);
 
 				List<String> items;
-				ProjectTypeUtils::FillTextureBuildMethodNames(items);
-				AddPropertyDropdown(L"Method", items, items.IndexOf(ProjectTypeUtils::ToString(tex->Method)));
+				ProjectUtils::TextureBuildMethodConv.DumpNames(items);
+				AddPropertyDropdown(L"Method", items, items.IndexOf(ProjectUtils::TextureBuildMethodConv.ToString(tex->Method)));
 				
 				AddPropertyCheckbox(L"Resize", tex->Resize);
 
 				items.Clear();
-				ProjectTypeUtils::FillTextureFilterTypeNames(items);
-				AddPropertyDropdown(L"ResizeFilterType", items, items.IndexOf(ProjectTypeUtils::ToString(tex->ResizeFilterType)));
+				ProjectUtils::TextureFilterTypeConv.DumpNames(items);
+				AddPropertyDropdown(L"ResizeFilterType", items, items.IndexOf(ProjectUtils::TextureFilterTypeConv.ToString(tex->ResizeFilterType)));
 
 				items.Clear();
 				PixelFormatUtils::DumpPixelFormatName(items);
@@ -523,8 +523,8 @@ namespace APDesigner
 
 
 				List<String> items;
-				ProjectTypeUtils::FillModelBuildMethodNames(items);
-				AddPropertyDropdown(L"Method", items, items.IndexOf(ProjectTypeUtils::ToString(mdl->Method)));
+				ProjectUtils::MeshBuildMethodConv.DumpNames(items);
+				AddPropertyDropdown(L"Method", items, items.IndexOf(ProjectUtils::MeshBuildMethodConv.ToString(mdl->Method)));
 			}
 			break;
 		case ProjectItemType::Font:
@@ -593,7 +593,7 @@ namespace APDesigner
 					else if (item.Name == L"Method")
 					{
 						String temp; item.getAsCombo(temp);
-						tex->Method = ProjectTypeUtils::ParseTextureBuildMethod(temp);
+						tex->Method = ProjectUtils::TextureBuildMethodConv.Parse(temp);
 					}
 					else if (item.Name == L"Resize")
 					{
@@ -602,7 +602,7 @@ namespace APDesigner
 					else if (item.Name == L"ResizeFilterType")
 					{
 						String temp; item.getAsCombo(temp);
-						tex->ResizeFilterType = ProjectTypeUtils::ParseTextureFilterType(temp);
+						tex->ResizeFilterType = ProjectUtils::TextureFilterTypeConv.Parse(temp);
 					}
 					else if (item.Name == L"NewFormat")
 					{
@@ -677,7 +677,7 @@ namespace APDesigner
 				case ProjectItemType::Texture:
 					{
 						ProjectResTexture* tex = static_cast<ProjectResTexture*>(item->getData());
-						String path = PathUtils::Combine(m_currentProject->getOutputPath(), tex->DestinationFile);
+						String path = tex->GetAbsoluteDestinationPath(tex->DestinationFile);
 						if (File::FileExists(path))
 						{
 							TextureViewer* tv = new TextureViewer(m_mainWindow, tex->DestinationFile, path);
@@ -735,104 +735,65 @@ namespace APDesigner
 		}
 		NukePropertyList(true);
 	}
-	void ResourcePane::BtnBrowseOpen_Release(Button* ctrl)
+
+	void ResourcePane::BtnBrowseOpen_Release(Button* ctrl) { OpenPaneFilePathBrowse(ctrl, true); }
+	void ResourcePane::BtnBrowseSave_Release(Button* ctrl) { OpenPaneFilePathBrowse(ctrl, false); }
+
+	void ResourcePane::OpenPaneFilePathBrowse(Button* ctrl, bool load)
 	{
-		if (!m_currentProject)
+		if (m_currentProject == nullptr || m_selectedItem == nullptr)
 			return;
 
-		for (int32 i=0;i<m_proplist.getCount();i++)
+		for (int32 i = 0; i < m_proplist.getCount(); i++)
 		{
-			if (m_proplist[i].ExtraButton == ctrl)
+			const PropItem& pi = m_proplist[i];
+			if (pi.ExtraButton == ctrl)
 			{
-				OpenFileDialog dlg;
-
-				// make filter
-				wchar_t filter[512];
-				memset(filter, 0, sizeof(filter));
-
-					
-				String right = L"*.*";
-
-				String left = L"All Files (";
-				left.append(right);
-				left.append(L")");
-				memcpy(filter, left.c_str(), sizeof(wchar_t)*left.length());
-				filter[left.length()] = 0;
-
-				memcpy(filter+(left.length()+1),right.c_str(), sizeof(wchar_t)*right.length());
-
-				dlg.SetFilter(filter);
-
-				if (dlg.ShowDialog() == DLGRES_OK)
+				bool done = false;
+				String selectedFilePath;
+				if (load)
 				{
-					TextBox* tb = up_cast<TextBox*>(m_proplist[i].Editor);
-					if (tb)
+					OpenFileDialog dlg;
+					dlg.SetAllFilesFilter();
+
+					if (dlg.ShowDialog() == DLGRES_OK)
 					{
-						const String& path	= dlg.getFilePath()[0];
+						done = true;
+						selectedFilePath = dlg.getFilePath()[0];
+					}
+				}
+				else
+				{
+					SaveFileDialog dlg;
+					dlg.SetAllFilesFilter();
 
-						wchar_t buffer[260];
-						PathRelativePathTo(buffer, m_currentProject->getBasePath().c_str(), FILE_ATTRIBUTE_DIRECTORY, path.c_str(),FILE_ATTRIBUTE_NORMAL);
-
-						String result = buffer;
-						String toIgnore(1, '.');
-						toIgnore.append(1, PathUtils::DirectorySeparator);
-
-						if (StringUtils::StartsWith(result, toIgnore))
-							result = result.substr(2);
-
-						tb->SetText(result);
+					if (dlg.ShowDialog() == DLGRES_OK)
+					{
+						done = true;
+						selectedFilePath = dlg.getFilePath()[0];
 					}
 				}
 
-				break;
-			}
-		}
-	}
-	void ResourcePane::BtnBrowseSave_Release(Button* ctrl)
-	{
-		if (!m_currentProject)
-			return;
 
-		for (int32 i=0;i<m_proplist.getCount();i++)
-		{
-			if (m_proplist[i].ExtraButton == ctrl)
-			{
-				SaveFileDialog dlg;
-
-				// make filter
-				wchar_t filter[512];
-				memset(filter, 0, sizeof(filter));
-
-					
-				String right = L"*.*";
-
-				String left = L"All Files (";
-				left.append(right);
-				left.append(L")");
-				memcpy(filter, left.c_str(), sizeof(wchar_t)*left.length());
-				filter[left.length()] = 0;
-
-				memcpy(filter+(left.length()+1),right.c_str(), sizeof(wchar_t)*right.length());
-
-				dlg.SetFilter(filter);
-
-				if (dlg.ShowDialog() == DLGRES_OK)
+				if (done)
 				{
-					TextBox* tb = up_cast<TextBox*>(m_proplist[i].Editor);
+					TextBox* tb = up_cast<TextBox*>(pi.Editor);
 					if (tb)
 					{
-						const String& path	= dlg.getFilePath()[0];
-
-						wchar_t buffer[260];
-						PathRelativePathTo(buffer, m_currentProject->getOutputPath().c_str(), FILE_ATTRIBUTE_DIRECTORY, path.c_str(),FILE_ATTRIBUTE_NORMAL);
-
-						String result = buffer;
-						String toIgnore(1, '.');
-						toIgnore.append(1, PathUtils::DirectorySeparator);
-
-						if (StringUtils::StartsWith(result, toIgnore))
-							result = result.substr(2);
+						ProjectItemData* itmData = m_selectedItem->getData();
 						
+						String result;
+						if (!PathUtils::GetRelativePath(itmData->GetAbsoluteSourcePathBase(), selectedFilePath, result))
+						{
+							result = selectedFilePath;
+						}
+
+						String toIgnore(1, '.');
+						toIgnore.append(1, PathUtils::DirectorySeparator);
+
+						if (StringUtils::StartsWith(result, toIgnore))
+							result = result.substr(2);
+
 						tb->SetText(result);
 					}
 				}
@@ -841,7 +802,6 @@ namespace APDesigner
 			}
 		}
 	}
-
 
 	int ResourcePane::getPropertyFieldWidth() const
 	{
