@@ -217,12 +217,16 @@ namespace APDesigner
 	TextureViewer::TextureViewer(MainWindow* window, const String& name, const String& filePath)
 		: Document(window, nullptr), m_pictureBox(0), m_filePath(filePath), m_texture(0), m_scale(0), m_name(name)
 	{
-		int32 sy = window->getUISkin()->FormTitle->Height;
-		m_pictureBox = new PictureBox(window->getUISkin(), Point(5,5 + sy), 1);
+		const StyleSkin* skin = window->getUISkin();
+		m_descFont = skin->ContentTextFont;
+
+		int32 sy = skin->FormTitle->Height;
+
+		m_pictureBox = new PictureBox(skin, Point(5, 5 + sy), 1);
 		m_pictureBox->eventPictureDraw.Bind(this, &TextureViewer::PixtureBox_Draw);
-		m_btnZoomIn = new Button(window->getUISkin(), Point(100,sy+7), L"+");
+		m_btnZoomIn = new Button(skin, Point(100, sy + 7), L"+");
 		m_btnZoomIn->eventPress.Bind(this, &TextureViewer::BtnZoomIn_Pressed);
-		m_btnZoomOut = new Button(window->getUISkin(), Point(140,sy+7), L"-");
+		m_btnZoomOut = new Button(skin, Point(140, sy + 7), L"-");
 		m_btnZoomOut->eventPress.Bind(this, &TextureViewer::BtnZoomOut_Pressed);
 
 
@@ -302,8 +306,8 @@ namespace APDesigner
 					msg.append(L"\nMip Levels:");
 					msg.append(StringUtils::IntToString(m_texture->getLevelCount()));	
 					
-					m_pictureBox->getFont()->DrawString(sprite, msg, Point(5+dr.X, 6+dr.Y), CV_Black);
-					m_pictureBox->getFont()->DrawString(sprite, msg, Point(5+dr.X, 5+dr.Y), CV_White);
+					m_descFont->DrawString(sprite, msg, Point(5 + dr.X, 6 + dr.Y), CV_Black);
+					m_descFont->DrawString(sprite, msg, Point(5 + dr.X, 5 + dr.Y), CV_White);
 				}
 				break;
 			}

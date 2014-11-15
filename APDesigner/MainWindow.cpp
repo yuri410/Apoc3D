@@ -54,7 +54,7 @@ namespace APDesigner
 {
 
 	MainWindow::MainWindow(RenderWindow* wnd)
-		: m_window(wnd), m_UIskin(0), m_project(0), m_currentDocument(0)
+		: m_window(wnd)
 	{
 		m_standardWorkdingDirCount = FileSystem::getSingleton().getNumWorkingDirectories();
 		m_standardTextureLoc = FileLocateRule::Textures;
@@ -69,8 +69,9 @@ namespace APDesigner
 	{
 		SystemUI::Add(document->getDocumentForm());
 		document->Initialize(m_device);
-		document->eventDocumentActivated().Bind(this, &MainWindow::Document_Activated);
-		document->eventDocumentDeactivated().Bind(this, &MainWindow::Document_Deactivated);
+		document->eventDocumentActivated.Bind(this, &MainWindow::Document_Activated);
+		document->eventDocumentDeactivated.Bind(this, &MainWindow::Document_Deactivated);
+
 		m_documentList.Add(document);
 	}
 
@@ -151,41 +152,21 @@ namespace APDesigner
 		m_mainMenu = new MenuBar(m_UIskin);
 
 		{
-			MenuItem* pojMenu = new MenuItem(L"Project");
+			MenuItemSetupInfo buildMenuInfo =
+			{
+				L"Project",
+				{
+					{ L"New Project...", { this, &MainWindow::Menu_NewProject } },
+					{ L"Open Project...", { this, &MainWindow::Menu_OpenProject } },
+					{ L"Save Project", { this, &MainWindow::Menu_SaveProject }, &m_savePrjMemuItem },
+					{ L"Recent Projects", nullptr, &m_recentPrjSubMenu, true },
 
+					{ L"-" },
+					{ L"Exit", { this, &MainWindow::Menu_Exit } },
+				}
+			};
 
-			SubMenu* pojSubMenu = new SubMenu(m_UIskin, nullptr);
-
-			MenuItem* mi=new MenuItem(L"New Project...");
-			mi->event.Bind(this, &MainWindow::Menu_NewProject);
-			pojSubMenu->Add(mi,0);
-
-			mi=new MenuItem(L"Open Project...");
-			mi->event.Bind(this, &MainWindow::Menu_OpenProject);
-			pojSubMenu->Add(mi,0);
-
-			m_savePrjMemuItem = new MenuItem(L"Save Project");
-			m_savePrjMemuItem->event.Bind(this, &MainWindow::Menu_SaveProject);
-			pojSubMenu->Add(m_savePrjMemuItem, 0);
-
-
-			m_recentPrjSubMenu = new SubMenu(m_UIskin, nullptr);
-
-			mi = new MenuItem(L"Recent Projects");
-			pojSubMenu->Add(mi, m_recentPrjSubMenu);
-
-			//mi=new MenuItem(L"Insert...");
-			//mi->event().bind(this, &MainWindow::Menu_Insert);
-			//pojSubMenu->Add(mi,0);
-
-			mi=new MenuItem(L"-");
-			pojSubMenu->Add(mi,0);
-
-			mi=new MenuItem(L"Exit");
-			mi->event.Bind(this, &MainWindow::Menu_Exit);
-			pojSubMenu->Add(mi,0);
-
-			m_mainMenu->Add(pojMenu,pojSubMenu);
+			m_mainMenu->Add(buildMenuInfo, m_UIskin, nullptr);
 		}
 		//{
 		//	MenuItem* fileMenu = new MenuItem(L"File");
@@ -200,23 +181,17 @@ namespace APDesigner
 		//	m_mainMenu->Add(fileMenu,fileSubMenu);
 		//}
 		{
-			MenuItem* buildMenu = new MenuItem(L"Build");
+			MenuItemSetupInfo buildMenuInfo =
+			{
+				L"Build",
+				{
+					{ L"QuickBuild", nullptr, &m_quickbuildSubMenu, true },
+					{ L"-" },
+					{ L"Build All", { this, &MainWindow::Menu_BuildAll }, &m_buildMemuItem },
+				}
+			};
 
-			SubMenu* buildSubMenu = new SubMenu(m_UIskin, nullptr);
-
-			m_quickbuildSubMenu = new SubMenu(m_UIskin, nullptr);
-
-			MenuItem* mi=new MenuItem(L"QuickBuild");
-			buildSubMenu->Add(mi,m_quickbuildSubMenu);
-
-			mi=new MenuItem(L"-");
-			buildSubMenu->Add(mi,nullptr);
-
-			m_buildMemuItem = new MenuItem(L"Build All");
-			m_buildMemuItem->event.Bind(this, &MainWindow::Menu_BuildAll);
-			buildSubMenu->Add(m_buildMemuItem, 0);
-
-			m_mainMenu->Add(buildMenu, buildSubMenu);
+			m_mainMenu->Add(buildMenuInfo, m_UIskin, nullptr);
 		}
 		{
 			MenuItem* toolsMenu = new MenuItem(L"Tools");
@@ -294,7 +269,7 @@ namespace APDesigner
 
 		LinkedList<Document*> recycleList;
 
-		for (int i=0;i<m_documentList.getCount();i++)
+		for (int i = 0; i < m_documentList.getCount(); i++)
 		{
 			m_documentList[i]->Update(time);
 			if (!m_documentList[i]->getDocumentForm()->Visible)
@@ -304,6 +279,10 @@ namespace APDesigner
 		}
 		for (Document* doc : recycleList)
 		{
+			if (doc == m_currentDocument)
+			{
+				m_currentDocument = nullptr;
+			}
 			m_documentList.Remove(doc);
 			delete doc;
 		}
@@ -340,13 +319,9 @@ namespace APDesigner
 		m_device->EndFrame();
 
 		Apoc3D::Math::Rectangle rect = SystemUI::GetUIArea(m_device);
-		if (m_lastSize.X != rect.Width || m_lastSize.Y != rect.Height)
+		if (m_lastSize != rect.getSize())
 		{
-			m_lastSize.X = rect.Width;
-			m_lastSize.Y = rect.Height;
-
-			
-
+			m_lastSize = rect.getSize();
 		}
 		
 
@@ -712,11 +687,8 @@ namespace APDesigner
 
 	void MainWindow::Document_Deactivated(Document* doc)
 	{
-		if (m_currentDocument == doc)
-		{
-			m_currentDocument = 0;
-		}
 	}
+
 
 	void MainWindow::LogBuildMessages()
 	{

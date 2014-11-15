@@ -70,7 +70,7 @@ namespace Apoc3D
 			Configuration(const Configuration& another);
 			virtual ~Configuration();
 
-			void Merge(Configuration* config);
+			void Merge(Configuration* config, bool noMessages);
 			
 			void Add(const String& name, ConfigurationSection* sect);
 			void Add(ConfigurationSection* sect);
@@ -85,7 +85,7 @@ namespace Apoc3D
 			ChildTable::ValueAccessor getSubSections() const { return m_sections.getValueAccessor(); }
 
 		private:
-			void MergeSubsection(ConfigurationSection* thisSectParent, ConfigurationSection* thisSect, ConfigurationSection* thatSect);
+			void MergeSubsection(ConfigurationSection* thisSectParent, ConfigurationSection* thisSect, ConfigurationSection* thatSect, bool noMessages);
 
 			String m_name;
 			ChildTable m_sections;

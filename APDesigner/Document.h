@@ -50,9 +50,6 @@ namespace APDesigner
 
 		virtual ObjectPropertyEditor* getRootPropertyEditor() { return nullptr; }
 
-		DocumentActivationHandler& eventDocumentActivated() { return m_eDocActivated; }
-		DocumentActivationHandler& eventDocumentDeactivated() { return m_eDocDeactivated; }
-
 		Form* getDocumentForm() const { return m_docForm; }
 
 		bool isActivated() const { return m_activated; }
@@ -88,13 +85,15 @@ namespace APDesigner
 		Form* m_docForm;
 		MainWindow* m_mainWindow;
 
-		DocumentActivationHandler m_eDocActivated;
-		DocumentActivationHandler m_eDocDeactivated;
-
 		EditorExtension* m_extension;
 
-		bool m_activated;
+		bool m_activated = false;
+		bool m_closed = false;
 
+	public:
+		DocumentActivationHandler eventDocumentActivated;
+		DocumentActivationHandler eventDocumentDeactivated;
+		DocumentActivationHandler eventDocumentClosed;
 	};
 }
 

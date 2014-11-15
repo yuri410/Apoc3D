@@ -5,7 +5,7 @@
 namespace APDesigner
 {
 	Document::Document(MainWindow* window, EditorExtension* ext)
-		: m_activated(false), m_mainWindow(window), m_extension(ext)
+		: m_mainWindow(window), m_extension(ext)
 	{
 		m_docForm = new Form(window->getUISkin(), window->getDevice(), FBS_Sizable, L"New document");
 		m_docForm->Position.Y = 25;
@@ -32,16 +32,26 @@ namespace APDesigner
 		{
 			if (SystemUI::TopMostForm == m_docForm)
 			{
-				m_eDocActivated.Invoke(this);
+				eventDocumentActivated.Invoke(this);
 				DocActivate(this);
 			}
 		}
 		else
 		{
-			if (SystemUI::TopMostForm != m_docForm && SystemUI::TopMostForm != m_mainWindow->getToolsPane())
+			if (SystemUI::TopMostForm != m_docForm)
 			{
-				m_eDocDeactivated.Invoke(this);
+				eventDocumentDeactivated.Invoke(this);
 				DocDeactivate(this);
+			}
+		}
+
+		if (!m_docForm->Visible)
+		{
+			if (!m_closed)
+			{
+				m_closed = true;
+
+				eventDocumentClosed.Invoke(this);
 			}
 		}
 	}

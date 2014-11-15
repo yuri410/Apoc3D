@@ -40,6 +40,49 @@ namespace Apoc3D
 			MENU_Closed
 		};
 
+		struct MenuItemSetupInfo
+		{
+			String Text;
+			List<MenuItemSetupInfo> SubMenuItemsInfo;
+			MenuItemEventHandler EventHandler;
+
+			bool ForceCreateSubMenu = false;
+
+			MenuItem** ResultItem = nullptr;
+			SubMenu** ResultSubMenu = nullptr;
+
+			
+			MenuItemSetupInfo() { }
+
+			MenuItemSetupInfo(const String& text, 
+				MenuItem** resultItem = nullptr, SubMenu** resultSubMenu = nullptr, bool forceSubMenu = false)
+				: Text(text), 
+				ForceCreateSubMenu(forceSubMenu), ResultItem(resultItem), ResultSubMenu(resultSubMenu) 
+			{ }
+
+			MenuItemSetupInfo(const String& text, std::initializer_list<MenuItemSetupInfo> subItems, 
+				MenuItem** resultItem = nullptr, SubMenu** resultSubMenu = nullptr, bool forceSubMenu = false)
+				: Text(text), SubMenuItemsInfo(subItems),
+				ForceCreateSubMenu(forceSubMenu), ResultItem(resultItem), ResultSubMenu(resultSubMenu)
+			{ }
+
+			MenuItemSetupInfo(const String& text, fastdelegate::FastDelegate1<MenuItem*> handler, 
+				MenuItem** resultItem = nullptr, SubMenu** resultSubMenu = nullptr, bool forceSubMenu = false)
+				: Text(text), 
+				ForceCreateSubMenu(forceSubMenu), ResultItem(resultItem), ResultSubMenu(resultSubMenu)
+			{
+				EventHandler.Bind(handler);
+			}
+
+			MenuItemSetupInfo(const String& text, fastdelegate::FastDelegate1<MenuItem*> handler, std::initializer_list<MenuItemSetupInfo> subItems, 
+				MenuItem** resultItem = nullptr, SubMenu** resultSubMenu = nullptr, bool forceSubMenu = false)
+				: Text(text), SubMenuItemsInfo(subItems), 
+				ForceCreateSubMenu(forceSubMenu), ResultItem(resultItem), ResultSubMenu(resultSubMenu)
+			{
+				EventHandler.Bind(handler);
+			}
+		};
+
 		class APAPI MenuBar : public Control
 		{
 			RTTI_DERIVED(MenuBar, Control);
@@ -48,6 +91,7 @@ namespace Apoc3D
 			virtual ~MenuBar();
 
 			void Add(MenuItem* item, SubMenu* submenu);
+			void Add(const MenuItemSetupInfo& info, const StyleSkin* skin, ControlContainer* owner);
 
 			virtual void Update(const GameTime* time) override;
 			virtual void Draw(Sprite* sprite) override;
@@ -94,10 +138,7 @@ namespace Apoc3D
 		class APAPI MenuItem
 		{
 		public:
-			MenuItem(const String& text)
-			{
-				setText(text);
-			}
+			explicit MenuItem(const String& text);
 
 			const String& getText() const { return m_text; }
 			void setText(const String& txt);
@@ -124,11 +165,14 @@ namespace Apoc3D
 			SubMenu* m_submenu = nullptr;
 		};
 
+
 		class APAPI SubMenu : public Control
 		{
 			RTTI_DERIVED(SubMenu, Control);
 		public:
 			SubMenu(const StyleSkin* skin, ControlContainer* owner);
+			SubMenu(const StyleSkin* skin, ControlContainer* owner, const List<MenuItemSetupInfo>& itemsInfo);
+
 			virtual ~SubMenu();
 
 			void Add(MenuItem* item, SubMenu* submenu);

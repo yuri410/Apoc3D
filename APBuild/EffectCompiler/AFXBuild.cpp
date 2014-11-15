@@ -30,7 +30,47 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace APBuild
 {
-	void Parse(const AFXBuildConfig& config, ConfigurationSection* ps, EffectParameter& ep);
+	void ParseEffectParameter(const AFXBuildConfig& config, ConfigurationSection* ps, EffectParameter& ep);
+
+	bool ProcessIncludes(Configuration* plist, const String& baseDir)
+	{
+		Configuration* curPlist = plist;
+
+		HashSet<String> openedIncludes;
+		Queue<String> includeQueue;
+
+		if (curPlist->get(L"Include"))
+		{
+			includeQueue.Enqueue(curPlist->get(L"Include")->getValue());
+		}
+
+		while (includeQueue.getCount() > 0)
+		{
+			String includeFile = includeQueue.Dequeue();
+
+			if (!openedIncludes.Contains(includeFile))
+			{
+				openedIncludes.Add(includeFile);
+
+				includeFile = PathUtils::Combine(baseDir, includeFile);
+				if (!File::FileExists(includeFile))
+				{
+					BuildSystem::LogError(includeFile, L"Could not find param list include file.");
+					return false;
+				}
+
+				Configuration* includeSrc = XMLConfigurationFormat::Instance.Load(FileLocation(includeFile));
+				if (includeSrc->get(L"Include"))
+				{
+					includeQueue.Enqueue(includeSrc->get(L"Include")->getValue());
+				}
+
+				curPlist->Merge(includeSrc, true);
+				delete includeSrc;
+			}
+		}
+		return true;
+	}
 
 	void AFXBuild::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
@@ -61,30 +101,18 @@ namespace APBuild
 
 		Configuration* plist = XMLConfigurationFormat::Instance.Load(FileLocation(config.PListFile));
 
-		// process plist include
-		if (plist->get(L"Include"))
+		if (!ProcessIncludes(plist, PathUtils::GetDirectory(config.PListFile)))
 		{
-			String includeFile = plist->get(L"Include")->getValue();
-			
-			includeFile = PathUtils::Combine(PathUtils::GetDirectory(config.PListFile), includeFile);
-			if (!File::FileExists(includeFile))
-			{
-				BuildSystem::LogError(includeFile, L"Could not find param list include file.");
-				delete plist;
-				return;
-			}
-
-			Configuration* includeSrc = XMLConfigurationFormat::Instance.Load(FileLocation(includeFile));
-			plist->Merge(includeSrc);
-			delete includeSrc;
+			delete plist;
+			return;
 		}
-
+	
 		EffectData data;
 		data.Name = config.Name;
 		data.ProfileCount = config.Targets.getCount();
 		data.Profiles = new EffectProfileData[data.ProfileCount];
 		
-		for (int i=0;i<config.Targets.getCount();i++)
+		for (int i = 0; i < config.Targets.getCount(); i++)
 		{
 			EffectProfileData& prof = data.Profiles[i];
 
@@ -119,19 +147,18 @@ namespace APBuild
 					shaderParams[1] = plist->get(L"PS");
 					shaderParams[2] = plist->get(L"GS");
 				}
-				
-				for (int j=0;j<3;j++)
+
+				for (int j = 0; j < countof(shaderParams); j++)
 				{
 					ConfigurationSection* sect = shaderParams[j];
 					if (!sect)
 						continue;
 
-					for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator(); iter.MoveNext();)
+					for (ConfigurationSection* psect : sect->getSubSections())
 					{
-						ConfigurationSection* psect = iter.getCurrentValue();
 						EffectParameter ep(psect->getName());
 
-						Parse(config, psect, ep);
+						ParseEffectParameter(config, psect, ep);
 
 						ep.ProgramType = shaderTypes[j];
 						ep.SamplerState.Parse(psect);
@@ -141,7 +168,7 @@ namespace APBuild
 			}
 			else
 			{
-				BuildSystem::LogError(L"Target profile is not supported "+ config.Targets[i], config.Name);
+				BuildSystem::LogError(L"Target profile is not supported " + config.Targets[i], config.Name);
 				return;
 			}
 		}
@@ -162,14 +189,14 @@ namespace APBuild
 		BuildSystem::LogEntryProcessed(config.DestFile, hierarchyPath);
 	}
 
-	void Parse(const AFXBuildConfig& config, ConfigurationSection* ps, EffectParameter& ep)
+	void ParseEffectParameter(const AFXBuildConfig& config, ConfigurationSection* ps, EffectParameter& ep)
 	{
 		ep.Usage = EffectParameter::ParseParamUsage(ps->getAttribute(L"Usage"));
 		if (ep.Usage == EPUSAGE_CustomMaterialParam)
 		{
 			if (!ps->hasAttribute(L"CustomUsage"))
 			{
-				BuildSystem::LogError(config.PListFile, L"Could not find CustomUsage for param " + ep.Name);
+				BuildSystem::LogError(config.PListFile, L"Could not find CustomUsage attribute for param " + ep.Name);
 			}
 			else
 			{
@@ -180,7 +207,7 @@ namespace APBuild
 		{
 			if (!ps->hasAttribute(L"BlobIndex"))
 			{
-				BuildSystem::LogError(config.PListFile, L"Could not find BlobIndex for param " + ep.Name);
+				BuildSystem::LogError(config.PListFile, L"Could not find BlobIndex attribute for param " + ep.Name);
 			}
 			else
 			{

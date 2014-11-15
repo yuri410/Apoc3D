@@ -49,12 +49,12 @@ namespace APBuild
 		{
 			const char* pfName = getHLSLCompilerProfileName(profData, type);
 
-			if (profData.MajorVer>3)
+			if (profData.MajorVer > 3)
 			{
 				DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRIX_ROW_MAJOR;
 				if (debugEnabled)
 				{
-					dwShaderFlags |= D3DCOMPILE_DEBUG;	
+					dwShaderFlags |= D3DCOMPILE_DEBUG;
 				}
 				else
 				{
@@ -64,11 +64,11 @@ namespace APBuild
 
 				ID3DBlob* pBlobOut;
 				ID3DBlob* pErrorBlob;
-				HRESULT hr = D3DX11CompileFromFile( src.c_str(), NULL, NULL, StringUtils::toPlatformNarrowString(entryPoint).c_str(), pfName, 
-					dwShaderFlags, 0, NULL, &pBlobOut, &pErrorBlob, NULL );
-				if( FAILED(hr) )
+				HRESULT hr = D3DX11CompileFromFile(src.c_str(), NULL, NULL, StringUtils::toPlatformNarrowString(entryPoint).c_str(), pfName,
+					dwShaderFlags, 0, NULL, &pBlobOut, &pErrorBlob, NULL);
+				if (FAILED(hr))
 				{
-					if( pErrorBlob != NULL )
+					if (pErrorBlob != NULL)
 					{
 						std::string errmsg = (const char*)pErrorBlob->GetBufferPointer();
 						WriteCompileError(errmsg, src);
@@ -94,7 +94,7 @@ namespace APBuild
 				DWORD flags = D3DXSHADER_PACKMATRIX_ROWMAJOR;
 				if (debugEnabled)
 				{
-					flags |= D3DXSHADER_DEBUG;	
+					flags |= D3DXSHADER_DEBUG;
 				}
 				else
 				{
@@ -103,7 +103,7 @@ namespace APBuild
 
 				//flags |= D3DXCONSTTABLE_LARGEADDRESSAWARE;
 
-				HRESULT hr = D3DXCompileShaderFromFile(src.c_str(), 0, 0, 
+				HRESULT hr = D3DXCompileShaderFromFile(src.c_str(), 0, 0,
 					StringUtils::toPlatformNarrowString(entryPoint).c_str(), pfName,
 					flags, &shader, &error, NULL);
 
@@ -130,12 +130,13 @@ namespace APBuild
 					shader->Release();
 					return false;
 				}
+
 				ShaderModel3ConstantTable constantHelper(constants);
 				constants->Release();
 
 				DWORD* newShaderCode;
 				int32 newShaderCodeSize;
-				ProcessShaderModel3ByteCode(constantHelper, 
+				ProcessShaderModel3ByteCode(constantHelper,
 					(const DWORD*)shader->GetBufferPointer(), shader->GetBufferSize(),
 					newShaderCode, newShaderCodeSize);
 
@@ -145,7 +146,7 @@ namespace APBuild
 				FillEffectProfileData(profData, (const char*)newShaderCode, newShaderCodeSize, type);
 
 				delete[] newShaderCode;
-				
+
 				return true;
 			}
 		}

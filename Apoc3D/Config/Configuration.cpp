@@ -63,16 +63,16 @@ namespace Apoc3D
 		}
 
 
-		void Configuration::Merge(Configuration* other)
+		void Configuration::Merge(Configuration* other, bool noMessages)
 		{
 			for (ConfigurationSection* sect : other->getSubSections())
 			{
 				ConfigurationSection* thisSect = get(sect->getName());
-				MergeSubsection(nullptr, thisSect, sect);
+				MergeSubsection(nullptr, thisSect, sect, noMessages);
 			}
 		}
 
-		void Configuration::MergeSubsection(ConfigurationSection* thisSectParent,  ConfigurationSection* thisSect, ConfigurationSection* thatSect)
+		void Configuration::MergeSubsection(ConfigurationSection* thisSectParent, ConfigurationSection* thisSect, ConfigurationSection* thatSect, bool noMessages)
 		{
 			if (thisSect)
 			{
@@ -81,7 +81,7 @@ namespace Apoc3D
 				{
 					if (!thisSect->hasAttribute(e.Key))
 						thisSect->AddAttributeString(e.Key, e.Value);
-					else
+					else if (!noMessages)
 					{
 						ApocLog(LOG_System, L"[Configuration] " + getName() +
 							L": Ignoring duplicated attribute " + e.Key  + L" in " + thisSect->getName() + L".", LOGLVL_Warning);
@@ -94,7 +94,7 @@ namespace Apoc3D
 					{
 						thisSect->SetValue(thatSect->getValue());
 					}
-					else
+					else if (!noMessages)
 					{
 						ApocLog(LOG_System, L"[Configuration] " + getName() + 
 							L": Merging section " + thisSect->getName() + L" has conflicting values.", LOGLVL_Warning);
@@ -107,7 +107,7 @@ namespace Apoc3D
 				{
 					ConfigurationSection* thisSubSect = thisSect->getSection(thatSubSect->getName());
 
-					MergeSubsection(thisSect, thisSubSect, thatSubSect);
+					MergeSubsection(thisSect, thisSubSect, thatSubSect, noMessages);
 				}
 			}
 			else

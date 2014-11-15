@@ -75,6 +75,29 @@ namespace Apoc3D
 
 			m_items.Add(item);
 		}
+		void MenuBar::Add(const MenuItemSetupInfo& info, const StyleSkin* skin, ControlContainer* owner)
+		{
+			MenuItem* menuBtn = new MenuItem(info.Text);
+
+			if (skin == nullptr)
+				skin = m_skin;
+
+			
+			SubMenu* subMenu = nullptr;
+			
+			if (info.SubMenuItemsInfo.getCount() > 0 || info.ForceCreateSubMenu)
+			{
+				subMenu = new SubMenu(skin, owner, info.SubMenuItemsInfo);
+			}
+
+			if (info.ResultItem)
+				*info.ResultItem = menuBtn;
+
+			if (info.ResultSubMenu)
+				*info.ResultSubMenu = subMenu;
+
+			Add(menuBtn, subMenu);
+		}
 
 		void MenuBar::CheckSelection()
 		{
@@ -388,6 +411,16 @@ namespace Apoc3D
 		}
 
 		/************************************************************************/
+		/*   MenuItem                                                           */
+		/************************************************************************/
+
+		MenuItem::MenuItem(const String& text)
+		{
+			setText(text);
+		}
+
+
+		/************************************************************************/
 		/*  SubMenu                                                             */
 		/************************************************************************/
 
@@ -396,6 +429,28 @@ namespace Apoc3D
 		{
 			m_helper.eventKeyPress.Bind(this, &SubMenu::Keyboard_OnPress);
 			m_helper.eventKeyRelease.Bind(this, &SubMenu::Keyboard_OnRelease);
+		}
+		SubMenu::SubMenu(const StyleSkin* skin, ControlContainer* owner, const List<MenuItemSetupInfo>& itemsInfo)
+			: SubMenu(skin, owner)
+		{
+			for (const MenuItemSetupInfo& msi : itemsInfo)
+			{
+				MenuItem* mi = new MenuItem(msi.Text);
+				mi->event = msi.EventHandler;
+
+				SubMenu* subMenu = nullptr;
+				if (msi.SubMenuItemsInfo.getCount() > 0 || msi.ForceCreateSubMenu)
+				{
+					subMenu = new SubMenu(skin, owner, msi.SubMenuItemsInfo);
+				}
+
+				if (msi.ResultItem)
+					*msi.ResultItem = mi;
+				if (msi.ResultSubMenu)
+					*msi.ResultSubMenu = subMenu;
+
+				Add(mi, subMenu);
+			}
 		}
 
 		SubMenu::~SubMenu()

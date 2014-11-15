@@ -90,6 +90,7 @@ namespace APDesigner
 
 		void Document_Activated(Document* doc);
 		void Document_Deactivated(Document* doc);
+
 		void UpdateProjectEffect(const List<ProjectItem*>& items);
 		void UpdateProjectEffect();
 
@@ -98,27 +99,27 @@ namespace APDesigner
 
 		void LogBuildMessages();
 
-		StyleSkin* m_UIskin;
+		StyleSkin* m_UIskin = nullptr;
 
-		RenderWindow* m_window;
-		RenderDevice* m_device;
+		RenderWindow* m_window = nullptr;
+		RenderDevice* m_device = nullptr;
 
-		Sprite* m_sprite;
+		Sprite* m_sprite = nullptr;
 
-		Document* m_currentDocument;
+		Document* m_currentDocument = nullptr;
 		List<Document*> m_documentList;
-		Console* m_console;
+		Console* m_console = nullptr;
 
-		MenuBar* m_mainMenu;
-		MenuItem* m_buildMemuItem;
-		MenuItem* m_savePrjMemuItem;
-		SubMenu* m_recentPrjSubMenu;
-		SubMenu* m_quickbuildSubMenu;
+		MenuBar* m_mainMenu = nullptr;
+		MenuItem* m_buildMemuItem = nullptr;
+		MenuItem* m_savePrjMemuItem = nullptr;
+		SubMenu* m_recentPrjSubMenu = nullptr;
+		SubMenu* m_quickbuildSubMenu = nullptr;
 
-		AtomManagerDialog* m_atomManager;
-		ResourcePane* m_resourcePane;
-		ToolsPane* m_toolsPane;
-		Project* m_project;
+		AtomManagerDialog* m_atomManager = nullptr;
+		ResourcePane* m_resourcePane = nullptr;
+		ToolsPane* m_toolsPane = nullptr;
+		Project* m_project = nullptr;
 		String m_projectFilePath;
 
 		Point m_lastSize;

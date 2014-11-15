@@ -70,6 +70,7 @@ namespace APDesigner
 
 		String m_name;
 		String m_filePath;
+		Font* m_descFont;
 		Texture* m_texture;
 		PictureBox* m_pictureBox;
 		Button* m_btnZoomIn;
