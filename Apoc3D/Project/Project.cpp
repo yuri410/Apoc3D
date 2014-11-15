@@ -126,7 +126,7 @@ namespace Apoc3D
 		}
 	}
 
-	List<String> ProjectFolder::GetAllOutputFiles()  { return GetDestFileOutput(DestinationPack); }
+	List<String> ProjectFolder::GetAllOutputFiles()  { return GetDestFileOutputSimple(DestinationPack); }
 
 	/************************************************************************/
 	/*  ProjectResTexture                                                   */
@@ -357,7 +357,7 @@ namespace Apoc3D
 	}
 	bool ProjectResTexture::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
 
-	List<String> ProjectResTexture::GetAllOutputFiles() { return GetDestFileOutput(DestinationFile); }
+	List<String> ProjectResTexture::GetAllOutputFiles() { return GetDestFileOutputSimple(DestinationFile); }
 
 	/************************************************************************/
 	/*  ProjectResMaterial                                                  */
@@ -371,7 +371,7 @@ namespace Apoc3D
 	{
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationFile, savingBuild));
 	}
-	List<String> ProjectResMaterial::GetAllOutputFiles() { return GetDestFileOutput(DestinationFile); }
+	List<String> ProjectResMaterial::GetAllOutputFiles() { return GetDestFileOutputSimple(DestinationFile); }
 	bool ProjectResMaterial::IsOutdated() { return IsSettingsNewerThan(DestinationFile); }
 	bool ProjectResMaterial::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
 
@@ -483,7 +483,7 @@ namespace Apoc3D
 			sect->AddSection(ss);
 		}
 	}
-	List<String> ProjectResFont::GetAllOutputFiles() { return GetDestFileOutput(DestFile); }
+	List<String> ProjectResFont::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }
 	bool ProjectResFont::IsOutdated() { return IsOutdatedSimple(SourceFile, DestFile); }
 	bool ProjectResFont::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
@@ -501,7 +501,7 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
 	}
-	List<String> ProjectResFontGlyphDist::GetAllOutputFiles() { return GetDestFileOutput(DestFile); }
+	List<String> ProjectResFontGlyphDist::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }
 	bool ProjectResFontGlyphDist::IsOutdated() { return IsOutdatedSimple(SourceFile, DestFile); }
 	bool ProjectResFontGlyphDist::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
@@ -646,7 +646,7 @@ namespace Apoc3D
 		}
 		sect->AddAttributeString(L"Targets", targetsStr);
 	}
-	List<String> ProjectResEffect::GetAllOutputFiles() { return GetDestFileOutput(DestFile); }
+	List<String> ProjectResEffect::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }
 	bool ProjectResEffect::IsOutdated()
 	{
 		time_t destFileTime;
@@ -699,7 +699,7 @@ namespace Apoc3D
 		sect->AddAttributeString(L"EntryPointPS", EntryPointPS);
 		sect->AddAttributeString(L"Profile", Profile);
 	}
-	List<String> ProjectResCustomEffect::GetAllOutputFiles() { return GetDestFileOutput(DestFile); }
+	List<String> ProjectResCustomEffect::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }
 	bool ProjectResCustomEffect::IsOutdated()
 	{
 		time_t destFileTime;
@@ -759,7 +759,7 @@ namespace Apoc3D
 		}
 		
 	}
-	List<String> ProjectResEffectList::GetAllOutputFiles() { return GetDestFileOutput(DestFile); }
+	List<String> ProjectResEffectList::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }
 	bool ProjectResEffectList::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
 	/************************************************************************/
@@ -776,7 +776,7 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SrcFile, savingBuild));
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
 	}
-	List<String> ProjectResShaderNetwork::GetAllOutputFiles() { return GetDestFileOutput(DestFile); }
+	List<String> ProjectResShaderNetwork::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }
 	bool ProjectResShaderNetwork::IsOutdated() { return IsOutdatedSimple(SrcFile, DestFile); }
 	bool ProjectResShaderNetwork::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
@@ -914,8 +914,8 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationFile, savingBuild));
 	}
-	List<String> ProjectResMAnim::GetAllOutputFiles() { return GetDestFileOutput(DestinationFile); }
-	bool ProjectResMAnim::IsOutdated() { return IsSettingsNewerThan(DestinationFile); }
+	List<String> ProjectResMAnim::GetAllOutputFiles() { return GetDestFileOutputSimple(DestinationFile); }
+	bool ProjectResMAnim::IsOutdated() { return IsOutdatedSimple(SourceFile, DestinationFile); }
 	bool ProjectResMAnim::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
 
 
@@ -953,7 +953,7 @@ namespace Apoc3D
 			sect->AddSection(ss);
 		}
 	}
-	List<String> ProjectResTAnim::GetAllOutputFiles() { return GetDestFileOutput(DestinationFile); }
+	List<String> ProjectResTAnim::GetAllOutputFiles() { return GetDestFileOutputSimple(DestinationFile); }
 	bool ProjectResTAnim::IsOutdated() { return IsOutdatedSimple(SourceFile, DestinationFile); }
 	bool ProjectResTAnim::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
 
@@ -971,7 +971,7 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationFile, savingBuild));
 	}
-	List<String> ProjectResUILayout::GetAllOutputFiles() { return GetDestFileOutput(DestinationFile); }
+	List<String> ProjectResUILayout::GetAllOutputFiles() { return GetDestFileOutputSimple(DestinationFile); }
 	bool ProjectResUILayout::IsOutdated() { return IsSettingsNewerThan(DestinationFile); }
 	bool ProjectResUILayout::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
 
@@ -990,7 +990,7 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationFile, savingBuild));
 	}
-	List<String> ProjectResCopy::GetAllOutputFiles() { return GetDestFileOutput(DestinationFile); }
+	List<String> ProjectResCopy::GetAllOutputFiles() { return GetDestFileOutputSimple(DestinationFile); }
 	bool ProjectResCopy::IsOutdated() { return IsSettingsNewerThan(DestinationFile); }
 	bool ProjectResCopy::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
 
@@ -1029,7 +1029,7 @@ namespace Apoc3D
 		}
 	}
 
-	List<String> ProjectCustomItem::GetAllOutputFiles() { return GetDestFileOutput(DestFile); }
+	List<String> ProjectCustomItem::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }
 	bool ProjectCustomItem::IsOutdated() { return IsSettingsNewerThan( DestFile); }
 	bool ProjectCustomItem::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
@@ -1126,7 +1126,7 @@ namespace Apoc3D
 		return path;
 	}
 
-	List<String> ProjectItemData::GetDestFileOutput(const String& destinationFile)
+	List<String> ProjectItemData::GetDestFileOutputSimple(const String& destinationFile)
 	{
 		List<String> e;
 		if (destinationFile.size())

@@ -142,8 +142,7 @@ namespace Apoc3D
 
 		bool IsOutdatedSimple(const String& srcFile, const String& destinationFile) const;
 
-
-		List<String> GetDestFileOutput(const String& destinationFile);
+		List<String> GetDestFileOutputSimple(const String& destinationFile);
 		bool IsDestFileNotBuilt(const String& destinationFile);
 	};
 
