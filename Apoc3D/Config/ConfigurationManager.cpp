@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Config/XmlConfigurationFormat.h"
 #include "apoc3d/Config/ABCConfigurationFormat.h"
 #include "apoc3d/Config/IniConfigurationFormat.h"
+#include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Utility/StringUtils.h"
@@ -46,6 +47,11 @@ namespace Apoc3D
 			RegisterFormat(new ABCConfigurationFormat());
 			RegisterFormat(new XMLConfigurationFormat());
 			RegisterFormat(new IniConfigurationFormat());
+
+			for (int32 i = 0; i < 50; i++)
+			{
+				m_sectionPool.Enqueue(new ConfigurationSection(L""));
+			}
 		}
 		ConfigurationManager::~ConfigurationManager()
 		{
@@ -109,6 +115,95 @@ namespace Apoc3D
 					m_formats.Remove(exts[i]);
 				}
 			}
+		}
+
+		ConfigurationSection* ConfigurationManager::NewConfigSection(const String& name)
+		{
+			if (!ConfigurationManager::isInitialized())
+				return new ConfigurationSection(name);
+			return ConfigurationManager::getSingleton().CreateSection(name, 0);
+		}
+		ConfigurationSection* ConfigurationManager::NewConfigSection(const String& name, int32 capacity)
+		{
+			if (!ConfigurationManager::isInitialized())
+				return new ConfigurationSection(name);
+			return ConfigurationManager::getSingleton().CreateSection(name, capacity);
+		}
+		ConfigurationSection* ConfigurationManager::NewConfigSection(const ConfigurationSection& other)
+		{
+			if (!ConfigurationManager::isInitialized())
+				return new ConfigurationSection(other);
+			return ConfigurationManager::getSingleton().CreateSection(other);
+		}
+
+		void ConfigurationManager::FreeConfigSection(ConfigurationSection* s)
+		{
+			if (!ConfigurationManager::isInitialized())
+				delete s;
+			else
+				ConfigurationManager::getSingleton().RecycleSection(s);
+		}
+
+
+		ConfigurationSection* ConfigurationManager::CreateSection(const String& name, int32 capacity)
+		{
+			ConfigurationSection* result = nullptr;
+			m_sectPoolLock.lock();
+
+			if (m_sectionPool.getCount() > 0)
+			{
+				result = m_sectionPool.Dequeue();
+				result->_SetName(name);
+				result->_EnsureCapacity(capacity);
+			}
+
+			m_sectPoolLock.unlock();
+
+			if (result == nullptr)
+			{
+				if (capacity != 0)
+					result = new ConfigurationSection(name, capacity);
+				else
+					result = new ConfigurationSection(name);
+			}
+
+			return result;
+		}
+		ConfigurationSection* ConfigurationManager::CreateSection(const ConfigurationSection& other)
+		{
+			ConfigurationSection* result = nullptr;
+			m_sectPoolLock.lock();
+
+			if (m_sectionPool.getCount() > 0)
+			{
+				result = m_sectionPool.Dequeue();
+				result->_CopyFrom(other);
+			}
+
+			m_sectPoolLock.unlock();
+
+			if (result == nullptr)
+			{
+				result = new ConfigurationSection(other);
+			}
+
+			return result;
+		}
+
+
+
+		void ConfigurationManager::RecycleSection(ConfigurationSection* sect)
+		{
+			for (ConfigurationSection* s : sect->m_subSection.getValueAccessor())
+			{
+				RecycleSection(s);
+			}
+
+			sect->_ShallowClear();
+
+			m_sectPoolLock.lock();
+			m_sectionPool.Enqueue(sect);
+			m_sectPoolLock.unlock();
 		}
 	}
 }

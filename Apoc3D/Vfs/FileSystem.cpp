@@ -58,6 +58,12 @@ namespace Apoc3D
 			
 			m_workingDirs.Add(_path);
 		}
+		void FileSystem::PushWrokingDirectory(const String& path)
+		{
+			String _path = PathUtils::NormalizePath(path);
+
+			m_workingDirs.Add(_path);
+		}
 		void FileSystem::PopWrokingDirectory()
 		{
 			if (m_workingDirs.getCount() > 0)

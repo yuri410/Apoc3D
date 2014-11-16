@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Exception.h"
 #include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Config/ConfigurationManager.h"
 #include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Math/Color.h"
 #include "apoc3d/Math/Plane.h"
@@ -1623,7 +1624,7 @@ namespace Apoc3D
 		}
 		ConfigurationSection* TaggedDataWriter::MakeDigest(const KeyType& name) const
 		{
-			ConfigurationSection* sect = new ConfigurationSection(StringUtils::UTF8toUTF16(name));
+			ConfigurationSection* sect = ConfigurationManager::NewConfigSection(StringUtils::UTF8toUTF16(name));
 			for (const Entry& e : m_positions.getValueAccessor())
 			{
 				MemoryOutStream* memBlock = e.Buffer;

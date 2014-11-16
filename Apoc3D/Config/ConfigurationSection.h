@@ -60,6 +60,7 @@ namespace Apoc3D
 		 */
 		class APAPI ConfigurationSection
 		{
+			friend class ConfigurationManager;
 		public:
 			static int32 FloatPointStoringPrecision;
 			static bool FloatPointCustomStoringPrecision;
@@ -90,8 +91,7 @@ namespace Apoc3D
 
 			ConfigurationSection* CreateSubSection(const String& name);
 			void AddSection(ConfigurationSection* section);
-			void SetValue( const String& value);
-
+			void SetValue(const String& value);
 
 			AttributeTable::Enumerator GetAttributeEnumrator() const { return m_attributes.GetEnumerator(); }
 			SubSectionTable::Enumerator GetSubSectionEnumrator() const { return m_subSection.GetEnumerator(); }
@@ -257,14 +257,22 @@ namespace Apoc3D
 			void SetColorValue(const String& name, ColorValue value);
 			void SetVector3(const String& name, const Vector3& v);
 
-		protected:
 			
+		protected:
+
 			String m_name;
 			String m_value;
 
 			AttributeTable m_attributes;
 			SubSectionTable m_subSection;
 
+		private:
+
+			void _ShallowClear();
+			void _SetName(const String& name);
+			void _EnsureCapacity(int32 capacity);
+
+			void _CopyFrom(const ConfigurationSection& other);
 		};
 	}
 }

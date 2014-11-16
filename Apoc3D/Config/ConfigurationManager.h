@@ -29,6 +29,8 @@
 
 #include "apoc3d/Common.h"
 #include "apoc3d/Collections/HashMap.h"
+#include "apoc3d/Collections/Queue.h"
+#include "apoc3d/Library/tinythread.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
@@ -67,12 +69,30 @@ namespace Apoc3D
 			void RegisterFormat(ConfigurationFormat* fmt);
 			void UnregisterFormat(ConfigurationFormat* fmt);
 
+			static ConfigurationSection* NewConfigSection(const String& name);
+			static ConfigurationSection* NewConfigSection(const String& name, int32 capacity);
+
+			static ConfigurationSection* NewConfigSection(const ConfigurationSection& other);
+
+			static void FreeConfigSection(ConfigurationSection* s);
 		private:
 			typedef HashMap<String, Configuration*> ConfigTable;
 			typedef HashMap<String, ConfigurationFormat*> FormatTable;
 			
+			ConfigurationSection* CreateSection(const String& name, int32 capacity);
+			ConfigurationSection* CreateSection(const ConfigurationSection& other);
+
+			void RecycleSection(ConfigurationSection* sect);
+
+
 			ConfigTable m_configs;
 			FormatTable m_formats;
+
+
+
+			tthread::mutex m_sectPoolLock;
+			Queue<ConfigurationSection*> m_sectionPool;
+
 		};
 	}
 }

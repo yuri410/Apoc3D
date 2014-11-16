@@ -69,9 +69,10 @@ namespace Apoc3D
 			 *  Adds an absolute path as a new working directory. 
 			 *
 			 *  @remark
-			 *   Duplicated dir is not checked. (TODO: check it)
+			 *   Duplicated dir is not checked.
 			 */
 			void AddWrokingDirectory(const String& path);
+			void PushWrokingDirectory(const String& path);
 			void PopWrokingDirectory();
 
 

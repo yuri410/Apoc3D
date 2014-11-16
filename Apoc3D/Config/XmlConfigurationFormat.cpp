@@ -24,6 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "XmlConfigurationFormat.h"
 
 #include "ConfigurationSection.h"
+#include "ConfigurationManager.h"
 
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/Utility/StringUtils.h"
@@ -88,7 +89,7 @@ namespace Apoc3D
 
 					String strName = doc.GetUTF16ElementName(elem);
 					
-					ConfigurationSection* section = new ConfigurationSection(strName);
+					ConfigurationSection* section = ConfigurationManager::NewConfigSection(strName);
 
 
 					for (const TiXmlAttribute* i = elem->FirstAttribute(); i!=0; i=i->Next())

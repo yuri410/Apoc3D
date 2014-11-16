@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "ConfigurationSection.h"
 
+#include "apoc3d/Config/ConfigurationManager.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/IOLib/BinaryReader.h"
@@ -160,7 +161,7 @@ namespace Apoc3D
 		void ABCConfigurationFormat::BuildNode(Configuration* config, const std::string& sectionName, BinaryReader* br, ConfigurationSection* parent)
 		{
 			String wSectName = StringUtils::UTF8toUTF16(sectionName);
-			ConfigurationSection* section = new ConfigurationSection(wSectName);
+			ConfigurationSection* section = ConfigurationManager::NewConfigSection(wSectName);
 
 			TaggedDataReader* localValues = br->ReadTaggedDataBlock();
 			{

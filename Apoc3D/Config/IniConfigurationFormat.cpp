@@ -26,6 +26,7 @@
 #include "IniConfigurationFormat.h"
 
 #include "ConfigurationSection.h"
+#include "ConfigurationManager.h"
 
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/IOLib/Streams.h"
@@ -91,7 +92,7 @@ namespace Apoc3D
 							curSect = config->get(curSectName);
 							if (curSect == nullptr)
 							{
-								curSect = new ConfigurationSection(curSectName);
+								curSect = ConfigurationManager::NewConfigSection(curSectName);
 								config->Add(curSect);
 							}
 							else

@@ -38,7 +38,7 @@ namespace Apoc3D
 	{
 		/** 
 		 *  An Apoc3d Binary Configuration format. Due to the text requirements of ConfigurationSection,
-		 *  values are store as Strings. Compared to XML config, no XML parsing and cant be edited using text editors.
+		 *  values are stored as Strings. Compared to XML config, no XML parsing needed and cant be edited using text editors.
 		 */
 		class APAPI ABCConfigurationFormat : public ConfigurationFormat
 		{

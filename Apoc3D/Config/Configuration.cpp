@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ConfigurationSection.h"
 
 #include "apoc3d/Core/Logging.h"
+#include "apoc3d/Config/ConfigurationManager.h"
 
 namespace Apoc3D
 {
@@ -36,13 +37,17 @@ namespace Apoc3D
 		{
 			for (ConfigurationSection*& newSect : m_sections.getValueAccessor())
 			{
-				newSect = new ConfigurationSection(*newSect);
+				newSect = ConfigurationManager::NewConfigSection(*newSect);
 			}
 		}
 
 		Configuration::~Configuration()
 		{
-			m_sections.DeleteValuesAndClear();
+			for (ConfigurationSection* s : m_sections.getValueAccessor())
+			{
+				ConfigurationManager::FreeConfigSection(s);
+			}
+			m_sections.Clear();
 		}
 
 		void Configuration::Add(ConfigurationSection* sect)
@@ -112,7 +117,7 @@ namespace Apoc3D
 			}
 			else
 			{
-				ConfigurationSection* thatSectClone = new ConfigurationSection(*thatSect);
+				ConfigurationSection* thatSectClone = ConfigurationManager::NewConfigSection(*thatSect);
 				if (thisSectParent)
 					thisSectParent->AddSection(thatSectClone);
 				else
