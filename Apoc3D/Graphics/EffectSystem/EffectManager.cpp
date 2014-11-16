@@ -60,10 +60,8 @@ namespace Apoc3D
 			void EffectManager::LoadEffectFromList(RenderDevice* device, const ResourceLocation& rl)
 			{
 				Configuration* config = XMLConfigurationFormat::Instance.Load(rl);
-				for (Configuration::ChildTable::Enumerator iter = config->GetEnumerator();iter.MoveNext();)
+				for (ConfigurationSection* lstEntry : config->getSubSections())
 				{
-					ConfigurationSection* lstEntry = iter.getCurrentValue();
-
 					FileLocation fl;
 					if (!FileSystem::getSingleton().TryLocate(lstEntry->getName() + L".afx", FileLocateRule::Effects, fl))
 					{
@@ -113,19 +111,15 @@ namespace Apoc3D
 				}
 				else
 				{
-					//Effect* eff = getEffect(effect->getName());
-
 					LogManager::getSingleton().Write(LOG_Graphics, 
-						L"EffectManager: A custom effect with the same name '" + effect->getName() + L"' is already loaded. Cannot load effect.", LOGLVL_Error);
-					//delete effect;
+						L"EffectManager: A custom effect with the same name '" + effect->getName() + L"' is already loaded. Cannot register.", LOGLVL_Error);
 				}
 			}
 
 			void EffectManager::Update(const GameTime* time)
 			{
-				for (EffectTable::Enumerator e = m_fxTable.GetEnumerator(); e.MoveNext();)
+				for (Effect* fx : m_fxTable.getValueAccessor())
 				{
-					Effect* fx = e.getCurrentValue();
 					fx->Update(time);
 				}
 			}

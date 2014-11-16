@@ -36,23 +36,23 @@ namespace APBuild
 	{
 		String SourceFile;
 		String DestinationFile;
-		bool GenerateMipmaps;
-		bool Resize;
-		int NewWidth;
-		int NewHeight;
-		int NewDepth;
-		TextureFilterType ResizeFilterType;
-		Apoc3D::Graphics::PixelFormat NewFormat;
-		
-		TextureCompressionType CompressionType;
 
-		bool AssembleCubemap;
-		bool AssembleVolumeMap;
+		ProjectTextureResizingOptions Resizing;
+
+		TextureBuildMethod Method = TextureBuildMethod::D3D;
+
+		TextureFilterType ResizeFilterType = TextureFilterType::BSpline;
+		Apoc3D::Graphics::PixelFormat NewFormat = FMT_Unknown;
+		
+		TextureCompressionType CompressionType = TextureCompressionType::None;
+
+		bool GenerateMipmaps = false;
+		bool AssembleCubemap = false;
+		bool AssembleVolumeMap = false;
 
 		HashMap<uint, String> SubMapTable;
 		HashMap<uint, String> SubAlphaMapTable;
 
-		TextureBuildMethod Method;
 
 		void Parse(const ConfigurationSection* sect);
 	};

@@ -134,22 +134,25 @@ namespace Apoc3D
 
 	void ProjectResTexture::Parse(const ConfigurationSection* sect)
 	{
-		String method = L"d3d";
-		sect->tryGetAttribute(L"Method", method);
+		String tmp;
 
-		Method = ProjectUtils::TextureBuildMethodConv.Parse(method);
+		Method = TextureBuildMethod::D3D;
+		if (sect->tryGetAttribute(L"Method", tmp))
+		{
+			Method = ProjectUtils::TextureBuildMethodConv.Parse(tmp);
+		}
+
 		AssembleCubemap = false;
 		AssembleVolumeMap = false;
 
-		String assembleType;
-		if (!sect->tryGetAttribute(L"Assemble", assembleType))
+		if (!sect->tryGetAttribute(L"Assemble", tmp))
 		{
 			SourceFile = sect->getAttribute(L"SourceFile");
 		}
 		else
 		{
-			StringUtils::ToLowerCase(assembleType);
-			if (assembleType == L"cubemap")
+			StringUtils::ToLowerCase(tmp);
+			if (tmp == L"cubemap")
 			{
 				AssembleCubemap = true;
 				AssembleVolumeMap = false;
@@ -205,46 +208,37 @@ namespace Apoc3D
 		GenerateMipmaps = false;
 		sect->TryGetAttributeBool(L"GenerateMipmaps", GenerateMipmaps);
 
-		bool passed = false;
-		passed |= sect->TryGetAttributeInt(L"Width", NewWidth);
-		passed |= sect->TryGetAttributeInt(L"Height", NewHeight);
-		passed |= sect->TryGetAttributeInt(L"Depth", NewDepth);
-
-		ResizeFilterType = TextureFilterType::BSpline;
-		String flt;
-		if (sect->tryGetAttribute(L"ResizeFilter", flt))
+		if (sect->tryGetAttribute(L"Resizing", tmp))
 		{
-			ResizeFilterType = ProjectUtils::TextureFilterTypeConv.Parse(flt);
+			Resizing.Parse(tmp);
 		}
 
-		Resize = passed;
+		ResizeFilterType = TextureFilterType::BSpline;
+		if (sect->tryGetAttribute(L"ResizeFilter", tmp))
+		{
+			ResizeFilterType = ProjectUtils::TextureFilterTypeConv.Parse(tmp);
+		}
+
 
 		NewFormat = FMT_Unknown;
-		String fmt;
-		if (sect->tryGetAttribute(L"PixelFormat", fmt))
+		if (sect->tryGetAttribute(L"PixelFormat", tmp))
 		{
-			NewFormat = PixelFormatUtils::ConvertFormat(fmt);
+			NewFormat = PixelFormatUtils::ConvertFormat(tmp);
 		}
 
 		CompressionType = TextureCompressionType::None;
-		String cmp;
-		if (sect->tryGetAttribute(L"Compression", cmp))
+		if (sect->tryGetAttribute(L"Compression", tmp))
 		{
-			StringUtils::ToLowerCase(cmp);
-			if (cmp == L"rle")
-			{
-				CompressionType = TextureCompressionType::RLE;
-			}
-			else if (cmp == L"lz4")
-			{
-				CompressionType = TextureCompressionType::LZ4;
-			}
+			CompressionType = ProjectUtils::TextureCompressionTypeConv.Parse(tmp);
 		}
 
 	}
 	void ProjectResTexture::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"Method", ProjectUtils::TextureBuildMethodConv.ToString(Method));
+		if (Method != TextureBuildMethod::D3D)
+		{
+			sect->AddAttributeString(L"Method", ProjectUtils::TextureBuildMethodConv.ToString(Method));
+		}
 
 		if (AssembleCubemap || AssembleVolumeMap)
 		{
@@ -314,11 +308,9 @@ namespace Apoc3D
 		if (GenerateMipmaps)
 			sect->AddAttributeString(L"GenerateMipmaps", StringUtils::BoolToString(GenerateMipmaps));
 
-		if (Resize)
+		if (Resizing.IsResizing())
 		{
-			sect->AddAttributeString(L"Width", StringUtils::IntToString(NewWidth));
-			sect->AddAttributeString(L"Height", StringUtils::IntToString(NewHeight));
-			sect->AddAttributeString(L"Depth", StringUtils::IntToString(NewDepth));
+			sect->AddAttributeString(L"Resizing", Resizing.ToString());
 
 			sect->AddAttributeString(L"ResizeFilter", ProjectUtils::TextureFilterTypeConv.ToString(ResizeFilterType));
 		}

@@ -502,7 +502,7 @@ namespace APDesigner
 				ProjectUtils::TextureBuildMethodConv.DumpNames(items);
 				AddPropertyDropdown(L"Method", items, items.IndexOf(ProjectUtils::TextureBuildMethodConv.ToString(tex->Method)));
 				
-				AddPropertyCheckbox(L"Resize", tex->Resize);
+				AddPropertyPair(L"Resizing", tex->Resizing.ToString());
 
 				items.Clear();
 				ProjectUtils::TextureFilterTypeConv.DumpNames(items);
@@ -595,9 +595,11 @@ namespace APDesigner
 						String temp; item.getAsCombo(temp);
 						tex->Method = ProjectUtils::TextureBuildMethodConv.Parse(temp);
 					}
-					else if (item.Name == L"Resize")
+					else if (item.Name == L"Resizing")
 					{
-						item.getAsCheckBox(tex->Resize);
+						String txt;
+						item.getAsTextbox(txt);
+						tex->Resizing.Parse(txt);
 					}
 					else if (item.Name == L"ResizeFilterType")
 					{

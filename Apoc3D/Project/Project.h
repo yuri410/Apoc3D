@@ -26,10 +26,11 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "apoc3d/Graphics/PixelFormat.h"
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Collections/HashMap.h"
+#include "apoc3d/Graphics/PixelFormat.h"
 #include "apoc3d/Graphics/RenderSystem/VertexElement.h"
+#include "apoc3d/Project/Properties.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Config;
@@ -237,17 +238,16 @@ namespace Apoc3D
 
 		String SourceFile;
 		String DestinationFile;
-		TextureCompressionType CompressionType = TextureCompressionType::None;
-		bool GenerateMipmaps = false;
-		bool Resize = false;
-		int NewWidth = 0;
-		int NewHeight = 0;
-		int NewDepth = 0;
-		TextureFilterType ResizeFilterType = TextureFilterType::BSpline;
-		Apoc3D::Graphics::PixelFormat NewFormat = FMT_Unknown;
+
+		ProjectTextureResizingOptions Resizing;
 
 		TextureBuildMethod Method = TextureBuildMethod::D3D;
+		TextureFilterType ResizeFilterType = TextureFilterType::BSpline;
+		Apoc3D::Graphics::PixelFormat NewFormat = FMT_Unknown;
+		TextureCompressionType CompressionType = TextureCompressionType::None;
 
+
+		bool GenerateMipmaps = false;
 		bool AssembleCubemap = false;
 		bool AssembleVolumeMap = false;
 

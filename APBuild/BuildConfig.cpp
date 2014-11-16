@@ -31,41 +31,38 @@ namespace APBuild
 {
 	void TextureBuildConfig::Parse(const ConfigurationSection* sect)
 	{
-		String method = L"d3d";
-		sect->tryGetAttribute(L"Method", method);
-		
-		Method = ProjectUtils::TextureBuildMethodConv.Parse(method);
+		String tmp;
+
+		Method = TextureBuildMethod::D3D;
+		if (sect->tryGetAttribute(L"Method", tmp))
+		{
+			Method = ProjectUtils::TextureBuildMethodConv.Parse(tmp);
+		}
 
 		AssembleCubemap = false;
 		AssembleVolumeMap = false;
 
-		String assembleType;
-		if (!sect->tryGetAttribute(L"Assemble", assembleType))
+		if (!sect->tryGetAttribute(L"Assemble", tmp))
 		{
 			SourceFile = sect->getAttribute(L"SourceFile");
 		}
 		else
 		{
-			StringUtils::ToLowerCase(assembleType);
-			if (assembleType == L"cubemap")
+			StringUtils::ToLowerCase(tmp);
+			if (tmp == L"cubemap")
 			{
 				AssembleCubemap = true;
 				AssembleVolumeMap = false;
 
-				String file = sect->getAttribute(L"NegX");
-				SubMapTable.Add((uint)CUBE_NegativeX, file);
-				file = sect->getAttribute(L"NegY");
-				SubMapTable.Add((uint)CUBE_NegativeY, file);
-				file = sect->getAttribute(L"NegZ");
-				SubMapTable.Add((uint)CUBE_NegativeZ, file);
+				SubMapTable.Add((uint)CUBE_NegativeX, sect->getAttribute(L"NegX"));
+				SubMapTable.Add((uint)CUBE_NegativeY, sect->getAttribute(L"NegY"));
+				SubMapTable.Add((uint)CUBE_NegativeZ, sect->getAttribute(L"NegZ"));
 
-				file = sect->getAttribute(L"PosX");
-				SubMapTable.Add((uint)CUBE_PositiveX, file);
-				file = sect->getAttribute(L"PosY");
-				SubMapTable.Add((uint)CUBE_PositiveY, file);
-				file = sect->getAttribute(L"PosZ");
-				SubMapTable.Add((uint)CUBE_PositiveZ, file);
+				SubMapTable.Add((uint)CUBE_PositiveX, sect->getAttribute(L"PosX"));
+				SubMapTable.Add((uint)CUBE_PositiveY, sect->getAttribute(L"PosY"));
+				SubMapTable.Add((uint)CUBE_PositiveZ, sect->getAttribute(L"PosZ"));
 
+				String file;
 				if (sect->tryGetAttribute(L"NegXAlpha", file))
 					SubAlphaMapTable.Add((uint)CUBE_NegativeX, file);
 				if (sect->tryGetAttribute(L"NegYAlpha", file))
@@ -86,27 +83,19 @@ namespace APBuild
 				AssembleCubemap = false;
 				AssembleVolumeMap = true;
 
-				uint i =0;
+				uint i = 0;
 				ConfigurationSection* srcsect = sect->getSection(L"Source");
-				for (ConfigurationSection::SubSectionEnumerator iter = srcsect->GetSubSectionEnumrator();
-					iter.MoveNext();)
+				for (const ConfigurationSection* ss : srcsect->getSubSections())
 				{
-					const ConfigurationSection* ss = iter.getCurrentValue();
-
-					SubMapTable.Add(i, ss->getAttribute(L"FilePath"));
-					i++;
+					SubMapTable.Add(i++, ss->getAttribute(L"FilePath"));
 				}
+
 				srcsect = sect->getSection(L"AlphaSource");
-				i=0;
-				for (ConfigurationSection::SubSectionEnumerator iter = srcsect->GetSubSectionEnumrator();
-					iter.MoveNext();)
+				i = 0;
+				for (const ConfigurationSection* ss : srcsect->getSubSections())
 				{
-					const ConfigurationSection* ss = iter.getCurrentValue();
-
-					SubMapTable.Add(i, ss->getAttribute(L"FilePath"));
-					i++;
+					SubAlphaMapTable.Add(i++, ss->getAttribute(L"FilePath"));
 				}
-				
 			}
 			
 		}
@@ -116,32 +105,28 @@ namespace APBuild
 		GenerateMipmaps = false;
 		sect->TryGetAttributeBool(L"GenerateMipmaps", GenerateMipmaps);
 
-		bool passed = false;
-		passed |= sect->TryGetAttributeInt(L"Width", NewWidth);
-		passed |= sect->TryGetAttributeInt(L"Height", NewHeight);
-		passed |= sect->TryGetAttributeInt(L"Depth", NewDepth);
-		
-		ResizeFilterType = TextureFilterType::BSpline;
-		String flt;
-		if (sect->tryGetAttribute(L"ResizeFilter", flt))
+		if (sect->tryGetAttribute(L"Resizing", tmp))
 		{
-			ResizeFilterType = ProjectUtils::TextureFilterTypeConv.Parse(flt);
+			Resizing.Parse(tmp);
 		}
 
-		Resize = passed;
+		ResizeFilterType = TextureFilterType::BSpline;
+		if (sect->tryGetAttribute(L"ResizeFilter", tmp))
+		{
+			ResizeFilterType = ProjectUtils::TextureFilterTypeConv.Parse(tmp);
+		}
+
 		
 		NewFormat = FMT_Unknown;
-		String fmt;
-		if (sect->tryGetAttribute(L"PixelFormat", fmt))
+		if (sect->tryGetAttribute(L"PixelFormat", tmp))
 		{
-			NewFormat = PixelFormatUtils::ConvertFormat(fmt);
+			NewFormat = PixelFormatUtils::ConvertFormat(tmp);
 		}
 		
 		CompressionType = TextureCompressionType::None;
-		String cmp;
-		if (sect->tryGetAttribute(L"Compression", cmp))
+		if (sect->tryGetAttribute(L"Compression", tmp))
 		{
-			CompressionType = ProjectUtils::TextureCompressionTypeConv.Parse(cmp);
+			CompressionType = ProjectUtils::TextureCompressionTypeConv.Parse(tmp);
 		}
 	}
 
@@ -154,11 +139,8 @@ namespace APBuild
 		sect->TryGetAttributeBool(L"AntiAlias", AntiAlias);
 
 
-		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
-			iter.MoveNext();)
+		for (const ConfigurationSection* ss : sect->getSubSections())
 		{
-			const ConfigurationSection* ss = iter.getCurrentValue();
-
 			CharRange range = { ss->GetAttributeInt(L"Start"), ss->GetAttributeInt(L"End") };
 			Ranges.Add(range);
 		}
@@ -175,11 +157,8 @@ namespace APBuild
 		AntiAlias = true;
 		sect->TryGetAttributeBool(L"AntiAlias", AntiAlias);
 
-		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
-			iter.MoveNext();)
+		for (const ConfigurationSection* ss : sect->getSubSections())
 		{
-			const ConfigurationSection* ss = iter.getCurrentValue();
-
 			CharRange range = { ss->GetAttributeInt(L"Start"), ss->GetAttributeInt(L"End") };
 			Ranges.Add(range);
 		}
@@ -195,11 +174,8 @@ namespace APBuild
 
 	void PakBuildConfig::Parse(const ConfigurationSection* sect)
 	{
-		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
-			iter.MoveNext();)
+		for (const ConfigurationSection* ss : sect->getSubSections())
 		{
-			const ConfigurationSection* ss = iter.getCurrentValue();
-
 			String path;
 			if (ss->tryGetAttribute(L"FilePath", path))
 			{
@@ -216,8 +192,6 @@ namespace APBuild
 				ent.Path = path;
 				Dirs.Add(ent);
 			}
-
-			
 		}
 
 		DestFile = sect->getAttribute(L"DestinationFile");
@@ -229,12 +203,10 @@ namespace APBuild
 		sect->TryGetAttributeBool(L"Debug", IsDebug);
 
 		String srcDesc = sect->getAttribute(L"Source");
-		List<String> srcSets;
-		StringUtils::Split(srcDesc, srcSets, L"|");
+		List<String> srcSets = StringUtils::Split(srcDesc, L"|");
 
-		for (int i=0;i<srcSets.getCount();i++)
+		for (String e : srcSets)
 		{
-			String e = srcSets[i];
 			StringUtils::Trim(e);
 
 			if (e.size() <= 3)
@@ -265,11 +237,10 @@ namespace APBuild
 		}
 
 		String entryPointsDesc = sect->getAttribute(L"EntryPoints");
-		srcSets.Clear();
-		StringUtils::Split(entryPointsDesc, srcSets, L"|");
-		for (int i=0;i<srcSets.getCount();i++)
+		srcSets = StringUtils::Split(entryPointsDesc, L"|");
+
+		for (String e : srcSets)
 		{
-			String e = srcSets[i];
 			StringUtils::Trim(e);
 
 			if (e.size() <= 3)
@@ -302,11 +273,11 @@ namespace APBuild
 		DestFile = sect->getAttribute(L"DestinationFile");
 		PListFile = sect->getAttribute(L"ParamList");
 
-		StringUtils::Split(sect->getAttribute(L"Targets"), Targets, L"|");
-		for (int i=0;i<Targets.getCount();i++)
+		Targets = StringUtils::Split(sect->getAttribute(L"Targets"), L"|");
+		for (String& tgt : Targets)
 		{
-			StringUtils::Trim(Targets[i]);
-			StringUtils::ToLowerCase(Targets[i]);
+			StringUtils::Trim(tgt);
+			StringUtils::ToLowerCase(tgt);
 		}
 
 		CompactBuild = false;
@@ -348,11 +319,9 @@ namespace APBuild
 		if (subs && subs->getSubSectionCount()>0)
 		{
 			UseVertexFormatConversion = true;
-			for (ConfigurationSection::SubSectionEnumerator iter = subs->GetSubSectionEnumrator();
-				iter.MoveNext();)
-			{
-				const ConfigurationSection* ent = iter.getCurrentValue();
 
+			for (const ConfigurationSection* ent : subs->getSubSections())
+			{
 				VertexElementUsage usage = GraphicsCommonUtils::ParseVertexElementUsage(ent->getName());
 				int index = 0;
 				if (usage == VEU_TextureCoordinate)
@@ -390,11 +359,8 @@ namespace APBuild
 		DstFile = sect->getAttribute(L"DestinationFile");
 		Reverse = sect->GetAttributeBool(L"Reverse");
 
-		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
-			iter.MoveNext();)
+		for (const ConfigurationSection* ss : sect->getSubSections())
 		{
-			const ConfigurationSection* ss = iter.getCurrentValue();
-
 			String name = ss->getName();
 			int objIdx = StringUtils::ParseInt32(ss->getValue());
 

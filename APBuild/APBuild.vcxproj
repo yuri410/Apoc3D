@@ -155,6 +155,7 @@
     <ClInclude Include="APBCommon.h" />
     <ClInclude Include="BuildConfig.h" />
     <ClInclude Include="EffectCompiler\CompilerService_SM3.h" />
+    <ClInclude Include="TextureBuild\D3DTextureBuild.h" />
     <ClInclude Include="Utils\D3DHelper.h" />
     <ClInclude Include="TextureBuild\dds.h" />
     <ClInclude Include="EffectCompiler\AFXBuild.h" />
@@ -195,6 +196,7 @@
     <ClCompile Include="EffectCompiler\CompileService.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="BuildConfig.cpp" />
+    <ClCompile Include="TextureBuild\D3DTextureBuild.cpp" />
     <ClCompile Include="Utils\D3DHelper.cpp" />
     <ClCompile Include="FontBuild\FontBuild.cpp" />
     <ClCompile Include="MaterialScript\MaterialBuild.cpp" />

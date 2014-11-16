@@ -47,13 +47,12 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
-			Effect::Effect(void)
-				: m_begun(false), m_isUnsupported(false)
+			Effect::Effect()
 			{
 			}
 
 
-			Effect::~Effect(void)
+			Effect::~Effect()
 			{
 			}
 
@@ -105,9 +104,7 @@ namespace Apoc3D
 
 
 			AutomaticEffect::AutomaticEffect(RenderDevice* device, const ResourceLocation& rl)
-				: m_vertexShader(nullptr), m_pixelShader(nullptr), m_device(device), m_supportsInstancing(false), 
-				m_unifiedTime(0), m_lastTime(0),
-				m_previousMaterialPointer(nullptr)
+				: m_device(device)
 			{
 				Reload(rl);
 
@@ -122,8 +119,7 @@ namespace Apoc3D
 			{
 				DELETE_AND_NULL(m_vertexShader);
 				DELETE_AND_NULL(m_pixelShader);
-
-				delete m_texture;
+				DELETE_AND_NULL(m_texture);
 			}
 
 			bool AutomaticEffect::SupportsInstancing()
@@ -792,7 +788,7 @@ namespace Apoc3D
 				Capabilities* caps = device->getCapabilities();
 				const EffectProfileData* profileSelected = nullptr;
 
-				for (int i=data.ProfileCount-1; i>=0; i--)
+				for (int i = data.ProfileCount - 1; i >= 0; i--)
 				{
 					const EffectProfileData& pd = data.Profiles[i];
 					if (!caps->SupportsVertexShader(pd.ImplementationType, pd.MajorVer, pd.MinorVer))
@@ -815,10 +811,8 @@ namespace Apoc3D
 
 			CustomShaderEffect::~CustomShaderEffect()
 			{
-				if (m_vertexShader)
-					delete m_vertexShader;
-				if (m_pixelShader)
-					delete m_pixelShader;
+				DELETE_AND_NULL(m_vertexShader);
+				DELETE_AND_NULL(m_pixelShader);
 			}
 		};
 	}

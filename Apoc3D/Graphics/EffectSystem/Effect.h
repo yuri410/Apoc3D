@@ -49,8 +49,8 @@ namespace Apoc3D
 			{
 				RTTI_BASE;
 			public:
-				Effect(void);
-				virtual ~Effect(void);
+				Effect();
+				virtual ~Effect();
 
 
 				virtual void Update(const GameTime* time) { }
@@ -105,9 +105,9 @@ namespace Apoc3D
 				static void LoadEffect(RenderDevice* rs, const ResourceLocation& rl, Shader*& vs, Shader*& ps);
 
 				String m_name;
-				bool m_isUnsupported;
+				bool m_isUnsupported = false;
 			private:
-				bool m_begun;
+				bool m_begun = false;
 				
 			};
 
@@ -161,11 +161,11 @@ namespace Apoc3D
 				{
 					ResolvedEffectParameter() : EffectParameter() { }
 					explicit ResolvedEffectParameter(const EffectParameter& base)
-						: EffectParameter(base), RS_SetupAtBeginingOnly(false), RS_SetupAtBegining(false), RS_TargetShader(nullptr) { }
+						: EffectParameter(base) { }
 
-					bool RS_SetupAtBegining;
-					bool RS_SetupAtBeginingOnly;
-					Shader* RS_TargetShader;
+					bool RS_SetupAtBegining = false;
+					bool RS_SetupAtBeginingOnly = false;
+					Shader* RS_TargetShader = nullptr;
 
 					void SetSamplerState() const;
 
@@ -199,21 +199,21 @@ namespace Apoc3D
 				void SetMaterialCustomParameter(ResolvedEffectParameter& param, Material* mtrl);
 				void SetSingleCustomParameter(ResolvedEffectParameter& param, CustomEffectParameterType type, const void* data);
 
-				Shader* m_vertexShader;
-				Shader* m_pixelShader;
+				Shader* m_vertexShader = nullptr;
+				Shader* m_pixelShader = nullptr;
 
 				List<ResolvedEffectParameter> m_parameters;
 
 				RenderDevice* m_device;
 				Texture* m_texture;
 
-				bool m_supportsInstancing;
+				bool m_supportsInstancing = false;
 
-				float m_unifiedTime;
-				float m_lastTime;
+				float m_unifiedTime = 0;
+				float m_lastTime = 0;
 
 				// for duplicated material parameter setup check only
-				void* m_previousMaterialPointer;
+				void* m_previousMaterialPointer = nullptr;
 				//Matrix m_mtrxBuffer[InstancingData::MaxOneTimeInstances];
 			};
 
