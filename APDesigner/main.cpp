@@ -56,6 +56,7 @@ struct StartupParameters
 	void Parse(wchar_t** argv, int count);
 };
 
+
 INT WINAPI wWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPWSTR    lpCmdLine,

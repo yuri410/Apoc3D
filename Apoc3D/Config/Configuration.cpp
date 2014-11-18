@@ -37,7 +37,7 @@ namespace Apoc3D
 		{
 			for (ConfigurationSection*& newSect : m_sections.getValueAccessor())
 			{
-				newSect = ConfigurationManager::NewConfigSection(*newSect);
+				newSect = new ConfigurationSection(*newSect);
 			}
 		}
 
@@ -45,7 +45,7 @@ namespace Apoc3D
 		{
 			for (ConfigurationSection* s : m_sections.getValueAccessor())
 			{
-				ConfigurationManager::FreeConfigSection(s);
+				delete s;
 			}
 			m_sections.Clear();
 		}
@@ -117,7 +117,7 @@ namespace Apoc3D
 			}
 			else
 			{
-				ConfigurationSection* thatSectClone = ConfigurationManager::NewConfigSection(*thatSect);
+				ConfigurationSection* thatSectClone = new ConfigurationSection(*thatSect);
 				if (thisSectParent)
 					thisSectParent->AddSection(thatSectClone);
 				else

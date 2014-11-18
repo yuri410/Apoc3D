@@ -1,5 +1,7 @@
 /* -----------------------------------------------------------------------------
-	squish 1.11, manual amalgamation version
+	WARNING: This code is modified from the original.
+
+	squish 1.11, amalgamation version
 	original license:
 
 	Copyright (c) 2006 Simon Brown                          si@sjbrown.co.uk

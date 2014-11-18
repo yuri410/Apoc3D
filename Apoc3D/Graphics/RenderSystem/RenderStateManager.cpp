@@ -22,6 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "RenderStateManager.h"
+#include "RenderDevice.h"
 
 namespace Apoc3D
 {
@@ -34,6 +35,58 @@ namespace Apoc3D
 			{
 
 			}
+
+			//////////////////////////////////////////////////////////////////////////
+
+			ScopeRenderTargetChange::ScopeRenderTargetChange(RenderDevice* device, int32 idx, RenderTarget* rt)
+				: m_device(device)
+			{
+				ZeroArray(m_oldRenderTargets);
+				ZeroArray(m_oldRenderTargetChanged);
+
+				SetRenderTarget(idx, rt);
+			}
+			ScopeRenderTargetChange::ScopeRenderTargetChange(RenderDevice* device, std::initializer_list<std::pair<int32, RenderTarget* >> list)
+				: m_device(device)
+			{
+				ZeroArray(m_oldRenderTargets);
+				ZeroArray(m_oldRenderTargetChanged);
+
+				for (const auto& e : list)
+				{
+					SetRenderTarget(e.first, e.second);
+				}
+			}
+			ScopeRenderTargetChange::~ScopeRenderTargetChange()
+			{
+				for (int32 i = 0; i < countof(m_oldRenderTargets);i++)
+				{
+					if (m_oldRenderTargetChanged[i])
+					{
+						m_device->SetRenderTarget(i, m_oldRenderTargets[i]);
+					}
+				}
+				for (auto e : m_additionalOldRenderTarget)
+				{
+					m_device->SetRenderTarget(e.Key, e.Value);
+				}
+			}
+
+			void ScopeRenderTargetChange::SetRenderTarget(int32 idx, RenderTarget* rt)
+			{
+				RenderTarget* oldRt = m_device->GetRenderTarget(idx);
+
+				if (idx < countof(m_oldRenderTargets))
+				{
+					m_oldRenderTargets[idx] = oldRt;
+					m_oldRenderTargetChanged[idx] = true;
+				}
+				else
+				{
+					m_additionalOldRenderTarget.Add(idx, oldRt);
+				}
+			}
+
 		}
 	}
 }

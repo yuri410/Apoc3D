@@ -100,7 +100,7 @@ namespace Apoc3D
 				sect->AddAttributeString(L"MinFilter", GraphicsCommonUtils::ToString(MinFilter));
 				sect->AddAttributeString(L"MipFilter", GraphicsCommonUtils::ToString(MipFilter));
 
-				sect->AddAttributeString(L"BorderColor", StringUtils::UIntToStringHex(BorderColor));
+				sect->AddAttributeString(L"BorderColor", StringUtils::UIntToStringHex(BorderColor, StringUtils::SF_ShowHexBase));
 
 				sect->AddAttributeString(L"MaxAnisotropy", StringUtils::IntToString(MaxAnisotropy));
 				sect->AddAttributeString(L"MaxMipLevel", StringUtils::IntToString(MaxMipLevel));

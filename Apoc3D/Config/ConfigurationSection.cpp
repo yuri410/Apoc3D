@@ -102,7 +102,7 @@ namespace Apoc3D
 			// deep copy sub sections
 			for (ConfigurationSection*& s : m_subSection.getValueAccessor())
 			{
-				ConfigurationSection* newSect = ConfigurationManager::NewConfigSection(*s);
+				ConfigurationSection* newSect = new ConfigurationSection(*s);
 
 				s = newSect;
 			}
@@ -111,7 +111,7 @@ namespace Apoc3D
 		{
 			for (ConfigurationSection* s : m_subSection.getValueAccessor())
 			{
-				ConfigurationManager::FreeConfigSection(s);
+				delete s;
 			}
 			m_subSection.Clear();
 		}
@@ -126,7 +126,7 @@ namespace Apoc3D
 			}
 			else
 			{
-				sect = ConfigurationManager::NewConfigSection(name);
+				sect = new ConfigurationSection(name);
 				m_subSection.Add(name, sect);
 			}
 			return sect;
@@ -152,41 +152,6 @@ namespace Apoc3D
 			m_value = value;
 		}
 
-		void ConfigurationSection::_ShallowClear()
-		{
-			m_value.clear();
-			m_name.clear();
-			m_subSection.Clear();
-			m_attributes.Clear();
-		}
-		void ConfigurationSection::_SetName(const String& name)
-		{
-			m_name = name;
-		}
-		void ConfigurationSection::_EnsureCapacity(int32 capacity)
-		{
-			if (m_subSection.getPrimeCapacity() < capacity)
-			{
-				m_subSection.Resize(capacity);
-			}
-		}
-		void ConfigurationSection::_CopyFrom(const ConfigurationSection& other)
-		{
-			m_name = other.m_name;
-			m_value = other.m_value;
-
-			assert(m_attributes.getCount() == 0);
-			assert(m_subSection.getCount() == 0);
-
-			m_subSection = other.m_subSection;
-			m_attributes = other.m_attributes;
-
-			for (ConfigurationSection*& s : m_subSection.getValueAccessor())
-			{
-				ConfigurationSection* newSect = ConfigurationManager::NewConfigSection(*s);
-				s = newSect;
-			}
-		}
 
 		bool ConfigurationSection::hasAttribute(const String& name) const { return m_attributes.Contains(name); }
 
@@ -363,7 +328,7 @@ namespace Apoc3D
 
 		void ConfigurationSection::AddStringValue(const String& name, const String& value)
 		{
-			ConfigurationSection* ss = ConfigurationManager::NewConfigSection(name);
+			ConfigurationSection* ss = new ConfigurationSection(name);
 			ss->SetValue(value);
 			AddSection(ss);
 		}

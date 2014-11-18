@@ -92,7 +92,7 @@ namespace Apoc3D
 							curSect = config->get(curSectName);
 							if (curSect == nullptr)
 							{
-								curSect = ConfigurationManager::NewConfigSection(curSectName);
+								curSect = new ConfigurationSection(curSectName);
 								config->Add(curSect);
 							}
 							else

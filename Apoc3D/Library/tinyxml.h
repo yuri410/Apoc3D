@@ -1,4 +1,6 @@
 /*
+WARNING: This code is modified from the original.
+
 www.sourceforge.net/projects/tinyxml
 Original code by Lee Thomason (www.grinninglizard.com)
 
@@ -22,11 +24,11 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
-
 #ifndef TINYXML_INCLUDED
 #define TINYXML_INCLUDED
 
 #include "../Common.h"
+#include "apoc3d/Core/Pool.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -180,7 +182,7 @@ const TiXmlEncoding TIXML_DEFAULT_ENCODING = TIXML_ENCODING_UNKNOWN;
 							Comment (leaf)
 							Unknown (leaf)
 
-	A Decleration contains: Attributes (not on tree)
+	A Declaration contains: Attributes (not on tree)
 	@endverbatim
 */
 class APAPI TiXmlBase
@@ -190,10 +192,12 @@ class APAPI TiXmlBase
 	friend class TiXmlDocument;
 
 public:
-	TiXmlBase()	:	userData(0)		{}
-	virtual ~TiXmlBase()			{}
+	TiXmlBase() { }
+	virtual ~TiXmlBase() { }
 
-	/**	All TinyXml classes can print themselves to a filestream
+	void operator=(const TiXmlBase& base) = delete;
+
+	/**	All TinyXml classes can print themselves to a file stream
 		or the string class (TiXmlString in non-STL mode, std::string
 		in STL mode.) Either or both cfile and str can be null.
 		
@@ -365,7 +369,7 @@ protected:
 	TiXmlCursor location;
 
     /// Field containing a generic user pointer
-	void*			userData;
+	void*			userData = 0;
 	
 	// None of these methods are reliable for any language except English.
 	// Good for approximation, not great for accuracy.
@@ -387,7 +391,6 @@ protected:
 
 private:
 	TiXmlBase( const TiXmlBase& );				// not implemented.
-	void operator=( const TiXmlBase& base );	// not allowed.
 
 	struct Entity
 	{
@@ -418,7 +421,6 @@ class APAPI TiXmlNode : public TiXmlBase
 	friend class TiXmlElement;
 
 public:
-
 
 
 	/** An input stream operator, for every class. Tolerant of newlines and
@@ -581,17 +583,17 @@ public:
 	TiXmlNode* LinkEndChild( TiXmlNode* addThis );
 
 	/** Add a new node related to this. Adds a child before the specified child.
-		Returns a pointer to the new object or NULL if an error occured.
+		Returns a pointer to the new object or NULL if an error occurred.
 	*/
 	TiXmlNode* InsertBeforeChild( TiXmlNode* beforeThis, const TiXmlNode& addThis );
 
 	/** Add a new node related to this. Adds a child after the specified child.
-		Returns a pointer to the new object or NULL if an error occured.
+		Returns a pointer to the new object or NULL if an error occurred.
 	*/
 	TiXmlNode* InsertAfterChild(  TiXmlNode* afterThis, const TiXmlNode& addThis );
 
 	/** Replace a child of this node.
-		Returns a pointer to the new object or NULL if an error occured.
+		Returns a pointer to the new object or NULL if an error occurred.
 	*/
 	TiXmlNode* ReplaceChild( TiXmlNode* replaceThis, const TiXmlNode& withThis );
 
@@ -699,7 +701,7 @@ public:
 	*/
 	virtual TiXmlNode* Clone() const = 0;
 
-	/** Accept a hierchical visit the nodes in the TinyXML DOM. Every node in the 
+	/** Accept a hierarchical visit the nodes in the TinyXML DOM. Every node in the 
 		XML tree will be conditionally visited and the host will be called back
 		via the TiXmlVisitor interface.
 
@@ -723,9 +725,12 @@ public:
 	*/
 	virtual bool Accept( TiXmlVisitor* visitor ) const = 0;
 
+	TiXmlNode(const TiXmlNode&) = delete;
+	void operator=(const TiXmlNode& base) = delete;
+
 protected:
 	TiXmlNode( NodeType _type );
-
+	
 	// Copy to the allocated object. Shared functionality between Clone, Copy constructor,
 	// and the assignment operator.
 	void CopyTo( TiXmlNode* target ) const;
@@ -736,20 +741,17 @@ protected:
 	// Figure out what is at *p, and parse it. Returns null if it is not an xml node.
 	TiXmlNode* Identify( const char* start, TiXmlEncoding encoding );
 
-	TiXmlNode*		parent;
+	TiXmlNode*		parent = 0;
 	NodeType		type;
 
-	TiXmlNode*		firstChild;
-	TiXmlNode*		lastChild;
+	TiXmlNode*		firstChild = 0;
+	TiXmlNode*		lastChild = 0;
 
 	TIXML_STRING	value;
 
-	TiXmlNode*		prev;
-	TiXmlNode*		next;
+	TiXmlNode*		prev = 0;
+	TiXmlNode*		next = 0;
 
-private:
-	TiXmlNode( const TiXmlNode& );				// not implemented.
-	void operator=( const TiXmlNode& base );	// not allowed.
 };
 
 
@@ -765,32 +767,22 @@ class APAPI TiXmlAttribute : public TiXmlBase
 	friend class TiXmlAttributeSet;
 
 public:
-	/// Construct an empty attribute.
-	TiXmlAttribute() : TiXmlBase()
-	{
-		document = 0;
-		prev = next = 0;
-	}
+	DECL_POOL_TYPE(TiXmlAttribute);
 
+	/// Construct an empty attribute.
+	TiXmlAttribute() : TiXmlBase() { }
 
 	/// std::string constructor.
 	TiXmlAttribute( const std::string& _name, const std::string& _value )
-	{
-		name = _name;
-		value = _value;
-		document = 0;
-		prev = next = 0;
-	}
-
+		: name(_name), value(_value) { }
 
 	/// Construct an attribute with a name and value.
 	TiXmlAttribute( const char * _name, const char * _value )
-	{
-		name = _name;
-		value = _value;
-		document = 0;
-		prev = next = 0;
-	}
+		: name(_name), value(_value) { }
+
+	TiXmlAttribute(const TiXmlAttribute&) = delete;
+	void operator=(const TiXmlAttribute& base) = delete;
+
 
 	const char*		Name()  const		{ return name.c_str(); }		///< Return the name of this attribute.
 	const char*		Value() const		{ return value.c_str(); }		///< Return the value of this attribute.
@@ -859,14 +851,12 @@ public:
 	void SetDocument( TiXmlDocument* doc )	{ document = doc; }
 
 private:
-	TiXmlAttribute( const TiXmlAttribute& );				// not implemented.
-	void operator=( const TiXmlAttribute& base );	// not allowed.
 
-	TiXmlDocument*	document;	// A pointer back to a document, for error reporting.
+	TiXmlDocument*	document = 0;	// A pointer back to a document, for error reporting.
 	TIXML_STRING name;
 	TIXML_STRING value;
-	TiXmlAttribute*	prev;
-	TiXmlAttribute*	next;
+	TiXmlAttribute*	prev = 0;
+	TiXmlAttribute*	next = 0;
 };
 
 
@@ -903,11 +893,12 @@ public:
 	TiXmlAttribute* FindOrCreate( const std::string& _name );
 
 
-private:
 	//*ME:	Because of hidden/disabled copy-construktor in TiXmlAttribute (sentinel-element),
 	//*ME:	this class must be also use a hidden/disabled copy-constructor !!!
-	TiXmlAttributeSet( const TiXmlAttributeSet& );	// not allowed
-	void operator=( const TiXmlAttributeSet& );	// not allowed (as TiXmlAttribute)
+	TiXmlAttributeSet(const TiXmlAttributeSet&) = delete;
+	void operator=(const TiXmlAttributeSet&) = delete;
+
+private:
 
 	TiXmlAttribute sentinel;
 };
@@ -920,13 +911,14 @@ private:
 class APAPI TiXmlElement : public TiXmlNode
 {
 public:
+	DECL_POOL_TYPE(TiXmlElement);
+
 	/// Construct an element.
 	TiXmlElement (const char * in_value);
 
 	/// std::string constructor.
 	TiXmlElement( const std::string& _value );
-
-	TiXmlElement( const Apoc3D::String& utf16 );
+	TiXmlElement(const Apoc3D::String& utf16);
 
 
 	TiXmlElement( const TiXmlElement& );
@@ -1143,6 +1135,8 @@ private:
 class APAPI TiXmlComment : public TiXmlNode
 {
 public:
+	DECL_POOL_TYPE(TiXmlComment);
+
 	/// Constructs an empty comment.
 	TiXmlComment() : TiXmlNode( TiXmlNode::TINYXML_COMMENT ) {}
 	/// Construct a comment from text.
@@ -1153,6 +1147,7 @@ public:
 	TiXmlComment& operator=( const TiXmlComment& base );
 
 	virtual ~TiXmlComment()	{}
+
 
 	/// Returns a copy of this Comment.
 	virtual TiXmlNode* Clone() const;
@@ -1193,6 +1188,8 @@ class APAPI TiXmlText : public TiXmlNode
 {
 	friend class TiXmlElement;
 public:
+	DECL_POOL_TYPE(TiXmlText);
+
 	/** Constructor for text element. By default, it is treated as 
 		normal, encoded text. If you want it be output as a CDATA text
 		element, set the parameter _cdata to 'true'
@@ -1200,21 +1197,20 @@ public:
 	TiXmlText (const char * initValue ) : TiXmlNode (TiXmlNode::TINYXML_TEXT)
 	{
 		SetValue( initValue );
-		cdata = false;
 	}
-	virtual ~TiXmlText() {}
 
 	/// Constructor.
-	TiXmlText( const std::string& initValue ) : TiXmlNode (TiXmlNode::TINYXML_TEXT)
+	TiXmlText(const std::string& initValue) : TiXmlNode(TiXmlNode::TINYXML_TEXT)
 	{
-		SetValue( initValue );
-		cdata = false;
+		SetValue(initValue);
 	}
 
-	TiXmlText( const Apoc3D::String& utf16 );
+	TiXmlText(const Apoc3D::String& utf16);
 
 	TiXmlText( const TiXmlText& copy ) : TiXmlNode( TiXmlNode::TINYXML_TEXT )	{ copy.CopyTo( this ); }
 	TiXmlText& operator=( const TiXmlText& base )							 	{ base.CopyTo( this ); return *this; }
+
+	virtual ~TiXmlText() {}
 
 	// Write this text object to a stream.
 	virtual void Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const;
@@ -1244,7 +1240,7 @@ protected :
 
 
 private:
-	bool cdata;			// true if this should be input and output as a CDATA style text element
+	bool cdata = false;			// true if this should be input and output as a CDATA style text element
 };
 
 
@@ -1264,6 +1260,8 @@ private:
 class APAPI TiXmlDeclaration : public TiXmlNode
 {
 public:
+	DECL_POOL_TYPE(TiXmlDeclaration);
+
 	/// Construct an empty declaration.
 	TiXmlDeclaration()   : TiXmlNode( TiXmlNode::TINYXML_DECLARATION ) {}
 
@@ -1331,6 +1329,8 @@ private:
 class APAPI TiXmlUnknown : public TiXmlNode
 {
 public:
+	DECL_POOL_TYPE(TiXmlUnknown);
+
 	TiXmlUnknown() : TiXmlNode( TiXmlNode::TINYXML_UNKNOWN )	{}
 	virtual ~TiXmlUnknown() {}
 
@@ -1381,8 +1381,8 @@ public:
 
 	virtual ~TiXmlDocument() {}
 
-	bool Load(Apoc3D::IO::Stream* strm, TiXmlEncoding encoding);
-	void Save(Apoc3D::IO::Stream* strm);
+	bool Load(Apoc3D::IO::Stream& strm, TiXmlEncoding encoding);
+	void Save(Apoc3D::IO::Stream& strm);
 
 	/** Parse the given null terminated block of xml data. Passing in an encoding to this
 		method (either TIXML_ENCODING_LEGACY or TIXML_ENCODING_UTF8 will force TinyXml

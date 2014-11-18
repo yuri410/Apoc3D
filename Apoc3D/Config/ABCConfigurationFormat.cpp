@@ -50,13 +50,13 @@ namespace Apoc3D
 		{
 			Configuration* config = new Configuration(rl.getName());
 
-			BinaryReader* br = new BinaryReader(rl);
+			BinaryReader br(rl);
 
-			int id = br->ReadInt32();
+			int id = br.ReadInt32();
 
 			if (id == FileID)
 			{
-				TaggedDataReader* root = br->ReadTaggedDataBlock();
+				TaggedDataReader* root = br.ReadTaggedDataBlock();
 
 				BuildHierarchy(config, root);
 
@@ -68,21 +68,20 @@ namespace Apoc3D
 				LogManager::getSingleton().Write(LOG_System, L"Invalid Apoc3D Binary Config format " + rl.getName(), LOGLVL_Error);
 			}
 
-			br->Close();
-			delete br;
+			br.Close();
+			
 			return config;
 		}
 		void ABCConfigurationFormat::Save(Configuration* config, Stream* strm)
 		{
-			BinaryWriter* bw = new BinaryWriter(strm);
+			BinaryWriter bw(strm);
 
-			bw->WriteInt32(static_cast<int>(FileID));
+			bw.WriteInt32(static_cast<int>(FileID));
 
 			TaggedDataWriter* root = new TaggedDataWriter(true);
 
-			for (Configuration::ChildTable::Enumerator e = config->GetEnumerator(); e.MoveNext();)
+			for (ConfigurationSection* sect : config->getSubSections())
 			{
-				ConfigurationSection* sect = e.getCurrentValue();
 				BinaryWriter* bw2 = root->AddEntry(StringUtils::UTF16toUTF8(sect->getName()));
 
 				SaveNode(sect, bw2);
@@ -91,11 +90,10 @@ namespace Apoc3D
 				delete bw2;
 			}
 
-			bw->WriteTaggedDataBlock(root);
+			bw.WriteTaggedDataBlock(root);
 			delete root;
 
-			bw->Close();
-			delete bw;
+			bw.Close();
 		}
 
 		void ABCConfigurationFormat::SaveNode(ConfigurationSection* section, BinaryWriter* bw)
@@ -161,7 +159,7 @@ namespace Apoc3D
 		void ABCConfigurationFormat::BuildNode(Configuration* config, const std::string& sectionName, BinaryReader* br, ConfigurationSection* parent)
 		{
 			String wSectName = StringUtils::UTF8toUTF16(sectionName);
-			ConfigurationSection* section = ConfigurationManager::NewConfigSection(wSectName);
+			ConfigurationSection* section = new ConfigurationSection(wSectName);
 
 			TaggedDataReader* localValues = br->ReadTaggedDataBlock();
 			{
@@ -173,7 +171,7 @@ namespace Apoc3D
 				if (br2)
 				{
 					int count = br2->ReadInt32();
-					for (int i=0;i<count;i++)
+					for (int i = 0; i < count; i++)
 					{
 						String key = br2->ReadString();
 						String val = br2->ReadString();

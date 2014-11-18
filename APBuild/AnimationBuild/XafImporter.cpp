@@ -44,7 +44,9 @@ namespace APBuild
 		String xafFile = config.SrcFile;
 
 		TiXmlDocument doc;
-		doc.Load(new FileStream(xafFile), TIXML_ENCODING_UNKNOWN);
+		FileStream inStream(xafFile);
+
+		doc.Load(inStream, TIXML_ENCODING_UNKNOWN);
 		
 		double frameRate = 0;
 		double tickpf = 0;

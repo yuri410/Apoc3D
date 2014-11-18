@@ -25,11 +25,12 @@
  * 
  * -----------------------------------------------------------------------------
  */
-
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
 #include "apoc3d/Math/Plane.h"
 #include "apoc3d/Math/Rectangle.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;
 
 namespace Apoc3D
@@ -145,6 +146,25 @@ namespace Apoc3D
 				RenderStateManager(RenderDevice* device);
 			private:
 				RenderDevice* m_renderDevice;
+			};
+
+			class APAPI ScopeRenderTargetChange
+			{
+			public:
+				ScopeRenderTargetChange(RenderDevice* device, int32 idx, RenderTarget* rt);
+				ScopeRenderTargetChange(RenderDevice* device, std::initializer_list<std::pair<int32, RenderTarget* >> list);
+				~ScopeRenderTargetChange();
+
+			private:
+				void SetRenderTarget(int32 idx, RenderTarget* rt);
+				
+				RenderDevice* m_device;
+
+				RenderTarget* m_oldRenderTargets[4];
+				bool m_oldRenderTargetChanged[4];
+				
+				// no allocation unless involved
+				HashMap<int32, RenderTarget*> m_additionalOldRenderTarget;
 			};
 		}
 	}

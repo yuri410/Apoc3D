@@ -103,32 +103,26 @@ namespace Apoc3D
 				}
 			}
 
-			int32 RenderDevice::BatchReportEntryComparison(BatchReportEntry* const& a, BatchReportEntry* const& b)
-			{
-				return -Apoc3D::Collections::OrderComparer(a->Sorter, b->Sorter);
-			}
-
 			void RenderDevice::EndFrame()
 			{
 				if (HasBatchReportRequest)
 				{
 					List<BatchReportEntry*> sortingList(m_reportTableByMaterial->getCount());
 
-					for (HashMap<void*, BatchReportEntry>::Enumerator e = m_reportTableByMaterial->GetEnumerator(); e.MoveNext();)
+					for (BatchReportEntry& bre : m_reportTableByMaterial->getValueAccessor())
 					{
-						BatchReportEntry* ent = &e.getCurrentValue();
-						
-						ent->CalculateSorter();
+						bre.CalculateSorter();
 
-						sortingList.Add(ent);
+						sortingList.Add(&bre);
 					}
 
-					sortingList.Sort(BatchReportEntryComparison);
-
-					for (int32 i=0;i<sortingList.getCount();i++)
+					sortingList.Sort([](const BatchReportEntry* a, const BatchReportEntry* b)->int
 					{
-						BatchReportEntry* ent = sortingList[i];
+						return -Apoc3D::Collections::OrderComparer(a->Sorter, b->Sorter);
+					});
 
+					for (BatchReportEntry* ent : sortingList)
+					{
 						String msg;
 						msg.append(ent->DebugName);
 						msg.append(L"\t DP=");

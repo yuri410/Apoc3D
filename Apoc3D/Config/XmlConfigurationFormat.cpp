@@ -34,6 +34,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Library/tinyxml.h"
 #include "apoc3d/Library/ConvertUTF.h"
 
+using namespace Apoc3D::Core;
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Utility;
 
@@ -51,8 +52,10 @@ namespace Apoc3D
 
 			Stream* strm = rl.GetReadStream();
 
-			doc.Load(strm, TIXML_ENCODING_UNKNOWN);
+			doc.Load(*strm, TIXML_ENCODING_UNKNOWN);
 			
+			delete strm;
+
 			BuildXml(config, &doc);
 
 			return config;
@@ -66,15 +69,15 @@ namespace Apoc3D
 			TiXmlElement* root = new TiXmlElement("Root");
 			doc.LinkEndChild(root);
 
-			for (Configuration::ChildTable::Enumerator iter = config->GetEnumerator();iter.MoveNext();)
+			for (ConfigurationSection* sect : config->getSubSections())
 			{
-				ConfigurationSection* sect = iter.getCurrentValue();
 				TiXmlElement* elem = new TiXmlElement(sect->getName());
 				root->LinkEndChild(elem);
 				SaveNode(elem, sect);
 			}
 
-			doc.Save(strm);
+			doc.Save(*strm);
+			delete strm;
 		}
 
 		void XMLConfigurationFormat::BuildNode(Configuration* config, const TiXmlNode* node, ConfigurationSection* parent, const TiXmlDocument& doc)
@@ -89,7 +92,7 @@ namespace Apoc3D
 
 					String strName = doc.GetUTF16ElementName(elem);
 					
-					ConfigurationSection* section = ConfigurationManager::NewConfigSection(strName);
+					ConfigurationSection* section = new ConfigurationSection(strName);
 
 
 					for (const TiXmlAttribute* i = elem->FirstAttribute(); i!=0; i=i->Next())
@@ -143,9 +146,8 @@ namespace Apoc3D
 				node->ToElement()->SetAttribute(iter.getCurrentKey(), iter.getCurrentValue());
 			}
 			
-			for (ConfigurationSection::SubSectionEnumerator iter = parent->GetSubSectionEnumrator();iter.MoveNext();)
+			for (ConfigurationSection* s : parent->getSubSections())
 			{
-				ConfigurationSection* s = iter.getCurrentValue();
 				TiXmlElement* elem = new TiXmlElement(s->getName());
 				if (s->getValue().size())
 				{

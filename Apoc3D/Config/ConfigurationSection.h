@@ -29,6 +29,7 @@
 #include "apoc3d/Math/ColorValue.h"
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Collections/List.h"
+#include "apoc3d/Core/Pool.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Core;
@@ -60,8 +61,9 @@ namespace Apoc3D
 		 */
 		class APAPI ConfigurationSection
 		{
-			friend class ConfigurationManager;
 		public:
+			DECL_POOL_TYPE(ConfigurationSection);
+
 			static int32 FloatPointStoringPrecision;
 			static bool FloatPointCustomStoringPrecision;
 
@@ -266,13 +268,6 @@ namespace Apoc3D
 			AttributeTable m_attributes;
 			SubSectionTable m_subSection;
 
-		private:
-
-			void _ShallowClear();
-			void _SetName(const String& name);
-			void _EnsureCapacity(int32 capacity);
-
-			void _CopyFrom(const ConfigurationSection& other);
 		};
 	}
 }

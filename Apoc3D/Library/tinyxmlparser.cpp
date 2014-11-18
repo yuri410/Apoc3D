@@ -1,4 +1,6 @@
 /*
+WARNING: This code is modified from the original.
+
 www.sourceforge.net/projects/tinyxml
 Original code by Lee Thomason (www.grinninglizard.com)
 
@@ -22,10 +24,13 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+
 #include <ctype.h>
 #include <stddef.h>
 
 #include "tinyxml.h"
+
+using namespace Apoc3D::Core;
 
 //#define DEBUG_PARSER
 #if defined( DEBUG_PARSER )
@@ -865,7 +870,7 @@ TiXmlNode* TiXmlNode::Identify( const char* p, TiXmlEncoding encoding )
 		#ifdef DEBUG_PARSER
 			TIXML_LOG( "XML parsing CDATA\n" );
 		#endif
-		TiXmlText* text = new TiXmlText( "" );
+		TiXmlText* text = new TiXmlText("");
 		text->SetCDATA( true );
 		returnNode = text;
 	}
@@ -882,7 +887,7 @@ TiXmlNode* TiXmlNode::Identify( const char* p, TiXmlEncoding encoding )
 		#ifdef DEBUG_PARSER
 			TIXML_LOG( "XML parsing Element\n" );
 		#endif
-		returnNode = new TiXmlElement( "" );
+		returnNode = new TiXmlElement("");
 	}
 	else
 	{
@@ -1154,6 +1159,7 @@ const char* TiXmlElement::Parse( const char* p, TiXmlParsingData* data, TiXmlEnc
 			if ( !p || !*p )
 			{
 				if ( document ) document->SetError( TIXML_ERROR_PARSING_ELEMENT, pErr, data, encoding );
+				
 				delete attrib;
 				return 0;
 			}
@@ -1167,6 +1173,7 @@ const char* TiXmlElement::Parse( const char* p, TiXmlParsingData* data, TiXmlEnc
 			if ( node )
 			{
 				if ( document ) document->SetError( TIXML_ERROR_PARSING_ELEMENT, pErr, data, encoding );
+				
 				delete attrib;
 				return 0;
 			}
@@ -1191,7 +1198,7 @@ const char* TiXmlElement::ReadValue( const char* p, TiXmlParsingData* data, TiXm
 		if ( *p != '<' )
 		{
 			// Take what we have, make a text element.
-			TiXmlText* textNode = new TiXmlText( "" );
+			TiXmlText* textNode = new TiXmlText("");
 
 			if ( !textNode )
 			{
@@ -1209,8 +1216,8 @@ const char* TiXmlElement::ReadValue( const char* p, TiXmlParsingData* data, TiXm
 				p = textNode->Parse( pWithWhiteSpace, data, encoding );
 			}
 
-			if ( !textNode->Blank() )
-				LinkEndChild( textNode );
+			if (!textNode->Blank())
+				LinkEndChild(textNode);
 			else
 				delete textNode;
 		} 

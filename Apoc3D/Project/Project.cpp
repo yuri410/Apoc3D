@@ -119,7 +119,7 @@ namespace Apoc3D
 				List<String> itemOutputs = item->GetAllOutputFiles();
 				for (const String& itmFile : itemOutputs)
 				{
-					ConfigurationSection* e = ConfigurationManager::NewConfigSection(L"Entry" + StringUtils::IntToString(idx++));
+					ConfigurationSection* e = new ConfigurationSection(L"Entry" + StringUtils::IntToString(idx++));
 					e->AddAttributeString(L"FilePath", itmFile);
 					sect->AddSection(e);
 				}
@@ -276,22 +276,22 @@ namespace Apoc3D
 			{
 				sect->AddAttributeString(L"Assemble", L"volume");
 				
-				ConfigurationSection* srcsect = ConfigurationManager::NewConfigSection(L"Source");
+				ConfigurationSection* srcsect = new ConfigurationSection(L"Source");
 				int32 idx = 0;
 				for (const String& fn : SubMapTable.getValueAccessor())
 				{
-					ConfigurationSection* es = ConfigurationManager::NewConfigSection(L"Slice" + StringUtils::IntToString(idx++));
+					ConfigurationSection* es = new ConfigurationSection(L"Slice" + StringUtils::IntToString(idx++));
 					es->AddAttributeString(L"FilePath", WrapSourcePath(fn, savingBuild));
 
 					srcsect->AddSection(es);
 				}
 				sect->AddSection(srcsect);
 
-				srcsect = ConfigurationManager::NewConfigSection(L"AlphaSource");
+				srcsect = new ConfigurationSection(L"AlphaSource");
 				idx = 0;
 				for (const String& fn : SubAlphaMapTable.getValueAccessor())
 				{
-					ConfigurationSection* es = ConfigurationManager::NewConfigSection(L"Slice" + StringUtils::IntToString(idx++));
+					ConfigurationSection* es = new ConfigurationSection(L"Slice" + StringUtils::IntToString(idx++));
 					es->AddAttributeString(L"FilePath", WrapSourcePath(fn, savingBuild));
 
 					srcsect->AddSection(es);
@@ -470,7 +470,7 @@ namespace Apoc3D
 		{
 			const CharRange& cr = Ranges[i];
 
-			ConfigurationSection* ss = ConfigurationManager::NewConfigSection(String(L"Range") + StringUtils::IntToString(i));
+			ConfigurationSection* ss = new ConfigurationSection(String(L"Range") + StringUtils::IntToString(i));
 			ss->AddAttributeString(L"Start", StringUtils::IntToString(cr.MinChar));
 			ss->AddAttributeString(L"End", StringUtils::IntToString(cr.MaxChar));
 
@@ -747,7 +747,7 @@ namespace Apoc3D
 
 			for (const String& fxName : effectList)
 			{
-				ConfigurationSection* ss = ConfigurationManager::NewConfigSection(fxName);
+				ConfigurationSection* ss = new ConfigurationSection(fxName);
 				sect->AddSection(ss);
 			}
 		}
@@ -825,7 +825,7 @@ namespace Apoc3D
 
 		if (UseVertexFormatConversion && ConversionVertexElements.getCount() > 0)
 		{
-			ConfigurationSection* subs = ConfigurationManager::NewConfigSection(L"VertexFormatConversion");
+			ConfigurationSection* subs = new ConfigurationSection(L"VertexFormatConversion");
 			for (const VertexElement& ve : ConversionVertexElements)
 			{
 				ConfigurationSection* vs;
@@ -833,12 +833,12 @@ namespace Apoc3D
 				{
 					String idxText = StringUtils::IntToString(ve.getIndex());
 
-					vs = ConfigurationManager::NewConfigSection(GraphicsCommonUtils::ToString(ve.getUsage()) + idxText);
+					vs = new ConfigurationSection(GraphicsCommonUtils::ToString(ve.getUsage()) + idxText);
 					vs->SetValue(idxText);
 				}
 				else
 				{
-					vs = ConfigurationManager::NewConfigSection(GraphicsCommonUtils::ToString(ve.getUsage()));
+					vs = new ConfigurationSection(GraphicsCommonUtils::ToString(ve.getUsage()));
 				}
 
 				subs->AddSection(vs);
@@ -941,7 +941,7 @@ namespace Apoc3D
 
 		for (auto e : ObjectIndexMapping)
 		{
-			ConfigurationSection* ss = ConfigurationManager::NewConfigSection(e.Key);
+			ConfigurationSection* ss = new ConfigurationSection(e.Key);
 			
 			ss->SetValue(StringUtils::IntToString(e.Value));
 
@@ -1017,7 +1017,7 @@ namespace Apoc3D
 
 		for (auto e : Properties)
 		{
-			ConfigurationSection* valSect = ConfigurationManager::NewConfigSection(e.Key);
+			ConfigurationSection* valSect = new ConfigurationSection(e.Key);
 			valSect->SetValue(e.Value);
 
 			sect->AddSection(valSect);
@@ -1160,7 +1160,7 @@ namespace Apoc3D
 		{
 			return 0;
 		}
-		ConfigurationSection* sect = ConfigurationManager::NewConfigSection(m_name);
+		ConfigurationSection* sect = new ConfigurationSection(m_name);
 
 		if (m_typeData)
 		{
@@ -1281,7 +1281,7 @@ namespace Apoc3D
 
 	ConfigurationSection* Project::Save()
 	{
-		ConfigurationSection* sect = ConfigurationManager::NewConfigSection(L"Project", m_items.getCount() * 2);
+		ConfigurationSection* sect = new ConfigurationSection(L"Project", m_items.getCount() * 2);
 
 		sect->AddAttributeString(L"Name", m_name);
 		sect->AddAttributeString(L"TexturePath", m_texturePath);
@@ -1297,7 +1297,7 @@ namespace Apoc3D
 	{
 		List<ConfigurationSection*> subtrees;
 
-		ConfigurationSection* sect = ConfigurationManager::NewConfigSection(L"Build", m_items.getCount() * 2);
+		ConfigurationSection* sect = new ConfigurationSection(L"Build", m_items.getCount() * 2);
 
 		sect->AddAttributeString(L"Name", m_name);
 
@@ -1335,7 +1335,7 @@ namespace Apoc3D
 
 					if (fld->PackType.size())
 					{
-						ConfigurationSection* s = ConfigurationManager::NewConfigSection(L"Archive_" + StringUtils::IntToString(startNo++));
+						ConfigurationSection* s = new ConfigurationSection(L"Archive_" + StringUtils::IntToString(startNo++));
 						fld->SavePackBuildConfig(s);
 
 						// these packaging builds will be added to the end, as the prerequisite items should be built first

@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="ApocMacros.h" />
     <ClInclude Include="Collections\BitArray.h" />
+    <ClInclude Include="Core\Pool.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="Collections\List2D.h" />
     <ClInclude Include="Collections\CollectionsCommon.h" />
@@ -321,6 +322,7 @@
     <ClInclude Include="Vfs\VFSCommon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Pool.cpp" />
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="Collections\CollectionsCommon.cpp" />
     <ClCompile Include="Common.cpp" />

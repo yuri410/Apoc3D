@@ -168,7 +168,6 @@ namespace Apoc3D
 
 				Apoc3D::Collections::HashMap<void*, BatchReportEntry>* m_reportTableByMaterial = nullptr;
 
-				static int32 BatchReportEntryComparison(BatchReportEntry* const& a, BatchReportEntry* const& b);
 			protected:
 				//Capabilities m_caps;
 				uint m_batchCount = 0;
