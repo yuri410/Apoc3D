@@ -95,6 +95,36 @@ namespace Apoc3D
 				}
 			}
 
+			void Sprite::Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect,
+				uint tlColor, uint trColor, uint blColor, uint brColor)
+			{
+				Apoc3D::Math::RectangleF dstRectF = dstRect;
+				if (srcRect)
+				{
+					Apoc3D::Math::RectangleF srcRectF = *srcRect;
+					Draw(texture, dstRectF, &srcRectF, tlColor, trColor, blColor, brColor);
+				}
+				else
+				{
+					Draw(texture, dstRectF, nullptr, tlColor, trColor, blColor, brColor);
+				}
+			}
+
+			void Sprite::Draw(Texture* texture, const Point(&corners)[4], const Apoc3D::Math::Rectangle* srcRect, const uint(&colors)[4])
+			{
+				PointF c[4] = { corners[0], corners[1], corners[2], corners[3] };
+
+				if (srcRect)
+				{
+					Apoc3D::Math::RectangleF srcRectF = *srcRect;
+					Draw(texture, c, &srcRectF, colors);
+				}
+				else
+				{
+					Draw(texture, c, nullptr, colors);
+				}
+			}
+
 			//////////////////////////////////////////////////////////////////////////
 
 			void Sprite::DrawCircle(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, int32 div, uint color)

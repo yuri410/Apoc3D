@@ -56,6 +56,9 @@ namespace Apoc3D
 				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
 					uint tlColor, uint trColor, uint blColor, uint brColor) override;
 
+				virtual void Draw(Texture* texture, const PointF(&corners)[4], const Apoc3D::Math::RectangleF* srcRect, const uint(&colors)[4]) override;
+
+
 				virtual void DrawTiled(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) override;
 				virtual void DrawTiled(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color) override;
 
@@ -96,7 +99,19 @@ namespace Apoc3D
 
 					void FillNormalDraw(Texture* texture, const Matrix& baseTrans, float x, float y, uint color);
 					void FillNormalDraw(Texture* texture, const Matrix& baseTrans, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color);
+
 					void FillTransformedDraw(Texture* texture, const Matrix& t, const Apoc3D::Math::RectangleF* srcRect, uint color);
+
+
+					void SetPositions(const Matrix& baseTrans, const PointF& tl_dp, const PointF& tr_dp, const PointF& bl_dp, const PointF& br_dp);
+
+					void SetSrcRect(Texture* texture, const Apoc3D::Math::RectangleF* srcRect);
+					void SetColors(uint color);
+					void SetColors(uint tlColor, uint trColor, uint blColor, uint brColor);
+
+					void SetTextureCoords(const PointF& tl_sp, const PointF& tr_sp, const PointF& bl_sp, const PointF& br_sp);
+
+					void ChangeUV(float uScale, float vScale, float uBias, float vBias);
 				};
 
 				void EnqueueDrawEntry(const DrawEntry& drawE);

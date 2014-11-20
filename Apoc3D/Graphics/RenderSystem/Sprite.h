@@ -80,6 +80,12 @@ namespace Apoc3D
 				void Draw(Texture* texture, const Vector2& pos, uint color);
 				void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color);
 
+				void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect,
+					uint tlColor, uint trColor, uint blColor, uint brColor);
+
+				void Draw(Texture* texture, const Point(&corners)[4], const Apoc3D::Math::Rectangle* srcRect, const uint(&colors)[4]);
+
+
 				void DrawCircle(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, int32 div, uint color);
 				void DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, int32 div, uint color);
 				void DrawCircle(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect,
@@ -94,6 +100,17 @@ namespace Apoc3D
 					float cornerRadius, int32 div, uint color);
 
 
+				virtual void Draw(Texture* texture, const PointF& pos, uint color) = 0;
+				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color) = 0;
+				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, 
+					uint tlColor, uint trColor, uint blColor, uint brColor) = 0;
+
+				virtual void Draw(Texture* texture, const PointF (&corners)[4], const Apoc3D::Math::RectangleF* srcRect, const uint (&colors)[4]) = 0;
+
+				virtual void DrawTiled(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color) = 0;
+				virtual void DrawTiled(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) = 0;
+
+
 				virtual void DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
 					float beginAngle, float endAngle, int32 div, uint color) = 0;
 				virtual void DrawCircleArc(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, float lineWidth,
@@ -101,14 +118,7 @@ namespace Apoc3D
 
 				virtual void DrawRoundedRect(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
 					float cornerRadius, int32 div, uint color) = 0;
-				
-				virtual void Draw(Texture* texture, const PointF& pos, uint color) = 0;
-				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color) = 0;
-				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, 
-					uint tlColor, uint trColor, uint blColor, uint brColor) = 0;
 
-				virtual void DrawTiled(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color) = 0;
-				virtual void DrawTiled(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) = 0;
 
 				virtual void Flush() = 0;
 
