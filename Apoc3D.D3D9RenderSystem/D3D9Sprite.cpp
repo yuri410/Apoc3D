@@ -648,7 +648,7 @@ namespace Apoc3D
 				float width = (float)texture->getWidth();
 				float height = (float)texture->getHeight();
 
-				SetPositions(baseTrans, { 0, 0 }, { width, 0 }, { 0, height }, { width, height });
+				SetPositions(baseTrans, { x, y }, { width+x, y }, { x, height + y }, { width + x, height + y });
 
 				SetColors(color);
 				SetSrcRect(nullptr, nullptr);
