@@ -110,6 +110,7 @@ namespace Apoc3D
 			PointF() : X(0), Y(0) { }
 			PointF(float x, float y) : X(x), Y(y) { }
 			PointF(const Point& p) : X(static_cast<float>(p.X)), Y(static_cast<float>(p.Y)) { }
+			PointF(const Vector2& v);
 
 			bool operator==(const PointF &other) const { return (X == other.X) && (Y == other.Y); }
 			bool operator!=(const PointF &other) const { return !(*this == other); }

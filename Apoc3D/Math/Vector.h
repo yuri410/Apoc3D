@@ -46,31 +46,21 @@ namespace Apoc3D
 		class Vector3;
 		class Vector4;
 
-		/**
-		 * Defines a four component vector.
-		 */
+		/** Defines a four component vector. */
 		class APAPI Vector4
 		{
 		public:
 			
-			/**
-			 * The X component of the vector.
-			 */
+			/** The X component of the vector. */
 			float X;
 
-			/**
-			 * The Y component of the vector
-			 */
+			/** The Y component of the vector */
 			float Y;
 
-			/**
-			 * The Z component of the vector.
-			 */
+			/** The Z component of the vector. */
 			float Z;
 
-			/**
-			 * The W component of the vector.
-			 */
+			/** The W component of the vector. */
 			float W;
 
 			Vector4() { }
@@ -440,25 +430,21 @@ namespace Apoc3D
 
 		};
 
-		/**
-		 *  Defines a two component vector.
-		 */
+		/** Defines a two component vector. */
 		class APAPI Vector2
 		{
 		public:
-			/**
-			 *  the X component of the vector
-			 */
+			/** the X component of the vector */
 			float X;
-			/**
-			 *  the Y component of the vector
-			 */
+			/** the Y component of the vector */
 			float Y;
 
 			Vector2() { }
 
 			Vector2(float x, float y)
 				: X(x), Y(y) { }
+
+			Vector2(const PointF& p);
 
 			bool operator==(const Vector2 &other) const { return other.X == X && other.Y == Y;  }
 			bool operator!=(const Vector2 &other) const { return !(*this == other); }

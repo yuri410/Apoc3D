@@ -221,8 +221,20 @@ namespace Apoc3D
 				assert(m_began);
 
 				DrawEntry drawE;
+				drawE.SetTexture(texture);
 				drawE.SetPositions(getTransform(), corners[0], corners[1], corners[2], corners[3]);
 				drawE.SetSrcRect(texture, srcRect);
+				drawE.SetColors(colors[0], colors[1], colors[2], colors[3]);
+				EnqueueDrawEntry(drawE);
+			}
+			void D3D9Sprite::Draw(Texture* texture, const PointF(&corners)[4], const PointF(&texCoords)[4], const uint(&colors)[4])
+			{
+				assert(m_began);
+
+				DrawEntry drawE;
+				drawE.SetTexture(texture);
+				drawE.SetPositions(getTransform(), corners[0], corners[1], corners[2], corners[3]);
+				drawE.SetTextureCoords(texCoords[0], texCoords[1], texCoords[2], texCoords[3]);
 				drawE.SetColors(colors[0], colors[1], colors[2], colors[3]);
 				EnqueueDrawEntry(drawE);
 			}
@@ -627,7 +639,7 @@ namespace Apoc3D
 				const PointF& tl_dp, const PointF& tr_dp, const PointF& bl_dp, const PointF& br_dp,
 				const PointF& tl_sp, const PointF& tr_sp, const PointF& bl_sp, const PointF& br_sp, uint color)
 			{
-				Tex = static_cast<D3D9Texture*>(texture);
+				SetTexture(texture);
 
 				SetPositions(baseTrans, tl_dp, tr_dp, bl_dp, br_dp);
 				SetColors(color);
@@ -643,7 +655,7 @@ namespace Apoc3D
 
 			void D3D9Sprite::DrawEntry::FillNormalDraw(Texture* texture, const Matrix& baseTrans, float x, float y, uint color)
 			{
-				Tex = static_cast<D3D9Texture*>(texture);
+				SetTexture(texture);
 
 				float width = (float)texture->getWidth();
 				float height = (float)texture->getHeight();
@@ -725,7 +737,7 @@ namespace Apoc3D
 
 			void D3D9Sprite::DrawEntry::FillTransformedDraw(Texture* texture, const Matrix& t, const Apoc3D::Math::RectangleF* srcRect, uint color)
 			{
-				Tex = static_cast<D3D9Texture*>(texture);
+				SetTexture(texture);
 
 				SetColors(color);
 
@@ -748,7 +760,10 @@ namespace Apoc3D
 				SetSrcRect(texture, srcRect);
 			}
 
-
+			void D3D9Sprite::DrawEntry::SetTexture(Texture* tex)
+			{
+				Tex = static_cast<D3D9Texture*>(tex);
+			}
 			void D3D9Sprite::DrawEntry::SetPositions(const Matrix& baseTrans, const PointF& tl_dp, const PointF& tr_dp, const PointF& bl_dp, const PointF& br_dp)
 			{
 				const Matrix& trans = baseTrans;

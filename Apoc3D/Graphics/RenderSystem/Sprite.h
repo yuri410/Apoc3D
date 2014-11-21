@@ -106,6 +106,7 @@ namespace Apoc3D
 					uint tlColor, uint trColor, uint blColor, uint brColor) = 0;
 
 				virtual void Draw(Texture* texture, const PointF (&corners)[4], const Apoc3D::Math::RectangleF* srcRect, const uint (&colors)[4]) = 0;
+				virtual void Draw(Texture* texture, const PointF(&corners)[4], const PointF(&texCoords)[4], const uint(&colors)[4]) = 0;
 
 				virtual void DrawTiled(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color) = 0;
 				virtual void DrawTiled(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) = 0;

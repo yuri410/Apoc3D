@@ -24,6 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vector.h"
 
 #include "Matrix.h"
+#include "Point.h"
+
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Collections/List.h"
 
@@ -50,7 +52,12 @@ namespace Apoc3D
 		const Vector4 Vector4::UnitZ = Vector4(0, 0, 1, 0);
 		const Vector4 Vector4::UnitW = Vector4(0, 0, 0, 1);
 		const Vector4 Vector4::One = Vector4::Set(1.0f);
-		
+
+		PointF::PointF(const Vector2& v)
+			: X(v.X), Y(v.Y) { }
+
+		Vector2::Vector2(const PointF& p)
+			: X(p.X), Y(p.Y) { }
 
 		void Vector2::Parse(const String& str, bool loosy)
 		{
