@@ -329,13 +329,12 @@ namespace Apoc3D
 
 			private:
 				Enumerator(const HashMapType* dict)
-					: m_dict(dict), m_next(0), m_current(nullptr), m_currentVal(nullptr)
-				{ }
+					: m_dict(dict) { }
 
 				const HashMapType* m_dict;
-				int m_next;
-				T* m_current;
-				S* m_currentVal;
+				int m_next = 0;
+				T* m_current = nullptr;
+				S* m_currentVal = nullptr;
 			};
 
 			class IteratorBase
@@ -355,7 +354,7 @@ namespace Apoc3D
 			protected:
 
 				explicit IteratorBase(const HashMapType* dict)
-					: m_dict(dict), m_next(0)
+					: m_dict(dict)
 				{
 					MoveToNext();
 				}
@@ -377,7 +376,7 @@ namespace Apoc3D
 				}
 
 				const HashMapType* m_dict;
-				int m_next;
+				int m_next = 0;
 			};
 
 			template <bool IsAccessingKey>
@@ -444,7 +443,7 @@ namespace Apoc3D
 				friend class HashMap;
 			public:
 				IteratorKV<IsAccessingKey> begin() { return IteratorKV<IsAccessingKey>(m_dict); }
-				IteratorKV<IsAccessingKey> end() { return IteratorKV<IsAccessingKey>(m_dict, m_dict->m_count + 1); }
+				IteratorKV<IsAccessingKey> end() { return IteratorKV<IsAccessingKey>(m_dict, m_dict->m_touchedSlots + 1); }
 
 			private:
 				Accessor(const HashMapType* dict)
@@ -591,11 +590,11 @@ namespace Apoc3D
 
 			private:
 				Enumerator(const HashSetType* dict)
-					: m_dict(dict), m_next(0), m_current(nullptr) { }
+					: m_dict(dict) { }
 
 				const HashSetType* m_dict;
-				int m_next;
-				const T* m_current;
+				int m_next = 0;
+				const T* m_current = nullptr;
 
 			};
 
@@ -622,7 +621,7 @@ namespace Apoc3D
 			private:
 
 				explicit Iterator(const HashSetType* dict)
-					: m_dict(dict), m_next(0)
+					: m_dict(dict)
 				{
 					MoveToNext();
 				}
@@ -644,7 +643,7 @@ namespace Apoc3D
 				}
 
 				const HashSetType* m_dict;
-				int m_next;
+				int m_next = 0;
 			};
 
 

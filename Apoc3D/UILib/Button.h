@@ -275,6 +275,8 @@ namespace Apoc3D
 			bool Enabled = true;
 			bool Visible = true;
 
+			bool IsInteractive = true;
+
 			Point Position;
 
 			ButtonEvent eventPress;

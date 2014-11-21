@@ -760,16 +760,14 @@ namespace Apoc3D
 
 			for (int32 i = 0; i < m_buttonCount; i++)
 			{
-				Apoc3D::Math::Rectangle rect;
-
-				rect = m_graphicsSrcRect;
+				Apoc3D::Math::Rectangle rect = m_graphicsSrcRect;
 
 				rect.X = Position.X + m_hotAreaPaddings[i].Left - m_hotAreaPaddings[0].Left;
 				rect.Y = Position.Y + m_hotAreaPaddings[i].Top - m_hotAreaPaddings[0].Top;
 				rect.Width -= m_hotAreaPaddings[i].getHorizontalSum();
 				rect.Height -= m_hotAreaPaddings[i].getVerticalSum();
 
-				if (rect.Contains(mouse->getX(), mouse->getY()))
+				if (IsInteractive && rect.Contains(mouse->getX(), mouse->getY()))
 				{
 					if (m_isMouseHover[i])
 					{
