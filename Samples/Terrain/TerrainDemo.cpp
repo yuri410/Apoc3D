@@ -85,7 +85,12 @@ namespace SampleTerrain
 		// our terrain mesh manager, see the header file for details
 		TerrainMeshManager::Initialize();
 		TerrainMeshManager::getSingleton().InitializeResources(m_device);
+
+#if _DEBUG
+		Terrain::NewSeed(88);
+#else
 		Terrain::NewSeed();
+#endif
 
 		m_scene = new OctreeSceneManager(OctreeBox(20000), 20000/256);
 

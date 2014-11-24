@@ -236,7 +236,6 @@ namespace Apoc3D
 		class Randomizer;
 
 		class PerlinNoise;
-		class PerlinNoise1D;
 
 		class GaussBlurFilter;
 

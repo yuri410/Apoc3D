@@ -25,7 +25,7 @@ namespace SampleTerrain
 		int octaves = StringUtils::ParseInt32(args[2]);
 		int seed = StringUtils::ParseInt32(args[3]);
 
-		pn.Set(persistence, frequency, pn.Amplitude(), octaves, seed);
+		pn.Set(persistence, frequency, octaves, seed);
 	}
 	void JumpHeightCommand(CommandArgsConstRef args)
 	{

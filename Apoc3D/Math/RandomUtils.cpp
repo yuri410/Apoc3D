@@ -42,7 +42,6 @@ namespace Apoc3D
 		Random Randomizer::m_randomizer;
 
 		Random::Random()
-			: m_index(0)
 		{
 			const int32 seed = static_cast<int32>(time(0));
 			SetSeed(seed, true);
@@ -54,21 +53,20 @@ namespace Apoc3D
 			{
 				Reset();
 			}
-			else
-			{
-				m_seed = seed;
-				int32 holdRand = seed;
+			
+			m_seed = seed;
+			int32 holdRand = seed;
 
-				for (int32 i=0;i<16;i++)
-				{
-					m_state[i] = (((holdRand = holdRand * 214013L + 2531011L) >> 16) & 0x7fff);
-				}
+			for (int32& s : m_state)
+			{
+				s = (((holdRand = holdRand * 214013L + 2531011L) >> 16) & 0x7fff);
 			}
 		}
 
 		void Random::Reset()
 		{
-			SetSeed(m_seed, false);
+			ZeroArray(m_state);
+			m_seed = 0;
 			m_index = 0;
 		}
 

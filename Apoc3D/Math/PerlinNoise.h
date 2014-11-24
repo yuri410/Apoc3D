@@ -13,105 +13,52 @@ namespace Apoc3D
 		public:
 			// Constructor
 			PerlinNoise();
-			PerlinNoise(double _persistence, double _frequency, double _amplitude, int _octaves, int _randomseed);
-
-			// Get Height
-			double GetHeight(double x, double y) const { return amplitude * Total(x, y); }
-			double GetUnifiedValue(double x, double y) const { return amplitude * Total(x, y) * 0.5 + 0.5; }
-
-			// Get
-			double Persistence() const { return persistence; }
-			double Frequency()   const { return frequency;   }
-			double Amplitude()   const { return amplitude;   }
-			int    Octaves()     const { return octaves;     }
-			int    RandomSeed()  const { return randomseed;  }
-
-			// Set
-			void Set(double _persistence, double _frequency, double _amplitude, int _octaves, int _randomseed);
-
-			void SetPersistence(double _persistence) { persistence = _persistence; }
-			void SetFrequency(  double _frequency)   { frequency = _frequency;     }
-			void SetAmplitude(  double _amplitude)   { amplitude = _amplitude;     }
-			void SetOctaves(    int    _octaves)     { octaves = _octaves;         }
-			void SetRandomSeed( int    _randomseed)  { randomseed = _randomseed;   }
-
-			double Noise(int x, int y) const;
-
-		private:
-
-			double Total(double i, double j) const;
-			double GetValue(double x, double y) const;
-			double Interpolate(double x, double y, double a) const;
+			PerlinNoise(double persistence, double frequency, int octaves);
+			PerlinNoise(double persistence, double frequency, int octaves, int randomseed);
 			
-			double persistence, frequency, amplitude;
-			int octaves, randomseed;
-		};
 
-		class APAPI PerlinNoise1D
-		{
-		public:
-			PerlinNoise1D()
-				: m_persistence(0), m_frequency(0), m_octaves(0), m_randomSeed(0)
-			{ }
-			PerlinNoise1D(double _persistence, double _frequency, int _octaves, int _randomseed)
-				: m_persistence(_persistence), m_frequency(_frequency), m_octaves(_octaves), m_randomSeed(_randomseed)
-			{ }
+			// noise value in [0, 1]
+			double GetUnifiedValue2D(double x, double y) const { return GetValue2D(x, y) * 0.5 + 0.5; }
+
+			// noise value in [-1, 1]
+			double GetValue1D(double x) const;
+			double GetValue2D(double x, double y) const;
+			double GetValue3D(double x, double y, double z) const;
+
 
 			// Get
-			double getPersistence() const { return m_persistence; }
-			double getFrequency()   const { return m_frequency;   }
-			int    getOctaves()     const { return m_octaves;     }
-			int    getRandomSeed()  const { return m_randomSeed;  }
+			double Persistence() const { return m_persistence; }
+			double Frequency()   const { return m_frequency;   }
+			int    Octaves()     const { return m_octaves;     }
+			int    RandomSeed()  const { return m_randomseed;  }
 
 			// Set
-			void SetParams(double _persistence, double _frequency, int _octaves, int _randomseed)
-			{
-				m_persistence = _persistence; m_frequency = _frequency; m_octaves = _octaves; m_randomSeed = _randomseed;
-			}
+			void Set(double _persistence, double _frequency, int _octaves, int _randomseed);
 
+			void SetPersistence(double _persistence) { m_persistence = _persistence; }
+			void SetFrequency(double _frequency)     { m_frequency = _frequency;     }
+			void SetOctaves(int _octaves)            { m_octaves = _octaves;         }
+			void SetRandomSeed(int _randomseed)      { m_randomseed = _randomseed;   }
 
-			double GetNoise(double x) const
-			{
-				double total = 0;
-				double freq = m_frequency;
-				double _amplitude = 1;
+			FORCE_INLINE double Noise1D(int x) const;
+			FORCE_INLINE double Noise2D(int x, int y) const;
+			FORCE_INLINE double Noise3D(int x, int y, int z) const;
 
-				for (int i=0;i<m_octaves;i++)
-				{
-					total += InterpolatedNoise(x * freq + m_randomSeed) * _amplitude;
-
-					_amplitude *= m_persistence;
-					freq *= 2;
-				}
-				return total;
-			}
 		private:
-			double Interpolate(double x, double y, double a) const;
-			double InterpolatedNoise(double x) const
-			{
-				int xint = x>=0 ? (int)x : (int)x - 1;
-				double Xfrac = x - xint;
+			double InterpolatedNoise1D(double x) const;
+			double InterpolatedNoise2D(double x, double y) const;
+			double InterpolatedNoise3D(double x, double y, double z) const;
 
-				double v1 = SmoothedNoise(xint);
-				double v2 = SmoothedNoise(xint+1);
-				return Interpolate(v1, v2, Xfrac);
-			}
-			double SmoothedNoise(int x) const
-			{
-				return Noise(x) / 2.0 + Noise(x-1) / 4.0 + Noise(x+1) / 4.0;
-			}
+			FORCE_INLINE double SampleNoise2D(int x, int y) const;
+			FORCE_INLINE double SampleNoise3D(int x, int y, int z) const;
 
-			double Noise(int x) const
-			{
-				x = (x<<13) ^ x;
-				return ( 1.0 - ( (x * (x * x * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0);
-			}
+			double m_persistence = 0;
+			double m_frequency = 0;
 
-			double m_persistence;
-			double m_frequency;
-			int m_octaves;
-			int m_randomSeed;
+			int m_octaves = 0;
+			int m_randomseed = 0;
 		};
+
 	}
 }
 

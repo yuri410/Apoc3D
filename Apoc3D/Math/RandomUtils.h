@@ -74,8 +74,8 @@ namespace Apoc3D
 			double NextDouble() { return SampleD(); }
 		private:
 			int32 m_state[16];
-			int32 m_index;
-			int32 m_seed;
+			int32 m_index = 0;
+			int32 m_seed = 0;
 
 			int32 RawSample()
 			{

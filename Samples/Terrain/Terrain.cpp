@@ -6,20 +6,20 @@ namespace SampleTerrain
 	const float Terrain::CellLength = 2;
 	const float Terrain::BlockLength = CellLength * TerrainEdgeLength;
 	const float Terrain::HeightScale = 75;
-	PerlinNoise Terrain::Noiser(0.42, 0.01, 1, 8, 8881);
+	PerlinNoise Terrain::Noiser(0.42, 0.01, 8, 8881);
 	RenderOperationBuffer Terrain::m_opBuffer;
-	
+
 
 	Terrain::Terrain(RenderDevice* device, int bx, int bz)
 		: m_treeROPDirty(true), m_bufferedLevel(0), m_isPushing(false)
 	{
 		m_BoundingSphere = GetBoundingSphere(bx, bz);
 		m_transformation.LoadIdentity();
-		
+
 		// create TerrainMesh instances from the manager for different LODs.
-		for (int i=0;i<4;i++)
+		for (int i = 0; i < 4; i++)
 		{
-			m_terrains[i] = TerrainMeshManager::getSingleton().CreateInstance(device, bx,bz, i);
+			m_terrains[i] = TerrainMeshManager::getSingleton().CreateInstance(device, bx, bz, i);
 		}
 
 		// Now generate the trees' position, rotation, height one by one.
@@ -34,18 +34,18 @@ namespace SampleTerrain
 		// this has nothing to do with the terrain mesh's cell in this method
 		float cellLength = 8;
 
-		int treeCellEdgeCount = (int)(Terrain::BlockLength/cellLength);
-		for (int i=0;i<treeCellEdgeCount;i++)
+		int treeCellEdgeCount = (int)(Terrain::BlockLength / cellLength);
+		for (int i = 0; i < treeCellEdgeCount; i++)
 		{
-			for (int j=0;j<treeCellEdgeCount;j++)
+			for (int j = 0; j < treeCellEdgeCount; j++)
 			{
-				float worldX = (i+0.5f)*cellLength + bx*Terrain::BlockLength;
-				float worldZ = (j+0.5f)*cellLength + bz*Terrain::BlockLength;
+				float worldX = (i + 0.5f)*cellLength + bx*Terrain::BlockLength;
+				float worldZ = (j + 0.5f)*cellLength + bz*Terrain::BlockLength;
 
 				// two additional sample are required to check the gradient at current position
 				// the gradient is used to modulate the chance whether a tree is spawned here.
 				float height = Terrain::GetHeightAt(worldX, worldZ);
-				float refheight2 = Terrain::GetHeightAt(worldX+1, worldZ+1);
+				float refheight2 = Terrain::GetHeightAt(worldX + 1, worldZ + 1);
 
 				// the probability of a tree's appearance at the current position.
 				// the p here is inverted, the real probability should be 1-p
@@ -53,19 +53,19 @@ namespace SampleTerrain
 				// the first half of the expression calculate the inv-chance by elevation, a elevation closer to 0.0
 				// is better place to put trees. The second part take the slope into consideration, 
 				// a higher different in height results higher inv-chance, which in turn make the chance smaller
-				float p = Math::Saturate(fabs(height - ( 0.00f)) / (0.25f) + 
-					powf(fabs(refheight2-height)*1.414f * HeightScale * 1.5f,8));
+				float p = Math::Saturate(fabs(height - (0.00f)) / (0.25f) +
+					powf(fabs(refheight2 - height)*1.414f * HeightScale * 1.5f, 8));
 
 				// some offset in position to make the tree's are not planted in rows or lines.
 				float ofX = Terrain::GetNoise((int)worldX, (int)worldZ);
-				float ofZ = Terrain::GetNoise((int)worldX+65535, (int)worldZ);
+				float ofZ = Terrain::GetNoise((int)worldX + 65535, (int)worldZ);
 
 				worldX += ofX*cellLength*0.5f; worldZ += ofZ*cellLength*0.5f;
 
 				// compare the probability. A lower P is easier to meet.
 				if (Terrain::GetPlantDist(worldX, worldZ) > p)
 				{
-					MakeTree(worldX, height * HeightScale-0.5f, worldZ);
+					MakeTree(worldX, height * HeightScale - 0.5f, worldZ);
 				}
 			}
 		}
@@ -74,7 +74,7 @@ namespace SampleTerrain
 
 	Terrain::~Terrain()
 	{
-		for (int i=0;i<4;i++)
+		for (int i = 0; i < 4; i++)
 		{
 			delete m_terrains[i];
 		}
@@ -83,7 +83,7 @@ namespace SampleTerrain
 	RenderOperationBuffer* Terrain::GetRenderOperation(int lod)
 	{
 		m_opBuffer.Clear();
-		if (lod>=4)
+		if (lod >= 4)
 			lod = 3;
 
 		// do a render operation request from the TerrainMeshes, with an order
@@ -96,7 +96,7 @@ namespace SampleTerrain
 		// showed up as soon as possible if not loaded yet. And minimize the waiting time during which may cause the terrain chunk
 		// translucent.
 		RenderOperationBuffer* opBuf = 0;
-		while (!opBuf && lod<4)
+		while (!opBuf && lod < 4)
 		{
 			TerrainMesh* mesh = m_terrains[lod]->Obtain();
 			opBuf = mesh->GetRenderOperation(lod);
@@ -147,7 +147,7 @@ namespace SampleTerrain
 		return &m_opBuffer;
 	}
 
-	
+
 	void Terrain::Update(const GameTime* time)
 	{
 		if (m_isPushing)
@@ -156,7 +156,7 @@ namespace SampleTerrain
 
 			const float thres = m_isFastPushing ? 256.0f : 64.0f;
 
-			for (int i=0;i<m_trees.getCount();i++)
+			for (int i = 0; i < m_trees.getCount(); i++)
 			{
 				if (m_trees[i].FallState == 0)
 				{
@@ -179,13 +179,13 @@ namespace SampleTerrain
 				{
 					if (m_trees[i].IsFastFalling)
 					{
-						m_trees[i].FallState += time->getElapsedTime() * 9;	
+						m_trees[i].FallState += time->getElapsedTime() * 9;
 					}
 					else
 					{
-						m_trees[i].FallState += time->getElapsedTime() * 3;	
+						m_trees[i].FallState += time->getElapsedTime() * 3;
 					}
-					
+
 				}
 			}
 			m_isPushing = false;
@@ -200,7 +200,7 @@ namespace SampleTerrain
 			m_treeOPBuffer.Clear();
 
 			Model* tree = TerrainMeshManager::getSingleton().getTreeModelByLOD(lod);
-			for (int i=0;i<m_trees.getCount();i++)
+			for (int i = 0; i < m_trees.getCount(); i++)
 			{
 				const TreeInfo& info = m_trees[i];
 
@@ -238,30 +238,28 @@ namespace SampleTerrain
 		TreeInfo info;
 		info.Height = Randomizer::NextFloat() * 0.1f + 0.9f;
 		info.Rot = Randomizer::NextFloat() * Math::PI * 2;
-		info.Position = Vector3(x,y,z);
+		info.Position = { x, y, z };
 		info.FallState = 0;
 		m_trees.Add(info);
 	}
 	float Terrain::GetHeightAt(float x, float z)
 	{
-
-		float h = (float)Noiser.GetHeight(x,z);
-		if (h<-0.5f)
-			h=-0.5f;
-
+		float h = (float)Noiser.GetValue2D(z, x);
+		if (h < -0.5f)
+			h = -0.5f;
 
 		return h;
 	}
+
 	float Terrain::GetPlantDist(float x, float z)
 	{
-		return (float)Noiser.Noise((int)x,(int)z);
+		return (float)Noiser.Noise2D((int)z, (int)x);
 	}
 	float Terrain::GetNoise(int x, int y)
 	{
-		return (float) Noiser.Noise(x,y);
+		return (float)Noiser.Noise2D(y, x);
 	}
-	void Terrain::NewSeed()
-	{
-		Noiser.SetRandomSeed(Randomizer::Next());
-	}
+
+	void Terrain::NewSeed() { Noiser.SetRandomSeed(Randomizer::Next()); }
+	void Terrain::NewSeed(int32 seed) { Noiser.SetRandomSeed(seed); }
 }

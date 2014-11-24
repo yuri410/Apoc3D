@@ -58,11 +58,11 @@ namespace SampleTerrain
 		*/
 		void Push(Vector3 pos, bool isFastPushing);
 
-		/** Generates a new seed for the Perlin Noise.
-		*/
+		/** Generates a new seed for the Perlin Noise. */
 		static void NewSeed();
-		/** Calculates the world coordinate for the given terrain chunk space coords.
-		*/
+		static void NewSeed(int32 seed);
+
+		/** Calculates the world coordinate for the given terrain chunk space coords. */
 		static void GetBlockCoordinate(const Vector3 pos, int& bx, int& bz)
 		{
 			bx = (int)floor(pos.X/BlockLength);
