@@ -17,33 +17,46 @@ namespace Apoc3D
 		enum
 		{
 			MF_None = 0,
-			MF_PreallocatedHead = 1,
-			MF_PreallocatedBody = 2
+			MF_PreallocatedHead = 1 << 0,
+			MF_PreallocatedBody = 1 << 1,
+			MF_Used = 1 << 2
 		};
 
-		static bool checkMemoryBlockSignatureAndOffset(void*& b, byte* flags)
+		static bool tagCheckInMemoryBlock(void*& b)
 		{
 			char* ptr = (char*)b;
 			ptr -= sizeof(PoolMemorySignature);
 
 			// check signature
-			uint32 id = *(const uint32*)ptr;
+			uint32& id = *(uint32*)ptr;
 			if ((id & 0xffffff00U) != PoolMemorySignature)
 				return false;
 
-			if (flags)
-				*flags = (byte)(0xff & id);
+			byte flags = (byte)(0xff & id);
+			assert((flags & MF_Used)); // already freed
+
+			flags &= ~MF_Used;
+			id = PoolMemorySignature | flags;
 
 			b = ptr;
 
 			return true;
 		}
-		static void tagMemeoryBlock(void* b, byte flags)
+		static void tagCheckOutMemoryBlock(void*& b)
 		{
-			uint32* id = (uint32*)b;
-			*id = PoolMemorySignature;
+			char* ptr = (char*)b;
 
-			(*id) |= flags;
+			uint32& id = *(uint32*)ptr;
+			assert((id & MF_Used) == 0);
+			id |= MF_Used;
+
+			ptr += sizeof(PoolMemorySignature);
+			b = ptr;
+		}
+		static void tagNewMemeoryBlock(void* b, byte flags)
+		{
+			uint32& id = *(uint32*)b;
+			id = PoolMemorySignature | flags;
 		}
 
 		const int32 PreallocationCount = 50;
@@ -61,7 +74,7 @@ namespace Apoc3D
 			if (o == nullptr)
 				return true;
 
-			if (!checkMemoryBlockSignatureAndOffset(o, nullptr))
+			if (!tagCheckInMemoryBlock(o))
 				return false;
 
 			m_poolLock.lock();
@@ -82,7 +95,8 @@ namespace Apoc3D
 
 			m_poolLock.unlock();
 
-			return ((char*)result) + sizeof(PoolMemorySignature);
+			tagCheckOutMemoryBlock(result);
+			return result;
 		}
 
 		void SizedPool::EnsureReserve(bool noLock, int32 amount)
@@ -106,7 +120,7 @@ namespace Apoc3D
 
 				for (int32 i = 0; i < amount; i++)
 				{
-					tagMemeoryBlock(buf, i == 0 ? MF_PreallocatedHead : MF_PreallocatedBody);
+					tagNewMemeoryBlock(buf, i == 0 ? MF_PreallocatedHead : MF_PreallocatedBody);
 					m_pool.Enqueue(buf);
 					buf += PaddedInstanceSize;
 				}
