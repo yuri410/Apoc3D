@@ -66,6 +66,7 @@ namespace Apoc3D
 
 			Point operator/(int32 v) const { return Point(X / v, Y / v); }
 			Point operator*(int32 v) const { return Point(X * v, Y * v); }
+			Point operator*(const Point& other) const { return Point(X * other.X, Y * other.Y); }
 
 			Point& operator +=(const Point& rhs)
 			{
@@ -121,6 +122,7 @@ namespace Apoc3D
 
 			PointF operator/(float v) const { return PointF(X / v, Y / v); }
 			PointF operator*(float v) const { return PointF(X * v, Y * v); }
+			PointF operator*(const PointF& other) const { return PointF(X * other.X, Y * other.Y); }
 
 			PointF& operator +=(const PointF& rhs)
 			{

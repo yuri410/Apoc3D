@@ -72,7 +72,7 @@ namespace APDesigner
 
 		{
 
-			m_applyMtrl = new Button(skin, Point(21 + 522+100+220, 159),150, L"Apply Changes");
+			m_applyMtrl = new Button(skin, Point(21 + 522 + 100 + 220, 159), 150, L"Apply Changes");
 			m_applyMtrl->eventRelease.Bind(this, &MaterialDocument::BtnApplyMtrl_Pressed);
 
 		}

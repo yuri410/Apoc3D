@@ -191,13 +191,13 @@ namespace Apoc3D
 		BatchData::BatchData()
 			: m_bufferCache(0, 0, MaxPriority+1, 50, 50, 50), m_objectCount(0), m_priTable(MaxPriority+1)
 		{
-			for (int i=0;i<MaxPriority;i++)
+			for (int i = 0; i < MaxPriority; i++)
 			{
 				MaterialTable* mtrlTable;
 				if (!m_priTable.TryGetValue(i, mtrlTable))
 				{
 					mtrlTable = m_bufferCache.ObtainNewMaterialTable();//new MaterialTable();
-					m_priTable.Add(i,mtrlTable);
+					m_priTable.Add(i, mtrlTable);
 				}
 			}
 		}
@@ -347,14 +347,14 @@ namespace Apoc3D
 							op.RootTransform = temp;
 						}
 						
-						uint priority = Math::Min(mtrl->getPriority(), MaxPriority);
+						uint priority = Math::Min(mtrl->getPriority(), MaxPriority - 1);
 
 						// add the rop from outer table to inner table(top down)
 						MaterialTable* mtrlTable;
 						if (!m_priTable.TryGetValue(priority, mtrlTable))
 						{
 							mtrlTable = m_bufferCache.ObtainNewMaterialTable();// new MaterialTable();
-							m_priTable.Add(priority,mtrlTable);
+							m_priTable.Add(priority, mtrlTable);
 						}
 
 						GeometryTable* geoTable;

@@ -160,27 +160,27 @@ namespace APDesigner
 			int sx2 = sx + 100;
 			int sy = 210;
 
-			m_cbUseRef = new CheckBox(skin, Point(sx,sy), L"Use External", false);
+			m_cbUseRef = new CheckBox(skin, Point(sx, sy), L"Use External", false);
 			m_cbUseRef->eventToggled.Bind(this, &ModelDocument::CBUseRef_Checked);
 
-			m_tbRefMaterialName = new TextBox(skin, Point(sx+150,sy), 150);
-			
+			m_tbRefMaterialName = new TextBox(skin, Point(sx + 150, sy), 150);
+
 			m_btnRefMaterial = new Button(skin, Point(sx + 310, sy), L"...");
 			m_btnRefMaterial->eventPress.Bind(this, &ModelDocument::BtnRefMtrl_Pressed);
 			m_btnRefMaterial->SetSizeY(lineHeight);
 
 			sy += 30;
 			m_cfAmbient = new ColorField(skin, Point(sx, sy), L"Ambient", CV_Red);
-			m_cfDiffuse = new ColorField(skin, Point(sx + 250, sy),  L"Diffuse", CV_Red);
+			m_cfDiffuse = new ColorField(skin, Point(sx + 250, sy), L"Diffuse", CV_Red);
 
 			sy += 25;
 			m_cfSpecular = new ColorField(skin, Point(sx, sy), L"Specular", CV_Red);
 			m_cfEmissive = new ColorField(skin, Point(sx + 250, sy), L"Emissive", CV_Red);
-			
+
 			sy += 25;
 			Label* lbl = new Label(skin, Point(sx, sy), L"Shininess", 120);
 			m_mtrlPanelLabels.Add(lbl);
-			m_tbShinness = new TextBox(skin, Point(sx+100, sy), 200, L"");
+			m_tbShinness = new TextBox(skin, Point(sx + 100, sy), 200, L"");
 
 			sy += 30;
 			lbl = new Label(skin, Point(sx, sy), L"Texture1", 120);
@@ -210,7 +210,7 @@ namespace APDesigner
 
 
 			sy += 35;
-			lbl = new Label(skin, Point(sx, sy), L"Priority[0,127]", 120);
+			lbl = new Label(skin, Point(sx, sy), L"Priority[0, " + StringUtils::UIntToString(BatchData::MaxPriority - 1) + L"]", 120);
 			m_mtrlPanelLabels.Add(lbl);
 			m_tbPriority = new TextBox(skin, Point(sx2, sy), 200, L"");
 
@@ -656,7 +656,7 @@ namespace APDesigner
 	{
 		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx!=-1)
+		if (selMeshIdx != -1)
 		{
 			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
 			int partIdx = m_cbMeshPart->getSelectedIndex();
@@ -785,15 +785,22 @@ namespace APDesigner
 
 		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx!=-1)
+		if (selMeshIdx != -1)
 		{
 			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			
+
 			m_tbMeshName->SetText(ents[selMeshIdx]->getName());
 
-			for (int32 i=0;i<mtrls->getMaterialCount();i++)
+			for (int32 i = 0; i < mtrls->getMaterialCount(); i++)
 			{
 				m_cbMeshPart->getItems().Add(L"Part(Material Set)" + StringUtils::IntToString(i, StrFmt::a<4, '0'>::val));
+			}
+
+			// select default
+			if (m_cbMeshPart->getItems().getCount() > 0)
+			{
+				m_cbMeshPart->setSelectedIndex(0);
+				CBMeshPart_SelectionChanged(m_cbMeshPart);
 			}
 		}
 	}
@@ -804,15 +811,21 @@ namespace APDesigner
 
 		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx!=-1)
+		if (selMeshIdx != -1)
 		{
 			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
 			int partIdx = m_cbMeshPart->getSelectedIndex();
 			if (partIdx != -1)
 			{
-				for (int32 i=0;i<mtrls->getFrameCount(partIdx);i++)
+				for (int32 i = 0; i < mtrls->getFrameCount(partIdx); i++)
 				{
 					m_cbSubMtrl->getItems().Add(L"Frame(Material)" + StringUtils::IntToString(i, StrFmt::a<4, '0'>::val));
+				}
+
+				if (m_cbSubMtrl->getItems().getCount() > 0)
+				{
+					m_cbSubMtrl->setSelectedIndex(0);
+					CBSubMtrl_SelectionChanged(m_cbSubMtrl);
 				}
 			}
 		}
@@ -821,7 +834,7 @@ namespace APDesigner
 	{
 		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx!=-1)
+		if (selMeshIdx != -1)
 		{
 			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
 			int partIdx = m_cbMeshPart->getSelectedIndex();

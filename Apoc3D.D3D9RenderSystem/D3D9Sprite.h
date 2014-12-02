@@ -52,23 +52,27 @@ namespace Apoc3D
 				virtual void End() override;
 
 				virtual void Draw(Texture* texture, const PointF& pos, uint color) override;
-				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color) override;
-				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
+				virtual void Draw(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, uint color) override;
+				virtual void Draw(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect,
 					uint tlColor, uint trColor, uint blColor, uint brColor) override;
 
-				virtual void Draw(Texture* texture, const PointF(&corners)[4], const Apoc3D::Math::RectangleF* srcRect, const uint(&colors)[4]) override;
-				virtual void Draw(Texture* texture, const PointF(&corners)[4], const PointF(&texCoords)[4], const uint(&colors)[4]) override;
+				virtual void Draw(Texture* texture, const PointF_A4& corners, const RectangleF* srcRect, const ColorValue_A4& colors) override;
+				virtual void Draw(Texture* texture, const PointF_A4& corners, const PointF_A4& texCoords, const ColorValue_A4& colors) override;
 
-				virtual void DrawTiled(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) override;
 				virtual void DrawTiled(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color) override;
+				virtual void DrawTiled(Texture* texture, const RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) override;
 
-				virtual void DrawRoundedRect(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
+				virtual void DrawCircle(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect,
+					float beginAngle, float endAngle, int32 div, uint color) override;
+
+				virtual void DrawCircleArc(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, float width,
+					float beginAngle, float endAngle, int32 div, uint color) override;
+
+				virtual void DrawRoundedRect(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect,
 					float cornerRadius, int32 div, uint color) override;
-				virtual void DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
-					float beginAngle, float endAngle, int32 div, uint color) override;
 
-				virtual void DrawCircleArc(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, float width,
-					float beginAngle, float endAngle, int32 div, uint color) override;
+				virtual void DrawRoundedRectBorder(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, float width,
+					float cornerRadius, int32 div, uint color) override;
 
 
 				virtual void Flush();
@@ -114,6 +118,13 @@ namespace Apoc3D
 
 					void ChangeUV(float uScale, float vScale, float uBias, float vBias);
 				};
+
+				void DrawCircleGeneric(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, float width,
+					float beginAngle, float endAngle, int32 div, uint color);
+
+				void DrawRoundedRectGeneric(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, float width,
+					float cornerRadius, int32 div, uint color);
+
 
 				void EnqueueDrawEntry(const DrawEntry& drawE);
 				

@@ -11,10 +11,10 @@ namespace APDesigner
 		: Document(window, ext), m_editingForm(nullptr), m_filePath(file)
 	{
 		m_uiViewer = new PictureBox(window->getUISkin(), Point(15, 27), 1);
-		m_uiViewer->setSize(512,512);
+		m_uiViewer->setSize(512, 512);
 		m_uiViewer->eventPictureDraw.Bind(this, &UIDocument::UIViewer_Draw);
 
-		getDocumentForm()->setMinimumSize(Point(1000,600));
+		getDocumentForm()->setMinimumSize(1000, 600);
 
 		getDocumentForm()->setTitle(file);
 	}

@@ -37,16 +37,24 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
+
 			/**
-			 *  Sprite is a utility used to draw textured rectangles in viewport. 
-			 *
-			 *  Sprite can work with a built-in matrix stack. When using matrix 
-			 *  stack, please notice that you should keep the stack balanced. 
-			 *  A call to SetTransform will push a matrix into the stack.
-			 */
+			*  Sprite is a utility used to draw textured rectangles in viewport.
+			*
+			*  Sprite can work with a built-in matrix stack. When using matrix
+			*  stack, please notice that you should keep the stack balanced.
+			*  A call to SetTransform will push a matrix into the stack.
+			*/
 			class APAPI Sprite
 			{
 			public:
+				typedef Point Point_A4[4];
+				typedef PointF PointF_A4[4];
+
+				typedef uint ColorValue_A4[4];
+
+				typedef Apoc3D::Math::Rectangle Rectangle;
+
 				enum SpriteSettings
 				{
 					/** Modify render states, but not restore them  */
@@ -73,51 +81,57 @@ namespace Apoc3D
 
 				void ResetBatchCount() { m_batchCount = 0; }
 
-				void Draw(Texture* texture, const Apoc3D::Math::Rectangle& rect, uint color);
-				void Draw(Texture* texture, const Point& pos, uint color);
 				void Draw(Texture* texture, int x, int y, uint color);
-				void Draw(Texture* texture, const Apoc3D::Math::RectangleF &rect, uint color);
+				void Draw(Texture* texture, const Point& pos, uint color);
 				void Draw(Texture* texture, const Vector2& pos, uint color);
-				void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color);
+				void Draw(Texture* texture, const Rectangle& rect, uint color);
+				void Draw(Texture* texture, const RectangleF &rect, uint color);
+				void Draw(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect, uint color);
 
-				void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect,
+				void Draw(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect,
 					uint tlColor, uint trColor, uint blColor, uint brColor);
 
-				void Draw(Texture* texture, const Point(&corners)[4], const Apoc3D::Math::Rectangle* srcRect, const uint(&colors)[4]);
+				void Draw(Texture* texture, const Point_A4& corners, const Rectangle* srcRect, const ColorValue_A4& colors);
 
 
-				void DrawCircle(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, int32 div, uint color);
-				void DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, int32 div, uint color);
-				void DrawCircle(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect,
+				void DrawCircle(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect, int32 div, uint color);
+				void DrawCircle(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, int32 div, uint color);
+				void DrawCircle(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect,
 					float beginAngle, float endAngle, int32 div, uint color);
 
-				void DrawCircleArc(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, float lineWidth, int32 div, uint color);
-				void DrawCircleArc(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, float lineWidth, int32 div, uint color);
-				void DrawCircleArc(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, float lineWidth,
+				void DrawCircleArc(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect, float lineWidth, int32 div, uint color);
+				void DrawCircleArc(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, float lineWidth, int32 div, uint color);
+				void DrawCircleArc(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect, float lineWidth,
 					float beginAngle, float endAngle, int32 div, uint color);
-				
-				void DrawRoundedRect(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect,
+
+				void DrawRoundedRect(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect,
+					float cornerRadius, int32 div, uint color);
+
+				void DrawRoundedRectBorder(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect, float width,
 					float cornerRadius, int32 div, uint color);
 
 
 				virtual void Draw(Texture* texture, const PointF& pos, uint color) = 0;
-				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color) = 0;
-				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, 
+				virtual void Draw(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, uint color) = 0;
+				virtual void Draw(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect,
 					uint tlColor, uint trColor, uint blColor, uint brColor) = 0;
 
-				virtual void Draw(Texture* texture, const PointF (&corners)[4], const Apoc3D::Math::RectangleF* srcRect, const uint (&colors)[4]) = 0;
-				virtual void Draw(Texture* texture, const PointF(&corners)[4], const PointF(&texCoords)[4], const uint(&colors)[4]) = 0;
+				virtual void Draw(Texture* texture, const PointF_A4& corners, const RectangleF* srcRect, const ColorValue_A4& colors) = 0;
+				virtual void Draw(Texture* texture, const PointF_A4& corners, const PointF_A4& texCoords, const ColorValue_A4& colors) = 0;
 
 				virtual void DrawTiled(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color) = 0;
-				virtual void DrawTiled(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) = 0;
+				virtual void DrawTiled(Texture* texture, const RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) = 0;
 
 
-				virtual void DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
+				virtual void DrawCircle(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect,
 					float beginAngle, float endAngle, int32 div, uint color) = 0;
-				virtual void DrawCircleArc(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, float lineWidth,
+				virtual void DrawCircleArc(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, float lineWidth,
 					float beginAngle, float endAngle, int32 div, uint color) = 0;
 
-				virtual void DrawRoundedRect(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect,
+				virtual void DrawRoundedRect(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect,
+					float cornerRadius, int32 div, uint color) = 0;
+
+				virtual void DrawRoundedRectBorder(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, float width,
 					float cornerRadius, int32 div, uint color) = 0;
 
 
@@ -126,27 +140,28 @@ namespace Apoc3D
 				const Matrix& getTransform() const;
 
 				/**
-				 *  When using matrix stack, pop the current matrix and restore to a previous transform
-				 *  state. Throws exception if not using matrix stack.
-				 */
+				*  When using matrix stack, pop the current matrix and restore to a previous transform
+				*  state. Throws exception if not using matrix stack.
+				*/
 				void PopTransform();
 
 				/**
-				 *  Multiply the current transform matrix by a given matrix. If using matrix stack, push
-				 *  the result onto the stack as well.
-				 */
+				*  Multiply the current transform matrix by a given matrix. If using matrix stack, push
+				*  the result onto the stack as well.
+				*/
 				void MultiplyTransform(const Matrix& matrix);
 				void PreMultiplyTransform(const Matrix& matrix);
 
 				/**
-				 *  Set current transform. If using matrix stack, pushes the matrix onto the stack as well.
-				 */
+				*  Set current transform. If using matrix stack, pushes the matrix onto the stack as well.
+				*/
 				virtual void SetTransform(const Matrix& matrix);
 
 				RenderDevice* getRenderDevice() const { return m_renderDevice; }
 				bool isUsingStack() const { return !!(m_currentSettings & SPR_UsePostTransformStack); }
 
 				int32 getBatchCount() const { return m_batchCount; }
+
 			protected:
 				Sprite(RenderDevice* rd);
 
@@ -161,6 +176,17 @@ namespace Apoc3D
 
 				SpriteSettings m_currentSettings;
 
+			};
+
+			class APAPI SpriteTransformScope
+			{
+			public:
+				SpriteTransformScope(Sprite* spr, const Matrix& transform);
+				~SpriteTransformScope();
+
+			private:
+				Sprite* m_sprite;
+				Matrix m_oldTransform;
 			};
 		}
 	}

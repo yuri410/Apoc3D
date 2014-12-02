@@ -181,9 +181,13 @@ namespace Apoc3D
 		void ComboBox::setSelectedIndex(int v) const
 		{
 			m_listBox->setSelectedIndex(v);
-			if (m_listBox->getSelectedIndex()!=-1)
+			if (m_listBox->getSelectedIndex() != -1)
 			{
 				m_textbox->SetText(m_listBox->getItems()[m_listBox->getSelectedIndex()]);
+			}
+			else
+			{
+				m_textbox->SetText(L"");
 			}
 		}
 
@@ -191,7 +195,14 @@ namespace Apoc3D
 		{
 			int idx = m_listBox->FindEntry(n);
 			if (idx != -1)
+			{
 				m_listBox->setSelectedIndex(idx);
+				m_textbox->SetText(n);
+			}
+			else
+			{
+				m_textbox->SetText(L"");
+			}
 		}
 		String* ComboBox::getSelectedItem() const
 		{
@@ -213,7 +224,7 @@ namespace Apoc3D
 		{
 			//String previousItem = m_textbox->Text;
 			//int lastIndex = m_listBox->getSelectedIndex();
-			if (m_listBox->getSelectedIndex()!=-1)
+			if (m_listBox->getSelectedIndex() != -1)
 			{
 				m_textbox->SetText(m_listBox->getItems()[m_listBox->getSelectedIndex()]);
 

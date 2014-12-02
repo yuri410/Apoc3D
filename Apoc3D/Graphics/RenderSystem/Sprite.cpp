@@ -59,142 +59,150 @@ namespace Apoc3D
 			}
 
 
-
-			void Sprite::Draw(Texture* texture, const Apoc3D::Math::Rectangle& rect, uint color)
-			{
-				Draw(texture, static_cast<Apoc3D::Math::RectangleF>(rect), color);
-			}
-			void Sprite::Draw(Texture* texture, const Point& pos, uint color)
-			{
-				Draw(texture, PointF(static_cast<float>(pos.X), static_cast<float>(pos.Y)), color);
-			}
 			void Sprite::Draw(Texture* texture, int x, int y, uint color)
 			{
 				Draw(texture, PointF(static_cast<float>(x), static_cast<float>(y)), color);
 			}
-			void Sprite::Draw(Texture* texture, const Apoc3D::Math::RectangleF &rect, uint color)
+
+			void Sprite::Draw(Texture* texture, const Point& pos, uint color)
 			{
-				Draw(texture, rect, nullptr, color);
+				Draw(texture, PointF(static_cast<float>(pos.X), static_cast<float>(pos.Y)), color);
 			}
+
 			void Sprite::Draw(Texture* texture, const Vector2& pos, uint color)
 			{
 				Draw(texture, PointF(pos.X, pos.Y), color);
 			}
-			void Sprite::Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)
+			
+			void Sprite::Draw(Texture* texture, const Rectangle& rect, uint color)
 			{
-				Apoc3D::Math::RectangleF dstRectF = dstRect;
+				Draw(texture, static_cast<RectangleF>(rect), color);
+			}
 
+			void Sprite::Draw(Texture* texture, const RectangleF &rect, uint color)
+			{
+				Draw(texture, rect, nullptr, color);
+			}
+
+			void Sprite::Draw(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect, uint color)
+			{
+				RectangleF dstRectF = dstRect;
 				if (srcRect)
 				{
-					Apoc3D::Math::RectangleF srcRectF = *srcRect;
+					RectangleF srcRectF = *srcRect;
 					Draw(texture, dstRectF, &srcRectF, color);
 				}
-				else
-				{
+				else 
 					Draw(texture, dstRectF, nullptr, color);
-				}
 			}
 
-			void Sprite::Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect,
+			void Sprite::Draw(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect,
 				uint tlColor, uint trColor, uint blColor, uint brColor)
 			{
-				Apoc3D::Math::RectangleF dstRectF = dstRect;
+				RectangleF dstRectF = dstRect;
+
 				if (srcRect)
 				{
-					Apoc3D::Math::RectangleF srcRectF = *srcRect;
+					RectangleF srcRectF = *srcRect;
 					Draw(texture, dstRectF, &srcRectF, tlColor, trColor, blColor, brColor);
 				}
-				else
-				{
+				else 
 					Draw(texture, dstRectF, nullptr, tlColor, trColor, blColor, brColor);
-				}
 			}
 
-			void Sprite::Draw(Texture* texture, const Point(&corners)[4], const Apoc3D::Math::Rectangle* srcRect, const uint(&colors)[4])
+			void Sprite::Draw(Texture* texture, const Point_A4& corners, const Rectangle* srcRect, const ColorValue_A4& colors)
 			{
 				PointF c[4] = { corners[0], corners[1], corners[2], corners[3] };
 
 				if (srcRect)
 				{
-					Apoc3D::Math::RectangleF srcRectF = *srcRect;
+					RectangleF srcRectF = *srcRect;
 					Draw(texture, c, &srcRectF, colors);
 				}
-				else
-				{
+				else 
 					Draw(texture, c, nullptr, colors);
-				}
 			}
 
 			//////////////////////////////////////////////////////////////////////////
 
-			void Sprite::DrawCircle(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, int32 div, uint color)
+			void Sprite::DrawCircle(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect, int32 div, uint color)
 			{
 				DrawCircle(texture, dstRect, srcRect, 0.0f, Math::PI * 2, div, color);
 			}
-			void Sprite::DrawCircle(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, int32 div, uint color)
+			void Sprite::DrawCircle(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, int32 div, uint color)
 			{
 				DrawCircle(texture, dstRect, srcRect, 0.0f, Math::PI * 2, div, color);
 			}
 
-			void Sprite::DrawCircle(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect,
+			void Sprite::DrawCircle(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect,
 				float beginAngle, float endAngle, int32 div, uint color)
 			{
-				Apoc3D::Math::RectangleF dstRectF = dstRect;
+				RectangleF dstRectF = dstRect;
 
 				if (srcRect)
 				{
-					Apoc3D::Math::RectangleF srcRectF = *srcRect;
+					RectangleF srcRectF = *srcRect;
 					DrawCircle(texture, dstRectF, &srcRectF, beginAngle, endAngle, div, color);
 				}
-				else
-				{
+				else 
 					DrawCircle(texture, dstRectF, nullptr, beginAngle, endAngle, div, color);
-				}
 			}
 
 			//////////////////////////////////////////////////////////////////////////
 
-			void Sprite::DrawCircleArc(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, float lineWidth, int32 div, uint color)
+			void Sprite::DrawCircleArc(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect, float lineWidth, int32 div, uint color)
 			{
 				DrawCircleArc(texture, dstRect, srcRect, lineWidth, 0.0f, Math::PI * 2, div, color);
 			}
-			void Sprite::DrawCircleArc(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, float lineWidth, int32 div, uint color)
+			void Sprite::DrawCircleArc(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, float lineWidth, int32 div, uint color)
 			{
 				DrawCircleArc(texture, dstRect, srcRect, lineWidth, 0.0f, Math::PI * 2, div, color);
 			}
-			void Sprite::DrawCircleArc(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, float lineWidth,
+			void Sprite::DrawCircleArc(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect, float lineWidth,
 				float beginAngle, float endAngle, int32 div, uint color)
 			{
-				Apoc3D::Math::RectangleF dstRectF = dstRect;
+				RectangleF dstRectF = dstRect;
 
 				if (srcRect)
 				{
-					Apoc3D::Math::RectangleF srcRectF = *srcRect;
+					RectangleF srcRectF = *srcRect;
 					DrawCircleArc(texture, dstRectF, &srcRectF, lineWidth, beginAngle, endAngle, div, color);
 				}
 				else
-				{
 					DrawCircleArc(texture, dstRectF, nullptr, lineWidth, beginAngle, endAngle, div, color);
-				}
 			}
 			
 			//////////////////////////////////////////////////////////////////////////
 
-			void Sprite::DrawRoundedRect(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect,
+			void Sprite::DrawRoundedRect(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect,
 				float cornerRadius, int32 div, uint color)
 			{
-				Apoc3D::Math::RectangleF dstRectF = dstRect;
+				RectangleF dstRectF = dstRect;
 
 				if (srcRect)
 				{
-					Apoc3D::Math::RectangleF srcRectF = *srcRect;
+					RectangleF srcRectF = *srcRect;
 					DrawRoundedRect(texture, dstRectF, &srcRectF, cornerRadius, div, color);
 				}
 				else
-				{
 					DrawRoundedRect(texture, dstRectF, nullptr, cornerRadius, div, color);
-				}
 			}
+
+			void Sprite::DrawRoundedRectBorder(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect,
+				float cornerRadius, float width, int32 div, uint color)
+			{
+				RectangleF dstRectF = dstRect;
+
+				if (srcRect)
+				{
+					RectangleF srcRectF = *srcRect;
+					DrawRoundedRectBorder(texture, dstRectF, &srcRectF, cornerRadius, width, div, color);
+				}
+				else
+					DrawRoundedRectBorder(texture, dstRectF, nullptr, cornerRadius, width, div, color);
+			}
+
+			//////////////////////////////////////////////////////////////////////////
 
 			const Matrix& Sprite::getTransform() const
 			{
@@ -243,6 +251,32 @@ namespace Apoc3D
 					m_transform = matrix;
 				}
 			}
+
+
+			//////////////////////////////////////////////////////////////////////////
+
+			SpriteTransformScope::SpriteTransformScope(Sprite* spr, const Matrix& transform)
+				: m_sprite(spr)
+			{
+				if (!m_sprite->isUsingStack())
+				{
+					m_oldTransform = m_sprite->getTransform();
+				}
+
+				m_sprite->SetTransform(transform);
+			}
+
+			SpriteTransformScope::~SpriteTransformScope()
+			{
+				if (m_sprite->isUsingStack())
+					m_sprite->PopTransform();
+				else
+				{
+					m_sprite->SetTransform(m_oldTransform);
+				}
+			}
+
+
 		}
 	}
 }
