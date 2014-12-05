@@ -229,6 +229,9 @@ namespace Apoc3D
 				return idx;
 			}
 
+			T& LastItem() { assert(m_count > 0); return m_elements[m_count - 1]; }
+			const T& LastItem() const { assert(m_count > 0); return m_elements[m_count - 1]; }
+
 			bool isIndexInRange(int32 idx) const { return idx >= 0 && idx < m_count; }
 			int32 getCount() const { return m_count; }
 

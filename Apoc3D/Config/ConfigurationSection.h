@@ -269,6 +269,96 @@ namespace Apoc3D
 			SubSectionTable m_subSection;
 
 		};
+
+
+
+		class ParameterDictionary : public HashMap<String, String>
+		{
+		public:
+
+#define PDICT_GETER_DECL(type, typeName) \
+			type Get##typeName(const String& key) const; \
+			bool TryGet##typeName(const String& key, type& result) const;
+
+			PDICT_GETER_DECL(bool, Bool);
+			PDICT_GETER_DECL(float, Single);
+			PDICT_GETER_DECL(float, Percentage);
+			PDICT_GETER_DECL(int32, Int);
+			PDICT_GETER_DECL(uint32, UInt);
+			PDICT_GETER_DECL(ColorValue, ColorValue);
+			PDICT_GETER_DECL(Vector3, Vector3);
+			PDICT_GETER_DECL(Point, Point);
+
+#undef PDICT_GETER_DECL
+
+
+#define PDICT_SPLITER_DECL(type, typeName) \
+			type Get##typeName(const String& key) const; \
+			void Get##typeName(const String& key, type& result) const; \
+			bool TryGet##typeName(const String& key, type& result) const;
+
+			PDICT_SPLITER_DECL(List<String>, Strings);
+			PDICT_SPLITER_DECL(List<float>, Singles);
+			PDICT_SPLITER_DECL(List<float>, Percentages);
+			PDICT_SPLITER_DECL(List<int32>, Ints);
+			PDICT_SPLITER_DECL(List<uint32>, UInts);
+			PDICT_SPLITER_DECL(List<Vector3>, Vector3s);
+			PDICT_SPLITER_DECL(List<Point>, Points);
+
+#undef PDICT_SPLITER_DECL
+
+
+#define PDICT_SPLITER_ARR_DECL(type, typeName) \
+			void Get##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount = nullptr) const; \
+			bool TryGet##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount = nullptr) const; \
+			void Get##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; Get##typeName(key, v, expectedCount, &actuallCount); assert(actuallCount == expectedCount); } \
+			bool TryGet##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; bool r = TryGet##typeName(key, v, expectedCount, &actuallCount); if (r) assert(actuallCount == expectedCount); return r; } \
+			template <int32 N> void Get##typeName##Checked(const String& key, type (&v)[N]) const { Get##typeName##Checked(key, v, N); } \
+			template <int32 N> bool TryGet##typeName##Checked(const String& key, type (&v)[N]) const { return TryGet##typeName##Checked(key, v, N); } 
+
+			PDICT_SPLITER_ARR_DECL(float, Singles);
+			PDICT_SPLITER_ARR_DECL(float, Percentages);
+			PDICT_SPLITER_ARR_DECL(int32, Ints);
+			PDICT_SPLITER_ARR_DECL(uint32, UInts);
+			PDICT_SPLITER_ARR_DECL(Vector3, Vector3s);
+			PDICT_SPLITER_ARR_DECL(Point, Points);
+
+#undef PDICT_SPLITER_ARR_DECL
+
+			//////////////////////////////////////////////////////////////////////////
+
+#define CONFIG_SECT_ADDER_DECL(type, typeName) void Add##typeName(const String& key, type value);
+
+			CONFIG_SECT_ADDER_DECL(bool, Bool);
+			CONFIG_SECT_ADDER_DECL(float, Single);
+			CONFIG_SECT_ADDER_DECL(float, Percentage);
+			CONFIG_SECT_ADDER_DECL(int32, Int);
+			CONFIG_SECT_ADDER_DECL(uint32, UInt);
+			CONFIG_SECT_ADDER_DECL(ColorValue, ColorValue);
+			CONFIG_SECT_ADDER_DECL(const Vector3&, Vector3);
+			CONFIG_SECT_ADDER_DECL(const Point&, Point);
+
+#undef CONFIG_SECT_ADDER_DECL
+
+
+#define CONFIG_SECT_COMBINER_DECL_NOLIST(type, typeName) void Add##typeName(const String& key, const type* v, int32 count); \
+
+#define CONFIG_SECT_COMBINER_DECL(type, typeName) \
+			CONFIG_SECT_COMBINER_DECL_NOLIST(type, typeName); \
+			void Add##typeName(const String& key, const List<type>& v) { Add##typeName(key, v.getElements(), v.getCount()); } \
+
+			CONFIG_SECT_COMBINER_DECL(String, Strings);
+			CONFIG_SECT_COMBINER_DECL(float, Singles);
+			CONFIG_SECT_COMBINER_DECL(float, Percentages);
+			CONFIG_SECT_COMBINER_DECL(int32, Ints);
+			CONFIG_SECT_COMBINER_DECL(uint32, UInts);
+			CONFIG_SECT_COMBINER_DECL_NOLIST(Vector3, Vector3s);
+			CONFIG_SECT_COMBINER_DECL_NOLIST(Point, Points);
+
+#undef CONFIG_SECT_COMBINER_DECL
+#undef CONFIG_SECT_COMBINER_DECL_NOLIST
+
+		};
 	}
 }
 #endif

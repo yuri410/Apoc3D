@@ -151,6 +151,13 @@ namespace Apoc3D
 			}
 		}
 		bool ComboBox::IsOverriding() { return m_listBox->Visible; }
+		Apoc3D::Math::Rectangle ComboBox::GetOverridingAbsoluteArea() 
+		{
+			Apoc3D::Math::Rectangle baseArea = getAbsoluteArea();
+			Apoc3D::Math::Rectangle listArea = m_listBox->getAbsoluteArea();
+
+			return Apoc3D::Math::Rectangle::Union(baseArea, listArea);
+		}
 
 		List<String>& ComboBox::getItems() const { return m_listBox->getItems(); }
 

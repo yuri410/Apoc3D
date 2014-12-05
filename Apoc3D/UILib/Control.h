@@ -86,6 +86,7 @@ namespace Apoc3D
 			 *  Gets a bool indicating if the control is blocking its parent
 			 */
 			virtual bool IsOverriding() { return false; }
+			virtual Apoc3D::Math::Rectangle GetOverridingAbsoluteArea() { return getAbsoluteArea(); }
 
 			Apoc3D::Math::Rectangle getAbsoluteArea() const { return Apoc3D::Math::Rectangle(GetAbsolutePosition(), m_size); }
 			Apoc3D::Math::Rectangle getArea() const { return Apoc3D::Math::Rectangle(Position, m_size); }
@@ -193,6 +194,7 @@ namespace Apoc3D
 			void DeferredAdd(Control* ctl);
 			void DeferredRemoval(Control* ctl, bool deleteAfter);
 
+			Control* FindOverridingControl() const;
 		private:
 			struct DeferredAction 
 			{

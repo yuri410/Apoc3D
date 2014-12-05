@@ -388,9 +388,16 @@ namespace Apoc3D
 				SystemUI::InteractingForm = this;
 			}
 
-			if (SystemUI::InteractingForm == nullptr && getArea().Contains(mouse->GetPosition()))
+			if (SystemUI::InteractingForm == nullptr)
 			{
-				SystemUI::InteractingForm = this;
+				if (getArea().Contains(mouse->GetPosition()))
+					SystemUI::InteractingForm = this;
+				else
+				{
+					Control* overriding = m_controls.FindOverridingControl();
+					if (overriding && overriding->GetOverridingAbsoluteArea().Contains(mouse->GetPosition()))
+						SystemUI::InteractingForm = this;
+				}
 			}
 
 			if (mouse->IsLeftPressedState())

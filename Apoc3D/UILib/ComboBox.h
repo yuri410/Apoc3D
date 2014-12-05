@@ -54,10 +54,11 @@ namespace Apoc3D
 			ComboBox(const StyleSkin* skin, const Point& position, int width, const List<String>& items);
 			virtual ~ComboBox();
 
-			virtual void Update(const GameTime* time);
-			virtual void Draw(Sprite* sprite);
-			virtual void DrawOverlay(Sprite* sprite);
-			virtual bool IsOverriding();
+			virtual void Update(const GameTime* time) override;
+			virtual void Draw(Sprite* sprite) override;
+			virtual void DrawOverlay(Sprite* sprite) override;
+			virtual bool IsOverriding() override;
+			virtual Apoc3D::Math::Rectangle ComboBox::GetOverridingAbsoluteArea() override;
 
 			bool isMouseHover() const;
 			Apoc3D::Math::Rectangle getMouseHoverArea() const;

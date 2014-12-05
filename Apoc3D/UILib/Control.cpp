@@ -461,6 +461,18 @@ namespace Apoc3D
 			m_deferredRemoval.Add({ ctl, false, deleteAfter });
 		}
 
+		Control* ControlCollection::FindOverridingControl() const
+		{
+			for (int32 i = 0; i < m_count; i++)
+			{
+				Control* ctrl = m_elements[i];
+				if (ctrl->IsOverriding())
+				{
+					return ctrl;
+				}
+			}
+			return nullptr;
+		}
 		/************************************************************************/
 		/* ControlContainer                                                     */
 		/************************************************************************/

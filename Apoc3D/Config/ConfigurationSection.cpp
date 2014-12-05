@@ -47,7 +47,7 @@ namespace Apoc3D
 			return flags;
 		}
 
-		
+		String SimpleFloatToString(const float& v);
 
 		/** Actual parsing/printing functions */
 		float ParsePercentage(const String& val);
@@ -87,14 +87,15 @@ namespace Apoc3D
 		int32 SplitVector3sArr(const String& str, Vector3* result, int32 expectedCount);
 		int32 SplitPointsArr(const String& str, Point* result, int32 expectedCount);
 
+		/************************************************************************/
+		/*   ConfigurationSection                                               */
+		/************************************************************************/
 
 		ConfigurationSection::ConfigurationSection(const String& name, int capacity)
-			: m_name(name), m_subSection(capacity)
-		{ }
+			: m_name(name), m_subSection(capacity) { }
 
 		ConfigurationSection::ConfigurationSection(const String& name)
-			: m_name(name)
-		{ }
+			: m_name(name) { }
 
 		ConfigurationSection::ConfigurationSection(const ConfigurationSection& another)
 			: m_attributes(another.m_attributes), m_subSection(another.m_subSection), m_name(another.m_name), m_value(another.m_value)
@@ -324,7 +325,6 @@ namespace Apoc3D
 		CONFIG_SECT_SPLITER_ARR_IMP(Point, Points, SplitPointsArr);
 
 		//////////////////////////////////////////////////////////////////////////
-		String SimpleFloatToString(const float& v);
 
 		void ConfigurationSection::AddStringValue(const String& name, const String& value)
 		{
@@ -337,7 +337,6 @@ namespace Apoc3D
 			try
 			{
 				m_attributes.Add(name, value);
-				//m_attributes.insert(make_pair(name, value));
 			}
 			catch (Exception& e)
 			{
@@ -419,8 +418,116 @@ namespace Apoc3D
 		void ConfigurationSection::SetUInts(const uint32* v, int32 count)				{ UIntsToString(v, count, m_value); }
 		void ConfigurationSection::SetVector3s(const Vector3* v, int count)				{ Vector3sToString(v, count, m_value); }
 
-		
 
+		/************************************************************************/
+		/* ParameterDictionary                                                  */
+		/************************************************************************/
+
+#define PDICT_GETER_IMP(type, typeName, parser) \
+		type ParameterDictionary::Get##typeName(const String& key) const { return parser(this->operator[](key)); } \
+		bool ParameterDictionary::TryGet##typeName(const String& key, type& result) const \
+		{ \
+			String str; \
+			if (TryGetValue(key, str)) \
+			{ \
+				result = parser(str); \
+				return true; \
+			} \
+			return false; \
+		} \
+
+#define PDICT_SPLITER_IMP(type, typeName, splitParser) \
+		type ParameterDictionary::Get##typeName(const String& key) const \
+		{ \
+			type result; \
+			splitParser(this->operator[](key), result); \
+			return result; \
+		} \
+		void ParameterDictionary::Get##typeName(const String& key, type& result) const { splitParser(this->operator[](key), result); } \
+		bool ParameterDictionary::TryGet##typeName(const String& key, type& result) const \
+		{ \
+			String str; \
+			if (TryGetValue(key, str)) \
+			{ \
+				splitParser(str, result); \
+				return true; \
+			} \
+			return false; \
+		} 
+
+#define PDICT_SPLITER_ARR_IMP(type, typeName, splitParser) \
+		void ParameterDictionary::Get##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount) const \
+		{ \
+			int32 actual = splitParser(this->operator[](key), v, maxCount); \
+			if (acutallCount) *acutallCount = actual; \
+		} \
+		bool ParameterDictionary::TryGet##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount) const \
+		{ \
+			String str; \
+			if (TryGetValue(key, str)) \
+			{ \
+				int32 actual = splitParser(str, v, maxCount); \
+				if (acutallCount) *acutallCount = actual; \
+				return true; \
+			} \
+			return false; \
+		} 
+
+#define PDICT_ADDER_IMP(type, typeName, toStr) void ParameterDictionary::Add##typeName(const String& key, type value) { Add(key, toStr(value)); }
+
+#define PDICT_COMBINER_IMP(type, typeName, combiner) \
+		void ParameterDictionary::Add##typeName(const String& key, const type* v, int32 count) \
+		{ \
+			String result; \
+			combiner(v, count, result); \
+			Add(key, result); \
+		}
+
+
+		PDICT_GETER_IMP(bool, Bool, StringUtils::ParseBool);
+		PDICT_GETER_IMP(float, Single, StringUtils::ParseSingle);
+		PDICT_GETER_IMP(float, Percentage, ParsePercentage);
+		PDICT_GETER_IMP(int32, Int, StringUtils::ParseInt32);
+		PDICT_GETER_IMP(uint32, UInt, StringUtils::ParseUInt32);
+		PDICT_GETER_IMP(ColorValue, ColorValue, ParseColorValue);
+		PDICT_GETER_IMP(Vector3, Vector3, ParseVector3);
+		PDICT_GETER_IMP(Point, Point, ParsePoint);
+		
+		PDICT_SPLITER_IMP(List<String>, Strings, SplitString);
+		PDICT_SPLITER_IMP(List<float>, Singles, SplitSingles);
+		PDICT_SPLITER_IMP(List<float>, Percentages, SplitPercentages);
+		PDICT_SPLITER_IMP(List<int32>, Ints, SplitInt);
+		PDICT_SPLITER_IMP(List<uint32>, UInts, SplitUint);
+		PDICT_SPLITER_IMP(List<Vector3>, Vector3s, SplitVector3s);
+		PDICT_SPLITER_IMP(List<Point>, Points, SplitPoints);
+		
+		PDICT_SPLITER_ARR_IMP(float, Singles, SplitSinglesArr);
+		PDICT_SPLITER_ARR_IMP(float, Percentages, SplitPercentagesArr);
+		PDICT_SPLITER_ARR_IMP(int32, Ints, SplitIntArr);
+		PDICT_SPLITER_ARR_IMP(uint32, UInts, SplitUintArr);
+		PDICT_SPLITER_ARR_IMP(Vector3, Vector3s, SplitVector3sArr);
+		PDICT_SPLITER_ARR_IMP(Point, Points, SplitPointsArr);
+		
+		PDICT_ADDER_IMP(bool, Bool, StringUtils::BoolToString);
+		PDICT_ADDER_IMP(float, Single, SimpleFloatToString);
+		PDICT_ADDER_IMP(float, Percentage, PercentageToString);
+		PDICT_ADDER_IMP(int32, Int, StringUtils::IntToString);
+		PDICT_ADDER_IMP(uint32, UInt, StringUtils::UIntToString);
+		PDICT_ADDER_IMP(ColorValue, ColorValue, ColorValueToString);
+		PDICT_ADDER_IMP(const Vector3&, Vector3, Vector3ToString);
+		PDICT_ADDER_IMP(const Point&, Point, PointToString);
+
+		PDICT_COMBINER_IMP(String, Strings, CombineString);
+		PDICT_COMBINER_IMP(float, Singles, SinglesToString);
+		PDICT_COMBINER_IMP(float, Percentages, PrecentagesToString);
+		PDICT_COMBINER_IMP(int32, Ints, IntsToString);
+		PDICT_COMBINER_IMP(uint32, UInts, UIntsToString);
+		PDICT_COMBINER_IMP(Vector3, Vector3s, Vector3sToString);
+		PDICT_COMBINER_IMP(Point, Points, PointsToString);
+
+
+		//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////
 
 		float ParsePercentage(const String& val)
 		{
@@ -444,13 +551,13 @@ namespace Apoc3D
 			List<String> val;
 			StringUtils::Split(str, val, L",");
 			if (val.getCount() == 4)
-			{				
+			{
 				const uint r = StringUtils::ParseUInt32(val[0]);
 				const uint g = StringUtils::ParseUInt32(val[1]);
 				const uint b = StringUtils::ParseUInt32(val[2]);
 				const uint a = StringUtils::ParseUInt32(val[3]);
 
-				return CV_PackColor(r,g,b,a);
+				return CV_PackColor(r, g, b, a);
 			}
 			else if (val.getCount() == 3)
 			{
@@ -459,7 +566,7 @@ namespace Apoc3D
 				const uint b = StringUtils::ParseUInt32(val[2]);
 				const uint a = 0xff;
 
-				return CV_PackColor(r,g,b,a);
+				return CV_PackColor(r, g, b, a);
 			}
 			throw AP_EXCEPTION(ExceptID::FormatException, L"Wrong number of channels: " + str);
 		}
@@ -487,24 +594,19 @@ namespace Apoc3D
 			return result;
 		}
 
-		Vector3 ParseVector3(const String& str)
-		{
-			Vector3 v;
-			v.Parse(str);
-			return v;
-		}
+		Vector3 ParseVector3(const String& str) { Vector3 v; v.Parse(str); return v; }
 		String Vector3ToString(const Vector3& vec) { return vec.ToParsableString(ConfigurationSection::FloatPointStoringPrecision); }
 
 		Point ParsePoint(const String& str)
 		{
 			int32 vals[2];
 			StringUtils::SplitParseIntsChecked(str, vals, 2, L", ");
-			
+
 			return Point(vals[0], vals[1]);
 		}
 		String PointToString(const Point& vec)
 		{
-			int32 vals[2] = {vec.X, vec.Y};
+			int32 vals[2] = { vec.X, vec.Y };
 			String result;
 			IntsToString(vals, 2, result);
 			return result;
@@ -513,7 +615,7 @@ namespace Apoc3D
 
 		void CombineString(const String* v, int count, String& result)
 		{
-			for (int i=0;i<count;i++)
+			for (int i = 0; i < count; i++)
 			{
 				if (v[i].find(',') != String::npos)
 				{
@@ -535,7 +637,7 @@ namespace Apoc3D
 			bool preventTriming = false;
 
 			String buffer;
-			for (size_t i=0;i<str.size();i++)
+			for (size_t i = 0; i < str.size(); i++)
 			{
 				wchar_t ch = str[i];
 				if (ch == '"')
@@ -605,45 +707,33 @@ namespace Apoc3D
 		template <typename ElementT, String (*ToStringConverter)(const ElementT&) >
 		void GenericToString(const ElementT* array, int32 count, String& result)
 		{
-			for (int32 i=0;i<count;i++)
+			for (int32 i = 0; i < count; i++)
 			{
 				result.append(ToStringConverter(array[i]));
-				if (i != count -1)
+				if (i != count - 1)
 					result.append(L", ");
 			}
 		}
-
-
-		void ColorValuesToString(const ColorValue* v, int count, String& result);
-		void Vector3sToString(const Vector3* v, int count, String& result);
-		void PointsToString(const Point* v, int count, String& result);
-
-		void SplitSingles(const String& str, List<float>& result);
-		void SplitPercentages(const String& str, List<float>& result);
-		void SplitInt(const String& str, List<int32>& result);
-		void SplitUint(const String& str, List<uint32>& result);
-		
-
 
 
 		void SplitSingles(const String& text, List<float>& result) { StringUtils::SplitParseSingles(text, result, L", "); } 
 		void SplitInt(const String& text, List<int32>& result) { StringUtils::SplitParseInts(text, result, L", "); } 
 		void SplitPercentages(const String& text, List<float>& result) { SplitT<List<float>, float, ParsePercentage>(text, result, L", "); }
 		void SplitUint(const String& text, List<uint32>& result) { SplitT<List<uint32>, uint32, StringUtils::ParseUInt32>(text, result, L", "); }
-		void SplitVector3s(const String& str, List<Vector3>& result) 
+		void SplitVector3s(const String& str, List<Vector3>& result)
 		{
 			List<float> buffer;
 			StringUtils::SplitParseSingles(str, buffer, L", ");
 
-			assert((buffer.getCount()%3) == 0);
-			int32 vecCount = buffer.getCount()/3;
+			assert((buffer.getCount() % 3) == 0);
+			int32 vecCount = buffer.getCount() / 3;
 			result.ReserveDiscard(vecCount);
-			for (int32 i=0;i<vecCount;i++)
+			for (int32 i = 0; i < vecCount; i++)
 			{
 				Vector3& v = result[i];
-				v.X = buffer[i*3];
-				v.Y = buffer[i*3+1];
-				v.Z = buffer[i*3+2];
+				v.X = buffer[i * 3];
+				v.Y = buffer[i * 3 + 1];
+				v.Z = buffer[i * 3 + 2];
 			}
 		}
 		void SplitPoints(const String& str, List<Point>& result)
@@ -651,14 +741,14 @@ namespace Apoc3D
 			List<int32> buffer;
 			StringUtils::SplitParseInts(str, buffer, L", ");
 
-			assert((buffer.getCount()%2) == 0);
-			int32 vecCount = buffer.getCount()/2;
+			assert((buffer.getCount() % 2) == 0);
+			int32 vecCount = buffer.getCount() / 2;
 			result.ReserveDiscard(vecCount);
-			for (int32 i=0;i<vecCount;i++)
+			for (int32 i = 0; i < vecCount; i++)
 			{
 				Point& v = result[i];
-				v.X = buffer[i*2];
-				v.Y = buffer[i*2+1];
+				v.X = buffer[i * 2];
+				v.Y = buffer[i * 2 + 1];
 			}
 		}
 
@@ -683,13 +773,11 @@ namespace Apoc3D
 		{
 		public:
 			CappedBufferList(T* dataBuf, int32 sizeCap)
-				: m_elements(dataBuf), m_sizeCap(sizeCap), m_internalPointer(0)
-			{
-			}
+				: m_elements(dataBuf), m_sizeCap(sizeCap) { }
 
 			void Add(const T& item)
 			{
-				assert(m_internalPointer<m_sizeCap);
+				assert(m_internalPointer < m_sizeCap);
 				m_elements[m_internalPointer++] = item;
 			}
 
@@ -698,7 +786,7 @@ namespace Apoc3D
 			T* m_elements;
 			int32 m_sizeCap;
 
-			int32 m_internalPointer;
+			int32 m_internalPointer = 0;
 		};
 
 		int32 SplitSinglesArr(const String& str, float* result, int32 expectedCount) { return StringUtils::SplitParseSingles(str, result, expectedCount, L", "); }
@@ -719,7 +807,7 @@ namespace Apoc3D
 		{
 			int32 actual = StringUtils::SplitParseSingles(str, (float*)result, expectedCount*3, L", ");
 
-			assert((actual%3) == 0);
+			assert((actual % 3) == 0);
 
 			return actual/3;
 		}
@@ -727,7 +815,7 @@ namespace Apoc3D
 		{
 			int32 actual = StringUtils::SplitParseInts(str, (int32*)result, expectedCount*2, L", ");
 			
-			assert((actual%2) == 0);
+			assert((actual % 2) == 0);
 
 			return actual/2;
 		}
