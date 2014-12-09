@@ -65,6 +65,7 @@
 #include <initializer_list>
 
 #include "FastDelegate\FastDelegate.h"
+#include "FunctorReference.h"
 
 typedef int16_t int16;
 typedef int32_t int32;

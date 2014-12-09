@@ -214,22 +214,21 @@ namespace Apoc3D
 
 		void EffectData::Load(const ResourceLocation& rl)
 		{
-			BinaryReader _br(rl.GetReadStream());
-			BinaryReader* br = &_br;
+			BinaryReader br(rl);
 
-			int id = br->ReadInt32();
+			int id = br.ReadInt32();
 
 			if (id == AfxId_V3)
 			{
-				LoadAFXV3(br);
+				LoadAFXV3(&br);
 			}
 			else if (id == AfxId_V31)
 			{
-				LoadAFXV3_1(br);
+				LoadAFXV3_1(&br);
 			}
 			else if (id == AfxId_V4)
 			{
-				LoadFXV4(br);
+				LoadFXV4(&br);
 			}
 			else if (id == CfxID_V3)
 			{
@@ -238,16 +237,15 @@ namespace Apoc3D
 				ProfileCount = 1;
 				Profiles = new EffectProfileData[ProfileCount];
 				Profiles->SetImplType(EffectProfileData::Imp_HLSL);
-				Profiles->MajorVer = br->ReadInt32();
-				Profiles->MinorVer = br->ReadInt32();
-				Name = br->ReadString();
+				Profiles->MajorVer = br.ReadInt32();
+				Profiles->MinorVer = br.ReadInt32();
+				Name = br.ReadString();
 
-				TaggedDataReader* data = br->ReadTaggedDataBlock();
+				TaggedDataReader* data = br.ReadTaggedDataBlock();
 
 				BinaryReader* br3 = data->GetData(TAG_3_ShaderCodeLengthTag);
 				Profiles->VSLength = br3->ReadInt32();
 				Profiles->PSLength = br3->ReadInt32();
-				br3->Close();
 				delete br3;
 
 				Profiles->VSCode = new char[Profiles->VSLength];
@@ -255,7 +253,6 @@ namespace Apoc3D
 				br3 = data->GetData(TAG_3_ShaderCodeTag);
 				br3->ReadBytes(Profiles->VSCode, Profiles->VSLength);
 				br3->ReadBytes(Profiles->PSCode, Profiles->PSLength);
-				br3->Close();
 				delete br3;
 
 				data->Close();
@@ -263,7 +260,7 @@ namespace Apoc3D
 			}
 			else if (id == CfxID_V4)
 			{
-				LoadFXV4(br);
+				LoadFXV4(&br);
 				IsCFX = true;
 			}
 			else
@@ -271,7 +268,6 @@ namespace Apoc3D
 				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid effect file. " + rl.getName(), LOGLVL_Error);
 			}
 			
-			br->Close();
 		}
 
 		void EffectData::LoadAFXV3(BinaryReader* br)
@@ -308,7 +304,6 @@ namespace Apoc3D
 					params.Usage = EPUSAGE_CustomMaterialParam;
 				}
 
-				br2->Close();
 				delete br2;
 
 				tag = StringUtils::IntToNarrowString(i);
@@ -329,7 +324,6 @@ namespace Apoc3D
 					params.SamplerState.MipFilter = static_cast<TextureFilter>(br2->ReadUInt32());
 					params.SamplerState.MipMapLODBias = br2->ReadInt32();
 
-					br2->Close();
 					delete br2;
 				}
 				else
@@ -355,7 +349,6 @@ namespace Apoc3D
 			BinaryReader* br3 = data->GetData(TAG_3_ShaderCodeLengthTag);
 			Profiles->VSLength = br3->ReadInt32();
 			Profiles->PSLength = br3->ReadInt32();
-			br3->Close();
 			delete br3;
 
 			Profiles->VSCode = new char[Profiles->VSLength];
@@ -363,7 +356,6 @@ namespace Apoc3D
 			br3 = data->GetData(TAG_3_ShaderCodeTag);
 			br3->ReadBytes(Profiles->VSCode, Profiles->VSLength);
 			br3->ReadBytes(Profiles->PSCode, Profiles->PSLength);
-			br3->Close();
 			delete br3;
 
 			data->Close();
@@ -400,7 +392,6 @@ namespace Apoc3D
 				params.InstanceBlobIndex = br->ReadInt32();
 				params.ProgramType = static_cast<ShaderType>(br->ReadInt32());
 
-				br2->Close();
 				delete br2;
 
 				tag = StringUtils::IntToNarrowString(i);
@@ -421,7 +412,6 @@ namespace Apoc3D
 					params.SamplerState.MipFilter = static_cast<TextureFilter>(br2->ReadUInt32());
 					params.SamplerState.MipMapLODBias = br2->ReadInt32();
 
-					br2->Close();
 					delete br2;
 				}
 				else
@@ -446,7 +436,6 @@ namespace Apoc3D
 			BinaryReader* br3 = data->GetData(TAG_3_ShaderCodeLengthTag);
 			Profiles->VSLength = br3->ReadInt32();
 			Profiles->PSLength = br3->ReadInt32();
-			br3->Close();
 			delete br3;
 
 			Profiles->VSCode = new char[Profiles->VSLength];
@@ -454,7 +443,6 @@ namespace Apoc3D
 			br3 = data->GetData(TAG_3_ShaderCodeTag);
 			br3->ReadBytes(Profiles->VSCode, Profiles->VSLength);
 			br3->ReadBytes(Profiles->PSCode, Profiles->PSLength);
-			br3->Close();
 			delete br3;
 
 			data->Close();
@@ -472,40 +460,37 @@ namespace Apoc3D
 			}
 		}
 
-		void EffectData::Save(Stream* strm) const
+		void EffectData::Save(Stream& strm) const
 		{
-			BinaryWriter _bw(strm);
-			BinaryWriter* bw = &_bw;
+			BinaryWriter bw(&strm, false);
 
 			if (IsCFX)
 			{
-				bw->WriteInt32((int32)CfxID_V4);
+				bw.WriteInt32((int32)CfxID_V4);
 			}
 			else
 			{
-				bw->WriteInt32((int32)AfxId_V4);
+				bw.WriteInt32((int32)AfxId_V4);
 			}
 
-			bw->WriteString(Name);
-			bw->WriteInt32(ProfileCount);
+			bw.WriteString(Name);
+			bw.WriteInt32(ProfileCount);
 			for (int32 i=0;i<ProfileCount;i++)
 			{
-				Profiles[i].Save(bw);
+				Profiles[i].Save(&bw);
 			}
-			bw->Close();
+
 		}
-		void EffectData::SaveLite(Stream* strm) const
+		void EffectData::SaveLite(Stream& strm) const
 		{
-			BinaryWriter _bw(strm);
-			BinaryWriter* bw = &_bw;
+			BinaryWriter bw(&strm, false);
 
-			bw->WriteInt32(LfxID_V1);
-			bw->WriteInt32(ProfileCount);
+			bw.WriteInt32(LfxID_V1);
+			bw.WriteInt32(ProfileCount);
 			for (int32 i=0;i<ProfileCount;i++)
 			{
-				Profiles[i].SaveLite(bw);
+				Profiles[i].SaveLite(&bw);
 			}
-			bw->Close();
 		}
 
 		void EffectData::SortProfiles()

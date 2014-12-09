@@ -275,8 +275,7 @@ namespace Apoc3D
 				String alltext = ConvertFromRawData(rawBytes, length, encoding, true);
 
 				delete[] rawBytes;
-				br.Close();
-
+				
 				return alltext;
 			}
 			void WriteAllText(Stream& strm, const String& text, TextEncoding encoding)

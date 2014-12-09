@@ -59,7 +59,7 @@ namespace Apoc3D
 
 				~D3D9Texture();
 
-				virtual void Save(Stream* strm) override;
+				virtual void Save(Stream& strm) override;
 
 				virtual DataRectangle lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect) override;
 				virtual DataBox lock(int32 surface, LockMode mode, const Box& box) override;

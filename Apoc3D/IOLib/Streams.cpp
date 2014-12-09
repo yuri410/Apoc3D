@@ -49,6 +49,7 @@ namespace Apoc3D
 		}
 		FileStream::~FileStream()
 		{
+			m_in.close();
 		}
 
 		int64 FileStream::Read(char* dest, int64 count)
@@ -67,25 +68,14 @@ namespace Apoc3D
 			ios::seekdir dir;
 			switch (mode)
 			{
-			case SEEK_Begin:
-				dir = ios::beg;
-				break;
-			case SEEK_End:
-				dir = ios::end;
-				break;
-			default:
-				dir = ios::cur;
-				break;
+				case SeekMode::Begin: dir = ios::beg; break;
+				case SeekMode::End: dir = ios::end; break;
+				default: dir = ios::cur; break;
 			}
 
 			m_in.seekg(offset, dir);
 		}
-
-		void FileStream::Close()
-		{
-			m_in.close();
-		}
-
+		
 		void FileStream::setPosition(int64 offset)
 		{
 			m_in.seekg(offset, ios::beg); 
@@ -101,11 +91,11 @@ namespace Apoc3D
 
 		FileOutStream::FileOutStream(const String& filename)
 			: m_out(filename.c_str(), ios::out | ios::binary | ios::trunc)
-		{
-			m_length = 0;
-		}
+		{ }
+
 		FileOutStream::~FileOutStream()
 		{
+			m_out.close();
 		}
 
 		int64 FileOutStream::Read(char* dest, int64 count)
@@ -117,7 +107,7 @@ namespace Apoc3D
 			m_out.write(src, count);
 			//m_length += count;
 			int64 p = getPosition();
-			if (p>m_length)
+			if (p > m_length)
 				m_length = p;
 		}
 		void FileOutStream::Seek(int64 offset, SeekMode mode)
@@ -125,26 +115,15 @@ namespace Apoc3D
 			ios::seekdir dir;
 			switch (mode)
 			{
-			case SEEK_Begin:
-				dir = ios::beg;
-				break;
-			case SEEK_End:
-				dir = ios::end;
-				break;
-			default:
-				dir = ios::cur;
-				break;
+				case SeekMode::Begin: dir = ios::beg; break;
+				case SeekMode::End: dir = ios::end; break;
+				default: dir = ios::cur; break;
 			}
 
 			m_out.seekp(offset, dir);
 			int64 p = getPosition();
-			if (p>m_length)
+			if (p > m_length)
 				m_length = p;
-		}
-
-		void FileOutStream::Close()
-		{
-			m_out.close();
 		}
 
 		void FileOutStream::Flush()
@@ -153,8 +132,8 @@ namespace Apoc3D
 		}
 		void FileOutStream::setPosition(int64 offset)
 		{
-			m_out.seekp(offset, ios::beg); 
-			if (m_length<offset)
+			m_out.seekp(offset, ios::beg);
+			if (m_length < offset)
 				m_length = offset;
 		}
 		int64 FileOutStream::getPosition()
@@ -193,15 +172,9 @@ namespace Apoc3D
 		{
 			switch (mode)
 			{
-			case SEEK_Begin:
-				m_position = (int)offset;
-				break;
-			case SEEK_Current:
-				m_position += (int)offset;
-				break;
-			case SEEK_End:
-				m_position = m_length + (int)offset;
-				break;
+				case SeekMode::Begin:   m_position = offset; break;
+				case SeekMode::Current: m_position += offset; break;
+				case SeekMode::End:     m_position = m_length + offset; break;
 			}
 			if (m_position < 0)
 				m_position = 0;
@@ -218,51 +191,75 @@ namespace Apoc3D
 		/*  VirtualStream                                                       */
 		/************************************************************************/
 
+		int64 VirtualStream::getLength() const
+		{
+			return m_isOutput ? m_baseStream->getLength() : m_length;
+		}
+
+
 		void VirtualStream::setPosition(int64 offset)
 		{
 			m_baseStream->setPosition( offset + m_baseOffset );
+		}
+		int64 VirtualStream::getPosition() 
+		{
+			return m_baseStream->getPosition() - m_baseOffset;
+		}
+
+		int64 VirtualStream::Read(char* dest, int64 count)
+		{
+			//if (getPosition() + count > getLength())
+			//{
+			//	count = getLength() - getPosition();
+			//}
+			if (count)
+			{
+				m_baseStream->Read(dest, count);
+			}
+
+			return count;
+		}
+		void VirtualStream::Write(const char* src, int64 count)
+		{
+			m_baseStream->Write(src, count);
 		}
 
 		void VirtualStream::Seek(int64 offset, SeekMode mode)
 		{
 			switch (mode)
 			{
-			case SEEK_Begin:
-				if (offset > m_length)
-				{
-					offset = m_length;
-				}
-				if (offset < 0)
-				{
-					offset = 0;
-				}
-				m_baseStream->setPosition(offset+ m_baseOffset);
-				break;
-			case SEEK_Current:
-				if (m_baseStream->getPosition() + offset > m_baseOffset + m_length)
-				{
-					offset = m_baseOffset + m_length - m_baseStream->getPosition();
-				}
-				if (m_baseStream->getPosition() + offset < m_baseOffset)
-				{
-					offset = m_baseOffset - m_baseStream->getPosition();
-				}
-				m_baseStream->Seek(offset, mode);
-				break;
-			case SEEK_End:
-				if (offset > 0)
-				{
-					offset = 0;
-				}
+				case SeekMode::Begin:
 
-				if (offset < -m_length)
-				{
-					offset = -m_length;
-				}
-				m_baseStream->setPosition(m_length - offset+ m_baseOffset);
-				break;
+					if (offset > m_length)
+						offset = m_length;
+					if (offset < 0)
+						offset = 0;
+
+					m_baseStream->setPosition(offset + m_baseOffset);
+					break;
+
+				case SeekMode::Current:
+					if (m_baseStream->getPosition() + offset > m_baseOffset + m_length)
+					{
+						offset = m_baseOffset + m_length - m_baseStream->getPosition();
+					}
+					if (m_baseStream->getPosition() + offset < m_baseOffset)
+					{
+						offset = m_baseOffset - m_baseStream->getPosition();
+					}
+					m_baseStream->Seek(offset, mode);
+					break;
+
+				case SeekMode::End:
+					if (offset > 0)
+						offset = 0;
+					if (offset < -m_length)
+						offset = -m_length;
+
+					m_baseStream->setPosition(m_length - offset + m_baseOffset);
+					break;
+
 			}
-
 		}
 
 		/************************************************************************/
@@ -276,17 +273,17 @@ namespace Apoc3D
 				count = m_length - m_position;
 			}
 
-			for (int64 i=0;i<count;i++)
-				dest[i] = m_data[static_cast<int32>(i+m_position)];
+			for (int64 i = 0; i < count; i++)
+				dest[i] = m_data[static_cast<int32>(i + m_position)];
 
 			m_position += count;
 			return count;
 		}
 		void MemoryOutStream::Write(const char* src, int64 count)
 		{
-			for (int64 i=0;i<count;i++)
+			for (int64 i = 0; i < count; i++)
 			{
-				if (m_position>=m_length)
+				if (m_position >= m_length)
 				{
 					m_data.Add(src[i]);
 					m_length++;
@@ -297,22 +294,15 @@ namespace Apoc3D
 				}
 				m_position++;
 			}
-
 		}
 
 		void MemoryOutStream::Seek(int64 offset, SeekMode mode)
 		{
 			switch (mode)
 			{
-			case SEEK_Begin:
-				m_position = (int)offset;
-				break;
-			case SEEK_Current:
-				m_position += (int)offset;
-				break;
-			case SEEK_End:
-				m_position = m_length + (int)offset;
-				break;
+				case SeekMode::Begin:   m_position = offset; break;
+				case SeekMode::Current: m_position += offset; break;
+				case SeekMode::End:     m_position = m_length + offset; break;
 			}
 			if (m_position < 0)
 				m_position = 0;
@@ -352,7 +342,7 @@ namespace Apoc3D
 				ret = 0;
 
 				int32 existing = getBufferContentSize();
-				if (existing>0)
+				if (existing > 0)
 				{
 					ReadBuffer(dest, existing);
 					ret = existing;
@@ -401,11 +391,11 @@ namespace Apoc3D
 			if (m_head + count > BufferSize)
 			{
 				int32 numHeadToEnd = BufferSize - m_head;
-				memcpy(dest, m_buffer+m_head, numHeadToEnd);
+				memcpy(dest, m_buffer + m_head, numHeadToEnd);
 
 				int32 remaining = count - numHeadToEnd;
-				assert(remaining<=m_head);
-				memcpy(dest+numHeadToEnd, m_buffer, remaining);
+				assert(remaining <= m_head);
+				memcpy(dest + numHeadToEnd, m_buffer, remaining);
 			}
 			else
 			{
@@ -419,7 +409,7 @@ namespace Apoc3D
 		void BufferedStreamReader::FillBuffer()
 		{
 			int32 count = BufferSize - m_size;
-			assert(count>0);
+			assert(count > 0);
 			int32 actualCount = 0;
 
 			if (m_tail + count > BufferSize)
@@ -432,7 +422,7 @@ namespace Apoc3D
 				if (!m_endofStream)
 				{
 					int32 remaining = count - numTailToEnd;
-					assert(remaining<=m_tail);
+					assert(remaining <= m_tail);
 
 					actual = static_cast<int32>(m_baseStream->Read(m_buffer, remaining));
 					m_endofStream = actual < remaining;
@@ -447,7 +437,7 @@ namespace Apoc3D
 			}
 
 			m_tail = (m_tail + actualCount) % BufferSize;
-			m_size+=actualCount;
+			m_size += actualCount;
 		}
 
 	};

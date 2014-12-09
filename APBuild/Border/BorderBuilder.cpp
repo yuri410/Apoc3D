@@ -305,7 +305,7 @@ namespace APBuild
 			}
 
 			//xml->Save(dstFile);
-			XMLConfigurationFormat::Instance.Save(xml, new FileOutStream(dstFile));
+			XMLConfigurationFormat::Instance.Save(xml, FileOutStream(dstFile));
 
 			delete xml;
 			

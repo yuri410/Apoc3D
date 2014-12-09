@@ -85,14 +85,14 @@ namespace Apoc3D
 				{
 					int32 frameCount = br->ReadInt32();
 
-					for (int32 i=0; i<frameCount; i++)
+					for (int32 i = 0; i < frameCount; i++)
 					{
 						TaggedDataReader* matData = br->ReadTaggedDataBlock();
 
 						MaterialData* mtrl = new MaterialData();
 						mtrl->LoadData(matData);
 
-						if (i==0)
+						if (i == 0)
 						{
 							Materials.Add(mtrl);
 						}
@@ -107,7 +107,6 @@ namespace Apoc3D
 				}
 				
 
-				br->Close();
 				delete br;
 			}
 
@@ -118,7 +117,6 @@ namespace Apoc3D
 			{
 				BinaryReader* br = data->GetData(TAG_3_BoundingSphereTag);
 				br->ReadBoundingSphere(BoundingSphere);
-				br->Close();
 				delete br;
 			}
 			else
@@ -138,7 +136,7 @@ namespace Apoc3D
 
 				BinaryReader* br = data->GetData(TAG_3_FacesTag);
 
-				for (uint i=0;i<faceCount;i++)
+				for (uint i = 0; i < faceCount; i++)
 				{
 					MeshFace face;
 					face.IndexA = br->ReadInt32();
@@ -150,7 +148,6 @@ namespace Apoc3D
 					Faces.Add(face);
 				}
 
-				br->Close();
 				delete br;
 			}
 
@@ -178,7 +175,7 @@ namespace Apoc3D
 
 				int elemConut = br->ReadInt32();
 				VertexElements.ResizeDiscard(elemConut);
-				for (int i=0;i<elemConut;i++)
+				for (int i = 0; i < elemConut; i++)
 				{
 					int emOfs = br->ReadInt32();
 					VertexElementFormat emFormat = static_cast<VertexElementFormat>(br->ReadUInt32());
@@ -188,7 +185,6 @@ namespace Apoc3D
 					VertexElements.Add(VertexElement(emOfs, emFormat, emUsage, emIndex));
 				}
 
-				br->Close();
 				delete br;
 			}
 			
@@ -208,7 +204,6 @@ namespace Apoc3D
 				VertexData = new char[VertexCount*VertexSize];
 				br->ReadBytes(reinterpret_cast<char*>(VertexData), VertexCount*VertexSize);
 
-				br->Close();
 				delete br;
 			}
 
@@ -236,7 +231,6 @@ namespace Apoc3D
 						delete matData;
 					}
 				}
-				bw->Close();
 				delete bw;
 			}
 
@@ -245,7 +239,6 @@ namespace Apoc3D
 			{
 				BinaryWriter* bw = data->AddEntry(TAG_3_BoundingSphereTag);
 				bw->WriteBoundingSphere(BoundingSphere);
-				bw->Close();
 				delete bw;
 			}
 
@@ -257,14 +250,13 @@ namespace Apoc3D
 			// write faces
 			{
 				BinaryWriter* bw = data->AddEntry(TAG_3_FacesTag);
-				for (int i=0;i<Faces.getCount();i++)
+				for (const MeshFace& mf : Faces)
 				{
-					bw->WriteInt32(Faces[i].IndexA);
-					bw->WriteInt32(Faces[i].IndexB);
-					bw->WriteInt32(Faces[i].IndexC);
-					bw->WriteInt32(Faces[i].MaterialID);
+					bw->WriteInt32(mf.IndexA);
+					bw->WriteInt32(mf.IndexB);
+					bw->WriteInt32(mf.IndexC);
+					bw->WriteInt32(mf.MaterialID);
 				}
-				bw->Close();
 				delete bw;
 			}
 
@@ -273,15 +265,14 @@ namespace Apoc3D
 				BinaryWriter* bw = data->AddEntry(TAG_3_VertexDeclTag);
 
 				bw->WriteUInt32(static_cast<uint32>(VertexElements.getCount()));
-				for (int i = 0; i < VertexElements.getCount(); i++)
+				for (const VertexElement& ve : VertexElements)
 				{
-					bw->WriteInt32(VertexElements[i].getOffset());
-					bw->WriteUInt32(static_cast<uint32>(VertexElements[i].getType()));
-					bw->WriteUInt32(static_cast<uint32>(VertexElements[i].getUsage()));
-					bw->WriteInt32(VertexElements[i].getIndex());
+					bw->WriteInt32(ve.getOffset());
+					bw->WriteUInt32(static_cast<uint32>(ve.getType()));
+					bw->WriteUInt32(static_cast<uint32>(ve.getUsage()));
+					bw->WriteInt32(ve.getIndex());
 				}
 
-				bw->Close();
 				delete bw;
 			}
 
@@ -292,43 +283,42 @@ namespace Apoc3D
 			{
 				BinaryWriter* bw = data->AddEntry(TAG_3_VertexDataTag);
 				bw->Write(VertexData, VertexSize*VertexCount);
-				bw->Close();
+				delete bw;
 			}
 
 			return data;
 		}
 
-		void MeshData::SaveLite(BinaryWriter* bw)
+		void MeshData::SaveLite(BinaryWriter& bw)
 		{
-			bw->WriteInt32(Materials.getMaterialCount());
-			for (int i=0;i<Materials.getMaterialCount();i++)
+			bw.WriteInt32(Materials.getMaterialCount());
+			for (int i = 0; i < Materials.getMaterialCount(); i++)
 			{
-				MaterialData* md = Materials.getMaterial(i,0);
-				bw->WriteColor4(md->Ambient);
-				bw->WriteColor4(md->Diffuse);
-				bw->WriteColor4(md->Specular);
-				bw->WriteColor4(md->Emissive);
-				bw->WriteSingle(md->Power);
+				MaterialData* md = Materials.getMaterial(i, 0);
+				bw.WriteColor4(md->Ambient);
+				bw.WriteColor4(md->Diffuse);
+				bw.WriteColor4(md->Specular);
+				bw.WriteColor4(md->Emissive);
+				bw.WriteSingle(md->Power);
 				if (md->TextureName.Contains(0))
-					bw->WriteString(PathUtils::GetFileNameNoExt(md->TextureName[0]));
+					bw.WriteString(PathUtils::GetFileNameNoExt(md->TextureName[0]));
 				else
-					bw->WriteString(PathUtils::GetFileNameNoExt(L""));
+					bw.WriteString(PathUtils::GetFileNameNoExt(L""));
 			}
-			bw->WriteInt32(Faces.getCount());
-			for (int i=0;i<Faces.getCount();i++)
+			bw.WriteInt32(Faces.getCount());
+			for (const MeshFace& mf : Faces)
 			{
-				bw->WriteInt32(Faces[i].IndexA);
-				bw->WriteInt32(Faces[i].IndexB);
-				bw->WriteInt32(Faces[i].IndexC);
-				bw->WriteInt32(Faces[i].MaterialID);
+				bw.WriteInt32(mf.IndexA);
+				bw.WriteInt32(mf.IndexB);
+				bw.WriteInt32(mf.IndexC);
+				bw.WriteInt32(mf.MaterialID);
 			}
-			bw->WriteInt32(VertexSize);
-			bw->WriteInt32(VertexCount);
-			bw->Write(VertexData, VertexSize*VertexCount);
+			bw.WriteInt32(VertexSize);
+			bw.WriteInt32(VertexCount);
+			bw.Write(VertexData, VertexSize*VertexCount);
 		}
 
 		MeshData::MeshData()
-			: VertexData(0), VertexSize(0), VertexCount(0)
 		{
 
 		}
@@ -337,11 +327,11 @@ namespace Apoc3D
 			if (VertexData)
 				delete[] VertexData;
 
-			for (int32 i=0;i<Materials.getMaterialCount();i++)
+			for (int32 i = 0; i < Materials.getMaterialCount(); i++)
 			{
-				for (int32 j=0;j<Materials.getFrameCount(i);j++)
+				for (int32 j = 0; j < Materials.getFrameCount(i); j++)
 				{
-					MaterialData* md = Materials.getMaterial(i,j);
+					MaterialData* md = Materials.getMaterial(i, j);
 					delete md;
 				}
 			}
@@ -366,18 +356,8 @@ namespace Apoc3D
 		{
 			if (Entities.getCount())
 			{
-				for (int i=0; i<Entities.getCount();i++)
-				{
-					delete Entities[i];
-				}
-				Entities.Clear();
+				Entities.DeleteAndClear();
 			}
-			
-			//if (AnimationData)
-			//{
-			//	delete AnimationData;
-			//	AnimationData = 0;
-			//}
 		}
 
 		void ModelData::ReadData(TaggedDataReader* data, int32 id)
@@ -402,7 +382,6 @@ namespace Apoc3D
 				meshData->Close();
 				delete meshData;
 
-				br->Close();
 				delete br;
 			}
 
@@ -457,7 +436,7 @@ namespace Apoc3D
 
 			data->AddEntryInt32(TAG_3_EntityCountTag, static_cast<int32>(Entities.getCount()));
 
-			for (int32 i=0;i<Entities.getCount();i++)
+			for (int32 i = 0; i < Entities.getCount(); i++)
 			{
 				std::string tag = StringUtils::IntToNarrowString(i);
 				tag = TAG_3_EntityPrefix + tag;
@@ -467,7 +446,6 @@ namespace Apoc3D
 				bw->WriteTaggedDataBlock(meshData);
 				delete meshData;
 
-				bw->Close();
 				delete bw;
 			}
 
@@ -487,15 +465,15 @@ namespace Apoc3D
 
 
 #if _DEBUG
-				for (int32 k=0;k<Entities.getCount();k++)
+				for (int32 k = 0; k < Entities.getCount(); k++)
 				{
 					MeshData* md = Entities[k];
 
-					for (int32 i=0;i<md->Materials.getMaterialCount();i++)
+					for (int32 i = 0; i < md->Materials.getMaterialCount(); i++)
 					{
-						for (int32 j=0;j<md->Materials.getFrameCount(i);j++)
+						for (int32 j = 0; j < md->Materials.getFrameCount(i); j++)
 						{
-							MaterialData* mtrlData = md->Materials.getMaterial(i,j);
+							MaterialData* mtrlData = md->Materials.getMaterial(i, j);
 
 							if (mtrlData->DebugName.empty())
 							{
@@ -519,33 +497,28 @@ namespace Apoc3D
 				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid model file. " + rl.getName(), LOGLVL_Error);
 			}
 
-			br->Close();
 		}
-		void ModelData::Save(Stream* strm) const
+		void ModelData::Save(Stream& strm) const
 		{
-			BinaryWriter _bw(strm);
-			BinaryWriter* bw = &_bw;
+			BinaryWriter bw(&strm, false);
 
-			bw->WriteInt32(MdlId_V3);
+			bw.WriteInt32(MdlId_V3);
 
 			TaggedDataWriter* mdlData = WriteData();
-			bw->WriteTaggedDataBlock(mdlData);
+			bw.WriteTaggedDataBlock(mdlData);
 			delete mdlData;
 
-			bw->Close();
 		}
-		void ModelData::SaveLite(Stream* strm) const
+		void ModelData::SaveLite(Stream& strm) const
 		{
-			BinaryWriter _bw(strm);
-			BinaryWriter* bw = &_bw;
+			BinaryWriter bw(&strm, false);
 
-			bw->WriteInt32(MdlLiteID);
-			bw->WriteInt32(Entities.getCount());
+			bw.WriteInt32(MdlLiteID);
+			bw.WriteInt32(Entities.getCount());
 			for (int i=0;i<Entities.getCount();i++)
 			{
 				Entities[i]->SaveLite(bw);
 			}
-			bw->Close();
 		}
 	}
 }

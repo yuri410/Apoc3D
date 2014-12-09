@@ -66,8 +66,7 @@ namespace Apoc3D
 			m_endianIndependent = strm->IsReadEndianIndependent();
 
 			VirtualStream baseStrm(strm, 0, strm->getLength());
-			BinaryReader br(&baseStrm);
-			br.SuspendStreamRelease();
+			BinaryReader br(&baseStrm, false);
 
 			uint32 firstInt = br.ReadUInt32();
 			if ((firstInt & 0x80000000U) == 0x80000000U)
@@ -114,14 +113,15 @@ namespace Apoc3D
 					uint size = br.ReadUInt32();
 
 					m_positions.Add(name, Entry(name, strm->getPosition(), size));
-					strm->Seek(size, SEEK_Current);
+					strm->Seek(size, SeekMode::Current);
 				}
 			}
-			br.Close();
 		}
 		TaggedDataReader::~TaggedDataReader()
 		{
-			delete m_stream;
+			if (!m_suspendStreamRelease)
+				delete m_stream;
+			m_stream = nullptr;
 		}
 
 		int64 TaggedDataReader::GetChunkOffset(const KeyType& name) const
@@ -138,7 +138,6 @@ namespace Apoc3D
 		{
 			if (seekToEnd)
 				m_stream->setPosition(m_initialPosition + m_sizeInBytes);
-			m_stream->Close(); 
 		}
 
 		void TaggedDataReader::FillTagList(List<KeyType>& nameTags) const
@@ -182,18 +181,44 @@ namespace Apoc3D
 		{
 			const Entry* ent = FindEntry(name);
 			if (ent)
-				return new BinaryReader(new VirtualStream(m_stream, ent->Offset, ent->Size));
+				return new BinaryReader(new VirtualStream(m_stream, ent->Offset, ent->Size), true);
 			return nullptr;
 		}
 		BinaryReader* TaggedDataReader::GetData(const KeyType& name) const
 		{
 			const Entry* ent = FindEntry(name);
 			if (ent)
-				return new BinaryReader(new VirtualStream(m_stream, ent->Offset, ent->Size));
+				return new BinaryReader(new VirtualStream(m_stream, ent->Offset, ent->Size), true);
 			throwKeynotFoundException(name);
-			throw; // keep the compiler happy
+			return nullptr; // keep the compiler happy
 		}
 
+
+		bool TaggedDataReader::TryProcessDataSection(const KeyType& name, FunctorReference<void(BinaryReader*)> func) const
+		{
+			const Entry* ent = FindEntry(name);
+
+			if (ent)
+			{
+				VirtualStream vs(m_stream, ent->Offset, ent->Size);
+				BinaryReader br(&vs, false);
+
+				func(&br);
+
+				return true;
+			}
+			return false;
+		}
+
+		void TaggedDataReader::ProcessDataSection(const KeyType& name, FunctorReference<void(BinaryReader*)> func) const
+		{
+			const Entry* ent = FindEntry(name);
+			VirtualStream vs(m_stream, ent->Offset, ent->Size);
+			{
+				BinaryReader br(&vs, false);
+				func(&br);
+			}
+		}
 
 		Stream* TaggedDataReader::GetDataStream(const KeyType& name) const
 		{
@@ -201,7 +226,7 @@ namespace Apoc3D
 			if (ent)
 				return new VirtualStream(m_stream, ent->Offset, ent->Size);
 			throwKeynotFoundException(name);
-			throw; // keep the compiler happy
+			return nullptr; // keep the compiler happy
 		}
 
 
@@ -772,12 +797,9 @@ namespace Apoc3D
 		void TaggedDataReader::_GetEntryString(const Entry* ent, String& str)
 		{
 			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
-			BinaryReader br(&vStrm);
-			br.SuspendStreamRelease();
+			BinaryReader br(&vStrm, false);
 
 			str = br.ReadString();
-
-			br.Close();
 		}
 		void TaggedDataReader::_GetEntryPlane(const Entry* ent, Plane& plane)
 		{
@@ -1187,13 +1209,10 @@ namespace Apoc3D
 		void TaggedDataReader::_GetEntryString(const Entry* ent, String* value, int len)
 		{
 			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
-			BinaryReader br(&vStrm);
-			br.SuspendStreamRelease();
+			BinaryReader br(&vStrm, false);
 
-			for (int32 i=0;i<len;i++)
+			for (int32 i = 0; i < len; i++)
 				value[i] = br.ReadString();
-
-			br.Close();
 		}
 		void TaggedDataReader::_GetEntryPlane(const Entry* ent, Plane* plane, int len)
 		{
@@ -1520,16 +1539,16 @@ namespace Apoc3D
 			else
 #endif
 			{
-				for (int i=1;i<len;i++)
+				for (int i = 1; i < len; i++)
 				{
 					Viewport& v = vp[i];
-					FillBufferCurrent(sizeof(int32)*4);
+					FillBufferCurrent(sizeof(int32) * 4);
 					v.X = ci32_le(m_buffer);
 					v.Y = ci32_le(m_buffer + sizeof(int32));
-					v.Width = ci32_le(m_buffer + sizeof(int32)*2);
-					v.Height = ci32_le(m_buffer + sizeof(int32)*3);
+					v.Width = ci32_le(m_buffer + sizeof(int32) * 2);
+					v.Height = ci32_le(m_buffer + sizeof(int32) * 3);
 
-					FillBufferCurrent(sizeof(float)*2);
+					FillBufferCurrent(sizeof(float) * 2);
 					v.MinZ = cr32_le(m_buffer);
 					v.MaxZ = cr32_le(m_buffer + sizeof(float));
 				}
@@ -1540,6 +1559,7 @@ namespace Apoc3D
 		{
 			throw AP_EXCEPTION(ExceptID::KeyNotFound, StringUtils::UTF8toUTF16(name));
 		}
+
 
 		//////////////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////////////
@@ -1555,10 +1575,9 @@ namespace Apoc3D
 
 		TaggedDataWriter::~TaggedDataWriter()
 		{
-			for (SectionTable::Enumerator e = m_positions.GetEnumerator(); e.MoveNext();)
+			for (Entry& ent : m_positions.getValueAccessor())
 			{
-				MemoryOutStream* ee = e.getCurrentValue().Buffer;
-				delete ee;
+				delete ent.Buffer;
 			}
 			m_positions.Clear();
 		}
@@ -1571,9 +1590,9 @@ namespace Apoc3D
 
 		void TaggedDataWriter::Entry::ResetWritePosition() const { Buffer->setPosition(0); }
 
-		void TaggedDataWriter::Save(Stream* stream) const
+		void TaggedDataWriter::Save(Stream& stream) const
 		{
-			BinaryWriter bw(stream);
+			BinaryWriter bw(&stream, false);
 
 			//uint32 firstInt = br->ReadUInt32();
 			//if ((firstInt & 0x80000000 == 0x80000000))
@@ -1600,7 +1619,7 @@ namespace Apoc3D
 				bw.WriteMBString(key);
 			}
 
-			uint32 baseOffset = static_cast<uint32>( stream->getPosition() ) + sizeof(uint32) * 2 * static_cast<uint32>(m_positions.getCount());
+			uint32 baseOffset = static_cast<uint32>( stream.getPosition() ) + sizeof(uint32) * 2 * static_cast<uint32>(m_positions.getCount());
 			uint32 offset = 0;
 			for (const Entry& e : m_positions.getValueAccessor())
 			{
@@ -1620,7 +1639,6 @@ namespace Apoc3D
 				bw.Write(memBlock->getDataPointer(), memBlock->getLength());
 			}
 
-			bw.Close();
 		}
 		ConfigurationSection* TaggedDataWriter::MakeDigest(const KeyType& name) const
 		{
@@ -1639,16 +1657,9 @@ namespace Apoc3D
 				{
 					const byte* data = reinterpret_cast<const byte*>(memBlock->getDataPointer());
 
-					for (int64 i=0;i<memBlock->getLength();i++)
+					for (int64 i = 0; i < memBlock->getLength(); i++)
 					{
-						std::wostringstream stream;
-						stream.width(2);
-						stream.fill('0');
-						stream.imbue(std::locale::classic());
-						stream.setf ( std::ios::hex, std::ios::basefield );       // set hex as the basefield
-						stream << data[i];
-
-						text.append(stream.str());
+						text.append(StringUtils::UIntToStringHex((uint32)data[i], StrFmt::a<2, '0'>::val));
 					}
 				}
 
@@ -1662,7 +1673,7 @@ namespace Apoc3D
 		{
 			Entry ent = Entry(name);
 			m_positions.Add(name, ent);
-			return new BinaryWriter(new VirtualStream(ent.Buffer, 0));
+			return new BinaryWriter(new VirtualStream(ent.Buffer, 0), true);
 		}
 		Stream* TaggedDataWriter::AddEntryStream(const KeyType& name)
 		{
@@ -1671,12 +1682,34 @@ namespace Apoc3D
 			return new VirtualStream(ent.Buffer, 0);
 		}
 
-		bool TaggedDataWriter::Contains(const KeyType& name) const { return !!FindEntry(name); }
+
+		void TaggedDataWriter::AddEntry(const KeyType& name, FunctorReference<void(BinaryWriter*)> func)
+		{
+			Entry ent = Entry(name);
+			m_positions.Add(name, ent);
+
+			VirtualStream vs(ent.Buffer, 0);
+			{
+				BinaryWriter bw(&vs, false);
+				func(&bw);
+			}
+		}
+
+		void TaggedDataWriter::AddEntryStream(const KeyType& name, FunctorReference<void(Stream*)> func)
+		{
+			Entry ent = Entry(name);
+			m_positions.Add(name, ent);
+
+			VirtualStream vs(ent.Buffer, 0);
+			func(&vs);
+		}
+
+		bool TaggedDataWriter::Contains(const KeyType& name) const { return FindEntry(name) != nullptr; }
 
 		BinaryWriter* TaggedDataWriter::GetData(const KeyType& name)
 		{
 			const Entry* ent = FindEntry(name);
-			return new BinaryWriter(new VirtualStream(ent->Buffer, 0));
+			return new BinaryWriter(new VirtualStream(ent->Buffer, 0), true);
 		}
 
 #define TAGW_NEW_ENTRY(name, value, setvalue) Entry ent = Entry(name); m_positions.Add(name, ent); setvalue(ent, value);
@@ -2031,13 +2064,10 @@ namespace Apoc3D
 		}
 		void TaggedDataWriter::_SetEntryDataString(const Entry& ent, const String& str)
 		{
-			VirtualStream vStrm(ent.Buffer, 0);
-			BinaryWriter bw(&vStrm);
-			bw.SuspendStreamRelease();
+			VirtualStream vs(ent.Buffer, 0);
+			BinaryWriter bw(&vs, false);
 
 			bw.WriteString(str);
-
-			bw.Close();
 		}
 		void TaggedDataWriter::_SetEntryDataPlane(const Entry& ent, const Plane& plane)
 		{
@@ -2279,14 +2309,11 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataColor4(const Entry& ent, const Color4* clr, int32 count)		{ for (int32 i=0;i<count;i++) _SetEntryDataColor4(ent, clr[i]); }
 		void TaggedDataWriter::_SetEntryDataString(const Entry& ent, const String* str, int32 count)
 		{
-			VirtualStream vStrm(ent.Buffer, 0);
-			BinaryWriter bw(&vStrm);
-			bw.SuspendStreamRelease();
+			VirtualStream vs(ent.Buffer, 0);
+			BinaryWriter bw(&vs, false);
 
-			for (int32 i=0;i<count;i++)
+			for (int32 i = 0; i < count; i++)
 				bw.WriteString(str[i]);
-
-			bw.Close();
 		}
 		void TaggedDataWriter::_SetEntryDataPlane(const Entry& ent, const Plane* plane, int32 count)					{ for (int32 i=0;i<count;i++) _SetEntryDataPlane(ent, plane[i]); }
 		void TaggedDataWriter::_SetEntryDataQuaternion(const Entry& ent, const Quaternion* quat, int32 count)			{ for (int32 i=0;i<count;i++) _SetEntryDataQuaternion(ent, quat[i]); }

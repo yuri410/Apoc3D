@@ -36,8 +36,8 @@ namespace Apoc3D
 	{
 		Mouse::Mouse()
 		{
-			memset(m_lastBtnState, 0, sizeof(m_lastBtnState));
-			memset(m_btnState, 0, sizeof(m_btnState));
+			ZeroArray(m_lastBtnState);
+			ZeroArray(m_btnState);
 		}
 		Mouse::~Mouse()
 		{
@@ -54,7 +54,7 @@ namespace Apoc3D
 			m_currentPos = loc;
 		}
 
-		void Mouse::Serialize(Apoc3D::IO::BinaryWriter* bw)
+		void Mouse::Serialize(Apoc3D::IO::BinaryWriter& bw)
 		{
 			const int32 lastCount = sizeof(m_lastBtnState) / sizeof(*m_lastBtnState);
 			const int32 count = sizeof(m_btnState) / sizeof(*m_btnState);
@@ -64,36 +64,36 @@ namespace Apoc3D
 			memcpy(packedBools+lastCount, m_btnState, sizeof(bool)*count);
 			packedBools[lastCount + count] = m_buttonSwapped;
 
-			bw->WriteBooleanBits(packedBools, lastCount+count);
+			bw.WriteBooleanBits(packedBools, lastCount+count);
 			
-			bw->WriteInt16(m_lastPosition.X);
-			bw->WriteInt16(m_lastPosition.Y);
-			bw->WriteInt16(m_currentPos.X);
-			bw->WriteInt16(m_currentPos.Y);
+			bw.WriteInt16(m_lastPosition.X);
+			bw.WriteInt16(m_lastPosition.Y);
+			bw.WriteInt16(m_currentPos.X);
+			bw.WriteInt16(m_currentPos.Y);
 
-			bw->WriteInt32(m_z);
-			bw->WriteInt32(m_lastZ);
+			bw.WriteInt32(m_z);
+			bw.WriteInt32(m_lastZ);
 		}
-		void Mouse::Deserialize(Apoc3D::IO::BinaryReader* br)
+		void Mouse::Deserialize(Apoc3D::IO::BinaryReader& br)
 		{
 			const int32 lastCount = sizeof(m_lastBtnState) / sizeof(*m_lastBtnState);
 			const int32 count = sizeof(m_btnState) / sizeof(*m_btnState);
 
 			bool packedBools[lastCount + count + 1];
 
-			br->ReadBooleanBits(packedBools, countof(packedBools));
+			br.ReadBooleanBits(packedBools, countof(packedBools));
 
 			memcpy(m_lastBtnState, packedBools, sizeof(bool)*lastCount);
 			memcpy(m_btnState, packedBools + lastCount, sizeof(bool)*count);
 			m_buttonSwapped = packedBools[lastCount + count];
 
-			m_lastPosition.X = br->ReadInt16();
-			m_lastPosition.Y = br->ReadInt16();
-			m_currentPos.X = br->ReadInt16();
-			m_currentPos.Y = br->ReadInt16();
+			m_lastPosition.X = br.ReadInt16();
+			m_lastPosition.Y = br.ReadInt16();
+			m_currentPos.X = br.ReadInt16();
+			m_currentPos.Y = br.ReadInt16();
 
-			m_z = br->ReadInt32();
-			m_lastZ = br->ReadInt32();
+			m_z = br.ReadInt32();
+			m_lastZ = br.ReadInt32();
 		}
 
 		/************************************************************************/

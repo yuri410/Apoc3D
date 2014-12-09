@@ -58,24 +58,28 @@ namespace Apoc3D
 			TaggedDataReader(Stream* strm);
 			~TaggedDataReader();
 
-			/**
-			 *  Check if the data chunk has a key name of the specified
-			 */
+			void SuspendStreamRelease() { m_suspendStreamRelease = true; }
+
+			/**  Check if the data chunk has a key name of the specified */
 			bool Contains(const KeyType& name) const { return m_positions.Contains(name); }
 
 			BinaryReader* TryGetData(const KeyType& name) const;
 			BinaryReader* GetData(const KeyType& name) const;
 
+			bool TryProcessDataSection(const KeyType& name, FunctorReference<void(BinaryReader*)> f) const;
+			void ProcessDataSection(const KeyType& name, FunctorReference<void(BinaryReader*)> f) const;
+
+
 			Stream* GetDataStream(const KeyType& name) const;
 
 
-			void GetAuto(const KeyType& name, int64& value)	{ value = GetDataInt64(name); }
+			void GetAuto(const KeyType& name, int64& value)		{ value = GetDataInt64(name); }
 			void GetAuto(const KeyType& name, uint64& value)	{ value = GetDataUInt64(name); }
-			void GetAuto(const KeyType& name, int32& value)	{ value = GetDataInt32(name); }
+			void GetAuto(const KeyType& name, int32& value)		{ value = GetDataInt32(name); }
 			void GetAuto(const KeyType& name, uint32& value)	{ value = GetDataUInt32(name); }
-			void GetAuto(const KeyType& name, int16& value)	{ value = GetDataInt16(name); }
+			void GetAuto(const KeyType& name, int16& value)		{ value = GetDataInt16(name); }
 			void GetAuto(const KeyType& name, uint16& value)	{ value = GetDataUInt16(name); }
-			void GetAuto(const KeyType& name, float& value)	{ value = GetDataSingle(name); }
+			void GetAuto(const KeyType& name, float& value)		{ value = GetDataSingle(name); }
 			void GetAuto(const KeyType& name, double& value)	{ value = GetDataDouble(name); }
 			void GetAuto(const KeyType& name, bool& value)	{ value = GetDataBool(name); }
 			void GetAuto(const KeyType& name, Vector2& vec)	{ GetDataVector2(name, vec); }
@@ -389,7 +393,8 @@ namespace Apoc3D
 			NO_INLINE static void throwKeynotFoundException(const KeyType& key);
 
 			bool m_endianIndependent;
-			
+			bool m_suspendStreamRelease = false;
+
 			int m_sectCount;
 			SectionTable m_positions;
 			Stream* m_stream;
@@ -416,6 +421,9 @@ namespace Apoc3D
 
 			BinaryWriter* AddEntry(const KeyType& name);
 			Stream* AddEntryStream(const KeyType& name);
+
+			void AddEntry(const KeyType& name, FunctorReference<void(BinaryWriter*)> func);
+			void AddEntryStream(const KeyType& name, FunctorReference<void(Stream*)> func);
 
 
 			void AddAuto(const KeyType& name, int64 value)	{ AddEntryInt64(name, value); }
@@ -590,7 +598,7 @@ namespace Apoc3D
 
 
 			Apoc3D::Config::ConfigurationSection* MakeDigest(const KeyType& name) const;
-			void Save(Stream* stream) const;
+			void Save(Stream& stream) const;
 
 			bool Contains(const KeyType& name) const;
 

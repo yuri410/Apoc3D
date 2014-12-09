@@ -60,16 +60,15 @@ namespace Apoc3D
 			/**
 			 *  Vertex data, no matter what exactly the vertex elements are, this is in a binary buffer form.
 			 */
-			char* VertexData;
+			char* VertexData = nullptr;
 
 			List<VertexElement> VertexElements;
 
-			//int32 ParentBoneID;
 			BoundingSphere BoundingSphere;
 
 			String Name;
-			uint32 VertexSize;
-			uint32 VertexCount;
+			uint32 VertexSize = 0;
+			uint32 VertexCount = 0;
 
 			/** 
 			 *  A set of arrays of material data.
@@ -81,18 +80,20 @@ namespace Apoc3D
 			 */
 			MeshMaterialSet<MaterialData*> Materials;
 
-			/** A list of triangle faces. Only triangle list is supported as primitive at this stage.
-			*/
+			/** A list of triangle faces. Only triangle list is supported as primitive at this stage. */
 			List<MeshFace> Faces;
 
 			static uint32 ComputeVertexSize(const List<VertexElement>& elements);
 
 			void LoadData(TaggedDataReader* data);
 			TaggedDataWriter* SaveData();
-			void SaveLite(BinaryWriter* bw);
+			void SaveLite(BinaryWriter& bw);
 
 			MeshData();
 			~MeshData();
+
+			MeshData(const MeshData&) = delete;
+			MeshData& operator=(const MeshData&) = delete;
 
 		};
 
@@ -102,9 +103,7 @@ namespace Apoc3D
 		class APAPI ModelData
 		{
 		public:
-			/**
-			 *  A list of meshes that this model has.
-			 */
+			/** A list of meshes that this model has. */
 			List<MeshData*> Entities;
 
 			ModelData()
@@ -112,9 +111,12 @@ namespace Apoc3D
 			}
 			~ModelData();
 			
+			ModelData(const ModelData&) = delete;
+			ModelData& operator=(const ModelData&) = delete;
+
 			void Load(const ResourceLocation& rl);
-			void Save(Stream* strm) const;
-			void SaveLite(Stream* strm) const;
+			void Save(Stream& strm) const;
+			void SaveLite(Stream& strm) const;
 		private:
 			void ReadData(TaggedDataReader* data, int32 id);
 			TaggedDataWriter* WriteData() const;

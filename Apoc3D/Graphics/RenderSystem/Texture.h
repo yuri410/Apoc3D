@@ -79,7 +79,7 @@ namespace Apoc3D
 				/**
 				 *  Save the texture as a TextureData into a Stream.
 				 */
-				virtual void Save(Stream* strm) = 0;
+				virtual void Save(Stream& strm) = 0;
 
 				
 				bool isLocked() const { return m_isLocked; }

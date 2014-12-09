@@ -38,7 +38,7 @@ namespace APBuild
 		MaterialData empty;
 		empty.SetDefaults();
 
-		empty.Save(new FileOutStream(config.DstFile));
+		empty.Save(FileOutStream(config.DstFile));
 
 		BuildSystem::LogEntryProcessed(config.DstFile, hierarchyPath);
 	}

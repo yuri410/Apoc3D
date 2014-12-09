@@ -40,7 +40,7 @@ namespace Apoc3D
 		class APAPI BinaryReader
 		{
 		public:
-			BinaryReader(Stream* baseStream);
+			BinaryReader(Stream* baseStream, bool releaseStream);
 			BinaryReader(const ResourceLocation& rsloc);
 
 			~BinaryReader();
@@ -93,6 +93,9 @@ namespace Apoc3D
 
 			void ReadBooleanBits(bool* arr, int32 count);
 
+			TaggedDataReader* ReadTaggedDataBlock();
+			void ReadTaggedDataBlock(FunctorReference<void(TaggedDataReader*)> f, bool continuous = true);
+
 			template <int32 N> void ReadSingle(float(&data)[N]) { return ReadSingle(data, N); }
 			template <int32 N> void ReadDouble(double (&data)[N]) { return ReadDouble(data, N); }
 			template <int32 N> void ReadInt32(int32 (&data)[N]) { return ReadInt32(data, N); }
@@ -102,15 +105,9 @@ namespace Apoc3D
 
 
 
-			TaggedDataReader* ReadTaggedDataBlock();
-
-			void Close() const;
-
 			Stream* getBaseStream() const { return m_baseStream; }
 
-			/**
-			 * Ask the BinaryWriter not to delete the base stream upon release
-			 */
+			/** Ask the BinaryWriter not to delete the base stream upon release */
 			void SuspendStreamRelease() { m_shouldDeleteStream = false; }
 		private:
 			inline void FillBuffer(int32 len);

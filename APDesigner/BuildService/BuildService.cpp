@@ -270,7 +270,7 @@ namespace APDesigner
 
 			if (buildScript)
 			{
-				XMLConfigurationFormat::Instance.Save(buildScript, new FileOutStream(L"build.xml"));
+				XMLConfigurationFormat::Instance.Save(buildScript, FileOutStream(L"build.xml"));
 				if (ExecuteBuildOperation())
 				{
 					m_hasLastError = true;

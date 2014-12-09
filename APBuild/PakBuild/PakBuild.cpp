@@ -34,155 +34,50 @@ using namespace Apoc3D::VFS;
 
 namespace APBuild
 {
-	const int PakFileID = ((byte)0 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
 
-	//struct PakEntry
-	//{
-	//	String SourceFile;
-	//	String DestFile;
-	//};
-
-	//struct PakNode
-	//{
-	//	List<PakEntry> SourceFiles;
-	//	List<PakNode> SubNodes;
-	//	String Directory;
-	//};
-	//PakNode* GetNodes(const PakBuildConfig& config)
-	//{
-	//	PakNode* result = new PakNode();
-	//	
-	//	for (int i=0;i<config.Files.getCount();i++)
-	//	{
-	//		
-	//	}
-
-	//	return result;
-	//}
-	//void Build(const PakNode& node, Stream* dest)
-	//{
-
-
-	//}
-	//
-	//
 	void PakBuild::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		PakBuildConfig config;
 		config.Parse(sect);
 
 		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
-		for (int i=0;i<config.Files.getCount();i++)
+		for (const String& fn : config.Files)
 		{
-			if (!File::FileExists(config.Files[i]))
+			if (!File::FileExists(fn))
 			{
-				BuildSystem::LogError(L"Source file does not exist: " + config.Files[i], config.DestFile);
+				BuildSystem::LogError(L"Source file does not exist: " + fn, config.DestFile);
 				return;
 			}
 		}
 
-
-		//PakNode* root = GetNodes(config);
-
 		List<String> sourceFiles;
+		sourceFiles.AddList(config.Files);
 
-		FileOutStream* fs = new FileOutStream(config.DestFile);
-		BinaryWriter* bw = new BinaryWriter(fs);
-
-		bw->WriteInt32(PakFileID);
-
-		
-		sourceFiles.ResizeDiscard(config.Files.getCount());
-		for (int i=0;i<config.Files.getCount();i++)
+		for (const PakBuildConfig::PakDirEntryConfig& dc : config.Dirs)
 		{
-			sourceFiles.Add(config.Files[i]);
-		}
-
-		for (int i=0;i<config.Dirs.getCount();i++)
-		{
-			if (config.Dirs[i].Flatten)
+			if (dc.Flatten)
 			{
-				DIR* dir;
-				struct dirent* ent;
+				List<String> entries;
+				File::ListDirectoryFiles(dc.Path, entries);
 
-				dir = opendir(StringUtils::toPlatformNarrowString(config.Dirs[i].Path).c_str());
-				if (dir)
+				for (const String& fn : entries)
 				{
-					int counter = 0;
-					while ((ent = readdir(dir)))
-					{
-						switch (ent->d_type)
-						{
-						case DT_REG:
-							String file = StringUtils::toPlatformWideString(ent->d_name);
-							file = PathUtils::Combine(config.Dirs[i].Path,file);
-							sourceFiles.Add(file);
-							counter++;
-							break;
-						}
-					}
-
-					closedir(dir);
-					BuildSystem::LogInformation(L"Adding " + StringUtils::IntToString(counter)
-						+ L" files from flatten dir: " + config.Dirs[i].Path, config.DestFile);
+					sourceFiles.Add(PathUtils::Combine(dc.Path, fn));
 				}
-				else
+
+				if (entries.getCount() > 0)
 				{
-					BuildSystem::LogError(L"Cannot read directory: "+config.Dirs[i].Path, config.DestFile);
+					BuildSystem::LogInformation(L"Adding " + StringUtils::IntToString(entries.getCount())
+						+ L" files from flatten dir: " + dc.Path, config.DestFile);
 				}
 			}
 			else
 			{
-				BuildSystem::LogError(L"Recursive dir currently not supported: " + config.Dirs[i].Path, config.DestFile);
+				BuildSystem::LogError(L"Recursive dir currently not supported: " + dc.Path, config.DestFile);
 			}
 		}
-		int count = sourceFiles.getCount();
-		bw->WriteInt32(count);
 
-		int64 oldPos = bw->getBaseStream()->getPosition();
-
-		PakArchiveEntry* entries = new PakArchiveEntry[count];
-		for (int i=0;i<count;i++)
-		{
-			entries[i].Name = PathUtils::GetFileName(sourceFiles[i]);
-			bw->WriteString(entries[i].Name);
-			bw->WriteUInt32(entries[i].Offset);
-			bw->WriteUInt32(entries[i].Size);
-			bw->WriteInt32((int32)0);
-		}
-
-		for (int i=0;i<count;i++)
-		{
-			FileStream* fs2 = new FileStream(sourceFiles[i]);
-			BinaryReader* br = new BinaryReader(fs2);
-
-			entries[i].Offset = (uint)fs->getPosition();
-			entries[i].Size = (uint)fs2->getLength();
-			//entries[i].Flag = 0;
-
-			char* buffer = new char[entries[i].Size];
-			br->ReadBytes(buffer, entries[i].Size);
-
-			bw->Write(buffer, entries[i].Size);
-
-			delete[] buffer;
-
-			br->Close();
-			delete br;
-		}
-
-		fs->Seek(oldPos, SEEK_Begin);
-		for (int i=0;i<count;i++)
-		{
-			bw->WriteString(entries[i].Name);
-			bw->WriteUInt32(entries[i].Offset);
-			bw->WriteUInt32(entries[i].Size);
-			bw->WriteInt32((int32)0);
-		}
-		
-
-		bw->Close();
-		delete bw;
+		PakArchive::Pack(FileOutStream(config.DestFile), sourceFiles);
 
 		BuildSystem::LogEntryProcessed(config.DestFile, hierarchyPath);
 	}

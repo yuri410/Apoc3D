@@ -44,8 +44,7 @@ namespace APDesigner
 			sect->AddSection(ss);
 		}
 
-		FileOutStream* fs = new FileOutStream(L"ideconf.xml");
-		XMLConfigurationFormat::Instance.Save(conf, fs);
+		XMLConfigurationFormat::Instance.Save(conf, FileOutStream(L"ideconf.xml"));
 
 		delete conf;
 	}

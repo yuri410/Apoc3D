@@ -110,7 +110,6 @@ namespace Apoc3D
 
 				mcp.Usage = br->ReadString();
 
-				br->Close();
 				delete br;
 
 				AddCustomParameter(mcp);
@@ -203,7 +202,6 @@ namespace Apoc3D
 				br->ReadColor4(Specular);
 				Power = br->ReadSingle();
 
-				br->Close();
 				delete br;
 			}
 
@@ -235,7 +233,6 @@ namespace Apoc3D
 					bw->Write(reinterpret_cast<const char*>(mcp.Value), sizeof(mcp.Value));
 					bw->WriteString(mcp.Usage);
 
-					bw->Close();
 					delete bw;
 				}
 			}
@@ -324,8 +321,6 @@ namespace Apoc3D
 				bw->WriteColor4(Specular);
 				bw->WriteSingle(Power);
 
-
-				bw->Close();
 				delete bw;
 			}
 
@@ -346,13 +341,12 @@ namespace Apoc3D
 			}
 #endif
 
-			BinaryReader _br(rl);
-			BinaryReader* br = &_br;
+			BinaryReader br(rl);
 
-			int32 id = br->ReadInt32();
+			int32 id = br.ReadInt32();
 			if (id == MtrlId_V3)
 			{
-				TaggedDataReader* data = br->ReadTaggedDataBlock();
+				TaggedDataReader* data = br.ReadTaggedDataBlock();
 
 				LoadData(data);
 
@@ -364,34 +358,18 @@ namespace Apoc3D
 				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid material file. " + rl.getName(), LOGLVL_Error);
 			}
 
-			br->Close();
 		}
-		void MaterialData::Save(Stream* strm)
+		void MaterialData::Save(Stream& strm)
 		{
-			BinaryWriter _bw(strm);
-			BinaryWriter* bw = &_bw;
+			BinaryWriter bw(&strm, false);
 			
-			bw->WriteInt32(MtrlId_V3);
+			bw.WriteInt32(MtrlId_V3);
 
 			TaggedDataWriter* mdlData = SaveData();
-			bw->WriteTaggedDataBlock(mdlData);
+			bw.WriteTaggedDataBlock(mdlData);
 			delete mdlData;
-
-			bw->Close();
 		}
 
-		MaterialData::MaterialData(const MaterialData& other)
-			: ExternalRefName(other.ExternalRefName), CustomParametrs(other.CustomParametrs), PassFlags(other.PassFlags),
-			Priority(other.Priority), SourceBlend(other.SourceBlend), DestinationBlend(other.DestinationBlend),
-			BlendFunction(other.BlendFunction), IsBlendTransparent(other.IsBlendTransparent), Cull(other.Cull), 
-			AlphaTestEnabled(other.AlphaTestEnabled), AlphaReference(other.AlphaReference), DepthWriteEnabled(other.DepthWriteEnabled), 
-			DepthTestEnabled(other.DepthTestEnabled), Ambient(other.Ambient), Diffuse(other.Diffuse), 
-			Emissive(other.Emissive), Specular(other.Specular), Power(other.Power), UsePointSprite(other.UsePointSprite),
-			EffectName(other.EffectName), TextureName(other.TextureName)
-		{
-#if _DEBUG
-			DebugName = other.DebugName;
-#endif
-		}
+
 	}
 }

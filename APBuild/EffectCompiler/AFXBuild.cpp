@@ -177,7 +177,7 @@ namespace APBuild
 
 		data.SortProfiles();
 
-		FileOutStream* fos = new FileOutStream(config.DestFile);
+		FileOutStream fos(config.DestFile);
 		if (config.CompactBuild)
 		{
 			data.SaveLite(fos);

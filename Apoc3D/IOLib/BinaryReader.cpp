@@ -42,11 +42,12 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		BinaryReader::BinaryReader(Stream* baseStream)
-			: m_baseStream(baseStream), m_shouldDeleteStream(true)
+		BinaryReader::BinaryReader(Stream* baseStream, bool releaseStream)
+			: m_baseStream(baseStream), m_shouldDeleteStream(releaseStream)
 		{
 			m_isEndianIndependent = baseStream->IsReadEndianIndependent();
 		}
+
 		BinaryReader::BinaryReader(const ResourceLocation& rsloc)
 			: m_shouldDeleteStream(true)
 		{
@@ -57,6 +58,7 @@ namespace Apoc3D
 		{
 			if (m_shouldDeleteStream)
 				delete m_baseStream;
+			m_baseStream = nullptr;
 		}
 
 
@@ -105,7 +107,7 @@ namespace Apoc3D
 				len &= 0x7FFFFFFFU;
 
 				String str(len, ' ');
-				for (size_t i=0;i<len;i++)
+				for (size_t i = 0; i < len; i++)
 				{
 					str[i] = ReadByte();
 				}
@@ -113,7 +115,7 @@ namespace Apoc3D
 			}
 
 			String str(len, ' ');
-			for (size_t i=0;i<len;i++)
+			for (size_t i = 0; i < len; i++)
 			{
 				str[i] = ReadInt16();
 			}
@@ -126,7 +128,7 @@ namespace Apoc3D
 			uint32 len = ReadUInt32();
 
 			std::string str(len, ' ');
-			for (size_t i=0;i<len;i++)
+			for (size_t i = 0; i < len; i++)
 			{
 				str[i] = ReadByte();
 			}
@@ -549,12 +551,12 @@ namespace Apoc3D
 
 		void BinaryReader::ReadBooleanBits(bool* arr, int32 count)
 		{
-			for (int32 i=0;i<count;i+=8)
+			for (int32 i = 0; i < count; i += 8)
 			{
 				byte bits = ReadByte();
 
-				for (int32 j=0;j<8 && i+j<count;j++)
-					arr[i+j] = (bits & (1<<j)) != 0;
+				for (int32 j = 0; j < 8 && i + j < count; j++)
+					arr[i + j] = (bits & (1 << j)) != 0;
 			}
 		}
 
@@ -568,11 +570,20 @@ namespace Apoc3D
 			return new TaggedDataReader(vs);
 		}
 
-		void BinaryReader::Close() const
+		void BinaryReader::ReadTaggedDataBlock(FunctorReference<void(TaggedDataReader*)> f, bool continuous)
 		{
-			m_baseStream->Close();
-		}
+			uint32 size = ReadUInt32();
 
+			VirtualStream vs(m_baseStream, m_baseStream->getPosition(), size);
+			{
+				TaggedDataReader data(&vs);
+				data.SuspendStreamRelease();
+
+				f(&data);
+
+				data.Close(continuous);
+			}
+		}
 
 
 		void BinaryReader::throwEndofStreamException()

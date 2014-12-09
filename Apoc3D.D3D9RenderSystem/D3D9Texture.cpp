@@ -578,7 +578,7 @@ namespace Apoc3D
 			}
 
 
-			void D3D9Texture::Save(Stream* strm)
+			void D3D9Texture::Save(Stream& strm)
 			{
 				// First lock the resource to keep it safe.
 				// This resource will not be unloaded by the background resource management

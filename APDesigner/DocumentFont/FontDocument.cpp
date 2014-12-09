@@ -35,18 +35,17 @@ namespace APDesigner
 	{
 		m_regions.Clear();
 
-		FileStream* fs = new FileStream(m_filePath);
-		BinaryReader* br = new BinaryReader(fs);
+		FileStream fs(m_filePath);
+		BinaryReader br(&fs, false);
 
-		int count = br->ReadInt32();
-		for (int i=0;i<count;i++)
+		int count = br.ReadInt32();
+		for (int i = 0; i < count; i++)
 		{
-			uint32 a = br->ReadUInt32();
-			uint32 b = br->ReadUInt32();
-			m_regions.Add(std::make_pair(a,b));
+			uint32 a = br.ReadUInt32();
+			uint32 b = br.ReadUInt32();
+			m_regions.Add(std::make_pair(a, b));
 		}
-		br->Close();
-		delete br;
+
 	}
 	void FontDocument::SaveRes()
 	{

@@ -52,22 +52,18 @@ namespace Apoc3D
 			String DebugName;
 #endif
 
-			/**
-			 *  Name for retiring material reference
-			 */
+			/** Name for retiring material reference  */
 			String ExternalRefName;
 
 
-			HashMap<int, String> EffectName;//[MaxScenePass];
+			HashMap<int, String> EffectName;
 
 			CustomParamTable CustomParametrs;
-			HashMap<int, String> TextureName;//[MaxTextures];
+			HashMap<int, String> TextureName;
 
 			uint64 PassFlags;
 
-			/** 
-			 */
-			int32 Priority;
+			int32 Priority;  // [0, 31] Lower the higher the priority
 			
 			bool UsePointSprite;
 
@@ -84,26 +80,12 @@ namespace Apoc3D
 			bool DepthWriteEnabled;
 			bool DepthTestEnabled;
 
-			/** 
-			 *  the ambient component of this material
-			 */
-			Color4 Ambient;
-			/** 
-			 *  the diffuse component of this material
-			 */
-			Color4 Diffuse;
-			/** 
-			 *  the emissive component of this material
-			 */
-			Color4 Emissive;
-			/** 
-			 *  the specular component of this material
-			 */
-			Color4 Specular;
-			/**
-			 *  the specular shininess
-			 */
-			float Power;
+			
+			Color4 Ambient;		/**  the ambient component of this material  */
+			Color4 Diffuse;		/**  the diffuse component of this material */
+			Color4 Emissive;	/**  the emissive component of this material */
+			Color4 Specular;	/** the specular component of this material */
+			float Power;		/** the specular shininess */
 
 			
 			void AddCustomParameter(const MaterialCustomParameter& value);
@@ -131,27 +113,20 @@ namespace Apoc3D
 			}
 
 			//MaterialData(const Material* mtrl);
-			MaterialData(const MaterialData& other);
-			MaterialData(void) { }
-			~MaterialData(void) { }
+			MaterialData(const MaterialData& other) = default;
+			MaterialData() { }
+			~MaterialData() { }
 
 			void LoadData(TaggedDataReader *data);
 			TaggedDataWriter* SaveData();
 
 
 			void Load(const ResourceLocation& rl);
-			void Save(Stream* strm);
+			void Save(Stream& strm);
 			
 		private:
-			//void LoadTexture(BinaryReader* br, int32 index);
-			//void SaveTexture(BinaryWriter* bw, int32 index);
-
-			//void LoadEffect(BinaryReader* br, int32 index);
-			//void SaveEffect(BinaryWriter* bw, int32 index);
-
-			/**
-			 *  Load with format version 3
-			 */
+			
+			/** Load with format version 3 */
 			void LoadV3(TaggedDataReader* data);
 		};
 

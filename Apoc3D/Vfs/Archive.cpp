@@ -29,62 +29,87 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/IOLib/BinaryReader.h"
+#include "apoc3d/IOLib/BinaryWriter.h"
+#include "apoc3d/Vfs/PathUtils.h"
 
 namespace Apoc3D
 {
 	namespace VFS
 	{
-
 		const int PakFileID1 = ((byte)0 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
-		const int PakFileID2 = ((byte)1 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
+		//const int PakFileID2 = ((byte)1 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
+		const int PakFileID2 = 'PAK2';
+
+		enum Pak3Flags
+		{
+			Pak2_64 = 1 << 0
+		};
 
 		PakArchive::PakArchive(const FileLocation& fl)
-			: Archive(fl.getPath(), fl.getSize(), fl.isInArchive()), m_compression(PCT_None)
+			: Archive(fl.getPath(), fl.getSize(), fl.isInArchive())
 		{
-			Stream* stream = fl.GetReadStream();
-			stream->setPosition(0);
+			BinaryReader br(fl);
+			int32 fid = br.ReadInt32();
 
-			BinaryReader* br = new BinaryReader(stream);
-			
-			if (br->ReadInt32() == PakFileID1)
+			if (fid == PakFileID1)
 			{
-				int fileCount = br->ReadInt32();
+				int fileCount = br.ReadInt32();
 
 				for (int i = 0; i < fileCount; i++)
 				{
 					PakArchiveEntry ent;
 
-					ent.Name = br->ReadString();
-					ent.Offset = br->ReadUInt32();
-					ent.Size = br->ReadUInt32();
-					br->ReadUInt32();
+					ent.Name = br.ReadString();
+					ent.Offset = br.ReadUInt32();
+					ent.Size = br.ReadUInt32();
+					br.ReadUInt32();
 
 					m_entries.Add(ent.Name, ent);
+					m_entryNames.Add(ent.Name);
 				}
 			}
-			else if (br->ReadInt32() == PakFileID2)
+			else if (fid == PakFileID2)
 			{
-				m_compression = static_cast<PakCompressionType>(br->ReadInt32());
-				int fileCount = br->ReadInt32();
+				int flags = br.ReadInt32();
+				br.ReadInt32();
+				br.ReadInt32();
 
-				for (int i = 0; i < fileCount; i++)
+				int fileCount = br.ReadInt32();
+
+				if (flags & Pak2_64)
 				{
-					PakArchiveEntry ent;
+					for (int i = 0; i < fileCount; i++)
+					{
+						PakArchiveEntry ent;
 
-					ent.Name = br->ReadString();
-					ent.Offset = br->ReadUInt32();
-					ent.Size = br->ReadUInt32();
+						ent.Name = br.ReadString();
+						ent.Offset = br.ReadInt64();
+						ent.Size = br.ReadInt64();
 
-					m_entries.Add(ent.Name, ent);
+						m_entries.Add(ent.Name, ent);
+						m_entryNames.Add(ent.Name);
+					}
+				}
+				else
+				{
+					for (int i = 0; i < fileCount; i++)
+					{
+						PakArchiveEntry ent;
+
+						ent.Name = br.ReadString();
+						ent.Offset = br.ReadUInt32();
+						ent.Size = br.ReadUInt32();
+
+						m_entries.Add(ent.Name, ent);
+						m_entryNames.Add(ent.Name);
+					}
 				}
 			}
 			else
 			{
 				LogManager::getSingleton().Write(LOG_System, L"Pak archive format is invalid " + fl.getPath(), LOGLVL_Warning);
 			}
-			br->Close();
-			delete br;
-
+			
 			m_fileStream = fl.GetReadStream();
 		}
 		PakArchive::~PakArchive()
@@ -94,11 +119,7 @@ namespace Apoc3D
 
 		void PakArchive::FillEntries(List<PakArchiveEntry>& entries)
 		{
-			for (HashMap<String, PakArchiveEntry>::Enumerator e = m_entries.GetEnumerator();
-				e.MoveNext();)
-			{
-				entries.Add(e.getCurrentValue());
-			}
+			m_entries.FillValues(entries);
 		}
 
 		int PakArchive::getFileCount() const
@@ -111,13 +132,6 @@ namespace Apoc3D
 
 			if (m_entries.TryGetValue(file, lpkEnt))
 			{
-				//int threadId = Thread.CurrentThread.ManagedThreadId;
-				//Stream thStream;
-
-				//if (!threadStreams.TryGetValue(threadId, out thStream))
-				//{
-				//	thStream = m_file->GetStream();
-				//}
 				VirtualStream* res = new VirtualStream(m_fileStream, lpkEnt.Offset, lpkEnt.Size);
 				res->setPosition( 0 );
 				return res;
@@ -138,20 +152,110 @@ namespace Apoc3D
 			}
 			return 0;
 		}
-		String PakArchive::GetEntryName(int index)
+
+		String PakArchive::GetEntryName(int index) { return m_entryNames[index]; }
+
+		void PakArchive::Pack(Stream& outStrm, const List<String>& sourceFiles)
 		{
-			int i=0;
-			HashMap<String, PakArchiveEntry>::Enumerator e = m_entries.GetEnumerator();
-			
-			e.MoveNext();
-			while (i<index)
+			const int32 count = sourceFiles.getCount();
+			PakArchiveEntry* entries = new PakArchiveEntry[count];
+			int64 totalSize = 0;
+			int64 maxItemSize = 0;
+			for (int i = 0; i < count; i++)
 			{
-				e.MoveNext();
-				i++;
+				const String& fn = sourceFiles[i];
+				entries[i].Name = PathUtils::GetFileName(sourceFiles[i]);
+
+				int64 fs = File::GetFileSize(fn);
+				if (fs > maxItemSize)
+					maxItemSize = fs;
+
+				totalSize += fs;
 			}
 
-			return e.getCurrentKey();
+			bool use64Bit = (totalSize > MaxUInt32 || maxItemSize > MaxUInt32);
+
+			int32 flags = 0;
+			if (use64Bit)
+				flags |= Pak2_64;
+
+			BinaryWriter bw(&outStrm, false);
+
+			bw.WriteInt32(PakFileID2);
+			bw.WriteInt32(flags);
+			bw.WriteInt32(0);
+			bw.WriteInt32(0);
+
+			bw.WriteInt32(count);
+
+			int64 oldPos = outStrm.getPosition();
+
+			if(use64Bit)
+			{
+				for (int i = 0; i < count; i++)
+				{
+					bw.WriteString(entries[i].Name);
+					bw.WriteInt64(entries[i].Offset);
+					bw.WriteInt64(entries[i].Size);
+				}
+			}
+			else
+			{
+				for (int i = 0; i < count; i++)
+				{
+					bw.WriteString(entries[i].Name);
+					bw.WriteUInt32((uint32)0);
+					bw.WriteUInt32((uint32)0);
+				}
+			}
+
+			const int bufferSize = 4096;
+			char* buffer = new char[bufferSize];
+
+			for (int i = 0; i < count; i++)
+			{
+				FileStream fs2(sourceFiles[i]);
+				
+				entries[i].Offset = outStrm.getPosition();
+				entries[i].Size = fs2.getLength();
+
+				for (;;)
+				{
+					int64 count = fs2.Read(buffer, bufferSize);
+
+					if (count > 0)
+					{
+						bw.Write(buffer, count);
+					}
+					else break;
+				}
+			}
+			delete[] buffer;
+
+			outStrm.Seek(oldPos, SeekMode::Begin);
+
+			if (use64Bit)
+			{
+				for (int i = 0; i < count; i++)
+				{
+					bw.WriteString(entries[i].Name);
+					bw.WriteInt64(entries[i].Offset);
+					bw.WriteInt64(entries[i].Size);
+				}
+			}
+			else
+			{
+				for (int i = 0; i < count; i++)
+				{
+					bw.WriteString(entries[i].Name);
+					bw.WriteUInt32((uint32)(entries[i].Offset & 0xffffffffU));
+					bw.WriteUInt32((uint32)(entries[i].Size & 0xffffffffU));
+				}
+			}
+			
+			delete[] entries;
 		}
+
 
 		Archive* PakArchiveFactory::CreateInstance(const String& file)
 		{

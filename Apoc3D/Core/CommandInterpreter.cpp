@@ -328,7 +328,7 @@ namespace Apoc3D
 				int32 streamLength = static_cast<int32>(inStrm->getLength());
 				char* binaryBuffer = new char[streamLength+1];
 				inStrm->Read(binaryBuffer, inStrm->getLength());
-				inStrm->Close();
+				
 				delete inStrm;
 				
 				binaryBuffer[streamLength] = 0;

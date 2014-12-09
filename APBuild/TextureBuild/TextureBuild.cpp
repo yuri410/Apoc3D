@@ -417,8 +417,7 @@ namespace APBuild
 		//	}
 		//}
 
-		FileOutStream* fs = new FileOutStream(config.DestinationFile);
-		texData.Save(fs);
+		texData.Save(FileOutStream(config.DestinationFile));
 
 		texData.Free();
 	}

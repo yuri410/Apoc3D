@@ -62,9 +62,9 @@ namespace Apoc3D
 
 			ObjectFactory* fac = device->getObjectFactory();
 			
-			BinaryReader* br = new BinaryReader(rl);
+			BinaryReader br(rl);
 
-			int fileID = br->ReadInt32();
+			int fileID = br.ReadInt32();
 			int charCount;
 
 			bool hasMetrics = false;
@@ -75,14 +75,14 @@ namespace Apoc3D
 				int32 ver = (fileID & 0xff);
 				if (ver == 2)
 				{
-					uint32 flags = br->ReadUInt32();
+					uint32 flags = br.ReadUInt32();
 					if ((flags & FF_HasLuminance))
 						m_hasLuminance = true;
 					if ((flags & FF_HasDrawOffset))
 						m_hasDrawOffset = true;
 				}
 
-				charCount = br->ReadInt32();
+				charCount = br.ReadInt32();
 			}
 			else
 			{
@@ -91,25 +91,25 @@ namespace Apoc3D
 
 			if (hasMetrics)
 			{
-				m_height = br->ReadSingle();
-				m_lineGap = br->ReadSingle();
-				m_ascender = br->ReadSingle();
-				m_descender = br->ReadSingle();
+				m_height = br.ReadSingle();
+				m_lineGap = br.ReadSingle();
+				m_ascender = br.ReadSingle();
+				m_descender = br.ReadSingle();
 
 				if (m_hasDrawOffset)
 				{
-					m_drawOffset.X = br->ReadSingle();
-					m_drawOffset.Y = br->ReadSingle();
+					m_drawOffset.X = br.ReadSingle();
+					m_drawOffset.Y = br.ReadSingle();
 				}
 
 				for (int i=0;i<charCount;i++)
 				{
 					Character ch;
-					ch._Character = static_cast<wchar_t>( br->ReadInt32());
-					ch.GlyphIndex = br->ReadInt32();
-					ch.Left = br->ReadInt16();
-					ch.Top = br->ReadInt16();
-					ch.AdvanceX = br->ReadSingle();
+					ch._Character = static_cast<wchar_t>( br.ReadInt32());
+					ch.GlyphIndex = br.ReadInt32();
+					ch.Left = br.ReadInt16();
+					ch.Top = br.ReadInt16();
+					ch.AdvanceX = br.ReadSingle();
 					m_charTable.Add(ch._Character, ch);
 				}
 			}
@@ -120,8 +120,8 @@ namespace Apoc3D
 				for (int i=0;i<charCount;i++)
 				{
 					Character ch;
-					ch._Character = static_cast<wchar_t>( br->ReadInt32());
-					ch.GlyphIndex = br->ReadInt32();
+					ch._Character = static_cast<wchar_t>( br.ReadInt32());
+					ch.GlyphIndex = br.ReadInt32();
 					ch.Left = ch.Top = 0;
 					m_charTable.Add(ch._Character, ch);
 				}
@@ -129,15 +129,15 @@ namespace Apoc3D
 			
 			int maxWidth = 1;
 			int maxHeight = 1;
-			int glyphCount = br->ReadInt32();
+			int glyphCount = br.ReadInt32();
 			m_glyphList = new Glyph[glyphCount];
 			for (int i=0;i<glyphCount;i++)
 			{
 				Glyph glyph;
-				glyph.Index = br->ReadInt32();
-				glyph.Width = br->ReadInt32();
-				glyph.Height = br->ReadInt32();
-				glyph.Offset = br->ReadInt64();
+				glyph.Index = br.ReadInt32();
+				glyph.Width = br.ReadInt32();
+				glyph.Height = br.ReadInt32();
+				glyph.Offset = br.ReadInt64();
 				glyph.IsMapped = false;
 				glyph.NumberOfBucketsUsing = 0;
 				glyph.StartingParentBucket = -1;
@@ -250,7 +250,7 @@ namespace Apoc3D
 
 						UseBuckets(&oglyph, buckY, startX, bucketsNeeded);
 
-						LoadGlyphData(br, oglyph);
+						LoadGlyphData(&br, oglyph);
 
 						buckX[buckY]+=bucketsNeeded;
 					}
@@ -261,8 +261,7 @@ namespace Apoc3D
 				delete[] buckX;
 			}
 
-			br->Close();
-			delete br;
+
 
 			if (!hasMetrics)
 			{
@@ -1246,7 +1245,7 @@ namespace Apoc3D
 			if (glyph.Width == 0 || glyph.Height == 0)
 				return;
 
-			br->getBaseStream()->Seek(glyph.Offset, SEEK_Begin);
+			br->getBaseStream()->Seek(glyph.Offset, SeekMode::Begin);
 
 			assert(glyph.Width <= m_selectTextureSize && glyph.Width >=0);
 			assert(glyph.Height <= m_selectTextureSize && glyph.Height >=0);
@@ -1344,16 +1343,14 @@ namespace Apoc3D
 							UseBuckets(nullptr, i, bucketPosition, bucketsNeeded);
 
 							Stream* strm = m_resource->GetReadStream();
-							BinaryReader* br = new BinaryReader(strm);
+							BinaryReader br(strm, true);
 
 							// 2. Tag the buckets
 							UseBuckets(&glyph, i, bucketPosition, bucketsNeeded);
 
 							// 3. Load the data
-							LoadGlyphData(br, glyph);
+							LoadGlyphData(&br, glyph);
 
-							br->Close();
-							delete br;
 
 							done = true;
 

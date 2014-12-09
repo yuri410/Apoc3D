@@ -497,10 +497,10 @@ namespace APDesigner
 	{
 		ModelData data;
 		m_modelSData->Save(&data);
-		data.Save(new FileOutStream(m_filePath));
+		data.Save(FileOutStream(m_filePath));
 		if (m_animPath.size())
 		{
-			m_animData->Save(new FileOutStream(m_animPath));
+			m_animData->Save(FileOutStream(m_animPath));
 		}
 	}
 	void ModelDocument::Initialize(RenderDevice* device)

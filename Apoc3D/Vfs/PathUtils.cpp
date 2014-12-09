@@ -278,16 +278,11 @@ namespace Apoc3D
 		String PathUtils::Combine(const String &path1, const String &path2)
 		{
 			size_t len1 = path1.length();
-			if (len1 == 0)
-			{
-				return path2;
-			}
+			if (len1 == 0) return path2;
 			
 			size_t len2 = path2.length();
 			if (len2 == 0)
-			{
 				return path1;
-			}
 
 			wchar_t ch = path1[len1 - 1];
 			if (isDirectorySeparatorNeededAfter(ch))
@@ -296,6 +291,23 @@ namespace Apoc3D
 			}
 			return path1 + path2;
 		}
+		std::string PathUtils::Combine(const std::string &path1, const std::string &path2)
+		{
+			size_t len1 = path1.length();
+			if (len1 == 0) return path2;
+
+			size_t len2 = path2.length();
+			if (len2 == 0)
+				return path1;
+
+			char ch = path1[len1 - 1];
+			if (isDirectorySeparatorNeededAfter(ch))
+			{
+				return path1 + (char)DirectorySeparator + path2;
+			}
+			return path1 + path2;
+		}
+
 		bool PathUtils::Match(const String& str, const String& pattern)
 		{
 			String tmpStr = NormalizePath(str);

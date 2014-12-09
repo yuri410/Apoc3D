@@ -28,15 +28,13 @@ namespace APBuild
 		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DstFile));
 
 		AnimationData* data = XafImporter::Import(config);
-		if (!data)
+		if (data == nullptr)
 		{
 			BuildSystem::LogError(config.SrcFile, L"Unknown error.");
 			return;
 		}
 
-		FileOutStream* fs = new FileOutStream(config.DstFile);
-
-		data->Save(fs);
+		data->Save(FileOutStream(config.DstFile));
 
 		delete data;
 

@@ -83,9 +83,7 @@ namespace APBuild
 		AnimationData* data = new AnimationData();
 		data->setMaterialAnimationClips(mtrlClip);
 		
-		FileOutStream* fs = new FileOutStream(config.DstFile);
-
-		data->Save(fs);
+		data->Save(FileOutStream(config.DstFile));
 
 		delete data;
 

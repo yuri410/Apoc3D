@@ -62,12 +62,10 @@ namespace Apoc3D
 			TextureLevelData()
 			{ }
 			~TextureLevelData() 
-			{
+			{ }
 
-			}
-
-			void LoadData(BinaryReader* br, bool doNotLoadContent = false, int32 flags = 0);
-			void SaveData(BinaryWriter* bw, int32 flags = 0) const;
+			void LoadData(BinaryReader& br, bool doNotLoadContent = false, int32 flags = 0);
+			void SaveData(BinaryWriter& bw, int32 flags = 0) const;
 
 			void LoadData(TaggedDataReader* data, bool doNotLoadContent = false, int32 flags = 0);
 			void SaveData(TaggedDataWriter* data, int32 flags = 0) const;
@@ -100,12 +98,12 @@ namespace Apoc3D
 			int32 LevelCount;
 			uint32 Flags;
 
-			TextureData() {}
-			~TextureData() {}
+			TextureData() { }
+			~TextureData() { }
 
 			void Load(const ResourceLocation& rl, bool doNotLoadLevel = false, bool doNotLoadContent = false);
-			void Save(Stream* strm) const;
-			void SaveAsTagged(Stream* strm) const;
+			void Save(Stream& strm) const;
+			void SaveAsTagged(Stream& strm) const;
 
 			void Free();
 		};

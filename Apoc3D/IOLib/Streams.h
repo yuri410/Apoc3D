@@ -38,11 +38,11 @@ namespace Apoc3D
 		/** 
 		 *  Defines represent reference points in streams for seeking.
 		 */
-		enum SeekMode
+		enum struct SeekMode
 		{
-			SEEK_Begin,
-			SEEK_Current,
-			SEEK_End
+			Begin,
+			Current,
+			End
 		};
 		/**
 		 *  Provides a generic access of a sequence of bytes.
@@ -67,6 +67,16 @@ namespace Apoc3D
 			virtual int64 getPosition() = 0;
 
 			virtual int64 Read(char* dest, int64 count) = 0;
+			
+			virtual void Write(const char* src, int64 count) = 0;
+
+			void WriteByte(byte value) { Write(reinterpret_cast<const char*>(&value), 1); }
+
+
+			virtual void Seek(int64 offset, SeekMode mode) = 0;
+
+			virtual void Flush() = 0;
+
 			int ReadByte()
 			{
 				char buffer;
@@ -76,17 +86,6 @@ namespace Apoc3D
 				}
 				return reinterpret_cast<const byte&>(buffer);
 			}
-
-			virtual void Write(const char* src, int64 count) = 0;
-
-			void WriteByte(byte value) { Write(reinterpret_cast<const char*>(&value), 1); }
-
-
-			virtual void Seek(int64 offset, SeekMode mode) = 0;
-
-			virtual void Close() = 0;
-
-			virtual void Flush() = 0;
 
 		};
 
@@ -100,24 +99,23 @@ namespace Apoc3D
 			FileStream(const String& filename);
 			virtual ~FileStream();
 
-			virtual bool IsReadEndianIndependent() const { return true; }
-			virtual bool IsWriteEndianIndependent() const { return true; }
+			virtual bool IsReadEndianIndependent() const override { return true; }
+			virtual bool IsWriteEndianIndependent() const override { return true; }
 
-			virtual bool CanRead() const { return true; }
-			virtual bool CanWrite() const { return false; }
+			virtual bool CanRead() const override { return true; }
+			virtual bool CanWrite() const override { return false; }
 
-			virtual int64 getLength() const { return m_length; }
+			virtual int64 getLength() const override { return m_length; }
 
-			virtual void setPosition(int64 offset);
-			virtual int64 getPosition();
+			virtual void setPosition(int64 offset) override;
+			virtual int64 getPosition() override;
 
-			virtual int64 Read(char* dest, int64 count);
-			virtual void Write(const char* src, int64 count);
+			virtual int64 Read(char* dest, int64 count) override;
+			virtual void Write(const char* src, int64 count) override;
 
-			virtual void Seek(int64 offset, SeekMode mode);
-			virtual void Close();
-
-			virtual void Flush() { }
+			virtual void Seek(int64 offset, SeekMode mode) override;
+			
+			virtual void Flush() override { }
 
 		private:
 			std::ifstream m_in;
@@ -133,28 +131,27 @@ namespace Apoc3D
 			FileOutStream(const String& filename);
 			virtual ~FileOutStream();
 
-			virtual bool IsReadEndianIndependent() const { return true; }
-			virtual bool IsWriteEndianIndependent() const { return true; }
+			virtual bool IsReadEndianIndependent() const override { return true; }
+			virtual bool IsWriteEndianIndependent() const override { return true; }
 
-			virtual bool CanRead() const { return false; }
-			virtual bool CanWrite() const { return true; }
+			virtual bool CanRead() const override { return false; }
+			virtual bool CanWrite() const override { return true; }
 
-			virtual int64 getLength() const { return m_length; }
+			virtual int64 getLength() const override { return m_length; }
 
-			virtual void setPosition(int64 offset);
-			virtual int64 getPosition();
+			virtual void setPosition(int64 offset) override;
+			virtual int64 getPosition() override;
 
-			virtual int64 Read(char* dest, int64 count);
-			virtual void Write(const char* src, int64 count);
+			virtual int64 Read(char* dest, int64 count) override;
+			virtual void Write(const char* src, int64 count) override;
 
-			virtual void Seek(int64 offset, SeekMode mode);
-			virtual void Close();
-
-			virtual void Flush();
+			virtual void Seek(int64 offset, SeekMode mode) override;
+			
+			virtual void Flush() override;
 
 		private:
 			std::ofstream m_out;
-			int64 m_length;
+			int64 m_length = 0;
 		};
 		/**
 		 *  Provides access to a space in memory as a stream
@@ -163,39 +160,37 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(MemoryStream, Stream);
 		public:
-			virtual bool IsReadEndianIndependent() const { return false; }
-			virtual bool IsWriteEndianIndependent() const { return false; }
-
 			MemoryStream(char* data, int64 length)
-				: m_data(data), m_length(length), m_position(0)
-			{ }
+				: m_data(data), m_length(length) { }
+
 			virtual ~MemoryStream()
-			{
-			}
+			{ }
 
-			virtual bool CanRead() const { return true; }
-			virtual bool CanWrite() const { return true; }
+			virtual bool IsReadEndianIndependent() const override { return false; }
+			virtual bool IsWriteEndianIndependent() const override { return false; }
 
-			virtual int64 getLength() const { return m_length; }
-			virtual void setPosition(int64 offset) { m_position = offset; }
-			virtual int64 getPosition() { return m_position; }
+			virtual bool CanRead() const override { return true; }
+			virtual bool CanWrite() const override { return true; }
 
-			virtual int64 Read(char* dest, int64 count);
-			virtual void Write(const char* src, int64 count);
+			virtual int64 getLength() const override { return m_length; }
+			virtual void setPosition(int64 offset) override { m_position = offset; }
+			virtual int64 getPosition() override { return m_position; }
+
+			virtual int64 Read(char* dest, int64 count) override;
+			virtual void Write(const char* src, int64 count) override;
 			
-			virtual void Seek(int64 offset, SeekMode mode);
-			virtual void Close() { }
-
-			virtual void Flush() { }
+			virtual void Seek(int64 offset, SeekMode mode) override;
+			
+			virtual void Flush() override { }
 
 			char* getDataPointer() const { return m_data; }
 
 		private:
 			NO_INLINE static void throwEndofStreamException();
 
-			int64 m_length;
-			char* m_data;
-			int64 m_position;
+			int64 m_length = 0;
+			char* m_data = nullptr;
+			int64 m_position = 0;
 		};
 
 		/** 
@@ -206,31 +201,8 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(VirtualStream, Stream);
 		public:
-			virtual bool IsReadEndianIndependent() const { return m_baseStream->IsReadEndianIndependent(); }
-			virtual bool IsWriteEndianIndependent() const { return m_baseStream->IsWriteEndianIndependent(); }
-
-			Stream* getBaseStream() const { return m_baseStream; }
-			bool isOutput() const { return m_isOutput; }
-
-			int64 getBaseOffset() const { return m_baseOffset; }
-			int64 getAbsolutePosition() const { return m_baseStream->getPosition(); }
-
-			virtual bool CanRead() const { return m_baseStream->CanRead(); }
-			virtual bool CanWrite() const { return m_baseStream->CanWrite(); }
-
-			virtual int64 getLength() const
-			{
-				return m_isOutput ? m_baseStream->getLength() : m_length;
-			}
-
-			virtual void setPosition(int64 offset);
-			virtual int64 getPosition()
-			{ 
-				return m_baseStream->getPosition() - m_baseOffset;
-			}
-
 			VirtualStream(Stream* strm)
-				: m_baseStream(strm), m_isOutput(true), m_length(strm->getLength()), m_baseOffset(0)
+				: m_baseStream(strm), m_isOutput(true), m_length(strm->getLength())
 			{
 				strm->setPosition(0);
 			}
@@ -246,33 +218,34 @@ namespace Apoc3D
 				strm->setPosition(baseOffset);
 			}
 
+			virtual bool IsReadEndianIndependent() const override { return m_baseStream->IsReadEndianIndependent(); }
+			virtual bool IsWriteEndianIndependent() const override { return m_baseStream->IsWriteEndianIndependent(); }
 
-			virtual int64 Read(char* dest, int64 count)
-			{
-				//if (getPosition() + count > getLength())
-				//{
-				//	count = getLength() - getPosition();
-				//}
-				if (count)
-				{
-					m_baseStream->Read(dest, count);
-				}
+			virtual bool CanRead() const override { return m_baseStream->CanRead(); }
+			virtual bool CanWrite() const override { return m_baseStream->CanWrite(); }
 
-				return count;
-			}
-			virtual void Write(const char* src, int64 count)
-			{
-				m_baseStream->Write(src, count);
-			}
-			virtual void Seek(int64 offset, SeekMode mode);
+			virtual int64 getLength() const override;
 
-			virtual void Close() { }
+			virtual void setPosition(int64 offset) override;
+			virtual int64 getPosition() override;
 
-			virtual void Flush() { m_baseStream->Flush(); }
+			virtual int64 Read(char* dest, int64 count) override;
+			virtual void Write(const char* src, int64 count) override;
+			virtual void Seek(int64 offset, SeekMode mode) override;
+
+			virtual void Flush() override { m_baseStream->Flush(); }
+
+			Stream* getBaseStream() const { return m_baseStream; }
+			bool isOutput() const { return m_isOutput; }
+
+			int64 getBaseOffset() const { return m_baseOffset; }
+			int64 getAbsolutePosition() const { return m_baseStream->getPosition(); }
+
+
 		private:
 			Stream* m_baseStream;
 			int64 m_length;
-			int64 m_baseOffset;
+			int64 m_baseOffset = 0;
 
 			bool m_isOutput;
 
@@ -286,41 +259,36 @@ namespace Apoc3D
 			RTTI_DERIVED(MemoryOutStream, Stream);
 		public:
 			MemoryOutStream(int64 preserved)
-				: m_length(0), m_position(0), m_data((int32)preserved)
-			{
-				
-			}
+				: m_data((int32)preserved) { }
+
 			virtual ~MemoryOutStream()
-			{
-				
-			}
+			{ }
 
-			virtual bool IsReadEndianIndependent() const { return false; }
-			virtual bool IsWriteEndianIndependent() const { return false; }
+			virtual bool IsReadEndianIndependent() const override { return false; }
+			virtual bool IsWriteEndianIndependent() const override { return false; }
 
-			virtual bool CanRead() const { return true; }
-			virtual bool CanWrite() const { return true; }
+			virtual bool CanRead() const override { return true; }
+			virtual bool CanWrite() const override { return true; }
 
-			virtual int64 getLength() const { return m_length; }
+			virtual int64 getLength() const override { return m_length; }
 
-			virtual void setPosition(int64 offset) { m_position = offset; }
-			virtual int64 getPosition() { return m_position; }
+			virtual void setPosition(int64 offset) override { m_position = offset; }
+			virtual int64 getPosition() override { return m_position; }
 
-			virtual int64 Read(char* dest, int64 count);
-			virtual void Write(const char* src, int64 count);
+			virtual int64 Read(char* dest, int64 count) override;
+			virtual void Write(const char* src, int64 count) override;
 
-			virtual void Seek(int64 offset, SeekMode mode);
-			virtual void Close() { }
-
-			virtual void Flush() { }
+			virtual void Seek(int64 offset, SeekMode mode) override;
+			
+			virtual void Flush() override { }
 
 			const char* getDataPointer() const { return m_data.getElements(); }
 			char* getDataPointer() { return m_data.getElements(); }
 
 		private:
-			int64 m_length;
+			int64 m_length = 0;
+			int64 m_position = 0;
 			List<char> m_data;
-			int64 m_position;
 		};
 
 		class APAPI PipeOutStream : public MemoryOutStream
@@ -347,8 +315,7 @@ namespace Apoc3D
 			static const int32 BufferSize = 8192;
 
 			BufferedStreamReader(Stream* strm)
-				: m_baseStream(strm), m_endofStream(false),
-				m_head(0), m_tail(0), m_size(0)
+				: m_baseStream(strm)
 			{
 				assert(strm->CanRead()); 
 			}
@@ -361,6 +328,7 @@ namespace Apoc3D
 
 			int32 Read(char* dest, int32 count);
 			bool ReadByte(char& result);
+		
 		private:
 			void ClearBuffer();
 			void ReadBuffer(char* dest, int32 count);
@@ -369,15 +337,14 @@ namespace Apoc3D
 			int getBufferContentSize() const { return m_size; }
 
 
-
 			Stream* m_baseStream;
-			bool m_endofStream;
+			bool m_endofStream = false;
 
 			char m_buffer[BufferSize];
 
-			int32 m_head;
-			int32 m_tail;
-			int32 m_size;
+			int32 m_head = 0;
+			int32 m_tail = 0;
+			int32 m_size = 0;
 		};
 	};
 }

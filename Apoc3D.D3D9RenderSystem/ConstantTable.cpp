@@ -90,12 +90,9 @@ namespace Apoc3D
 			void ConstantTable::ReadShaderComment(char* data, int32 size)
 			{
 				MemoryStream ms(data, size);
-				BinaryReader br(&ms);
-				br.SuspendStreamRelease();
+				BinaryReader br(&ms, false);
 
 				Read(&br);
-
-				br.Close();
 			}
 
 			ConstantTable::~ConstantTable()

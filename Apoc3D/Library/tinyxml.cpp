@@ -962,8 +962,7 @@ bool TiXmlDocument::Load(Apoc3D::IO::Stream& strm, TiXmlEncoding encoding)
 }
 void TiXmlDocument::Save(Apoc3D::IO::Stream& strm)
 {
-	Apoc3D::IO::BinaryWriter bw(&strm);
-	bw.SuspendStreamRelease();
+	Apoc3D::IO::BinaryWriter bw(&strm, false);
 
 	if (useMicrosoftBOM)
 	{
@@ -977,8 +976,6 @@ void TiXmlDocument::Save(Apoc3D::IO::Stream& strm)
 	}
 	
 	Print(&bw, 0);
-
-	bw.Close();
 }
 
 void TiXmlDocument::CopyTo( TiXmlDocument* target ) const

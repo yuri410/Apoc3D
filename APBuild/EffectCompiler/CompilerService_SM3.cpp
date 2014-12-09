@@ -163,9 +163,7 @@ namespace APBuild
 	void ProcessShaderModel3ByteCode(ShaderModel3ConstantTable& ct, const DWORD* byteCode, int32 codeSize, DWORD*& newByteCode, int32& newCodeSize)
 	{
 		MemoryOutStream newCodeBuffer(4096);
-		BinaryWriter bw(&newCodeBuffer);
-		bw.SuspendStreamRelease();
-		
+		BinaryWriter bw(&newCodeBuffer, false);
 
 		const DWORD* ptr = byteCode;
 
@@ -189,20 +187,17 @@ namespace APBuild
 
 		MemoryOutStream metaDataBuffer(1024);
 		{
-			BinaryWriter bw2(&metaDataBuffer);
-			bw2.SuspendStreamRelease();
+			BinaryWriter bw2(&metaDataBuffer, false);
 			ct.Write(&bw2);
 
 			// align to dword
 			int32 alignment = ((int32)metaDataBuffer.getLength() + 3) & ~0x03;
 			alignment -= (int32)metaDataBuffer.getLength();
 
-			for (int32 i=0;i<alignment;i++)
+			for (int32 i = 0; i < alignment; i++)
 				bw2.WriteByte(0);
-
-			bw2.Close();
 		}
-		DWORD commentSize = (DWORD)metaDataBuffer.getLength() / sizeof(DWORD) + 2; // 2 = 1x blob name + 1x crc
+		DWORD commentSize = (DWORD)metaDataBuffer.getLength() / sizeof(DWORD) + 2; // 2 = 1x blob name(APBM) + 1x crc
 		DWORD commentDword = D3DSHADER_COMMENT(commentSize);
 
 		bw.WriteUInt32(commentDword);
@@ -213,7 +208,6 @@ namespace APBuild
 		
 		bw.WriteUInt32(D3DSIO_END);
 
-		bw.Close();
 
 		int32 sizeInDwords = (int32)newCodeBuffer.getLength()/sizeof(DWORD);
 		newByteCode = new DWORD[sizeInDwords];

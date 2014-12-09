@@ -1273,8 +1273,8 @@ namespace Apoc3D
 		Configuration* xc = new Configuration(m_name);
 		xc->Add(s);
 		//xc->Save(file);
-		FileOutStream* fs = new FileOutStream(file);
-		XMLConfigurationFormat::Instance.Save(xc, fs);
+
+		XMLConfigurationFormat::Instance.Save(xc, FileOutStream(file));
 		
 		delete xc;
 	}

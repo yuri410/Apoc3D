@@ -102,8 +102,8 @@ namespace Apoc3D
 			~EffectData();
 
 			void Load(const ResourceLocation& rl);
-			void Save(Stream* strm) const;
-			void SaveLite(Stream* strm) const;
+			void Save(Stream& strm) const;
+			void SaveLite(Stream& strm) const;
 
 			void SortProfiles();
 		private:

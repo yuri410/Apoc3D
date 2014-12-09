@@ -42,15 +42,15 @@ namespace Apoc3D
 
 		}
 
-		void Keyboard::Serialize(Apoc3D::IO::BinaryWriter* bw)
+		void Keyboard::Serialize(Apoc3D::IO::BinaryWriter& bw)
 		{
-			bw->WriteUInt32(m_keyState.getData());
-			bw->WriteUInt32(m_lastKeyState.getData());
+			bw.WriteUInt32(m_keyState.getData());
+			bw.WriteUInt32(m_lastKeyState.getData());
 		}
-		void Keyboard::Deserialize(Apoc3D::IO::BinaryReader* br)
+		void Keyboard::Deserialize(Apoc3D::IO::BinaryReader& br)
 		{
-			br->ReadUInt32(m_keyState.getData());
-			br->ReadUInt32(m_lastKeyState.getData());
+			br.ReadUInt32(m_keyState.getData());
+			br.ReadUInt32(m_lastKeyState.getData());
 		}
 
 	

@@ -44,8 +44,7 @@ namespace APBuild
 		MeshBuild::ConvertVertexData(data, config);
 		MeshBuild::CollapseMeshs(data, config);
 
-		FileOutStream* fs = new FileOutStream(config.DstFile);
-		data->Save(fs);
+		data->Save(FileOutStream(config.DstFile));
 		delete data;
 
 	}
@@ -56,7 +55,7 @@ namespace APBuild
 		MeshBuild::ConvertVertexData(data, config);
 		MeshBuild::CollapseMeshs(data, config);
 
-		FileOutStream* fs = new FileOutStream(config.DstFile);
+		FileOutStream fs(config.DstFile);
 		if (config.CompactBuild)
 		{
 			data->SaveLite(fs);

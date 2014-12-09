@@ -73,7 +73,6 @@ namespace Apoc3D
 					assert(ret == LevelSize);
 				}
 
-				strm->Close();
 				delete strm;
 			}
 			else
@@ -97,20 +96,19 @@ namespace Apoc3D
 			{
 				strm->Write(ContentData, LevelSize);
 			}
-			strm->Close();
 			delete strm;
 		}
 
-		void TextureLevelData::LoadData(BinaryReader* br, bool doNotLoadContent, int32 flags)
+		void TextureLevelData::LoadData(BinaryReader& br, bool doNotLoadContent, int32 flags)
 		{
-			Width = br->ReadInt32();
-			Height = br->ReadInt32();
-			Depth = br->ReadInt32();
-			LevelSize = br->ReadInt32();
+			Width = br.ReadInt32();
+			Height = br.ReadInt32();
+			Depth = br.ReadInt32();
+			LevelSize = br.ReadInt32();
 
 			if (!doNotLoadContent)
 			{
-				Stream* strm = br->getBaseStream();
+				Stream* strm = br.getBaseStream();
 
 				ContentData = new char[LevelSize];
 				if ((flags & TextureData::TDF_RLECompressed) == TextureData::TDF_RLECompressed)
@@ -121,7 +119,7 @@ namespace Apoc3D
 				}
 				else if ((flags & TextureData::TDF_LZ4Compressed) == TextureData::TDF_LZ4Compressed)
 				{
-					int32 comprsesedSize = br->ReadInt32();
+					int32 comprsesedSize = br.ReadInt32();
 					char* compressedData = new char[comprsesedSize];
 					strm->Read(compressedData, comprsesedSize);
 					int32 ret = LZ4_decompress_safe(compressedData, ContentData, comprsesedSize, LevelSize);
@@ -139,14 +137,14 @@ namespace Apoc3D
 				ContentData = nullptr;
 			}
 		}
-		void TextureLevelData::SaveData(BinaryWriter* bw, int32 flags) const
+		void TextureLevelData::SaveData(BinaryWriter& bw, int32 flags) const
 		{
-			bw->WriteInt32(Width);
-			bw->WriteInt32(Height);
-			bw->WriteInt32(Depth);
-			bw->WriteInt32(LevelSize);
+			bw.WriteInt32(Width);
+			bw.WriteInt32(Height);
+			bw.WriteInt32(Depth);
+			bw.WriteInt32(LevelSize);
 
-			Stream* strm = bw->getBaseStream();
+			Stream* strm = bw.getBaseStream();
 			if ((flags & TextureData::TDF_RLECompressed) == TextureData::TDF_RLECompressed)
 			{
 				rleCompress(ContentData, LevelSize, strm);
@@ -156,7 +154,7 @@ namespace Apoc3D
 				char* compressedData = new char[LZ4_COMPRESSBOUND(LevelSize)];
 				int32 compressedSize = LZ4_compressHC2(ContentData, compressedData, LevelSize, 8);
 				assert(compressedSize>0);
-				bw->WriteInt32(compressedSize);
+				bw.WriteInt32(compressedSize);
 				strm->Write(compressedData, compressedSize);
 				delete[] compressedData;
 			}
@@ -176,13 +174,12 @@ namespace Apoc3D
 
 		void TextureData::Load(const ResourceLocation& rl, bool doNotLoadLevel, bool doNotLoadContent)
 		{
-			BinaryReader _br(rl);
-			BinaryReader* br = &_br;
+			BinaryReader br(rl);
 
-			int32 id = br->ReadInt32();
+			int32 id = br.ReadInt32();
 			if (id == FileID1)
 			{
-				TaggedDataReader* data = br->ReadTaggedDataBlock();
+				TaggedDataReader* data = br.ReadTaggedDataBlock();
 
 				Type = static_cast<TextureType>(data->GetDataInt32(Tag_Type));
 
@@ -210,7 +207,6 @@ namespace Apoc3D
 						Levels.Add(lvl);
 
 						data2->Close();
-						br2->Close();
 
 						delete data2;
 						delete br2;
@@ -222,13 +218,13 @@ namespace Apoc3D
 			}
 			else if (id == FileID2)
 			{
-				Type = static_cast<TextureType>(br->ReadInt32());
-				Format = static_cast<PixelFormat>(br->ReadInt32());
+				Type = static_cast<TextureType>(br.ReadInt32());
+				Format = static_cast<PixelFormat>(br.ReadInt32());
 
-				ContentSize = br->ReadInt32();
-				LevelCount = br->ReadInt32();
+				ContentSize = br.ReadInt32();
+				LevelCount = br.ReadInt32();
 
-				Flags = static_cast<TextureDataFlags>(br->ReadUInt32());
+				Flags = static_cast<TextureDataFlags>(br.ReadUInt32());
 
 				if (!doNotLoadLevel)
 				{
@@ -243,36 +239,33 @@ namespace Apoc3D
 			{
 				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid texture file. " + rl.getName(), LOGLVL_Error);
 			}
-			br->Close();
 		}
-		void TextureData::Save(Stream* strm) const
+		void TextureData::Save(Stream& strm) const
 		{
-			BinaryWriter _bw(strm);
-			BinaryWriter* bw = &_bw;
-			bw->WriteInt32(FileID2);
+			BinaryWriter bw(&strm, false);
+			bw.WriteInt32(FileID2);
 
-			bw->WriteInt32(static_cast<int32>(Type));
-			bw->WriteInt32(static_cast<int32>(Format));
+			bw.WriteInt32(static_cast<int32>(Type));
+			bw.WriteInt32(static_cast<int32>(Format));
 
-			bw->WriteInt32(ContentSize);
-			bw->WriteInt32(LevelCount);
+			bw.WriteInt32(ContentSize);
+			bw.WriteInt32(LevelCount);
 
-			bw->WriteInt32(static_cast<int32>(Flags));
+			bw.WriteInt32(static_cast<int32>(Flags));
 
 			for (int i = 0; i < LevelCount; i++)
 			{
 				Levels[i].SaveData(bw, Flags);
 			}
 
-			bw->Close();
 		}
-		void TextureData::SaveAsTagged(Stream* strm) const
+		void TextureData::SaveAsTagged(Stream& strm) const
 		{
-			BinaryWriter _bw(strm);
-			BinaryWriter* bw = &_bw;
-			bw->WriteInt32(FileID1);
+			BinaryWriter bw(&strm, false);
 
-			TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianIndependent());
+			bw.WriteInt32(FileID1);
+
+			TaggedDataWriter* data = new TaggedDataWriter(strm.IsWriteEndianIndependent());
 
 			data->AddEntryInt32(Tag_Type, (int32)Type);
 			data->AddEntryInt32(Tag_Format, (int32)Format);
@@ -286,25 +279,23 @@ namespace Apoc3D
 				levelName.append(StringUtils::IntToNarrowString(i));
 
 				BinaryWriter* bw2 = data->AddEntry(levelName);
-				TaggedDataWriter* data2 = new TaggedDataWriter(strm->IsWriteEndianIndependent());
+				TaggedDataWriter* data2 = new TaggedDataWriter(strm.IsWriteEndianIndependent());
 				Levels[i].SaveData(data2, Flags);
 
 				bw2->WriteTaggedDataBlock(data2);
 
 				delete data2;
-				bw2->Close();
 				delete bw2;
 			}
 
-			bw->WriteTaggedDataBlock(data);
+			bw.WriteTaggedDataBlock(data);
 			delete data;
 
-			bw->Close();
 		}
 
 		void TextureData::Free()
 		{
-			for (int i=0;i<LevelCount;i++)
+			for (int i = 0; i < LevelCount; i++)
 			{
 				delete[] Levels[i].ContentData;
 			}

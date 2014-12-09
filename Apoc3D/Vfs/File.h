@@ -64,6 +64,8 @@ namespace Apoc3D
 			static bool DirectoryExists(const String& path);
 
 			static bool ListDirectoryFiles(const String& path, Apoc3D::Collections::List<String>& items);
+			static bool ListDirectoryFilesRecursive(const String& path, Apoc3D::Collections::List<String>& items, int32 maxDepth = -1);
+
 		};
 	}
 }

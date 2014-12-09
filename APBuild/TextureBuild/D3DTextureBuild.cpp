@@ -537,8 +537,7 @@ namespace APBuild
 		//	}
 		//}
 
-		FileOutStream* fs = new FileOutStream(path);
-		data.Save(fs);
+		data.Save(FileOutStream(path));
 		data.Free();
 	}
 

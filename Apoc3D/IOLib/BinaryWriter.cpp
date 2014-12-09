@@ -38,15 +38,17 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		BinaryWriter::BinaryWriter(Stream* baseStream)
-			: m_baseStream(baseStream), m_shouldDeleteStream(true)
+		BinaryWriter::BinaryWriter(Stream* baseStream, bool releaseStream)
+			: m_baseStream(baseStream), m_shouldDeleteStream(releaseStream)
 		{
 			m_endianIndependent = baseStream->IsWriteEndianIndependent();
 		}
+
 		BinaryWriter::~BinaryWriter()
 		{
 			if (m_shouldDeleteStream)
 				delete m_baseStream;
+			m_baseStream = nullptr;
 		}
 
 		void BinaryWriter::Write(const char* bytes, int64 count) const
@@ -99,7 +101,7 @@ namespace Apoc3D
 		{
 			bool isMB = true;
 
-			for (size_t i=0;i<value.size();i++)
+			for (size_t i = 0; i < value.size(); i++)
 			{
 				if (value[i]>0xff)
 				{
@@ -119,14 +121,14 @@ namespace Apoc3D
 
 			if (isMB)
 			{
-				for (size_t i=0;i<value.size();i++)
+				for (size_t i = 0; i < value.size(); i++)
 				{
 					WriteByte(reinterpret_cast<const char&>(value[i]));
 				}
 			}
 			else
 			{
-				for (size_t i=0;i<value.size();i++)
+				for (size_t i = 0; i < value.size(); i++)
 				{
 					WriteInt16(reinterpret_cast<const int16&>(value[i]));
 				}
@@ -333,17 +335,23 @@ namespace Apoc3D
 			WriteUInt32(zeroSize);
 
 			int64 start = m_baseStream->getPosition();
-			data->Save(new VirtualStream(m_baseStream, m_baseStream->getPosition()));
+			data->Save(VirtualStream(m_baseStream, m_baseStream->getPosition()));
 
 			int64 end = m_baseStream->getPosition();
 
 			uint32 size = static_cast<uint32>(end - start);
-			m_baseStream->setPosition(start-sizeof(uint32));
+			m_baseStream->setPosition(start - sizeof(uint32));
 
 			WriteUInt32(size);
 
 			m_baseStream->setPosition(end);
 
+		}
+		void BinaryWriter::WriteTaggedDataBlock(FunctorReference<void(TaggedDataWriter*)> f) const
+		{
+			TaggedDataWriter data(m_endianIndependent);
+			f(&data);
+			WriteTaggedDataBlock(&data);
 		}
 
 		void BinaryWriter::WriteVector2(const Vector2& vec) const
@@ -412,22 +420,16 @@ namespace Apoc3D
 
 		void BinaryWriter::WriteBooleanBits(const bool* arr, int32 count) const
 		{
-			for (int32 i=0;i<count;i+=8)
+			for (int32 i = 0; i < count; i += 8)
 			{
 				byte bits = 0;
 
-				for (int32 j=0;j<8 && i+j<count;j++)
-					if (arr[i+j])
+				for (int32 j = 0; j < 8 && i + j < count; j++)
+					if (arr[i + j])
 						bits |= (byte)(1 << j);
 
 				WriteByte((char)bits);
 			}
-		}
-
-
-		void BinaryWriter::Close() const
-		{
-			m_baseStream->Close();
 		}
 
 

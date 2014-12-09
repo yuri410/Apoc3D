@@ -22,19 +22,16 @@ namespace APDesigner
 			
 			if (File::FileExists(SettingsFileName))
 			{
-				FileStream* fs = new FileStream(SettingsFileName);
-				BinaryReader* br = new BinaryReader(fs);
+				FileStream fs(SettingsFileName);
+				BinaryReader br(&fs, false);
 
-				if (br->ReadInt32() == FileID)
+				if (br.ReadInt32() == FileID)
 				{
-					for (int32 i=0;i<CustomColorCount;i++)
+					for (int32 i = 0; i < CustomColorCount; i++)
 					{
-						acrCustClr[i] = br->ReadUInt32();
+						acrCustClr[i] = br.ReadUInt32();
 					}
 				}
-
-				br->Close();
-				delete br;
 			}
 
 			static DWORD rgbCurrent;        // initial color selection
@@ -58,17 +55,15 @@ namespace APDesigner
 					0xff);
 
 
-				FileOutStream* fs = new FileOutStream(SettingsFileName);
-				BinaryWriter* bw = new BinaryWriter(fs);
+				FileOutStream fs(SettingsFileName);
+				BinaryWriter bw(&fs, false);
 
-				bw->WriteInt32(FileID);
+				bw.WriteInt32(FileID);
 				for (int32 i=0;i<CustomColorCount;i++)
 				{
-					bw->WriteUInt32(static_cast<uint32>(acrCustClr[i]));
+					bw.WriteUInt32(static_cast<uint32>(acrCustClr[i]));
 				}
 
-				bw->Close();
-				delete bw;
 
 				return DLGRES_OK;
 			}

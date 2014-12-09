@@ -22,13 +22,16 @@
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Library/lz4.h"
 #include "apoc3d/Library/lz4hc.h"
+#include "apoc3d/Vfs/File.h"
 #include "apoc3d/Vfs/FileSystem.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Vfs/FileLocateRule.h"
+#include "apoc3d/Vfs/PathUtils.h"
 
 #include <iostream>
 #include <chrono>
 #include <vector>
+//#include <functional>
 
 using namespace Apoc3D;
 using namespace Apoc3D::Config;
@@ -60,11 +63,34 @@ void main()
 	//std::wcout << s.c_str() << L"\n";
 	//std::wcout << std::numeric_limits<float>::digits10+1 << L"\n";
 
+	
+	BinaryReader br(0, 0);
+	br.ReadTaggedDataBlock({ [](TaggedDataReader* data)
+	{
+
+	} });
+	
+	/*std::function<TaggedDataWriter*> ff = [](TaggedDataReader* data)
+	{
+
+	};*/
+
+	/*fastdelegate::FastDelegate1<TaggedDataWriter*> f = [](TaggedDataReader* data)
+	{
+
+	};
+	*/
+
 	FileSystem::Initialize();
 	wchar_t workingDir[260];
 	GetCurrentDirectory(260, workingDir);
 	FileSystem::getSingleton().AddWrokingDirectory(workingDir);
 	
+	String s = PathUtils::CombineMult(L"a", L"b", L"c");
+
+	List<String> ritems;
+	File::ListDirectoryFilesRecursive(L"F:\\Dropbox\\ost", ritems);
+
 	List<String> items;
 	FileSystem::getSingleton().ListDirectoryFiles(L"", items);
 
@@ -127,7 +153,7 @@ void TestTaggedData()
 	outData->AddEntryViewport("Viewport", (Viewport*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Viewport));
 
 	MemoryOutStream* buffer = new MemoryOutStream(0xffff);
-	outData->Save(new VirtualStream(buffer));
+	outData->Save(VirtualStream(buffer));
 	buffer->setPosition(0);
 	char tempBuffer[1024];
 	TaggedDataReader* inData = new TaggedDataReader(buffer);
@@ -223,7 +249,7 @@ void TestRLE()
 	FileStream fs(L"testMath1.dat");
 	char* buffer = new char[(int32)fs.getLength()];
 	fs.Read(buffer, fs.getLength());
-	fs.Close();
+	
 
 	int32 compressedSize = rleEvalCompressedSize(buffer, (int32)fs.getLength());
 
@@ -297,8 +323,7 @@ void TestLZ4()
 
 	char* buffer = new char[srcDataSize];
 	fs.Read(buffer, fs.getLength());
-	fs.Close();
-
+	
 	
 	char* compressed = new char[LZ4_COMPRESSBOUND(srcDataSize)];
 	int32 t = GetTickCount();
@@ -326,7 +351,6 @@ void TestBufferStream()
 	FileStream fs(L"Apoc3d.lib");
 	char* buffer = new char[(int32)fs.getLength()];
 	fs.Read(buffer, fs.getLength());
-	fs.Close();
 
 
 	MemoryStream ms(buffer, fs.getLength());
@@ -408,9 +432,9 @@ void TestMath()
 	DWORD t = end - start;
 	std::wcout << t << L"\n";
 
-	BinaryWriter* bw = new BinaryWriter(new FileOutStream(L"testMath1.dat"));
-	bw->Write((char*)result, sizeof(Matrix) * count);
-	delete bw;
+	FileOutStream fs(L"testMath1.dat");
+	BinaryWriter bw(&fs, false);
+	bw.Write((char*)result, sizeof(Matrix) * count);
 }
 
 void TestIni()
@@ -421,7 +445,7 @@ void TestIni()
 	FileLocation fl(path);// FileSystem::getSingleton().Locate(L"testIni.ini", FileLocateRule::Default);
 	Configuration* config = IniConfigurationFormat::Instance.Load(fl);
 
-	IniConfigurationFormat::Instance.Save(config, new FileOutStream(L"iniOut.ini"));
+	IniConfigurationFormat::Instance.Save(config, FileOutStream(L"iniOut.ini"));
 
 	delete config;
 }

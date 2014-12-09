@@ -155,7 +155,7 @@ namespace Apoc3D
 				int64 len = br.getBaseStream()->getLength();
 				char* buffer = new char[static_cast<uint>(len)];
 				br.ReadBytes(buffer, len);
-				br.Close();
+
 
 				D3DDevice* dev = m_device->getDevice();
 				HRESULT hr = (dev->*CreateShader)(reinterpret_cast<const DWORD*>(buffer), &m_shader);

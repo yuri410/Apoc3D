@@ -311,7 +311,7 @@ namespace APDesigner
 	{
 		MaterialData data;
 		m_material->Save(data);
-		data.Save(new FileOutStream(m_filePath));
+		data.Save(FileOutStream(m_filePath));
 	}
 	void MaterialDocument::Initialize(RenderDevice* device)
 	{

@@ -171,7 +171,7 @@ namespace APDesigner
 		}
 
 		//config->Save(filePath);
-		XMLConfigurationFormat::Instance.Save(config, new FileOutStream(filePath));
+		XMLConfigurationFormat::Instance.Save(config, FileOutStream(filePath));
 		delete config;
 	}
 	/************************************************************************/

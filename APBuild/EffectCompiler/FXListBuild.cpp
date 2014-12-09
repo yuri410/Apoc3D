@@ -45,7 +45,7 @@ namespace APBuild
 		}
 
 		//xml->Save(config.DestFile);
-		XMLConfigurationFormat::Instance.Save(xml, new FileOutStream(config.DestFile));
+		XMLConfigurationFormat::Instance.Save(xml, FileOutStream(config.DestFile));
 		delete xml;
 
 		BuildSystem::LogEntryProcessed(config.DestFile, hierarchyPath);

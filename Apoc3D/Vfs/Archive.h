@@ -29,6 +29,7 @@
 #include "File.h"
 
 #include "apoc3d/Collections/HashMap.h"
+#include "apoc3d/Collections/List.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::IO;
@@ -50,9 +51,7 @@ namespace Apoc3D
 			virtual String getExtension() const = 0;
 		};
 
-		/**
-		 *  Define interface for accessing pack files, like .zip or custom packs.
-		 */
+		/** Define interface for accessing pack files, like .zip or custom packs. */
 		class APAPI Archive : public File
 		{
 		protected:
@@ -72,8 +71,8 @@ namespace Apoc3D
 		struct PakArchiveEntry
 		{
 			String Name;
-			uint Offset;
-			uint Size;
+			int64 Offset;
+			int64 Size;
 		};
 
 		// the engine has built in support for a kind of uncompressed pak file.
@@ -91,16 +90,19 @@ namespace Apoc3D
 			virtual int64 GetEntrySize(const String& file);
 			virtual String GetEntryName(int index);
 
-			enum PakCompressionType
+			static void Pack(Stream& outStrm, const List<String>& sourceFiles);
+			/*enum PakCompressionType
 			{
 				PCT_None,
 				PCT_RLEPerEntry
-			};
+			};*/
+
 		private:
 			HashMap<String, PakArchiveEntry> m_entries;
+			List<String> m_entryNames;
 
 			Stream* m_fileStream;
-			PakCompressionType m_compression;
+			//PakCompressionType m_compression;
 		};
 
 		class APAPI PakArchiveFactory : public ArchiveFactory

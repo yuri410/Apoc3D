@@ -39,7 +39,7 @@ namespace Apoc3D
 		class APAPI BinaryWriter
 		{
 		public:
-			BinaryWriter(Stream* baseStream);
+			BinaryWriter(Stream* baseStream, bool releaseStream);
 			~BinaryWriter();
 
 			void Write(const char* bytes, int64 count) const;
@@ -73,6 +73,7 @@ namespace Apoc3D
 			void WriteBoundingSphere(const BoundingSphere& sphere) const;
 
 			void WriteTaggedDataBlock(const TaggedDataWriter* data) const;
+			void WriteTaggedDataBlock(FunctorReference<void(TaggedDataWriter*)> f) const;
 
 			void WriteVector2(const Vector2& vec) const;
 			void WriteVector3(const Vector3& vec) const;
@@ -95,12 +96,7 @@ namespace Apoc3D
 			template <int32 N> void WriteBooleanBits(const bool(&data)[N]) { return WriteBooleanBits(data, N); }
 
 
-
-			void Close() const;
-
-			/**
-			 * Ask the BinaryWriter not to delete the base stream upon release
-			 */
+			/** Ask the BinaryWriter not to delete the base stream upon release */
 			void SuspendStreamRelease() { m_shouldDeleteStream = false; }
 
 			Stream* getBaseStream() const { return m_baseStream; }

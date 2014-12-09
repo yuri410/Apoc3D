@@ -253,7 +253,7 @@ namespace APDesigner
 		plist->Add(ps);
 
 		//plist->Save(m_filePath);
-		XMLConfigurationFormat::Instance.Save(plist, new FileOutStream(m_filePath));
+		XMLConfigurationFormat::Instance.Save(plist, FileOutStream(m_filePath));
 
 		delete plist;
 	}

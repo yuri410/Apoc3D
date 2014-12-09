@@ -94,8 +94,8 @@ namespace Apoc3D
 
 			virtual void Update(const GameTime* time) = 0;
 
-			void Serialize(Apoc3D::IO::BinaryWriter* bw);
-			void Deserialize(Apoc3D::IO::BinaryReader* br);
+			void Serialize(Apoc3D::IO::BinaryWriter& bw);
+			void Deserialize(Apoc3D::IO::BinaryReader& br);
 
 		protected:
 			Mouse();

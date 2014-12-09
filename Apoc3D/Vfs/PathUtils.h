@@ -64,21 +64,30 @@ namespace Apoc3D
 			APAPI bool GetRelativePath(const String& source, const String& target, String& result);
 			APAPI bool GetCommonBasePath(const String& path1, const String& path2, String& result);
 			
-			/**
-			 *  Combines two path strings
-			 */
+			/** Combines two path strings */
 			APAPI String Combine(const String& left, const String& right);
-			/**
-			 *  Append sub dir to a path string
-			 */
+			APAPI std::string Combine(const std::string& left, const std::string& right);
+			
+			template <typename T> 
+			String CombineMult(const String& left, const T& right)
+			{
+				return Combine(left, right); 
+			}
+
+			template <typename ... T> 
+			String CombineMult(const String& left, const T&...parts) 
+			{
+				return Combine(left, CombineMult(parts...)); 
+			}
+
+
+			/** Append sub dir to a path string */
 			APAPI void Append(String& str, const String& app);
 			APAPI bool Match(const String& str, const String& pattern);
 
 			APAPI bool IsAbsolute(const String& str);
 
-			/**
-			 *  Compare two path string in a reliable way. Returns true if equal
-			 */
+			/** Compare two path string in a reliable way. Returns true if equal */
 			APAPI bool ComparePath(const String& left, const String& right);
 			APAPI bool ComparePath(const String& left, const String& right, int32& commonBaseIndex);
 
