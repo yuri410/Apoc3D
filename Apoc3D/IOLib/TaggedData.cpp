@@ -194,7 +194,7 @@ namespace Apoc3D
 		}
 
 
-		bool TaggedDataReader::TryProcessDataSection(const KeyType& name, FunctorReference<void(BinaryReader*)> func) const
+		bool TaggedDataReader::TryProcessData(const KeyType& name, FunctorReference<void(BinaryReader*)> func) const
 		{
 			const Entry* ent = FindEntry(name);
 
@@ -202,15 +202,13 @@ namespace Apoc3D
 			{
 				VirtualStream vs(m_stream, ent->Offset, ent->Size);
 				BinaryReader br(&vs, false);
-
 				func(&br);
-
 				return true;
 			}
 			return false;
 		}
 
-		void TaggedDataReader::ProcessDataSection(const KeyType& name, FunctorReference<void(BinaryReader*)> func) const
+		void TaggedDataReader::ProcessData(const KeyType& name, FunctorReference<void(BinaryReader*)> func) const
 		{
 			const Entry* ent = FindEntry(name);
 			VirtualStream vs(m_stream, ent->Offset, ent->Size);
@@ -219,6 +217,20 @@ namespace Apoc3D
 				func(&br);
 			}
 		}
+
+		bool TaggedDataReader::TryProcessData(const KeyType& name, FunctorReference<void(TaggedDataReader*)> f) const
+		{
+			return TryProcessData(name, FunctorReference < void(BinaryReader*) > {
+				[f](BinaryReader* br) { br->ReadTaggedDataBlock(f, false); }
+			});
+		}
+		void TaggedDataReader::ProcessData(const KeyType& name, FunctorReference<void(TaggedDataReader*)> f) const
+		{
+			ProcessData(name, FunctorReference < void(BinaryReader*) > {
+				[f](BinaryReader* br) { br->ReadTaggedDataBlock(f, false); }
+			});
+		}
+
 
 		Stream* TaggedDataReader::GetDataStream(const KeyType& name) const
 		{
@@ -1682,7 +1694,6 @@ namespace Apoc3D
 			return new VirtualStream(ent.Buffer, 0);
 		}
 
-
 		void TaggedDataWriter::AddEntry(const KeyType& name, FunctorReference<void(BinaryWriter*)> func)
 		{
 			Entry ent = Entry(name);
@@ -1703,6 +1714,14 @@ namespace Apoc3D
 			VirtualStream vs(ent.Buffer, 0);
 			func(&vs);
 		}
+
+		void TaggedDataWriter::AddEntry(const KeyType& name, FunctorReference<void(TaggedDataWriter*)> func)
+		{
+			AddEntry(name, FunctorReference < void(BinaryWriter*) > { 
+				[func](BinaryWriter* bw) { bw->WriteTaggedDataBlock(func); }
+			});
+		}
+
 
 		bool TaggedDataWriter::Contains(const KeyType& name) const { return FindEntry(name) != nullptr; }
 

@@ -50,8 +50,7 @@ namespace Apoc3D
 
 				m_stream = strm;
 
-				BinaryWriter bw(strm);
-				bw.SuspendStreamRelease();
+				BinaryWriter bw(strm, false);
 
 				bw.WriteInt32(DataID);
 
@@ -68,8 +67,7 @@ namespace Apoc3D
 			}
 			else
 			{
-				BinaryReader br(strm);
-				br.SuspendStreamRelease();
+				BinaryReader br(strm, false);
 
 				int32 id = br.ReadInt32();
 				if (id == DataID)
@@ -111,13 +109,12 @@ namespace Apoc3D
 				return false;
 
 
-			if (m_frames.getCount()<BlockFrameCount && 
+			if (m_frames.getCount() < BlockFrameCount && 
 				m_numBlocksRead<m_blockCount && m_numFramesRead < m_frameCount)
 			{
 				// read blocks until BlockFrameCount is reached
 
-				BinaryReader br(m_stream);
-				br.SuspendStreamRelease();
+				BinaryReader br(m_stream, false);
 
 				while (m_frames.getCount()<BlockFrameCount)
 				{
@@ -141,10 +138,9 @@ namespace Apoc3D
 						assert(ret == decompressedDataSize);
 
 						MemoryStream ms(decompressedBuffer, decompressedDataSize);
-						BinaryReader bbr(&ms);
-						bbr.SuspendStreamRelease();
+						BinaryReader bbr(&ms, false);
 
-						for (int32 i=0;i<blockFrameCount;i++)
+						for (int32 i = 0; i < blockFrameCount; i++)
 						{
 							FrameInfo fi;
 							fi.Read(&bbr);
@@ -191,8 +187,7 @@ namespace Apoc3D
 
 			MemoryOutStream buffer(numFramesToWrite*sizeof(FrameInfo));
 
-			BinaryWriter bbw(&buffer);
-			bbw.SuspendStreamRelease();
+			BinaryWriter bbw(&buffer, false);
 
 			for (int32 i=0;i<numFramesToWrite;i++)
 			{
@@ -201,7 +196,6 @@ namespace Apoc3D
 				frame.Write(&bbw);
 			}
 
-			bbw.Close();
 
 			//////////////////////////////////////////////////////////////////////////
 
@@ -210,8 +204,7 @@ namespace Apoc3D
 
 			uint32 crc32 = Utility::CalculateCRC32(compressedData, compressedSize);
 
-			BinaryWriter bw(m_stream);
-			bw.SuspendStreamRelease();
+			BinaryWriter bw(m_stream, false);
 
 			bw.WriteInt32(numFramesToWrite);
 			bw.WriteInt32(compressedSize);
@@ -229,8 +222,7 @@ namespace Apoc3D
 		{
 			assert(m_stream);
 			m_stream->setPosition(0);
-			BinaryWriter bw(m_stream);
-			bw.SuspendStreamRelease();
+			BinaryWriter bw(m_stream, false);
 
 			bw.WriteInt32(DataID);
 
@@ -244,7 +236,6 @@ namespace Apoc3D
 			bw.WriteInt32(m_frameCount); 
 			bw.WriteInt32(m_randomizerSeed); 
 			bw.WriteInt64(m_time); 
-			bw.Close();
 		}
 		
 		void FrameInputData::FrameInfo::Read(BinaryReader* br)
@@ -361,9 +352,8 @@ namespace Apoc3D
 			if (mouse)
 			{
 				MemoryStream ms(frame.MouseState, countof(frame.MouseState));
-				BinaryWriter bw(&ms);
-				bw.SuspendStreamRelease();
-				mouse->Serialize(&bw);
+				BinaryWriter bw(&ms, false);
+				mouse->Serialize(bw);
 
 				int64 size = ms.getPosition();
 				assert(size<countof(frame.MouseState));
@@ -373,9 +363,8 @@ namespace Apoc3D
 			if (kb)
 			{
 				MemoryStream ms(frame.KeyboardState, countof(frame.KeyboardState));
-				BinaryWriter bw(&ms);
-				bw.SuspendStreamRelease();
-				kb->Serialize(&bw);
+				BinaryWriter bw(&ms, false);
+				kb->Serialize(bw);
 
 				int64 size = ms.getPosition();
 				assert(size<countof(frame.KeyboardState));
@@ -438,17 +427,15 @@ namespace Apoc3D
 			if (mouse)
 			{
 				MemoryStream ms(fi.MouseState, fi.MouseStateSize);
-				BinaryReader br(&ms);
-				br.SuspendStreamRelease();
-				mouse->Deserialize(&br);
+				BinaryReader br(&ms, false);
+				mouse->Deserialize(br);
 			}
 			
 			if (kb)
 			{
 				MemoryStream ms(fi.KeyboardState, fi.KeyboardStateSize);
-				BinaryReader br(&ms);
-				br.SuspendStreamRelease();
-				kb->Deserialize(&br);
+				BinaryReader br(&ms, false);
+				kb->Deserialize(br);
 			}
 			
 			m_currentFrame++;

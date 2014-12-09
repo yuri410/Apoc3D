@@ -37,18 +37,20 @@ namespace Apoc3D
 		using RawFunctionType = Ret(*)(Args...);
 
 	public:
+		FunctorReference() { }
+
 		template <typename F>
 		FunctorReference(F& lambda)
 		{
 			m_instance = const_cast<F*>(&lambda);
-			m_invoker = &Invoker_Method < F, &F::operator() > ;
+			m_invoker = &Invoker_Method<F, &F::operator()> ;
 		}
 
 		template <typename F>
 		FunctorReference(const F& lambda)
 		{
 			m_instance = const_cast<F*>(&lambda);
-			m_invoker = &Invoker_ConstMethod < F, &F::operator() > ;
+			m_invoker = &Invoker_ConstMethod<F, &F::operator()> ;
 		}
 
 		FunctorReference(RawFunctionType functionPtr)
@@ -56,17 +58,19 @@ namespace Apoc3D
 
 
 		template <class ClassType, Ret(ClassType::*method_ptr)(Args...)>
-		void Bind(ClassType* ct)
+		FunctorReference& Bind(ClassType* ct)
 		{
 			m_instance = const_cast<ClassType*>(ct);
-			m_invoker = &Invoker_Method < ClassType, method_ptr >;
+			m_invoker = &Invoker_Method<ClassType, method_ptr>;
+			return *this;
 		}
 
 		template <class ClassType, Ret(ClassType::*method_ptr)(Args...) const>
-		void Bind(const ClassType* ct)
+		FunctorReference& Bind(const ClassType* ct)
 		{
 			m_instance = const_cast<ClassType*>(ct);
-			m_invoker = &Invoker_ConstMethod < ClassType, method_ptr > ;
+			m_invoker = &Invoker_ConstMethod<ClassType, method_ptr> ;
+			return *this;
 		}
 
 		Ret operator()(Args... args) const
