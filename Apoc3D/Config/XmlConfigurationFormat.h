@@ -38,29 +38,24 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		/**
-		 *  a xml format configuration storing as described in Configuration
-		 */
+		/** XML format configuration storing as described in Configuration */
 		class APAPI XMLConfigurationFormat : public ConfigurationFormat
 		{
 		public:
 			static XMLConfigurationFormat Instance;
 
 			virtual Configuration* Load(const ResourceLocation& rl) override;
-			virtual void Save(Configuration* config, Stream* strm) override;
+			virtual void Save(Configuration* config, Stream& strm) override;
 
 			List<String> GetSupportedFileSystemExtensions() override
 			{
 				return { L"xml" };
 			}
 		private:
-			/**
-			 *  Saves a ConfigurationSection sub tree to the tiny xml node, recursively.
-			 */
+			/** Saves a ConfigurationSection sub tree to the tiny xml node, recursively. */
 			void SaveNode(TiXmlNode* node, ConfigurationSection* parent);
-			/**
-			 *  Read xml node recursively, while add data into ConfigurationSection
-			 */
+
+			/** Read xml node recursively, while add data into ConfigurationSection */
 			void BuildNode(Configuration* config, const TiXmlNode* node, ConfigurationSection* parent, const TiXmlDocument& doc);
 			void BuildXml(Configuration* config, const TiXmlDocument* doc);
 		};

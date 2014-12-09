@@ -83,15 +83,14 @@ namespace Apoc3D
 					m_mtrlAnimationClips.Resize(count);
 					
 					bool readsFrameFlag = false;
-					BinaryReader* br = nullptr;
-					br = data->TryGetData(TAG_3_MaterialAnimationTag);
+					BinaryReader* br = data->TryGetData(TAG_3_MaterialAnimationTag);
 					if (br == nullptr)
 					{
 						br = data->TryGetData(TAG_3_1_MaterialAnimationTag);
 						readsFrameFlag = true;
 					}
 					
-					for (int i=0;i<count;i++)
+					for (int i = 0; i < count; i++)
 					{
 						List<MaterialAnimationKeyframe> keyframes;
 						String key = br->ReadString();
@@ -100,8 +99,8 @@ namespace Apoc3D
 
 						int frameCount = br->ReadInt32();
 						keyframes.ResizeDiscard(frameCount);
-						
-						for (int j=0;j<frameCount;j++)
+
+						for (int j = 0; j < frameCount; j++)
 						{
 							float time = br->ReadSingle();
 							int32 mid = br->ReadInt32();
@@ -119,8 +118,6 @@ namespace Apoc3D
 
 						m_mtrlAnimationClips.Add(key, clip);
 					}
-
-					br->Close();
 
 					delete br;
 				}
@@ -152,11 +149,11 @@ namespace Apoc3D
 						}
 
 						Bone bone = Bone(bidx, bindpose, children, parentId, name);
-						
+
 						bone.setBoneReferenceTransform(boneRef);
 						m_bones.Add(bone);
 					}
-					br2->Close();
+
 					delete br2;
 					m_rootBone = data->GetDataInt32(TAG_3_RootBoneTag);
 				}
@@ -171,7 +168,7 @@ namespace Apoc3D
 					m_skinnedAnimationClips.Resize(count);
 
 					BinaryReader* br = data->GetData(TAG_3_SkinnedAnimationClipTag);
-					for (int i=0;i<count;i++)
+					for (int i = 0; i < count; i++)
 					{
 						String key = br->ReadString();
 
@@ -181,7 +178,7 @@ namespace Apoc3D
 
 						List<ModelKeyframe> frames(frameCount);
 
-						for (int j=0;j<frameCount;j++)
+						for (int j = 0; j < frameCount; j++)
 						{
 							int32 bone = br->ReadInt32();
 
@@ -195,10 +192,10 @@ namespace Apoc3D
 						}
 
 						ModelAnimationClip* clip = new ModelAnimationClip(duration, frames);
-						
+
 						m_skinnedAnimationClips.Add(key, clip);
 					}
-					br->Close();
+
 					delete br;
 				}
 
@@ -212,10 +209,9 @@ namespace Apoc3D
 					m_rigidAnimationClips.Resize(count);
 
 					BinaryReader* br = data->GetData(TAG_3_RigidAnimationClipTag);
-					for (int i=0;i<count;i++)
+					for (int i = 0; i < count; i++)
 					{
 						String key = br->ReadString();
-
 
 						float duration = static_cast<float>(br->ReadDouble());
 
@@ -223,7 +219,7 @@ namespace Apoc3D
 
 						List<ModelKeyframe> frames(frameCount);
 
-						for (int j=0;j<frameCount;j++)
+						for (int j = 0; j < frameCount; j++)
 						{
 							int32 partId = br->ReadInt32();
 
@@ -239,7 +235,7 @@ namespace Apoc3D
 						ModelAnimationClip* clip = new ModelAnimationClip(duration, frames);
 						m_rigidAnimationClips.Add(key, clip);
 					}
-					br->Close();
+
 					delete br;
 				}
 
@@ -256,27 +252,25 @@ namespace Apoc3D
 					data->AddEntryInt32(TAG_3_MaterialAnimationCountTag, (int32)m_mtrlAnimationClips.getCount());
 
 					BinaryWriter* bw = data->AddEntry(TAG_3_1_MaterialAnimationTag);
-					for (MtrlClipTable::Enumerator e = m_mtrlAnimationClips.GetEnumerator(); e.MoveNext();)
+					for (auto e : m_mtrlAnimationClips)
 					{
-						const String& name = e.getCurrentKey();
+						const String& name = e.Key;
+						const MaterialAnimationClip* clip = e.Value;
 
 						bw->WriteString(name);
-
-						const MaterialAnimationClip* clip = e.getCurrentValue();
 						bw->WriteSingle(clip->Duration);
 
 						const List<MaterialAnimationKeyframe>& keyFrames = clip->Keyframes;
 						bw->WriteInt32(keyFrames.getCount());
 
-						for (int i = 0; i < keyFrames.getCount(); i++)
+						for (const MaterialAnimationKeyframe& kf : keyFrames)
 						{
-							const MaterialAnimationKeyframe& kf = keyFrames[i];
 							bw->WriteSingle(kf.getTime());
 							bw->WriteInt32(kf.getMaterialFrame());
 							bw->WriteUInt32(kf.getFlags());
 						}
 					}
-					bw->Close();
+
 					delete bw;
 				}
 
@@ -301,9 +295,8 @@ namespace Apoc3D
 						{
 							bw->WriteInt32(m_bones[i].Children[j]);
 						}
-
 					}
-					bw->Close();
+
 					delete bw;
 
 					data->AddEntryInt32(TAG_3_RootBoneTag, m_rootBone);
@@ -334,7 +327,7 @@ namespace Apoc3D
 							bw->WriteInt32(static_cast<int32>(keyFrames[i].getNextFrameIndex()));
 						}
 					}
-					bw->Close();
+
 					delete bw;
 				}
 				if (m_hasRigidClip)
@@ -342,26 +335,26 @@ namespace Apoc3D
 					data->AddEntryInt32(TAG_3_RigidAnimationClipCountTag, m_rigidAnimationClips.getCount());
 
 					BinaryWriter* bw = data->AddEntry(TAG_3_RigidAnimationClipTag);
-					for (ClipTable::Enumerator e = m_rigidAnimationClips.GetEnumerator(); e.MoveNext();)
+					for (auto e : m_rigidAnimationClips)
 					{
-						const String& name = e.getCurrentKey();
-						bw->WriteString(name);
+						const String& name = e.Key;
+						const ModelAnimationClip* clip = e.Value;
 
-						const ModelAnimationClip* clip = e.getCurrentValue();
+						bw->WriteString(name);
 						bw->WriteDouble(static_cast<double>(clip->getDuration()));
 						
 						const List<ModelKeyframe>& keyFrames = clip->getKeyframes();
 						bw->WriteInt32(keyFrames.getCount());
 
-						for (int i = 0; i < keyFrames.getCount(); i++)
+						for (const ModelKeyframe& kf : keyFrames)
 						{
-							bw->WriteInt32(static_cast<int32>(keyFrames[i].getObjectIndex()));
-							bw->WriteDouble(static_cast<double>(keyFrames[i].getTime()));
-							bw->WriteMatrix(keyFrames[i].getTransform());
-							bw->WriteInt32(static_cast<int32>(keyFrames[i].getNextFrameIndex()));
+							bw->WriteInt32(static_cast<int32>(kf.getObjectIndex()));
+							bw->WriteDouble(static_cast<double>(kf.getTime()));
+							bw->WriteMatrix(kf.getTransform());
+							bw->WriteInt32(static_cast<int32>(kf.getNextFrameIndex()));
 						}
 					}
-					bw->Close();
+
 					delete bw;
 				}
 
@@ -370,12 +363,12 @@ namespace Apoc3D
 
 			void AnimationData::Load(const ResourceLocation& rl)
 			{
-				BinaryReader* br = new BinaryReader(rl);
+				BinaryReader br(rl);
 
-				int32 id = br->ReadInt32();
+				int32 id = br.ReadInt32();
 				if (id == MANI_ID)
 				{
-					TaggedDataReader* data = br->ReadTaggedDataBlock();
+					TaggedDataReader* data = br.ReadTaggedDataBlock();
 
 					ReadData(data);
 
@@ -387,21 +380,17 @@ namespace Apoc3D
 					LogManager::getSingleton().Write(LOG_Graphics, L"Invalid animation file." + rl.getName(), LOGLVL_Error);
 				}
 
-				br->Close();
-				delete br;
 			}
-			void AnimationData::Save(Stream* strm) const
+			void AnimationData::Save(Stream& strm) const
 			{
-				BinaryWriter* bw = new BinaryWriter(strm);
+				BinaryWriter bw(&strm, false);
 
-				bw->WriteInt32(MANI_ID);
+				bw.WriteInt32(MANI_ID);
 
 				TaggedDataWriter* mdlData = WriteData();
-				bw->WriteTaggedDataBlock(mdlData);
+				bw.WriteTaggedDataBlock(mdlData);
 				delete mdlData;
 
-				bw->Close();
-				delete bw;
 			}
 		}
 	}

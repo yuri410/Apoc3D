@@ -49,9 +49,6 @@ namespace Apoc3D
 				typedef HashMap<String, ModelAnimationClip*> ClipTable;
 				typedef HashMap<String, MaterialAnimationClip*> MtrlClipTable;
 			public:
-				int RigidEntityCount;
-				//bool hasBindPose() const { return m_hasBindPose; }
-				//bool hasSkeleton() const { return m_hasSkeleton; }
 
 				bool hasMtrlClip() const { return m_hasMtrlClip; }
 				bool hasSkinnedClip() const { return m_hasSkinnedClip; }
@@ -80,69 +77,41 @@ namespace Apoc3D
 				{
 					m_bones = bones;
 				}
-				void setRigidAnimationClips(const ClipTable& table) { m_rigidAnimationClips = table; m_hasRigidClip = !!table.getCount();}
-				void setSkinnedAnimationClips(const ClipTable& table) { m_skinnedAnimationClips = table; m_hasSkinnedClip = !!table.getCount(); }
-				void setMaterialAnimationClips(const MtrlClipTable& table) { m_mtrlAnimationClips = table; m_hasMtrlClip = !!table.getCount(); }
+				void setRigidAnimationClips(const ClipTable& table) { m_rigidAnimationClips = table; m_hasRigidClip = table.getCount() != 0;}
+				void setSkinnedAnimationClips(const ClipTable& table) { m_skinnedAnimationClips = table; m_hasSkinnedClip = table.getCount() != 0; }
+				void setMaterialAnimationClips(const MtrlClipTable& table) { m_mtrlAnimationClips = table; m_hasMtrlClip = table.getCount() != 0; }
 				
 
-				///** Bindpose matrices for each bone in the skeleton,
-				//	relative to the parent bone.
-				//*/
-				//const List<Matrix>& getBindPose() const { return m_bindPose; }
-				///** Vertex to bonespace transforms for each bone in the skeleton.
-				//*/
-				//const List<Matrix>& getInvBindPose() const { return m_invBindPose; }
-				///** For each bone in the skeleton, stores the index of the parent bone.
-				//*/
-				//const List<int32>& getSkeletonHierarchy() const { return m_skeletonHierarchy; }
-
-				/**
-				 *  Load animation data from a Tagged Data Block
-				 */
+				/**  Load animation data from a Tagged Data Block  */
 				void ReadData(TaggedDataReader* data);
 				TaggedDataWriter* WriteData() const;
 
 
 				void Load(const ResourceLocation& rl);
-				void Save(Stream* strm) const;
+				void Save(Stream& strm) const;
 
 				AnimationData()
-					: m_hasSkinnedClip(false), m_hasRigidClip(false), m_hasMtrlClip(false), 
-					RigidEntityCount(0), m_rootBone(-1)
-				{
-
-				}
-
-				//AnimationData(
-				//	const ClipTable& modelAnimationClips, 
-				//	const ClipTable& rootAnimationClips,
-				//	const MtrlClipTable& mtrlAnimationClip,
-				//	const vector<Matrix>& bindPose,
-				//	const vector<Matrix>& inverseBindPose,
-				//	const vector<int32>& skeletonHierarchy)
-				//	: m_modelAnimationClips(m_modelAnimationClips),m_rootAnimationClips(rootAnimationClips),
-				//	m_mtrlAnimationClips(mtrlAnimationClip), m_bindPose(bindPose), m_invBindPose(inverseBindPose),
-				//	m_skeletonHierarchy(skeletonHierarchy)
-				//{
-
-				//}
+				{ }
 
 				~AnimationData();
+
+				AnimationData(const AnimationData&) = delete;
+				AnimationData& operator=(const AnimationData&) = delete;
+
+				int RigidEntityCount = 0;
 
 			private:
 				ClipTable m_rigidAnimationClips;
 				ClipTable m_skinnedAnimationClips;
 				MtrlClipTable m_mtrlAnimationClips;
 
-				//bool m_hasBindPose;
-				//bool m_hasSkeleton;
-				bool m_hasMtrlClip;
-				bool m_hasSkinnedClip;
-				bool m_hasRigidClip;
+				bool m_hasMtrlClip = false;
+				bool m_hasSkinnedClip = false;
+				bool m_hasRigidClip = false;
 
 
 				List<Bone> m_bones;
-				int32 m_rootBone;
+				int32 m_rootBone = -1;
 
 			};
 		}

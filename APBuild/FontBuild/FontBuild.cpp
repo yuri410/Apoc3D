@@ -171,36 +171,36 @@ namespace APBuild
 		BuildSystem::LogEntryProcessed(config.DestFile, hierarchyPath);
 	}
 
-	void FontBuild::BuildGlyphAvailabilityRanges(const String& hierarchyPath,  const ConfigurationSection* sect)
+	void FontBuild::BuildGlyphAvailabilityRanges(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		String srcFile = sect->getAttribute(L"SourceFile");
 		String dstFile = sect->getAttribute(L"DestinationFile");
 
 		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(dstFile));
-		
+
 		FT_Library library;
-		if (FT_Init_FreeType( &library )) 
+		if (FT_Init_FreeType(&library))
 			throw std::runtime_error("FT_Init_FreeType failed");
-		
+
 		std::string name = StringUtils::toPlatformNarrowString(srcFile);
 		FT_Face face;
-		if (FT_New_Face( library, name.c_str(), 0, &face )) 
+		if (FT_New_Face(library, name.c_str(), 0, &face))
 			throw std::runtime_error("FT_New_Face failed (there is probably a problem with your font file)");
 
-		FT_Select_Charmap(face, FT_ENCODING_UNICODE );
+		FT_Select_Charmap(face, FT_ENCODING_UNICODE);
 
 		List<std::pair<FT_UInt, FT_UInt>> regions;
 		FT_UInt lastIdx = 0;
-		for (uint i=0;i<65535;i++)
+		for (uint i = 0; i < 65535; i++)
 		{
 			FT_UInt idx = FT_Get_Char_Index(face, i);
-			
+
 			if (idx == 0)
 			{
 				if (i - lastIdx > 1)
 				{
 					// put session
-					regions.Add(std::make_pair(lastIdx+1, i-1));
+					regions.Add(std::make_pair(lastIdx + 1, i - 1));
 				}
 				lastIdx = i;
 			}
@@ -210,19 +210,16 @@ namespace APBuild
 		FT_Done_Face(face);
 		FT_Done_FreeType(library);
 
-		FileOutStream* fs = new FileOutStream(dstFile);
-		BinaryWriter* bw = new BinaryWriter(fs);
-		
-		bw->WriteInt32(regions.getCount());
+		FileOutStream fs(dstFile);
+		BinaryWriter bw(&fs, false);
 
-		for (int i=0;i<regions.getCount();i++)
+		bw.WriteInt32(regions.getCount());
+
+		for (int i = 0; i < regions.getCount(); i++)
 		{
-			bw->WriteUInt32(regions[i].first);
-			bw->WriteUInt32(regions[i].second);
+			bw.WriteUInt32(regions[i].first);
+			bw.WriteUInt32(regions[i].second);
 		}
-
-		bw->Close();
-		delete bw;
 
 		BuildSystem::LogEntryProcessed(dstFile, hierarchyPath);
 	}
@@ -240,32 +237,32 @@ namespace APBuild
 		FontRenderInfo info;
 		RenderGlyphsByFreeType(StringUtils::toPlatformNarrowString(config.SourceFile), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
 
-		FileOutStream* fs = new FileOutStream(config.DestIndexFile);
-		BinaryWriter* bw = new BinaryWriter(fs);
+		FileOutStream fs(config.DestIndexFile);
+		BinaryWriter bw(&fs, false);
 
-		bw->WriteInt32(FIDXFileID);
-		bw->WriteInt32(0); // version
+		bw.WriteInt32(FIDXFileID);
+		bw.WriteInt32(0); // version
 
-		bw->WriteInt32(charMap.getCount());
-		bw->WriteSingle(info.Height);
-		bw->WriteSingle(info.LineGap);
-		bw->WriteSingle(-info.Ascender);
-		bw->WriteSingle(-info.Descender);
-		bw->WriteSingle((float)config.GlyphMargin);
-		bw->WriteSingle((float)config.GlyphMargin);
+		bw.WriteInt32(charMap.getCount());
+		bw.WriteSingle(info.Height);
+		bw.WriteSingle(info.LineGap);
+		bw.WriteSingle(-info.Ascender);
+		bw.WriteSingle(-info.Descender);
+		bw.WriteSingle((float)config.GlyphMargin);
+		bw.WriteSingle((float)config.GlyphMargin);
 
 		// char to glyph mapping
 		for (int i=0;i<charMap.getCount();i++)
 		{
-			bw->WriteInt32(charMap[i].Character);
-			bw->WriteInt32(charMap[i].GlyphIndex);
+			bw.WriteInt32(charMap[i].Character);
+			bw.WriteInt32(charMap[i].GlyphIndex);
 
-			bw->WriteInt16(charMap[i].Left);
-			bw->WriteInt16(charMap[i].Top);
-			bw->WriteSingle(charMap[i].AdvanceX);
+			bw.WriteInt16(charMap[i].Left);
+			bw.WriteInt16(charMap[i].Top);
+			bw.WriteSingle(charMap[i].AdvanceX);
 		}
 
-		bw->WriteInt32(glyphHashTable.getCount());
+		bw.WriteInt32(glyphHashTable.getCount());
 
 
 		int maxGWidth = 0;
@@ -295,14 +292,14 @@ namespace APBuild
 			for (GlyphBitmapTable::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
 			{
 				const GlyphBitmap* g = &i.getCurrentKey();
-				bw->WriteInt32(g->Index);
-				bw->WriteInt32(g->Width + config.GlyphMargin*2);
-				bw->WriteInt32(g->Height + config.GlyphMargin*2);
+				bw.WriteInt32(g->Index);
+				bw.WriteInt32(g->Width + config.GlyphMargin*2);
+				bw.WriteInt32(g->Height + config.GlyphMargin*2);
 
 				int32 regionX = xPos * cellWidth;
 				int32 regionY = yPos * cellHeight;
-				bw->WriteInt32(regionX);
-				bw->WriteInt32(regionY);
+				bw.WriteInt32(regionX);
+				bw.WriteInt32(regionY);
 
 				regionX += config.GlyphMargin;
 				regionY += config.GlyphMargin;
@@ -365,9 +362,6 @@ namespace APBuild
 
 			packedMap.UnlockBits(&bmpData);
 		}
-		
-		bw->Close();
-		delete bw;
 
 		CLSID pngClsid;
 		GetEncoderClsid(L"image/png", &pngClsid);
@@ -399,10 +393,10 @@ namespace APBuild
 		FontRenderInfo info;
 		renderer(StringUtils::toPlatformNarrowString(config.SourceFile), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
 
-		FileOutStream* fs = new FileOutStream(config.DestFile);
-		BinaryWriter* bw = new BinaryWriter(fs);
+		FileOutStream fs(config.DestFile);
+		BinaryWriter bw(&fs, false);
 
-		bw->WriteUInt32(0xffffff02U); // new version id
+		bw.WriteUInt32(0xffffff02U); // new version id
 
 		uint32 flags = 0;
 		if (info.HasLuminance)
@@ -410,60 +404,60 @@ namespace APBuild
 		if (info.HasDrawOffset)
 			flags |= 2;
 
-		bw->WriteUInt32(flags);
+		bw.WriteUInt32(flags);
 
-		bw->WriteInt32(charMap.getCount());
-		bw->WriteSingle(info.Height);
-		bw->WriteSingle(info.LineGap);
-		bw->WriteSingle(-info.Ascender);
-		bw->WriteSingle(-info.Descender);
+		bw.WriteInt32(charMap.getCount());
+		bw.WriteSingle(info.Height);
+		bw.WriteSingle(info.LineGap);
+		bw.WriteSingle(-info.Ascender);
+		bw.WriteSingle(-info.Descender);
 		if (info.HasDrawOffset)
 		{
-			bw->WriteSingle(info.DrawOffset[0]);
-			bw->WriteSingle(info.DrawOffset[1]);
+			bw.WriteSingle(info.DrawOffset[0]);
+			bw.WriteSingle(info.DrawOffset[1]);
 		}
 
 		for (int i=0;i<charMap.getCount();i++)
 		{
-			bw->WriteInt32(charMap[i].Character);
-			bw->WriteInt32(charMap[i].GlyphIndex);
+			bw.WriteInt32(charMap[i].Character);
+			bw.WriteInt32(charMap[i].GlyphIndex);
 
-			bw->WriteInt16(charMap[i].Left);
-			bw->WriteInt16(charMap[i].Top);
-			bw->WriteSingle(charMap[i].AdvanceX);
+			bw.WriteInt16(charMap[i].Left);
+			bw.WriteInt16(charMap[i].Top);
+			bw.WriteSingle(charMap[i].AdvanceX);
 		}
 
-		bw->WriteInt32(glyphHashTable.getCount());
-		int64 glyRecPos = fs->getPosition();
+		bw.WriteInt32(glyphHashTable.getCount());
+		int64 glyRecPos = fs.getPosition();
 		for (int i=0;i<glyphHashTable.getCount();i++)
 		{
-			bw->WriteInt32((int32)0);
-			bw->WriteInt32((int32)0);
-			bw->WriteInt32((int32)0);
-			bw->WriteInt64((int64)0);
+			bw.WriteInt32((int32)0);
+			bw.WriteInt32((int32)0);
+			bw.WriteInt32((int32)0);
+			bw.WriteInt64((int64)0);
 		}
-		int64 baseOfs = fs->getPosition();
+		int64 baseOfs = fs.getPosition();
 
 		for (GlyphBitmapTable::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
 		{
 			const GlyphBitmap* g = &i.getCurrentKey();
 
 			if (info.HasLuminance)
-				bw->Write(g->PixelData, g->Width * g->Height * 2);
+				bw.Write(g->PixelData, g->Width * g->Height * 2);
 			else
-				bw->Write(g->PixelData, g->Width * g->Height);
+				bw.Write(g->PixelData, g->Width * g->Height);
 		}
 
-		fs->Seek(glyRecPos, SEEK_Begin);
+		fs.Seek(glyRecPos, SeekMode::Begin);
 
 		for (GlyphBitmapTable::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
 		{
 			const GlyphBitmap* g = &i.getCurrentKey();
 
-			bw->WriteInt32((int32)g->Index);
-			bw->WriteInt32((int32)g->Width);
-			bw->WriteInt32((int32)g->Height);
-			bw->WriteInt64((int64)baseOfs);
+			bw.WriteInt32((int32)g->Index);
+			bw.WriteInt32((int32)g->Width);
+			bw.WriteInt32((int32)g->Height);
+			bw.WriteInt64((int64)baseOfs);
 
 			if (info.HasLuminance)
 				baseOfs += g->Width * g->Height * 2;
@@ -472,9 +466,6 @@ namespace APBuild
 
 			delete[] g->PixelData;
 		}
-
-		bw->Close();
-		delete bw;
 	}
 
 	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, bool antiAlias,
@@ -622,22 +613,23 @@ namespace APBuild
 		Gdiplus::Rect lr( 0, 0, packedMap->GetWidth(), packedMap->GetHeight() );
 		Gdiplus::Status ret = packedMap->LockBits(&lr, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpData);
 
-		BinaryReader* br = new BinaryReader(new FileStream(idxFile));
+		FileStream fs(idxFile);
+		BinaryReader br(&fs, false);
 
-		int32 fid = br->ReadInt32();
+		int32 fid = br.ReadInt32();
 		assert(fid == FIDXFileID);
 
-		br->ReadInt32();
+		br.ReadInt32();
 
-		int32 charCount = br->ReadInt32();
+		int32 charCount = br.ReadInt32();
 		charMap.ReserveDiscard(charCount);
 
-		resultInfo.Height = br->ReadSingle();
-		resultInfo.LineGap = br->ReadSingle();
-		resultInfo.Ascender = -br->ReadSingle();
-		resultInfo.Descender = -br->ReadSingle();
-		resultInfo.DrawOffset[0] = br->ReadSingle();
-		resultInfo.DrawOffset[1] = br->ReadSingle();
+		resultInfo.Height = br.ReadSingle();
+		resultInfo.LineGap = br.ReadSingle();
+		resultInfo.Ascender = -br.ReadSingle();
+		resultInfo.Descender = -br.ReadSingle();
+		resultInfo.DrawOffset[0] = br.ReadSingle();
+		resultInfo.DrawOffset[1] = br.ReadSingle();
 
 		resultInfo.HasLuminance = true;
 		resultInfo.HasDrawOffset = true;
@@ -645,24 +637,24 @@ namespace APBuild
 		for (int i=0;i<charCount;i++)
 		{
 			CharMapping& cm = charMap[i];
-			cm.Character = br->ReadInt32();
-			cm.GlyphIndex = br->ReadInt32();
-			cm.Left = br->ReadInt16();
-			cm.Top = br->ReadInt16();
-			cm.AdvanceX = br->ReadSingle();
+			cm.Character = br.ReadInt32();
+			cm.GlyphIndex = br.ReadInt32();
+			cm.Left = br.ReadInt16();
+			cm.Top = br.ReadInt16();
+			cm.AdvanceX = br.ReadSingle();
 		}
 
-		int32 glyphCount = br->ReadInt32();
+		int32 glyphCount = br.ReadInt32();
 		glyphHashTable.Resize(glyphCount);
 
 		for (int k=0;k<glyphCount;k++)
 		{
-			int32 gbIndex = br->ReadInt32();
-			int32 gbWidth = br->ReadInt32();
-			int32 gbHeight = br->ReadInt32();
+			int32 gbIndex = br.ReadInt32();
+			int32 gbWidth = br.ReadInt32();
+			int32 gbHeight = br.ReadInt32();
 			
-			int rx = br->ReadInt32();
-			int ry = br->ReadInt32();
+			int rx = br.ReadInt32();
+			int ry = br.ReadInt32();
 
 			char* pixelData = new char[gbWidth * gbHeight * 2];
 
@@ -695,7 +687,6 @@ namespace APBuild
 
 		packedMap->UnlockBits(&bmpData);
 		delete packedMap;
-		delete br;
 	}
 
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)

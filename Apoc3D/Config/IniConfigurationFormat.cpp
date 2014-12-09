@@ -134,11 +134,11 @@ namespace Apoc3D
 
 			return config;
 		}
-		void IniConfigurationFormat::Save(Configuration* config, Stream* strm)
+		void IniConfigurationFormat::Save(Configuration* config, Stream& strm)
 		{
 			bool firstSection = true;
 			String resultBuffer;
-			for (Configuration::ChildTable::Enumerator e1 = config->GetEnumerator(); e1.MoveNext();)
+			for (ConfigurationSection* sect : config->getSubSections())
 			{
 				if (!firstSection)
 				{
@@ -146,26 +146,21 @@ namespace Apoc3D
 				}
 
 				resultBuffer.append(1, '[');
-				resultBuffer.append(e1.getCurrentKey());
+				resultBuffer.append(sect->getName());
 				resultBuffer.append(L"]\n");
 
 				firstSection = false;
 
-				ConfigurationSection* sect = e1.getCurrentValue();
-				for (ConfigurationSection::SubSectionEnumerator e2 = sect->GetSubSectionEnumrator();e2.MoveNext();)
+				for (ConfigurationSection* ss : sect->getSubSections())
 				{
-					resultBuffer.append(e2.getCurrentKey());
+					resultBuffer.append(ss->getName());
 					resultBuffer.append(L" = ");
-					resultBuffer.append(e2.getCurrentValue()->getValue());
+					resultBuffer.append(ss->getValue());
 					resultBuffer.append(L"\n");
 				}
 			}
 
-			Encoding::WriteAllText(*strm, resultBuffer, Encoding::TEC_UTF8);
-
-
-			strm->Close();
-			delete strm;
+			Encoding::WriteAllText(strm, resultBuffer, Encoding::TEC_UTF8);
 		}
 	}
 }

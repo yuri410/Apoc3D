@@ -46,7 +46,7 @@ namespace Apoc3D
 			static ABCConfigurationFormat Instance;
 
 			virtual Configuration* Load(const ResourceLocation& rl) override;
-			virtual void Save(Configuration* config, Stream* strm) override;
+			virtual void Save(Configuration* config, Stream& strm) override;
 
 			List<String> GetSupportedFileSystemExtensions() override
 			{

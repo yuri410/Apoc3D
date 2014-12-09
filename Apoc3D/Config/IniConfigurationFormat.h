@@ -36,16 +36,14 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		/**
-		 *  a xml format configuration storing as described in Configuration
-		 */
+		/** INI format configuration storing as described in Configuration */
 		class APAPI IniConfigurationFormat : public ConfigurationFormat
 		{
 		public:
 			static IniConfigurationFormat Instance;
 
 			virtual Configuration* Load(const ResourceLocation& rl) override;
-			virtual void Save(Configuration* config, Stream* strm) override;
+			virtual void Save(Configuration* config, Stream& strm) override;
 
 			List<String> GetSupportedFileSystemExtensions() override
 			{

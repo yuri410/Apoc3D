@@ -68,15 +68,13 @@ namespace Apoc3D
 				LogManager::getSingleton().Write(LOG_System, L"Invalid Apoc3D Binary Config format " + rl.getName(), LOGLVL_Error);
 			}
 
-			br.Close();
-			
 			return config;
 		}
-		void ABCConfigurationFormat::Save(Configuration* config, Stream* strm)
+		void ABCConfigurationFormat::Save(Configuration* config, Stream& strm)
 		{
-			BinaryWriter bw(strm);
+			BinaryWriter bw(&strm, false);
 
-			bw.WriteInt32(static_cast<int>(FileID));
+			bw.WriteInt32(FileID);
 
 			TaggedDataWriter* root = new TaggedDataWriter(true);
 
@@ -86,14 +84,12 @@ namespace Apoc3D
 
 				SaveNode(sect, bw2);
 
-				bw2->Close();
 				delete bw2;
 			}
 
 			bw.WriteTaggedDataBlock(root);
 			delete root;
 
-			bw.Close();
 		}
 
 		void ABCConfigurationFormat::SaveNode(ConfigurationSection* section, BinaryWriter* bw)
@@ -102,17 +98,17 @@ namespace Apoc3D
 			TaggedDataWriter* localValues = new TaggedDataWriter(true);
 			{
 				localValues->AddEntryString("Value", section->getValue());
-				
-				if (section->getAttributeCount()>0)
+
+				if (section->getAttributeCount() > 0)
 				{
 					BinaryWriter* bw2 = localValues->AddEntry("Attributes");
 					bw2->WriteInt32(static_cast<int32>(section->getAttributeCount()));
-					for (ConfigurationSection::AttributeEnumerator e = section->GetAttributeEnumrator();e.MoveNext();)
+					for (auto e : section->getAttributes())
 					{
-						bw2->WriteString(e.getCurrentKey());
-						bw2->WriteString(e.getCurrentValue());
+						bw2->WriteString(e.Key);
+						bw2->WriteString(e.Value);
 					}
-					bw2->Close();
+
 					delete bw2;
 				}
 			}
@@ -123,14 +119,12 @@ namespace Apoc3D
 
 			TaggedDataWriter* subTreeData = new TaggedDataWriter(true);
 			{
-				for (ConfigurationSection::SubSectionEnumerator e = section->GetSubSectionEnumrator(); e.MoveNext();)
+				for (ConfigurationSection* sect : section->getSubSections())
 				{
-					ConfigurationSection* sect = e.getCurrentValue();
 					BinaryWriter* bw2 = subTreeData->AddEntry(StringUtils::UTF16toUTF8(sect->getName()));
 
 					SaveNode(sect, bw2);
 
-					bw2->Close();
 					delete bw2;
 				}
 			}
@@ -145,13 +139,12 @@ namespace Apoc3D
 			List<std::string> tagNames;
 			doc->FillTagList(tagNames); 
 
-			for (int i=0;i<tagNames.getCount();i++)
+			for (int i = 0; i < tagNames.getCount(); i++)
 			{
 				BinaryReader* br = doc->GetData(tagNames[i]);
 
 				BuildNode(config, tagNames[i], br, nullptr);
 
-				br->Close();
 				delete br;
 			}
 		}
@@ -177,7 +170,7 @@ namespace Apoc3D
 						String val = br2->ReadString();
 						section->AddAttributeString(key, val);
 					}
-					br2->Close();
+
 					delete br2;
 				}
 			}
@@ -189,13 +182,12 @@ namespace Apoc3D
 				List<std::string> tagNames;
 				subTreeData->FillTagList(tagNames); 
 
-				for (int i=0;i<tagNames.getCount();i++)
+				for (int i = 0; i < tagNames.getCount(); i++)
 				{
 					BinaryReader* br2 = subTreeData->GetData(tagNames[i]);
 
 					BuildNode(config, tagNames[i], br2, section);
 
-					br2->Close();
 					delete br2;
 				}
 			}

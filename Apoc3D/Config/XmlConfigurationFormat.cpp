@@ -60,7 +60,7 @@ namespace Apoc3D
 
 			return config;
 		}
-		void XMLConfigurationFormat::Save(Configuration* config, Stream* strm)
+		void XMLConfigurationFormat::Save(Configuration* config, Stream& strm)
 		{
 			TiXmlDocument doc;
 			TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "", "");
@@ -76,8 +76,7 @@ namespace Apoc3D
 				SaveNode(elem, sect);
 			}
 
-			doc.Save(*strm);
-			delete strm;
+			doc.Save(strm);
 		}
 
 		void XMLConfigurationFormat::BuildNode(Configuration* config, const TiXmlNode* node, ConfigurationSection* parent, const TiXmlDocument& doc)
@@ -132,7 +131,7 @@ namespace Apoc3D
 			const TiXmlNode* i = doc->FirstChildElement();
 			if (i)
 			{
-				for (const TiXmlNode* j = i->FirstChild(); j!=0; j=j->NextSibling())
+				for (const TiXmlNode* j = i->FirstChild(); j != 0; j = j->NextSibling())
 				{
 					BuildNode(config, j, nullptr, *doc);
 				}
@@ -141,9 +140,9 @@ namespace Apoc3D
 
 		void XMLConfigurationFormat::SaveNode(TiXmlNode* node, ConfigurationSection* parent)
 		{
-			for (ConfigurationSection::AttributeEnumerator iter = parent->GetAttributeEnumrator();iter.MoveNext();)
+			for (auto e : parent->getAttributes())
 			{
-				node->ToElement()->SetAttribute(iter.getCurrentKey(), iter.getCurrentValue());
+				node->ToElement()->SetAttribute(e.Key, e.Value);
 			}
 			
 			for (ConfigurationSection* s : parent->getSubSections())

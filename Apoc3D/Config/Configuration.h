@@ -43,7 +43,7 @@ namespace Apoc3D
 		{
 		public:
 			virtual Configuration* Load(const ResourceLocation& rl) = 0;
-			virtual void Save(Configuration* config, Stream* strm) = 0;
+			virtual void Save(Configuration* config, Stream& strm) = 0;
 
 			virtual List<String> GetSupportedFileSystemExtensions() = 0;
 		};

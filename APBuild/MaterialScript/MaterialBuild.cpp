@@ -63,22 +63,21 @@ namespace APBuild
 
 		HashMap<String, Pallet*> palColors;
 		
-		for (ConfigurationSection::SubSectionEnumerator e = palSect->GetSubSectionEnumrator(); e.MoveNext();)
+		for (ConfigurationSection* subSect : palSect->getSubSections())
 		{
-			const String& palName = e.getCurrentKey();
+			const String& palName = subSect->getName();
 
 			Pallet* p = new Pallet();
 			p->Name = palName;
 
 			palColors.Add(palName, p);
 
-			ConfigurationSection* subSect = e.getCurrentValue();
-			for (ConfigurationSection::SubSectionEnumerator e1 = subSect->GetSubSectionEnumrator(); e1.MoveNext();)
+			for (ConfigurationSection* ss : subSect->getSubSections())
 			{
 				PalletColor pc;
 
-				pc.Color = ResolveColor4(e1.getCurrentValue()->getValue(), palColors);
-				pc.Name = e1.getCurrentKey();
+				pc.Color = ResolveColor4(ss->getValue(), palColors);
+				pc.Name = ss->getName();
 				p->Colors.Add(pc);
 			}
 
@@ -90,31 +89,31 @@ namespace APBuild
 		ConfigurationSection* mSect = config->get(L"Materials");
 		HashMap<String, MaterialData*> mtrlTable;
 
-		for (ConfigurationSection::SubSectionEnumerator e = mSect->GetSubSectionEnumrator(); e.MoveNext();)
+		for (ConfigurationSection* ss : mSect->getSubSections())
 		{
-			ParseMaterialTree(mtrlTable, 0, L"", e.getCurrentValue(), palColors);
+			ParseMaterialTree(mtrlTable, 0, L"", ss, palColors);
 		}
 
 		delete config;
 
 		Configuration* tokenFile = new Configuration(L"MtrlToken");
-		for (HashMap<String, MaterialData*>::Enumerator e = mtrlTable.GetEnumerator();e.MoveNext();)
+		for (const String& key : mtrlTable.getKeyAccessor())
 		{
-			ConfigurationSection* s = new ConfigurationSection(e.getCurrentKey());
+			ConfigurationSection* s = new ConfigurationSection(key);
 			tokenFile->Add(s);
 		}
 		//tokenFile->Save(desinationToken);
-		XMLConfigurationFormat::Instance.Save(tokenFile, new FileOutStream(desinationToken));
+		XMLConfigurationFormat::Instance.Save(tokenFile, FileOutStream(desinationToken));
 		delete tokenFile;
 
-		for (HashMap<String, MaterialData*>::Enumerator e = mtrlTable.GetEnumerator();e.MoveNext();)
+		for (auto e : mtrlTable)
 		{
-			String destPath = PathUtils::Combine(destination, e.getCurrentKey());
+			String destPath = PathUtils::Combine(destination, e.Key);
 			destPath.append(L".mtrl");
 
-			MaterialData* md = e.getCurrentValue();
-			FileOutStream* fos = new FileOutStream(destPath);
-			md->Save(fos);
+			MaterialData* md = e.Value;
+
+			md->Save(FileOutStream(destPath));
 
 			delete md;
 			//BuildSystem::LogInformation(e.getCurrentKey(), L">");
@@ -207,12 +206,12 @@ namespace APBuild
 		}
 
 		String effString;
-		if (sect->tryGetAttribute(L"Effect",effString))
+		if (sect->tryGetAttribute(L"Effect", effString))
 		{
 			List<String> defs;
 			StringUtils::Split(effString, defs, L";");
 
-			for (int32 i=0;i<defs.getCount();i++)
+			for (int32 i = 0; i < defs.getCount(); i++)
 			{
 				List<String> lr;
 				StringUtils::Split(defs[i], lr, L":");
@@ -227,12 +226,12 @@ namespace APBuild
 					int ord = StringUtils::ParseInt32(lr[0].substr(1));
 					String name = lr[1];
 
-					if (!newNode->EffectName.Contains(ord-1))
-						newNode->EffectName.Add(ord-1, name);
+					if (!newNode->EffectName.Contains(ord - 1))
+						newNode->EffectName.Add(ord - 1, name);
 					else
-						newNode->EffectName[ord-1] = name;
+						newNode->EffectName[ord - 1] = name;
 				}
-				
+
 			}
 		}
 
