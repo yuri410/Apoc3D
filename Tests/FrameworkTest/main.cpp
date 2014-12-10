@@ -63,23 +63,6 @@ void main()
 	//std::wcout << s.c_str() << L"\n";
 	//std::wcout << std::numeric_limits<float>::digits10+1 << L"\n";
 
-	
-	BinaryReader br(0, 0);
-	br.ReadTaggedDataBlock({ [](TaggedDataReader* data)
-	{
-
-	} });
-	
-	/*std::function<TaggedDataWriter*> ff = [](TaggedDataReader* data)
-	{
-
-	};*/
-
-	/*fastdelegate::FastDelegate1<TaggedDataWriter*> f = [](TaggedDataReader* data)
-	{
-
-	};
-	*/
 
 	FileSystem::Initialize();
 	wchar_t workingDir[260];
@@ -153,7 +136,7 @@ void TestTaggedData()
 	outData->AddEntryViewport("Viewport", (Viewport*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Viewport));
 
 	MemoryOutStream* buffer = new MemoryOutStream(0xffff);
-	outData->Save(VirtualStream(buffer));
+	outData->Save(*buffer);
 	buffer->setPosition(0);
 	char tempBuffer[1024];
 	TaggedDataReader* inData = new TaggedDataReader(buffer);

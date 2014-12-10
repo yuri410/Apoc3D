@@ -65,8 +65,8 @@ namespace Apoc3D
 			m_sizeInBytes = (uint32)strm->getLength();
 			m_endianIndependent = strm->IsReadEndianIndependent();
 
-			VirtualStream baseStrm(strm, 0, strm->getLength());
-			BinaryReader br(&baseStrm, false);
+			//VirtualStream baseStrm(strm, 0, strm->getLength());
+			BinaryReader br(strm, false);
 
 			uint32 firstInt = br.ReadUInt32();
 			if ((firstInt & 0x80000000U) == 0x80000000U)
@@ -1701,9 +1701,9 @@ namespace Apoc3D
 			Entry ent = Entry(name);
 			m_positions.Add(name, ent);
 
-			VirtualStream vs(ent.Buffer, 0);
+			//VirtualStream vs(ent.Buffer, 0);
 			{
-				BinaryWriter bw(&vs, false);
+				BinaryWriter bw(ent.Buffer, false);
 				func(&bw);
 			}
 		}
@@ -1713,8 +1713,8 @@ namespace Apoc3D
 			Entry ent = Entry(name);
 			m_positions.Add(name, ent);
 
-			VirtualStream vs(ent.Buffer, 0);
-			func(&vs);
+			//VirtualStream vs(ent.Buffer, 0);
+			func(ent.Buffer);
 		}
 
 		void TaggedDataWriter::AddEntryDataSection(const KeyType& name, FunctorReference<void(TaggedDataWriter*)> func)
@@ -2086,8 +2086,8 @@ namespace Apoc3D
 		}
 		void TaggedDataWriter::_SetEntryDataString(const Entry& ent, const String& str)
 		{
-			VirtualStream vs(ent.Buffer, 0);
-			BinaryWriter bw(&vs, false);
+			//VirtualStream vs(ent.Buffer, 0);
+			BinaryWriter bw(ent.Buffer, false);
 
 			bw.WriteString(str);
 		}
@@ -2331,8 +2331,8 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataColor4(const Entry& ent, const Color4* clr, int32 count)		{ for (int32 i=0;i<count;i++) _SetEntryDataColor4(ent, clr[i]); }
 		void TaggedDataWriter::_SetEntryDataString(const Entry& ent, const String* str, int32 count)
 		{
-			VirtualStream vs(ent.Buffer, 0);
-			BinaryWriter bw(&vs, false);
+			//VirtualStream vs(ent.Buffer, 0);
+			BinaryWriter bw(ent.Buffer, false);
 
 			for (int32 i = 0; i < count; i++)
 				bw.WriteString(str[i]);

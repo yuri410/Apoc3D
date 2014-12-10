@@ -336,7 +336,7 @@ namespace Apoc3D
 			WriteUInt32(zeroSize);
 
 			int64 start = m_baseStream->getPosition();
-			data->Save(VirtualStream(m_baseStream, m_baseStream->getPosition()));
+			data->Save(*m_baseStream);//VirtualStream(m_baseStream, m_baseStream->getPosition()));
 
 			int64 end = m_baseStream->getPosition();
 
