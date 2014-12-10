@@ -25,7 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "apoc3d/Engine.h"
 
 #pragma comment(lib, "Apoc3D.lib")
 #pragma comment(lib, "Apoc3D.D3D9RenderSystem.lib")
@@ -36,8 +35,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 namespace dip
 {
 	class DIP1;
-};
 
-using namespace Apoc3D;
+	class FreqDomainFilter;
+	struct Complex;
+
+	class SubDemo;
+};
 
 #endif

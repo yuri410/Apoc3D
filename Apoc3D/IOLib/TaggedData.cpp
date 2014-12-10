@@ -218,16 +218,18 @@ namespace Apoc3D
 			}
 		}
 
-		bool TaggedDataReader::TryProcessData(const KeyType& name, FunctorReference<void(TaggedDataReader*)> f) const
+		bool TaggedDataReader::TryProcessDataSection(const KeyType& name, FunctorReference<void(TaggedDataReader*)> f) const
 		{
-			return TryProcessData(name, FunctorReference < void(BinaryReader*) > {
-				[f](BinaryReader* br) { br->ReadTaggedDataBlock(f, false); }
+			return TryProcessData(name, [f](BinaryReader* br) 
+			{
+				br->ReadTaggedDataBlock(f, false); 
 			});
 		}
-		void TaggedDataReader::ProcessData(const KeyType& name, FunctorReference<void(TaggedDataReader*)> f) const
+		void TaggedDataReader::ProcessDataSection(const KeyType& name, FunctorReference<void(TaggedDataReader*)> f) const
 		{
-			ProcessData(name, FunctorReference < void(BinaryReader*) > {
-				[f](BinaryReader* br) { br->ReadTaggedDataBlock(f, false); }
+			ProcessData(name, [f](BinaryReader* br) 
+			{
+				br->ReadTaggedDataBlock(f, false); 
 			});
 		}
 
@@ -1715,10 +1717,11 @@ namespace Apoc3D
 			func(&vs);
 		}
 
-		void TaggedDataWriter::AddEntry(const KeyType& name, FunctorReference<void(TaggedDataWriter*)> func)
+		void TaggedDataWriter::AddEntryDataSection(const KeyType& name, FunctorReference<void(TaggedDataWriter*)> func)
 		{
-			AddEntry(name, FunctorReference < void(BinaryWriter*) > { 
-				[func](BinaryWriter* bw) { bw->WriteTaggedDataBlock(func); }
+			AddEntry(name, [func](BinaryWriter* bw) 
+			{
+				bw->WriteTaggedDataBlock(func);
 			});
 		}
 

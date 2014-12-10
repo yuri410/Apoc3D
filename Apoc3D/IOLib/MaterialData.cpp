@@ -96,7 +96,7 @@ namespace Apoc3D
 			//m_customParametrs.reserve(cmpCount);
 			CustomParametrs.Resize(cmpCount);
 
-			for (uint32 i=0;i<cmpCount;i++)
+			for (uint32 i = 0; i < cmpCount; i++)
 			{
 				std::string tag = StringUtils::UIntToNarrowString(i);
 				tag = TAG_3_CustomParam + tag;
@@ -120,7 +120,7 @@ namespace Apoc3D
 				bool hasTexture[MaxTextures];
 				data->GetDataBool(TAG_3_HasTexture, hasTexture, MaxTextures);
 
-				for (int32 i=0;i<MaxTextures;i++)
+				for (int32 i = 0; i < MaxTextures; i++)
 				{
 					if (hasTexture[i])
 					{
@@ -144,7 +144,7 @@ namespace Apoc3D
 				bool hasEffect[MaxScenePass];
 				data->GetDataBool(TAG_3_HasEffect, hasEffect, MaxScenePass);
 
-				for (int32 i=0;i<MaxScenePass;i++)
+				for (int32 i = 0; i < MaxScenePass; i++)
 				{
 					if (hasEffect[i])
 					{
@@ -194,7 +194,16 @@ namespace Apoc3D
 
 			// load material basic color
 			{
-				BinaryReader* br = data->GetData(TAG_3_MaterialColorTag);
+				data->ProcessData(TAG_3_MaterialColorTag, [this](BinaryReader* br)
+				{
+					br->ReadColor4(Ambient);
+					br->ReadColor4(Diffuse);
+					br->ReadColor4(Emissive);
+					br->ReadColor4(Specular);
+					Power = br->ReadSingle();
+				});
+
+				/*BinaryReader* br = data->GetData(TAG_3_MaterialColorTag);
 
 				br->ReadColor4(Ambient);
 				br->ReadColor4(Diffuse);
@@ -202,7 +211,7 @@ namespace Apoc3D
 				br->ReadColor4(Specular);
 				Power = br->ReadSingle();
 
-				delete br;
+				delete br;*/
 			}
 
 			data->TryGetString(TAG_3_MaterialRefName, ExternalRefName);
@@ -218,10 +227,8 @@ namespace Apoc3D
 
 			data->AddEntryInt32(TAG_3_CustomParamCount, CustomParametrs.getCount());
 			int32 index = 0;
-			for (CustomParamTable::Enumerator e = CustomParametrs.GetEnumerator(); e.MoveNext();)
-			{				
-				const MaterialCustomParameter& mcp = e.getCurrentValue();
-
+			for (const MaterialCustomParameter& mcp : CustomParametrs.getValueAccessor())
+			{	
 				if (!EffectParameter::IsReference(mcp.Type))
 				{
 					std::string tag = StringUtils::IntToNarrowString(index++);

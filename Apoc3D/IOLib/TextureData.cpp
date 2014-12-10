@@ -48,6 +48,7 @@ namespace Apoc3D
 		const char Tag_Content[] = "Content";
 		const char Tag_LevelSize[] = "LevelSize";
 		
+		// v1
 		void TextureLevelData::LoadData(TaggedDataReader* data, bool doNotLoadContent, int32 flags)
 		{
 			Width = data->GetDataInt32(Tag1_Width);
@@ -99,6 +100,7 @@ namespace Apoc3D
 			delete strm;
 		}
 
+		// v2
 		void TextureLevelData::LoadData(BinaryReader& br, bool doNotLoadContent, int32 flags)
 		{
 			Width = br.ReadInt32();

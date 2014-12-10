@@ -87,25 +87,22 @@ namespace Apoc3D
 
 					for (int32 i = 0; i < frameCount; i++)
 					{
-						TaggedDataReader* matData = br->ReadTaggedDataBlock();
-
-						MaterialData* mtrl = new MaterialData();
-						mtrl->LoadData(matData);
-
-						if (i == 0)
+						br->ReadTaggedDataBlock([this, i, j](TaggedDataReader* matData)
 						{
-							Materials.Add(mtrl);
-						}
-						else
-						{
-							Materials.AddFrame(mtrl, j);
-						}
+							MaterialData* mtrl = new MaterialData();
+							mtrl->LoadData(matData);
 
-						matData->Close(true);
-						delete matData;
+							if (i == 0)
+							{
+								Materials.Add(mtrl);
+							}
+							else
+							{
+								Materials.AddFrame(mtrl, j);
+							}
+						});
 					}
 				}
-				
 
 				delete br;
 			}
@@ -115,9 +112,10 @@ namespace Apoc3D
 
 			if (data->Contains(TAG_3_BoundingSphereTag))
 			{
-				BinaryReader* br = data->GetData(TAG_3_BoundingSphereTag);
-				br->ReadBoundingSphere(BoundingSphere);
-				delete br;
+				data->ProcessData(TAG_3_BoundingSphereTag, [this](BinaryReader* br) 
+				{
+					br->ReadBoundingSphere(BoundingSphere);
+				});
 			}
 			else
 			{

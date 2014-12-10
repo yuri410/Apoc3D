@@ -69,8 +69,8 @@ namespace Apoc3D
 			bool TryProcessData(const KeyType& name, FunctorReference<void(BinaryReader*)> f) const;
 			void ProcessData(const KeyType& name, FunctorReference<void(BinaryReader*)> f) const;
 
-			bool TryProcessData(const KeyType& name, FunctorReference<void(TaggedDataReader*)> f) const;
-			void ProcessData(const KeyType& name, FunctorReference<void(TaggedDataReader*)> f) const;
+			bool TryProcessDataSection(const KeyType& name, FunctorReference<void(TaggedDataReader*)> f) const;
+			void ProcessDataSection(const KeyType& name, FunctorReference<void(TaggedDataReader*)> f) const;
 
 			Stream* GetDataStream(const KeyType& name) const;
 
@@ -427,7 +427,7 @@ namespace Apoc3D
 			void AddEntry(const KeyType& name, FunctorReference<void(BinaryWriter*)> func);
 			void AddEntryStream(const KeyType& name, FunctorReference<void(Stream*)> func);
 
-			void AddEntry(const KeyType& name, FunctorReference<void(TaggedDataWriter*)> func);
+			void AddEntryDataSection(const KeyType& name, FunctorReference<void(TaggedDataWriter*)> func);
 
 			void AddAuto(const KeyType& name, int64 value)	{ AddEntryInt64(name, value); }
 			void AddAuto(const KeyType& name, uint64 value)	{ AddEntryUInt64(name, value); }

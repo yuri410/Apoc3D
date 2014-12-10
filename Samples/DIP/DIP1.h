@@ -30,9 +30,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace dip
 {
-	class FreqDomainFilter;
-	struct Complex;
-
     class DIP1 : public Apoc3DEx::Game
 	{
 	public:
@@ -52,22 +49,12 @@ namespace dip
 		virtual void OnFrameStart();
 		virtual void OnFrameEnd();
 
-	private:
-		struct HistogramData
-		{
-			int PixelCount[256];
-			int TotalPixelCount;
-			int HighestPixelCount;
-		};
-		
-		void Work11(MenuItem* ctrl);
-		void Work11_Process(Button* ctrl);
-		void Work11_HG1(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
-		void Work11_HG2(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
-		void Work11_HG3(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
+		Texture* getSourceTexture() const { return m_original; }
+		Texture* getSourceTexture512() const { return m_original512; }
+		Texture* getSourceTexture256() const { return m_original256; }
 
-		void Work12(MenuItem* ctrl);
-		void Work12_Process(Button* ctrl);
+	private:
+		void MenuItem_OpenDemo(MenuItem* mi);
 
 		void Work13(MenuItem* ctrl);
 		void Work13_Process(Button* ctrl);
@@ -87,8 +74,6 @@ namespace dip
 		void Work23_Process(Button* ctrl);
 		void Work23_SelImage(ComboBox* ctrl);
 
-		void GenerateHistogramInformation(Texture* texture, HistogramData& result);
-		void DrawHistogramFor(Sprite* sprite, const Apoc3D::Math::Rectangle& rect, const HistogramData& data);
 
 		void ShowAbout(MenuItem* ctrl);
 
@@ -101,26 +86,14 @@ namespace dip
 		Texture* m_original256;
 		Texture* m_original512;
 		Texture* m_original;
+
 		Texture* m_originalGrad;
 		Texture* m_originalAlt;
 		Texture* m_originalAperture256;
 		Texture* m_originalAlt256;
-		HistogramData m_originalHgram;
 
-		Form* m_frmW11;
-		Texture* m_w11result1;
-		HistogramData m_w11result1HG;
-		Texture* m_w11result2;
-		HistogramData m_w11result2HG;
-
-		Form* m_frmW12;
-		Texture* m_w12noise;
-		Texture* m_w12noise2;
-		Texture* m_w12result1_1;
-		Texture* m_w12result1_2;
-		Texture* m_w12result2_1;
-		Texture* m_w12result2_2;
-
+		List<SubDemo*> m_subdemos;
+		
 		Form* m_frmW13;
 		Texture* m_w13result;
 

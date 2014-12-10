@@ -106,6 +106,7 @@ namespace Apoc3D
 				if (value[i]>0xff)
 				{
 					isMB = false;
+					break;
 				}
 			}
 

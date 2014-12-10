@@ -14,13 +14,14 @@ namespace APDesigner
 			Configuration* conf = XMLConfigurationFormat::Instance.Load(fl);
 
 			ConfigurationSection* sect = conf->get(L"Recents");
-			for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator(); e.MoveNext();)
+			if (sect)
 			{
-				ConfigurationSection* ss = e.getCurrentValue();
-
-				String name = ss->getAttribute(L"Name");
-				String value = ss->getValue();
-				RecentProjects.Enqueue(std::make_pair(name, value));
+				for (ConfigurationSection* ss : sect->getSubSections())
+				{
+					String name = ss->getAttribute(L"Name");
+					String value = ss->getValue();
+					RecentProjects.Enqueue(std::make_pair(name, value));
+				}
 			}
 			
 			delete conf;
