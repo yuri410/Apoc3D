@@ -44,7 +44,7 @@ namespace Apoc3D
 		public:
 			static XMLConfigurationFormat Instance;
 
-			virtual Configuration* Load(const ResourceLocation& rl) override;
+			virtual void Load(const ResourceLocation& rl, Configuration* config) override;
 			virtual void Save(Configuration* config, Stream& strm) override;
 
 			List<String> GetSupportedFileSystemExtensions() override

@@ -41,9 +41,10 @@ namespace APDesigner
 
 		FileLocation fl = FileSystem::getSingleton().Locate(L"ModelViewSceneRenderer.xml", FileLocateRule::Default);
 
-		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
-		m_sceneRenderer->Load(config);
-		delete config;
+		Configuration config;
+		XMLConfigurationFormat::Instance.Load(fl, &config);
+		m_sceneRenderer->Load(&config);
+		
 
 		m_camera = new ChaseCamera();
 		m_camera->setChaseDirection(Vector3(0, 0, 1));

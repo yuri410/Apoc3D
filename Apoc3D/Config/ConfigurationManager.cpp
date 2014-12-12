@@ -57,7 +57,7 @@ namespace Apoc3D
 		void ConfigurationManager::LoadConfig(const String& name, const ResourceLocation& rl, ConfigurationFormat* fmt)
 		{
 			Configuration* conf = CreateInstance(rl, fmt);
-			//XMLConfiguration* conf = new XMLConfiguration(rl);
+
 			m_configs.Add(name, conf);
 		}
 
@@ -65,49 +65,53 @@ namespace Apoc3D
 		{
 			if (fmt)
 			{
-				return fmt->Load(rl);
+				Configuration* result = new Configuration(rl.getName());
+				fmt->Load(rl, result);
+				return result;
 			}
 
 			const FileLocation* fl = up_cast<const FileLocation*>(&rl);
 			if (fl)
 			{
-				String temp;
+				String fn;
 				String ext;
-				PathUtils::SplitFileNameExtension(fl->getPath(), temp, ext);
+				PathUtils::SplitFileNameExtension(fl->getPath(), fn, ext);
 				StringUtils::ToLowerCase(ext);
 
+				ConfigurationFormat* fmt;
 				if (m_formats.TryGetValue(ext, fmt))
 				{
-					return fmt->Load(rl);
+					Configuration* result = new Configuration(fn);
+					fmt->Load(rl, result);
+					return result;
 				}
 				throw AP_EXCEPTION(ExceptID::NotSupported, ext + L" files are not supported");
 			}
 			throw AP_EXCEPTION(ExceptID::Argument, L"Either a FileLocation or a ConfigurationFormat is required.");
 		}
 
-
 		void ConfigurationManager::RegisterFormat(ConfigurationFormat* fmt)
 		{
 			List<String> exts = fmt->GetSupportedFileSystemExtensions();
-			for (int32 i=0;i<exts.getCount();i++)
+			for (const String& ex : exts)
 			{
-				if (!m_formats.Contains(exts[i]))
-					m_formats.Add(exts[i], fmt);
+				if (!m_formats.Contains(ex))
+					m_formats.Add(ex, fmt);
 				else
 				{
-					LogManager::getSingleton().Write(LOG_System, L"[ConfigurationManager] FileSys extension " + exts[i] + L" cannot be registered because it is already supported.", LOGLVL_Warning);
+					LogManager::getSingleton().Write(LOG_System, L"[ConfigurationManager] FileSys extension " + ex + L" cannot be registered because it is already supported.", LOGLVL_Warning);
 				}
 			}
 		}
 		void ConfigurationManager::UnregisterFormat(ConfigurationFormat* fmt)
 		{
 			List<String> exts = fmt->GetSupportedFileSystemExtensions();
-			for (int32 i=0;i<exts.getCount();i++)
+			for (const String& ex : exts)
 			{
 				ConfigurationFormat* cf;
-				if (m_formats.TryGetValue(exts[i], cf) && cf == fmt)
+				if (m_formats.TryGetValue(ex, cf) && cf == fmt)
 				{
-					m_formats.Remove(exts[i]);
+					m_formats.Remove(ex);
 				}
 			}
 		}

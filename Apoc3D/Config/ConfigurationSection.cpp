@@ -768,39 +768,19 @@ namespace Apoc3D
 
 
 
-		template <typename T>
-		class CappedBufferList
-		{
-		public:
-			CappedBufferList(T* dataBuf, int32 sizeCap)
-				: m_elements(dataBuf), m_sizeCap(sizeCap) { }
-
-			void Add(const T& item)
-			{
-				assert(m_internalPointer < m_sizeCap);
-				m_elements[m_internalPointer++] = item;
-			}
-
-			int32 getCount() const { return m_internalPointer; }
-		private:
-			T* m_elements;
-			int32 m_sizeCap;
-
-			int32 m_internalPointer = 0;
-		};
 
 		int32 SplitSinglesArr(const String& str, float* result, int32 expectedCount) { return StringUtils::SplitParseSingles(str, result, expectedCount, L", "); }
 		int32 SplitPercentagesArr(const String& str, float* result, int32 expectedCount)
 		{
-			CappedBufferList<float> lst(result, expectedCount);
-			SplitT<CappedBufferList<float>, float, StringUtils::ParseSingle>(str, lst, L", ");
+			WrappedList<float> lst(result, expectedCount);
+			SplitT<WrappedList<float>, float, ParsePercentage>(str, lst, L", ");
 			return lst.getCount();
 		}
 		int32 SplitIntArr(const String& str, int32* result, int32 expectedCount) { return StringUtils::SplitParseInts(str, result, expectedCount, L", "); }
 		int32 SplitUintArr(const String& str, uint32* result, int32 expectedCount)
 		{
-			CappedBufferList<uint32> lst(result, expectedCount);
-			SplitT<CappedBufferList<uint32>, uint32, StringUtils::ParseUInt32>(str, lst, L", ");
+			WrappedList<uint32> lst(result, expectedCount);
+			SplitT<WrappedList<uint32>, uint32, StringUtils::ParseUInt32>(str, lst, L", ");
 			return lst.getCount();
 		}
 		int32 SplitVector3sArr(const String& str, Vector3* result, int32 expectedCount)

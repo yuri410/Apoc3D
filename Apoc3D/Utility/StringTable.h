@@ -36,32 +36,28 @@ namespace Apoc3D
 {
 	namespace Utility
 	{
-		//template class APAPI unordered_map<String, pair<String, String>>;
-
 		class APAPI StringTable
 		{
 		public:
-			StringTable(void) {}
-			~StringTable(void) {}
+			StringTable() {}
+			~StringTable() {}
 
+			String GetString(const std::string& name) const;
 		private:
+
 			struct Entry
 			{
 				String Text;
-				String Extra;
+				char Extra[32];
 			};
-			HashMap<String, Entry> m_entryTable;
-
+			HashMap<std::string, Entry> m_entryTable;
 		};
 
-		class APAPI StringTableLoader
+		class APAPI StringTableFormat
 		{
 		public:
-			StringTable* Load(const ResourceLocation* rl);
-			StringTable* Load(const String &file);
-
-			virtual void Read(StringTable* data, Stream* stm) = 0;
-			virtual void Write(StringTable* data, Stream* stm) = 0;
+			virtual void Read(StringTable* data, Stream& stm) = 0;
+			virtual void Write(StringTable* data, Stream& stm) = 0;
 
 			virtual List<String> getFilters() = 0;
 		};

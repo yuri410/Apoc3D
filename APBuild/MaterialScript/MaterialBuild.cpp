@@ -56,10 +56,10 @@ namespace APBuild
 
 		BuildSystem::EnsureDirectory(destination);
 
-		FileLocation fl(srcFile);
-		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
+		Configuration config;
+		XMLConfigurationFormat::Instance.Load(FileLocation(srcFile), &config);
 
-		ConfigurationSection* palSect = config->get(L"Pallet");
+		ConfigurationSection* palSect = config[L"Pallet"];
 
 		HashMap<String, Pallet*> palColors;
 		
@@ -86,7 +86,7 @@ namespace APBuild
 		
 		// inherit structure
 		// every node is expected to be a material definition where mtrl attribs are as XML attribs
-		ConfigurationSection* mSect = config->get(L"Materials");
+		ConfigurationSection* mSect = config[L"Materials"];
 		HashMap<String, MaterialData*> mtrlTable;
 
 		for (ConfigurationSection* ss : mSect->getSubSections())
@@ -94,17 +94,15 @@ namespace APBuild
 			ParseMaterialTree(mtrlTable, 0, L"", ss, palColors);
 		}
 
-		delete config;
 
-		Configuration* tokenFile = new Configuration(L"MtrlToken");
+		Configuration tokenFile(L"MtrlToken");
 		for (const String& key : mtrlTable.getKeyAccessor())
 		{
-			ConfigurationSection* s = new ConfigurationSection(key);
-			tokenFile->Add(s);
+			tokenFile.Add(new ConfigurationSection(key));
 		}
 		//tokenFile->Save(desinationToken);
-		XMLConfigurationFormat::Instance.Save(tokenFile, FileOutStream(desinationToken));
-		delete tokenFile;
+		XMLConfigurationFormat::Instance.Save(&tokenFile, FileOutStream(desinationToken));
+		
 
 		for (auto e : mtrlTable)
 		{

@@ -1,22 +1,20 @@
 #include "StringTable.h"
 
 #include "apoc3d/VFS/ResourceLocation.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 namespace Apoc3D
 {
 	namespace Utility
 	{
-		StringTable* StringTableLoader::Load(const ResourceLocation* rl)
+		String StringTable::GetString(const std::string& name) const
 		{
-			StringTable* st = new StringTable();
-			Read(st, rl->GetReadStream());
-			return st;
-		}
-
-		StringTable* StringTableLoader::Load(const String &file)
-		{
-			const FileLocation fl(file);
-			return Load(&fl);
+			const Entry* e = m_entryTable.TryGetValue(name);
+			if (e)
+			{
+				return e->Text;
+			}
+			return L"MISSING: " + StringUtils::toASCIIWideString(name);
 		}
 	}
 }

@@ -175,13 +175,11 @@ namespace APDesigner
 	}
 	void EffectDocument::LoadRes()
 	{
-		FileLocation fl(m_filePath);
-		Configuration* plist = XMLConfigurationFormat::Instance.Load(fl);
+		Configuration plist;
+		XMLConfigurationFormat::Instance.Load(FileLocation(m_filePath), &plist);
 
-		ConfigurationSection* s = plist->get(L"VS");
-		for (ConfigurationSection::SubSectionEnumerator iter = s->GetSubSectionEnumrator(); iter.MoveNext();)
+		for (ConfigurationSection* ps : plist[L"VS"]->getSubSections())
 		{
-			ConfigurationSection* ps = iter.getCurrentValue();
 			EffectParameter ep(ps->getName());
 
 			Parse(ps, ep);
@@ -191,11 +189,8 @@ namespace APDesigner
 			m_parameters.Add(ep);
 		}
 
-		s = plist->get(L"PS");
-
-		for (ConfigurationSection::SubSectionEnumerator iter = s->GetSubSectionEnumrator(); iter.MoveNext();)
+		for (ConfigurationSection* ps : plist[L"PS"]->getSubSections())
 		{
-			ConfigurationSection* ps = iter.getCurrentValue();
 			EffectParameter ep(ps->getName());
 
 			Parse(ps, ep);
@@ -204,9 +199,7 @@ namespace APDesigner
 			ep.SamplerState.Parse(ps);
 			m_parameters.Add(ep);
 		}
-
-		delete plist;
-
+		
 		{
 			FileLocation fl(m_vsPath);
 			String code = Encoding::ReadAllText(fl, Encoding::TEC_Unknown);
@@ -225,11 +218,11 @@ namespace APDesigner
 	}
 	void EffectDocument::SaveRes()
 	{
-		Configuration* plist = new Configuration(L"Root");
+		Configuration plist(L"Root");
 
 		ConfigurationSection* vs = new ConfigurationSection(L"VS");
 		ConfigurationSection* ps = new ConfigurationSection(L"PS");
-		for (int i=0;i<m_parameters.getCount();i++)
+		for (int i = 0; i < m_parameters.getCount(); i++)
 		{
 			EffectParameter& ep = m_parameters[i];
 
@@ -249,13 +242,11 @@ namespace APDesigner
 			else
 				ps->AddSection(sect);
 		}
-		plist->Add(vs);
-		plist->Add(ps);
+		plist.Add(vs);
+		plist.Add(ps);
 
 		//plist->Save(m_filePath);
-		XMLConfigurationFormat::Instance.Save(plist, FileOutStream(m_filePath));
-
-		delete plist;
+		XMLConfigurationFormat::Instance.Save(&plist, FileOutStream(m_filePath));
 	}
 
 	void EffectDocument::Render()

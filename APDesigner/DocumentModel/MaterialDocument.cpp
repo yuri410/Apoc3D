@@ -36,14 +36,14 @@ namespace APDesigner
 		m_name(name), m_model(0), m_modelSData(0), m_material(0),
 		m_distance(7),m_xang(ToRadian(45)),m_yang(ToRadian(45))
 	{
-		
 		m_sceneRenderer = new SceneRenderer(window->getDevice());
 
 		FileLocation fl = FileSystem::getSingleton().Locate(L"ModelViewSceneRenderer.xml", FileLocateRule::Default);
 
-		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
-		m_sceneRenderer->Load(config);
-		delete config;
+		Configuration config;
+		XMLConfigurationFormat::Instance.Load(fl, &config);
+		m_sceneRenderer->Load(&config);
+		
 		m_camera = new ChaseCamera();
 		m_camera->setChaseDirection(Vector3(0, 0, 1));
 		m_camera->setChasePosition(Vector3(0, 0, 0));

@@ -489,15 +489,13 @@ namespace APDesigner
 
 				LogManager::getSingleton().Write(LOG_Graphics, L"Updating material table " + itm->getName());
 
-				FileLocation fl(cpath);
-				Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
-				ConfigurationSection* mSect = config->get(L"Materials");
+				Configuration config;
+				XMLConfigurationFormat::Instance.Load(FileLocation(cpath), &config);
 
-				for (ConfigurationSection::SubSectionEnumerator e = mSect->GetSubSectionEnumrator(); e.MoveNext();)
+				for (ConfigurationSection* ss : config[L"Materials"]->getSubSections())
 				{
-					ParseMaterialTree(L"", e.getCurrentValue(), m_projectMaterialNames);
+					ParseMaterialTree(L"", ss, m_projectMaterialNames);
 				}
-				delete config;
 			}
 			else if (itm->getType() == ProjectItemType::Folder)
 			{

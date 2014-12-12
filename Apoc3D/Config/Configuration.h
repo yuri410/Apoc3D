@@ -38,11 +38,10 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		//template class APAPI unordered_map<String, ConfigurationSection*>;
 		class APAPI ConfigurationFormat
 		{
 		public:
-			virtual Configuration* Load(const ResourceLocation& rl) = 0;
+			virtual void Load(const ResourceLocation& rl, Configuration* result) = 0;
 			virtual void Save(Configuration* config, Stream& strm) = 0;
 
 			virtual List<String> GetSupportedFileSystemExtensions() = 0;
@@ -64,6 +63,8 @@ namespace Apoc3D
 		public:
 			typedef HashMap<String, ConfigurationSection*> ChildTable;
 			
+			Configuration() { }
+
 			Configuration(const String& name)
 				: m_name(name) { }
 
@@ -77,6 +78,8 @@ namespace Apoc3D
 
 			/** Gets the top level sections with a name. */
 			ConfigurationSection* get(const String& name) const;
+
+			ConfigurationSection* operator[](const String& name) const { return get(name); }
 
 			const String& getName() const { return m_name; }
 

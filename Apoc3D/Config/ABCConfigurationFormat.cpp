@@ -46,29 +46,23 @@ namespace Apoc3D
 	{
 		ABCConfigurationFormat ABCConfigurationFormat::Instance;
 
-		Configuration* ABCConfigurationFormat::Load(const ResourceLocation& rl)
+		void ABCConfigurationFormat::Load(const ResourceLocation& rl, Configuration* config)
 		{
-			Configuration* config = new Configuration(rl.getName());
-
 			BinaryReader br(rl);
 
 			int id = br.ReadInt32();
 
 			if (id == FileID)
 			{
-				TaggedDataReader* root = br.ReadTaggedDataBlock();
-
-				BuildHierarchy(config, root);
-
-				root->Close();
-				delete root;
+				br.ReadTaggedDataBlock([this, config](TaggedDataReader* root)
+				{
+					BuildHierarchy(config, root);
+				}, false);
 			}
 			else
 			{
 				LogManager::getSingleton().Write(LOG_System, L"Invalid Apoc3D Binary Config format " + rl.getName(), LOGLVL_Error);
 			}
-
-			return config;
 		}
 		void ABCConfigurationFormat::Save(Configuration* config, Stream& strm)
 		{
@@ -76,60 +70,51 @@ namespace Apoc3D
 
 			bw.WriteInt32(FileID);
 
-			TaggedDataWriter* root = new TaggedDataWriter(true);
-
-			for (ConfigurationSection* sect : config->getSubSections())
+			bw.WriteTaggedDataBlock([this, config](TaggedDataWriter* root)
 			{
-				BinaryWriter* bw2 = root->AddEntry(StringUtils::UTF16toUTF8(sect->getName()));
-
-				SaveNode(sect, bw2);
-
-				delete bw2;
-			}
-
-			bw.WriteTaggedDataBlock(root);
-			delete root;
-
+				for (ConfigurationSection* sect : config->getSubSections())
+				{
+					root->AddEntry(StringUtils::UTF16toUTF8(sect->getName()), [this, sect](BinaryWriter* bw2)
+					{
+						SaveNode(sect, bw2);
+					});
+				}
+			});
 		}
 
 		void ABCConfigurationFormat::SaveNode(ConfigurationSection* section, BinaryWriter* bw)
 		{
 			// 2 tagged to one
-			TaggedDataWriter* localValues = new TaggedDataWriter(true);
+			bw->WriteTaggedDataBlock([section](TaggedDataWriter* localValues)
 			{
 				localValues->AddEntryString("Value", section->getValue());
 
 				if (section->getAttributeCount() > 0)
 				{
-					BinaryWriter* bw2 = localValues->AddEntry("Attributes");
-					bw2->WriteInt32(static_cast<int32>(section->getAttributeCount()));
-					for (auto e : section->getAttributes())
+					localValues->AddEntry("Attributes", [section](BinaryWriter* bw2)
 					{
-						bw2->WriteString(e.Key);
-						bw2->WriteString(e.Value);
-					}
-
-					delete bw2;
+						bw2->WriteInt32(static_cast<int32>(section->getAttributeCount()));
+						for (auto e : section->getAttributes())
+						{
+							bw2->WriteString(e.Key);
+							bw2->WriteString(e.Value);
+						}
+					});
 				}
-			}
-			bw->WriteTaggedDataBlock(localValues);
-			delete localValues;
+			});
 
 			//////////////////////////////////////////////////////////////////////////
 
-			TaggedDataWriter* subTreeData = new TaggedDataWriter(true);
+			bw->WriteTaggedDataBlock([section, this](TaggedDataWriter* subTreeData)
 			{
 				for (ConfigurationSection* sect : section->getSubSections())
 				{
-					BinaryWriter* bw2 = subTreeData->AddEntry(StringUtils::UTF16toUTF8(sect->getName()));
-
-					SaveNode(sect, bw2);
-
-					delete bw2;
+					subTreeData->AddEntry(StringUtils::UTF16toUTF8(sect->getName()), [sect, this](BinaryWriter* bw2)
+					{
+						SaveNode(sect, bw2);
+					});
 				}
-			}
-			bw->WriteTaggedDataBlock(subTreeData);
-			delete subTreeData;
+			});
 		}
 
 
@@ -139,13 +124,12 @@ namespace Apoc3D
 			List<std::string> tagNames;
 			doc->FillTagList(tagNames); 
 
-			for (int i = 0; i < tagNames.getCount(); i++)
-			{
-				BinaryReader* br = doc->GetData(tagNames[i]);
-
-				BuildNode(config, tagNames[i], br, nullptr);
-
-				delete br;
+			for (const std::string& sn : tagNames)
+			{	
+				doc->ProcessData(sn, [this, config, sn](BinaryReader* br)
+				{
+					BuildNode(config, sn, br, nullptr);
+				});
 			}
 		}
 
@@ -154,14 +138,13 @@ namespace Apoc3D
 			String wSectName = StringUtils::UTF8toUTF16(sectionName);
 			ConfigurationSection* section = new ConfigurationSection(wSectName);
 
-			TaggedDataReader* localValues = br->ReadTaggedDataBlock();
+			br->ReadTaggedDataBlock([section](TaggedDataReader* localValues)
 			{
 				String svalue;
 				localValues->GetDataString("Value", svalue);
 				section->SetValue(svalue);
-				
-				BinaryReader* br2 = localValues->TryGetData("Attributes");
-				if (br2)
+
+				localValues->TryProcessData("Attributes", [section](BinaryReader* br2)
 				{
 					int count = br2->ReadInt32();
 					for (int i = 0; i < count; i++)
@@ -170,29 +153,23 @@ namespace Apoc3D
 						String val = br2->ReadString();
 						section->AddAttributeString(key, val);
 					}
+				});
+			});
 
-					delete br2;
-				}
-			}
-			localValues->Close(true);
-			delete localValues;
-
-			TaggedDataReader* subTreeData = br->ReadTaggedDataBlock();
+			br->ReadTaggedDataBlock([section, this, config](TaggedDataReader* subTreeData)
 			{
 				List<std::string> tagNames;
-				subTreeData->FillTagList(tagNames); 
+				subTreeData->FillTagList(tagNames);
 
-				for (int i = 0; i < tagNames.getCount(); i++)
+				for (const std::string& sn : tagNames)
 				{
-					BinaryReader* br2 = subTreeData->GetData(tagNames[i]);
-
-					BuildNode(config, tagNames[i], br2, section);
-
-					delete br2;
+					subTreeData->ProcessData(sn, [this, config, sn, section](BinaryReader* br2)
+					{
+						BuildNode(config, sn, br2, section);
+					});
 				}
-			}
-			subTreeData->Close(true);
-			delete subTreeData;
+			});
+
 
 			if (parent)
 			{

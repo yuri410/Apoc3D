@@ -135,44 +135,39 @@ namespace APDesigner
 
 	void ShaderAtomType::Load(const String& filePath)
 	{
-		FileLocation fl(filePath);
-		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
+		Configuration config;
+		XMLConfigurationFormat::Instance.Load(FileLocation(filePath), &config);
 
-		ConfigurationSection* sect = config->get(L"Basic");
+		ConfigurationSection* sect = config[L"Basic"];
 		m_name = sect->getValue(L"Name");
 		m_type = GraphicsCommonUtils::ParseShaderType(sect->getValue(L"Type"));
 		m_majorSMVersion = sect->GetInt(L"MajorSMVersion");
 		m_minorSMVersion = sect->GetInt(L"MinorSMVersion");
 		m_codeBody = sect->getValue(L"Code");
 		
-		sect = config->get(L"Ports");
-		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
+		for (ConfigurationSection* ss : config[L"Ports"]->getSubSections())
 		{
 			ShaderAtomPort port;
-			port.Parse(e.getCurrentValue());
+			port.Parse(ss);
 			m_ports.Add(port);
 		}
-		
-		delete config;
 	}
 	void ShaderAtomType::Save(const String& filePath)
 	{
-		Configuration* config = new Configuration(L"Root");
+		Configuration config(L"Root");
 
-		ConfigurationSection* sect = new ConfigurationSection(L"Basic");
-		config->Add(sect);
+		config.Add(new ConfigurationSection(L"Basic"));
 
-		sect = new ConfigurationSection(L"Ports");
-		config->Add(sect);
-		for (int i=0;i<m_ports.getCount();i++)
+		ConfigurationSection* sect = new ConfigurationSection(L"Ports");
+		config.Add(new ConfigurationSection(L"Ports"));
+		for (ShaderAtomPort& p : m_ports)
 		{
-			ConfigurationSection* subs = m_ports[i].Save();
-			sect->AddSection(subs);
+			sect->AddSection(p.Save());
 		}
 
 		//config->Save(filePath);
-		XMLConfigurationFormat::Instance.Save(config, FileOutStream(filePath));
-		delete config;
+		XMLConfigurationFormat::Instance.Save(&config, FileOutStream(filePath));
+		
 	}
 	/************************************************************************/
 	/*  ShaderAtomLibraryManager                                            */
@@ -184,11 +179,12 @@ namespace APDesigner
 	{
 		String basePath = PathUtils::GetDirectory(fl.getPath());
 
-		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
+		Configuration config;
+		XMLConfigurationFormat::Instance.Load(fl, &config);
 
-		for (Configuration::ChildTable::Enumerator e = config->GetEnumerator();e.MoveNext();)
+		for (ConfigurationSection* ss : config.getSubSections())
 		{
-			String file = e.getCurrentValue()->getValue();
+			String file = ss->getValue();
 			String filePath = PathUtils::Combine(basePath, file);
 
 			ShaderAtomType* type = new ShaderAtomType();
@@ -196,8 +192,6 @@ namespace APDesigner
 
 			m_table.Add(type->getName(), type);
 		}
-
-		delete config;
 	}
 
 	void ShaderAtomLibraryManager::AddAtomType(ShaderAtomType* type)

@@ -71,9 +71,9 @@ namespace SampleTerrain
 		// The scene render script is located
 		fl = FileSystem::getSingleton().Locate(L"Renderer.xml", FileLocateRule::Default);
 		// Then loaded by SceneRenderer
-		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
-		m_sceneRenderer->Load(config);
-		delete config;
+		Configuration config;
+		XMLConfigurationFormat::Instance.Load(fl, &config);
+		m_sceneRenderer->Load(&config);
 
 		m_sceneRenderer->RegisterCamera(m_camera);
 

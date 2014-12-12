@@ -28,47 +28,43 @@ namespace APDesigner
 {
 	void ShaderDocumentData::Load(const String& filePath)
 	{
-		FileLocation fl(filePath);
-		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
+		Configuration config;
+		XMLConfigurationFormat::Instance.Load(FileLocation(filePath), &config);
 		
-		ConfigurationSection* sect = config->get(L"Basic");
+		ConfigurationSection* sect = config[L"Basic"];
 		MajorSMVersion = sect->GetInt(L"MajorSMVersion");
 		MinorSMVersion = sect->GetInt(L"MinorSMVersion");
 
-		sect = config->get(L"Nodes");
-		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
+		sect = config[L"Nodes"];
+		for (ConfigurationSection* ss : sect->getSubSections())
 		{
-			Nodes.Add(
-				e.getCurrentValue()->getValue()
-			);
+			Nodes.Add(ss->getValue());
 		}
 
-		sect = config->get(L"Varyings");
-		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
+		sect = config[L"Varyings"];
+		for (ConfigurationSection* ss : sect->getSubSections())
 		{
 			ShaderNetVaryingNode inp;
-			inp.Parse(e.getCurrentValue());
+			inp.Parse(ss);
 			VaryingNodes.Add(inp);
 		}
 
-		sect = config->get(L"Constants");
-		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
+		sect = config[L"Constants"];
+		for (ConfigurationSection* ss : sect->getSubSections())
 		{
 			ShaderNetConstantNode oup;
-			oup.Parse(e.getCurrentValue());
+			oup.Parse(ss);
 			ConstantNodes.Add(oup);
 		}
 
-		sect = config->get(L"Links");
-		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
+		sect = config[L"Links"];
+		for (ConfigurationSection* ss : sect->getSubSections())
 		{
 			ShaderAtomLinkInfo lnk;
-			lnk.Parse(e.getCurrentValue());
+			lnk.Parse(ss);
 			Links.Add(lnk);
 		}
 
-
-		delete config;
 	}
 
 	void ShaderDocumentData::Save(const String& filePath)

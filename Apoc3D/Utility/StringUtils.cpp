@@ -302,7 +302,7 @@ namespace Apoc3D
 
 					if (isInvalid)
 					{
-						*isInvalid &= !isDigit(ch); // invalid char
+						*isInvalid |= !isDigit(ch); // invalid char
 
 						IntType prevVal = num;
 						num *= 10;
@@ -338,7 +338,7 @@ namespace Apoc3D
 						num += ch - '0';
 
 						if (num < prevVal)
-							*isInvalid = false; // overflow
+							*isInvalid = true; // overflow
 					}
 					else
 					{
@@ -440,7 +440,7 @@ namespace Apoc3D
 						result |= (ch == '1') ? 1 : 0;
 
 						if (result < prevVal)
-							*isInvalid = false; // overflow
+							*isInvalid = true; // overflow
 					}
 					else
 					{
@@ -489,7 +489,7 @@ namespace Apoc3D
 						result |= digit;
 
 						if (result < prevVal)
-							*isInvalid = false; // overflow
+							*isInvalid = true; // overflow
 					}
 					else
 					{

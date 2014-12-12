@@ -59,8 +59,10 @@ namespace Apoc3D
 
 			void EffectManager::LoadEffectFromList(RenderDevice* device, const ResourceLocation& rl)
 			{
-				Configuration* config = XMLConfigurationFormat::Instance.Load(rl);
-				for (ConfigurationSection* lstEntry : config->getSubSections())
+				Configuration config(rl.getName());
+				XMLConfigurationFormat::Instance.Load(rl, &config);
+
+				for (ConfigurationSection* lstEntry : config.getSubSections())
 				{
 					FileLocation fl;
 					if (!FileSystem::getSingleton().TryLocate(lstEntry->getName() + L".afx", FileLocateRule::Effects, fl))

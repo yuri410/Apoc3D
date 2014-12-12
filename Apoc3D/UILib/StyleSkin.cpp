@@ -51,9 +51,10 @@ namespace Apoc3D
 		StyleSkin::StyleSkin(RenderDevice* device, const FileLocateRule& rule)
 		{
 			FileLocation fl = FileSystem::getSingleton().Locate(L"skin.xml", rule);
-			Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
+			Configuration config(fl.getName());
+			XMLConfigurationFormat::Instance.Load(fl, &config);
 			
-			ConfigurationSection* basicSect = config->get(L"Basic");
+			ConfigurationSection* basicSect = config[L"Basic"];
 			String contentTextFontName = basicSect->getValue(L"TextFont");
 			String titleTextFontName = basicSect->getValue(L"TitleFont");
 			String texturePackName = basicSect->getValue(L"TexturePack");
@@ -97,7 +98,7 @@ namespace Apoc3D
 
 			HashMap<String, const Apoc3D::Math::Rectangle*> cachedRegions;
 			{ // Button
-				ConfigurationSection* btnSect = config->get(L"Button");
+				ConfigurationSection* btnSect = config[L"Button"];
 
 				ButtonFont = GetFontName(btnSect->getAttribute(L"Font"));
 				ParseMargin(btnSect, ButtonMargin);
@@ -127,7 +128,7 @@ namespace Apoc3D
 			}
 
 			{ // TextBox
-				ConfigurationSection* textBoxSect = config->get(L"TextBox");
+				ConfigurationSection* textBoxSect = config[L"TextBox"];
 
 				TextBoxFont = GetFontName(textBoxSect->getAttribute(L"Font"));
 				ParseMargin(textBoxSect, TextBoxMargin);
@@ -141,7 +142,7 @@ namespace Apoc3D
 				cachedRegions.Clear();
 			}
 			{ // TextFieldEx
-				ConfigurationSection* textBoxExSect = config->get(L"TextFieldMultiline");
+				ConfigurationSection* textBoxExSect = config[L"TextFieldMultiline"];
 				
 				ParseMargin(textBoxExSect, TextBoxExMargin);
 
@@ -155,7 +156,7 @@ namespace Apoc3D
 
 
 			{ // CheckBox
-				ConfigurationSection* checkBoxSect = config->get(L"CheckBox");
+				ConfigurationSection* checkBoxSect = config[L"CheckBox"];
 
 				CheckBoxFont = GetFontName(checkBoxSect->getAttribute(L"Font"));
 				ParseMargin(checkBoxSect, CheckBoxMargin);
@@ -194,7 +195,7 @@ namespace Apoc3D
 			}
 
 			{ // RadioButton
-				ConfigurationSection* radioButtonSect = config->get(L"RadioButton");
+				ConfigurationSection* radioButtonSect = config[L"RadioButton"];
 
 				RadioButtonFont = GetFontName(radioButtonSect->getAttribute(L"Font"));
 				ParseMargin(radioButtonSect, RadioButtonMargin);
@@ -232,7 +233,7 @@ namespace Apoc3D
 			}
 
 			{ // DropdownButton
-				ConfigurationSection* dropdownSect = config->get(L"DropdownButton");
+				ConfigurationSection* dropdownSect = config[L"DropdownButton"];
 
 				ParseOffset(dropdownSect, DropdownButtonOffset);
 
@@ -258,7 +259,7 @@ namespace Apoc3D
 			}
 
 			{ // VScrollBar
-				ConfigurationSection* vsBar = config->get(L"VScrollBar");
+				ConfigurationSection* vsBar = config[L"VScrollBar"];
 
 				ConfigurationSection* bgSect = vsBar->getSection(L"Background");
 				ConfigurationSection* cursor = vsBar->getSection(L"Cursor")->getSection(L"Normal");
@@ -284,7 +285,7 @@ namespace Apoc3D
 
 
 			{ // HScrollBar
-				ConfigurationSection* vsBar = config->get(L"HScrollBar");
+				ConfigurationSection* vsBar = config[L"HScrollBar"];
 
 				ConfigurationSection* bgSect = vsBar->getSection(L"Background");
 				ConfigurationSection* cursor = vsBar->getSection(L"Cursor")->getSection(L"Normal");
@@ -310,7 +311,7 @@ namespace Apoc3D
 
 
 			{ // ListBox
-				ConfigurationSection* listBox = config->get(L"ListBox");
+				ConfigurationSection* listBox = config[L"ListBox"];
 				ListBoxFont = GetFontName(listBox->getAttribute(L"Font"));
 
 				ParseMargin(listBox, ListBoxMargin);
@@ -325,7 +326,7 @@ namespace Apoc3D
 
 
 			{ // ProgressBar
-				ConfigurationSection* pbSect = config->get(L"ProgressBar");
+				ConfigurationSection* pbSect = config[L"ProgressBar"];
 
 				ProgressBarVS.Graphic = SkinTexture;
 				ProgressBarVS.FontRef = GetFontName(pbSect->getAttribute(L"Font"));
@@ -361,7 +362,7 @@ namespace Apoc3D
 			}
 
 			{ // HSliderBar
-				ConfigurationSection* pbSect = config->get(L"HSliderBar");
+				ConfigurationSection* pbSect = config[L"HSliderBar"];
 
 				HSliderBar.Graphic = SkinTexture;
 				ParseMargin(pbSect, HSliderBar.Margin);
@@ -449,7 +450,7 @@ namespace Apoc3D
 
 
 			{ // Form
-				ConfigurationSection* formSect = config->get(L"Form");
+				ConfigurationSection* formSect = config[L"Form"];
 				FormFont = GetFontName(formSect->getAttribute(L"Font"));
 
 				ParsePadding(formSect, FormTitlePadding);
@@ -530,7 +531,7 @@ namespace Apoc3D
 
 			// Menu
 			{
-				ConfigurationSection* menuSect = config->get(L"Menu");
+				ConfigurationSection* menuSect = config[L"Menu"];
 
 				ConfigurationSection* subMenuArrow = menuSect->getSection(L"SubMenuArrow");
 				ConfigurationSection* hshadeSect = menuSect->getSection(L"HShade");
@@ -543,8 +544,6 @@ namespace Apoc3D
 
 				cachedRegions.Clear();
 			}
-
-			delete config;
 		}
 
 		StyleSkin::~StyleSkin()

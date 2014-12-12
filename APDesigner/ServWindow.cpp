@@ -190,14 +190,13 @@ namespace APDesigner
 
 	void ServWindow::UpdateProject()
 	{
-		FileLocation fl(m_projectFilePath);
-		Configuration* conf = XMLConfigurationFormat::Instance.Load(fl);
+		Configuration conf;
+		XMLConfigurationFormat::Instance.Load(FileLocation(m_projectFilePath), &conf);
 
 		Project* prj = new Project();
-		prj->Parse(conf->get(L"Project"));
+		prj->Parse(conf[L"Project"]);
 		prj->SetPath(PathUtils::GetDirectory(m_projectFilePath), nullptr);
 
-		delete conf;
 
 		if (m_currentProject)
 			delete m_currentProject;

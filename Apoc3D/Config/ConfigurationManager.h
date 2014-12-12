@@ -54,9 +54,7 @@ namespace Apoc3D
 			 */
 			void LoadConfig(const String& name, const ResourceLocation& rl, ConfigurationFormat* fmt = nullptr);
 
-			/** 
-			 *  Gets a pre-loaded configuration with the given name
-			 */
+			/**  Gets a pre-loaded configuration with the given name */
 			Configuration* getConfiguration(const String& name) const
 			{
 				Configuration* result = nullptr;

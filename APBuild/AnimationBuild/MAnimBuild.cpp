@@ -21,20 +21,18 @@ namespace APBuild
 
 		AnimationData::MtrlClipTable mtrlClip;
 
-		FileLocation fl(config.SrcFile);
-		Configuration* script = XMLConfigurationFormat::Instance.Load(fl);
+		Configuration script;
+		XMLConfigurationFormat::Instance.Load(FileLocation(config.SrcFile), &script);
 
-		ConfigurationSection* animSect = script->get(L"Animation");
+		ConfigurationSection* animSect = script[L"Animation"];
 
 		String takeName = animSect->getAttribute(L"Name");
 		float frameRate = animSect->GetAttributeSingle(L"FrameRate");
 
 		List<MaterialAnimationKeyframe> keyFrames;
 		float maxTime = 0;
-		for (ConfigurationSection::SubSectionEnumerator e = animSect->GetSubSectionEnumrator(); e.MoveNext();)
+		for (ConfigurationSection* subSect : animSect->getSubSections())
 		{
-			ConfigurationSection* subSect = e.getCurrentValue();
-
 			String type = subSect->getAttribute(L"Type");
 
 			StringUtils::ToLowerCase(type);
@@ -77,12 +75,10 @@ namespace APBuild
 
 		mtrlClip.Add(takeName, clip);
 		
-		delete script;
 
 
 		AnimationData* data = new AnimationData();
 		data->setMaterialAnimationClips(mtrlClip);
-		
 		data->Save(FileOutStream(config.DstFile));
 
 		delete data;

@@ -99,7 +99,7 @@ namespace Apoc3D
 					{
 						thisSect->SetValue(thatSect->getValue());
 					}
-					else if (!noMessages)
+					else if (!noMessages && thisSect->getValue() != thatSect->getValue())
 					{
 						ApocLog(LOG_System, L"[Configuration] " + getName() + 
 							L": Merging section " + thisSect->getName() + L" has conflicting values.", LOGLVL_Warning);

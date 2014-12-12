@@ -411,17 +411,17 @@ namespace Apoc3D
 		if (File::FileExists(path))
 		{
 			FileLocation floc(path);
-			Configuration* config = XMLConfigurationFormat::Instance.Load(floc);
-			ConfigurationSection* mSect = config->get(L"Materials");
+			Configuration config(path);
+			XMLConfigurationFormat::Instance.Load(floc, &config);
+
+			ConfigurationSection* mSect = config[L"Materials"];
 
 			List<String> names;
 			for (ConfigurationSection* sub : mSect->getSubSections())
 			{
 				ParseMaterialTree(names, L"", sub);
 			} 
-
-			delete config;
-
+			
 			String basePath = WrapDestinationPath(DestinationLocation, true);
 
 			for (const String& name : names)

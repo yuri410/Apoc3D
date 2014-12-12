@@ -91,20 +91,17 @@ int PrepareBuild(int argc, _TCHAR* argv[])
 				return ERR_CONFIG_FILE_NOT_FOUND;
 			}
 
-			FileLocation fl(configPath);
-			Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
+			Configuration config;
+			XMLConfigurationFormat::Instance.Load(FileLocation(configPath), &config);
 
 			// find the first section in the build config
-			Configuration::ChildTable::Enumerator e = config->GetEnumerator();
+			Configuration::ChildTable::Enumerator e = config.GetEnumerator();
 			e.MoveNext();
 		
-			ConfigurationSection* attachmentSect = config->get(ProjectUtils::BuildAttachmentSectionGUID);
+			ConfigurationSection* attachmentSect = config.get(ProjectUtils::BuildAttachmentSectionGUID);
 
 			// build the node
-			int ret = BuildSystem::Build(e.getCurrentValue(), attachmentSect);
-			delete config;
-
-			return ret;
+			return BuildSystem::Build(e.getCurrentValue(), attachmentSect);
 		}
 	}
 	else PrintUsage();

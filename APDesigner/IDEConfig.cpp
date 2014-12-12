@@ -10,10 +10,10 @@ namespace APDesigner
 	{
 		if (File::FileExists(L"ideconf.xml"))
 		{
-			FileLocation fl(L"ideconf.xml");
-			Configuration* conf = XMLConfigurationFormat::Instance.Load(fl);
+			Configuration conf;
+			XMLConfigurationFormat::Instance.Load(FileLocation(L"ideconf.xml"), &conf);
 
-			ConfigurationSection* sect = conf->get(L"Recents");
+			ConfigurationSection* sect = conf[L"Recents"];
 			if (sect)
 			{
 				for (ConfigurationSection* ss : sect->getSubSections())
@@ -24,18 +24,17 @@ namespace APDesigner
 				}
 			}
 			
-			delete conf;
 		}
 	}
 
 	void cfFlushConfig()
 	{
-		Configuration* conf = new Configuration(L"IDE");
+		Configuration conf(L"IDE");
 
 		ConfigurationSection* sect = new ConfigurationSection(L"Recents");
-		conf->Add(sect);
+		conf.Add(sect);
 
-		for (int32 i=RecentProjects.getCount()-1;i>=0;i--)
+		for (int32 i = RecentProjects.getCount() - 1; i >= 0; i--)
 		{
 			const std::pair<String, String>& p = RecentProjects.GetElement(i);
 
@@ -45,16 +44,14 @@ namespace APDesigner
 			sect->AddSection(ss);
 		}
 
-		XMLConfigurationFormat::Instance.Save(conf, FileOutStream(L"ideconf.xml"));
-
-		delete conf;
+		XMLConfigurationFormat::Instance.Save(&conf, FileOutStream(L"ideconf.xml"));
 	}
 
 	const Queue<std::pair<String, String>>& cfGetRecentProjects() { return RecentProjects; }
 	void cfAddRecentProject(const String& name, const String& path)
 	{
 		Queue<std::pair<String, String>> newList;
-		for (int i=RecentProjects.getCount()-1;i>=0;i--)
+		for (int i = RecentProjects.getCount() - 1; i >= 0; i--)
 		{
 			if (!PathUtils::ComparePath(RecentProjects.GetElement(i).second, path))
 			{
@@ -72,7 +69,7 @@ namespace APDesigner
 	void cfRemoveRecentProject(int index)
 	{
 		Queue<std::pair<String, String>> newList;
-		for (int i=RecentProjects.getCount()-1;i>=0;i--)
+		for (int i = RecentProjects.getCount() - 1; i >= 0; i--)
 		{
 			if (i != index)
 			{

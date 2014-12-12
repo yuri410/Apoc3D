@@ -59,14 +59,15 @@ namespace APBuild
 					return false;
 				}
 
-				Configuration* includeSrc = XMLConfigurationFormat::Instance.Load(FileLocation(includeFile));
-				if (includeSrc->get(L"Include"))
+				Configuration includeSrc;
+				XMLConfigurationFormat::Instance.Load(FileLocation(includeFile), &includeSrc);
+
+				if (includeSrc[L"Include"])
 				{
-					includeQueue.Enqueue(includeSrc->get(L"Include")->getValue());
+					includeQueue.Enqueue(includeSrc[L"Include"]->getValue());
 				}
 
-				curPlist->Merge(includeSrc, true);
-				delete includeSrc;
+				curPlist->Merge(&includeSrc, true);
 			}
 		}
 		return true;
@@ -99,11 +100,11 @@ namespace APBuild
 		}
 		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
 
-		Configuration* plist = XMLConfigurationFormat::Instance.Load(FileLocation(config.PListFile));
+		Configuration plist;
+		XMLConfigurationFormat::Instance.Load(FileLocation(config.PListFile), &plist);
 
-		if (!ProcessIncludes(plist, PathUtils::GetDirectory(config.PListFile)))
+		if (!ProcessIncludes(&plist, PathUtils::GetDirectory(config.PListFile)))
 		{
-			delete plist;
 			return;
 		}
 	
@@ -134,7 +135,7 @@ namespace APBuild
 
 				ShaderType shaderTypes[3] = { SHDT_Vertex, SHDT_Pixel, SHDT_Geometry };
 				ConfigurationSection* shaderParams[3] = { 0 };
-				ConfigurationSection* profContainer = plist->get(config.Targets[i]);
+				ConfigurationSection* profContainer = plist[config.Targets[i]];
 				if (profContainer)
 				{
 					shaderParams[0] = profContainer->getSection(L"VS");
@@ -143,9 +144,9 @@ namespace APBuild
 				}
 				else
 				{
-					shaderParams[0] = plist->get(L"VS");
-					shaderParams[1] = plist->get(L"PS");
-					shaderParams[2] = plist->get(L"GS");
+					shaderParams[0] = plist[L"VS"];
+					shaderParams[1] = plist[L"PS"];
+					shaderParams[2] = plist[L"GS"];
 				}
 
 				for (int j = 0; j < countof(shaderParams); j++)
@@ -172,9 +173,7 @@ namespace APBuild
 				return;
 			}
 		}
-
-		delete plist;
-
+		
 		data.SortProfiles();
 
 		FileOutStream fos(config.DestFile);

@@ -48,10 +48,8 @@ namespace Apoc3D
 	{
 		IniConfigurationFormat IniConfigurationFormat::Instance;
 
-		Configuration* IniConfigurationFormat::Load(const ResourceLocation& rl)
+		void IniConfigurationFormat::Load(const ResourceLocation& rl, Configuration* config)
 		{
-			Configuration* config = new Configuration(rl.getName());
-
 			String allText = Encoding::ReadAllText(rl, Encoding::TEC_Unknown);
 
 			if (allText.size())
@@ -131,8 +129,6 @@ namespace Apoc3D
 
 				}
 			}
-
-			return config;
 		}
 		void IniConfigurationFormat::Save(Configuration* config, Stream& strm)
 		{

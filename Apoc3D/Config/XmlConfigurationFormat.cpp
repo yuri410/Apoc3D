@@ -44,10 +44,8 @@ namespace Apoc3D
 	{
 		XMLConfigurationFormat XMLConfigurationFormat::Instance;
 
-		Configuration* XMLConfigurationFormat::Load(const ResourceLocation& rl)
+		void XMLConfigurationFormat::Load(const ResourceLocation& rl, Configuration* config)
 		{
-			Configuration* config = new Configuration(rl.getName());
-
 			TiXmlDocument doc;
 
 			Stream* strm = rl.GetReadStream();
@@ -57,8 +55,6 @@ namespace Apoc3D
 			delete strm;
 
 			BuildXml(config, &doc);
-
-			return config;
 		}
 		void XMLConfigurationFormat::Save(Configuration* config, Stream& strm)
 		{
