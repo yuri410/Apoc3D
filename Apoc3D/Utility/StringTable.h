@@ -26,6 +26,7 @@
  * -----------------------------------------------------------------------------
  */
 
+#include "apoc3d/Collections/List.h"
 #include "apoc3d/Collections/HashMap.h"
 
 using namespace Apoc3D::Collections;
@@ -36,30 +37,56 @@ namespace Apoc3D
 {
 	namespace Utility
 	{
-		class APAPI StringTable
+		struct APAPI StringTableEntry
 		{
-		public:
-			StringTable() {}
-			~StringTable() {}
+			String Text;
+			char Extra[32];
 
-			String GetString(const std::string& name) const;
-		private:
-
-			struct Entry
-			{
-				String Text;
-				char Extra[32];
-			};
-			HashMap<std::string, Entry> m_entryTable;
+			StringTableEntry();
+			StringTableEntry(const String& txt, const std::string& extra);
 		};
 
-		class APAPI StringTableFormat
+		typedef HashMap<std::string, StringTableEntry, NStringEqualityComparerNoCase> StringTableMap;
+		class StringTableFormat;
+
+		class APAPI StringTable
+		{
+			friend class StringTableFormat;
+		public:
+			StringTable() { }
+			~StringTable() { }
+
+			String GetString(const std::string& name) const;
+
+			String operator[](const std::string& name) const { return GetString(name); }
+
+			void Load(StringTableFormat* fmt, const ResourceLocation& rl);
+			void Load(StringTableFormat* fmt, Stream& strm);
+
+			void Save(StringTableFormat* fmt, Stream& strm);
+		private:
+			StringTableMap m_entryTable;
+		};
+
+		class StringTableFormat
 		{
 		public:
-			virtual void Read(StringTable* data, Stream& stm) = 0;
-			virtual void Write(StringTable* data, Stream& stm) = 0;
+			virtual void Read(Stream& stm, StringTableMap& map) = 0;
+			virtual void Write(StringTableMap& map, Stream& stm) = 0;
 
 			virtual List<String> getFilters() = 0;
+		};
+
+		class APAPI CsfStringTableFormat : public StringTableFormat
+		{
+		public:
+			virtual void Read(Stream& stm, StringTableMap& map) override;
+			virtual void Write(StringTableMap& map, Stream& stm) override;
+
+			List<String> getFilters() override 
+			{
+				return{ L"csf" }; 
+			}
 		};
 	}
 }

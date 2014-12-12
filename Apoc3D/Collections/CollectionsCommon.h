@@ -47,7 +47,7 @@ namespace Apoc3D
 			/** 
 			 *  Returns a hash code for the specified object.
 			 */
-			static int32 GetHashCode(T* const& obj);
+			static int32 GetHashCode(const T& obj);
 		};
 
 		template <typename T>
@@ -101,6 +101,7 @@ namespace Apoc3D
 			static bool Equals(const std::string& x, const std::string& y);
 			static int32 GetHashCode(const std::string& obj);
 		};
+
 
 		template <>
 		struct APAPI EqualityComparer<String>
@@ -159,6 +160,21 @@ namespace Apoc3D
 			static bool Equals(const Apoc3D::Math::Color4& x, const Apoc3D::Math::Color4& y);
 			static int32 GetHashCode(const Apoc3D::Math::Color4& obj);
 		};
+
+
+
+		struct APAPI NStringEqualityComparerNoCase
+		{
+			static bool Equals(const std::string& x, const std::string& y);
+			static int32 GetHashCode(const std::string& obj);
+		};
+
+		struct APAPI StringEqualityComparerNoCase
+		{
+			static bool Equals(const String& x, const String& y);
+			static int32 GetHashCode(const String& obj);
+		};
+
 
 		template <typename T>
 		int32 OrderComparer(const T& a, const T& b)

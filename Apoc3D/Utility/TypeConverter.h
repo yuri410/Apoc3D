@@ -45,7 +45,7 @@ namespace Apoc3D
 			};
 
 		public:
-			typedef Apoc3D::Collections::HashMap<String, T> CastTable;
+			typedef Apoc3D::Collections::HashMap<String, T, Apoc3D::Collections::StringEqualityComparerNoCase> CastTable;
 			typedef Apoc3D::Collections::HashMap<T, String, EnumEqualityComparer> InverseCastTable;
 			typedef Apoc3D::Collections::List<String> NameList;
 			typedef Apoc3D::Collections::List<T> ValueList;
@@ -72,12 +72,12 @@ namespace Apoc3D
 			}
 
 
-			bool SupportsName(const String& name) const { String n = name; StringUtils::ToLowerCase(n); return m_cast.Contains(n); }
+			bool SupportsName(const String& name) const { return m_cast.Contains(name); }
 
-			T Parse(const String& name) const { String n = name; StringUtils::ToLowerCase(n); return m_cast[n]; }
+			T Parse(const String& name) const { return m_cast[name]; }
 			T ParseFlags(const String& combo, const String& delim) const;
 
-			bool TryParse(const String& name, T& r) const { String n = name; StringUtils::ToLowerCase(n); return m_cast.TryGetValue(n, r); }
+			bool TryParse(const String& name, T& r) const { return m_cast.TryGetValue(name, r); }
 
 			const String& ToString(T e) const { return m_invCast[e]; }
 			String ToStringFlags(T flags, const String& delim) const;
@@ -99,9 +99,7 @@ namespace Apoc3D
 		protected:
 			void AddPair(const String& name, T v)
 			{
-				String cpy = name;
-				StringUtils::ToLowerCase(cpy);
-				m_cast.Add(cpy, v);
+				m_cast.Add(name, v);
 				m_invCast.Add(v, name);
 			}
 
@@ -170,7 +168,7 @@ namespace Apoc3D
 		class TypeParseConverter
 		{
 		public:
-			typedef Apoc3D::Collections::HashMap<String, T> CastTable;
+			typedef Apoc3D::Collections::HashMap<String, T, Apoc3D::Collections::StringEqualityComparerNoCase> CastTable;
 			typedef Apoc3D::Collections::List<T> ValueList;
 
 			typedef typename CastTable::Iterator Iterator;
@@ -187,11 +185,11 @@ namespace Apoc3D
 					m_cast.Add(e.second, e.first);
 			}
 
-			bool SupportsName(const String& name) const { String n = name; StringUtils::ToLowerCase(n); return m_cast.Contains(n); }
+			bool SupportsName(const String& name) const { return m_cast.Contains(name); }
 
-			T Parse(const String& name) const { String n = name; StringUtils::ToLowerCase(n); return m_cast[n]; }
+			T Parse(const String& name) const { return m_cast[name]; }
 			T ParseFlags(const String& combo, const String& delim) const;
-			bool TryParse(const String& name, T& r) const { String n = name; StringUtils::ToLowerCase(n); return m_cast.TryGetValue(name, r); }
+			bool TryParse(const String& name, T& r) const { return m_cast.TryGetValue(name, r); }
 
 			void DumpValues(ValueList& values) const { m_cast.FillKeys(values); }
 
@@ -228,11 +226,8 @@ namespace Apoc3D
 		template <typename T, typename H, T (H::*parse)(const String&) const>
 		T ParseFlagFields(const String& combo, const H* obj, const String& delim) 
 		{
-			String v = combo;
-			StringUtils::ToLowerCase(v);
-
 			List<String> vals;
-			StringUtils::Split(v, vals, delim);
+			StringUtils::Split(combo, vals, delim);
 			std::underlying_type<T>::type result = 0;
 
 			for (const String& e : vals)

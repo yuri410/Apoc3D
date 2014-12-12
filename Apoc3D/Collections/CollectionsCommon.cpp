@@ -31,7 +31,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Math/Vector.h"
 #include "apoc3d/Math/Color.h"
 
-using namespace std;
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -41,7 +40,7 @@ namespace Apoc3D
 		//////////////////////////////////////////////////////////////////////////
 
 		bool EqualityComparer<std::string>::Equals(const std::string& x, const std::string& y) { return x == y; }
-		int32 EqualityComparer<std::string>::GetHashCode(const string& obj)
+		int32 EqualityComparer<std::string>::GetHashCode(const std::string& obj)
 		{
 			FNVHash32 fnv;
 			fnv.Accumulate(obj.c_str(), obj.size());
@@ -79,7 +78,32 @@ namespace Apoc3D
 		bool EqualityComparer<Apoc3D::Math::Color4>::Equals(const Apoc3D::Math::Color4& x, const Apoc3D::Math::Color4& y) { return x == y; }
 		int32 EqualityComparer<Apoc3D::Math::Color4>::GetHashCode(const Apoc3D::Math::Color4& obj) { return *(const int32*)&obj.Red ^ *(const int32*)&obj.Green ^ *(const int32*)&obj.Blue ^ *(const int32*)&obj.Alpha; }
 
+		//////////////////////////////////////////////////////////////////////////
 
+
+		bool NStringEqualityComparerNoCase::Equals(const std::string& x, const std::string& y) { return StringUtils::EqualsNoCase(x,y); }
+		int32 NStringEqualityComparerNoCase::GetHashCode(const std::string& obj)
+		{
+			FNVHash32 fnv;
+			for (char c : obj)
+			{
+				c = StringUtils::ToLowerCase(c);
+				fnv.Accumulate(&c, 1);
+			}
+
+			return fnv.GetResult();
+		}
+		bool StringEqualityComparerNoCase::Equals(const String& x, const String& y) { return StringUtils::EqualsNoCase(x, y); }
+		int32 StringEqualityComparerNoCase::GetHashCode(const String& obj)
+		{
+			FNVHash32 fnv;
+			for (wchar_t c : obj)
+			{
+				c = StringUtils::ToLowerCase(c);
+				fnv.Accumulate(&c, 1);
+			}
+			return fnv.GetResult();
+		}
 
 		namespace Utils
 		{

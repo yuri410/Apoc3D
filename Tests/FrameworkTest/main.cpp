@@ -20,6 +20,7 @@
 #include "apoc3d/Math/Math.h"
 #include "apoc3d/Utility/Compression.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Utility/StringTable.h"
 #include "apoc3d/Library/lz4.h"
 #include "apoc3d/Library/lz4hc.h"
 #include "apoc3d/Vfs/File.h"
@@ -69,11 +70,6 @@ void main()
 	GetCurrentDirectory(260, workingDir);
 	FileSystem::getSingleton().AddWrokingDirectory(workingDir);
 	
-	String s = PathUtils::CombineMult(L"a", L"b", L"c");
-
-	List<String> ritems;
-	File::ListDirectoryFilesRecursive(L"F:\\Dropbox\\ost", ritems);
-
 	List<String> items;
 	FileSystem::getSingleton().ListDirectoryFiles(L"", items);
 
