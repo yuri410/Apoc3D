@@ -11,7 +11,7 @@ namespace CodeCheck
     class Program
     {
         static Regex inheritanceMatcher =
-            new Regex(@"(class|struct)(\s+\S+)?\s+(?<name>\S+)\s*:\s*(public|private|protected)\s*(?<base>[^,\s]+)[^\{\}]*\{\s*RTTI_UpcastableDerived\(\s*(?<a1>\S*)\s*\,\s*(?<a2>\S*)\s*\)");
+            new Regex(@"(class|struct)(\s+\S+)?\s+(?<name>\S+)\s*:\s*(public|private|protected)\s*(?<base>[^,\s]+)[^\{\}]*\{\s*RTTI_DERIVED\(\s*(?<a1>\S*)\s*\,\s*(?<a2>\S*)\s*\)");
 
         static Regex forLoopMatcher = new Regex(@"for\s*\(int(\w\w)?\s*(?<var>\S+)\s*=\s*\S+\s*;.*\)");
 
