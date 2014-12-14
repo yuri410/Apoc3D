@@ -35,12 +35,14 @@ Derived up_cast(Base* o)
 
 	static_assert(std::is_base_of<Base, std::remove_pointer<Derived>::type>::value, "Impossible up_cast");
 
+	(void)Base::_getTypeID();
+
 	if (o == nullptr)
 		return nullptr;
 
 	if (o->CheckRuntimeType(std::remove_pointer<Derived>::type::_getTypeID()))
 	{
-		return (Derived)o;
+		return static_cast<Derived>(o);
 	}
 	return nullptr;
 }
