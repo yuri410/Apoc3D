@@ -32,6 +32,7 @@
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Math/Color.h"
 #include "apoc3d/Math/Vector.h"
+#include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Graphics/RenderSystem/Shader.h"
 
 using namespace Apoc3D::Collections;
@@ -263,15 +264,16 @@ namespace Apoc3D
 			enum CustomEffectParameterType
 			{
 				CEPT_Float = 0,
-				CEPT_Vector2 = 1,
-				CEPT_Vector4 = 2,
-				CEPT_Boolean = 3,
-				CEPT_Integer = 4,
-				CEPT_Ref_Vector2 = 5,
-				CEPT_Ref_Vector3 = 6,
-				CEPT_Ref_Vector4 = 7,
-				CEPT_Ref_Texture = 8,
-				CEPT_Ref_TextureHandle = 9,
+				CEPT_Vector2,
+				CEPT_Vector4,
+				CEPT_Matrix,
+				CEPT_Boolean,
+				CEPT_Integer,
+				CEPT_Ref_Vector2,
+				CEPT_Ref_Vector3,
+				CEPT_Ref_Vector4,
+				CEPT_Ref_Texture,
+				CEPT_Ref_TextureHandle,
 			};
 
 			/** 
@@ -328,39 +330,19 @@ namespace Apoc3D
 				InstanceInfoBlobValue()
 				{ }
 
-				InstanceInfoBlobValue(float val)
-					: Type(CEPT_Float)
-				{
-					AsSingle() = val;
-				}
+				InstanceInfoBlobValue(float val) : Type(CEPT_Float) { AsSingle() = val; }
+				InstanceInfoBlobValue(const Vector2& val) : Type(CEPT_Vector2) { AsVector2() = val; }
+				InstanceInfoBlobValue(const Vector4& val) : Type(CEPT_Vector4) { AsVector4() = val; }
+				InstanceInfoBlobValue(const Matrix& val) : Type(CEPT_Matrix) { AsMatrix() = val; }
 
-				InstanceInfoBlobValue(const Vector2& val)
-					: Type(CEPT_Vector2)
-				{
-					AsVector2() = val;
-				}
+				InstanceInfoBlobValue(bool val) : Type(CEPT_Boolean) { AsBoolean() = val; }
+				InstanceInfoBlobValue(int val) : Type(CEPT_Integer) { AsInteger() = val; }
 
-				InstanceInfoBlobValue(const Vector4& val)
-					: Type(CEPT_Vector4)
-				{
-					AsVector4() = val;
-				}
-
-				InstanceInfoBlobValue(bool val)
-					: Type(CEPT_Boolean)
-				{
-					AsBoolean() = val;
-				}
-
-				InstanceInfoBlobValue(int val)
-					: Type(CEPT_Integer)
-				{
-					AsInteger() = val;
-				}
 
 				float& AsSingle() { return reinterpret_cast<float&>(Value); }
 				Vector2& AsVector2() { return reinterpret_cast<Vector2&>(Value); }
 				Vector4& AsVector4() { return reinterpret_cast<Vector4&>(Value); }
+				Matrix& AsMatrix() { return reinterpret_cast<Matrix&>(Value); }
 				bool& AsBoolean() { return reinterpret_cast<bool&>(Value); }
 				int& AsInteger() { return reinterpret_cast<int&>(Value); }
 
@@ -372,6 +354,7 @@ namespace Apoc3D
 				void Configure(float defVal) { RefValue = nullptr; Type = CEPT_Float; AsSingle() = defVal; }
 				void Configure(const Vector2& defVal) { RefValue = nullptr; Type = CEPT_Vector2; AsVector2() = defVal; }
 				void Configure(const Vector4& defVal) { RefValue = nullptr; Type = CEPT_Vector4; AsVector4() = defVal; }
+				void Configure(const Matrix& defVal) { RefValue = nullptr; Type = CEPT_Matrix; AsMatrix() = defVal; }
 				void Configure(bool defVal) { RefValue = nullptr; Type = CEPT_Boolean; AsBoolean() = defVal; }
 				void Configure(int defVal) { RefValue = nullptr; Type = CEPT_Integer; AsInteger() = defVal; }
 

@@ -45,7 +45,7 @@ namespace Apoc3D
 				while (arr[j] > pivot)
 					j--;
 
-				if (i<=j)
+				if (i <= j)
 				{
 					std::swap(arr[i], arr[j]);
 
@@ -70,7 +70,7 @@ namespace Apoc3D
 				while (comparer(arr[j], pivot) > 0)
 					j--;
 
-				if (i<=j)
+				if (i <= j)
 				{
 					std::swap(arr[i], arr[j]);
 
@@ -157,7 +157,7 @@ namespace Apoc3D
 				{
 					for (int32 i = index + 1; i < m_count; i++)
 					{
-						m_elements[i - 1] = m_elements[i];
+						m_elements[i - 1] = std::move(m_elements[i]);
 					}
 				}
 
@@ -182,7 +182,7 @@ namespace Apoc3D
 					{
 						for (int32 i = start; i < m_count; i++)
 						{
-							m_elements[i] = m_elements[i + count];
+							m_elements[i] = std::move(m_elements[i + count]);
 						}
 					}
 				}
@@ -196,9 +196,7 @@ namespace Apoc3D
 				for (int i = 0; i < m_count / 2; i++)
 				{
 					int32 another = m_count - i - 1;
-					T temp = m_elements[i];
-					m_elements[i] = m_elements[another];
-					m_elements[another] = temp;
+					std::swap(m_elements[i], m_elements[another]);
 				}
 			}
 
@@ -253,6 +251,18 @@ namespace Apoc3D
 				{
 					for (int32 i = 0; i < count; i++)
 						dest[i] = src[i];
+				}
+			}
+			static void MoveTo(T* dest, T* src, int32 count)
+			{
+				if (!std::is_trivially_copyable<T>::value && std::is_move_assignable<T>::value)
+				{
+					for (int32 i = 0; i < count; i++)
+						dest[i] = std::move(src[i]);
+				}
+				else
+				{
+					memcpy(dest, src, count*sizeof(T));
 				}
 			}
 
@@ -423,6 +433,8 @@ namespace Apoc3D
 				: ListBase(other.m_elements, other.m_count), m_length(other.m_length)
 			{
 				other.m_elements = nullptr;
+				other.m_count = 0;
+				other.m_length = 0;
 			}
 			~List()
 			{
@@ -461,10 +473,12 @@ namespace Apoc3D
 				{
 					delete[] m_elements;
 					m_elements = rhs.m_elements;
-					m_length = rhs.m_length;
 					m_count = rhs.m_count;
+					m_length = rhs.m_length;
 
 					rhs.m_elements = nullptr;
+					rhs.m_count = 0;
+					rhs.m_length = 0;
 				}
 				return *this;
 			}
@@ -516,7 +530,7 @@ namespace Apoc3D
 				assert(newSize >= m_count);
 				T* newArr = new T[newSize];
 
-				CopyTo(newArr, m_elements, m_count);
+				MoveTo(newArr, m_elements, m_count);
 
 				delete[] m_elements;
 				m_elements = newArr;
@@ -557,7 +571,7 @@ namespace Apoc3D
 				{
 					for (int32 i = m_count; i > index; i--)
 					{
-						m_elements[i] = m_elements[i - 1];
+						m_elements[i] = std::move(m_elements[i - 1]);
 					}
 				}
 				m_elements[index] = item;
@@ -572,7 +586,7 @@ namespace Apoc3D
 				{
 					for (int32 i = m_count + count - 1; i > index; i--)
 					{
-						m_elements[i] = m_elements[i - count];
+						m_elements[i] = std::move(m_elements[i - count]);
 					}
 				}
 

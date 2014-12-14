@@ -96,7 +96,7 @@ namespace Apoc3D
 				{
 					int index = m_entries[j].hashCode % primeCapacity;
 
-					newEntries[j] = m_entries[j];
+					newEntries[j] = std::move(m_entries[j]);
 					newEntries[j].next = newBuckets[index];
 					newBuckets[index] = j;
 				}
@@ -144,6 +144,10 @@ namespace Apoc3D
 			{
 				other.m_buckets = nullptr;
 				other.m_entries = nullptr;
+				other.m_bucketsLength = 0;
+				other.m_touchedSlots = 0;
+				other.m_count = 0;
+				other.m_emptySlot = -1;
 			}
 			HashMapCore& operator=(const HashMapCore& other)
 			{
@@ -201,6 +205,10 @@ namespace Apoc3D
 
 					other.m_buckets = nullptr;
 					other.m_entries = nullptr;
+					other.m_bucketsLength = 0;
+					other.m_touchedSlots = 0;
+					other.m_count = 0;
+					other.m_emptySlot = -1;
 				}
 				return *this;
 			}
@@ -536,8 +544,8 @@ namespace Apoc3D
 				if (list.getCount() == 0)
 					list.ResizeDiscard(getCount());
 
-				for (Enumerator e = GetEnumerator(); e.MoveNext();)
-					list.Add(e.getCurrentKey());
+				for (const T& key : getKeyAccessor())
+					list.Add(key);
 			}
 
 			void FillValues(List<S>& list) const
@@ -545,8 +553,8 @@ namespace Apoc3D
 				if (list.getCount() == 0)
 					list.ResizeDiscard(getCount());
 
-				for (Enumerator e = GetEnumerator(); e.MoveNext();)
-					list.Add(e.getCurrentValue());
+				for (const S& val : getValueAccessor())
+					list.Add(val);
 			}
 
 			//////////////////////////////////////////////////////////////////////////

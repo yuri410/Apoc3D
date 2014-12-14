@@ -234,12 +234,43 @@ namespace Apoc3D
 				int32 hashCode;
 				int32 next;
 				A data;
+
+				HashMapEntry() { }
+
+				HashMapEntry(HashMapEntry&& o)
+					: hashCode(o.hashCode), next(o.next), data(std::move(o.data)) { }
+
+				HashMapEntry& operator=(HashMapEntry&& rhs)
+				{
+					if (this != &rhs)
+					{
+						hashCode = rhs.hashCode;
+						next = rhs.next;
+						data = std::move(rhs.data);
+					}
+					return *this;
+				}
 			};
 
 			template <typename A, typename B>
 			struct HashMapEntryPair : public HashMapEntry < A >
 			{
 				B value;
+
+				HashMapEntryPair() { }
+				HashMapEntryPair(HashMapEntryPair&& o)
+					: HashMapEntry(std::forward<HashMapEntry<A>>(o)), value(std::move(o.value)) { }
+
+				HashMapEntryPair& operator=(HashMapEntryPair&& rhs)
+				{
+					if (this != &rhs)
+					{
+						HashMapEntry::operator =(std::forward<HashMapEntry<A>>(rhs));
+
+						value = std::move(rhs.value);
+					}
+					return *this;
+				}
 			};
 
 		};

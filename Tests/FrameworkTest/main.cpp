@@ -64,7 +64,6 @@ void main()
 	//std::wcout << s.c_str() << L"\n";
 	//std::wcout << std::numeric_limits<float>::digits10+1 << L"\n";
 
-
 	FileSystem::Initialize();
 	wchar_t workingDir[260];
 	GetCurrentDirectory(260, workingDir);
