@@ -272,6 +272,7 @@ namespace Apoc3D
 				CEPT_Ref_Vector2,
 				CEPT_Ref_Vector3,
 				CEPT_Ref_Vector4,
+				CEPT_Ref_Matrix,
 				CEPT_Ref_Texture,
 				CEPT_Ref_TextureHandle,
 			};

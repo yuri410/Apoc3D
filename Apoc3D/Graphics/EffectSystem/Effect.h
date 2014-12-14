@@ -164,7 +164,7 @@ namespace Apoc3D
 						: EffectParameter(base) { }
 
 					bool RS_SetupAtBegining = false;
-					bool RS_SetupAtBeginingOnly = false;
+					bool RS_SetupAtBeginingOnly = false;		/** for parameter with RS_SetupAtBegining==true, this means if setup can be fully done at beginning */
 					Shader* RS_TargetShader = nullptr;
 
 					void SetSamplerState() const;

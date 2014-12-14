@@ -50,67 +50,55 @@ namespace Apoc3D
 		class APAPI Vector4
 		{
 		public:
-			
-			/** The X component of the vector. */
-			float X;
-
-			/** The Y component of the vector */
-			float Y;
-
-			/** The Z component of the vector. */
-			float Z;
-
-			/** The W component of the vector. */
-			float W;
+			float X;	/** The X component of the vector. */
+			float Y;	/** The Y component of the vector. */
+			float Z;	/** The Z component of the vector. */
+			float W;	/** The W component of the vector. */
 
 			Vector4() { }
 
-			explicit Vector4(const float* ptr)
-				: X(ptr[0]), Y(ptr[1]), Z(ptr[2]), W(ptr[3])
-			{ }
+			Vector4(const float (&ptr)[4])
+				: X(ptr[0]), Y(ptr[1]), Z(ptr[2]), W(ptr[3]) { }
+
 			Vector4(float x, float y, float z, float w)
-				: X(x), Y(y), Z(z), W(w)
-			{ }
+				: X(x), Y(y), Z(z), W(w) { }
 
 			Vector4(const Vector3& v, float w);
 
-			bool operator==(const Vector4 &other) const { return other.X == X && other.Y == Y && other.Z == Z && other.W == W; }
-			bool operator!=(const Vector4 &other) const { return !(*this == other); }
+			bool operator==(const Vector4 &other) const		{ return other.X == X && other.Y == Y && other.Z == Z && other.W == W; }
+			bool operator!=(const Vector4 &other) const		{ return !(*this == other); }
 
-			operator float*() { return &X; }
-			operator const float*() const { return &X; }
+			operator float*()								{ return &X; }
+			operator const float*() const					{ return &X; }
 
-			void operator +=(const Vector4& vec) { X += vec.X; Y += vec.Y; Z += vec.Z; W += vec.W; }
-			void operator -=(const Vector4& vec) { X -= vec.X; Y -= vec.Y; Z -= vec.Z; W -= vec.W; }
+			void operator +=(const Vector4& vec)			{ X += vec.X; Y += vec.Y; Z += vec.Z; W += vec.W; }
+			void operator -=(const Vector4& vec)			{ X -= vec.X; Y -= vec.Y; Z -= vec.Z; W -= vec.W; }
 
-			void operator *=(const Vector4& vec) { X *= vec.X; Y *= vec.Y; Z *= vec.Z; W *= vec.W; }
-			void operator *=(float scalar) { X *= scalar; Y *= scalar; Z *= scalar; W *= scalar; }
-			void operator /=(float scalar) { float inv = 1.0f/scalar; X *= inv; Y *= inv; Z *= inv; W *= inv; }
+			void operator *=(const Vector4& vec)			{ X *= vec.X; Y *= vec.Y; Z *= vec.Z; W *= vec.W; }
+			void operator *=(float scalar)					{ X *= scalar; Y *= scalar; Z *= scalar; W *= scalar; }
+			void operator /=(float scalar)					{ float inv = 1.0f/scalar; X *= inv; Y *= inv; Z *= inv; W *= inv; }
 
-			Vector4 operator -() const { return Vector4(-X, -Y, -Z, -W); }
-			Vector4 operator -(const Vector4& vec) const { return Vector4(X - vec.X, Y - vec.Y, Z - vec.Z, W - vec.W); }
-			Vector4 operator +(const Vector4& vec) const { return Vector4(X + vec.X, Y + vec.Y, Z + vec.Z, W + vec.W); }
-			Vector4 operator *(const Vector4& vec) const { return Vector4(X * vec.X, Y * vec.Y, Z * vec.Z, W * vec.W); }
-			Vector4 operator *(float scalar) const { return Vector4(X * scalar, Y * scalar, Z * scalar, W * scalar); }
-			Vector4 operator /(float scalar) const { scalar = 1/scalar; return Vector4(X * scalar, Y * scalar, Z * scalar, W * scalar); }
+			Vector4 operator -() const						{ return Vector4(-X, -Y, -Z, -W); }
+			Vector4 operator -(const Vector4& vec) const	{ return Vector4(X - vec.X, Y - vec.Y, Z - vec.Z, W - vec.W); }
+			Vector4 operator +(const Vector4& vec) const	{ return Vector4(X + vec.X, Y + vec.Y, Z + vec.Z, W + vec.W); }
+			Vector4 operator *(const Vector4& vec) const	{ return Vector4(X * vec.X, Y * vec.Y, Z * vec.Z, W * vec.W); }
+			Vector4 operator *(float scalar) const			{ return Vector4(X * scalar, Y * scalar, Z * scalar, W * scalar); }
+			Vector4 operator /(float scalar) const			{ scalar = 1/scalar; return Vector4(X * scalar, Y * scalar, Z * scalar, W * scalar); }
 			
-			float operator[] (int idx) const { assert(idx<4); return (&X)[idx]; }
+			float operator[] (int idx) const				{ assert(idx<4); return (&X)[idx]; }
+			float& operator[] (int idx)						{ assert(idx < 4); return (&X)[idx]; }
 
-			void Load(const float* ptr) { X = ptr[0]; Y = ptr[1]; Z = ptr[2]; W = ptr[3]; }
-			void Store(float* dest) { dest[0] = X; dest[1] = Y; dest[2] = Z; dest[3] = W; }
 
-			/**
-			 * Calculates the length of the vector.
-			 */
-			float Length() const { return sqrtf(X*X + Y*Y + Z*Z + W*W); }
-			/**
-			 * Calculates the squared length of the vector.
-			 */
-			float LengthSquared() const { return X*X + Y*Y + Z*Z + W*W; }
+			void Load(const float* ptr)						{ X = ptr[0]; Y = ptr[1]; Z = ptr[2]; W = ptr[3]; }
+			void Store(float* dest)							{ dest[0] = X; dest[1] = Y; dest[2] = Z; dest[3] = W; }
 
-			/**
-			 * Converts the vector into a unit vector.
-			 */
+			/** Calculates the length of the vector. */
+			float Length() const							{ return sqrtf(X*X + Y*Y + Z*Z + W*W); }
+
+			/** Calculates the squared length of the vector. */
+			float LengthSquared() const						{ return X*X + Y*Y + Z*Z + W*W; }
+
+			/** Converts the vector into a unit vector. */
 			void NormalizeInPlace()
 			{
 				float length = Length();
@@ -125,15 +113,11 @@ namespace Apoc3D
 			}
 			Vector4 Normalized() const { Vector4 copy = *this; copy.NormalizeInPlace(); return copy; }
 
-			/**
-			 * Reverses the direction of the vector.
-			 */
+			/** Reverses the direction of the vector. */
 			void NegateInPlace() { X = -X; Y = -Y; Z = -Z; W = -W; }
 			Vector4 Negate() const { Vector4 copy = *this; copy.NegateInPlace(); return copy; }
 
-			/**
-			 * Calculates the distance between two vectors.
-			 */
+			/** Calculates the distance between two vectors. */
 			float Distance(const Vector4& vec) const
 			{
 				float x = X - vec.X;
@@ -141,8 +125,9 @@ namespace Apoc3D
 				float z = Z - vec.Z;
 				float w = W - vec.W;
 
-				return sqrtf(x * x + y * y + z * z + w * w);
+				return sqrtf(x*x + y*y + z*z + w*w);
 			}
+
 			float DistanceSquared(const Vector4& vec) const
 			{
 				float x = X - vec.X;
@@ -150,12 +135,10 @@ namespace Apoc3D
 				float z = Z - vec.Z;
 				float w = W - vec.W;
 
-				return x * x + y * y + z * z + w * w;
+				return x*x + y*y + z*z + w*w;
 			}
 
-			/**
-			 * Calculates the dot product of two vectors.
-			 */
+			/** Calculates the dot product of two vectors. */
 			float Dot(const Vector4& right) const { return X * right.X + Y * right.Y + Z * right.Z + W * right.W; }
 
 			uint32 GetHashCode() const
@@ -169,19 +152,17 @@ namespace Apoc3D
 			String ToParsableString(int precision = -1) const;
 			
 
+			static Vector4 Set(float s)				{ return Vector4(s, s, s, s); }
+			static Vector4 Set(const float* ptr)	{ Vector4 v; v.Load(ptr); return v; }
 
-			/**
-			 * Calculates the length of the vector.
-			 */
-			static float Length(const Vector4& v) { return sqrtf(v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W); }
-			/**
-			 * Calculates the squared length of the vector.
-			 */
-			static float LengthSquared(const Vector4& v) { return v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W; }
 
-			/**
-			 * Converts the vector into a unit vector.
-			 */
+			/** Calculates the length of the vector. */
+			static float Length(const Vector4& v)				{ return sqrtf(v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W); }
+
+			/** Calculates the squared length of the vector. */
+			static float LengthSquared(const Vector4& v)		{ return v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W; }
+
+			/** Converts the vector into a unit vector. */
 			static Vector4 Normalize(const Vector4& vector)
 			{
 				float length = Length(vector);
@@ -193,42 +174,22 @@ namespace Apoc3D
 				return Vector4(vector.X * inv, vector.Y * inv, vector.Z * inv, vector.W * inv);
 			}
 
-			/**
-			 * Adds two vectors.
-			 */
-			static Vector4 Add(const Vector4& left, const Vector4& right)
-			{
-				return Vector4(left.X + right.X, left.Y + right.Y, left.Z + right.Z, left.W + right.W);
-			}
-			/**
-			 * Subtracts two vectors.
-			 */
-			static Vector4 Subtract(const Vector4& left, const Vector4& right) 
-			{
-				return Vector4(left.X - right.X, left.Y - right.Y, left.Z - right.Z, left.W - right.W); 
-			}
-			/**
-			 * Scales a vector by the given value.
-			 */
-			static Vector4 Multiply(const Vector4& value, float scale)
-			{
-				return Vector4(value.X * scale, value.Y * scale, value.Z * scale, value.W * scale);
-			}
-			/**
-			 * Modulates a vector by another.
-			 */
-			static Vector4 Modulate(const Vector4& left, const Vector4& right)
-			{
-				return Vector4(left.X * right.X, left.Y * right.Y, left.Z * right.Z, left.W * right.W);
-			}
-			/**
-			 * Scales a vector by the given value.
-			 */
-			static Vector4 Divide(const Vector4& value, float scale) { float inv = 1/scale; return Vector4(value.X * inv, value.Y * inv, value.Z * inv, value.W * inv); }
-			/**
-			 * Reverses the direction of a given vector.
-			 */
-			static Vector4 Negate(const Vector4& value) { return Vector4(-value.X, -value.Y, -value.Z, -value.W); }
+			/** Adds two vectors. */
+			static Vector4 Add(const Vector4& a, const Vector4& b)					{ return Vector4(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W); }
+
+			/** Subtracts two vectors. */
+			static Vector4 Subtract(const Vector4& a, const Vector4& b)				{ return Vector4(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);  }
+
+			/** Scales a vector by the given value. */
+			static Vector4 Multiply(const Vector4& v, float scale)					{ return Vector4(v.X * scale, v.Y * scale, v.Z * scale, v.W * scale); }
+
+			/** Modulates a vector by another. */
+			static Vector4 Modulate(const Vector4& a, const Vector4& b)				{ return Vector4(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W); }
+
+			static Vector4 Divide(const Vector4& v, float scale)					{ float inv = 1/scale; return Vector4(v.X * inv, v.Y * inv, v.Z * inv, v.W * inv); }
+
+			/** Reverses the direction of a given vector. */
+			static Vector4 Negate(const Vector4& v)									{ return Vector4(-v.X, -v.Y, -v.Z, -v.W); }
 
 			/** 
 			 * Returns a Vector4 containing the 4D Cartesian coordinates of 
@@ -244,9 +205,8 @@ namespace Apoc3D
 				vector.W = value1.W + amount1 * (value2.W - value1.W) + amount2 * (value3.W - value1.W);
 				return vector;
 			}
-			/** 
-			 * Performs a Catmull-Rom interpolation using the specified positions.
-			 */
+
+			/** Performs a Catmull-Rom interpolation using the specified positions. */
 			static Vector4 CatmullRom(const Vector4& value1, const Vector4& value2, 
 				const Vector4& value3, const Vector4& value4, float amount)
 			{
@@ -262,9 +222,7 @@ namespace Apoc3D
 				return vector;
 			}
 
-			/**
-			 * Performs a Hermite spline interpolation.
-			 */
+			/** Performs a Hermite spline interpolation. */
 			static Vector4 Hermite(const Vector4& value1, const Vector4& tangent1, 
 				const Vector4& value2, const Vector4& tangent2, float amount)
 			{
@@ -284,9 +242,7 @@ namespace Apoc3D
 				return vector;
 			}
 
-			/** 
-			 * Restricts a value to be within a specified range.
-			 */
+			/** Restricts a value to be within a specified range. */
 			static Vector4 Clamp(const Vector4& value, const Vector4& min, const Vector4& max)
 			{
 				float x = value.X;
@@ -308,9 +264,7 @@ namespace Apoc3D
 				return Vector4(x, y, z, w);
 			}
 			
-			/**
-			 * Performs a linear interpolation between two vectors.
-			 */
+			/** Performs a linear interpolation between two vectors. */
 			static Vector4 Lerp(const Vector4& start, const Vector4& end, float amount)
 			{
 				Vector4 vector;
@@ -322,9 +276,8 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/**
-			 * Performs a cubic interpolation between two vectors.
-			 */
+
+			/** Performs a cubic interpolation between two vectors. */
 			static Vector4 SmoothStep(const Vector4& start, const Vector4& end, float amount)
 			{
 				Vector4 vector;
@@ -340,9 +293,7 @@ namespace Apoc3D
 				return vector;
 			}
 
-			/**
-			 * Calculates the distance between two vectors.
-			 */
+			/** Calculates the distance between two vectors. */
 			static float Distance(const Vector4& value1, const Vector4& value2)
 			{
 				float x = value1.X - value2.X;
@@ -352,9 +303,8 @@ namespace Apoc3D
 
 				return sqrtf(x * x + y * y + z * z + w * w);
 			}
-			/**
-			 * Calculates the squared distance between two vectors.
-			 */
+
+			/** Calculates the squared distance between two vectors. */
 			static float DistanceSquared(const Vector4& value1, const Vector4& value2)
 			{
 				float x = value1.X - value2.X;
@@ -364,17 +314,11 @@ namespace Apoc3D
 
 				return x * x + y * y + z * z + w * w;
 			}
-			/** 
-			 * Calculates the dot product of two vectors.
-			 */
-			static float Dot(const Vector4& left, const Vector4& right)
-			{
-				return left.X * right.X + left.Y * right.Y + left.Z * right.Z + left.W * right.W;
-			}
 
-			/**
-			 * Returns a vector containing the smallest components of the specified vectors.
-			 */
+			/** Calculates the dot product of two vectors. */
+			static float Dot(const Vector4& a, const Vector4& b) { return a.X * b.X + a.Y * b.Y + a.Z * b.Z + a.W * b.W; }
+
+			/** Returns a vector containing the smallest components of the specified vectors. */
 			static Vector4 Minimize(const Vector4& left, const Vector4& right)
 			{
 				Vector4 vector;
@@ -385,9 +329,7 @@ namespace Apoc3D
 				return vector;
 			}
 
-			/**
-			 * Returns a vector containing the largest components of the specified vectors.
-			 */
+			/** Returns a vector containing the largest components of the specified vectors. */
 			static Vector4 Maximize(const Vector4& left, const Vector4& right)
 			{
 				Vector4 vector;
@@ -399,33 +341,16 @@ namespace Apoc3D
 			}
 
 			
-			/**
-			 * Transforms a 3D vector by the given Matrix
-			 */
+			/** Transforms a 3D vector by the given Matrix */
 			static Vector4 Transform(const Vector4& vector, const Matrix& transform);
 			
-			static Vector4 Set(float s) { return Vector4(s, s, s, s); }
-
-			/** 
-			 * a Vector4 with all of its components set to zero.
-			 */
+			/** a Vector4 with all of its components set to zero. */
 			static const Vector4 Zero;
-			/**
-			 * X unit Vector4 (1, 0, 0, 0).
-			 */
-			static const Vector4 UnitX;
-			/**
-			 * Y unit Vector4 (0, 1, 0, 0).
-			 */
-			static const Vector4 UnitY;
-			/**
-			 * Z unit Vector4 (0, 0, 1, 0).
-			 */
-			static const Vector4 UnitZ;
-			/**
-			 * W unit Vector4 (0, 0, 0, 1).
-			 */
-			static const Vector4 UnitW;
+			
+			static const Vector4 UnitX;		/** X unit Vector4 (1, 0, 0, 0). */
+			static const Vector4 UnitY;		/** Y unit Vector4 (0, 1, 0, 0). */
+			static const Vector4 UnitZ;		/** Z unit Vector4 (0, 0, 1, 0). */
+			static const Vector4 UnitW;		/** W unit Vector4 (0, 0, 0, 1). */
 			static const Vector4 One;
 
 		};
@@ -434,10 +359,8 @@ namespace Apoc3D
 		class APAPI Vector2
 		{
 		public:
-			/** the X component of the vector */
-			float X;
-			/** the Y component of the vector */
-			float Y;
+			float X;	/** the X component of the vector */
+			float Y;	/** the Y component of the vector */
 
 			Vector2() { }
 
@@ -449,43 +372,38 @@ namespace Apoc3D
 			bool operator==(const Vector2 &other) const { return other.X == X && other.Y == Y;  }
 			bool operator!=(const Vector2 &other) const { return !(*this == other); }
 
-			operator float*() { return &X; }
-			operator const float*() const { return &X; }
+			operator float*()							{ return &X; }
+			operator const float*() const				{ return &X; }
 
 
-			void operator +=(const Vector2& vec) { X += vec.X; Y += vec.Y; }
-			void operator -=(const Vector2& vec) { X -= vec.X; Y -= vec.Y; }
+			void operator +=(const Vector2& vec)		{ X += vec.X; Y += vec.Y; }
+			void operator -=(const Vector2& vec)		{ X -= vec.X; Y -= vec.Y; }
 
-			void operator *=(const Vector2& vec) { X *= vec.X; Y *= vec.Y; }
-			void operator *=(float scalar) { X *= scalar; Y *= scalar; }
-			void operator /=(float scalar) { float inv = 1.0f/scalar; X *= inv; Y *= inv; }
+			void operator *=(const Vector2& vec)		{ X *= vec.X; Y *= vec.Y; }
+			void operator *=(float scalar)				{ X *= scalar; Y *= scalar; }
+			void operator /=(float scalar)				{ float inv = 1.0f/scalar; X *= inv; Y *= inv; }
 
-			Vector2 operator -() const { return Vector2(-X, -Y); }
-			Vector2 operator -(const Vector2& vec) const { return Vector2(X - vec.X, Y - vec.Y); }
-			Vector2 operator +(const Vector2& vec) const { return Vector2(X + vec.X, Y + vec.Y); }
-			Vector2 operator *(const Vector2& vec) const { return Vector2(X * vec.X, Y * vec.Y); }
-			Vector2 operator *(float scalar) const { return Vector2(X * scalar, Y * scalar); }
-			Vector2 operator /(float scalar) const { scalar = 1/scalar; return Vector2(X * scalar, Y * scalar); }
+			Vector2 operator -() const						{ return Vector2(-X, -Y); }
+			Vector2 operator -(const Vector2& vec) const	{ return Vector2(X - vec.X, Y - vec.Y); }
+			Vector2 operator +(const Vector2& vec) const	{ return Vector2(X + vec.X, Y + vec.Y); }
+			Vector2 operator *(const Vector2& vec) const	{ return Vector2(X * vec.X, Y * vec.Y); }
+			Vector2 operator *(float scalar) const			{ return Vector2(X * scalar, Y * scalar); }
+			Vector2 operator /(float scalar) const			{ scalar = 1/scalar; return Vector2(X * scalar, Y * scalar); }
 			
-			float operator[] (int idx) const { assert(idx<2); return (&X)[idx]; }
+			float operator[] (int idx) const	{ assert(idx<2); return (&X)[idx]; }
+			float& operator[] (int idx)			{ assert(idx < 4); return (&X)[idx]; }
 
-			void Load(const float* ptr) { X = ptr[0]; Y = ptr[1]; }
-			void Store(float* dest) const { dest[0] = X; dest[1] = Y; }
+			void Load(const float* ptr)			{ X = ptr[0]; Y = ptr[1]; }
+			void Store(float* dest) const		{ dest[0] = X; dest[1] = Y; }
 
 
-			/**
-			 * Calculates the length of the vector.
-			 */
-			float Length() const { return sqrtf(X*X + Y*Y); }
+			/** Calculates the length of the vector. */
+			float Length() const				{ return sqrtf(X*X + Y*Y); }
 
-			/**
-			 * Calculates the squared length of the vector.
-			 */
-			float LengthSquared() const { return X*X + Y*Y; }
+			/** Calculates the squared length of the vector. */
+			float LengthSquared() const			{ return X*X + Y*Y; }
 
-			/**
-			 * Converts the vector into a unit vector.
-			 */
+			/** Converts the vector into a unit vector. */
 			void NormalizeInPlace()
 			{
 				float length = Length();
@@ -500,18 +418,14 @@ namespace Apoc3D
 			}
 			Vector2 Normalized() const { Vector2 copy = *this; copy.NormalizeInPlace(); return copy; }
 
-			/**
-			 * Reverses the direction of the vector.
-			 */
+			/** Reverses the direction of the vector. */
 			void NegateInPlace() { X = -X; Y = -Y; }
 			Vector2 Negate() const { Vector2 copy = *this; copy.NegateInPlace(); return copy; }
 
 			float Cross(const Vector2& b) const { return X * b.Y - b.X * Y; }
 
 
-			/**
-			 * Calculates the distance between two vectors.
-			 */
+			/** Calculates the distance between two vectors. */
 			float Distance(const Vector2& vec) const
 			{
 				float x = X - vec.X;
@@ -520,9 +434,7 @@ namespace Apoc3D
 				return sqrtf(x * x + y * y);
 			}
 
-			/**
-			 * Calculates the dot product of two vectors.
-			 */
+			/** Calculates the dot product of two vectors. */
 			float Dot(const Vector2& right) const { return X * right.X + Y * right.Y; }
 
 			uint32 GetHashCode() const { return reinterpret_cast<const uint32&>(X) ^ reinterpret_cast<const uint32&>(Y); }
@@ -533,47 +445,32 @@ namespace Apoc3D
 			String ToParsableString(int precision = -1) const;
 
 			
+			static Vector2 Set(float s)				{ return Vector2(s, s); }
+			static Vector2 Set(const float* ptr)	{ Vector2 v; v.Load(ptr); return v; }
+
+			/** Calculates the length of the vector. */
+			static float Length(const Vector2& v)						{ return sqrtf(v.X*v.X + v.Y*v.Y); }
+
+			/** Calculates the squared length of the vector. */
+			static float LengthSquared(const Vector2& v)				{ return v.X*v.X + v.Y*v.Y; }
+
+			/** Converts the vector into a unit vector. */
+			static Vector2 Normalize(const Vector2& vector)				{ return vector.Normalized(); }
+
+			/** Adds two vectors. */
+			static Vector2 Add(const Vector2& left, const Vector2& right)			{ return Vector2(left.X + right.X, left.Y + right.Y); }
+			/** Subtracts two vectors. */
+			static Vector2 Subtract(const Vector2& left, const Vector2& right)		{ return Vector2(left.X - right.X, left.Y - right.Y); }
+			/** Scales a vector by the given value. */
+			static Vector2 Multiply(const Vector2& value, float scale)				{ return Vector2(value.X * scale, value.Y * scale); }
+			/** Modulates a vector by another. */
+			static Vector2 Modulate(const Vector2& left, const Vector2& right)		{ return Vector2(left.X * right.X, left.Y * right.Y); }
 			
-			/**
-			 * Calculates the length of the vector.
-			 */
-			static float Length(const Vector2& v) { return sqrtf(v.X*v.X + v.Y*v.Y); }
+			static Vector2 Divide(const Vector2& value, float scale)				{ float inv = 1.0f/scale; return Vector2(value.X * inv, value.Y * inv); }
+			static float Cross(const Vector2& a, const Vector2& b)					{ return a.X * b.Y - b.X * a.Y; }
 
-			/**
-			 * Calculates the squared length of the vector.
-			 */
-			static float LengthSquared(const Vector2& v) { return v.X*v.X + v.Y*v.Y; }
-
-			/**
-			 * Converts the vector into a unit vector.
-			 */
-			static Vector2 Normalize(const Vector2& vector) { return vector.Normalized(); }
-			/**
-			 * Adds two vectors.
-			 */
-			static Vector2 Add(const Vector2& left, const Vector2& right) { return Vector2(left.X + right.X, left.Y + right.Y); }
-			/**
-			 * Subtracts two vectors.
-			 */
-			static Vector2 Subtract(const Vector2& left, const Vector2& right) { return Vector2(left.X - right.X, left.Y - right.Y); }
-			/**
-			 * Scales a vector by the given value.
-			 */
-			static Vector2 Multiply(const Vector2& value, float scale) { return Vector2(value.X * scale, value.Y * scale); }
-			/**
-			 * Modulates a vector by another.
-			 */
-			static Vector2 Modulate(const Vector2& left, const Vector2& right) { return Vector2(left.X * right.X, left.Y * right.Y); }
-			/**
-			 * Scales a vector by the given value.
-			 */
-			static Vector2 Divide(const Vector2& value, float scale) { float inv = 1.0f/scale; return Vector2(value.X * inv, value.Y * inv); }
-			static float Cross(const Vector2& a, const Vector2& b) { return a.X * b.Y - b.X * a.Y; }
-
-			/**
-			 * Reverses the direction of a given vector.
-			 */
-			static Vector2 Negate(const Vector2& value) { return Vector2(-value.X, -value.Y); }
+			/** Reverses the direction of a given vector. */
+			static Vector2 Negate(const Vector2& value)								{ return Vector2(-value.X, -value.Y); }
 
 			/**
 			 * Returns a Vector2 containing the 2D Cartesian coordinates of a point 
@@ -586,9 +483,8 @@ namespace Apoc3D
 				vector.Y = value1.Y + amount1 * (value2.Y - value1.Y) + amount2 * (value3.Y - value1.Y);
 				return vector;
 			}
-			/**
-			 * Performs a Catmull-Rom interpolation using the specified positions.
-			 */
+
+			/** Performs a Catmull-Rom interpolation using the specified positions. */
 			static Vector2 CatmullRom(const Vector2& value1, const Vector2& value2, const Vector2& value3, const Vector2& value4, float amount)
 			{
 				Vector2 vector;
@@ -600,9 +496,8 @@ namespace Apoc3D
 				
 				return vector;
 			}
-			/**
-			 * Performs a Hermite spline interpolation.
-			 */
+
+			/** Performs a Hermite spline interpolation. */
 			static Vector2 Hermite(const Vector2& value1, const Vector2& tangent1, const Vector2& value2, const Vector2& tangent2, float amount)
 			{
 				Vector2 vector;
@@ -618,9 +513,8 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/**
-			 * Performs a linear interpolation between two vectors.
-			 */
+
+			/** Performs a linear interpolation between two vectors. */
 			static Vector2 Lerp(const Vector2& start, const Vector2& end, float amount)
 			{
 				Vector2 vector;
@@ -630,9 +524,8 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/**
-			 * Performs a cubic interpolation between two vectors.
-			 */
+
+			/** Performs a cubic interpolation between two vectors. */
 			static Vector2 SmoothStep(const Vector2& start, const Vector2& end, float amount)
 			{
 				Vector2 vector;
@@ -645,9 +538,8 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/**
-			 * Restricts a value to be within a specified range.
-			 */
+
+			/** Restricts a value to be within a specified range. */
 			static Vector2 Clamp(const Vector2& value, const Vector2& min, const Vector2& max)
 			{
 				float x = value.X;
@@ -661,9 +553,7 @@ namespace Apoc3D
 				return Vector2(x, y);
 			}
 
-			/**
-			 * Calculates the distance between two vectors.
-			 */
+			/** Calculates the distance between two vectors. */
 			static float Distance(const Vector2& value1, const Vector2& value2)
 			{
 				float x = value1.X - value2.X;
@@ -672,9 +562,7 @@ namespace Apoc3D
 				return sqrtf(x * x + y * y);
 			}
 
-			/**
-			 * Calculates the squared distance between two vectors.
-			 */
+			/** Calculates the squared distance between two vectors. */
 			static float DistanceSquared(const Vector2& value1, const Vector2& value2)
 			{
 				float x = value1.X - value2.X;
@@ -683,14 +571,10 @@ namespace Apoc3D
 				return x * x + y * y;
 			}
 
-			/**
-			 * Calculates the dot product of two vectors.
-			 */
+			/** Calculates the dot product of two vectors. */
 			static float Dot(const Vector2& left, const Vector2& right) { return left.X * right.X + left.Y * right.Y; }
 
-			/**
-			 * Returns the reflection of a vector off a surface that has the specified normal. 
-			 */
+			/** Returns the reflection of a vector off a surface that has the specified normal. */
 			static Vector2 Reflect(const Vector2& vector, const Vector2& normal)
 			{
 				Vector2 vector2;
@@ -699,9 +583,8 @@ namespace Apoc3D
 				vector2.Y = vector.Y - 2.0f * dot * normal.Y;
 				return vector2;
 			}
-			/**
-			 * Returns a vector containing the smallest components of the specified vectors.
-			 */
+
+			/** Returns a vector containing the smallest components of the specified vectors. */
 			static Vector2 Minimize(const Vector2& left, const Vector2& right)
 			{
 				Vector2 vector;
@@ -709,9 +592,8 @@ namespace Apoc3D
 				vector.Y = (left.Y < right.Y) ? left.Y : right.Y;
 				return vector;
 			}
-			/**
-			 * Returns a vector containing the largest components of the specified vectors.
-			 */
+
+			/** Returns a vector containing the largest components of the specified vectors. */
 			static Vector2 Maximize(const Vector2& left, const Vector2& right)
 			{
 				Vector2 vector;
@@ -720,28 +602,14 @@ namespace Apoc3D
 				return vector;
 			}
 
-			static Vector2 Set(float s) { return Vector2(s, s); }
-
-			/**
-			 *  a Vector2 with all of its components set to zero.
-			 */
-			static const Vector2 Zero;
-			/**
-			 *  X unit Vector2 (1, 0).
-			 */
-			static const Vector2 UnitX;
-			/**
-			 *  Y unit Vector2 (0, 1).
-			 */
-			static const Vector2 UnitY;
+			static const Vector2 Zero;		/** a Vector2 with all of its components set to zero. */
+			static const Vector2 UnitX;		/** X unit Vector2 (1, 0). */
+			static const Vector2 UnitY;		/** Y unit Vector2 (0, 1). */
 
 			static const Vector2 One;
-
 		};
 
-		/**
-		 * Defines a three component vector.
-		 */
+		/** Defines a three component vector. */
 		class APAPI Vector3
 		{
 		public:
@@ -749,53 +617,46 @@ namespace Apoc3D
 			float Y;
 			float Z;
 
-
 			Vector3() { }
-			explicit Vector3(const float* ptr)
-				: X(ptr[0]), Y(ptr[1]), Z(ptr[2])
-			{ }
+			Vector3(const float (&ptr)[3])
+				: X(ptr[0]), Y(ptr[1]), Z(ptr[2]) { }
 			
 			Vector3(float x, float y, float z)
-				: X(x), Y(y), Z(z)
-			{ }
+				: X(x), Y(y), Z(z) { }
 
 			bool operator==(const Vector3 &other) const { return other.X == X && other.Y == Y && other.Z == Z;  }
 			bool operator!=(const Vector3 &other) const { return !(*this == other); }
 
-			operator float*() { return &X; }
-			operator const float*() const { return &X; }
+			operator float*()							{ return &X; }
+			operator const float*() const				{ return &X; }
 
-			void operator +=(const Vector3& vec) { X += vec.X; Y += vec.Y; Z += vec.Z; }
-			void operator -=(const Vector3& vec) { X -= vec.X; Y -= vec.Y; Z -= vec.Z; }
+			void operator +=(const Vector3& vec)		{ X += vec.X; Y += vec.Y; Z += vec.Z; }
+			void operator -=(const Vector3& vec)		{ X -= vec.X; Y -= vec.Y; Z -= vec.Z; }
 
-			void operator *=(const Vector3& vec) { X *= vec.X; Y *= vec.Y; Z *= vec.Z; }
-			void operator *=(float scalar) { X *= scalar; Y *= scalar; Z *= scalar; }
-			void operator /=(float scalar) { float inv = 1.0f/scalar; X *= inv; Y *= inv; Z *= inv; }
+			void operator *=(const Vector3& vec)		{ X *= vec.X; Y *= vec.Y; Z *= vec.Z; }
+			void operator *=(float scalar)				{ X *= scalar; Y *= scalar; Z *= scalar; }
+			void operator /=(float scalar)				{ float inv = 1.0f/scalar; X *= inv; Y *= inv; Z *= inv; }
 
-			Vector3 operator -() const { return Vector3(-X, -Y, -Z); }
-			Vector3 operator -(const Vector3& vec) const { return Vector3(X - vec.X, Y - vec.Y, Z - vec.Z); }
-			Vector3 operator +(const Vector3& vec) const { return Vector3(X + vec.X, Y + vec.Y, Z + vec.Z); }
-			Vector3 operator *(const Vector3& vec) const { return Vector3(X * vec.X, Y * vec.Y, Z * vec.Z); }
-			Vector3 operator *(float scalar) const { return Vector3(X * scalar, Y * scalar, Z * scalar); }
-			Vector3 operator /(float scalar) const { scalar = 1/scalar; return Vector3(X * scalar, Y * scalar, Z * scalar); }
+			Vector3 operator -() const						{ return Vector3(-X, -Y, -Z); }
+			Vector3 operator -(const Vector3& vec) const	{ return Vector3(X - vec.X, Y - vec.Y, Z - vec.Z); }
+			Vector3 operator +(const Vector3& vec) const	{ return Vector3(X + vec.X, Y + vec.Y, Z + vec.Z); }
+			Vector3 operator *(const Vector3& vec) const	{ return Vector3(X * vec.X, Y * vec.Y, Z * vec.Z); }
+			Vector3 operator *(float scalar) const			{ return Vector3(X * scalar, Y * scalar, Z * scalar); }
+			Vector3 operator /(float scalar) const			{ scalar = 1/scalar; return Vector3(X * scalar, Y * scalar, Z * scalar); }
 			
-			float operator[] (int idx) const { assert(idx<3); return (&X)[idx]; }
+			float operator[] (int idx) const		{ assert(idx<3); return (&X)[idx]; }
+			float& operator[] (int idx)				{ assert(idx < 3); return (&X)[idx]; }
 
-			void Load(const float* ptr) { X = ptr[0]; Y = ptr[1]; Z = ptr[2]; }
-			void Store(float* dest) const { dest[0] = X; dest[1] = Y; dest[2] = Z; }
+			void Load(const float* ptr)				{ X = ptr[0]; Y = ptr[1]; Z = ptr[2]; }
+			void Store(float* dest) const			{ dest[0] = X; dest[1] = Y; dest[2] = Z; }
 
-			/**
-			 * Calculates the length of the vector.
-			 */
-			float Length() const { return sqrtf(X*X+Y*Y+Z*Z); }
-			/**
-			 * Calculates the squared length of the vector.
-			 */
-			float LengthSquared() const { return X*X + Y*Y + Z*Z; }
+			/** Calculates the length of the vector. */
+			float Length() const					{ return sqrtf(X*X + Y*Y + Z*Z); }
 
-			/**
-			 * Converts the vector into a unit vector.
-			 */
+			/** Calculates the squared length of the vector. */
+			float LengthSquared() const				{ return X*X + Y*Y + Z*Z; }
+
+			/** Converts the vector into a unit vector. */
 			void NormalizeInPlace()
 			{
 				float length = Length();
@@ -809,9 +670,7 @@ namespace Apoc3D
 			}
 			Vector3 Normalized() const { Vector3 copy = *this; copy.NormalizeInPlace(); return copy; }
 
-			/**
-			 * Reverses the direction of the vector.
-			 */
+			/** Reverses the direction of the vector. */
 			void NegateInPlace() { X = -X; Y = -Y; Z = -Z; }
 			Vector3 Negate() const { Vector3 copy = *this; copy.NegateInPlace(); return copy; }
 
@@ -825,9 +684,7 @@ namespace Apoc3D
 				return result;
 			}
 
-			/**
-			 * Calculates the distance between two vectors.
-			 */
+			/** Calculates the distance between two vectors. */
 			float Distance(const Vector3& vec) const
 			{
 				float x = X - vec.X;
@@ -846,7 +703,7 @@ namespace Apoc3D
 			}
 
 			/**
-			 * Calculates the dot product of two vectors.
+			 *  Calculates the dot product of two vectors.
 			 */
 			float Dot(const Vector3& right) const { return X * right.X + Y * right.Y + Z * right.Z; }
 
@@ -857,42 +714,35 @@ namespace Apoc3D
 			String ToParsableString(int precision = -1) const;
 
 			
-			/**
-			 * Calculates the length of the vector.
-			 */
-			static float Length(const Vector3& v) { return sqrtf(v.X*v.X + v.Y*v.Y + v.Z*v.Z); }
+			static Vector3 Set(float s)				{ return Vector3(s, s, s); }
+			static Vector3 Set(const float* ptr)	{ Vector3 v; v.Load(ptr); return v; }
 
-			/**
-			 * Calculates the squared length of the vector.
-			 */
-			static float LengthSquared(const Vector3& v) { return v.X*v.X + v.Y*v.Y + v.Z*v.Z; }
 
-			static Vector3 Normalize(const Vector3& vector) { return vector.Normalized(); }
+			/** Calculates the length of the vector. */
+			static float Length(const Vector3& v)					{ return sqrtf(v.X*v.X + v.Y*v.Y + v.Z*v.Z); }
 
-			/**
-			 * Adds two vectors.
-			 */
-			static Vector3 Add(const Vector3& left, const Vector3& right) { return Vector3(left.X + right.X, left.Y + right.Y, left.Z + right.Z); }
-			/**
-			 * Subtracts two vectors.
-			 */
-			static Vector3 Subtract(const Vector3& left, const Vector3& right) { return Vector3(left.X - right.X, left.Y - right.Y, left.Z - right.Z); }
-			/**
-			 * Scales a vector by the given value.
-			 */
-			static Vector3 Multiply(const Vector3& value, float scale) { return Vector3(value.X * scale, value.Y * scale, value.Z * scale); }
-			/*
-			 * Modulates a vector by another.
-			 */
-			static Vector3 Modulate(const Vector3& left, const Vector3& right) { return Vector3(left.X * right.X, left.Y * right.Y, left.Z * right.Z); }
-			/**
-			 * Scales a vector by the given value.
-			 */
-			static Vector3 Divide(const Vector3& value, float scale) { float inv = 1/scale; return Vector3(value.X * inv, value.Y * inv, value.Z * inv); }
-			/**
-			 * Reverses the direction of a given vector.
-			 */
-			static Vector3 Negate(const Vector3& value) { return Vector3(-value.X, -value.Y, -value.Z); }
+			/** Calculates the squared length of the vector. */
+			static float LengthSquared(const Vector3& v)			{ return v.X*v.X + v.Y*v.Y + v.Z*v.Z; }
+
+			static Vector3 Normalize(const Vector3& vector)			{ return vector.Normalized(); }
+
+			/** Adds two vectors. */
+			static Vector3 Add(const Vector3& left, const Vector3& right)		{ return Vector3(left.X + right.X, left.Y + right.Y, left.Z + right.Z); }
+
+			/** Subtracts two vectors. */
+			static Vector3 Subtract(const Vector3& left, const Vector3& right)		{ return Vector3(left.X - right.X, left.Y - right.Y, left.Z - right.Z); }
+
+			/** Scales a vector by the given value. */
+			static Vector3 Multiply(const Vector3& value, float scale)				{ return Vector3(value.X * scale, value.Y * scale, value.Z * scale); }
+
+			/** Modulates a vector by another. */
+			static Vector3 Modulate(const Vector3& left, const Vector3& right)		{ return Vector3(left.X * right.X, left.Y * right.Y, left.Z * right.Z); }
+
+			/** Scales a vector by the given value. */
+			static Vector3 Divide(const Vector3& value, float scale)				{ float inv = 1/scale; return Vector3(value.X * inv, value.Y * inv, value.Z * inv); }
+
+			/** Reverses the direction of a given vector. */
+			static Vector3 Negate(const Vector3& value)								{ return Vector3(-value.X, -value.Y, -value.Z); }
 
 
 			/**
@@ -908,9 +758,7 @@ namespace Apoc3D
 				return vector;
 			}
 
-			/**
-			 * Performs a Catmull-Rom interpolation using the specified positions.
-			 */
+			/** Performs a Catmull-Rom interpolation using the specified positions. */
 			static Vector3 CatmullRom(const Vector3& value1, Vector3 value2, const Vector3& value3, const Vector3& value4, float amount)
 			{
 				Vector3 vector;
@@ -923,9 +771,7 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/**
-			 * Performs a Hermite spline interpolation.
-			 */
+			/** Performs a Hermite spline interpolation. */
 			static Vector3 Hermite(const Vector3& value1, const Vector3& tangent1, const Vector3& value2, const Vector3& tangent2, float amount)
 			{
 				Vector3 vector;
@@ -942,9 +788,8 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/**
-			 * Performs a linear interpolation between two vectors.
-			 */
+
+			/** Performs a linear interpolation between two vectors. */
 			static Vector3 Lerp(const Vector3& start, const Vector3& end, float amount)
 			{
 				Vector3 vector;
@@ -955,9 +800,8 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/**
-			 * Performs a cubic interpolation between two vectors.
-			 */
+
+			/** Performs a cubic interpolation between two vectors. */
 			static Vector3 SmoothStep(const Vector3& start, const Vector3& end, float amount)
 			{
 				Vector3 vector;
@@ -971,9 +815,8 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/**
-			 * Restricts a value to be within a specified range.
-			 */
+
+			/** Restricts a value to be within a specified range. */
 			static Vector3 Clamp(const Vector3& value, const Vector3& min, const Vector3& max)
 			{
 				float x = value.X;
@@ -991,9 +834,7 @@ namespace Apoc3D
 				return Vector3(x, y, z);
 			}
 
-			/**
-			 * Calculates the distance between two vectors.
-			 */
+			/** Calculates the distance between two vectors. */
 			static float Distance(const Vector3& value1, const Vector3& value2)
 			{
 				float x = value1.X - value2.X;
@@ -1002,9 +843,7 @@ namespace Apoc3D
 
 				return sqrtf(x * x + y * y + z * z);
 			}
-			/**
-			 * Calculates the squared distance between two vectors.
-			 */
+			/** Calculates the squared distance between two vectors. */
 			static float DistanceSquared(const Vector3& value1, const Vector3& value2)
 			{
 				float x = value1.X - value2.X;
@@ -1014,14 +853,10 @@ namespace Apoc3D
 				return x * x + y * y + z * z;
 			}
 
-			/**
-			 * Calculates the dot product of two vectors.
-			 */
+			/** Calculates the dot product of two vectors. */
 			static float Dot(const Vector3& left, const Vector3& right) { return left.X * right.X + left.Y * right.Y + left.Z * right.Z; }
 
-			/**
-			 * Calculates the cross product of two vectors.
-			 */
+			/** Calculates the cross product of two vectors. */
 			static Vector3 Cross(const Vector3& left, const Vector3& right)
 			{
 				Vector3 result;
@@ -1031,9 +866,7 @@ namespace Apoc3D
 				return result;
 			}
 
-			/**
-			 * Returns the reflection of a vector off a surface that has the specified normal. 
-			 */
+			/** Returns the reflection of a vector off a surface that has the specified normal. */
 			static Vector3 Reflect(const Vector3& vector, const Vector3& normal)
 			{
 				Vector3 result;
@@ -1047,9 +880,7 @@ namespace Apoc3D
 			}
 
 
-			/**
-			 * Returns a vector containing the smallest components of the specified vectors.
-			 */
+			/** Returns a vector containing the smallest components of the specified vectors. */
 			static Vector3 Minimize(const Vector3& left, const Vector3& right)
 			{
 				Vector3 vector;
@@ -1058,9 +889,7 @@ namespace Apoc3D
 				vector.Z = (left.Z < right.Z) ? left.Z : right.Z;
 				return vector;
 			}
-			/**
-			 * Returns a vector containing the largest components of the specified vectors.
-			 */
+			/** Returns a vector containing the largest components of the specified vectors. */
 			static Vector3 Maximize(const Vector3& left, const Vector3& right)
 			{
 				Vector3 vector;
@@ -1069,21 +898,14 @@ namespace Apoc3D
 				vector.Z = (left.Z > right.Z) ? left.Z : right.Z;
 				return vector;
 			}
-			/**
-			 * Transforms a 3D vector by the given Matrix
-			 */
+
+			/** Transforms a 3D vector by the given Matrix */
 			static Vector4 Transform(const Vector3& vector, const Matrix& transform);
-			/**
-			 * Performs a coordinate transformation using the given Matrix. can not project
-			 */
+			/** Performs a coordinate transformation using the given Matrix. can not project */
 			static Vector3 TransformSimple(const Vector3& vector, const Matrix& transform);
-			/**
-			 * Performs a coordinate transformation using the given Matrix
-			 */
+			/** Performs a coordinate transformation using the given Matrix */
 			static Vector3 TransformCoordinate(const Vector3& vector, const Matrix& transform);
-			/**
-			 * Performs a normal transformation using the given Matrix
-			 */
+			/** Performs a normal transformation using the given Matrix */
 			static Vector3 TransformNormal(const Vector3& vector, const Matrix& transform);
 
 			static bool IsLess(const Vector3& left, const Vector3& right)			{ return left.X <  right.X && left.Y <  right.Y && left.Z <  right.Z; }
@@ -1091,24 +913,10 @@ namespace Apoc3D
 			static bool IsGreater(const Vector3& left, const Vector3& right)		{ return left.X >  right.X && left.Y >  right.Y && left.Z >  right.Z; }
 			static bool IsGreaterEqual(const Vector3& left, const Vector3& right)	{ return left.X >= right.X && left.Y >= right.Y && left.Z >= right.Z; }
 
-			static Vector3 Set(float s) { return Vector3(s, s, s); }
-
-			/**
-			 * a Vector3 with all of its components set to zero.
-			 */
-			static const Vector3 Zero;
-			/**
-			 * X unit Vector3 (1, 0, 0).
-			 */
-			static const Vector3 UnitX;
-			/**
-			 * Y unit Vector3 (0, 1, 0).
-			 */
-			static const Vector3 UnitY;
-			/**
-			 * Z unit Vector3 (0, 0, 1).
-			 */
-			static const Vector3 UnitZ;
+			static const Vector3 Zero;		/** a Vector3 with all of its components set to zero. */
+			static const Vector3 UnitX;		/** X unit Vector3 (1, 0, 0). */
+			static const Vector3 UnitY;		/** Y unit Vector3 (0, 1, 0). */
+			static const Vector3 UnitZ;		/** Z unit Vector3 (0, 0, 1). */
 			static const Vector3 One;
 		};
 		

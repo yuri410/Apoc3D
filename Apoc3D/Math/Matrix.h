@@ -82,7 +82,7 @@ namespace Apoc3D
 		class APAPI Matrix
 		{
 		public:
-			const static Matrix Identity;
+			static const Matrix Identity;
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 			union
@@ -122,15 +122,15 @@ namespace Apoc3D
 			
 				
 			Matrix() {  ZeroMatrix(); }
-			explicit Matrix(const float elements[16])
+			explicit Matrix(const float (&elements)[16])
 			{
-				memcpy(Elements, elements, sizeof(Elements));
+				CopyArray(Elements, elements);
 			}
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 			Matrix(const Matrix &m) : Row1(m.Row1), Row2(m.Row2), Row3(m.Row3), Row4(m.Row4) {}
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			Matrix(const Matrix &m) { memcpy(Elements, m.Elements, sizeof(Elements)); } 
+			Matrix(const Matrix &m) { CopyArray(Elements, m.Elements); }
 #endif
 
 			Matrix(float f11, float f12, float f13, float f14,
@@ -142,6 +142,8 @@ namespace Apoc3D
 				 M31(f31), M32(f32), M33(f33), M34(f34),
 				 M41(f41), M42(f42), M43(f43), M44(f44)
 			{ }
+
+			void LoadFromPointer(const float* elements) { FillArray(Elements, Elements); }
 
 			Vector3 GetX() const
 			{

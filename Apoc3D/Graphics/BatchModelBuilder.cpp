@@ -131,7 +131,8 @@ namespace Apoc3D
 
 							if (posElem)
 							{
-								Vector3 v((float*)(newVtxPtr + posElem->getOffset()));
+								Vector3 v = Vector3::Set((float*)(newVtxPtr + posElem->getOffset()));
+
 								v = Vector3::TransformCoordinate(v, trans);
 								*((float*)(newVtxPtr + posElem->getOffset())+0) = v.X;
 								*((float*)(newVtxPtr + posElem->getOffset())+1) = v.Y;
@@ -139,7 +140,7 @@ namespace Apoc3D
 							}
 							if (nrmElem)
 							{
-								Vector3 v( (float*)(newVtxPtr + nrmElem->getOffset()));
+								Vector3 v = Vector3::Set((float*)(newVtxPtr + nrmElem->getOffset()));
 								v = Vector3::TransformNormal(v, trans);
 								*((float*)(newVtxPtr + nrmElem->getOffset())+0) = v.X;
 								*((float*)(newVtxPtr + nrmElem->getOffset())+1) = v.Y;
@@ -226,7 +227,7 @@ namespace Apoc3D
 
 							if (posElem)
 							{
-								Vector3 v( (float*)(newVtx + posElem->getOffset()));
+								Vector3 v = Vector3::Set((float*)(newVtx + posElem->getOffset()));
 								v = Vector3::TransformCoordinate(v, trans);
 								*((float*)(newVtx + posElem->getOffset())+0) = v.X;
 								*((float*)(newVtx + posElem->getOffset())+1) = v.Y;
@@ -234,7 +235,7 @@ namespace Apoc3D
 							}
 							if (nrmElem)
 							{
-								Vector3 v( (float*)(newVtx + nrmElem->getOffset()));
+								Vector3 v = Vector3::Set((float*)(newVtx + nrmElem->getOffset()));
 								v = Vector3::TransformNormal(v, trans);
 								*((float*)(newVtx + nrmElem->getOffset())+0) = v.X;
 								*((float*)(newVtx + nrmElem->getOffset())+1) = v.Y;

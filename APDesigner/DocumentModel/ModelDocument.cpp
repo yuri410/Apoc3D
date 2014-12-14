@@ -1240,7 +1240,7 @@ namespace APDesigner
 			}
 
 			BoundingSphere sphere = mesh->getBoundingSphere();
-			sphere.Center = Vector3::Subtract(sphere.Center, center);
+			sphere.Center = sphere.Center - center;
 			mesh->setBoundingSphere(sphere);
 		}
 	}
@@ -1262,7 +1262,7 @@ namespace APDesigner
 					{
 						float* dataOfs = reinterpret_cast<float*>(vtxData+posElem->getOffset()+j*mesh->getVertexSize());
 
-						Vector3 pos(dataOfs);
+						Vector3 pos = Vector3::Set(dataOfs);
 						pos = Vector3::TransformCoordinate(pos, transform);
 
 						pos.Store(dataOfs);
@@ -1273,7 +1273,7 @@ namespace APDesigner
 					{
 						float* dataOfs = reinterpret_cast<float*>(vtxData+nrmElem->getOffset()+j*mesh->getVertexSize());
 
-						Vector3 pos(dataOfs);
+						Vector3 pos = Vector3::Set(dataOfs);
 						pos = Vector3::TransformNormal(pos, transform);
 
 						pos.Store(dataOfs);

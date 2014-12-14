@@ -110,9 +110,7 @@ namespace Apoc3D
 
 				ObjectFactory* objFac = m_device->getObjectFactory();
 				m_texture = objFac->CreateTexture(1,1,1, TU_Static, FMT_A8R8G8B8);
-				DataRectangle rect = m_texture->Lock(0, LOCK_None);
-				*(uint*)rect.getDataPointer() = 0xffffffff;
-				m_texture->Unlock(0);
+				m_texture->FillColor(CV_White);
 			}
 
 			AutomaticEffect::~AutomaticEffect()
@@ -258,7 +256,7 @@ namespace Apoc3D
 
 			void AutomaticEffect::Update(const GameTime* time)
 			{
-				float t = m_lastTime + time->getElapsedTime();//(float)( clock() / CLOCKS_PER_SEC);
+				float t = m_lastTime + time->ElapsedTime;//(float)( clock() / CLOCKS_PER_SEC);
 				m_unifiedTime += t - m_lastTime;
 				m_lastTime = t;
 
@@ -275,7 +273,7 @@ namespace Apoc3D
 				// the material for all the render operations in the list is the same.
 				// it is better to be set only once. by checking m_previousMaterialPointer
 
-				for (int k=0;k<m_parameters.getCount();k++)
+				for (int k = 0; k < m_parameters.getCount(); k++)
 				{
 					ResolvedEffectParameter& ep = m_parameters[k];
 
@@ -363,16 +361,18 @@ namespace Apoc3D
 							}
 							break;
 						case EPUSAGE_Trans_InstanceWorlds:
-							{
-								for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
-								{
-									s_instancingMatrixBuffer[i] = rop[i].RootTransform;
-								}
+						{
+							int32 legalCount = Math::Min(count, InstancingData::MaxOneTimeInstances);
 
-								ep.SetMatrix(s_instancingMatrixBuffer, count);
+							for (int i = 0; i < legalCount; i++)
+							{
+								s_instancingMatrixBuffer[i] = rop[i].RootTransform;
 							}
+
+							ep.SetMatrix(s_instancingMatrixBuffer, count);
 							break;
-						
+						}
+
 						case EPUSAGE_M4X3_BoneTrans:
 							ep.Set4X3Matrix(rop->PartTransform.Transfroms, rop->PartTransform.Count);
 							break;
@@ -389,67 +389,75 @@ namespace Apoc3D
 								{
 									CustomEffectParameterType paramType = firstBlob[ep.InstanceBlobIndex].Type;
 
+									int32 legalCont = Math::Min(count, InstancingData::MaxOneTimeInstances);
+
 									bool inValidType = false;
 									switch (paramType)
 									{
-									case CEPT_Float:
+										case CEPT_Float:
 										{
-											for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
+											for (int i = 0; i < legalCont; i++)
 												s_instancingFloatBuffer[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsSingle();
 
-											int32 alignedCount = (count + 3) & ~0x03;
+											int32 alignedCount = (legalCont + 3) & ~0x03;
 											ep.SetFloat(s_instancingFloatBuffer, alignedCount);
-										}
-										break;
+											break;
 
-									case CEPT_Vector2:
-									case CEPT_Ref_Vector2:
+										}
+
+										case CEPT_Vector2:
+										case CEPT_Ref_Vector2:
 										{
 											Vector2* dst = reinterpret_cast<Vector2*>(s_instancingVector2Buffer);
 
 											if (paramType == CEPT_Ref_Vector2)
 											{
-												for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
+												for (int i = 0; i < legalCont; i++)
 													dst[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector2Ref();
 											}
 											else
 											{
-												for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
+												for (int i = 0; i < legalCont; i++)
 													dst[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector2();
 											}
-												
-											int32 alignedCount = (count*2 + 3) & ~0x03;
+
+											int32 alignedCount = (legalCont * 2 + 3) & ~0x03;
 											ep.SetFloat(s_instancingVector2Buffer, alignedCount);
+											break;
 										}
-										break;
-											
-									case CEPT_Vector4:
-										for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
-											s_instancingVector4Buffer[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector4();
-										ep.SetVector4(s_instancingVector4Buffer, count);
-										break;
-									case CEPT_Ref_Vector4:
-										for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
-											s_instancingVector4Buffer[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector4Ref();
-										ep.SetVector4(s_instancingVector4Buffer, count);
-										break;
+										case CEPT_Vector4:
+											for (int i = 0; i < legalCont; i++)
+												s_instancingVector4Buffer[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector4();
+											ep.SetVector4(s_instancingVector4Buffer, count);
+											break;
+										case CEPT_Ref_Vector4:
+											for (int i = 0; i < legalCont; i++)
+												s_instancingVector4Buffer[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector4Ref();
+											ep.SetVector4(s_instancingVector4Buffer, count);
+											break;
 
-									case CEPT_Ref_Vector3:
-										for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
-											(Vector3&)s_instancingVector4Buffer[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector3Ref();
-										ep.SetVector4(s_instancingVector4Buffer, count);
-										break;
+										case CEPT_Matrix:
+											for (int i = 0; i < legalCont; i++)
+												s_instancingMatrixBuffer[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsMatrix();
+											ep.SetMatrix(s_instancingMatrixBuffer, count);
+											break;
 
-									case CEPT_Boolean:
-									case CEPT_Integer:
-									case CEPT_Ref_TextureHandle:
-									case CEPT_Ref_Texture:
-										inValidType = true;
-										break;
+										case CEPT_Ref_Vector3:
+											for (int i = 0; i < legalCont; i++)
+												s_instancingVector4Buffer[i] = Vector4((*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector3Ref(), 0);
+											ep.SetVector4(s_instancingVector4Buffer, count);
+											break;
+
+										case CEPT_Boolean:
+										case CEPT_Integer:
+										case CEPT_Ref_TextureHandle:
+										case CEPT_Ref_Texture:
+											inValidType = true;
+											break;
 									}
 									if (inValidType)
 									{
-										LogManager::getSingleton().Write(LOG_Graphics, 
+										LogManager::getSingleton().Write(LOG_Graphics,
 											L"[" + m_name + L"] Instanced InfoBlob parameter " + ep.Name + L" type not valid. ", LOGLVL_Warning);
 									}
 								}
@@ -463,7 +471,7 @@ namespace Apoc3D
 								LogManager::getSingleton().Write(LOG_Graphics, L"[" + m_name + L"] No InfoBlob Obtained.", LOGLVL_Error);
 							}
 							break;
-							
+
 						case EPUSAGE_CustomMaterialParam:
 							if (m_previousMaterialPointer != mtrl)
 							{
@@ -554,7 +562,7 @@ namespace Apoc3D
 				m_device->BindPixelShader(m_pixelShader);
 				m_device->BindVertexShader(m_vertexShader);
 
-				for (int i=0;i<m_parameters.getCount();i++)
+				for (int i = 0; i < m_parameters.getCount(); i++)
 				{
 					ResolvedEffectParameter& ep = m_parameters[i];
 
@@ -563,112 +571,112 @@ namespace Apoc3D
 
 					switch (ep.Usage)
 					{
-					case EPUSAGE_LC4_Ambient:
-						ep.SetColor4(RendererEffectParams::LightAmbient);
-						break;
-					case EPUSAGE_LC4_Diffuse:
-						ep.SetColor4(RendererEffectParams::LightDiffuse);
-						break;
-					case EPUSAGE_LC4_Specular:
-						ep.SetColor4(RendererEffectParams::LightSpecular);
-						break;
-					case EPUSAGE_LV3_LightDir:
-						ep.SetVector3(RendererEffectParams::LightDirection);
-						break;
-					case EPUSAGE_PV3_ViewPos:
-						if (RendererEffectParams::CurrentCamera)
-						{
-							Vector3 pos = RendererEffectParams::CurrentCamera->getInvViewMatrix().GetTranslation();
-							ep.SetVector3(pos);
-						}
-						break;
-					case EPUSAGE_SV2_ViewportSize:
+						case EPUSAGE_LC4_Ambient:
+							ep.SetColor4(RendererEffectParams::LightAmbient);
+							break;
+						case EPUSAGE_LC4_Diffuse:
+							ep.SetColor4(RendererEffectParams::LightDiffuse);
+							break;
+						case EPUSAGE_LC4_Specular:
+							ep.SetColor4(RendererEffectParams::LightSpecular);
+							break;
+						case EPUSAGE_LV3_LightDir:
+							ep.SetVector3(RendererEffectParams::LightDirection);
+							break;
+						case EPUSAGE_PV3_ViewPos:
+							if (RendererEffectParams::CurrentCamera)
+							{
+								Vector3 pos = RendererEffectParams::CurrentCamera->getInvViewMatrix().GetTranslation();
+								ep.SetVector3(pos);
+							}
+							break;
+						case EPUSAGE_SV2_ViewportSize:
 						{
 							Viewport vp = m_device->getViewport();
 							Vector2 size = Vector2((float)vp.Width, (float)vp.Height);
 							ep.SetVector2(size);
 							break;
 						}
-					case EPUSAGE_SV2_InvViewportSize:
+						case EPUSAGE_SV2_InvViewportSize:
 						{
 							Viewport vp = m_device->getViewport();
-							Vector2 size = Vector2(1.f/(float)vp.Width, 1.f/(float)vp.Height);
+							Vector2 size = Vector2(1.f / (float)vp.Width, 1.f / (float)vp.Height);
 							ep.SetVector2(size);
 							break;
 						}
-					case EPUSAGE_S_FarPlane:
+						case EPUSAGE_S_FarPlane:
 						{
 							//SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->);
 							const Matrix& view = RendererEffectParams::CurrentCamera->getProjMatrix();
 							float n = -view.M34 * view.M43 / view.M33;
-							if (view.M34<0)
+							if (view.M34 < 0)
 							{
 								// RH
-								ep.SetFloat((float)(view.M33 * n /(view.M33*n+1)));
+								ep.SetFloat((float)(view.M33 * n / (view.M33*n + 1)));
 							}
 							else
 							{
-								ep.SetFloat((float)(view.M33 * n /(view.M33*n-1)));
+								ep.SetFloat((float)(view.M33 * n / (view.M33*n - 1)));
 							}
 							break;
 						}
-					case EPUSAGE_S_NearPlane:
+						case EPUSAGE_S_NearPlane:
 						{
 							const Matrix& view = RendererEffectParams::CurrentCamera->getProjMatrix();
-							float n = - view.M34 * view.M43 / view.M33;
+							float n = -view.M34 * view.M43 / view.M33;
 							ep.SetFloat(n);
 							break;
 						}
-					case EPUSAGE_Trans_View:
-						ep.SetMatrix(RendererEffectParams::CurrentCamera->getViewMatrix());
-						break;
-					case EPUSAGE_Trans_InvView:
-						ep.SetMatrix(RendererEffectParams::CurrentCamera->getInvViewMatrix());
-						break;
-					case EPUSAGE_Trans_ViewProj:
-						ep.SetMatrix(RendererEffectParams::CurrentCamera->getViewProjMatrix());
-						break;
-					case EPUSAGE_Trans_Projection:
-						ep.SetMatrix(RendererEffectParams::CurrentCamera->getProjMatrix());
-						break;
-					case EPUSAGE_Trans_InvProj:
+						case EPUSAGE_Trans_View:
+							ep.SetMatrix(RendererEffectParams::CurrentCamera->getViewMatrix());
+							break;
+						case EPUSAGE_Trans_InvView:
+							ep.SetMatrix(RendererEffectParams::CurrentCamera->getInvViewMatrix());
+							break;
+						case EPUSAGE_Trans_ViewProj:
+							ep.SetMatrix(RendererEffectParams::CurrentCamera->getViewProjMatrix());
+							break;
+						case EPUSAGE_Trans_Projection:
+							ep.SetMatrix(RendererEffectParams::CurrentCamera->getProjMatrix());
+							break;
+						case EPUSAGE_Trans_InvProj:
 						{
 							Matrix invProj;
 							Matrix::Inverse(invProj, RendererEffectParams::CurrentCamera->getProjMatrix());
 							ep.SetMatrix(invProj);
 							break;
 						}
-					case EPUSAGE_V3_CameraX:
-						ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetX());
-						break;
-					case EPUSAGE_V3_CameraY:
-						ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetY());
-						break;
-					case EPUSAGE_V3_CameraZ:
-						ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetZ());
-						break;
-					case EPUSAGE_Tex0:
-					case EPUSAGE_Tex1:
-					case EPUSAGE_Tex2:
-					case EPUSAGE_Tex3:
-					case EPUSAGE_Tex4:
-					case EPUSAGE_Tex5:
-					case EPUSAGE_Tex6:
-					case EPUSAGE_Tex7:
-					case EPUSAGE_Tex8:
-					case EPUSAGE_Tex9:
-					case EPUSAGE_Tex10:
-					case EPUSAGE_Tex11:
-					case EPUSAGE_Tex12:
-					case EPUSAGE_Tex13:
-					case EPUSAGE_Tex14:
-					case EPUSAGE_Tex15:
-						ep.SetSamplerState();
-						break;
+						case EPUSAGE_V3_CameraX:
+							ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetX());
+							break;
+						case EPUSAGE_V3_CameraY:
+							ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetY());
+							break;
+						case EPUSAGE_V3_CameraZ:
+							ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetZ());
+							break;
+						case EPUSAGE_Tex0:
+						case EPUSAGE_Tex1:
+						case EPUSAGE_Tex2:
+						case EPUSAGE_Tex3:
+						case EPUSAGE_Tex4:
+						case EPUSAGE_Tex5:
+						case EPUSAGE_Tex6:
+						case EPUSAGE_Tex7:
+						case EPUSAGE_Tex8:
+						case EPUSAGE_Tex9:
+						case EPUSAGE_Tex10:
+						case EPUSAGE_Tex11:
+						case EPUSAGE_Tex12:
+						case EPUSAGE_Tex13:
+						case EPUSAGE_Tex14:
+						case EPUSAGE_Tex15:
+							ep.SetSamplerState();
+							break;
 
-					case EPUSAGE_S_UnifiedTime:
-						ep.SetFloat(m_unifiedTime);
-						break;
+						case EPUSAGE_S_UnifiedTime:
+							ep.SetFloat(m_unifiedTime);
+							break;
 					}
 				}
 
@@ -724,17 +732,26 @@ namespace Apoc3D
 				case CEPT_Float:
 					ep.SetFloat(*reinterpret_cast<const float*>(data));
 					break;
+
 				case CEPT_Vector2:
 				case CEPT_Ref_Vector2:
 					ep.SetVector2(*reinterpret_cast<const Vector2*>(data));
 					break;
+
 				case CEPT_Ref_Vector3:
 					ep.SetVector3(*reinterpret_cast<const Vector3*>(data));
 					break;
-				case CEPT_Ref_Vector4:
+
 				case CEPT_Vector4:
+				case CEPT_Ref_Vector4:
 					ep.SetVector4(*reinterpret_cast<const Vector4*>(data));
 					break;
+
+				case CEPT_Matrix:
+				case CEPT_Ref_Matrix:
+					ep.SetMatrix(*reinterpret_cast<const Matrix*>(data));
+					break;
+
 				case CEPT_Boolean:
 					ep.SetBool(*reinterpret_cast<const bool*>(data));
 					break;

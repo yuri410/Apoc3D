@@ -135,7 +135,7 @@ namespace APBuild
 				if (posElem)
 				{
 					const float* vtx = reinterpret_cast<const float*>(data->VertexData + j*vertexSize + posElem->getOffset());
-					Vector3 p(vtx);
+					Vector3 p = Vector3::Set(vtx);
 					data->BoundingSphere.Center += p;
 				}
 				memcpy(data->VertexData+j*vertexSize, verticePointers[j], vertexSize);
