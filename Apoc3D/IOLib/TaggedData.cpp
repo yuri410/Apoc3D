@@ -98,7 +98,7 @@ namespace Apoc3D
 
 				for (Entry& ent : m_positions.getValueAccessor())
 				{
-					ent.Offset = br.ReadUInt32();
+					ent.Offset = br.ReadUInt32() + m_initialPosition;
 					ent.Size = br.ReadUInt32();
 				}
 			}
@@ -1625,6 +1625,9 @@ namespace Apoc3D
 			//}
 
 			// always write as the lastest format
+
+			int64 startPos = stream.getPosition();
+
 			bw.WriteUInt32(0x80000000U | TF_NarrowKeyFormat);
 			bw.WriteInt32(m_positions.getCount());
 
@@ -1633,7 +1636,7 @@ namespace Apoc3D
 				bw.WriteMBString(key);
 			}
 
-			uint32 baseOffset = static_cast<uint32>( stream.getPosition() ) + sizeof(uint32) * 2 * static_cast<uint32>(m_positions.getCount());
+			uint32 baseOffset = static_cast<uint32>(stream.getPosition() - startPos) + sizeof(uint32) * 2 * static_cast<uint32>(m_positions.getCount());
 			uint32 offset = 0;
 			for (const Entry& e : m_positions.getValueAccessor())
 			{
@@ -1641,8 +1644,8 @@ namespace Apoc3D
 
 				uint32 blockSize = static_cast<uint32>(memBlock->getLength());
 
-				bw.WriteUInt32(offset + baseOffset); // place holder offset
-				bw.WriteUInt32(blockSize); // place holder size 
+				bw.WriteUInt32(offset + baseOffset);
+				bw.WriteUInt32(blockSize);
 
 				offset += blockSize;
 			}

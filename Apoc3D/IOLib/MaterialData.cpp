@@ -231,8 +231,7 @@ namespace Apoc3D
 			{	
 				if (!EffectParameter::IsReference(mcp.Type))
 				{
-					std::string tag = StringUtils::IntToNarrowString(index++);
-					tag = TAG_3_CustomParam + tag;// tag + TAG_3_CustomParam;
+					std::string tag = TAG_3_CustomParam + StringUtils::IntToNarrowString(index++);
 
 					BinaryWriter* bw = data->AddEntry(tag);
 
