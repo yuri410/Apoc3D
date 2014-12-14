@@ -39,12 +39,6 @@ namespace Apoc3D
 	public:
 		FunctorReference() { }
 
-		template <typename F>
-		FunctorReference(F& lambda)
-		{
-			m_instance = const_cast<F*>(&lambda);
-			m_invoker = &Invoker_Method<F, &F::operator()> ;
-		}
 
 		template <typename F>
 		FunctorReference(const F& lambda)
@@ -52,6 +46,13 @@ namespace Apoc3D
 			m_instance = const_cast<F*>(&lambda);
 			m_invoker = &Invoker_ConstMethod<F, &F::operator()> ;
 		}
+
+		template <typename F> // prevent const in T
+		FunctorReference(typename std::enable_if<std::is_const<F>::value, F>::type& lambda)
+		{
+			m_instance = const_cast<F*>(&lambda);
+			m_invoker = &Invoker_Method < F, &F::operator() > ;
+		} 
 
 		FunctorReference(RawFunctionType functionPtr)
 			: m_rawFunction(functionPtr) { }
