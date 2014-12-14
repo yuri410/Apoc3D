@@ -65,7 +65,6 @@ namespace Apoc3D
 			m_sizeInBytes = (uint32)strm->getLength();
 			m_endianIndependent = strm->IsReadEndianIndependent();
 
-			//VirtualStream baseStrm(strm, 0, strm->getLength());
 			BinaryReader br(strm, false);
 
 			uint32 firstInt = br.ReadUInt32();
@@ -98,7 +97,7 @@ namespace Apoc3D
 
 				for (Entry& ent : m_positions.getValueAccessor())
 				{
-					ent.Offset = br.ReadUInt32() + m_initialPosition;
+					ent.Offset = br.ReadUInt32();
 					ent.Size = br.ReadUInt32();
 				}
 			}

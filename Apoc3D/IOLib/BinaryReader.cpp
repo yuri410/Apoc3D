@@ -574,10 +574,10 @@ namespace Apoc3D
 		{
 			uint32 size = ReadUInt32();
 
-			//VirtualStream vs(m_baseStream, m_baseStream->getPosition(), size);
+			VirtualStream vs(m_baseStream, m_baseStream->getPosition(), size);
 			{
-				//TaggedDataReader data(&vs);
-				TaggedDataReader data(m_baseStream);
+				TaggedDataReader data(&vs);
+				//TaggedDataReader data(m_baseStream);
 				data.SuspendStreamRelease();
 
 				f(&data);
