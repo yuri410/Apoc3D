@@ -40,17 +40,17 @@ namespace Apoc3D
 			void SetOctaves(int _octaves)            { m_octaves = _octaves;         }
 			void SetRandomSeed(int _randomseed)      { m_randomseed = _randomseed;   }
 
-			FORCE_INLINE double Noise1D(int x) const;
-			FORCE_INLINE double Noise2D(int x, int y) const;
-			FORCE_INLINE double Noise3D(int x, int y, int z) const;
+			static double Noise1D(int x);
+			static double Noise2D(int x, int y);
+			static double Noise3D(int x, int y, int z);
 
 		private:
-			double InterpolatedNoise1D(double x) const;
-			double InterpolatedNoise2D(double x, double y) const;
-			double InterpolatedNoise3D(double x, double y, double z) const;
+			static double InterpolatedNoise1D(double x);
+			static double InterpolatedNoise2D(double x, double y);
+			static double InterpolatedNoise3D(double x, double y, double z);
 
-			FORCE_INLINE double SampleNoise2D(int x, int y) const;
-			FORCE_INLINE double SampleNoise3D(int x, int y, int z) const;
+			static double SampleNoise2D(int x, int y);
+			static double SampleNoise3D(int x, int y, int z);
 
 			double m_persistence = 0;
 			double m_frequency = 0;

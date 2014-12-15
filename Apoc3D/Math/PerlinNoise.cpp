@@ -93,7 +93,7 @@ namespace Apoc3D
 			return t;
 		}
 
-		double PerlinNoise::InterpolatedNoise1D(double x) const
+		double PerlinNoise::InterpolatedNoise1D(double x)
 		{
 			int xint = x >= 0 ? (int)x : (int)x - 1;
 			double Xfrac = x - xint;
@@ -117,7 +117,7 @@ namespace Apoc3D
 			return LinearInterpolate(v1, v2, Xfrac);
 		}
 
-		double PerlinNoise::InterpolatedNoise2D(double x, double y) const
+		double PerlinNoise::InterpolatedNoise2D(double x, double y)
 		{
 			int Xint = x >= 0 ? (int)x : (int)x - 1;
 			int Yint = y >= 0 ? (int)y : (int)y - 1;
@@ -174,7 +174,7 @@ namespace Apoc3D
 			return LinearInterpolate(v1, v2, Yfrac);
 		}
 
-		double PerlinNoise::InterpolatedNoise3D(double x, double y, double z) const
+		double PerlinNoise::InterpolatedNoise3D(double x, double y, double z)
 		{
 			int Xint = x >= 0 ? (int)x : (int)x - 1;
 			int Yint = y >= 0 ? (int)y : (int)y - 1;
@@ -213,7 +213,7 @@ namespace Apoc3D
 			return LinearInterpolate(z0, z1, Zfrac);
 		}
 
-		double PerlinNoise::SampleNoise2D(int x, int y) const
+		double PerlinNoise::SampleNoise2D(int x, int y)
 		{
 			double corners = Noise2D(x-1, y-1) + Noise2D(x+1, y-1) + Noise2D(x-1, y+1) + Noise2D(x+1, y+1);
 			double sides = Noise2D(x-1, y) + Noise2D(x+1, y) + Noise2D(x, y-1) + Noise2D(x, y+1);
@@ -221,7 +221,7 @@ namespace Apoc3D
 			return corners * (0.25 / 4.0) + sides * (0.5 / 4.0) + center * 0.25;
 		}
 
-		double PerlinNoise::SampleNoise3D(int x, int y, int z) const
+		double PerlinNoise::SampleNoise3D(int x, int y, int z)
 		{
 			// 0.125
 			double corners =
@@ -246,13 +246,13 @@ namespace Apoc3D
 		}
 
 
-		double PerlinNoise::Noise1D(int x) const
+		double PerlinNoise::Noise1D(int x)
 		{
 			x = (x << 13) ^ x;
 			return (1.0 - ((x * (x * x * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0);
 		}
 
-		double PerlinNoise::Noise2D(int x, int y) const
+		double PerlinNoise::Noise2D(int x, int y)
 		{
 			int n = x + y * 3251;
 			n = (n << 13) ^ n;
@@ -262,7 +262,7 @@ namespace Apoc3D
 			return 1.0 - double(t) * 0.931322574615478515625e-9;/// 1073741824.0);
 		}
 
-		double PerlinNoise::Noise3D(int x, int y, int z) const
+		double PerlinNoise::Noise3D(int x, int y, int z)
 		{
 			int n = x + y * 3251 + z * 31147;
 			n = (n << 13) ^ n;

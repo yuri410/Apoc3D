@@ -35,6 +35,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Math/Color.h"
 #include "apoc3d/Math/Math.h"
 #include "apoc3d/Math/RandomUtils.h"
+#include "apoc3d/Math/PerlinNoise.h"
 
 using namespace Apoc3D::IO;
 using namespace Apoc3D::Utility;
@@ -398,14 +399,7 @@ namespace Apoc3D
 
 		void Font::UnregisterCustomGlyph(int32 utf16code) { m_customCharacters.Remove(utf16code); }
 		void Font::ClearCustomGlyph() { m_customCharacters.Clear(); }
-
-
-		static float PositionalNoise(int32 x)
-		{
-			x = (x<<13) ^ x;
-			return (float)( 1.0 - ( (x * (x * x * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0);
-		}
-
+		
 		void Font::DrawDisolvingCharacter(Sprite* sprite, float x, float y,
 			int32 seed, const Apoc3D::Math::RectangleF& _srcRect, int32 glyphLeft, int32 glyphTop, int32 glyphWidth, int32 glyphHeight, uint32 color,
 			const Point& dissolvePatchSize, float progress)
@@ -417,7 +411,7 @@ namespace Apoc3D
 			{
 				for (int32 dx = 0; dx < xDPCount; dx++)
 				{
-					float ang = PositionalNoise(seed + dx*yDPCount + dy) * Math::PI;
+					float ang = (float)PerlinNoise::Noise1D(seed + dx*yDPCount + dy) * Math::PI;
 					Vector2 rndDir(cosf(ang), sinf(ang));
 					if (xDPCount>1)
 						rndDir.X += (float)dx / (xDPCount - 1) - 0.5f;
