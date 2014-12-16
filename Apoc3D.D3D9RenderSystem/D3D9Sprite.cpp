@@ -282,19 +282,15 @@ namespace Apoc3D
 
 				NativeD3DStateManager* mgr = m_device->getNativeStateManager();
 
-				mgr->SetTexture(0,0);
 				D3D9Texture* currentTexture = m_deferredDraws[0].Tex;
 				int32 lastIndex = 0;
-				bool currentUVExtend = false;
-				{
-					const ShaderSamplerState& state = mgr->getPixelSampler(0);
-					if (state.AddressU != TA_Clamp || state.AddressV != TA_Clamp)
-						currentUVExtend = true;
-				}
+				bool currentUVExtend = m_deferredDraws[0].IsUVExtended;
+				
+				mgr->SetTexture(0, currentTexture);
+				SetUVExtendedState(currentUVExtend);
 
 				for (int i = 0; i < m_deferredDraws.getCount() + 1; i++)
 				{
-					bool stateChanged = false;
 					const DrawEntry* de;
 
 					if (i == m_deferredDraws.getCount())
@@ -311,34 +307,22 @@ namespace Apoc3D
 						de = &m_deferredDraws[i];
 					}
 
+					bool textureChanged = false;
+					bool uvModeChanged = false;
+
 					if (de->Tex != currentTexture)
 					{
-						mgr->SetTexture(0, currentTexture);
 						currentTexture = de->Tex;
-						stateChanged = true;
+						textureChanged = true;
 					}
 
 					if (de->IsUVExtended != currentUVExtend)
 					{
-						if (currentUVExtend)
-						{
-							ShaderSamplerState state = mgr->getPixelSampler(0);
-							state.AddressU = TA_Wrap;
-							state.AddressV = TA_Wrap;
-							mgr->SetPixelSampler(0, state);
-						}
-						else
-						{
-							ShaderSamplerState state = mgr->getPixelSampler(0);
-							state.AddressU = TA_Clamp;
-							state.AddressV = TA_Clamp;
-							mgr->SetPixelSampler(0, state);
-						}
 						currentUVExtend = de->IsUVExtended;
-						stateChanged = true;
+						uvModeChanged = true;
 					}
 
-					if (stateChanged)
+					if (textureChanged || uvModeChanged)
 					{
 						int32 startIndex = lastIndex * 6;
 						int32 startVertex = lastIndex * 4;
@@ -350,13 +334,18 @@ namespace Apoc3D
 						m_batchCount++;
 
 						lastIndex = i;
+
+						if (i != m_deferredDraws.getCount())
+						{
+							if (textureChanged)
+								mgr->SetTexture(0, currentTexture);
+
+							if (uvModeChanged)
+								SetUVExtendedState(currentUVExtend);
+						}
 					}
-
-
-					//m_rawDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i*4, 2);
 				}
 				
-
 				m_deferredDraws.Clear();
 			}
 
@@ -368,6 +357,25 @@ namespace Apoc3D
 				if (m_deferredDraws.getCount() > FlushThreshold)
 				{
 					Flush();
+				}
+			}
+
+			void D3D9Sprite::SetUVExtendedState(bool isExtended)
+			{
+				NativeD3DStateManager* mgr = m_device->getNativeStateManager();
+				if (isExtended)
+				{
+					ShaderSamplerState state = mgr->getPixelSampler(0);
+					state.AddressU = TA_Wrap;
+					state.AddressV = TA_Wrap;
+					mgr->SetPixelSampler(0, state);
+				}
+				else
+				{
+					ShaderSamplerState state = mgr->getPixelSampler(0);
+					state.AddressU = TA_Clamp;
+					state.AddressV = TA_Clamp;
+					mgr->SetPixelSampler(0, state);
 				}
 			}
 
@@ -426,7 +434,7 @@ namespace Apoc3D
 				DrawCircleGeneric(texture, dstRect, _srcRect, lineWidth, beginAngle, endAngle, div, color);
 			}
 
-			void D3D9Sprite::DrawCircleGeneric(Texture* texture, const RectangleF& dstRect, const RectangleF* _srcRect, float lineWidth, float beginAngle, float endAngle, int32 div, uint color)
+			void D3D9Sprite::DrawCircleGeneric(Texture* texture, const RectangleF& dstRect, const RectangleF* _srcRect, float lineWidth, float beginAngle, float endAngle, int32 div, uint color, bool uvExt)
 			{
 				assert(m_began);
 
@@ -524,7 +532,7 @@ namespace Apoc3D
 						de.FillNormalDraw(texture, getTransform(), leftDstOutterPos, rightDstOutterPos, leftDstInnerPos, rightDstInnerPos,
 							leftSrcOutterPos, rightSrcOutterPos, leftSrcInnerPos, rightSrcInnerPos, color);
 					}
-
+					de.IsUVExtended = uvExt;
 					EnqueueDrawEntry(de);
 
 				}
@@ -841,11 +849,25 @@ namespace Apoc3D
 
 				if (caps == LineCapsOptions::Round)
 				{
-					float r = width * 0.5f;
-					//RectangleF leftRoundDst = { , , r, width };
-					//RectangleF leftRoundSrc;
+					PointF offset = uvShift;
+					offset.X *= texture->getWidth();
+					offset.Y *= texture->getHeight();
 
-					//DrawCircle(texture, leftRoundDst, &leftRoundSrc, Math::Half_PI, 3 * Math::Half_PI, 2, color);
+					float r = width * 0.5f;
+					
+					float angle = atan2(normal.Y, normal.X);
+
+					RectangleF leftRoundDst = { start - PointF(r, r), { width, width } };
+					RectangleF leftRoundSrc = { 0, 0, width, (float)texture->getHeight() };
+					leftRoundSrc.Offset(offset);
+					leftRoundSrc.Width *= uvScale.X; leftRoundSrc.Height *= uvScale.Y;
+					DrawCircle(texture, leftRoundDst, &leftRoundSrc, angle, angle + Math::PI, 2, color);
+
+					RectangleF rightRoundDst = { end - PointF(r, r), { width, width } };
+					RectangleF rightRoundSrc = { length - width, 0, width, (float)texture->getHeight() };
+					rightRoundSrc.Offset(offset);
+					rightRoundSrc.Width *= uvScale.X; rightRoundSrc.Height *= uvScale.Y;
+					DrawCircle(texture, rightRoundDst, &rightRoundSrc, angle - Math::PI, angle, 2, color);
 				}
 			}
 

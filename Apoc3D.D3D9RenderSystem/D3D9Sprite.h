@@ -123,7 +123,7 @@ namespace Apoc3D
 				};
 
 				void DrawCircleGeneric(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, float width,
-					float beginAngle, float endAngle, int32 div, uint color);
+					float beginAngle, float endAngle, int32 div, uint color, bool uvExt = false);
 
 				void DrawRoundedRectGeneric(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, float width,
 					float cornerRadius, int32 div, uint color);
@@ -131,6 +131,9 @@ namespace Apoc3D
 
 				void EnqueueDrawEntry(const DrawEntry& drawE);
 				
+				void SetUVExtendedState(bool isExtended);
+
+
 				void SetRenderState();
 				void RestoreRenderState();
 
