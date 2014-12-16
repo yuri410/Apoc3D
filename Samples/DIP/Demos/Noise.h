@@ -19,8 +19,6 @@ namespace dip
 		void SliderPercentage1_ValueChange(SliderBar* sb, bool);
 		void SliderPercentage2_ValueChange(SliderBar* sb, bool);
 
-		Texture* m_original;
-
 		Form* m_form;
 		Texture* m_noise;
 		Texture* m_noise2;

@@ -239,26 +239,26 @@ namespace Apoc3D
 				EnqueueDrawEntry(drawE);
 			}
 
-			void D3D9Sprite::DrawTiled(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color)
+			void D3D9Sprite::DrawTiled(Texture* texture, const PointF& pos, const PointF& uvScale, const PointF& uvShift, uint color)
 			{
 				assert(m_began);
 
 				DrawEntry drawE;
 				drawE.FillNormalDraw(texture, getTransform(), pos.X, pos.Y, color);
 
-				drawE.ChangeUV(uScale, vScale, uBias, vBias);
+				drawE.ChangeUV(uvScale, uvShift);
 
 				EnqueueDrawEntry(drawE);
 			}
 
-			void D3D9Sprite::DrawTiled(Texture* texture, const RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color)
+			void D3D9Sprite::DrawTiled(Texture* texture, const RectangleF& dstRect, const PointF& uvScale, const PointF& uvShift, uint color)
 			{
 				assert(m_began);
 
 				DrawEntry drawE;
 				drawE.FillNormalDraw(texture, getTransform(), dstRect, NULL, color);
 
-				drawE.ChangeUV(uScale, vScale, uBias, vBias);
+				drawE.ChangeUV(uvScale, uvShift);
 
 				EnqueueDrawEntry(drawE);
 			}
@@ -282,11 +282,15 @@ namespace Apoc3D
 
 				NativeD3DStateManager* mgr = m_device->getNativeStateManager();
 
-				//m_rawDevice->SetTexture(0,0);
 				mgr->SetTexture(0,0);
 				D3D9Texture* currentTexture = m_deferredDraws[0].Tex;
-				bool currentUVExtend = m_deferredDraws[0].IsUVExtended;
 				int32 lastIndex = 0;
+				bool currentUVExtend = false;
+				{
+					const ShaderSamplerState& state = mgr->getPixelSampler(0);
+					if (state.AddressU != TA_Clamp || state.AddressV != TA_Clamp)
+						currentUVExtend = true;
+				}
 
 				for (int i = 0; i < m_deferredDraws.getCount() + 1; i++)
 				{
@@ -417,7 +421,7 @@ namespace Apoc3D
 			void D3D9Sprite::DrawCircleArc(Texture* texture, const RectangleF& dstRect, const RectangleF* _srcRect, float lineWidth, float beginAngle, float endAngle, int32 div, uint color)
 			{
 				assert(m_began);
-				if (lineWidth <= EPSILON) lineWidth = EPSILON;
+				if (lineWidth <= EPSILON) return;
 
 				DrawCircleGeneric(texture, dstRect, _srcRect, lineWidth, beginAngle, endAngle, div, color);
 			}
@@ -592,7 +596,7 @@ namespace Apoc3D
 			void D3D9Sprite::DrawRoundedRectBorder(Texture* texture, const RectangleF& dstRect, const RectangleF* _srcRect, float width, float cornerRadius, int32 div, uint color)
 			{
 				assert(m_began);
-				if (width <= EPSILON) width = EPSILON;
+				if (width <= EPSILON) return;
 
 				DrawRoundedRectGeneric(texture, dstRect, _srcRect, width, cornerRadius, div, color);
 			}
@@ -777,6 +781,73 @@ namespace Apoc3D
 
 			}
 
+			void D3D9Sprite::DrawLine(Texture* texture, const PointF& _start, const PointF& _end, uint color,
+				float width, LineCapsOptions caps, const PointF& uvScale, const PointF& uvShift)
+			{
+				assert(m_began);
+
+				PointF start = _start;
+				PointF end = _end;
+
+				Vector2 d = end - start;
+				float length = d.Length();
+				d.NormalizeInPlace();
+
+				Vector2 normal = { -d.Y, d.X };
+
+				if (caps == LineCapsOptions::Square)
+				{
+					float r = width * 0.5f;
+					start -= d * r;
+					end += d * r;
+				}
+
+				if (width == 0)
+				{
+					width = static_cast<float>(texture->getHeight());
+				}
+
+				float scaleOnLengthDir = length / texture->getWidth();
+
+				PointF sideExt = normal * (width*0.5f);
+
+				PointF corners[4] = 
+				{
+					start - sideExt, end - sideExt,
+					start + sideExt, end + sideExt
+				};
+				PointF texCoords[4] = 
+				{
+					{ 0, 0 }, { scaleOnLengthDir, 0 },
+					{ 0, 1 }, { scaleOnLengthDir, 1 },
+				};
+
+				if (caps == LineCapsOptions::Round)
+				{
+					float xTexCoordPad = width * 0.5f / texture->getWidth();
+					texCoords[0].X += xTexCoordPad;
+					texCoords[1].X -= xTexCoordPad;
+					texCoords[2].X += xTexCoordPad;
+					texCoords[3].X -= xTexCoordPad;
+				}
+
+				DrawEntry drawE;
+				drawE.SetTexture(texture);
+				drawE.SetPositions(getTransform(), corners[0], corners[1], corners[2], corners[3]);
+				drawE.SetTextureCoords(texCoords[0], texCoords[1], texCoords[2], texCoords[3]);
+				drawE.ChangeUV(uvScale, uvShift);
+				drawE.SetColors(color);
+				EnqueueDrawEntry(drawE);
+
+				if (caps == LineCapsOptions::Round)
+				{
+					float r = width * 0.5f;
+					//RectangleF leftRoundDst = { , , r, width };
+					//RectangleF leftRoundSrc;
+
+					//DrawCircle(texture, leftRoundDst, &leftRoundSrc, Math::Half_PI, 3 * Math::Half_PI, 2, color);
+				}
+			}
 
 			void D3D9Sprite::SetTransform(const Matrix& matrix)
 			{
@@ -808,7 +879,7 @@ namespace Apoc3D
 				float width = (float)texture->getWidth();
 				float height = (float)texture->getHeight();
 
-				SetPositions(baseTrans, { x, y }, { width+x, y }, { x, height + y }, { width + x, height + y });
+				SetPositions(baseTrans, { x, y }, { width + x, y }, { x, height + y }, { width + x, height + y });
 
 				SetColors(color);
 				SetSrcRect(nullptr, nullptr);
@@ -817,93 +888,17 @@ namespace Apoc3D
 			// Auto resizing to fit the target rectangle is implemented in this method.
 			void D3D9Sprite::DrawEntry::FillNormalDraw(Texture* texture, const Matrix& baseTrans, const RectangleF& dstRect, const RectangleF* srcRect, uint color)
 			{
-				float position[3] = { dstRect.X, dstRect.Y, 0 };
-
-				Matrix tempM;
-
-				if (srcRect)
-				{
-					struct RECTF
-					{
-						float left;
-						float top;
-						float right;
-						float bottom;
-					} r = {
-						srcRect->X,
-						srcRect->Y,
-						srcRect->getRight(),
-						srcRect->getBottom()
-					};
-
-					// In some cases, the X,Y of the rect is not always the top-left corner,
-					// when the Width or Height is negative. Standardize it.
-					if (r.left > r.right)
-					{
-						float temp = r.right;
-						r.right = r.left;
-						r.left = temp;
-						position[0] += r.right - r.left;
-					}
-					if (r.top > r.bottom)
-					{
-						float temp = r.bottom;
-						r.bottom = r.top;
-						r.top = temp;
-						position[1] += r.bottom - r.top;
-					}
-					Apoc3D::Math::RectangleF r2(r.left, r.top, r.right - r.left, r.bottom - r.top);
-
-					// calculate a scaling and translation matrix
-					Matrix trans;
-					Matrix::CreateTranslation(trans, position[0], position[1], position[2]);
-					trans.M11 = (float)dstRect.Width / (float)srcRect->Width;
-					trans.M22 = (float)dstRect.Height / (float)srcRect->Height;
-
-					// add "trans" at the the beginning for the result
-					Matrix::Multiply(tempM, trans, baseTrans);
-
-					// As the position have been added to the transform, 
-					// draw the texture at the origin
-					FillTransformedDraw(texture, tempM, &r2, color);
-				}
-				else
-				{
-					Matrix trans;
-					Matrix::CreateTranslation(trans, position[0], position[1], position[2]);
-					trans.M11 = (float)dstRect.Width / (float)texture->getWidth();
-					trans.M22 = (float)dstRect.Height / (float)texture->getHeight();
-
-					Matrix::Multiply(tempM, trans, baseTrans);
-
-					// As the position have been added to the transform, 
-					// draw the texture at the origin
-					FillTransformedDraw(texture, tempM, NULL, color);
-				}
-			}
-
-			void D3D9Sprite::DrawEntry::FillTransformedDraw(Texture* texture, const Matrix& t, const RectangleF* srcRect, uint color)
-			{
 				SetTexture(texture);
 
+				float width = (float)dstRect.Width;
+				float height = (float)dstRect.Height;
+
+				float x = dstRect.X;
+				float y = dstRect.Y;
+
+				SetPositions(baseTrans, { x, y }, { x + width, y }, { x, y + height }, { x + width, y + height });
+
 				SetColors(color);
-
-				float width;
-				float height;
-
-				if (srcRect)
-				{
-					width = srcRect->Width;
-					height = srcRect->Height;
-				}
-				else
-				{
-					width = (float)texture->getWidth();
-					height = (float)texture->getHeight();
-				}
-				
-				SetPositions(t, { 0, 0 }, { width, 0 }, { 0, height }, { width, height });
-
 				SetSrcRect(texture, srcRect);
 			}
 
@@ -1012,6 +1007,10 @@ namespace Apoc3D
 				TR.TexCoord[1] += vBias;
 
 				IsUVExtended = true;
+			}
+			void D3D9Sprite::DrawEntry::ChangeUV(const PointF& uvScale, const PointF& uvShift)
+			{
+				ChangeUV(uvScale.X, uvScale.Y, uvShift.X, uvShift.Y);
 			}
 
 		}

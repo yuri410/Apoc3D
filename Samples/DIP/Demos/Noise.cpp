@@ -1,19 +1,22 @@
 #include "Noise.h"
 #include "../DIP1.h"
+#include "../ImageLibrary.h"
 
 namespace dip
 {
 	DemoNoise::DemoNoise(DIP1* parent, RenderDevice* device, const StyleSkin* skin)
-		: SubDemo(L"Noise Generation and Reduction"), m_original(parent->getSourceTexture())
+		: SubDemo(L"Noise Generation and Reduction")
 	{
 		ObjectFactory* fac = device->getObjectFactory();
 
-		m_noise = fac->CreateTexture(m_original->getWidth(), m_original->getHeight(), 1, TU_Static, FMT_Luminance8);
-		m_noise2 = fac->CreateTexture(m_original->getWidth(), m_original->getHeight(), 1, TU_Static, FMT_Luminance8);
-		m_result1_1 = fac->CreateTexture(m_original->getWidth(), m_original->getHeight(), 1, TU_Static, FMT_Luminance8);
-		m_result1_2 = fac->CreateTexture(m_original->getWidth(), m_original->getHeight(), 1, TU_Static, FMT_Luminance8);
-		m_result2_1 = fac->CreateTexture(m_original->getWidth(), m_original->getHeight(), 1, TU_Static, FMT_Luminance8);
-		m_result2_2 = fac->CreateTexture(m_original->getWidth(), m_original->getHeight(), 1, TU_Static, FMT_Luminance8);
+		Texture* original = ImageLibrary::getSingleton().m_original;
+
+		m_noise = fac->CreateTexture(original->getWidth(), original->getHeight(), 1, TU_Static, FMT_Luminance8);
+		m_noise2 = fac->CreateTexture(original->getWidth(), original->getHeight(), 1, TU_Static, FMT_Luminance8);
+		m_result1_1 = fac->CreateTexture(original->getWidth(), original->getHeight(), 1, TU_Static, FMT_Luminance8);
+		m_result1_2 = fac->CreateTexture(original->getWidth(), original->getHeight(), 1, TU_Static, FMT_Luminance8);
+		m_result2_1 = fac->CreateTexture(original->getWidth(), original->getHeight(), 1, TU_Static, FMT_Luminance8);
+		m_result2_2 = fac->CreateTexture(original->getWidth(), original->getHeight(), 1, TU_Static, FMT_Luminance8);
 
 		m_form = new Form(skin, device, FBS_Fixed, getName());
 		m_form->setSize(256 * 4 + 5 * 5, 620);
@@ -40,7 +43,7 @@ namespace dip
 
 
 		int sy = 5 + skin->FormTitle->Height;
-		PictureBox* pbOriginal = new PictureBox(skin, Point(5, sy), 1, m_original);
+		PictureBox* pbOriginal = new PictureBox(skin, Point(5, sy), 1, original);
 		pbOriginal->setSize(256, 256);
 		cc.Add(pbOriginal);
 
@@ -88,15 +91,31 @@ namespace dip
 		SystemUI::Add(m_form);
 	}
 
+	DemoNoise::~DemoNoise()
+	{
+		SystemUI::Remove(m_form);
+		delete m_form;
+		delete m_noise;
+		delete m_noise2;
+
+		delete m_result1_1;
+		delete m_result1_2;
+		delete m_result2_1;
+		delete m_result2_2;
+
+	}
+
 
 	void DemoNoise::Process(Button* ctrl)
 	{
+		Texture* original = ImageLibrary::getSingleton().m_original;
+
 		const float percentage1 = m_percentage1;
 		const float percentage2 = m_percentage2;
 
 		DataRectangle dataR1 = m_noise->Lock(0, LOCK_None);
 		DataRectangle dataR2 = m_noise2->Lock(0, LOCK_None);
-		DataRectangle dataR = m_original->Lock(0, LOCK_ReadOnly);
+		DataRectangle dataR = original->Lock(0, LOCK_ReadOnly);
 		const byte* srcData = (const byte*)dataR.getDataPointer();
 		byte* dstR1 = (byte*)dataR1.getDataPointer();
 		byte* dstR2 = (byte*)dataR2.getDataPointer();
@@ -138,7 +157,7 @@ namespace dip
 			dstR1 += dataR1.getPitch();
 			dstR2 += dataR2.getPitch();
 		}
-		m_original->Unlock(0);
+		original->Unlock(0);
 
 		// ======================================================
 
@@ -236,20 +255,6 @@ namespace dip
 
 		m_noise->Unlock(0);
 		m_noise2->Unlock(0);
-	}
-
-	DemoNoise::~DemoNoise()
-	{
-		SystemUI::Remove(m_form);
-		delete m_form;
-		delete m_noise;
-		delete m_noise2;
-
-		delete m_result1_1;
-		delete m_result1_2;
-		delete m_result2_1;
-		delete m_result2_2;
-
 	}
 
 	void DemoNoise::SliderPercentage1_ValueChange(SliderBar* sb, bool)

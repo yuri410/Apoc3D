@@ -32,7 +32,7 @@
       <b3 Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\dm\b3.png" DestinationFile="s_dip\dm\b3.tex" />
       <b4 Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\dm\b4.png" DestinationFile="s_dip\dm\b4.tex" />
 
-      <ba_1 Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\dm\ba_1.png" DestinationFile="s_dip\dm\ba_1.tex" />
+      <b5 Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\dm\b5.png" DestinationFile="s_dip\dm\b5.tex" />
     </dm>
   </Project>
 </TestBuild>

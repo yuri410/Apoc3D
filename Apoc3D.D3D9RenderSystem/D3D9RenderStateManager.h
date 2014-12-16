@@ -159,6 +159,7 @@ namespace Apoc3D
 				void Reset() { InitializeDefaultState(); }
 			private:
 				void InitializeDefaultState();
+				void SetSampler(DWORD samplerIndex, ShaderSamplerState& curState, const ShaderSamplerState& state);
 
 				D3D9RenderDevice* m_device;
 

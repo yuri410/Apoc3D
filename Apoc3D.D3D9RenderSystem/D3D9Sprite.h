@@ -59,8 +59,8 @@ namespace Apoc3D
 				virtual void Draw(Texture* texture, const PointF_A4& corners, const RectangleF* srcRect, const ColorValue_A4& colors) override;
 				virtual void Draw(Texture* texture, const PointF_A4& corners, const PointF_A4& texCoords, const ColorValue_A4& colors) override;
 
-				virtual void DrawTiled(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color) override;
-				virtual void DrawTiled(Texture* texture, const RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) override;
+				virtual void DrawTiled(Texture* texture, const PointF& pos, const PointF& uvScale, const PointF& uvShift, uint color) override;
+				virtual void DrawTiled(Texture* texture, const RectangleF& dstRect, const PointF& uvScale, const PointF& uvShift, uint color) override;
 
 				virtual void DrawCircle(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect,
 					float beginAngle, float endAngle, int32 div, uint color) override;
@@ -74,6 +74,8 @@ namespace Apoc3D
 				virtual void DrawRoundedRectBorder(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, float width,
 					float cornerRadius, int32 div, uint color) override;
 
+				virtual void DrawLine(Texture* texture, const PointF& start, const PointF& end, uint color, 
+					float width, LineCapsOptions caps, const PointF& uvScale, const PointF& uvShift) override;
 
 				virtual void Flush();
 
@@ -104,7 +106,6 @@ namespace Apoc3D
 					void FillNormalDraw(Texture* texture, const Matrix& baseTrans, float x, float y, uint color);
 					void FillNormalDraw(Texture* texture, const Matrix& baseTrans, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color);
 
-					void FillTransformedDraw(Texture* texture, const Matrix& t, const Apoc3D::Math::RectangleF* srcRect, uint color);
 
 					void SetTexture(Texture* tex);
 
@@ -117,6 +118,8 @@ namespace Apoc3D
 					void SetTextureCoords(const PointF& tl_sp, const PointF& tr_sp, const PointF& bl_sp, const PointF& br_sp);
 
 					void ChangeUV(float uScale, float vScale, float uBias, float vBias);
+					void ChangeUV(const PointF& uvScale, const PointF& uvShift);
+
 				};
 
 				void DrawCircleGeneric(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, float width,

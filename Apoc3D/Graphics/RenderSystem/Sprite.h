@@ -37,6 +37,19 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
+			enum struct LineCapsOptions
+			{
+				Butt,
+				Round,
+				Square
+			};
+
+			enum struct LineCornersOptions
+			{
+				Miter,
+				Round,
+				Bevel
+			};
 
 			/**
 			*  Sprite is a utility used to draw textured rectangles in viewport.
@@ -110,6 +123,11 @@ namespace Apoc3D
 				void DrawRoundedRectBorder(Texture* texture, const Rectangle& dstRect, const Rectangle* srcRect, float width,
 					float cornerRadius, int32 div, uint color);
 
+				void DrawLine(Texture* texture, const Point& start, const Point& end, uint color, 
+					float width, LineCapsOptions caps, const PointF& uvScale, const PointF& uvShift);
+
+
+				//////////////////////////////////////////////////////////////////////////
 
 				virtual void Draw(Texture* texture, const PointF& pos, uint color) = 0;
 				virtual void Draw(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, uint color) = 0;
@@ -119,8 +137,8 @@ namespace Apoc3D
 				virtual void Draw(Texture* texture, const PointF_A4& corners, const RectangleF* srcRect, const ColorValue_A4& colors) = 0;
 				virtual void Draw(Texture* texture, const PointF_A4& corners, const PointF_A4& texCoords, const ColorValue_A4& colors) = 0;
 
-				virtual void DrawTiled(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color) = 0;
-				virtual void DrawTiled(Texture* texture, const RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) = 0;
+				virtual void DrawTiled(Texture* texture, const PointF& pos, const PointF& uvScale, const PointF& uvShift, uint color) = 0;
+				virtual void DrawTiled(Texture* texture, const RectangleF& dstRect, const PointF& uvScale, const PointF& uvShift, uint color) = 0;
 
 
 				virtual void DrawCircle(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect,
@@ -134,6 +152,12 @@ namespace Apoc3D
 				virtual void DrawRoundedRectBorder(Texture* texture, const RectangleF& dstRect, const RectangleF* srcRect, float width,
 					float cornerRadius, int32 div, uint color) = 0;
 
+
+				virtual void DrawLine(Texture* texture, const PointF& start, const PointF& end, uint color,
+					float width, LineCapsOptions caps, const PointF& uvScale = PointF(1, 1), const PointF& uvShift = PointF(0, 0)) = 0;
+				//virtual void DrawLine(Texture* texture, const PointF* starts,, uint color, LineCapsOptions caps, LineCornersOptions corners) = 0;
+
+				//////////////////////////////////////////////////////////////////////////
 
 				virtual void Flush() = 0;
 

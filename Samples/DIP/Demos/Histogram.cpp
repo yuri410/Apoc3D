@@ -1,5 +1,6 @@
 #include "Histogram.h"
 #include "../DIP1.h"
+#include "../ImageLibrary.h"
 
 namespace dip
 {
@@ -57,12 +58,14 @@ namespace dip
 	//////////////////////////////////////////////////////////////////////////
 
 	DemoHistogram::DemoHistogram(DIP1* parent, RenderDevice* device, const StyleSkin* skin)
-		: SubDemo(L"Histogram Processing"), m_original(parent->getSourceTexture())
+		: SubDemo(L"Histogram Processing")
 	{
+		Texture* original = ImageLibrary::getSingleton().m_original;
+
 		ObjectFactory* fac = device->getObjectFactory();
-		m_result1 = fac->CreateTexture(m_original->getWidth(), m_original->getHeight(), 1, TU_Static, FMT_Luminance8);
-		m_result2 = fac->CreateTexture(m_original->getWidth(), m_original->getHeight(), 1, TU_Static, FMT_Luminance8);
-		m_originalHgram.Build(m_original);
+		m_result1 = fac->CreateTexture(original->getWidth(), original->getHeight(), 1, TU_Static, FMT_Luminance8);
+		m_result2 = fac->CreateTexture(original->getWidth(), original->getHeight(), 1, TU_Static, FMT_Luminance8);
+		m_originalHgram.Build(original);
 
 
 		m_form = new Form(skin, device, FBS_Fixed, getName());
@@ -73,7 +76,7 @@ namespace dip
 		ControlCollection& cc = m_form->getControls();
 
 		int sy = 5 + skin->FormTitle->Height;
-		PictureBox* m_pbOriginal = new PictureBox(skin, Point(5, sy), 1, m_original);
+		PictureBox* m_pbOriginal = new PictureBox(skin, Point(5, sy), 1, original);
 		m_pbOriginal->setSize(256, 256);
 		cc.Add(m_pbOriginal);
 
@@ -137,10 +140,12 @@ namespace dip
 
 	void DemoHistogram::Process(Button* ctrl)
 	{
+		Texture* original = ImageLibrary::getSingleton().m_original;
+
 		DataRectangle dataR1 = m_result1->Lock(0, LOCK_None);
 		DataRectangle dataR2 = m_result2->Lock(0, LOCK_None);
 
-		DataRectangle dataR = m_original->Lock(0, LOCK_ReadOnly);
+		DataRectangle dataR = original->Lock(0, LOCK_ReadOnly);
 		const byte* srcData = (const byte*)dataR.getDataPointer();
 		byte* dstR1 = (byte*)dataR1.getDataPointer();
 		byte* dstR2 = (byte*)dataR2.getDataPointer();
@@ -162,7 +167,7 @@ namespace dip
 			dstR1 += dataR1.getPitch();
 			dstR2 += dataR2.getPitch();
 		}
-		m_original->Unlock(0);
+		original->Unlock(0);
 
 		m_result1->Unlock(0);
 		m_result2->Unlock(0);

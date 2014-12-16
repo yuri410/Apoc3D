@@ -155,6 +155,7 @@
     <ClInclude Include="APBCommon.h" />
     <ClInclude Include="BuildConfig.h" />
     <ClInclude Include="EffectCompiler\CompilerService_SM3.h" />
+    <ClInclude Include="StringTableBuild\CSFBuild.h" />
     <ClInclude Include="TextureBuild\D3DTextureBuild.h" />
     <ClInclude Include="Utils\D3DHelper.h" />
     <ClInclude Include="TextureBuild\dds.h" />

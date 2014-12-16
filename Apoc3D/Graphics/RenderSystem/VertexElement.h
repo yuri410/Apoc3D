@@ -38,30 +38,8 @@ namespace Apoc3D
 		{
 			class APAPI VertexElement
 			{
-			private:
-				int m_offset;
-				VertexElementFormat m_type;
-				VertexElementUsage m_semantic;
-				int m_index;
 			public:
-				/**
-				 *  Gets the offset in the buffer that this element starts at.
-				 */
-				int getOffset() const { return m_offset; }
-				/**
-				 *  Gets the type of element.
-				 */
-				VertexElementFormat getType() const { return m_type; }
-				/**
-				 *  Gets the meaning of the element.
-				 */
-				VertexElementUsage getUsage() const { return m_semantic; }
-				/** 
-				 *  Gets index of the item, only applicable for some elements like texture coords
-				 */
-				int getIndex() const { return m_index; }
-				int getSize() const { return GetTypeSize(m_type); }
-
+				
 				VertexElement() { }
 				VertexElement(int offset, VertexElementFormat type, VertexElementUsage semantic)		
 					: m_offset(offset), m_type(type), m_semantic(semantic), m_index(0)
@@ -73,9 +51,34 @@ namespace Apoc3D
 				{
 				}
 
+				/** Gets the offset in the buffer that this element starts at. */
+				int getOffset() const { return m_offset; }
+				
+				/** Gets the type of element. */
+				VertexElementFormat getType() const { return m_type; }
+				
+				/** Gets the meaning of the element. */
+				VertexElementUsage getUsage() const { return m_semantic; }
+				
+				/** Gets index of the item, only applicable for some elements like texture coords */
+				int getIndex() const { return m_index; }
+				int getSize() const { return GetTypeSize(m_type); }
+
+
+				bool operator ==(const VertexElement& another)
+				{
+					return m_index == another.m_index &&
+						m_offset == another.m_offset &&
+						m_semantic == another.m_semantic &&
+						m_type == another.m_type;
+				}
+
+				bool operator !=(const VertexElement& another) { return !(this->operator ==(another)); }
+
+
 				static VertexElement* FindElementBySemantic(const List<VertexElement>& elem, VertexElementUsage semantic);
 				
-				static bool Compare(const List<VertexElement> &e1, const List<VertexElement> &e2);
+				static bool Compare(const List<VertexElement>& e1, const List<VertexElement>& e2);
 
 				/**
 				 *  Calculate the size of a specified vertex element format
@@ -87,15 +90,11 @@ namespace Apoc3D
 				 */
 				static int GetTypeCount(VertexElementFormat type);
 
-				bool operator ==(const VertexElement& another)
-				{
-					return m_index == another.m_index &&
-						m_offset == another.m_offset &&
-						m_semantic == another.m_semantic &&
-						m_type == another.m_type;
-				}
-				bool operator !=(const VertexElement& another) { return !(this->operator ==(another)); }
-
+			private:
+				int m_offset;
+				VertexElementFormat m_type;
+				VertexElementUsage m_semantic;
+				int m_index;
 			};
 		}
 	}

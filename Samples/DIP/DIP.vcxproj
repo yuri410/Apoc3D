@@ -147,7 +147,13 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SamplePCH.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">SamplePCH.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClInclude Include="Demos\Clustering.h" />
+    <ClInclude Include="Demos\EdgeFilters.h" />
+    <ClInclude Include="Demos\FreqDomainFilters.h" />
+    <ClInclude Include="Demos\Huffman.h" />
+    <ClInclude Include="ImageLibrary.h" />
     <ClInclude Include="Demos\Noise.h" />
+    <ClInclude Include="Demos\Transformation.h" />
     <ClInclude Include="DIP1.h" />
     <ClInclude Include="DIPCommon.h" />
     <ClInclude Include="DIPMath.h" />
@@ -157,7 +163,13 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Demos\Clustering.cpp" />
+    <ClCompile Include="Demos\EdgeFilters.cpp" />
+    <ClCompile Include="Demos\FreqDomainFilters.cpp" />
+    <ClCompile Include="Demos\Huffman.cpp" />
+    <ClCompile Include="ImageLibrary.cpp" />
     <ClCompile Include="Demos\Noise.cpp" />
+    <ClCompile Include="Demos\Transformation.cpp" />
     <ClCompile Include="DIP1.cpp" />
     <ClCompile Include="DIPMath.cpp" />
     <ClCompile Include="Demos\Histogram.cpp" />

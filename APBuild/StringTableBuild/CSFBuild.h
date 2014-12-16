@@ -1,6 +1,4 @@
 #pragma once
-#ifndef DIP_H
-#define DIP_H
 
 /*
 -----------------------------------------------------------------------------
@@ -19,49 +17,26 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
+along with this program.  if not, write to the Free Software Foundation,
 Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
 
-#include "DIPCommon.h"
+#ifndef APB_CSFBUILD_H
+#define APB_CSFBUILD_H
 
-namespace dip
+#include "../APBCommon.h"
+#include "../BuildConfig.h"
+
+using namespace Apoc3D::Config;
+
+namespace APBuild
 {
-    class DIP1 : public Apoc3DEx::Game
+	namespace CsfBuild
 	{
-	public:
-		DIP1(RenderWindow* wnd);
-		~DIP1();
-
-		virtual void Initialize();
-		virtual void Finalize();
-
-		virtual void Load();
-		virtual void Unload();
-		virtual void Update(const GameTime* time);
-		virtual void Draw(const GameTime* time);
-
-		virtual void OnFrameStart();
-		virtual void OnFrameEnd();
-		
-	private:
-		void MenuItem_OpenDemo(MenuItem* mi);
-
-		void ShowAbout(MenuItem* ctrl);
-
-
-
-		List<SubDemo*> m_subdemos;
-		
-
-		Form* m_aboutDlg;
-
-		MenuBar* m_mainMenu;
-
-		Sprite* m_sprite;
-    };
+		void Build(const String& hierarchyPath, const ConfigurationSection* sect);
+	};
 }
 #endif

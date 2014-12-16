@@ -31,7 +31,6 @@ namespace dip
 		void Work11_HG2(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void Work11_HG3(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 
-		Texture* m_original;
 		HistogramData m_originalHgram;
 
 		Form* m_form;
