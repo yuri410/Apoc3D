@@ -263,6 +263,7 @@
     <ClInclude Include="UILib\UICommon.h" />
     <ClInclude Include="UILib\SystemUIImpl.h" />
     <ClInclude Include="Utility\Compression.h" />
+    <ClInclude Include="Utility\Graph.h" />
     <ClInclude Include="Utility\Hash.h" />
     <ClInclude Include="Utility\StringUtils.h" />
     <ClInclude Include="Graphics\PixelFormat.h" />
@@ -419,6 +420,7 @@
     <ClCompile Include="UILib\UICommon.cpp" />
     <ClCompile Include="UILib\SystemUIImpl.cpp" />
     <ClCompile Include="Utility\Compression.cpp" />
+    <ClCompile Include="Utility\Graph.cpp" />
     <ClCompile Include="Utility\Hash.cpp" />
     <ClCompile Include="Utility\StringUtils.cpp" />
     <ClCompile Include="Graphics\PixelFormat.cpp" />

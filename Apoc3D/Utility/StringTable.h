@@ -41,7 +41,7 @@ namespace Apoc3D
 		{
 			String Text;
 			char Extra[32];
-
+			
 			StringTableEntry();
 			StringTableEntry(const String& txt, const std::string& extra);
 		};

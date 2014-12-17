@@ -179,6 +179,8 @@ namespace Apoc3D
 		class ResourceManager;
 		struct GameTime;
 		
+		template<typename T>
+		class BackgroundSequencialWorker;
 
 		class Plugin;
 		class PluginManager;

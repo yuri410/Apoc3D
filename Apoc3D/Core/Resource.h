@@ -188,8 +188,8 @@ namespace Apoc3D
 			/** implement unload processing here */
 			virtual void unload() = 0;
 
-			virtual void loadPostSync(int32 percentage) { }
-			virtual void unloadPostSync(int32 percentage) { }
+			virtual void loadPostSync(int32 percentage) { load(); }
+			virtual void unloadPostSync(int32 percentage) { unload(); }
 			
 		private:
 			Resource& operator=(const Resource &rhs) = delete;

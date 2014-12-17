@@ -85,10 +85,8 @@ namespace Apoc3D
 
 		void ResourceManager::ReloadAll()
 		{
-			for (ResHashTable::Enumerator e = m_hashTable.GetEnumerator();e.MoveNext();)
+			for (Resource* res : m_hashTable.getValueAccessor())
 			{
-				Resource* res = e.getCurrentValue();
-
 				if (res->getState() == ResourceState::Loaded)
 				{
 					res->Reload();

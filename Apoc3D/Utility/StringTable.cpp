@@ -133,12 +133,11 @@ namespace Apoc3D
 
 				bw.WriteMBString(key);
 
-
-				bool hasExtra = strlen(ent.Extra)>0;
+				bool hasExtra = strlen(ent.Extra) > 0;
 				bw.WriteInt32(hasExtra ? CSFWStringID : CSFStringID);
 				bw.WriteInt32((int32)ent.Text.size());
 				for (wchar_t ch : ent.Text)
-					bw.WriteUInt16(ch);
+					bw.WriteUInt16(~(uint16)ch);
 
 				if (hasExtra)
 				{

@@ -48,11 +48,11 @@ namespace Apoc3D
 
 				while (!m_closed)
 				{
-					bool rest = true;
+					bool haveRest = true;
 
 					ResourceOperation resOp;
 					m_queueMutex->lock();
-					if (m_opQueue.getCount())
+					if (m_opQueue.getCount() > 0)
 					{
 						resOp = m_opQueue.Dequeue();
 					}
@@ -68,7 +68,7 @@ namespace Apoc3D
 							m_postSyncQueue.Enqueue(resOp);
 						}
 
-						rest = false;
+						haveRest = false;
 					}
 					
 					float t = (float)clock() / CLOCKS_PER_SEC;
@@ -87,7 +87,7 @@ namespace Apoc3D
 					{
 						m_genTable->SubTask_GenUpdate();
 						accumulatedGenUpdateWaitingTime = 0;
-						if (!rest) ApocSleep(10);
+						if (!haveRest) ApocSleep(10);
 					}
 
 
@@ -95,10 +95,10 @@ namespace Apoc3D
 					{
 						m_genTable->SubTask_Collect();
 						accumulatedCollectWaitingTime = 0;
-						if (!rest) ApocSleep(10);
+						if (!haveRest) ApocSleep(10);
 					}
 
-					if (rest) ApocSleep(10);
+					if (haveRest) ApocSleep(10);
 					
 				}
 			}

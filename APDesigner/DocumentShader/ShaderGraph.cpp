@@ -838,8 +838,8 @@ namespace APDesigner
 
 	void ShaderGraph::MoveNode(GraphNode* node, float dx, float dy)
 	{
-		node->setPosition(Vector2::Add(node->getPosition(), 
-			Vector2(dx/powf(2,m_zooming),dy/powf(2,m_zooming))));
+		Vector2 np = node->getPosition() + Vector2(dx / powf(2, m_zooming), dy / powf(2, m_zooming));
+		node->setPosition(np);
 	}
 
 	void ShaderGraph::GetViewMatrix(Matrix& mtrx)

@@ -790,7 +790,7 @@ namespace Apoc3D
 			}
 
 			void D3D9Sprite::DrawLine(Texture* texture, const PointF& _start, const PointF& _end, uint color,
-				float width, LineCapsOptions caps, const PointF& uvScale, const PointF& uvShift)
+				float width, LineCapOptions caps, const PointF& uvScale, const PointF& uvShift)
 			{
 				assert(m_began);
 
@@ -803,7 +803,7 @@ namespace Apoc3D
 
 				Vector2 normal = { -d.Y, d.X };
 
-				if (caps == LineCapsOptions::Square)
+				if (caps == LineCapOptions::Square)
 				{
 					float r = width * 0.5f;
 					start -= d * r;
@@ -830,7 +830,7 @@ namespace Apoc3D
 					{ 0, 1 }, { scaleOnLengthDir, 1 },
 				};
 
-				if (caps == LineCapsOptions::Round)
+				if (caps == LineCapOptions::Round)
 				{
 					float xTexCoordPad = width * 0.5f / texture->getWidth();
 					texCoords[0].X += xTexCoordPad;
@@ -847,7 +847,7 @@ namespace Apoc3D
 				drawE.SetColors(color);
 				EnqueueDrawEntry(drawE);
 
-				if (caps == LineCapsOptions::Round)
+				if (caps == LineCapOptions::Round)
 				{
 					PointF offset = uvShift;
 					offset.X *= texture->getWidth();

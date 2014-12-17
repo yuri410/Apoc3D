@@ -202,7 +202,7 @@ namespace Apoc3D
 					DrawRoundedRectBorder(texture, dstRectF, nullptr, cornerRadius, width, div, color);
 			}
 			void Sprite::DrawLine(Texture* texture, const Point& start, const Point& end, uint color, 
-				float width, LineCapsOptions caps, const PointF& uvScale, const PointF& uvShift)
+				float width, LineCapOptions caps, const PointF& uvScale, const PointF& uvShift)
 			{
 				DrawLine(texture, PointF(start), PointF(end), color, width, caps, uvScale, uvShift);
 			}

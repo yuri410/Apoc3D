@@ -75,7 +75,7 @@ namespace Apoc3D
 					float cornerRadius, int32 div, uint color) override;
 
 				virtual void DrawLine(Texture* texture, const PointF& start, const PointF& end, uint color, 
-					float width, LineCapsOptions caps, const PointF& uvScale, const PointF& uvShift) override;
+					float width, LineCapOptions caps, const PointF& uvScale, const PointF& uvShift) override;
 
 				virtual void Flush();
 

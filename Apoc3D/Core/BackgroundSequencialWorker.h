@@ -28,6 +28,7 @@
  */
 
 #include "apoc3d/Common.h"
+#include "apoc3d/Collections/Queue.h"
 #include "apoc3d/Platform/Thread.h"
 #include "apoc3d/Library/tinythread.h"
 
@@ -38,9 +39,27 @@ namespace Apoc3D
 		template <typename T>
 		class BackgroundSequencialWorker
 		{
-		protected:
-			BackgroundSequencialWorker()
-				: m_terminated(true), m_thread(nullptr) { }
+		public:
+			int32 WaitUntilClear(int32 timeOut = 0)
+			{
+				bool allowTimeOut = timeOut > 0;
+
+				int32 count;
+				do 
+				{
+					m_queueMutex.lock();
+					count = m_taskQueue.getCount();
+					m_queueMutex.unlock();
+
+					if (count == 0)
+						break;
+
+					Platform::ApocSleep(1);
+					timeOut--;
+
+				} while (count > 0 && (!allowTimeOut || timeOut > 0));
+				return count;
+			}
 
 			void StartBackground(const String& name)
 			{
@@ -74,6 +93,15 @@ namespace Apoc3D
 				m_queueMutex.unlock();
 			}
 
+		protected:
+			BackgroundSequencialWorker()
+				: m_terminated(true), m_thread(nullptr) { }
+
+			~BackgroundSequencialWorker()
+			{
+				StopBackground();
+			}
+			
 			static void BackgroundMainStatic(void* thisInstance) { ((BackgroundSequencialWorker*)thisInstance)->BackgroundMain(); }
 			virtual void BackgroundMain()
 			{
@@ -82,22 +110,24 @@ namespace Apoc3D
 				while (!m_terminated)
 				{
 					m_queueMutex.lock();
-					volatile int32 queueCount = m_taskQueue.getCount();
-					if (queueCount == 0)
+					volatile bool hasTask = false;
+					T task;
+					if (m_taskQueue.getCount() == 0)
 					{
 						m_queueEmptyWait.wait(m_queueMutex);
+					}
+					else
+					{
+						task = m_taskQueue.Dequeue();
+						hasTask = true;
 					}
 					m_queueMutex.unlock();
 
 					if (m_terminated)
 						break;
 
-					if (queueCount>0)
+					if (hasTask)
 					{
-						m_queueMutex.lock();
-						T task = m_taskQueue.Dequeue();
-						m_queueMutex.unlock();
-
 						BackgroundMainProcess(task);
 					}
 				}
@@ -114,7 +144,7 @@ namespace Apoc3D
 
 			tthread::condition_variable m_queueEmptyWait;
 			tthread::mutex m_queueMutex;
-			Queue<T> m_taskQueue;
+			Apoc3D::Collections::Queue<T> m_taskQueue;
 
 			tthread::thread* m_thread;
 			volatile bool m_terminated;

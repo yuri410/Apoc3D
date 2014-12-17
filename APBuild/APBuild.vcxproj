@@ -197,6 +197,7 @@
     <ClCompile Include="EffectCompiler\CompileService.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="BuildConfig.cpp" />
+    <ClCompile Include="StringTableBuild\CSFBuild.cpp" />
     <ClCompile Include="TextureBuild\D3DTextureBuild.cpp" />
     <ClCompile Include="Utils\D3DHelper.cpp" />
     <ClCompile Include="FontBuild\FontBuild.cpp" />
