@@ -73,6 +73,11 @@ namespace Apoc3D
 		{
 			UpdateEvents_StandardButton(m_mouseHover, m_mouseDown, getAbsoluteArea(),
 				&PictureBox::OnMouseHover, &PictureBox::OnMouseOut, &PictureBox::OnPress, &PictureBox::OnRelease);
+
+			if (IsInteractive && m_mouseHover)
+			{
+				eventInteractiveUpdate.Invoke(this, time);
+			}
 		}
 
 		void PictureBox::Draw(Sprite* sprite)

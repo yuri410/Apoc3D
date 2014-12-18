@@ -254,7 +254,6 @@ namespace Apoc3D
 			{
 				m_size.X = SystemUI::GetUIArea(sprite->getRenderDevice()).Width;
 			}
-			m_size.Y = static_cast<int>(m_fontRef->getLineBackgroundHeight());
 
 			{
 				Apoc3D::Math::Rectangle area(drawPos.X + 1, drawPos.Y, m_size.X, m_size.Y - m_skin->HShade.Height);

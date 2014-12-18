@@ -483,7 +483,10 @@ namespace Apoc3D
 		ControlContainer::~ControlContainer()
 		{
 			if (ReleaseControls)
+			{
 				m_controls.DeleteAndClear();
+				DELETE_AND_NULL(MenuBar);
+			}
 		}
 
 		void ControlContainer::Draw(Sprite* sprite)

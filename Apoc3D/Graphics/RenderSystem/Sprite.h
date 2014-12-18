@@ -205,7 +205,7 @@ namespace Apoc3D
 			class APAPI SpriteTransformScope
 			{
 			public:
-				SpriteTransformScope(Sprite* spr, const Matrix& transform);
+				SpriteTransformScope(Sprite* spr, const Matrix& transform, bool mult);
 				~SpriteTransformScope();
 
 			private:

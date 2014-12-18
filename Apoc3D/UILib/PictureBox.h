@@ -40,6 +40,8 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(PictureBox, Control);
 		public:
+			typedef EventDelegate2<PictureBox*, const GameTime*> InteractiveUpdateEventHandler;
+
 			PictureBox(const Point& position, int border);
 			PictureBox(const Point& position, int border, Texture* texture);
 			PictureBox(const StyleSkin* skin, const Point& position, int border);
@@ -69,6 +71,8 @@ namespace Apoc3D
 			UIEventHandler eventMouseOut;
 			UIEventHandler eventPress;
 			UIEventHandler eventRelease;
+
+			InteractiveUpdateEventHandler eventInteractiveUpdate;
 
 		private:
 			void OnMouseHover();

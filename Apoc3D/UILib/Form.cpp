@@ -296,9 +296,6 @@ namespace Apoc3D
 			if (!Visible)
 				return;
 
-			if (MenuBar)
-				MenuBar->Position = Point(0, m_skin->FormTitle->Height);
-
 			UpdateStateAnimation();
 			UpdateFocus();
 
@@ -317,6 +314,12 @@ namespace Apoc3D
 
 			CheckClick(time);
 			SetElementsBasicStates();
+
+			if (MenuBar)
+			{
+				MenuBar->BaseOffset = Position;
+				MenuBar->Position = Point(0, m_skin->FormTitle->Height);
+			}
 
 			if (m_state != FWS_Minimized && !m_isMinimized)
 			{

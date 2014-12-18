@@ -260,7 +260,7 @@ namespace Apoc3D
 
 			//////////////////////////////////////////////////////////////////////////
 
-			SpriteTransformScope::SpriteTransformScope(Sprite* spr, const Matrix& transform)
+			SpriteTransformScope::SpriteTransformScope(Sprite* spr, const Matrix& transform, bool mult)
 				: m_sprite(spr)
 			{
 				if (!m_sprite->isUsingStack())
@@ -268,7 +268,10 @@ namespace Apoc3D
 					m_oldTransform = m_sprite->getTransform();
 				}
 
-				m_sprite->SetTransform(transform);
+				if (mult)
+					m_sprite->MultiplyTransform(transform);
+				else 
+					m_sprite->SetTransform(transform);
 			}
 
 			SpriteTransformScope::~SpriteTransformScope()
