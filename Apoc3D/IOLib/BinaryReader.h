@@ -113,6 +113,11 @@ namespace Apoc3D
 			inline void FillBuffer(int32 len);
 			NO_INLINE static void throwEndofStreamException();
 
+			template <typename T, typename ET>
+			void FillString(T& str, int32 len);
+
+			int16 InterpretInt16(const char* data) const;
+
 			bool m_isEndianIndependent;
 			bool m_shouldDeleteStream;
 

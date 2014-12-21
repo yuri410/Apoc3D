@@ -330,52 +330,48 @@ void TestBufferStream()
 	char* buffer = new char[(int32)fs.getLength()];
 	fs.Read(buffer, fs.getLength());
 
-
-	MemoryStream ms(buffer, fs.getLength());
-	BufferedStreamReader bsr(&ms);
-	char* cmp = buffer;
-	for (;;)
 	{
-		char temp[102400];
-		int32 countToRead = Randomizer::NextExclusive(ARRAYSIZE(temp));
-		int32 r = bsr.Read(temp, countToRead);
-		CheckEqual<char>(cmp, temp, r);
-		
-		cmp += r;
+		MemoryStream ms(buffer, fs.getLength());
+		BufferedStreamReader bsr(&ms);
+		char* cmp = buffer;
+		for (;;)
+		{
+			char temp[8192];
+			int32 countToRead = Randomizer::NextExclusive(ARRAYSIZE(temp));
+			int32 r = bsr.Read(temp, countToRead);
+			CheckEqual<char>(cmp, temp, r);
 
-		if (r < countToRead)
-			break;
+			cmp += r;
+
+			if (r < countToRead)
+				break;
+		}
 	}
-	//char temp[102400];
-	//bsr.Read(temp, 4);
-	//CheckEqual<char>(cmp, temp, 4);
-	//cmp += 4;
 
-	//bsr.Read(temp, 1024);
-	//CheckEqual<char>(cmp, temp, 1024);
-	//cmp += 1024;
+	{
+		MemoryStream ms(buffer, fs.getLength());
+		BufferedStreamReader bsr(&ms);
+		FileStream fs2(L"Apoc3d.lib");
 
-	//bsr.Read(temp, 4096);
-	//CheckEqual<char>(cmp, temp, 4096);
-	//cmp += 4096;
+		for (;;)
+		{
+			char temp[8192];
+			char temp2[8192];
 
-	//bsr.Read(temp, 4096);
-	//CheckEqual<char>(cmp, temp, 4096);
-	//cmp += 4096;
+			int32 countToRead = Randomizer::NextExclusive(countof(temp));
+			int32 r1 = bsr.Read(temp, countToRead);
+			int32 r2 = (int32)fs2.Read(temp2, (int64)countToRead);
+			assert(r1 == r2);
 
-	//bsr.Read(temp, 128);
-	//CheckEqual<char>(cmp, temp, 128);
-	//cmp += 128;
+			CheckEqual<char>(temp2, temp, r1);
 
-	//bsr.Read(temp, 8192);
-	//CheckEqual<char>(cmp, temp, 8192);
-	//cmp += 8192;
-
-	//bsr.Read(temp, 102400);
-	//CheckEqual<char>(cmp, temp, 102400);
-	//cmp += 102400;
+			if (r1 < countToRead)
+				break;
+		}
+	}
 
 	delete[] buffer;
+
 }
 
 Matrix* GenerateRandomMatrices(Random& rnd, int32 count)

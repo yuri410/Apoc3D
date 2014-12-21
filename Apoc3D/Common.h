@@ -132,19 +132,54 @@ namespace Apoc3D
 	template <typename T, int32 N>
 	void ZeroArray(T(&arr)[N]) { static_assert(std::is_trivially_default_constructible<T>::value, "Type not suitable"); memset(arr, 0, sizeof(T)*N); }
 
+	//template <typename X, typename Y, int32 N1, int32 N2>
+	//void CopyArray(X(&dst)[N1], const Y(&src)[N2]) 
+	//{
+	//	static_assert(std::is_trivially_copyable<X>::value && std::is_trivially_copyable<Y>::value, "Type not suitable"); 
+	//	static_assert(N1 * sizeof(X) == N2 * sizeof(Y), "Array size mismatch");
+	//	memcpy(dst, src, sizeof(X)*N1); 
+	//}
+
+	//template <typename X, typename Y, int32 N>
+	//void FillArray(X(&dst)[N], const Y* dataPtr)
+	//{
+	//	static_assert(std::is_trivially_copyable<X>::value, "Type not suitable");
+	//	memcpy(dst, dataPtr, sizeof(X)*N);
+	//}
+
 	template <typename X, typename Y, int32 N1, int32 N2>
-	void CopyArray(X(&dst)[N1], const Y(&src)[N2]) 
+	typename std::enable_if<std::is_trivially_copyable<X>::value && std::is_trivially_copyable<Y>::value, void>::type
+		CopyArray(X(&dst)[N1], const Y(&src)[N2])
 	{
-		static_assert(std::is_trivially_copyable<X>::value && std::is_trivially_copyable<Y>::value, "Type not suitable"); 
+		static_assert(std::is_trivially_copyable<X>::value && std::is_trivially_copyable<Y>::value, "Type not suitable");
 		static_assert(N1 * sizeof(X) == N2 * sizeof(Y), "Array size mismatch");
-		memcpy(dst, src, sizeof(X)*N1); 
+		memcpy(dst, src, sizeof(X)*N1);
+	}
+
+	template <typename X, int32 N>
+	typename std::enable_if<!std::is_trivially_copyable<X>::value, void>::type 
+		CopyArray(X(&dst)[N], const X(&src)[N])
+	{
+		static_assert(!std::is_trivially_copyable<X>::value, "Type not suitable");
+		for (int32 i = 0; i < N; i++)
+			dst[i] = src[i];
 	}
 
 	template <typename X, typename Y, int32 N>
-	void FillArray(X(&dst)[N], const Y* dataPtr)
+	typename std::enable_if<std::is_trivially_copyable<X>::value, void>::type 
+		FillArray(X(&dst)[N], const Y* dataPtr)
 	{
 		static_assert(std::is_trivially_copyable<X>::value, "Type not suitable");
 		memcpy(dst, dataPtr, sizeof(X)*N);
+	}
+
+	template <typename X, int32 N>
+	typename std::enable_if<!std::is_trivially_copyable<X>::value, void>::type
+		FillArray(X(&dst)[N], const X* dataPtr)
+	{
+		static_assert(!std::is_trivially_copyable<X>::value, "Type not suitable");
+		for (int32 i = 0; i < N; i++)
+			dst[i] = dataPtr[i];
 	}
 
 	void DebugBreak();

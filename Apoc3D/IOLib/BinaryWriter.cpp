@@ -97,6 +97,7 @@ namespace Apoc3D
 			}
 			m_baseStream->Write(buffer, sizeof(float));
 		}
+
 		void BinaryWriter::WriteString(const String& value) const
 		{
 			bool isMB = true;

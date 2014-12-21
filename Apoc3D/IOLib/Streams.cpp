@@ -24,6 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Streams.h"
 #include "apoc3d/Exception.h"
+#include "apoc3d/Math/Math.h"
+
+#ifdef USE_WIN32_FILE
+#include <Windows.h>
+#endif
 
 using namespace std;
 
@@ -36,9 +41,24 @@ namespace Apoc3D
 		/************************************************************************/
 
 		FileStream::FileStream(const String& filename)
-			: m_in(filename.c_str(), ios::in | ios::binary)
 		{
-			m_in.exceptions( std::ios::failbit ); 
+#ifdef USE_WIN32_FILE
+			m_file = CreateFile(filename.c_str(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_FLAG_OPEN_NO_RECALL, NULL);
+			assert(m_file != INVALID_HANDLE_VALUE);
+
+			LARGE_INTEGER pos = { 0 };
+			LARGE_INTEGER endPos = { 0 };
+
+			SetFilePointerEx(m_file, pos, &endPos, FILE_END);
+			SetFilePointerEx(m_file, pos, NULL, FILE_BEGIN);
+
+			m_length = endPos.QuadPart;
+#else
+			m_in.rdbuf()->pubsetbuf(0, 0);
+
+			m_in.open(filename.c_str(), ios::in | ios::binary);
+
+			m_in.exceptions(std::ios::failbit);
 
 			uint64 oldPos = m_in.tellg();
 			m_in.seekg(0, ios::end);
@@ -46,17 +66,68 @@ namespace Apoc3D
 			m_in.seekg(oldPos, ios::beg);
 
 			m_in.exceptions(std::ios::goodbit);
+#endif	
 		}
 		FileStream::~FileStream()
 		{
+#ifdef USE_WIN32_FILE
+			if (m_file != INVALID_HANDLE_VALUE)
+			{
+				CloseHandle(m_file);
+			}
+#else
 			m_in.close();
+#endif	
+
 		}
 
 		int64 FileStream::Read(char* dest, int64 count)
 		{
-			m_in.read(reinterpret_cast<char*>(dest), count);
+			if (!isBuffered())
+			{
+				m_sequentialCount++;
 
-			return m_in.gcount();
+				return ReadImpl(dest, count);
+			}
+			else
+			{
+				if (count > m_readBuffer.getCapacity())
+				{
+					int32 existingCount = m_readBuffer.getCount();
+					m_readBuffer.CopyTo(dest, existingCount);
+					count -= existingCount;
+					dest += existingCount;
+					m_readBuffer.Clear();
+
+					int64 actual = ReadImpl(dest, count);
+
+					return actual + existingCount;
+				}
+				else
+				{
+					if (!m_endofStream && m_readBuffer.getCount() < count)
+					{
+						// refill buffer
+						int32 toFill = m_readBuffer.getCapacity() - m_readBuffer.getCount();
+						if (toFill > 0)
+						{
+							char buf[4096];
+
+							//m_in.read(buf, toFill);
+
+							int32 actual = static_cast<int32>(ReadImpl(buf, toFill));// static_cast<int32>(m_in.gcount());
+							m_readBuffer.Enqueue(buf, actual);
+
+							m_endofStream |= actual < toFill;
+						}
+					}
+
+					count = Math::_Min<int64>(count, m_readBuffer.getCount());
+					m_readBuffer.CopyTo(dest, static_cast<int32>(count));
+					m_readBuffer.DequeueOnly(static_cast<int32>(count));
+					return count;
+				}	
+			}
 		}
 		void FileStream::Write(const char* src, int64 count)
 		{
@@ -65,24 +136,98 @@ namespace Apoc3D
 
 		void FileStream::Seek(int64 offset, SeekMode mode)
 		{
-			ios::seekdir dir;
-			switch (mode)
+			if (mode == SeekMode::Current && isBuffered())
 			{
-				case SeekMode::Begin: dir = ios::beg; break;
-				case SeekMode::End: dir = ios::end; break;
-				default: dir = ios::cur; break;
+				mode = SeekMode::Begin;
+				offset -= (int64)m_readBuffer.getCount();
 			}
 
-			m_in.seekg(offset, dir);
+			ClearReadBuffer();
+
+			SeekImpl(offset, mode);
 		}
 		
 		void FileStream::setPosition(int64 offset)
 		{
-			m_in.seekg(offset, ios::beg); 
+			ClearReadBuffer();
+
+			SeekImpl(offset, SeekMode::Begin);
 		}
+
 		int64 FileStream::getPosition()
-		{ 
+		{
+			if (!isBuffered())
+				return GetPositionImpl();
+			return GetPositionImpl() - (int64)m_readBuffer.getCount(); 
+		}
+
+		void FileStream::ClearReadBuffer()
+		{
+			if (isBuffered())
+			{
+				m_sequentialCount = 0;
+
+				if (m_endofStream)
+				{
+					m_endofStream = false;
+#ifndef USE_WIN32_FILE
+					m_in.clear(ios::eofbit);
+#endif
+				}
+				m_readBuffer.Clear();
+			}
+			else m_sequentialCount = 0;
+		}
+
+
+		int64 FileStream::ReadImpl(char* dest, int64 count)
+		{
+#ifdef USE_WIN32_FILE
+			DWORD amount = (DWORD)count;
+			DWORD actuall;
+			ReadFile(m_file, dest, amount, &actuall, NULL);
+			return actuall;
+#else
+			m_in.read(dest, count);
+			return m_in.gcount();
+#endif
+		}
+
+		void FileStream::SeekImpl(int64 offset, SeekMode mode)
+		{
+#ifdef USE_WIN32_FILE
+			DWORD movMethod = FILE_BEGIN;
+			LARGE_INTEGER movDistance;
+			movDistance.QuadPart = offset;
+
+			if (mode == SeekMode::Current)
+				movMethod = FILE_CURRENT;
+			else if (mode == SeekMode::End)
+				movMethod = FILE_END;
+
+			SetFilePointerEx(m_file, movDistance, NULL, movMethod);
+#else
+			ios::seekdir dir = ios::beg;
+
+			if (mode == SeekMode::Current)
+				dir = ios::cur;
+			else if (mode == SeekMode::End)
+				dir = ios::end;
+
+			m_in.seekg(offset, dir);
+#endif
+		}
+
+		int64 FileStream::GetPositionImpl()
+		{
+#ifdef USE_WIN32_FILE
+			LARGE_INTEGER curPos;
+			LARGE_INTEGER d = {0};
+			SetFilePointerEx(m_file, d, &curPos, FILE_CURRENT);
+			return curPos.QuadPart;
+#else
 			return m_in.tellg();
+#endif
 		}
 
 		/************************************************************************/
@@ -90,8 +235,11 @@ namespace Apoc3D
 		/************************************************************************/
 
 		FileOutStream::FileOutStream(const String& filename)
-			: m_out(filename.c_str(), ios::out | ios::binary | ios::trunc)
-		{ }
+		{
+			m_out.rdbuf()->pubsetbuf(m_buffer, countof(m_buffer));
+
+			m_out.open(filename.c_str(), ios::out | ios::binary | ios::trunc);
+		}
 
 		FileOutStream::~FileOutStream()
 		{
@@ -212,12 +360,7 @@ namespace Apoc3D
 			//{
 			//	count = getLength() - getPosition();
 			//}
-			if (count)
-			{
-				m_baseStream->Read(dest, count);
-			}
-
-			return count;
+			return m_baseStream->Read(dest, count);
 		}
 		void VirtualStream::Write(const char* src, int64 count)
 		{

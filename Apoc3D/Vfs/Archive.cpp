@@ -136,7 +136,7 @@ namespace Apoc3D
 				res->setPosition( 0 );
 				return res;
 			}
-			return 0;
+			return nullptr;
 		}
 		bool PakArchive::HasEntry(const String& file)
 		{

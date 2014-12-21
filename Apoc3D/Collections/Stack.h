@@ -36,7 +36,7 @@ namespace Apoc3D
 		{
 		public:	
 			explicit Stack(int capacity = 8)
-				: m_length(capacity), m_size(0)
+				: m_length(capacity)
 			{
 				m_array = new T[m_length];
 			}
@@ -50,75 +50,77 @@ namespace Apoc3D
 				: m_size(another.m_size), m_length(another.m_length)
 			{
 				m_array = new T[m_length];
-				for (int i=0;i<m_length;i++)
+				for (int i = 0; i < m_length; i++)
 					m_array[i] = another.m_array[i];
 			}
 
 			Stack& operator=(const Stack& another)
 			{
-				delete[] m_array;
-				
-				m_size = another.m_size;
-				m_length = another.m_length;
-				m_array = new T[m_length];
+				if (this != &another)
+				{
+					delete[] m_array;
 
-				for (int i=0;i<m_length;i++)
-					m_array[i] = another.m_array[i];
+					m_size = another.m_size;
+					m_length = another.m_length;
+					m_array = new T[m_length];
 
-				return *this; 
+					for (int i = 0; i < m_length; i++)
+						m_array[i] = another.m_array[i];
+				}
+				return *this;
+			}
+
+			Stack(Stack&& another)
+				: m_size(another.m_size), m_length(another.m_length)
+			{
+				m_array = another.m_array;
+				another.m_array = nullptr;
+				another.m_size = another.m_length = 0;
+			}
+
+			Stack& operator=(Stack&& another)
+			{
+				if (this != &another)
+				{
+					m_size = another.m_size;
+					m_length = another.m_length;
+					m_array = another.m_array;
+
+					another.m_array = nullptr;
+					another.m_size = another.m_length = 0;
+				}
+				return *this;
 			}
 
 			int getCount() const { return m_size; }
 
-			void Clear()
-			{
-				m_size = 0;
-				//memset(m_array, 0, sizeof(T) * m_size)
-			}
+			void Clear() { m_size = 0; }
 
 			bool Contains(const T& item)
 			{
-				int index = m_size;
-				while (index-->0)
-				{
-					if (item == m_array[index])
-					{
+				for (int32 i = m_size - 1; i >= 0; i--)
+					if (m_array[i] == item)
 						return true;
-					}
-				}
 				return false;
 			}
 
-			T& Peek()
-			{
-				return m_array[m_size - 1];
-			}
-
-			T Pop()
-			{
-				T local = m_array[--m_size];
-				//memset(&m_array[m_size], 0, sizeof(T));
-				return local;
-			}
-			void FastPop()
-			{
-				m_size--;
-			}
+			T& Peek() { assert(m_size > 0); return m_array[m_size - 1]; }
+			T Pop() { assert(m_size > 0); return m_array[--m_size]; }
+			void FastPop() { assert(m_size > 0); m_size--; }
 
 			void Push(const T& item)
 			{
 				if (m_size == m_length)
 				{
-					if (!m_length)
+					if (m_length == 0)
 						m_length = 1;
 					else
 						m_length *= 2;
 
 					T* destinationArray = new T[m_length * 2];
-					for (int i=0;i<m_size;i++)
-						destinationArray[i] = m_array[i];
+					for (int i = 0; i < m_size; i++)
+						destinationArray[i] = std::move(m_array[i]);
 
-					//memcpy(destinationArray, m_array, m_size*sizeof(T));
 					delete[] m_array;
 					m_array = destinationArray;
 				}
@@ -127,8 +129,43 @@ namespace Apoc3D
 
 		private:
 			T* m_array;
-			int m_size;
+			int m_size = 0;
 			int m_length;
+		};
+
+		template<typename T, int32 N>
+		class FixedStack
+		{
+		public:
+			FixedStack() { }
+			~FixedStack() { }
+
+			int getCount() const { return m_size; }
+
+			void Clear() { m_size = 0; }
+
+			bool Contains(const T& item)
+			{
+				for (int32 i = m_size - 1; i >= 0; i--)
+					if (m_array[i] == item)
+						return true;
+				return false;
+			}
+
+			T& Peek() { assert(m_size > 0); return m_array[m_size - 1]; }
+			T Pop() { assert(m_size > 0); return m_array[--m_size]; }
+
+			void FastPop() { assert(m_size > 0); m_size--; }
+
+			void Push(const T& item)
+			{
+				assert(m_size < m_length);
+				m_array[m_size++] = item;
+			}
+
+		private:
+			int m_size = 0;
+			T m_array[N];
 		};
 	}
 }

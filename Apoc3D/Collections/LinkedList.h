@@ -14,7 +14,6 @@ namespace Apoc3D
 		template <typename T>
 		class LinkedList
 		{
-		private:
 			struct Node;
 
 		public:
@@ -24,7 +23,7 @@ namespace Apoc3D
 			class Iterator
 			{
 			public:
-				Iterator() : m_owner(nullptr), m_referenceNode(nullptr) { }
+				Iterator() { }
 
 				T& operator*() const { assert(m_referenceNode); return m_referenceNode->Data; }
 
@@ -54,12 +53,12 @@ namespace Apoc3D
 			private:
 				Iterator(const LinkedList* owner, Node* ref) : m_owner(owner), m_referenceNode(ref) { }
 
-				const LinkedList* m_owner;
+				const LinkedList* m_owner = nullptr;
 
 				/**
 				 *  The end iterator has nullptr for this
 				 */
-				Node* m_referenceNode;
+				Node* m_referenceNode = nullptr;
 
 				friend class LinkedList;
 			};
@@ -68,7 +67,6 @@ namespace Apoc3D
 			 * Initializes the list to be empty.
 			 */
 			LinkedList()
-				: m_firstNode(nullptr), m_lastNode(nullptr), m_size(0)
 			{ }
 
 			/**
@@ -76,9 +74,17 @@ namespace Apoc3D
 			 * @params anther The SList object to copy from.
 			 */
 			LinkedList(const LinkedList& another)
-				: m_size(another.m_size), m_firstNode(nullptr)
+				: m_size(another.m_size)
 			{
 				CopyNodesFrom(another.m_firstNode);
+			}
+
+			LinkedList(LinkedList&& another)
+				: m_size(another.m_size), m_firstNode(another.m_firstNode), m_lastNode(another.m_lastNode)
+			{
+				another.m_firstNode = nullptr;
+				another.m_lastNode = nullptr;
+				another.m_size = 0;
 			}
 
 			/**
@@ -94,6 +100,21 @@ namespace Apoc3D
 
 				m_size = rhs.m_size;
 				CopyNodesFrom(rhs.m_firstNode);
+				return *this;
+			}
+
+			LinkedList& operator=(LinkedList&& rhs)
+			{
+				if (&rhs == this)
+					return *this;
+
+				m_firstNode = rhs.m_firstNode;
+				m_lastNode = rhs.m_lastNode;
+				m_size = rhs.m_size;
+
+				rhs.m_firstNode = nullptr;
+				rhs.m_lastNode = nullptr;
+				rhs.m_size = 0;
 				return *this;
 			}
 
@@ -392,14 +413,14 @@ namespace Apoc3D
 			/**
 			 * The node containing the first item in the list.
 			 */
-			Node* m_firstNode;
+			Node* m_firstNode = nullptr;
 			/**
 			 * The node containing the last item in the list.
 			 */
-			Node* m_lastNode;
+			Node* m_lastNode = nullptr;
 			/** @see Size()
 			 */
-			int32 m_size;
+			int32 m_size = 0;
 		};
 	}
 

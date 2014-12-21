@@ -396,8 +396,8 @@ namespace Apoc3D
 
 			T* begin() { return m_elements; }
 			T* end() { return m_elements + m_count; }
-		private:
 
+		private:
 			int m_length = 0;
 		};
 

@@ -98,6 +98,60 @@ namespace Apoc3D
 #endif
 			return cr32_le(m_buffer);
 		}
+
+		template <typename T, typename ET>
+		void BinaryReader::FillString(T& str, int32 len)
+		{
+			int32 idx = 0;
+
+			const int32 BufferStringCharCount = sizeof(m_buffer) / sizeof(ET);
+
+			while (len >= BufferStringCharCount)
+			{
+				m_baseStream->Read(m_buffer, sizeof(m_buffer));
+
+				if (sizeof(ET) == 1)
+				{
+					for (int32 i = 0; i < BufferStringCharCount; i++)
+						str[idx++] = m_buffer[i];
+				}
+				else
+				{
+					for (int32 i = 0; i < BufferStringCharCount; i++)
+						str[idx++] = static_cast<T::value_type>(InterpretInt16(m_buffer + i * sizeof(ET)));
+				}
+
+				len -= BufferStringCharCount;
+			}
+
+			if (len > 0)
+			{
+				m_baseStream->Read(m_buffer, len * sizeof(ET));
+
+				if (sizeof(ET) == 1)
+				{
+					for (int32 i = 0; i < len; i++)
+						str[idx++] = m_buffer[i];
+				}
+				else
+				{
+					for (int32 i = 0; i < len; i++)
+						str[idx++] = static_cast<T::value_type>(InterpretInt16(m_buffer + i * sizeof(ET)));
+				}
+			}
+		}
+
+		int16 BinaryReader::InterpretInt16(const char* data) const
+		{
+#ifdef BIG_ENDIAN
+			if (!m_isEndianIndependent)
+			{
+				return ci16_dep(data);
+			}
+#endif
+			return ci16_le(data);
+		}
+
 		String BinaryReader::ReadString()
 		{
 			uint32 len = ReadUInt32();
@@ -107,20 +161,19 @@ namespace Apoc3D
 				len &= 0x7FFFFFFFU;
 
 				String str(len, ' ');
-				for (size_t i = 0; i < len; i++)
-				{
-					str[i] = ReadByte();
-				}
+				
+				FillString<String, char>(str, len);
 				return str;
 			}
 
 			String str(len, ' ');
-			for (size_t i = 0; i < len; i++)
-			{
-				str[i] = ReadInt16();
-			}
-
+			FillString<String, int16>(str, len);
 			return str;
+
+			//for (size_t i = 0; i < len; i++)
+			//{
+			//	str[i] = ReadInt16();
+			//}
 		}
 
 		std::string BinaryReader::ReadMBString()
@@ -128,23 +181,15 @@ namespace Apoc3D
 			uint32 len = ReadUInt32();
 
 			std::string str(len, ' ');
-			for (size_t i = 0; i < len; i++)
-			{
-				str[i] = ReadByte();
-			}
+			FillString<std::string, char>(str, len);
+
 			return str;
 		}
 
 		int16 BinaryReader::ReadInt16() 
 		{
 			FillBuffer(sizeof(int16));
-#ifdef BIG_ENDIAN
-			if (!m_isEndianIndependent)
-			{
-				return ci16_dep(m_buffer);
-			}
-#endif
-			return ci16_le(m_buffer);
+			return InterpretInt16(m_buffer);
 		}
 		int32 BinaryReader::ReadInt32() 
 		{
