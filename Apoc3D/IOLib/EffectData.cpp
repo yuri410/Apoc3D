@@ -95,104 +95,6 @@ namespace Apoc3D
 		}
 
 
-		void EffectProfileData::Load(BinaryReader* br)
-		{
-			br->ReadBytes(ImplementationType, sizeof(ImplementationType));
-
-			MajorVer = br->ReadInt32();
-			MinorVer = br->ReadInt32();
-			VSLength = br->ReadInt32();
-			PSLength = br->ReadInt32();
-			GSLength = br->ReadInt32();
-			br->ReadInt32(); // HS
-			br->ReadInt32(); // CS
-			br->ReadInt32(); // DS
-
-			VSCode = new char[VSLength];
-			br->ReadBytes(VSCode, VSLength);
-
-			PSCode = new char[PSLength];
-			br->ReadBytes(PSCode, PSLength);
-
-			if (GSLength > 0)
-			{
-				GSCode = new char[GSLength];
-				br->ReadBytes(GSCode, GSLength);
-			}
-
-			int paramCount = br->ReadInt32();
-			Parameters.ReserveDiscard(paramCount);
-			for (int32 i = 0; i < paramCount; i++)
-			{
-				EffectParameter& fxParam = Parameters[i];
-				fxParam.Name = br->ReadString();
-				fxParam.Usage = EffectParameter::ParseParamUsage(br->ReadString());
-				fxParam.CustomMaterialParamName = br->ReadString();
-				fxParam.InstanceBlobIndex = br->ReadInt32();
-				fxParam.ProgramType = static_cast<ShaderType>(br->ReadInt32());
-
-				fxParam.RegisterIndex = br->ReadInt32();
-				fxParam.SamplerIndex = br->ReadInt32();
-
-				fxParam.SamplerState.AddressU = static_cast<TextureAddressMode>(br->ReadUInt32());
-				fxParam.SamplerState.AddressV = static_cast<TextureAddressMode>(br->ReadUInt32());
-				fxParam.SamplerState.AddressW = static_cast<TextureAddressMode>(br->ReadUInt32());
-				fxParam.SamplerState.BorderColor = br->ReadUInt32();
-				fxParam.SamplerState.MagFilter = static_cast<TextureFilter>(br->ReadUInt32());
-				fxParam.SamplerState.MaxAnisotropy = br->ReadInt32();
-				fxParam.SamplerState.MaxMipLevel = br->ReadInt32();
-				fxParam.SamplerState.MinFilter = static_cast<TextureFilter>(br->ReadUInt32());
-				fxParam.SamplerState.MipFilter = static_cast<TextureFilter>(br->ReadUInt32());
-				fxParam.SamplerState.MipMapLODBias = br->ReadUInt32();
-			}
-		}
-		void EffectProfileData::Save(BinaryWriter* bw)
-		{
-			bw->Write(ImplementationType, sizeof(ImplementationType));
-
-			bw->WriteInt32(MajorVer);
-			bw->WriteInt32(MinorVer);
-			bw->WriteInt32(VSLength);
-			bw->WriteInt32(PSLength);
-			bw->WriteInt32(GSLength);
-			bw->WriteInt32(0);
-			bw->WriteInt32(0);
-			bw->WriteInt32(0);
-
-			bw->Write(VSCode, VSLength);
-			bw->Write(PSCode, PSLength);
-			
-			if (GSLength>0)
-			{
-				bw->Write(GSCode, GSLength);
-			}
-
-			bw->WriteInt32(Parameters.getCount());
-			for (int32 i=0;i<Parameters.getCount();i++)
-			{
-				const EffectParameter& fxParam = Parameters[i];
-				bw->WriteString(fxParam.Name);
-				bw->WriteString(EffectParameter::ToString(fxParam.Usage));
-				bw->WriteString(fxParam.CustomMaterialParamName);
-				bw->WriteInt32(fxParam.InstanceBlobIndex);
-				bw->WriteInt32((int32)fxParam.ProgramType);
-
-				bw->WriteInt32(fxParam.RegisterIndex);
-				bw->WriteInt32(fxParam.SamplerIndex);
-
-				bw->WriteUInt32((uint32)fxParam.SamplerState.AddressU);
-				bw->WriteUInt32((uint32)fxParam.SamplerState.AddressV);
-				bw->WriteUInt32((uint32)fxParam.SamplerState.AddressW);
-				bw->WriteUInt32((uint32)fxParam.SamplerState.BorderColor);
-				bw->WriteUInt32((uint32)fxParam.SamplerState.MagFilter);
-				bw->WriteUInt32((uint32)fxParam.SamplerState.MaxAnisotropy);
-				bw->WriteUInt32((uint32)fxParam.SamplerState.MaxMipLevel);
-				bw->WriteUInt32((uint32)fxParam.SamplerState.MinFilter);
-				bw->WriteUInt32((uint32)fxParam.SamplerState.MipFilter);
-				bw->WriteUInt32((uint32)fxParam.SamplerState.MipMapLODBias);
-			}
-		}
-		
 		struct EffectProfileCodeField
 		{
 			int32 ID;
@@ -321,12 +223,9 @@ namespace Apoc3D
 
 		//////////////////////////////////////////////////////////////////////////
 
-		const int LfxID_V1 = 'LFX1';
-
-		const int AfxId_V4 = 'AFX1';
 		const int AfxId_V5 = 'AFX2';
 
-		const int CfxID_V4 = 'CFX1';
+		const int CfxID_V5 = 'CFX2';
 
 		const char TAG_3_ParameterCountTag[] = "ParameterCount";
 		const char TAG_3_ParameterTag[] = "Parameter";
@@ -349,17 +248,13 @@ namespace Apoc3D
 
 			int id = br.ReadInt32();
 
-			if (id == AfxId_V4)
-			{
-				LoadFXV4(&br);
-			}
-			else if (id == AfxId_V5)
+			if (id == AfxId_V5)
 			{
 				LoadFXV5(&br);
 			}
-			else if (id == CfxID_V4)
+			else if (id == CfxID_V5)
 			{
-				LoadFXV4(&br);
+				LoadFXV5(&br);
 				IsCFX = true;
 			}
 			else
@@ -369,16 +264,6 @@ namespace Apoc3D
 			
 		}
 
-		void EffectData::LoadFXV4(BinaryReader* br)
-		{
-			Name = br->ReadString();
-			int32 profileCount = br->ReadInt32();
-			Profiles.ReserveDiscard(profileCount);
-			for (EffectProfileData& proData : Profiles)
-			{
-				proData.Load(br);
-			}
-		}
 		void EffectData::LoadFXV5(BinaryReader* br)
 		{
 			Name = br->ReadString();
@@ -396,7 +281,7 @@ namespace Apoc3D
 
 			if (IsCFX)
 			{
-				bw.WriteInt32((int32)CfxID_V4);
+				bw.WriteInt32((int32)CfxID_V5);
 			}
 			else
 			{

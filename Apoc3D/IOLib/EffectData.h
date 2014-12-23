@@ -78,9 +78,6 @@ namespace Apoc3D
 			EffectProfileData(const EffectProfileData&) = delete;
 			EffectProfileData& operator=(const EffectProfileData&) = delete;
 
-			void Load(BinaryReader* br);
-			void Save(BinaryWriter* bw);
-
 			void LoadV5(const String& name, BinaryReader* br);
 			void SaveV5(BinaryWriter* bw);
 
@@ -113,7 +110,6 @@ namespace Apoc3D
 
 			void SortProfiles();
 		private:
-			void LoadFXV4(BinaryReader* br);
 			void LoadFXV5(BinaryReader* br);
 
 		};

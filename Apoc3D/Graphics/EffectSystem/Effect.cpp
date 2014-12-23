@@ -246,7 +246,7 @@ namespace Apoc3D
 					shader->TryGetSamplerIndex(rep.Name, rep.SamplerIndex);
 					shader->TryGetParamIndex(rep.Name, rep.RegisterIndex);
 
-					if (rep.RegisterIndex != -1 && rep.SamplerIndex != -1)
+					if (rep.RegisterIndex == -1 && rep.SamplerIndex == -1)
 					{
 						ApocLog(LOG_Graphics, L"[AutomaticEffect][" + m_name + L"] Effect parameter " + rep.Name + L" does not have valid info.", LOGLVL_Warning);
 						hasShaderIssues = true;
