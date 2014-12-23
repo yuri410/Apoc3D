@@ -38,9 +38,9 @@ namespace APBuild
 
 		Configuration* xml = new Configuration(L"FXList");
 
-		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();iter.MoveNext();)
+		for (ConfigurationSection* s : sect->getSubSections())
 		{
-			ConfigurationSection* ss = new ConfigurationSection(iter.getCurrentValue()->getName());
+			ConfigurationSection* ss = new ConfigurationSection(s->getName());
 			xml->Add(ss);
 		}
 

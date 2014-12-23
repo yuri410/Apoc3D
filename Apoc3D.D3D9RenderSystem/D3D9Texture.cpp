@@ -401,8 +401,8 @@ namespace Apoc3D
 						{
 							String name = getResourceLocationName();
 
-							LogManager::getSingleton().Write(LOG_Graphics, 
-								L"[D3D9Texture]" + name + L" " + PixelFormatUtils::ToString(data.Format) 
+							LogManager::getSingleton().Write(LOG_Graphics,
+								L"[D3D9Texture]" + name + L" " + PixelFormatUtils::ToString(data.Format)
 								+ L" Pixel format is not supported by hardware. Converting to " +
 								PixelFormatUtils::ToString(newFmt), LOGLVL_Warning);
 
@@ -416,7 +416,7 @@ namespace Apoc3D
 							newdata.Flags = data.Flags;
 
 							// do it for all levels
-							for (int i=0;i<newdata.LevelCount;i++)
+							for (int i = 0; i < newdata.LevelCount; i++)
 							{
 								TextureLevelData& srcLvl = data.Levels[i];
 
@@ -427,7 +427,7 @@ namespace Apoc3D
 
 								int dstLvlSize = PixelFormatUtils::GetMemorySize(
 									dstLvl.Width, dstLvl.Height, dstLvl.Depth, newdata.Format);
-								
+
 								if (data.Type == TT_CubeTexture)
 								{
 									dstLvlSize *= 6;

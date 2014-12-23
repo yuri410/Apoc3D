@@ -110,8 +110,7 @@ namespace APBuild
 	
 		EffectData data;
 		data.Name = config.Name;
-		data.ProfileCount = config.Targets.getCount();
-		data.Profiles = new EffectProfileData[data.ProfileCount];
+		data.Profiles.ReserveDiscard(config.Targets.getCount());
 		
 		for (int i = 0; i < config.Targets.getCount(); i++)
 		{
@@ -175,16 +174,8 @@ namespace APBuild
 		}
 		
 		data.SortProfiles();
+		data.Save(FileOutStream(config.DestFile));
 
-		FileOutStream fos(config.DestFile);
-		if (config.CompactBuild)
-		{
-			data.SaveLite(fos);
-		}
-		else
-		{
-			data.Save(fos);
-		}
 		BuildSystem::LogEntryProcessed(config.DestFile, hierarchyPath);
 	}
 
@@ -211,8 +202,9 @@ namespace APBuild
 			else
 			{
 				ep.InstanceBlobIndex = ps->GetAttributeInt(L"BlobIndex");
-			}
-			
+			}	
 		}
+
+		ps->tryGetAttribute(L"DefaultTextureName", ep.DefaultTextureName);
 	}
 }

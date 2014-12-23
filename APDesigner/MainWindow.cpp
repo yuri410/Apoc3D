@@ -426,7 +426,7 @@ namespace APDesigner
 
 		const Queue<std::pair<String, String>>& recents = cfGetRecentProjects();
 
-		for (int i=0;i<recents.getCount();i++)
+		for (int i = 0; i < recents.getCount(); i++)
 		{
 			const std::pair<String, String>& p = recents.GetElement(i);
 			String fileName = PathUtils::GetFileName(p.second);

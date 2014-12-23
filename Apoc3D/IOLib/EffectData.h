@@ -55,26 +55,34 @@ namespace Apoc3D
 			/**
 			 *  The length of VSCode in bytes.
 			 */
-			int VSLength;
-			int PSLength;
-			int GSLength;
+			int VSLength = 0;
+			int PSLength = 0;
+			int GSLength = 0;
 
 			/**
 			 *  The vertex shader code. Could be compiled HLSL microcode or GLSL source 
 			 *  depends on the
 			 */
-			char* VSCode;
-			char* PSCode;
-			char* GSCode;
+			char* VSCode = nullptr;
+			char* PSCode = nullptr;
+			char* GSCode = nullptr;
 
 			List<EffectParameter> Parameters;
 
 			EffectProfileData();
 			~EffectProfileData();
 			
+			EffectProfileData(EffectProfileData&& other);
+			EffectProfileData& operator=(EffectProfileData&& other);
+
+			EffectProfileData(const EffectProfileData&) = delete;
+			EffectProfileData& operator=(const EffectProfileData&) = delete;
+
 			void Load(BinaryReader* br);
 			void Save(BinaryWriter* bw);
-			void SaveLite(BinaryWriter* bw);
+
+			void LoadV5(const String& name, BinaryReader* br);
+			void SaveV5(BinaryWriter* bw);
 
 			bool MatchImplType(const char* str) const;
 			void SetImplType(const char* str);
@@ -89,27 +97,25 @@ namespace Apoc3D
 		public:
 			String Name;
 
-			int ProfileCount;
-			EffectProfileData* Profiles;
+			List<EffectProfileData> Profiles;
 
 			/**
 			 *  Indicates whether this effect is from a AFX or CFX. 
 			 *  AFX is loaded by AutomaticEffect, while CFX is the custom one.
 			 */
-			bool IsCFX;
+			bool IsCFX = false;
 
 			EffectData();
 			~EffectData();
 
 			void Load(const ResourceLocation& rl);
 			void Save(Stream& strm) const;
-			void SaveLite(Stream& strm) const;
 
 			void SortProfiles();
 		private:
-			void LoadAFXV3(BinaryReader* br);
-			void LoadAFXV3_1(BinaryReader* br);
 			void LoadFXV4(BinaryReader* br);
+			void LoadFXV5(BinaryReader* br);
+
 		};
 	}
 }

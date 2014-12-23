@@ -38,6 +38,7 @@
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Math;
+using namespace Apoc3D::IO;
 
 namespace Apoc3D
 {
@@ -67,56 +68,22 @@ namespace Apoc3D
 				 *  effect can be assigned by scene rendering scripts.
 				 */
 				EPUSAGE_Unknown=0,
-				/** 
-				 *  mc4_ambient
-				 */
-				EPUSAGE_MtrlC4_Ambient,
-				/**
-				 *  mc4_diffuse
-				 */
-				EPUSAGE_MtrlC4_Diffuse,
-				/**
-				 *  mc4_emissive
-				 */
-				EPUSAGE_MtrlC4_Emissive,
-				/**
-				 *  mc4_specular
-				 */
-				EPUSAGE_MtrlC4_Specular,
-				/**
-				 *  mc_power
-				 */
-				EPUSAGE_MtrlC_Power,
+				
+				EPUSAGE_MtrlC4_Ambient,				/** mc4_ambient */
+				EPUSAGE_MtrlC4_Diffuse,				/** mc4_diffuse */
+				EPUSAGE_MtrlC4_Emissive,			/** mc4_emissive */
+				EPUSAGE_MtrlC4_Specular,			/** mc4_specular */
+				EPUSAGE_MtrlC_Power,				/** mc_power */
 				
 
-				/**
-				 *  tr_worldviewproj
-				 */
-				EPUSAGE_Trans_WorldViewProj=100,
-				/**
-				 *  tr_worldvieworiproj
-				 */
-				EPUSAGE_Trans_WorldViewOriProj,
-				/**
-				 *  tr_world
-				 */
-				EPUSAGE_Trans_World,
-				/**
-				 * tr_worldview
-				 */
-				EPUSAGE_Trans_WorldView,
-				/**
-				 * tr_view
-				 */
-				EPUSAGE_Trans_View,
-				/**
-				 * tr_viewproj
-				 */
-				EPUSAGE_Trans_ViewProj,
-				/**
-				 * tr_invview
-				 */
-				EPUSAGE_Trans_InvView,
+				
+				EPUSAGE_Trans_WorldViewProj = 100,		/** tr_worldviewproj */
+				EPUSAGE_Trans_WorldViewOriProj,			/** tr_worldvieworiproj */
+				EPUSAGE_Trans_World,					/** tr_world */
+				EPUSAGE_Trans_WorldView,				/** tr_worldview */
+				EPUSAGE_Trans_View,						/** tr_view */
+				EPUSAGE_Trans_ViewProj,					/** tr_viewproj */
+				EPUSAGE_Trans_InvView,					/** tr_invview */
 
 				/**
 				 * tr_instanceworld
@@ -124,44 +91,19 @@ namespace Apoc3D
 				 *  InstancingData::MaxOneTimeInstances
 				 */
 				EPUSAGE_Trans_InstanceWorlds,
-				/**
-				 * tr_proj
-				 */
-				EPUSAGE_Trans_Projection,
-				/**
-				 * tr_invproj
-				 */
-				EPUSAGE_Trans_InvProj,
-
 				
-				/**
-				 * m4x3_bonestransform
-				 */
-				EPUSAGE_M4X3_BoneTrans,
-				/**
-				 * m4x4_bonestransform
-				 */
-				EPUSAGE_M4X4_BoneTrans,
+				EPUSAGE_Trans_Projection,		/** tr_proj */
+				EPUSAGE_Trans_InvProj,			/** tr_invproj */
+
+				EPUSAGE_M4X3_BoneTrans,			/** m4x3_bonestransform */
+				EPUSAGE_M4X4_BoneTrans,			/** m4x4_bonestransform */
+
+				EPUSAGE_V3_CameraX,				/** v3_camerax */
+				EPUSAGE_V3_CameraY,				/** v3_cameray */
+				EPUSAGE_V3_CameraZ,				/** v3_cameraz */
 
 
-				/**
-				 * v3_camerax
-				 */
-				EPUSAGE_V3_CameraX,
-				/**
-				 * v3_cameray
-				 */
-				EPUSAGE_V3_CameraY,
-				/**
-				 * v3_cameraz
-				 */
-				EPUSAGE_V3_CameraZ,
-
-
-				/**
-				 * tex_0
-				 */
-				EPUSAGE_Tex0=200,
+				EPUSAGE_Tex0 = 200,				/** tex_0 */
 				EPUSAGE_Tex1,
 				EPUSAGE_Tex2,
 				EPUSAGE_Tex3,
@@ -178,50 +120,23 @@ namespace Apoc3D
 				EPUSAGE_Tex14,
 				EPUSAGE_Tex15,
 				EPUSAGE_Tex16,
+				EPUSAGE_DefaultTexture,				/** tex_default */
 
-				/**
-				 *  lv3_lightDir
-				 */
-				EPUSAGE_LV3_LightDir=500,
-				/**
-				 *  lc4_ambient
-				 */
-				EPUSAGE_LC4_Ambient,
-				/**
-				 *  lc4_diffuse
-				 */
-				EPUSAGE_LC4_Diffuse,
-				/** 
-				 *  lc4_specular
-				 */
-				EPUSAGE_LC4_Specular,
-
-				/**
-				 *  pv3_viewPos
-				 */
-				EPUSAGE_PV3_ViewPos=1000,
-				/** 
-				 *  sv2_viewportSize
-				 */
-				EPUSAGE_SV2_ViewportSize,
-				/**
-				 *  sv2_invviewportSize
-				 */
-				EPUSAGE_SV2_InvViewportSize,
+				EPUSAGE_LV3_LightDir = 500,			/** lv3_lightDir */
+				EPUSAGE_LC4_Ambient,				/** lc4_ambient */
+				EPUSAGE_LC4_Diffuse,				/** lc4_diffuse */
+				
+				EPUSAGE_LC4_Specular,				/** lc4_specular */
+				EPUSAGE_PV3_ViewPos = 1000,			/** pv3_viewPos */
+				EPUSAGE_SV2_ViewportSize,			/** sv2_viewportSize */
+				EPUSAGE_SV2_InvViewportSize,		/**  sv2_invviewportSize */
 
 				/**
 				 *  s_unifiedTime. A time from 0 to 5pi will be assigned to the parameter
 				 */
 				EPUSAGE_S_UnifiedTime,
-
-				/**
-				 *  s_farPlane
-				 */
-				EPUSAGE_S_FarPlane,
-				/**
-				 *  s_nearPlane
-				 */
-				EPUSAGE_S_NearPlane,
+				EPUSAGE_S_FarPlane,				/** s_farPlane */
+				EPUSAGE_S_NearPlane,			/** s_nearPlane  */
 
 				/**
 				 *  The engine will get the value for the parameter from UserData pointer 
@@ -305,9 +220,15 @@ namespace Apoc3D
 				int32 SamplerIndex = -1;
 				ShaderSamplerState SamplerState;
 
+				String DefaultTextureName;
+
 				EffectParameter() { }
 				EffectParameter(const String& name);
 				~EffectParameter();
+
+				void Read(BinaryReader* br);
+				void Write(BinaryWriter* bw);
+
 
 				static EffectParamUsage ParseParamUsage(const String& val);
 				static String ToString(EffectParamUsage usage);
@@ -317,6 +238,7 @@ namespace Apoc3D
 				{
 					return t == CEPT_Ref_Texture || t == CEPT_Ref_Vector2 || t == CEPT_Ref_Vector3 || t == CEPT_Ref_Vector4;
 				}
+
 			private:
 
 			};

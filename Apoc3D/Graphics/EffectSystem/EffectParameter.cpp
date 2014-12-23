@@ -22,8 +22,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "EffectParameter.h"
-
+#include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Core/Logging.h"
+#include "apoc3d/IOLib/BinaryReader.h"
+#include "apoc3d/IOLib/BinaryWriter.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Utility/TypeConverter.h"
 
@@ -80,6 +82,7 @@ namespace Apoc3D
 				{ L"tex_13", EPUSAGE_Tex13 },
 				{ L"tex_14", EPUSAGE_Tex14 },
 				{ L"tex_15", EPUSAGE_Tex15 },
+				{ L"tex_default", EPUSAGE_DefaultTexture },
 
 				{ L"lv3_lightdir", EPUSAGE_LV3_LightDir },
 				{ L"lc4_ambient", EPUSAGE_LC4_Ambient },
@@ -103,6 +106,61 @@ namespace Apoc3D
 			EffectParameter::~EffectParameter()
 			{
 			}
+
+
+			void EffectParameter::Read(BinaryReader* br)
+			{
+				int32 version = br->ReadInt32();
+
+				Name = br->ReadString();
+				Usage = EffectParameter::ParseParamUsage(br->ReadString());
+				CustomMaterialParamName = br->ReadString();
+				InstanceBlobIndex = br->ReadInt32();
+				ProgramType = static_cast<ShaderType>(br->ReadInt32());
+
+				RegisterIndex = br->ReadInt32();
+				SamplerIndex = br->ReadInt32();
+
+				SamplerState.AddressU = static_cast<TextureAddressMode>(br->ReadUInt32());
+				SamplerState.AddressV = static_cast<TextureAddressMode>(br->ReadUInt32());
+				SamplerState.AddressW = static_cast<TextureAddressMode>(br->ReadUInt32());
+				SamplerState.BorderColor = br->ReadUInt32();
+				SamplerState.MagFilter = static_cast<TextureFilter>(br->ReadUInt32());
+				SamplerState.MaxAnisotropy = br->ReadInt32();
+				SamplerState.MaxMipLevel = br->ReadInt32();
+				SamplerState.MinFilter = static_cast<TextureFilter>(br->ReadUInt32());
+				SamplerState.MipFilter = static_cast<TextureFilter>(br->ReadUInt32());
+				SamplerState.MipMapLODBias = br->ReadUInt32();
+
+				DefaultTextureName = br->ReadString();
+			}
+			void EffectParameter::Write(BinaryWriter* bw)
+			{
+				bw->WriteInt32(1);
+
+				bw->WriteString(Name);
+				bw->WriteString(EffectParameter::ToString(Usage));
+				bw->WriteString(CustomMaterialParamName);
+				bw->WriteInt32(InstanceBlobIndex);
+				bw->WriteInt32((int32)ProgramType);
+
+				bw->WriteInt32(RegisterIndex);
+				bw->WriteInt32(SamplerIndex);
+
+				bw->WriteUInt32((uint32)SamplerState.AddressU);
+				bw->WriteUInt32((uint32)SamplerState.AddressV);
+				bw->WriteUInt32((uint32)SamplerState.AddressW);
+				bw->WriteUInt32((uint32)SamplerState.BorderColor);
+				bw->WriteUInt32((uint32)SamplerState.MagFilter);
+				bw->WriteUInt32((uint32)SamplerState.MaxAnisotropy);
+				bw->WriteUInt32((uint32)SamplerState.MaxMipLevel);
+				bw->WriteUInt32((uint32)SamplerState.MinFilter);
+				bw->WriteUInt32((uint32)SamplerState.MipFilter);
+				bw->WriteUInt32((uint32)SamplerState.MipMapLODBias);
+
+				bw->WriteString(DefaultTextureName);
+			}
+
 
 			EffectParamUsage EffectParameter::ParseParamUsage(const String& val)
 			{

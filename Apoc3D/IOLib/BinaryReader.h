@@ -96,14 +96,15 @@ namespace Apoc3D
 			TaggedDataReader* ReadTaggedDataBlock();
 			void ReadTaggedDataBlock(FunctorReference<void(TaggedDataReader*)> f, bool continuous = true);
 
+			
+
+
 			template <int32 N> void ReadSingle(float(&data)[N]) { return ReadSingle(data, N); }
 			template <int32 N> void ReadDouble(double (&data)[N]) { return ReadDouble(data, N); }
 			template <int32 N> void ReadInt32(int32 (&data)[N]) { return ReadInt32(data, N); }
 			template <int32 N> void ReadUInt32(uint32 (&data)[N]) { return ReadUInt32(data, N); }
 			template <int32 N> void ReadBoolean(bool (&data)[N]) { return ReadBoolean(data, N); }
 			template <int32 N> void ReadBooleanBits(bool (&data)[N]) { return ReadBooleanBits(data, N); }
-
-
 
 			Stream* getBaseStream() const { return m_baseStream; }
 

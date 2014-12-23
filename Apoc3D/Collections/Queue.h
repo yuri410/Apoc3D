@@ -61,7 +61,7 @@ namespace Apoc3D
 			}
 			Queue& operator=(const Queue& rhs)
 			{
-				if (this == &rhs)
+				if (this != &rhs)
 				{
 					delete[] m_array;
 

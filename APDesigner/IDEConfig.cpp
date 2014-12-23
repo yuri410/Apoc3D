@@ -20,6 +20,7 @@ namespace APDesigner
 				{
 					String name = ss->getAttribute(L"Name");
 					String value = ss->getValue();
+
 					RecentProjects.Enqueue(std::make_pair(name, value));
 				}
 			}
@@ -53,14 +54,15 @@ namespace APDesigner
 		Queue<std::pair<String, String>> newList;
 		for (int i = RecentProjects.getCount() - 1; i >= 0; i--)
 		{
-			if (!PathUtils::ComparePath(RecentProjects.GetElement(i).second, path))
+			const String& curPath = RecentProjects.GetElement(i).second;
+			if (!PathUtils::ComparePath(curPath, path))
 			{
 				newList.Enqueue(RecentProjects.GetElement(i));
 			}
 		}
 		RecentProjects = newList;
 
-		while (RecentProjects.getCount()>=MaxRecentProjects)
+		while (RecentProjects.getCount() >= MaxRecentProjects)
 			RecentProjects.DequeueOnly();
 
 		RecentProjects.Enqueue(std::make_pair(name, path));

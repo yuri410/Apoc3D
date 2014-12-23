@@ -23,20 +23,24 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Effect.h"
 
-#include "apoc3d/Core/Logging.h"
 #include "apoc3d/Core/GameTime.h"
-#include "apoc3d/Graphics/Material.h"
-#include "apoc3d/Graphics/Camera.h"
-#include "apoc3d/Graphics/RenderSystem/Shader.h"
-#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
-#include "apoc3d/Graphics/RenderSystem/Texture.h"
-#include "apoc3d/Graphics/RenderSystem/InstancingData.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/IOLib/BinaryReader.h"
-#include "apoc3d/IOLib/EffectData.h"
-#include "apoc3d/Math/Matrix.h"
+#include "apoc3d/Core/Logging.h"
 #include "apoc3d/Core/Resource.h"
 #include "apoc3d/Core/ResourceHandle.h"
+#include "apoc3d/Graphics/Camera.h"
+#include "apoc3d/Graphics/Material.h"
+#include "apoc3d/Graphics/RenderSystem/InstancingData.h"
+#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
+#include "apoc3d/Graphics/RenderSystem/Shader.h"
+#include "apoc3d/Graphics/RenderSystem/Texture.h"
+#include "apoc3d/Graphics/TextureManager.h"
+#include "apoc3d/IOLib/BinaryReader.h"
+#include "apoc3d/IOLib/EffectData.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/Math/Matrix.h"
+#include "apoc3d/Vfs/FileSystem.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/Vfs/FileLocateRule.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::IO;
@@ -109,12 +113,17 @@ namespace Apoc3D
 				Reload(rl);
 
 				ObjectFactory* objFac = m_device->getObjectFactory();
-				m_texture = objFac->CreateTexture(1,1,1, TU_Static, FMT_A8R8G8B8);
+				m_texture = objFac->CreateTexture(1, 1, 1, TU_Static, FMT_A8R8G8B8);
 				m_texture->FillColor(CV_White);
 			}
 
 			AutomaticEffect::~AutomaticEffect()
 			{
+				for (ResolvedEffectParameter& ep : m_parameters)
+				{
+					ep.Free();
+				}
+
 				DELETE_AND_NULL(m_vertexShader);
 				DELETE_AND_NULL(m_pixelShader);
 				DELETE_AND_NULL(m_texture);
@@ -142,9 +151,8 @@ namespace Apoc3D
 				Capabilities* caps = m_device->getCapabilities();
 
 				const EffectProfileData* profileSelected = nullptr;
-				for (int i=data.ProfileCount-1; i>=0; i--)
+				for (const EffectProfileData& pd : data.Profiles)
 				{
-					const EffectProfileData& pd = data.Profiles[i];
 					if (!caps->SupportsVertexShader(pd.ImplementationType, pd.MajorVer, pd.MinorVer))
 					{
 						m_isUnsupported = true;
@@ -165,7 +173,7 @@ namespace Apoc3D
 				bool hasShaderIssues = false;
 
 				m_parameters.ResizeDiscard(profileSelected->Parameters.getCount());
-				for (int32 i=0;i<profileSelected->Parameters.getCount();i++)
+				for (int32 i = 0; i < profileSelected->Parameters.getCount(); i++)
 				{
 					ResolvedEffectParameter rep(profileSelected->Parameters[i]);
 
@@ -178,58 +186,69 @@ namespace Apoc3D
 					{
 						shader = m_pixelShader;
 					}
+
 					assert(shader);
 					rep.RS_TargetShader = shader;
 
 					switch (rep.Usage)
 					{
-					case EPUSAGE_LC4_Ambient:
-					case EPUSAGE_LC4_Diffuse:
-					case EPUSAGE_LC4_Specular:
-					case EPUSAGE_LV3_LightDir:
-					case EPUSAGE_PV3_ViewPos:
-					case EPUSAGE_SV2_ViewportSize:
-					case EPUSAGE_SV2_InvViewportSize:
-					case EPUSAGE_S_FarPlane:
-					case EPUSAGE_S_NearPlane:
-					case EPUSAGE_Trans_View:
-					case EPUSAGE_Trans_InvView:
-					case EPUSAGE_Trans_ViewProj:
-					case EPUSAGE_Trans_Projection:
-					case EPUSAGE_Trans_InvProj:
-					case EPUSAGE_V3_CameraX:
-					case EPUSAGE_V3_CameraY:
-					case EPUSAGE_V3_CameraZ:
-					case EPUSAGE_S_UnifiedTime:
-						rep.RS_SetupAtBeginingOnly = true;
+						case EPUSAGE_LC4_Ambient:
+						case EPUSAGE_LC4_Diffuse:
+						case EPUSAGE_LC4_Specular:
+						case EPUSAGE_LV3_LightDir:
+						case EPUSAGE_PV3_ViewPos:
+						case EPUSAGE_SV2_ViewportSize:
+						case EPUSAGE_SV2_InvViewportSize:
+						case EPUSAGE_S_FarPlane:
+						case EPUSAGE_S_NearPlane:
+						case EPUSAGE_Trans_View:
+						case EPUSAGE_Trans_InvView:
+						case EPUSAGE_Trans_ViewProj:
+						case EPUSAGE_Trans_Projection:
+						case EPUSAGE_Trans_InvProj:
+						case EPUSAGE_V3_CameraX:
+						case EPUSAGE_V3_CameraY:
+						case EPUSAGE_V3_CameraZ:
+						case EPUSAGE_S_UnifiedTime:
+						case EPUSAGE_DefaultTexture:
+							rep.RS_SetupAtBeginingOnly = true;
 
-					case EPUSAGE_Tex0:
-					case EPUSAGE_Tex1:
-					case EPUSAGE_Tex2:
-					case EPUSAGE_Tex3:
-					case EPUSAGE_Tex4:
-					case EPUSAGE_Tex5:
-					case EPUSAGE_Tex6:
-					case EPUSAGE_Tex7:
-					case EPUSAGE_Tex8:
-					case EPUSAGE_Tex9:
-					case EPUSAGE_Tex10:
-					case EPUSAGE_Tex11:
-					case EPUSAGE_Tex12:
-					case EPUSAGE_Tex13:
-					case EPUSAGE_Tex14:
-					case EPUSAGE_Tex15:
+						case EPUSAGE_Tex0:
+						case EPUSAGE_Tex1:
+						case EPUSAGE_Tex2:
+						case EPUSAGE_Tex3:
+						case EPUSAGE_Tex4:
+						case EPUSAGE_Tex5:
+						case EPUSAGE_Tex6:
+						case EPUSAGE_Tex7:
+						case EPUSAGE_Tex8:
+						case EPUSAGE_Tex9:
+						case EPUSAGE_Tex10:
+						case EPUSAGE_Tex11:
+						case EPUSAGE_Tex12:
+						case EPUSAGE_Tex13:
+						case EPUSAGE_Tex14:
+						case EPUSAGE_Tex15:
 
-						rep.RS_SetupAtBegining = true;
-						break;
+							rep.RS_SetupAtBegining = true;
+							break;
 					}
 
+					if (rep.DefaultTextureName.size())
+					{
+						FileLocation fl;
+						if (FileSystem::getSingleton().TryLocate(rep.DefaultTextureName, FileLocateRule::Textures, fl))
+							rep.DefaultTexture = TextureManager::getSingleton().CreateInstance(m_device, fl);
+						else
+							ApocLog(LOG_Graphics, L"[AutomaticEffect][" + m_name + L"] Default texture " + rep.DefaultTextureName + L" for parameter " + rep.Name + L" not found.", LOGLVL_Warning);
+					}
+					
 					shader->TryGetSamplerIndex(rep.Name, rep.SamplerIndex);
 					shader->TryGetParamIndex(rep.Name, rep.RegisterIndex);
 
-					if (!(rep.RegisterIndex != -1 || rep.SamplerIndex != -1))
+					if (rep.RegisterIndex != -1 && rep.SamplerIndex != -1)
 					{
-						ApocLog(LOG_Graphics, L"[AutomaticEffect][" + m_name + L"] Effect parameter " + rep.Name +  L" does not have valid info.", LOGLVL_Warning);
+						ApocLog(LOG_Graphics, L"[AutomaticEffect][" + m_name + L"] Effect parameter " + rep.Name + L" does not have valid info.", LOGLVL_Warning);
 						hasShaderIssues = true;
 					}
 
@@ -237,9 +256,9 @@ namespace Apoc3D
 				}
 				
 				// instancing check
-				for (int i=0;i<m_parameters.getCount();i++)
+				for (ResolvedEffectParameter& rep : m_parameters)
 				{
-					if (m_parameters[i].Usage == EPUSAGE_Trans_InstanceWorlds)
+					if (rep.Usage == EPUSAGE_Trans_InstanceWorlds)
 					{
 						m_supportsInstancing = true;
 						break;
@@ -256,7 +275,7 @@ namespace Apoc3D
 
 			void AutomaticEffect::Update(const GameTime* time)
 			{
-				float t = m_lastTime + time->ElapsedTime;//(float)( clock() / CLOCKS_PER_SEC);
+				float t = m_lastTime + time->ElapsedTime;
 				m_unifiedTime += t - m_lastTime;
 				m_lastTime = t;
 
@@ -323,7 +342,6 @@ namespace Apoc3D
 								SetTexture(ep, mtrl->getTexture(ep.Usage - EPUSAGE_Tex0));
 							}
 							break;
-
 						case EPUSAGE_Trans_WorldViewProj:
 							if (RendererEffectParams::CurrentCamera)
 							{
@@ -495,7 +513,7 @@ namespace Apoc3D
 
 			}
 
-			template<typename T>
+			template <typename T>
 			void AutomaticEffect::SetParameterValue(int index, const T* value, int count)
 			{
 				ResolvedEffectParameter& param = m_parameters[index];
@@ -525,14 +543,13 @@ namespace Apoc3D
 				param.RS_TargetShader->SetTexture(param.SamplerIndex, tex);
 			}
 
+
 			int AutomaticEffect::FindParameterIndex(const String& name)
 			{
-				for (int i=0;i<m_parameters.getCount();i++)
+				for (int i = 0; i < m_parameters.getCount(); i++)
 				{
 					if (m_parameters[i].Name == name)
-					{
 						return i;
-					}
 				}
 				return -1;
 			}
@@ -593,14 +610,14 @@ namespace Apoc3D
 						case EPUSAGE_SV2_ViewportSize:
 						{
 							Viewport vp = m_device->getViewport();
-							Vector2 size = Vector2((float)vp.Width, (float)vp.Height);
+							Vector2 size((float)vp.Width, (float)vp.Height);
 							ep.SetVector2(size);
 							break;
 						}
 						case EPUSAGE_SV2_InvViewportSize:
 						{
 							Viewport vp = m_device->getViewport();
-							Vector2 size = Vector2(1.f / (float)vp.Width, 1.f / (float)vp.Height);
+							Vector2 size(1.f / vp.Width, 1.f / vp.Height);
 							ep.SetVector2(size);
 							break;
 						}
@@ -672,6 +689,12 @@ namespace Apoc3D
 						case EPUSAGE_Tex14:
 						case EPUSAGE_Tex15:
 							ep.SetSamplerState();
+							break;
+
+						case EPUSAGE_DefaultTexture:
+							ep.SetSamplerState();
+							SetTexture(ep, ep.DefaultTexture);
+
 							break;
 
 						case EPUSAGE_S_UnifiedTime:
@@ -767,6 +790,9 @@ namespace Apoc3D
 				}
 			}
 
+
+			void AutomaticEffect::ResolvedEffectParameter::Free() { DELETE_AND_NULL(DefaultTexture); }
+
 			void AutomaticEffect::ResolvedEffectParameter::SetSamplerState() const { RS_TargetShader->SetSamplerState(SamplerIndex, SamplerState); }
 
 			void AutomaticEffect::ResolvedEffectParameter::SetVector2(const Vector2& value) const { RS_TargetShader->SetVector2(RegisterIndex, value); }
@@ -805,9 +831,8 @@ namespace Apoc3D
 				Capabilities* caps = device->getCapabilities();
 				const EffectProfileData* profileSelected = nullptr;
 
-				for (int i = data.ProfileCount - 1; i >= 0; i--)
+				for (const EffectProfileData& pd : data.Profiles)
 				{
-					const EffectProfileData& pd = data.Profiles[i];
 					if (!caps->SupportsVertexShader(pd.ImplementationType, pd.MajorVer, pd.MinorVer))
 					{
 						m_isUnsupported = true;

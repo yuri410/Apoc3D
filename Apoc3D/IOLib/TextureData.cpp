@@ -196,6 +196,8 @@ namespace Apoc3D
 
 				if (!doNotLoadLevel)
 				{
+					Levels.ReserveDiscard(LevelCount);
+
 					for (int32 i = 0; i < LevelCount; i++)
 					{
 						std::string levelName = Tag_Level;
@@ -204,9 +206,7 @@ namespace Apoc3D
 						BinaryReader* br2 = data->GetData(levelName);
 						TaggedDataReader* data2 = br2->ReadTaggedDataBlock();
 
-						TextureLevelData lvl;
-						lvl.LoadData(data2, doNotLoadContent, Flags);
-						Levels.Add(lvl);
+						Levels[i].LoadData(data2, doNotLoadContent, Flags);
 
 						data2->Close();
 

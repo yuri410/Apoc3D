@@ -63,6 +63,7 @@ namespace Apoc3D
 			{ }
 			~TextureLevelData() 
 			{ }
+			
 
 			void LoadData(BinaryReader& br, bool doNotLoadContent = false, int32 flags = 0);
 			void SaveData(BinaryWriter& bw, int32 flags = 0) const;
@@ -100,7 +101,7 @@ namespace Apoc3D
 
 			TextureData() { }
 			~TextureData() { }
-
+			
 			void Load(const ResourceLocation& rl, bool doNotLoadLevel = false, bool doNotLoadContent = false);
 			void Save(Stream& strm) const;
 			void SaveAsTagged(Stream& strm) const;

@@ -163,9 +163,14 @@ namespace Apoc3D
 					explicit ResolvedEffectParameter(const EffectParameter& base)
 						: EffectParameter(base) { }
 
+					void Free();
+
 					bool RS_SetupAtBegining = false;
 					bool RS_SetupAtBeginingOnly = false;		/** for parameter with RS_SetupAtBegining==true, this means if setup can be fully done at beginning */
 					Shader* RS_TargetShader = nullptr;
+
+					ResourceHandle<Texture>* DefaultTexture = nullptr;
+
 
 					void SetSamplerState() const;
 

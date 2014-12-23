@@ -40,10 +40,8 @@ namespace Apoc3D
 
 			while (i<=j)
 			{
-				while (arr[i] < pivot)
-					i++;
-				while (arr[j] > pivot)
-					j--;
+				while (arr[i] < pivot) i++;
+				while (arr[j] > pivot) j--;
 
 				if (i <= j)
 				{
@@ -65,10 +63,8 @@ namespace Apoc3D
 
 			while (i<=j)
 			{
-				while (comparer(arr[i], pivot) < 0)
-					i++;
-				while (comparer(arr[j], pivot) > 0)
-					j--;
+				while (comparer(arr[i], pivot) < 0) i++;
+				while (comparer(arr[j], pivot) > 0) j--;
 
 				if (i <= j)
 				{
@@ -83,17 +79,15 @@ namespace Apoc3D
 		}
 
 		template<typename T, typename Func>
-		void QuickSort(T* arr, int left, int right, Func comparer)
+		void QuickSort(T* arr, int left, int right, Func& comparer)
 		{
 			int i = left, j = right;
 			const T pivot = arr[(left + right) / 2];
 
 			while (i <= j)
 			{
-				while (comparer(arr[i], pivot) < 0)
-					i++;
-				while (comparer(arr[j], pivot) > 0)
-					j--;
+				while (comparer(arr[i], pivot) < 0) i++;
+				while (comparer(arr[j], pivot) > 0) j--;
 
 				if (i <= j)
 				{
@@ -105,6 +99,52 @@ namespace Apoc3D
 
 			if (left < j) QuickSort(arr, left, j, comparer);
 			if (i < right) QuickSort(arr, i, right, comparer);
+		}
+
+		template <typename T, typename SorterType, SorterType(*sorterCalc)(const T& a, const T& b)>
+		void QuickSortWithSorter(T* arr, int left, int right)
+		{
+			int i = left, j = right;
+			SorterType pivot = sorterCalc(arr[(left + right) / 2]);
+
+			while (i <= j)
+			{
+				while (sorterCalc(arr[i]) < pivot) i++;
+				while (sorterCalc(arr[j]) > pivot) j--;
+
+				if (i <= j)
+				{
+					std::swap(arr[i], arr[j]);
+
+					i++; j--;
+				}
+			}
+
+			if (left < j) QuickSortWithSorter<T, SorterType, sorterCalc>(arr, left, j);
+			if (i < right) QuickSortWithSorter<T, SorterType, sorterCalc>(arr, i, right);
+		}
+
+		template <typename T, typename SorterType, typename SorterCalc>
+		void QuickSortWithSorter(T* arr, int left, int right, SorterCalc& sorterCalc)
+		{
+			int i = left, j = right;
+			SorterType pivot = sorterCalc(arr[(left + right) / 2]);
+
+			while (i <= j)
+			{
+				while (sorterCalc(arr[i]) < pivot) i++;
+				while (sorterCalc(arr[j]) > pivot) j--;
+
+				if (i <= j)
+				{
+					std::swap(arr[i], arr[j]);
+
+					i++; j--;
+				}
+			}
+
+			if (left < j) QuickSortWithSorter<T, SorterType>(arr, left, j, sorterCalc);
+			if (i < right) QuickSortWithSorter<T, SorterType>(arr, i, right, sorterCalc);
 		}
 
 
@@ -213,10 +253,19 @@ namespace Apoc3D
 			}
 
 			void Sort() { if (m_count > 0) QuickSort(m_elements, 0, m_count - 1); }
+
 			template <int(*comparer)(const T&, const T&)>
 			void Sort() { if (m_count > 0) QuickSort<T, comparer>(m_elements, 0, m_count - 1); }
+			
 			template <typename Func>
-			void Sort(Func comparer) { if (m_count > 0) QuickSort(m_elements, 0, m_count - 1, comparer); }
+			void Sort(Func& comparer) { if (m_count > 0) QuickSort(m_elements, 0, m_count - 1, comparer); }
+
+			template <typename SorterType, typename SorterCalc>
+			void SortWithSorter(SorterCalc& sorter) { if (m_count > 0) QuickSortWithSorter<T, SorterType>(m_elements, 0, m_count - 1, sorter); }
+
+			template <typename SorterType, SorterType(*sorterCalc)(const T& a, const T& b)>
+			void SortWithSorter() { if (m_count > 0) QuickSortWithSorter<T, SorterType, sorterCalc>(m_elements, 0, m_count - 1); }
+
 
 			int32 ClampIndexInRange(int32 idx) const
 			{

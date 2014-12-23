@@ -55,13 +55,14 @@ namespace APBuild
 
 		EffectData data;
 		data.Name = config.Name;
-		data.ProfileCount = 1;
-		data.Profiles = new EffectProfileData[1];
+		data.Profiles.ReserveDiscard(1);
 		
+		EffectProfileData& proData = data.Profiles[0];
+
 		std::string impType;
-		if (ParseShaderProfileString(config.Profile, impType, data.Profiles->MajorVer, data.Profiles->MinorVer))
+		if (ParseShaderProfileString(config.Profile, impType, proData.MajorVer, proData.MinorVer))
 		{
-			data.Profiles->SetImplType(impType);
+			proData.SetImplType(impType);
 
 			if (!CompileShader(config.SrcVSFile, config.EntryPointVS, data.Profiles[0], SHDT_Vertex, false))
 				return;
@@ -76,15 +77,7 @@ namespace APBuild
 		data.IsCFX=true;
 		data.SortProfiles();
 
-		FileOutStream fos(config.DestFile);
-		if (config.CompactBuild)
-		{
-			data.SaveLite(fos);
-		}
-		else
-		{
-			data.Save(fos);
-		}
+		data.Save(FileOutStream(config.DestFile));
 
 		BuildSystem::LogEntryProcessed(config.DestFile, hierarchyPath);
 	}

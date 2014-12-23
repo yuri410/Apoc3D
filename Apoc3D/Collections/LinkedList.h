@@ -108,6 +108,8 @@ namespace Apoc3D
 				if (&rhs == this)
 					return *this;
 
+				Clear();
+
 				m_firstNode = rhs.m_firstNode;
 				m_lastNode = rhs.m_lastNode;
 				m_size = rhs.m_size;

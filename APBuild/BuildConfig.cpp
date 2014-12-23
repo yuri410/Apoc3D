@@ -279,9 +279,6 @@ namespace APBuild
 			StringUtils::Trim(tgt);
 			StringUtils::ToLowerCase(tgt);
 		}
-
-		CompactBuild = false;
-		sect->TryGetAttributeBool(L"CompactBuild", CompactBuild);
 	}
 	void CFXBuildConfig::Parse(const ConfigurationSection* sect)
 	{
@@ -293,9 +290,6 @@ namespace APBuild
 		EntryPointVS = sect->getAttribute(L"EntryPointVS");
 		EntryPointPS = sect->getAttribute(L"EntryPointPS");
 		Profile = sect->getAttribute(L"Profile");
-
-		CompactBuild = false;
-		sect->TryGetAttributeBool(L"CompactBuild", CompactBuild);
 	}
 	void FXListBuildConfig::Parse(const ConfigurationSection* sect)
 	{

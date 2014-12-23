@@ -82,6 +82,8 @@ namespace Apoc3D
 			{
 				if (this != &another)
 				{
+					delete[] m_array;
+
 					m_size = another.m_size;
 					m_length = another.m_length;
 					m_array = another.m_array;

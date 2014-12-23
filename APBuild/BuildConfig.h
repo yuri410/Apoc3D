@@ -121,8 +121,6 @@ namespace APBuild
 
 		List<String> Targets;
 
-		bool CompactBuild;
-
 		void Parse(const ConfigurationSection* sect);
 	};
 	struct CFXBuildConfig
@@ -135,8 +133,6 @@ namespace APBuild
 		String EntryPointVS;
 		String EntryPointPS;
 		String Profile;
-
-		bool CompactBuild;
 
 		void Parse(const ConfigurationSection* sect);
 	};
