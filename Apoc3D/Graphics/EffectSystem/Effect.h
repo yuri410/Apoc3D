@@ -153,6 +153,7 @@ namespace Apoc3D
 
 				virtual void Update(const GameTime* time);
 
+				RenderDevice* getDevice() const { return m_device; }
 			protected:
 				virtual int begin();
 				virtual void end();

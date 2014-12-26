@@ -3,19 +3,17 @@
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Core/ResourceManager.h"
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
+#include "apoc3d/Graphics/EffectSystem/EffectManager.h"
+#include "apoc3d/Graphics/EffectSystem/Effect.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/IOLib/TextData.h"
 #include "apoc3d/Vfs/FileSystem.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Vfs/FileLocateRule.h"
 
-#include <strstream>
-#include <sstream>
-#include <vector>
-
-using namespace std;
-
 using namespace Apoc3D::Collections;
+using namespace Apoc3D::Graphics::EffectSystem;
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::VFS;
 
@@ -34,6 +32,9 @@ namespace Apoc3D
 		void ResReloadCommand(CommandArgsConstRef args);
 		void ExecCommand(CommandArgsConstRef args);
 
+		void FxListCommand(CommandArgsConstRef args);
+		void FxReloadCommand(CommandArgsConstRef args);
+
 		void BatchReportCommand(CommandArgsConstRef args);
 
 		/************************************************************************/
@@ -42,18 +43,29 @@ namespace Apoc3D
 		
 		CommandInterpreter::CommandInterpreter()
 		{
+			RegisterCommand(
 			{
-				CommandDescription desc(L"res", 1, ResCommand, L"Resource Management Command Set", L"");
-				desc.SubCommands.PushBack(CommandDescription(L"list", 0, ResListCommand, L"List ResourceManager", L""));
-				desc.SubCommands.PushBack(CommandDescription(L"reload", 1, ResReloadCommand, L"Reload Resources", L""));
+				L"res", 1, ResCommand, L"Resource Management Command Set",
+				{
+					{ L"list", 0, ResListCommand, L"List ResourceManager" },
+					{ L"reload", 1, ResReloadCommand, L"Reload Resources" }
+				}
+			});
 
-				RegisterCommand(desc);
-			}
+
+			RegisterCommand(
+			{
+				L"fx", 0, nullptr, L"Effect Management Command Set",
+				{
+					{ L"list", 0, FxListCommand, L"List Effects" },
+					{ L"reload", 0, FxReloadCommand, L"Reload All Automatic Effects" }
+				}
+			});
 
 
-			RegisterCommand(CommandDescription(L"exec", 1, ExecCommand, L"Execute Script", L""));
+			RegisterCommand({ L"exec", 1, ExecCommand, L"Execute Script" });
 
-			RegisterCommand(CommandDescription(L"batchreport", 0, BatchReportCommand, L"Report Render Batch Stats", L""));
+			RegisterCommand({ L"batchreport", 0, BatchReportCommand, L"Report Render Batch Stats" });
 		}
 
 		CommandInterpreter::~CommandInterpreter()
@@ -72,7 +84,7 @@ namespace Apoc3D
 			
 			bool previousIsQuoted = false;
 
-			for (size_t i=0;i<line.size();i++)
+			for (size_t i = 0; i < line.size(); i++)
 			{
 				wchar_t ch = line[i];
 				if (ch == '\'')
@@ -103,7 +115,7 @@ namespace Apoc3D
 				}
 				else if (ch == ' ' && !isInQuote)
 				{
-					if (i && (int)i-1 != lastPos)
+					if (i && (int)i - 1 != lastPos)
 					{
 						int32 startBounds = previousIsQuoted ? 2 : 1;
 						int32 endbounds = previousIsQuoted ? 3 : 1;
@@ -113,7 +125,7 @@ namespace Apoc3D
 							previousIsQuoted = false;
 						}
 
-						args.Add(line.substr(lastPos+startBounds, i-lastPos-endbounds));
+						args.Add(line.substr(lastPos + startBounds, i - lastPos - endbounds));
 						lastPos = i;
 					}
 					else
@@ -133,23 +145,26 @@ namespace Apoc3D
 				//args.Add(line.substr(lastPos+1, line.size()-lastPos-1));
 			}
 
-			if (args.getCount()>0)
+			if (args.getCount() > 0)
 			{
 				CommandMatchingResult cmr = RunCommand(0, m_rootNode.SubCommands, args);
-				if (cmr == CMR_NoSuchCommand)
+				if (cmr == CommandMatchingResult::NoSuchCommand)
 				{
 					LogManager::getSingleton().Write(LOG_CommandResponse, L"Command not supported.", LOGLVL_Error);
 
 					return false;
 				}
-				else if (cmr == CMR_NoSuchArgument)
+				else if (cmr == CommandMatchingResult::NoSuchArgument)
 				{
 					LogManager::getSingleton().Write(LOG_CommandResponse, L"Invalid amount of parameters.", LOGLVL_Error);
 
 					return false;
 				}
+				else if (cmr == CommandMatchingResult::SubcommandNeeded)
+				{
+					LogManager::getSingleton().Write(LOG_CommandResponse, L"Sub command needed.", LOGLVL_Error);
+				}
 
-				//Console_CommandSubmited(cmd, &args);
 
 				if (triggersEvent)
 				{
@@ -162,9 +177,21 @@ namespace Apoc3D
 			return true;
 		}
 
+		void PrintSubCommands(CommandDescription* cmd)
+		{
+			LogManager::getSingleton().Write(LOG_CommandResponse, L"Sub commands:", LOGLVL_Infomation);
+
+			for (CommandDescription& cd : cmd->SubCommands)
+			{
+				String msg = L"  " + cd.CommandName + L"(" + StringUtils::IntToString(cd.NumOfParameters) + L"): " + cd.Name;
+
+				LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
+			}
+		}
+
 		CommandInterpreter::CommandMatchingResult CommandInterpreter::RunCommand(int32 startingIndex, const CommandRecord::SubCommandTable& table, const List<String>& args)
 		{
-			if (args.getCount()>startingIndex)
+			if (args.getCount() > startingIndex)
 			{
 				String cmdName = args[startingIndex];
 				StringUtils::ToLowerCase(cmdName);
@@ -172,30 +199,36 @@ namespace Apoc3D
 				CommandRecord* cmdRec;
 				if (table.TryGetValue(cmdName, cmdRec))
 				{
-					CommandMatchingResult cmr = RunCommand(startingIndex+1, cmdRec->SubCommands, args);
-					if (cmr != CMR_OK)
+					CommandMatchingResult cmr = RunCommand(startingIndex + 1, cmdRec->SubCommands, args);
+					if (cmr != CommandMatchingResult::OK)
 					{
 						if (cmdRec->Cmd)
 						{
 							int32 remainingArgCount = args.getCount() - startingIndex - 1;
 							if (cmdRec->Cmd->NumOfParameters == remainingArgCount)
 							{
+								if (cmdRec->Cmd->Handler.empty() && cmdRec->Cmd->SubCommands.getCount() > 0)
+								{
+									PrintSubCommands(cmdRec->Cmd);
+									return CommandMatchingResult::SubcommandNeeded;
+								}
+
 								List<String> finalArgs(args.getCount() - startingIndex);
 
-								for (int32 i=startingIndex+1;i<args.getCount();i++)
+								for (int32 i = startingIndex + 1; i < args.getCount(); i++)
 									finalArgs.Add(args[i]);
 
 								cmdRec->Cmd->Handler(finalArgs);
 
-								return CMR_OK;
+								return CommandMatchingResult::OK;
 							}
-							return CMR_NoSuchArgument;
+							return CommandMatchingResult::NoSuchArgument;
 						}
 					}
-					return CMR_OK;
+					return CommandMatchingResult::OK;
 				}
 			}
-			return CMR_NoSuchCommand;
+			return CommandMatchingResult::NoSuchCommand;
 		}
 
 		void CommandInterpreter::RegisterCommand(const CommandDescription& cmd)
@@ -212,7 +245,7 @@ namespace Apoc3D
 		{
 			CommandRecord* rec = new CommandRecord();
 			rec->Cmd = new CommandDescription(cmd);
-
+			
 			for (const CommandDescription& subCmd : cmd.SubCommands)
 			{
 				AddCommandTree(subCmd, rec->SubCommands);
@@ -242,9 +275,8 @@ namespace Apoc3D
 
 		void CommandInterpreter::DesturctCommandTree(CommandRecord::SubCommandTable& table)
 		{
-			for (CommandRecord::SubCommandTable::Enumerator e = table.GetEnumerator(); e.MoveNext(); )
+			for (CommandRecord* rec : table.getValueAccessor())
 			{
-				CommandRecord* rec = e.getCurrentValue();
 				DesturctCommandTree(rec->SubCommands);
 				if (rec->Cmd)
 				{
@@ -261,9 +293,9 @@ namespace Apoc3D
 
 		void ResCommand(CommandArgsConstRef args)
 		{
-			int32 index = StringUtils::ParseInt32(args[0])-1;
+			int32 index = StringUtils::ParseInt32(args[0]) - 1;
 			const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
-			if (index >=0 && index < list.getCount())
+			if (index >= 0 && index < list.getCount())
 			{
 				ResourceManager* mgr = list[index];
 				String msg = mgr->getName();
@@ -294,22 +326,22 @@ namespace Apoc3D
 			LogManager::getSingleton().Write(LOG_CommandResponse, L"Listing ResourceManagers...", LOGLVL_Infomation);
 
 			const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
-			for (int32 i=0;i<list.getCount();i++)
+			for (int32 i = 0; i < list.getCount(); i++)
 			{
-				LogManager::getSingleton().Write(LOG_CommandResponse, L"  " + StringUtils::IntToString(i+1) + L". " + list[i]->getName(), LOGLVL_Infomation);
+				LogManager::getSingleton().Write(LOG_CommandResponse, L"  " + StringUtils::IntToString(i + 1) + L". " + list[i]->getName(), LOGLVL_Infomation);
 			}
 		}
 		void ResReloadCommand(CommandArgsConstRef args)
 		{
-			int32 index = StringUtils::ParseInt32(args[0])-1;
+			int32 index = StringUtils::ParseInt32(args[0]) - 1;
 			const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
-			if (index >=0 && index < list.getCount())
+			if (index >= 0 && index < list.getCount())
 			{
 				LogManager::getSingleton().Write(LOG_CommandResponse, L"Reloading " + list[index]->getName() + L" ...", LOGLVL_Infomation);
 
 				list[index]->ReloadAll();
 			}
-			else LogManager::getSingleton().Write(LOG_CommandResponse, L"No such ordinal.", LOGLVL_Error);	
+			else LogManager::getSingleton().Write(LOG_CommandResponse, L"No such ordinal.", LOGLVL_Error);
 		}
 
 		void ExecCommand(CommandArgsConstRef args)
@@ -324,38 +356,64 @@ namespace Apoc3D
 
 				LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
 
-				Stream* inStrm = fl.GetReadStream();
-				int32 streamLength = static_cast<int32>(inStrm->getLength());
-				char* binaryBuffer = new char[streamLength+1];
-				inStrm->Read(binaryBuffer, inStrm->getLength());
-				
-				delete inStrm;
-				
-				binaryBuffer[streamLength] = 0;
+				String code = IO::Encoding::ReadAllText(fl, IO::Encoding::TEC_Unknown);
 
-				istringstream readStrm(binaryBuffer, std::ios::in);
-				readStrm.exceptions(std::ios::failbit);
-
-
-				std::vector<char> buffer = std::vector<char>( std::istreambuf_iterator<char>(readStrm), std::istreambuf_iterator<char>( ) );
-				buffer.push_back('\0');
-				delete[] binaryBuffer;
-
-				const char* allContent = &buffer[0];
-				String allContentStr = StringUtils::toPlatformWideString(allContent);
 				List<String> lines(50);
-				StringUtils::Split(allContentStr, lines, L"\n\r");
+				StringUtils::Split(code, lines, L"\n\r");
 
-				for (int32 i=0;i<lines.getCount();i++)
+				for (int32 i = 0; i < lines.getCount(); i++)
 				{
 					String& lineW = lines[i];
 					StringUtils::Trim(lineW);
 
 					CommandInterpreter::getSingleton().RunLine(lineW, false);
 				}
-
 			}
 			else LogManager::getSingleton().Write(LOG_CommandResponse, String(L"Script '") + args[0] + String(L"'not found."), LOGLVL_Error);
+		}
+
+
+		void FxListCommand(CommandArgsConstRef args)
+		{
+			List<Effect*> fxList;
+			EffectManager::getSingleton().FillEffects(fxList);
+
+			LogManager::getSingleton().Write(LOG_CommandResponse, L"Effect Listing:", LOGLVL_Infomation);
+
+			int32 id = 1;
+			for (Effect* fx : fxList)
+			{
+				AutomaticEffect* ae = up_cast<AutomaticEffect*>(fx);
+
+				String msg = L"  " + StringUtils::IntToString(id) + L". ";
+				msg.append(ae ? L"[Auto] " : L"[Custom] ");
+				msg.append(fx->getName());
+
+				if (fx->IsUnsupported())
+					msg.append(L" [Unsupported] ");
+
+				if (fx->SupportsInstancing())
+					msg.append(L" [Instancing] ");
+
+				LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
+
+				id++;
+			}
+		}
+		void FxReloadCommand(CommandArgsConstRef args)
+		{
+			EffectManager::getSingleton().ReloadAutomaticEffects();
+
+			List<Effect*> fxList;
+			EffectManager::getSingleton().FillEffects(fxList);
+			int32 counter = 0;
+			for (Effect* fx : fxList)
+			{
+				AutomaticEffect* ae = up_cast<AutomaticEffect*>(fx);
+				if (ae) counter++;
+			}
+
+			LogManager::getSingleton().Write(LOG_CommandResponse, StringUtils::IntToString(counter) +  L" automatic effects reloaded.", LOGLVL_Infomation);
 		}
 
 		void BatchReportCommand(CommandArgsConstRef args)

@@ -327,7 +327,7 @@ namespace Apoc3D
 		void Console::RegisterCommands()
 		{
 			//ConsoleCommandSet* s = new ConsoleCommandSet(this);
-			CommandInterpreter::getSingleton().RegisterCommand(CommandDescription(L"clear", 0, CommandHandler(this, &Console::ClearCommand)));
+			CommandInterpreter::getSingleton().RegisterCommand({ L"clear", 0, CommandHandler(this, &Console::ClearCommand) });
 		}
 
 		void Console::ClearCommand(const List<String>& args)

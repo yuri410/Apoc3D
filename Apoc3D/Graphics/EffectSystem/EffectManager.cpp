@@ -45,15 +45,6 @@ namespace Apoc3D
 				UnloadAllEffects();
 			}
 
-			//void EffectManager::Initialize()
-			//{
-
-			//}
-			//void EffectManager::Terminate()
-			//{
-			//	m_autoEffectInfo.Clear();
-			//}
-
 			bool EffectManager::HasEffect(const String& name) const
 			{
 				return m_fxTable.Contains(name);
@@ -109,7 +100,7 @@ namespace Apoc3D
 						delete m_fxTable[name];
 						m_fxTable[name] = effect;
 						LogManager::getSingleton().Write(LOG_Graphics, 
-							L"EffectManager: An automatic effect with the same name '" + name + L"' is already loaded. Reloading...",
+							L"EffectManager: An automatic effect with the same name '" + name + L"' is already loaded. Full reloading...",
 							LOGLVL_Infomation);
 					}
 					else
@@ -134,13 +125,16 @@ namespace Apoc3D
 				}
 			}
 
-			void EffectManager::ReloadAutomaticEffects(RenderDevice* device)
+			void EffectManager::ReloadAutomaticEffects()
 			{
 				for (auto& e : m_autoEffectInfo)
 				{
 					if (HasEffect(e.Name))
 					{
-						LoadAutomaticEffect(device, *e.Location);
+						Effect* eff = getEffect(e.Name);
+						AutomaticEffect* ae = up_cast<AutomaticEffect*>(eff);
+
+						ae->Reload(*e.Location);
 					}
 				}
 			}
@@ -157,6 +151,13 @@ namespace Apoc3D
 				}
 			}
 
+			void EffectManager::FillEffects(List<Effect*>& list)
+			{
+				for (Effect* fx : m_fxTable.getValueAccessor())
+				{
+					list.Add(fx);
+				}
+			}
 			//////////////////////////////////////////////////////////////////////////
 
 			EffectManager::AutomaticEffectInfo::AutomaticEffectInfo(const String& name, const ResourceLocation* loc)

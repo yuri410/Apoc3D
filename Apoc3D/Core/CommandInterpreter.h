@@ -47,20 +47,36 @@ namespace Apoc3D
 
 			String CommandName;
 
-			int32 NumOfParameters;
+			int32 NumOfParameters = 0;
 			CommandHandler Handler;
 
 			Apoc3D::Collections::LinkedList<CommandDescription> SubCommands;
 
-			CommandDescription()
-				: NumOfParameters(0)
-			{ }
-			CommandDescription(const String& cmdName, int paramCount, const CommandHandler& handler)
-				: Name(cmdName), CommandName(cmdName), NumOfParameters(paramCount), Handler(handler)
-			{ }
+			CommandDescription() { }
+
 			CommandDescription(const String& command, int paramCount, const CommandHandler& handler, const String& name, const String& description)
 				: Name(name), Description(description), CommandName(command), NumOfParameters(paramCount), Handler(handler)
 			{ }
+
+			CommandDescription(const String& command, int paramCount, const CommandHandler& handler, const String& name, const String& description, 
+				std::initializer_list<CommandDescription> subCmds)
+				: CommandDescription(command, paramCount, handler, name, description)
+			{
+				for (const CommandDescription& cd : subCmds)
+				{
+					SubCommands.PushBack(cd);
+				}
+			}
+
+			CommandDescription(const String& command, int paramCount, const CommandHandler& handler, const String& name)
+				: CommandDescription(command, paramCount, handler, name, L"") { }
+
+			CommandDescription(const String& command, int paramCount, const CommandHandler& handler, const String& name, std::initializer_list<CommandDescription> subCmds)
+				: CommandDescription(command, paramCount, handler, name, L"", subCmds) { }
+
+			CommandDescription(const String& command, int paramCount, const CommandHandler& handler)
+				: CommandDescription(command, paramCount, handler, command, L"") { }
+
 		};
 
 		typedef EventDelegate2<String, Apoc3D::Collections::List<String>*> RawCommandHandler;
@@ -79,21 +95,22 @@ namespace Apoc3D
 			RawCommandHandler& eventCommandSubmited() { return m_eCommandSubmited; }
 		private:
 
-
 			struct CommandRecord
 			{
 				typedef Apoc3D::Collections::HashMap<String, CommandRecord*> SubCommandTable;
+
 				CommandDescription* Cmd;
 				SubCommandTable SubCommands;
 
 				CommandRecord() : Cmd(nullptr) { }
 			};
 
-			enum CommandMatchingResult
+			enum struct CommandMatchingResult
 			{
-				CMR_NoSuchCommand,
-				CMR_NoSuchArgument,
-				CMR_OK
+				OK,
+				NoSuchCommand,
+				NoSuchArgument,
+				SubcommandNeeded
 			};
 
 			CommandMatchingResult RunCommand(int32 startingIndex, const CommandRecord::SubCommandTable& table, const Apoc3D::Collections::List<String>& args);

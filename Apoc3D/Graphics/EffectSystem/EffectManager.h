@@ -60,12 +60,14 @@ namespace Apoc3D
 
 				void RegisterCustomEffect(CustomShaderEffect* effect);
 
-				void ReloadAutomaticEffects(RenderDevice* device);
+				void ReloadAutomaticEffects();
 				
 				void UnloadAllEffects();
 
 				
 				void Update(const GameTime* time);
+
+				void FillEffects(List<Effect*>& list);
 
 			private:
 				typedef HashMap<String, Effect*> EffectTable;
