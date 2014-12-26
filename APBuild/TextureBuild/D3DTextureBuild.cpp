@@ -538,7 +538,6 @@ namespace APBuild
 		//}
 
 		data.Save(FileOutStream(path));
-		data.Free();
 	}
 
 	void DXTex::Error(const String& msg, const String& src)
@@ -588,7 +587,7 @@ namespace APBuild
 			{
 				BuildSystem::LogWarning(
 					L"The source image contains premultiplied alpha, and the RGB values will be copied to \
-					 					 						 						 						 						 						the destination without \"unpremultiplying\" them so the resulting colors may be affected.", m_name);
+					 the destination without \"unpremultiplying\" them so the resulting colors may be affected.", m_name);
 				//AfxMessageBox(ID_ERROR_PREMULTTODXT1);
 			}
 			else if (fmtTo != D3DFMT_DXT2 && fmtTo != D3DFMT_DXT4)

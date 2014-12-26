@@ -164,6 +164,8 @@ namespace Apoc3D
 			int32 operator[](SideIndex idx) const;
 
 			void SetFromLeftTopRightBottom(int32 padding[4]);
+			void SetLeftRight(int32 l, int32 r);
+			void SetTopBottom(int32 t, int32 b);
 			void SetZero();
 		};
 

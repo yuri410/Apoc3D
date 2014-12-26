@@ -138,6 +138,7 @@ namespace Apoc3D
 			{
 				assert(data.Levels.getCount() == 0);
 				data.ContentSize = 0;
+				data.Levels.ReserveDiscard(data.LevelCount);
 
 				for (int i = 0; i < data.LevelCount; i++)
 				{
@@ -145,7 +146,8 @@ namespace Apoc3D
 
 					D3DSURFACE_DESC desc;
 					tex->GetLevelDesc(i, &desc);
-					TextureLevelData lvlData;
+
+					TextureLevelData& lvlData = data.Levels[i];
 					lvlData.Width = (int32)desc.Width;
 					lvlData.Height = (int32)desc.Width;
 					lvlData.Depth = 1;
@@ -176,19 +178,19 @@ namespace Apoc3D
 					}
 
 					// ======================================================================
-					data.Levels.Add(lvlData);
+					
 					data.ContentSize += lvlData.LevelSize;
-
 				}
 			}
 			void getData(TextureData& data, D3DTexture2D* tex)
 			{
 				assert(data.Levels.getCount() == 0);
 				data.ContentSize = 0;
+				data.Levels.ReserveDiscard(data.LevelCount);
 
 				for (int i = 0; i < data.LevelCount; i++)
 				{
-					TextureLevelData lvlData;
+					TextureLevelData& lvlData = data.Levels[i];
 
 					D3DSURFACE_DESC desc;
 					tex->GetLevelDesc(i, &desc);
@@ -207,7 +209,6 @@ namespace Apoc3D
 					hr = tex->UnlockRect(i);
 					assert(SUCCEEDED(hr));
 
-					data.Levels.Add(lvlData);
 					data.ContentSize += lvlData.LevelSize;
 				}
 			}
@@ -215,10 +216,11 @@ namespace Apoc3D
 			{
 				assert(data.Levels.getCount() == 0);
 				data.ContentSize = 0;
+				data.Levels.ReserveDiscard(data.LevelCount);
 
 				for (int i = 0; i < data.LevelCount; i++)
 				{
-					TextureLevelData lvlData;
+					TextureLevelData& lvlData = data.Levels[i];
 
 					D3DVOLUME_DESC desc;
 					tex->GetLevelDesc(i, &desc);
@@ -244,7 +246,7 @@ namespace Apoc3D
 
 			void setData(const TextureData& data, D3DTextureCube* tex)
 			{
-				for (int i=0;i<data.LevelCount;i++)
+				for (int i = 0; i < data.LevelCount; i++)
 				{
 					const TextureLevelData& lvlData = data.Levels[i];
 
@@ -253,7 +255,7 @@ namespace Apoc3D
 					D3DSURFACE_DESC desc;
 					tex->GetLevelDesc(i, &desc);
 
-					const D3DCUBEMAP_FACES faces[] = 
+					const D3DCUBEMAP_FACES faces[] =
 					{
 						D3DCUBEMAP_FACE_POSITIVE_X, D3DCUBEMAP_FACE_NEGATIVE_X,
 						D3DCUBEMAP_FACE_POSITIVE_Y, D3DCUBEMAP_FACE_NEGATIVE_Y,
@@ -273,7 +275,6 @@ namespace Apoc3D
 						hr = tex->UnlockRect(cf, i);
 						assert(SUCCEEDED(hr));
 					}
-
 				}
 			}
 			void setData(const TextureData& data, D3DTexture2D* tex)

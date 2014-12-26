@@ -106,9 +106,7 @@ namespace Apoc3D
 			/** A list of meshes that this model has. */
 			List<MeshData*> Entities;
 
-			ModelData()
-			{
-			}
+			ModelData() { }
 			~ModelData();
 			
 			ModelData(const ModelData&) = delete;

@@ -266,7 +266,7 @@ namespace APBuild
 		}
 
 		texData.Levels.Reserve(mipCount);
-		for (int i=0;i<mipCount;i++)
+		for (int i = 0; i < mipCount; i++)
 		{
 			ilBindImage(image);
 			ilActiveMipmap(i);
@@ -346,56 +346,7 @@ namespace APBuild
 		if (config.NewFormat != FMT_Unknown &&
 			texData.Format != config.NewFormat)
 		{
-			TextureData newdata;
-			newdata.Format = config.NewFormat;
-			newdata.ContentSize = 0;
-			newdata.LevelCount = texData.LevelCount;
-			newdata.Type = texData.Type;
-			newdata.Levels.ResizeDiscard(texData.LevelCount);
-			newdata.Flags = TextureData::TDF_None;
-
-			for (int i=0;i<newdata.LevelCount;i++)
-			{
-				TextureLevelData& srcLvl = texData.Levels[i];
-
-				TextureLevelData dstLvl;
-				dstLvl.Depth = srcLvl.Depth;
-				dstLvl.Width = srcLvl.Width;
-				dstLvl.Height = srcLvl.Height;
-
-				int lvlSize = PixelFormatUtils::GetMemorySize(
-					dstLvl.Width, dstLvl.Height, dstLvl.Depth, newdata.Format);
-				dstLvl.LevelSize = lvlSize;
-
-				dstLvl.ContentData = new char[lvlSize];
-				newdata.ContentSize += lvlSize;
-
-				DataBox src = DataBox(
-					srcLvl.Width, 
-					srcLvl.Height, 
-					srcLvl.Depth, 
-					PixelFormatUtils::GetMemorySize(srcLvl.Width, 1, 1, texData.Format),
-					PixelFormatUtils::GetMemorySize(srcLvl.Width, srcLvl.Height, 1, texData.Format), 
-					srcLvl.ContentData,
-					texData.Format);
-
-				DataBox dst = DataBox(
-					dstLvl.Width,
-					dstLvl.Height, 
-					dstLvl.Depth, 
-					PixelFormatUtils::GetMemorySize(dstLvl.Width, 1, 1, newdata.Format),
-					PixelFormatUtils::GetMemorySize(dstLvl.Width, dstLvl.Height, 1, newdata.Format), 
-					dstLvl.ContentData,
-					newdata.Format);
-
-				bool r = PixelFormatUtils::ConvertPixels(src, dst);
-				assert(r);
-
-				newdata.Levels.Add(dstLvl);
-			}
-
-			texData.Free();
-			texData = newdata;
+			texData.ConvertInPlace(config.NewFormat);
 		}
 
 		if (config.CompressionType == TextureCompressionType::RLE)
@@ -418,8 +369,6 @@ namespace APBuild
 		//}
 
 		texData.Save(FileOutStream(config.DestinationFile));
-
-		texData.Free();
 	}
 	
 	void TextureBuild::Build(const String& hierarchyPath, const ConfigurationSection* sect)

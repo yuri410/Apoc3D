@@ -240,7 +240,14 @@ namespace Apoc3D
 		{
 			Left = Right = Top = Bottom = 0;
 		}
-
+		void ControlBounds::SetLeftRight(int32 l, int32 r)
+		{
+			Left = l; Right = r;
+		}
+		void ControlBounds::SetTopBottom(int32 t, int32 b)
+		{
+			Top = t; Bottom = b;
+		}
 
 		/************************************************************************/
 		/* TextRenderSettings                                                   */

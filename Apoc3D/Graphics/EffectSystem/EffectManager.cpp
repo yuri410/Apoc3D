@@ -40,6 +40,20 @@ namespace Apoc3D
 		{
 			SINGLETON_IMPL(EffectManager);
 
+			EffectManager::~EffectManager() 
+			{
+				UnloadAllEffects();
+			}
+
+			//void EffectManager::Initialize()
+			//{
+
+			//}
+			//void EffectManager::Terminate()
+			//{
+			//	m_autoEffectInfo.Clear();
+			//}
+
 			bool EffectManager::HasEffect(const String& name) const
 			{
 				return m_fxTable.Contains(name);
@@ -57,7 +71,7 @@ namespace Apoc3D
 				return nullptr;
 			}
 
-			void EffectManager::LoadEffectFromList(RenderDevice* device, const ResourceLocation& rl)
+			void EffectManager::LoadEffectsFromList(RenderDevice* device, const ResourceLocation& rl)
 			{
 				Configuration config(rl.getName());
 				XMLConfigurationFormat::Instance.Load(rl, &config);
@@ -70,39 +84,41 @@ namespace Apoc3D
 						LogManager::getSingleton().Write(LOG_Graphics, L"Effect " + lstEntry->getName() + L" is not found.", LOGLVL_Error);
 						continue;
 					}
-					LoadEffect(device, fl);
+					LoadAutomaticEffect(device, fl);
 				}
 			}
-			void EffectManager::LoadEffect(RenderDevice* device, const ResourceLocation& rl)
+			void EffectManager::LoadAutomaticEffect(RenderDevice* device, const ResourceLocation& rl)
 			{
 				AutomaticEffect* effect = new AutomaticEffect(device, rl);
 
-				if (!HasEffect(effect->getName()))
+				const String& name = effect->getName();
+
+				if (!HasEffect(name))
 				{
-					m_fxTable.Add(effect->getName(), effect);
+					m_fxTable.Add(name, effect);
+
+					m_autoEffectInfo.Add(AutomaticEffectInfo(name, &rl));
 				}
 				else
 				{
-					Effect* eff = getEffect(effect->getName());
+					Effect* eff = getEffect(name);
 
 					AutomaticEffect* ae = up_cast<AutomaticEffect*>(eff);
 					if (ae)
 					{
-						delete m_fxTable[effect->getName()];
-						m_fxTable[effect->getName()] = effect;
+						delete m_fxTable[name];
+						m_fxTable[name] = effect;
 						LogManager::getSingleton().Write(LOG_Graphics, 
-							L"EffectManager: An automatic effect with the same name '" + effect->getName() + L"' is already loaded. Reloading...",
+							L"EffectManager: An automatic effect with the same name '" + name + L"' is already loaded. Reloading...",
 							LOGLVL_Infomation);
 					}
 					else
 					{
 						LogManager::getSingleton().Write(LOG_Graphics, 
-							L"EffectManager: A custom effect with the same name '" + effect->getName() + L"' is already loaded. Cannot load effect.", LOGLVL_Error);
+							L"EffectManager: A custom effect with the same name '" + name + L"' is already loaded. Cannot load effect.", LOGLVL_Error);
 						delete effect;
 					}
 				}
-				
-
 			}
 
 			void EffectManager::RegisterCustomEffect(CustomShaderEffect* effect)
@@ -118,12 +134,57 @@ namespace Apoc3D
 				}
 			}
 
+			void EffectManager::ReloadAutomaticEffects(RenderDevice* device)
+			{
+				for (auto& e : m_autoEffectInfo)
+				{
+					if (HasEffect(e.Name))
+					{
+						LoadAutomaticEffect(device, *e.Location);
+					}
+				}
+			}
+			void EffectManager::UnloadAllEffects()
+			{
+				m_fxTable.DeleteValuesAndClear();
+			}
+
 			void EffectManager::Update(const GameTime* time)
 			{
 				for (Effect* fx : m_fxTable.getValueAccessor())
 				{
 					fx->Update(time);
 				}
+			}
+
+			//////////////////////////////////////////////////////////////////////////
+
+			EffectManager::AutomaticEffectInfo::AutomaticEffectInfo(const String& name, const ResourceLocation* loc)
+				: Name(name)
+			{
+				Location = loc->Clone();
+			}
+			EffectManager::AutomaticEffectInfo::~AutomaticEffectInfo()
+			{
+				DELETE_AND_NULL(Location);
+			}
+
+			EffectManager::AutomaticEffectInfo::AutomaticEffectInfo(AutomaticEffectInfo&& rhs)
+				: Name(std::move(rhs.Name)), Location(rhs.Location)
+			{
+				rhs.Location = nullptr;
+			}
+
+			EffectManager::AutomaticEffectInfo& EffectManager::AutomaticEffectInfo::operator=(AutomaticEffectInfo&& rhs)
+			{
+				if (this != &rhs)
+				{
+					Name = std::move(rhs.Name);
+					Location = rhs.Location;
+
+					rhs.Location = nullptr;
+				}
+				return *this;
 			}
 		}
 	}

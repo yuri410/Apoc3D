@@ -46,24 +46,21 @@ namespace Apoc3D
 		class APAPI TextureLevelData
 		{
 		public:
-			int32 Height;
 			int32 Width;
+			int32 Height;
 			int32 Depth;
-			/**
-			 *  The size of the content data in bytes.
-			 */
-			int32 LevelSize;
-			/**
-			 *  Packed pixel data.
-			 *  This SHOULD be manually released.
-			 */
-			char* ContentData;
+			int32 LevelSize;		/**  The size of the content data in bytes. */
 
-			TextureLevelData()
-			{ }
-			~TextureLevelData() 
-			{ }
+			char* ContentData = nullptr;		/** Packed pixel data. */
+
+			TextureLevelData() { }
+			~TextureLevelData();
 			
+			TextureLevelData(TextureLevelData&& rhs);
+			TextureLevelData& operator=(TextureLevelData&& rhs);
+
+			TextureLevelData(const TextureLevelData&) = delete;
+			TextureLevelData& operator=(const TextureLevelData&) = delete;
 
 			void LoadData(BinaryReader& br, bool doNotLoadContent = false, int32 flags = 0);
 			void SaveData(BinaryWriter& bw, int32 flags = 0) const;
@@ -71,8 +68,6 @@ namespace Apoc3D
 			void LoadData(TaggedDataReader* data, bool doNotLoadContent = false, int32 flags = 0);
 			void SaveData(TaggedDataWriter* data, int32 flags = 0) const;
 
-			
-		private:
 		};
 
 		/** 
@@ -102,11 +97,19 @@ namespace Apoc3D
 			TextureData() { }
 			~TextureData() { }
 			
+			TextureData(TextureData&& rhs);
+			TextureData& operator=(TextureData&& rhs);
+
+			TextureData(const TextureData&) = delete;
+			TextureData& operator=(const TextureData&) = delete;
+
 			void Load(const ResourceLocation& rl, bool doNotLoadLevel = false, bool doNotLoadContent = false);
 			void Save(Stream& strm) const;
 			void SaveAsTagged(Stream& strm) const;
 
-			void Free();
+			void ConvertInPlace(PixelFormat fmt);
+			void ResizeInPlace(int32 newWidth, int32 newHeight);
+
 		};
 	}
 }

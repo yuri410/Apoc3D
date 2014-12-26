@@ -107,7 +107,7 @@ namespace APDesigner
 		{
 			FileLocateRule rule = { { L"system.pak\\effects.pak" } };
 			FileLocation fl = FileSystem::getSingleton().Locate(L"standard.afx", rule);
-			EffectManager::getSingleton().LoadEffect(m_device, fl);
+			EffectManager::getSingleton().LoadAutomaticEffect(m_device, fl);
 		}
 
 		UIResources::Initialize(m_device);
@@ -311,7 +311,7 @@ namespace APDesigner
 
 		//m_sprite->End();
 
-		for (int i=0;i<m_documentList.getCount();i++)
+		for (int i = 0; i < m_documentList.getCount(); i++)
 		{
 			m_documentList[i]->Render();
 		}
@@ -346,8 +346,8 @@ namespace APDesigner
 		{
 			m_project = new Project();
 			m_projectFilePath = path;
-			FileLocation fl(path);
-			Configuration* conf = ConfigurationManager::getSingleton().CreateInstance(fl);// XMLConfigurationFormat::Instance.Load(fl);
+			
+			Configuration* conf = ConfigurationManager::getSingleton().CreateInstance(FileLocation(path));// XMLConfigurationFormat::Instance.Load(fl);
 
 			m_project->Parse(conf->get(L"Project"));
 			delete conf;
@@ -398,8 +398,7 @@ namespace APDesigner
 
 					LogManager::getSingleton().Write(LOG_Graphics, L"Updating effect " + eff->DestFile);
 
-					FileLocation fl(df);
-					EffectManager::getSingleton().LoadEffect(m_device, fl);
+					EffectManager::getSingleton().LoadAutomaticEffect(m_device, FileLocation(df));
 				}
 			}
 			else if (itm->getType() == ProjectItemType::Folder)

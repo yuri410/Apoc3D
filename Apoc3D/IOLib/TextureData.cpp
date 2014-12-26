@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "TaggedData.h"
 #include "Streams.h"
 #include "apoc3d/Core/Logging.h"
+#include "apoc3d/Graphics/LockData.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Utility/Compression.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
@@ -36,7 +37,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Library/lz4hc.h"
 
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Math;
 using namespace Apoc3D::Utility;
+using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
 {
@@ -48,6 +51,34 @@ namespace Apoc3D
 		const char Tag_Content[] = "Content";
 		const char Tag_LevelSize[] = "LevelSize";
 		
+
+		TextureLevelData::~TextureLevelData()
+		{
+			delete[] ContentData;
+			ContentData = nullptr;
+		}
+
+		TextureLevelData::TextureLevelData(TextureLevelData&& rhs)
+			: Width(rhs.Width), Height(rhs.Height), Depth(rhs.Depth),
+			LevelSize(rhs.LevelSize), ContentData(rhs.ContentData) { }
+
+		TextureLevelData& TextureLevelData::operator=(TextureLevelData&& rhs)
+		{
+			if (this != &rhs)
+			{
+				delete[] rhs.ContentData;
+
+				Width = rhs.Width;
+				Height = rhs.Height;
+				Depth = rhs.Depth;
+				LevelSize = rhs.LevelSize;
+				ContentData = rhs.ContentData;
+
+				rhs.ContentData = nullptr;
+			}
+			return *this;
+		}
+
 		// v1
 		void TextureLevelData::LoadData(TaggedDataReader* data, bool doNotLoadContent, int32 flags)
 		{
@@ -174,6 +205,28 @@ namespace Apoc3D
 		const char Tag_Level[] = "Level";
 		const char Tag_Flags[] = "Flags";
 
+
+
+		TextureData::TextureData(TextureData&& rhs)
+			: Type(rhs.Type), Levels(std::move(rhs.Levels)), Format(rhs.Format),
+			ContentSize(rhs.ContentSize), LevelCount(rhs.LevelCount), Flags(rhs.Flags)
+		{ }
+
+		TextureData& TextureData::operator=(TextureData&& rhs)
+		{
+			if (this != &rhs)
+			{
+				Type = rhs.Type;
+				Levels = std::move(rhs.Levels);
+				Format = rhs.Format;
+				ContentSize = rhs.ContentSize;
+				LevelCount = rhs.LevelCount;
+				Flags = rhs.Flags;
+			}
+			return *this;
+		}
+
+
 		void TextureData::Load(const ResourceLocation& rl, bool doNotLoadLevel, bool doNotLoadContent)
 		{
 			BinaryReader br(rl);
@@ -295,13 +348,132 @@ namespace Apoc3D
 
 		}
 
-		void TextureData::Free()
+		void ConvertFormat(const TextureLevelData& srcLvl, const TextureLevelData& dstLvl,
+			PixelFormat srcFormat, PixelFormat dstFormat,
+			int32 srcOffset = 0, int32 dstOffset = 0)
 		{
-			for (int i = 0; i < LevelCount; i++)
+			DataBox src = DataBox(
+				srcLvl.Width,
+				srcLvl.Height,
+				srcLvl.Depth,
+				PixelFormatUtils::GetMemorySize(srcLvl.Width, 1, 1, srcFormat),
+				PixelFormatUtils::GetMemorySize(srcLvl.Width, srcLvl.Height, 1, srcFormat),
+				srcLvl.ContentData + srcOffset,
+				srcFormat);
+
+			DataBox dst = DataBox(
+				dstLvl.Width,
+				dstLvl.Height,
+				dstLvl.Depth,
+				PixelFormatUtils::GetMemorySize(dstLvl.Width, 1, 1, dstFormat),
+				PixelFormatUtils::GetMemorySize(dstLvl.Width, dstLvl.Height, 1, dstFormat),
+				dstLvl.ContentData + dstOffset,
+				dstFormat);
+
+			bool r = PixelFormatUtils::ConvertPixels(src, dst);
+			assert(r);
+		}
+
+		void TextureData::ConvertInPlace(PixelFormat newFmt)
+		{
+			TextureData newdata;
+			newdata.Format = newFmt;
+			newdata.ContentSize = 0;
+			newdata.LevelCount = LevelCount;
+			newdata.Type = Type;
+			newdata.Levels.ReserveDiscard(LevelCount);
+			newdata.Flags = Flags;
+
+			// do it for all levels
+			for (int i = 0; i < newdata.LevelCount; i++)
 			{
-				delete[] Levels[i].ContentData;
+				TextureLevelData& srcLvl = Levels[i];
+				TextureLevelData& dstLvl = newdata.Levels[i];
+
+				dstLvl.Depth = srcLvl.Depth;
+				dstLvl.Width = srcLvl.Width;
+				dstLvl.Height = srcLvl.Height;
+
+				int dstLvlSize = PixelFormatUtils::GetMemorySize(
+					dstLvl.Width, dstLvl.Height, dstLvl.Depth, newdata.Format);
+
+				if (Type == TT_CubeTexture)
+				{
+					dstLvlSize *= 6;
+				}
+				dstLvl.LevelSize = dstLvlSize;
+
+
+				dstLvl.ContentData = new char[dstLvlSize];
+				newdata.ContentSize += dstLvlSize;
+
+				if (Type == TT_CubeTexture)
+				{
+					int32 srcFaceSize = srcLvl.LevelSize / 6;
+					int32 dstFaceSize = dstLvlSize / 6;
+					for (int32 j = 0; j < 6; j++)
+					{
+						ConvertFormat(srcLvl, dstLvl, Format, newdata.Format, i*srcFaceSize, i*dstFaceSize);
+					}
+				}
+				else
+				{
+					ConvertFormat(srcLvl, dstLvl, Format, newdata.Format);
+				}
 			}
-			Levels.Clear();
+
+			*this = std::move(newdata);
+		}
+
+		void TextureData::ResizeInPlace(int32 newWidth, int32 newHeight)
+		{
+			TextureData newData;
+			newData.Format = Format;
+			newData.ContentSize = 0;
+			newData.LevelCount = LevelCount;
+			newData.Type = Type;
+			newData.Levels.ReserveDiscard(LevelCount);
+			newData.Flags = Flags;
+
+			// do it for all levels
+			for (int i = 0; i < newData.LevelCount; i++)
+			{
+				TextureLevelData& srcLvl = Levels[i];
+				TextureLevelData& dstLvl = newData.Levels[i];
+
+				dstLvl.Depth = srcLvl.Depth;
+				dstLvl.Width = newWidth / (1 << i);
+				dstLvl.Height = newHeight / (1 << i);
+
+				int dstLvlSize = PixelFormatUtils::GetMemorySize(
+					dstLvl.Width, dstLvl.Height, dstLvl.Depth, newData.Format);
+
+				if (Type == TT_CubeTexture)
+				{
+					dstLvlSize *= 6;
+				}
+				dstLvl.LevelSize = dstLvlSize;
+
+				dstLvl.ContentData = new char[dstLvlSize];
+				newData.ContentSize += dstLvlSize;
+
+				if (Type == TT_CubeTexture)
+				{
+					int32 srcFaceSize = srcLvl.LevelSize / 6;
+					int32 dstFaceSize = dstLvlSize / 6;
+					for (int32 j = 0; j < 6; j++)
+					{
+						PixelFormatUtils::Resize(srcLvl.ContentData + i * srcFaceSize, srcLvl.Width, srcLvl.Height,
+							dstLvl.ContentData + i*dstFaceSize, dstLvl.Width, dstLvl.Height, newData.Format);
+					}
+				}
+				else
+				{
+					PixelFormatUtils::Resize(srcLvl.ContentData, srcLvl.Width, srcLvl.Height, dstLvl.ContentData, dstLvl.Width, dstLvl.Height, newData.Format);
+				}
+			}
+
+			*this = std::move(newData);
 		}
 	}
 }

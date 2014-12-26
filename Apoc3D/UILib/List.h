@@ -258,7 +258,8 @@ namespace Apoc3D
 		private:
 			void Initialize(const StyleSkin* skin);
 			int GetVisibleItems();
-			
+			void GetVisibleItemsRange(int32& start, int32& end);
+
 			Point GetColumnHeaderOffset() const;
 			Point GetCellOffset() const;
 

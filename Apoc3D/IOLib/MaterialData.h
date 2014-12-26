@@ -113,9 +113,11 @@ namespace Apoc3D
 			}
 
 			//MaterialData(const Material* mtrl);
-			MaterialData(const MaterialData& other) = default;
 			MaterialData() { }
 			~MaterialData() { }
+
+			MaterialData(const MaterialData& other) = default;
+
 
 			void LoadData(TaggedDataReader *data);
 			TaggedDataWriter* SaveData();

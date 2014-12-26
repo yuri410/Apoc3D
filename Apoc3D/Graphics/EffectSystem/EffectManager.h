@@ -26,6 +26,7 @@
  * -----------------------------------------------------------------------------
  */
 
+#include "apoc3d/Collections/List.h"
 #include "apoc3d/Collections/HashMap.h"
 
 using namespace Apoc3D::Collections;
@@ -48,27 +49,46 @@ namespace Apoc3D
 				SINGLETON_DECL(EffectManager);
 			public:
 				EffectManager() { }
-				~EffectManager() { }
+				~EffectManager();
 
 				bool HasEffect(const String& name) const;
 				Effect* getEffect(const String& name) const;
 
-				//void ReloadEffect(RenderDevice* device, const ResourceLocation* fl);
-				void LoadEffect(RenderDevice* device, const ResourceLocation& rl);
-				
+				/** Loads all of a project's effects from a APBuild-generated xml list automatically. */
+				void LoadEffectsFromList(RenderDevice* device, const ResourceLocation& rl);
+				void LoadAutomaticEffect(RenderDevice* device, const ResourceLocation& rl);
+
 				void RegisterCustomEffect(CustomShaderEffect* effect);
 
-				/**
-				 *  Loads all of a project's effects from a APBuild-generated xml list automatically.
-				 */
-				void LoadEffectFromList(RenderDevice* device, const ResourceLocation& rl);
+				void ReloadAutomaticEffects(RenderDevice* device);
+				
+				void UnloadAllEffects();
 
+				
 				void Update(const GameTime* time);
 
 			private:
 				typedef HashMap<String, Effect*> EffectTable;
 
 				EffectTable m_fxTable;
+
+				struct AutomaticEffectInfo
+				{
+					String Name;
+					ResourceLocation* Location = nullptr;
+
+					AutomaticEffectInfo() { }
+					AutomaticEffectInfo(const String& name, const ResourceLocation* loc);
+					~AutomaticEffectInfo();
+
+					AutomaticEffectInfo(const AutomaticEffectInfo&) = delete;
+					AutomaticEffectInfo& operator=(const AutomaticEffectInfo&) = delete;
+
+					AutomaticEffectInfo(AutomaticEffectInfo&&);
+					AutomaticEffectInfo& operator=(AutomaticEffectInfo&& rhs);
+				};
+
+				List<AutomaticEffectInfo> m_autoEffectInfo;
 			};
 		};
 	};

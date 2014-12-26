@@ -630,6 +630,9 @@ namespace Apoc3D
 			: ScrollableControl(skin, position, size), m_items(items)
 		{
 			Initialize(skin);
+
+			TextSettings.HorizontalAlignment = TextHAlign::Left;
+			TextSettings.TextPadding.SetLeftRight(4, 4);
 		}
 
 		ListView::~ListView()
@@ -701,10 +704,16 @@ namespace Apoc3D
 			if (!IsInteractive || !m_contentArea.Contains(mouse->GetPosition()))
 				return;
 
+			int32 itemStart, itemEnd;
+			GetVisibleItemsRange(itemStart, itemEnd);
+
 			if (FullRowSelect)
 			{
-				for (int y = 0; y < m_items.getCount(); y++)
+				for (int y = itemStart; y < itemEnd; y++)
 				{
+					if (!m_items.isIndexInRange(y))
+						continue;
+
 					Apoc3D::Math::Rectangle selectionRect;
 					selectionRect.setPosition(GetCellOffset() + m_contentArea.getTopLeft());
 					selectionRect.Y += m_rowHeight * y;
@@ -725,28 +734,30 @@ namespace Apoc3D
 				cellArea.setPosition(GetCellOffset() + m_contentArea.getTopLeft());
 				cellArea.Height = m_rowHeight;
 
-				for (int y = 0; y < m_items.getCount(); y++)
+				int32 baseX = cellArea.X;
+				int32 baseY = cellArea.Y;
+
+				for (int y = itemStart; y < itemEnd; y++)
 				{
-					int32 baseX = cellArea.X;
-					for (int x = 0; x<m_items.getWidth(); x++)
+					if (!m_items.isIndexInRange(y))
+						continue;
+
+					cellArea.X = baseX;
+					cellArea.Y = baseY + y * cellArea.Height;
+
+					for (int x = 0; x < m_items.getWidth(); x++)
 					{
 						cellArea.Width = m_columnHeader[x].Width;
 
-						if (y > m_vscrollbar->getValue() - 1)
+						if (cellArea.Contains(mouse->GetPosition()))
 						{
-							if (cellArea.Contains(mouse->GetPosition()))
-							{
-								m_hoverColumnIndex = x;
-								m_hoverRowIndex = y;
-								break;
-							}
+							m_hoverColumnIndex = x;
+							m_hoverRowIndex = y;
+							break;
 						}
 
 						cellArea.X += cellArea.Width;
 					}
-
-					cellArea.X = baseX;
-					cellArea.Y += m_rowHeight;
 				}
 			}
 
@@ -976,6 +987,7 @@ namespace Apoc3D
 
 			Apoc3D::Math::Rectangle lineRect;
 			lineRect.setPosition(m_contentArea.getTopLeft());
+			lineRect.X++;
 			lineRect.Width = m_contentArea.Width;
 			lineRect.Height = 1;
 
@@ -1009,41 +1021,48 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle cellArea;
 			cellArea.setPosition(GetCellOffset() + m_contentArea.getTopLeft());
 			cellArea.Height = m_rowHeight;
+			
+			int32 itemStart, itemEnd;
+			GetVisibleItemsRange(itemStart, itemEnd);
 
 			int32 baseX = cellArea.X;
-			for (int y = 0; y < m_items.getCount(); y++)
+			int32 baseY = cellArea.Y;
+
+			for (int y = itemStart; y < itemEnd; y++)
 			{
-				for (int x = 0; x<m_items.getWidth(); x++)
+				if (!m_items.isIndexInRange(y))
+					continue;
+
+				cellArea.X = baseX;
+				cellArea.Y = baseY + y * cellArea.Height;
+
+				for (int x = 0; x < m_items.getWidth(); x++)
 				{
 					cellArea.Width = m_columnHeader[x].Width;
 
-					if (y > m_vscrollbar->getValue() - 1)
+					if (!m_isResizingHeaders)
 					{
-						if (!m_isResizingHeaders)
-						{
-							if (HoverSelectionMode && x == m_hoverColumnIndex && y == m_hoverRowIndex)
-								DrawHoverBox(sprite, cellArea);
-						}
-
-						if (FullRowSelect && x == 0 && y == m_selectedRow)
-							DrawSelectedBox(sprite, cellArea);
-						else if (!FullRowSelect && x == m_selectedRow && y == m_selectedColumn)
-							DrawSelectedBox(sprite, cellArea);
-
-						{
-							// truncate text
-							String text = m_items.at(y, x);
-
-							guiOmitLineText(m_fontRef, cellArea.Width, text);
-
-							//m_fontRef->DrawString(sprite, text, cellArea.getTopLeft(), CV_Black);
-							TextSettings.Draw(sprite, m_fontRef, text, cellArea, Enabled);
-						}
+						if (HoverSelectionMode && x == m_hoverColumnIndex && y == m_hoverRowIndex)
+							DrawHoverBox(sprite, cellArea);
 					}
+
+					if (FullRowSelect && y == m_selectedRow && x == 0)
+						DrawSelectedBox(sprite, cellArea);
+					else if (!FullRowSelect && y == m_selectedRow && x == m_selectedColumn)
+						DrawSelectedBox(sprite, cellArea);
+
+					{
+						// truncate text
+						String text = m_items[y][x];
+
+						guiOmitLineText(m_fontRef, cellArea.Width - TextSettings.TextPadding.getHorizontalSum(), text);
+
+						//m_fontRef->DrawString(sprite, text, cellArea.getTopLeft(), CV_Black);
+						TextSettings.Draw(sprite, m_fontRef, text, cellArea, Enabled);
+					}
+
 					cellArea.X += cellArea.Width;
 				}
-				cellArea.X = baseX;
-				cellArea.Y += m_rowHeight;
 			}
 		}
 
@@ -1060,7 +1079,7 @@ namespace Apoc3D
 			}
 			else
 			{
-				selectionRect.X = area.X - 4;
+				selectionRect.X = area.X;
 				selectionRect.Width = area.Width;
 			}
 			selectionRect.Height = area.Height;
@@ -1087,6 +1106,11 @@ namespace Apoc3D
 		int ListView::GetVisibleItems()
 		{
 			return (int)ceilf((float)(m_contentArea.Height / m_rowHeight));
+		}
+		void ListView::GetVisibleItemsRange(int32& start, int32& end)
+		{
+			start = m_vscrollbar->getValue();
+			end = start + GetVisibleItems();
 		}
 	}
 }

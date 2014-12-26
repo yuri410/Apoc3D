@@ -46,26 +46,23 @@ namespace Apoc3D
 
 			char ImplementationType[5];
 
-			/**
-			 *  The major version of shader model expected.
-			 */
+			/** The major version of shader model expected. */
 			int MajorVer;
 			int MinorVer;
 
-			/**
-			 *  The length of VSCode in bytes.
-			 */
+			/** The length of shader code in bytes. */
 			int VSLength = 0;
 			int PSLength = 0;
 			int GSLength = 0;
 
 			/**
-			 *  The vertex shader code. Could be compiled HLSL microcode or GLSL source 
-			 *  depends on the
+			 *  The shader code. Could be compiled HLSL microcode or GLSL source 
+			 *  depends on the ImplementationType
 			 */
 			char* VSCode = nullptr;
 			char* PSCode = nullptr;
 			char* GSCode = nullptr;
+
 
 			List<EffectParameter> Parameters;
 
@@ -104,6 +101,9 @@ namespace Apoc3D
 
 			EffectData();
 			~EffectData();
+
+			EffectData(const EffectData&) = delete;
+			EffectData& operator=(const EffectData&) = delete;
 
 			void Load(const ResourceLocation& rl);
 			void Save(Stream& strm) const;

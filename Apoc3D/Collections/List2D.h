@@ -39,78 +39,123 @@ namespace Apoc3D
 			List2D(int w, int h = 4)
 				: m_width(w), m_height(h), m_internalPointer(0)
 			{
-				m_data = new T*[h];
-				for (int i=0;i<h;i++)
-				{
-					m_data[i] = new T[w];
-				}
+				m_data = new T*[h]();
 			}
 
 			List2D(const List2D& another)
 				: m_width(another.m_width), m_height(another.m_height), m_internalPointer(another.m_internalPointer)
 			{
-				m_data = new T*[m_height];
-				for (int i=0;i<m_height;i++)
+				m_data = new T*[m_height]();
+
+				for (int i = 0; i < m_internalPointer; i++)
 				{
 					m_data[i] = new T[m_width];
-					for (int j=0;j<m_width;j++)
+					for (int j = 0; j < m_width; j++)
 					{
 						m_data[i][j] = another.m_data[i][j];
 					}
-					
 				}
 			}
+
+			List2D(List2D&& other)
+				: m_width(other.m_width), m_height(other.m_height), m_internalPointer(other.m_internalPointer), m_data(other.m_data)
+			{
+				other.m_data = nullptr;
+				other.m_height = 0;
+				other.m_internalPointer = 0;
+			}
+
 			~List2D()
 			{
-				for (int i=0;i<m_internalPointer;i++)
+				if (m_data)
 				{
-					delete[] m_data[i];
+					for (int i = 0; i < m_internalPointer; i++)
+					{
+						delete[] m_data[i];
+					}
+					delete[] m_data;
+
+					m_data = nullptr;
 				}
-				delete[] m_data;				
 			}
 			
-			T& at(int32 i, int32 j) const
-			{
-				assert(i>=0);
-				assert(i<m_internalPointer);
-				assert(j>=0);
-				assert(j<m_width);
-				return m_data[i][j];
-			}
-			List2D& operator=(const List2D &rhs)
-			{
-				for (int i=0;i<m_internalPointer;i++)
-				{
-					delete[] m_data[i];
-				}
-				delete[] m_data;
 
-				m_internalPointer = rhs.m_internalPointer;
-				m_width = rhs.m_width;
-				m_height = rhs.m_height;
-
-				m_data = new T*[m_height];
-				for (int i=0;i<m_internalPointer;i++)
+			List2D& operator=(const List2D& rhs)
+			{
+				if (this != &rhs)
 				{
-					m_data[i] = new T[m_width];
-					for (int j=0;j<m_width;j++)
+					~List2D();
+
+					m_internalPointer = rhs.m_internalPointer;
+					m_width = rhs.m_width;
+					m_height = rhs.m_height;
+
+					m_data = new T*[m_height]();
+					for (int i = 0; i < m_internalPointer; i++)
 					{
-						m_data[i][j] = rhs.m_data[i][j];
+						m_data[i] = new T[m_width];
+						for (int j = 0; j < m_width; j++)
+						{
+							m_data[i][j] = rhs.m_data[i][j];
+						}
 					}
-
 				}
 				return *this;
 			}
+
+			List2D& operator=(List2D&& rhs)
+			{
+				if (this != &rhs)
+				{
+					~List2D();
+					
+					m_data = rhs.m_data;
+					m_internalPointer = rhs.m_internalPointer;
+					m_width = rhs.m_width;
+					m_height = rhs.m_height;
+
+					rhs.m_data = nullptr;
+					rhs.m_height = 0;
+					rhs.m_internalPointer = 0;
+				}
+				return *this;
+			}
+
+			bool isIndexInRange(int32 i, int32 j) const { return i >= 0 && i < m_internalPointer && j >= 0 && j < m_width; }
+			bool isIndexInRange(int32 i) const { return i >= 0 && i < m_internalPointer; }
+
 			int getCount() const { return m_internalPointer; }
 			int getWidth() const { return m_width; }
+
+			T& at(int32 i, int32 j) const
+			{
+				assert(i >= 0 && i < m_internalPointer);
+				assert(j >= 0 && j < m_width);
+				return m_data[i][j];
+			}
+
+			class RowSubscriptProxy
+			{
+			public:
+				RowSubscriptProxy(T* row, int32 w)
+					: m_row(row), m_width(w) { }
+
+				T& operator[](int32 j) { assert(j >= 0 && j < m_width); return m_row[j]; }
+			private:
+				T* m_row;
+				int32 m_width;
+			};
+
+			RowSubscriptProxy operator[](int32 i) { assert(i >= 0 && i < m_internalPointer); return RowSubscriptProxy(m_data[i], m_width); }
+
 			void AddRow(const T* val)
 			{
-				if (m_height<=m_internalPointer)
+				if (m_internalPointer >= m_height)
 				{
-					ResizeRows(!m_height ? 4 : (m_height * 2));
+					ResizeRows(m_height == 0 ? 4 : (m_height * 2));
 				}
 				m_data[m_internalPointer] = new T[m_width];
-				for (int i=0;i<m_width;i++)
+				for (int i = 0; i < m_width; i++)
 				{
 					m_data[m_internalPointer][i] = val[i];
 				}
@@ -118,7 +163,7 @@ namespace Apoc3D
 			}
 			void Clear()
 			{
-				for (int i=0;i<m_internalPointer;i++)
+				for (int i = 0; i < m_internalPointer; i++)
 				{
 					delete[] m_data[i];
 				}
@@ -127,6 +172,8 @@ namespace Apoc3D
 			}
 			void RemoveRow(int index)
 			{
+				assert(isIndexInRange(index));
+
 				if (index == m_internalPointer - 1)
 				{
 					m_internalPointer--;
@@ -135,9 +182,9 @@ namespace Apoc3D
 				else
 				{
 					delete[] m_data[index];
-					for (int i=index;i<m_internalPointer-1;i++)
+					for (int i = index; i < m_internalPointer - 1; i++)
 					{
-						m_data[i] = m_data[i+1];
+						m_data[i] = m_data[i + 1];
 					}
 					m_internalPointer--;
 				}
@@ -146,35 +193,32 @@ namespace Apoc3D
 			{
 				if (count > 0 && index < m_internalPointer)
 				{
-					for (int i=index;i<index+count;i++)
+					for (int i = index; i < index + count; i++)
 						delete[] m_data[i];
 
-					for (int i=index;i<m_internalPointer-count;i++)
+					for (int i = index; i < m_internalPointer - count; i++)
 					{
-						m_data[i] = m_data[i+count];
+						m_data[i] = m_data[i + count];
 					}
-					m_internalPointer-=count;
+					m_internalPointer -= count;
 				}
 			}
+
 		private:
+			void ResizeRows(int newSize)
+			{
+				T** newArr = new T*[newSize]();
+				memcpy(newArr, m_data, m_height*sizeof(T*));
+				delete[] m_data;
+				m_data = newArr;
+
+				m_height = newSize;
+			}
+
 			T** m_data;
 			int m_width;
 			int m_height;
 			int m_internalPointer;
-
-
-			void ResizeRows(int newSize)
-			{
-				T** newArr = new T*[newSize];
-				memcpy(newArr, m_data, m_height*sizeof(T*));
-				delete[] m_data;
-				m_data = newArr;
-				//for (int i=m_height;i<newSize;i++)
-				//{
-					//newArr[i] = new T[m_width];
-				//}
-				m_height = newSize;
-			}
 		};
 	}
 }
