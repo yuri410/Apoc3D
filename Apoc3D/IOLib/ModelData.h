@@ -58,7 +58,7 @@ namespace Apoc3D
 		{
 		public:
 			/**
-			 *  Vertex data, no matter what exactly the vertex elements are, this is in a binary buffer form.
+			 *  Vertex data, no matter what exactly the vertex elements are, this is in a binary buffer form defined in VertexElements.
 			 */
 			char* VertexData = nullptr;
 

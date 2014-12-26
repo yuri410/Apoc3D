@@ -94,6 +94,29 @@ namespace Apoc3D
 			}
 		}
 
+		bool ResourceManager::IsIdle() const
+		{
+			CheckAsync();
+			return m_asyncProc->TaskCompleted();
+		}
+		void ResourceManager::WaitForIdle() const
+		{
+			CheckAsync();
+			m_asyncProc->WaitForCompletion();
+		}
+
+		int ResourceManager::GetCurrentOperationCount() const
+		{
+			CheckAsync();
+			return m_asyncProc->GetOperationCount();
+		}
+
+		void ResourceManager::ProcessPostSync(float& timeLeft)
+		{
+			CheckAsync();
+			m_asyncProc->ProcessPostSync(timeLeft);
+		}
+
 		Resource* ResourceManager::Exists(const String& hashString)
 		{
 			Resource* result;
@@ -101,6 +124,17 @@ namespace Apoc3D
 				return result;
 			return nullptr;
 		}
+
+		int64 ResourceManager::CalculateTotalResourceSize() const
+		{
+			int64 result = 0;
+			for (Resource* r : m_hashTable.getValueAccessor())
+			{
+				result += r->getSize();
+			}
+			return result;
+		}
+
 		void ResourceManager::NotifyNewResource(Resource* res)
 		{
 			//assert(!res->isManaged());
@@ -134,27 +168,8 @@ namespace Apoc3D
 			}
 			//m_hashTable.erase(res->getHashString());
 		}
-		bool ResourceManager::IsIdle() const
-		{
-			CheckAsync();
-			return m_asyncProc->TaskCompleted();
-		}
-		void ResourceManager::WaitForIdle() const
-		{
-			CheckAsync();
-			m_asyncProc->WaitForCompletion();
-		}
-		int ResourceManager::GetCurrentOperationCount() const
-		{
-			CheckAsync();
-			return m_asyncProc->GetOperationCount();
-		}
-
-		void ResourceManager::ProcessPostSync(float& timeLeft)
-		{
-			CheckAsync();
-			m_asyncProc->ProcessPostSync(timeLeft);
-		}
+		
+		
 		void ResourceManager::PerformAllPostSync(float timelimit)
 		{
 			const ResourceManager::ManagerList& mgrList = ResourceManager::getManagerInstances();

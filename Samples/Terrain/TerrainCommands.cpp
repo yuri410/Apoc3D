@@ -4,10 +4,6 @@
 
 namespace SampleTerrain
 {
-	void GenCommand(CommandArgsConstRef args)
-	{
-		LogManager::getSingleton().Write(LOG_CommandResponse, L"Use gen get/set.", LOGLVL_Infomation);
-	}
 	void GenGetCommand(CommandArgsConstRef args)
 	{
 		PerlinNoise& pn = Terrain::GetNoiseGenerator();
@@ -39,14 +35,14 @@ namespace SampleTerrain
 
 	void RegisterTerrainCommands()
 	{
+		CommandInterpreter::getSingleton().RegisterCommand(
 		{
-			CommandDescription desc(L"gen", 0, GenCommand, L"Noise Generator", L"");
-
-			desc.SubCommands.PushBack(CommandDescription(L"get", 0, GenGetCommand, L"Noise Generator Get params. [persistence, frequency, octaves, seed]", L""));
-			desc.SubCommands.PushBack(CommandDescription(L"set", 4, GenSetCommand, L"Noise Generator Set params. [persistence, frequency, octaves, seed]", L""));
-
-			CommandInterpreter::getSingleton().RegisterCommand(desc);
-		}
+			L"gen", 0, nullptr, L"Noise Generator",
+			{
+				{ L"get", 0, GenGetCommand, L"Noise Generator Get params. [persistence, frequency, octaves, seed]" },
+				{ L"set", 4, GenSetCommand, L"Noise Generator Set params. [persistence, frequency, octaves, seed]" }
+			}
+		});
 
 		CommandInterpreter::getSingleton().RegisterCommand(CommandDescription(L"jumpvel", 1, JumpHeightCommand, L"Jump Velocity", L""));
 		CommandInterpreter::getSingleton().RegisterCommand(CommandDescription(L"fly", 2, FlyCommand, L"Fly mode", L""));

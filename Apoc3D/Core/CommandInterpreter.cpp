@@ -299,16 +299,25 @@ namespace Apoc3D
 			{
 				ResourceManager* mgr = list[index];
 				String msg = mgr->getName();
-				msg.append(L"  |  [");
-				msg.append(StringUtils::SingleToString(mgr->getUsedCacheSize() / 1048576.0f, StrFmt::fpdec<1>::val));
-				msg.append(L"MB / ");
-				msg.append(StringUtils::SingleToString(mgr->getTotalCacheSize() / 1048576.0f, StrFmt::fpdec<1>::val));
-				msg.append(L"MB]");
+				msg.append(L"  |  ");
 				if (mgr->usesAsync())
 				{
+					msg.append(L"[");
+					msg.append(StringUtils::SingleToString(mgr->getUsedCacheSize() / 1048576.0f, StrFmt::fpdec<1>::val));
+					msg.append(L"MB / ");
+					msg.append(StringUtils::SingleToString(mgr->getTotalCacheSize() / 1048576.0f, StrFmt::fpdec<1>::val));
+					msg.append(L"MB]");
+
 					msg.append(L" [OP = ");
 					msg.append(StringUtils::IntToString(mgr->GetCurrentOperationCount()));
 					msg.append(L"] [Async]");
+				}
+				else
+				{
+					int64 sz = mgr->CalculateTotalResourceSize();
+					msg.append(L"[Used = ");
+					msg.append(StringUtils::SingleToString(sz / 1048576.0f, StrFmt::fpdec<1>::val));
+					msg.append(L"MB]");
 				}
 
 				LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);

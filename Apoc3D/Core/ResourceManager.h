@@ -69,14 +69,10 @@ namespace Apoc3D
 			ResourceManager(const String& name, int64 cacheSize, bool useAsync = true);
 			virtual ~ResourceManager();
 
-			/**
-			 * Finalizes the resource manager.
-			 */
+			/** Finalizes the resource manager. */
 			void Shutdown();
 
-			/**
-			 *  Make all managed resources to reload.
-			 */
+			/** Make all managed resources to reload. */
 			void ReloadAll();
 
 			/**
@@ -104,15 +100,15 @@ namespace Apoc3D
 			 */
 			Resource* Exists(const String& hashString);
 
+			int64 CalculateTotalResourceSize() const;
+
 			/**
 			 *  Gets the name of the resource manager. 
 			 *  The name usually tells what kind of resources the manager takes care of.
 			 */
 			const String& getName() const { return m_name; }
 
-			/**
-			 *  Check if the resource manager is working in async mode.
-			 */
+			/**  Check if the resource manager is working in async mode. */
 			bool usesAsync() const { return m_asyncProc != nullptr; }
 
 			/**
@@ -139,13 +135,10 @@ namespace Apoc3D
 
 		protected:
 			
-			/**
-			 *  Notifies the resource manager a new resource is created, and should be managed.
-			 */
+			/**  Notifies the resource manager a new resource is created, and should be managed. */
 			void NotifyNewResource(Resource* res);
-			/**
-			 *  Notifies the resource manager a resource is release, and should be removed from management.
-			 */
+
+			/**  Notifies the resource manager a resource is release, and should be removed from management. */
 			void NotifyReleaseResource(Resource* res);
 
 			void NotifyResourceLoaded(Resource* res);
