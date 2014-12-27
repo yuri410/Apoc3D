@@ -28,9 +28,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Core/Logging.h"
 
-#include <strstream>
-#include <sstream>
-
 using namespace Apoc3D::Core;
 
 namespace Apoc3D
@@ -257,32 +254,32 @@ namespace Apoc3D
 				PropogateSettings();
 
 				{
-					std::wstringstream wss;
+					String descTxt;
 
 					if (m_currentSetting->DeviceType == D3DDEVTYPE_HAL)
-						wss << L"HAL";
+						descTxt.append( L"HAL");
 					else if (m_currentSetting->DeviceType == D3DDEVTYPE_REF)
-						wss << L"REF";
+						descTxt.append( L"REF");
 					else if (m_currentSetting->DeviceType == D3DDEVTYPE_SW)
-						wss << L"SW";
+						descTxt.append( L"SW");
 
 					if (m_currentSetting->CreationFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING)
 					{
 						if (m_currentSetting->DeviceType == D3DDEVTYPE_HAL)
-							wss << L" (hw vp)";
+							descTxt.append( L" (hw vp)");
 						else
-							wss << L" (simulated hw vp)";
+							descTxt.append( L" (simulated hw vp)");
 					}
 					else if (m_currentSetting->CreationFlags & D3DCREATE_MIXED_VERTEXPROCESSING)
 					{
 						if (m_currentSetting->DeviceType == D3DDEVTYPE_HAL)
-							wss << L" (mixed vp)";
+							descTxt.append(L" (mixed vp)");
 						else
-							wss << L" (simulated mixed vp)";
+							descTxt.append(L" (simulated mixed vp)");
 					}
 					else
 					{
-						wss << L" (sw vp)";
+						descTxt.append( L" (sw vp)");
 					}
 
 					const List<AdapterInfo*> adapters = Enumeration::getAdapters();
@@ -290,14 +287,14 @@ namespace Apoc3D
 					{
 						if (adp->AdapterIndex == (int32)m_currentSetting->AdapterOrdinal)
 						{
-							wss << L": ";
-							wss << adp->Description;
+							descTxt.append(L": ");
+							descTxt += adp->Description;
 							break;
 						}
 					}
 
 					LogManager::getSingleton().Write(LOG_Graphics, 
-						L"[D3D9]Created device: " + wss.str(), 
+						L"[D3D9]Created device: " + descTxt, 
 						LOGLVL_Infomation);
 				}
 

@@ -29,9 +29,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
 #include "apoc3d/Utility/StringUtils.h"
 
-#include <strstream>
-#include <sstream>
-
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -61,16 +58,11 @@ namespace Apoc3D
 				{
 					OIS::ParamList pl;
 
-
-					std::ostringstream wnd;
-					wnd << (size_t)m_hwnd;
-					pl.insert(make_pair("WINDOW", wnd.str()));
+					pl.insert({ "WINDOW", StringUtils::UIntToNarrowString(reinterpret_cast<uintptr>(m_hwnd)) });
 
 					m_InputManager = OIS::InputManager::createInputSystem(pl);
 					m_InputManager->enableAddOnFactory(OIS::InputManager::AddOn_All);
 				}
-				
-				//HWND hwnd = FindWindow(L"Apoc3D Engine", window->getTitle().c_str());// GetForegroundWindow();
 			}
 
 			BOOL Win32InputFactory::EnumWindowsProc(

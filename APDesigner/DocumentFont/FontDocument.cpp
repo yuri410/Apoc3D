@@ -6,9 +6,6 @@
 #include "apoc3d/Core/ResourceHandle.h"
 #include "FontDocument.h"
 
-#include <strstream>
-#include <sstream>
-
 using namespace APDesigner::CommonDialog;
 
 namespace APDesigner
@@ -138,22 +135,13 @@ namespace APDesigner
 			sprite->Draw(white, Apoc3D::Math::Rectangle(j*CellSize,0,1,CellSize*EdgeCellCount), nullptr, CV_Black);
 		}
 
-		for (int i=0;i<EdgeCellCount;i++)
+		for (int i = 0; i < EdgeCellCount; i++)
 		{
-			for (int j=0;j<EdgeCellCount;j++)
+			for (int j = 0; j < EdgeCellCount; j++)
 			{
-				std::wostringstream stream;
-				stream.width(2);
-				stream.fill('0');
-				stream.imbue(std::locale::classic());
-				stream.setf ( std::ios::hex, std::ios::basefield );       // set hex as the basefield
-
-				stream << (i*EdgeCellCount+j);
-
-				int cx = j * CellSize + CellSize/4;
-				int cy = i * CellSize + CellSize/5;
-				String txt = stream.str();
-				StringUtils::ToUpperCase(txt);
+				int cx = j * CellSize + CellSize / 4;
+				int cy = i * CellSize + CellSize / 5;
+				String txt = StringUtils::UIntToStringHex((uint32)(i*EdgeCellCount + j), StrFmt::a<2, '0'>::val | StringUtils::SF_UpperCase);
 
 				defFont->DrawString(sprite, txt, Point(cx, cy), CV_Black);
 			}

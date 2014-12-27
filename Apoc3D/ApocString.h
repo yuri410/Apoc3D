@@ -16,6 +16,70 @@ namespace Apoc3D
 		static_assert(std::is_trivially_copyable<CharType>::value, "");
 
 	public:
+		StringBase(const StringBase& other)
+			: m_length(other.m_length)
+		{
+			Resize(other.m_capacity);
+
+			other.CopyTo(c_str());
+		}
+
+		StringBase(StringBase&& other)
+			: m_content(other.m_content), m_length(other.m_length), m_capacity(other.m_capacity)
+		{
+			other.m_content.allocatedBuffer = nullptr;
+			other.m_length = 0;
+			other.m_capacity = 0;
+		}
+
+		~StringBase()
+		{
+			if (isAllocated())
+			{
+				delete[] m_content.allocatedBuffer;
+				m_content.allocatedBuffer = nullptr;
+			}
+		}
+
+		StringBase& operator=(const StringBase& other)
+		{
+			if (this != &other)
+			{
+				if (m_capacity != other.m_capacity)
+				{
+					~StringBase();
+
+					m_capacity = LocalBufferLength;
+					m_length = 0;
+
+					Resize(other.m_capacity);
+				}
+				
+				m_length = other.m_length;
+
+				other.CopyTo(c_str());
+			}
+			return *this;
+		}
+
+		StringBase& operator=(StringBase&& other)
+		{
+			if (this != &other)
+			{
+				~StringBase();
+
+				m_content = other.m_content;
+				m_length = other.m_length;
+				m_capacity = other.m_capacity;
+
+				other.m_content.allocatedBuffer = nullptr;
+				other.m_length = 0;
+				other.m_capacity = 0;
+			}
+			return *this;
+		}
+
+
 
 
 		void Resize(int32 newCapacity)
@@ -27,7 +91,7 @@ namespace Apoc3D
 
 				if (isAllocated())
 				{
-					delete m_content.allocatedBuffer;
+					delete[] m_content.allocatedBuffer;
 				}
 
 				m_content.allocatedBuffer = buf;
@@ -39,13 +103,11 @@ namespace Apoc3D
 		CharType* begin() { return c_str(); }
 		CharType* end() { return c_str() + m_length; }
 
-		CharType* c_str() const { return isAllocated() ? m_content.allocatedBuffer : m_content.localBuffer; }
+		const CharType* c_str() const { return isAllocated() ? m_content.allocatedBuffer : m_content.localBuffer; }
+		CharType* c_str() { return const_cast<CharType*>(c_str()); }
 
 	private:
 		bool isAllocated() const { return m_capacity > LocalBufferLength; }
-
-		
-		void EnsureCapacity() { EnsureCapacity(1); }
 
 		void EnsureCapacity(int32 more)
 		{
@@ -65,7 +127,7 @@ namespace Apoc3D
 
 		void CopyTo(CharType* dest)
 		{
-			memcpy(dest, c_str(), (m_length + 1)*sizeof(CharType));
+			memcpy(dest, c_str(), (m_length+1)*sizeof(CharType));
 		}
 		
 
@@ -76,8 +138,8 @@ namespace Apoc3D
 			CharType* allocatedBuffer;
 		} m_content;
 
-		int m_length = 0;
-		int m_capacity = LocalBufferLength;
+		int32 m_length = 0;
+		int32 m_capacity = LocalBufferLength;
 
 	};
 

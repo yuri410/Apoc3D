@@ -34,12 +34,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Library/tinythread.h"
 
 #include <ctime>
-
-#include <strstream>
-#include <sstream>
 #include <iostream>
 
-using namespace std;
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -52,14 +48,14 @@ namespace Apoc3D
 
 		LogManager::LogManager()
 		{
-			for (size_t i=0;i<LOG_Count;i++)
+			for (size_t i = 0; i < LOG_Count; i++)
 			{
 				m_logs[i] = new LogSet(static_cast<LogType>(i));
 			}
 		}
 		LogManager::~LogManager()
 		{
-			for (size_t i=0;i<LOG_Count;i++)
+			for (size_t i = 0; i < LOG_Count; i++)
 			{
 				delete m_logs[i];
 				m_logs[i] = nullptr;
@@ -117,7 +113,7 @@ namespace Apoc3D
 					}
 #endif
 
-					wcout << ( msg );
+					std::wcout << ( msg );
 				}
 			}
 
@@ -126,13 +122,13 @@ namespace Apoc3D
 		void LogManager::DumpLogs(String& result)
 		{
 			int32 totalEntryCount = 0;
-			for (size_t i=0;i<LOG_Count;i++)
+			for (size_t i = 0; i < LOG_Count; i++)
 			{
 				totalEntryCount += m_logs[i]->getCount();
 			}
 
 			List<const LogEntry*> allEntries(totalEntryCount);
-			for (size_t i=0;i<LOG_Count;i++)
+			for (size_t i = 0; i < LOG_Count; i++)
 			{
 				LogSet* ls = m_logs[i];
 				for (LogSet::Iterator iter = ls->begin(); iter != ls->end(); ++iter)
@@ -148,7 +144,7 @@ namespace Apoc3D
 			});
 			
 			result.reserve(10240);
-			for (int32 i=0;i<allEntries.getCount();i++)
+			for (int32 i = 0; i < allEntries.getCount(); i++)
 			{
 				String str = allEntries[i]->ToString();
 				result.append(str);
@@ -188,7 +184,7 @@ namespace Apoc3D
 			{
 				time_t t = time(0);
 
-				while (m_entries.getCount()>MaxEntries)
+				while (m_entries.getCount() > MaxEntries)
 				{
 					m_entries.PopFront();
 				}
@@ -215,64 +211,46 @@ namespace Apoc3D
 		{
 			tm* t = localtime(&Time);
 
-			wstringstream wss;
+			//wstringstream wss;
+			String result;
 
 			bool isCommandRelated = Type == LOG_Command || Type == LOG_CommandResponse;
 			if (!isCommandRelated)
 			{
-				wss.width(2);
-				wss.fill('0');
-				wss.imbue(locale::classic());
-				wss.setf(std::ios::right);
-				wss << t->tm_hour;
-
-				wss.width(2);
-				wss.fill('0');
-				wss.imbue(locale::classic());
-				wss.setf(std::ios::right);
-				wss << t->tm_min;
-
-				wss.width(2);
-				wss.fill('0');
-				wss.imbue(locale::classic());
-				wss.setf(std::ios::right);
-				wss << t->tm_sec;
-
-				wss.width(0);
-				wss.fill(' ');
-				wss.setf(0);
+				result.append(StringUtils::IntToString(t->tm_hour * 10000 + t->tm_min * 100 + t->tm_sec, StrFmt::a<6, '0'>::val));
+				result.append(1, ' ');
 
 				if (Type != LOG_Game)
 				{
-					wss << L" [";
+					result.append(L" [");
 					switch (Type)
 					{
-					case LOG_System:
-						wss << L"SYS";
-						break;
-					case LOG_Graphics:
-						wss << L"GRP";
-						break;
-					case LOG_Audio:
-						wss << L"AUD";
-						break;
-					case LOG_Scene:
-						wss << L"SCE";
-						break;
-					case LOG_Network:
-						wss << L"NET";
-						break;
+						case LOG_System:
+							result.append(L"SYS");
+							break;
+						case LOG_Graphics:
+							result.append(L"GRP");
+							break;
+						case LOG_Audio:
+							result.append(L"AUD");
+							break;
+						case LOG_Scene:
+							result.append(L"SCE");
+							break;
+						case LOG_Network:
+							result.append(L"NET");
+							break;
 					}
-					wss << L"] ";
+					result.append(L"] ");
 				}
 				else
 				{
-					wss << L" ";
+					result.append(L" ");
 				}
 			}
 			else if (Type != LOG_CommandResponse)
 			{
-				wss << L" >";
+				result.append(L" >");
 			}
 			
 
@@ -281,24 +259,23 @@ namespace Apoc3D
 				switch (Level)
 				{
 				case LOGLVL_Error:
-					wss << L"[Err] ";
+					result.append(L"[Err] ");
 					break;
 				case LOGLVL_Warning:
-					wss << L"[Warn] ";
+					result.append(L"[Warn] ");
 					break;
 				case LOGLVL_Fatal:
-					wss << L"[Critical] ";
+					result.append(L"[Critical] ");
 					break;
 				case LOGLVL_Infomation:
-					wss << L" ";
+					result.append(L" ");
 					break;
 				}
 			}
 
-			wss << Content;
-			//wss << L"\n";
+			result += Content;
 
-			return wss.str();
+			return result;
 		}
 
 		bool LogEntry::operator ==(const LogEntry& b) const
