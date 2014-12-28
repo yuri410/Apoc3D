@@ -414,11 +414,11 @@ namespace Apoc3D
 			m_baseStream->Write(writeBuffer, sizeof(float)*4);
 		}
 
-		void BinaryWriter::WriteSingle(const float* data, int32 count) const	{ for (int32 i=0;i<count;i++) WriteSingle(data[i]); }
-		void BinaryWriter::WriteDouble(const double* data, int32 count) const	{ for (int32 i=0;i<count;i++) WriteDouble(data[i]); }
-		void BinaryWriter::WriteInt32(const int32* data, int32 count) const		{ for (int32 i=0;i<count;i++) WriteInt32(data[i]); }
-		void BinaryWriter::WriteUInt32(const uint32* data, int32 count) const	{ for (int32 i=0;i<count;i++) WriteUInt32(data[i]); }
-		void BinaryWriter::WriteBoolean(const bool* data, int32 count) const	{ for (int32 i=0;i<count;i++) WriteBoolean(data[i]); }
+		void BinaryWriter::WriteSingle(const float* data, int32 count) const	{ for (int32 i = 0; i < count; i++) WriteSingle(data[i]); }
+		void BinaryWriter::WriteDouble(const double* data, int32 count) const	{ for (int32 i = 0; i < count; i++) WriteDouble(data[i]); }
+		void BinaryWriter::WriteInt32(const int32* data, int32 count) const		{ for (int32 i = 0; i < count; i++) WriteInt32(data[i]); }
+		void BinaryWriter::WriteUInt32(const uint32* data, int32 count) const	{ for (int32 i = 0; i < count; i++) WriteUInt32(data[i]); }
+		void BinaryWriter::WriteBoolean(const bool* data, int32 count) const	{ for (int32 i = 0; i < count; i++) WriteBoolean(data[i]); }
 
 		void BinaryWriter::WriteBooleanBits(const bool* arr, int32 count) const
 		{

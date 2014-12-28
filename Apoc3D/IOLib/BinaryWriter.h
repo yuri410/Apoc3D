@@ -102,9 +102,7 @@ namespace Apoc3D
 			Stream* getBaseStream() const { return m_baseStream; }
 
 		private:
-			template <typename T, typename ET>
-			void FillString(T& str, int32 len);
-
+			
 			bool m_endianIndependent;
 			bool m_shouldDeleteStream;
 

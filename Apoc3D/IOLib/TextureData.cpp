@@ -82,10 +82,10 @@ namespace Apoc3D
 		// v1
 		void TextureLevelData::LoadData(TaggedDataReader* data, bool doNotLoadContent, int32 flags)
 		{
-			Width = data->GetDataInt32(Tag1_Width);
-			Height = data->GetDataInt32(Tag_Height);
-			Depth = data->GetDataInt32(Tag_Depth);
-			LevelSize = data->GetDataInt32(Tag_LevelSize);
+			Width = data->GetInt32(Tag1_Width);
+			Height = data->GetInt32(Tag_Height);
+			Depth = data->GetInt32(Tag_Depth);
+			LevelSize = data->GetInt32(Tag_LevelSize);
 
 			if (!doNotLoadContent)
 			{
@@ -114,10 +114,10 @@ namespace Apoc3D
 		}
 		void TextureLevelData::SaveData(TaggedDataWriter* data, int32 flags) const
 		{
-			data->AddEntryInt32(Tag1_Width, Width);
-			data->AddEntryInt32(Tag_Height, Height);
-			data->AddEntryInt32(Tag_Depth, Depth);
-			data->AddEntryInt32(Tag_LevelSize, LevelSize);
+			data->AddInt32(Tag1_Width, Width);
+			data->AddInt32(Tag_Height, Height);
+			data->AddInt32(Tag_Depth, Depth);
+			data->AddInt32(Tag_LevelSize, LevelSize);
 
 			Stream* strm = data->AddEntryStream(Tag_Content);
 			if ((flags & TextureData::TDF_RLECompressed) == TextureData::TDF_RLECompressed)
@@ -236,13 +236,13 @@ namespace Apoc3D
 			{
 				TaggedDataReader* data = br.ReadTaggedDataBlock();
 
-				Type = static_cast<TextureType>(data->GetDataInt32(Tag_Type));
+				Type = static_cast<TextureType>(data->GetInt32(Tag_Type));
 
-				Format = static_cast<PixelFormat>(data->GetDataInt32(Tag_Format));
-				ContentSize = data->GetDataInt32(Tag_ContentSize);
-				LevelCount = data->GetDataInt32(Tag_LevelCount);
+				Format = static_cast<PixelFormat>(data->GetInt32(Tag_Format));
+				ContentSize = data->GetInt32(Tag_ContentSize);
+				LevelCount = data->GetInt32(Tag_LevelCount);
 
-				if (!data->TryGetDataUInt32(Tag_Flags, Flags))
+				if (!data->TryGetUInt32(Tag_Flags, Flags))
 				{
 					Flags = TDF_None;
 				}
@@ -322,11 +322,11 @@ namespace Apoc3D
 
 			TaggedDataWriter* data = new TaggedDataWriter(strm.IsWriteEndianIndependent());
 
-			data->AddEntryInt32(Tag_Type, (int32)Type);
-			data->AddEntryInt32(Tag_Format, (int32)Format);
-			data->AddEntryInt32(Tag_ContentSize, ContentSize);
-			data->AddEntryInt32(Tag_LevelCount, LevelCount);
-			data->AddEntryInt32(Tag_Flags, Flags);
+			data->AddInt32(Tag_Type, (int32)Type);
+			data->AddInt32(Tag_Format, (int32)Format);
+			data->AddInt32(Tag_ContentSize, ContentSize);
+			data->AddInt32(Tag_LevelCount, LevelCount);
+			data->AddInt32(Tag_Flags, Flags);
 
 			for (int32 i = 0; i < LevelCount; i++)
 			{

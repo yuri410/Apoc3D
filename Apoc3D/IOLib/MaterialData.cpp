@@ -92,7 +92,7 @@ namespace Apoc3D
 		{
 			// load custom material parameters
 			uint32 cmpCount = 0;
-			data->TryGetDataUInt32(TAG_3_CustomParamCount, cmpCount);
+			data->TryGetUInt32(TAG_3_CustomParamCount, cmpCount);
 			//m_customParametrs.reserve(cmpCount);
 			CustomParametrs.Resize(cmpCount);
 
@@ -118,7 +118,7 @@ namespace Apoc3D
 			// Load textures
 			{
 				bool hasTexture[MaxTextures];
-				data->GetDataBool(TAG_3_HasTexture, hasTexture, MaxTextures);
+				data->GetBool(TAG_3_HasTexture, hasTexture, MaxTextures);
 
 				for (int32 i = 0; i < MaxTextures; i++)
 				{
@@ -128,7 +128,7 @@ namespace Apoc3D
 						tag = tag + TAG_3_Texture;
 
 						String name;
-						data->GetDataString(tag, name);
+						data->GetString(tag, name);
 
 						if (!TextureName.Contains(i))
 							TextureName.Add(i, name);
@@ -142,7 +142,7 @@ namespace Apoc3D
 			// Load effects
 			{
 				bool hasEffect[MaxScenePass];
-				data->GetDataBool(TAG_3_HasEffect, hasEffect, MaxScenePass);
+				data->GetBool(TAG_3_HasEffect, hasEffect, MaxScenePass);
 
 				for (int32 i = 0; i < MaxScenePass; i++)
 				{
@@ -152,7 +152,7 @@ namespace Apoc3D
 						tag = tag + TAG_3_Effect;
 
 						String name;
-						data->GetDataString(tag, name);
+						data->GetString(tag, name);
 
 						if (!EffectName.Contains(i))
 							EffectName.Add(i, name);
@@ -164,33 +164,33 @@ namespace Apoc3D
 				}
 			}
 
-			Priority = data->GetDataInt32(TAG_3_RenderPriority);
-			PassFlags = data->GetDataUInt64(TAG_3_PassFlags);
+			Priority = data->GetInt32(TAG_3_RenderPriority);
+			PassFlags = data->GetUInt64(TAG_3_PassFlags);
 
-			IsBlendTransparent = data->GetDataBool(TAG_3_IsBlendTransparent);
+			IsBlendTransparent = data->GetBool(TAG_3_IsBlendTransparent);
 
 			uint32 val = static_cast<uint32>(SourceBlend);
-			data->TryGetDataUInt32(TAG_3_SourceBlend, val);
+			data->TryGetUInt32(TAG_3_SourceBlend, val);
 			SourceBlend = static_cast<Blend>(val);
 
 			val = static_cast<uint32>(DestinationBlend);
-			data->TryGetDataUInt32(TAG_3_DestinationBlend, val);
+			data->TryGetUInt32(TAG_3_DestinationBlend, val);
 			DestinationBlend = static_cast<Blend>(val);
 
 			val = static_cast<uint32>(BlendFunction);
-			data->TryGetDataUInt32(TAG_3_BlendFunction, val);
+			data->TryGetUInt32(TAG_3_BlendFunction, val);
 			BlendFunction = static_cast<Apoc3D::Graphics::RenderSystem::BlendFunction>(val);
 
-			Cull = static_cast<CullMode>(data->GetDataUInt32(TAG_3_CullMode));
+			Cull = static_cast<CullMode>(data->GetUInt32(TAG_3_CullMode));
 
-			AlphaReference = data->GetDataUInt32(TAG_3_AlphaReference);
-			AlphaTestEnabled = data->GetDataBool(TAG_3_AlphaTestEnable);
+			AlphaReference = data->GetUInt32(TAG_3_AlphaReference);
+			AlphaTestEnabled = data->GetBool(TAG_3_AlphaTestEnable);
 
-			DepthTestEnabled = data->GetDataBool(TAG_3_DepthTestEnabled);
-			DepthWriteEnabled = data->GetDataBool(TAG_3_DepthWriteEnabled);
+			DepthTestEnabled = data->GetBool(TAG_3_DepthTestEnabled);
+			DepthWriteEnabled = data->GetBool(TAG_3_DepthWriteEnabled);
 
 			UsePointSprite = false;
-			data->TryGetDataBool(TAG_3_UsePointSprite, UsePointSprite);
+			data->TryGetBool(TAG_3_UsePointSprite, UsePointSprite);
 
 			// load material basic color
 			{
@@ -225,7 +225,7 @@ namespace Apoc3D
 		{
 			TaggedDataWriter* data = new TaggedDataWriter(true);
 
-			data->AddEntryInt32(TAG_3_CustomParamCount, CustomParametrs.getCount());
+			data->AddInt32(TAG_3_CustomParamCount, CustomParametrs.getCount());
 			int32 index = 0;
 			for (const MaterialCustomParameter& mcp : CustomParametrs.getValueAccessor())
 			{	
@@ -258,7 +258,7 @@ namespace Apoc3D
 						hasTexture[i] = false;
 					}
 				}
-				data->AddEntryBool(TAG_3_HasTexture, hasTexture, MaxTextures);
+				data->AddBool(TAG_3_HasTexture, hasTexture, MaxTextures);
 
 				for (int32 i=0;i<MaxTextures;i++)
 				{
@@ -267,7 +267,7 @@ namespace Apoc3D
 						std::string tag = StringUtils::IntToNarrowString(i);
 						tag = tag + TAG_3_Texture;
 
-						data->AddEntryString(tag, TextureName[i]);
+						data->AddString(tag, TextureName[i]);
 					}
 				}
 			}
@@ -286,7 +286,7 @@ namespace Apoc3D
 						hasEffects[i] = false;
 					}
 				}
-				data->AddEntryBool(TAG_3_HasEffect, hasEffects, MaxScenePass);
+				data->AddBool(TAG_3_HasEffect, hasEffects, MaxScenePass);
 
 				for (int32 i=0;i<MaxScenePass;i++)
 				{
@@ -295,27 +295,27 @@ namespace Apoc3D
 						std::string tag = StringUtils::IntToNarrowString(i);
 						tag = tag + TAG_3_Effect;
 
-						data->AddEntryString(tag, EffectName[i]);
+						data->AddString(tag, EffectName[i]);
 					}
 				}
 			}
 
-			data->AddEntryInt32(TAG_3_RenderPriority, Priority);
-			data->AddEntryUInt64(TAG_3_PassFlags, PassFlags);
+			data->AddInt32(TAG_3_RenderPriority, Priority);
+			data->AddUInt64(TAG_3_PassFlags, PassFlags);
 
-			data->AddEntryBool(TAG_3_IsBlendTransparent, IsBlendTransparent);
-			data->AddEntryUInt32(TAG_3_SourceBlend, static_cast<uint32>(SourceBlend));
-			data->AddEntryUInt32(TAG_3_DestinationBlend, static_cast<uint32>(DestinationBlend));
-			data->AddEntryUInt32(TAG_3_BlendFunction, static_cast<uint32>(BlendFunction));
+			data->AddBool(TAG_3_IsBlendTransparent, IsBlendTransparent);
+			data->AddUInt32(TAG_3_SourceBlend, static_cast<uint32>(SourceBlend));
+			data->AddUInt32(TAG_3_DestinationBlend, static_cast<uint32>(DestinationBlend));
+			data->AddUInt32(TAG_3_BlendFunction, static_cast<uint32>(BlendFunction));
 
-			data->AddEntryUInt32(TAG_3_CullMode, static_cast<uint32>(Cull));			
+			data->AddUInt32(TAG_3_CullMode, static_cast<uint32>(Cull));			
 
-			data->AddEntryUInt32(TAG_3_AlphaReference, AlphaReference);
-			data->AddEntryBool(TAG_3_AlphaTestEnable, AlphaTestEnabled);
+			data->AddUInt32(TAG_3_AlphaReference, AlphaReference);
+			data->AddBool(TAG_3_AlphaTestEnable, AlphaTestEnabled);
 
-			data->AddEntryBool(TAG_3_DepthTestEnabled, DepthTestEnabled);
-			data->AddEntryBool(TAG_3_DepthWriteEnabled, DepthWriteEnabled);
-			data->AddEntryBool(TAG_3_UsePointSprite, UsePointSprite);
+			data->AddBool(TAG_3_DepthTestEnabled, DepthTestEnabled);
+			data->AddBool(TAG_3_DepthWriteEnabled, DepthWriteEnabled);
+			data->AddBool(TAG_3_UsePointSprite, UsePointSprite);
 
 			// save material basic color
 			{
@@ -330,7 +330,7 @@ namespace Apoc3D
 				delete bw;
 			}
 
-			data->AddEntryString(TAG_3_MaterialRefName, ExternalRefName);
+			data->AddString(TAG_3_MaterialRefName, ExternalRefName);
 
 			return data;
 		}

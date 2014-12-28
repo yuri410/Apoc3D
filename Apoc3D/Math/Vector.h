@@ -374,8 +374,7 @@ namespace Apoc3D
 
 			operator float*()							{ return &X; }
 			operator const float*() const				{ return &X; }
-
-
+			
 			void operator +=(const Vector2& vec)		{ X += vec.X; Y += vec.Y; }
 			void operator -=(const Vector2& vec)		{ X -= vec.X; Y -= vec.Y; }
 
@@ -705,7 +704,7 @@ namespace Apoc3D
 			/**
 			 *  Calculates the dot product of two vectors.
 			 */
-			float Dot(const Vector3& right) const { return X * right.X + Y * right.Y + Z * right.Z; }
+			float Dot(const Vector3& right) const	{ return X * right.X + Y * right.Y + Z * right.Z; }
 
 			uint32 GetHashCode() const { return reinterpret_cast<const uint32&>(X) ^ reinterpret_cast<const uint32&>(Y) ^ reinterpret_cast<const uint32&>(Z); }
 

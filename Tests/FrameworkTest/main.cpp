@@ -105,30 +105,30 @@ void TestTaggedData()
 
 	TaggedDataWriter* outData = new TaggedDataWriter(true);
 	//outData->AddEntryBool(L"Bool", (bool*)sourceBuffer, sizeof(sourceBuffer)/sizeof(bool));
-	outData->AddEntryBoundingBox("BoundingBox", (BoundingBox*)sourceBuffer, sizeof(sourceBuffer)/sizeof(BoundingBox));
-	outData->AddEntryBoundingSphere("BoundingSphere", (BoundingSphere*)sourceBuffer, sizeof(sourceBuffer)/sizeof(BoundingSphere));
-	outData->AddEntryColor4("Color4", (Color4*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Color4));
-	outData->AddEntryDouble("Double", (double*)sourceBuffer, sizeof(sourceBuffer)/sizeof(double));
-	outData->AddEntryInt16("Int16", (int16*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int16));
-	outData->AddEntryInt32("Int32", (int32*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int32));
-	outData->AddEntryInt64("Int64", (int64*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int64));
-	outData->AddEntryMathSize("MathSize", (Size*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Size));
-	outData->AddEntryMatrix("Matrix", (Matrix*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Matrix));
-	outData->AddEntryPlane("Plane", (Plane*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Plane));
-	outData->AddEntryPoint("Point", (Point*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Point));
-	outData->AddEntryPointF("PointF", (PointF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(PointF));
-	outData->AddEntryQuaternion("Quaternion", (Quaternion*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Quaternion));
-	outData->AddEntryRay("Ray", (Ray*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Ray));
-	outData->AddEntryRectangle("Rectangle", (Apoc3D::Math::Rectangle*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Apoc3D::Math::Rectangle));
-	outData->AddEntryRectangleF("RectangleF", (RectangleF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(RectangleF));
-	outData->AddEntrySingle("Single", (float*)sourceBuffer, sizeof(sourceBuffer)/sizeof(float));
-	outData->AddEntryUInt16("UInt16", (uint16*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint16));
-	outData->AddEntryUInt32("UInt32", (uint32*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint32));
-	outData->AddEntryUInt64("UInt64", (uint64*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint64));
-	outData->AddEntryVector2("Vector2", (Vector2*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector2));
-	outData->AddEntryVector3("Vector3", (Vector3*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector3));
-	outData->AddEntryVector4("Vector4", (Vector4*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector4));
-	outData->AddEntryViewport("Viewport", (Viewport*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Viewport));
+	outData->AddBoundingBox("BoundingBox", (BoundingBox*)sourceBuffer, sizeof(sourceBuffer)/sizeof(BoundingBox));
+	outData->AddBoundingSphere("BoundingSphere", (BoundingSphere*)sourceBuffer, sizeof(sourceBuffer)/sizeof(BoundingSphere));
+	outData->AddColor4("Color4", (Color4*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Color4));
+	outData->AddDouble("Double", (double*)sourceBuffer, sizeof(sourceBuffer)/sizeof(double));
+	outData->AddInt16("Int16", (int16*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int16));
+	outData->AddInt32("Int32", (int32*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int32));
+	outData->AddInt64("Int64", (int64*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int64));
+	outData->AddMathSize("MathSize", (Size*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Size));
+	outData->AddMatrix("Matrix", (Matrix*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Matrix));
+	outData->AddPlane("Plane", (Plane*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Plane));
+	outData->AddPoint("Point", (Point*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Point));
+	outData->AddPointF("PointF", (PointF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(PointF));
+	outData->AddQuaternion("Quaternion", (Quaternion*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Quaternion));
+	outData->AddRay("Ray", (Ray*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Ray));
+	outData->AddRectangle("Rectangle", (Apoc3D::Math::Rectangle*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Apoc3D::Math::Rectangle));
+	outData->AddRectangleF("RectangleF", (RectangleF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(RectangleF));
+	outData->AddSingle("Single", (float*)sourceBuffer, sizeof(sourceBuffer)/sizeof(float));
+	outData->AddUInt16("UInt16", (uint16*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint16));
+	outData->AddUInt32("UInt32", (uint32*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint32));
+	outData->AddUInt64("UInt64", (uint64*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint64));
+	outData->AddVector2("Vector2", (Vector2*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector2));
+	outData->AddVector3("Vector3", (Vector3*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector3));
+	outData->AddVector4("Vector4", (Vector4*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector4));
+	outData->AddViewport("Viewport", (Viewport*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Viewport));
 
 	MemoryOutStream* buffer = new MemoryOutStream(0xffff);
 	outData->Save(*buffer);
@@ -138,76 +138,76 @@ void TestTaggedData()
 	//inData->GetDataBool(L"Bool", (bool*)tempBuffer, sizeof(tempBuffer)/sizeof(bool));
 	//CheckEqual((bool*)tempBuffer, (bool*)sourceBuffer, sizeof(sourceBuffer)/sizeof(bool));
 	
-	inData->GetDataBoundingBox("BoundingBox", (BoundingBox*)tempBuffer, sizeof(tempBuffer)/sizeof(BoundingBox));
+	inData->GetBoundingBox("BoundingBox", (BoundingBox*)tempBuffer, sizeof(tempBuffer)/sizeof(BoundingBox));
 	CheckEqual((BoundingBox*)tempBuffer, (BoundingBox*)sourceBuffer, sizeof(sourceBuffer)/sizeof(BoundingBox));
 
-	inData->GetDataBoundingSphere("BoundingSphere", (BoundingSphere*)tempBuffer, sizeof(tempBuffer)/sizeof(BoundingSphere));
+	inData->GetBoundingSphere("BoundingSphere", (BoundingSphere*)tempBuffer, sizeof(tempBuffer)/sizeof(BoundingSphere));
 	CheckEqual((BoundingSphere*)tempBuffer, (BoundingSphere*)sourceBuffer, sizeof(sourceBuffer)/sizeof(BoundingSphere));
 
-	inData->GetDataColor4("Color4", (Color4*)tempBuffer, sizeof(tempBuffer)/sizeof(Color4));
+	inData->GetColor4("Color4", (Color4*)tempBuffer, sizeof(tempBuffer)/sizeof(Color4));
 	CheckEqual((Color4*)tempBuffer, (Color4*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Color4));
 
-	inData->GetDataDouble("Double", (double*)tempBuffer, sizeof(tempBuffer)/sizeof(double));
+	inData->GetDouble("Double", (double*)tempBuffer, sizeof(tempBuffer)/sizeof(double));
 	CheckEqual((double*)tempBuffer, (double*)sourceBuffer, sizeof(sourceBuffer)/sizeof(double));
 
-	inData->GetDataInt16("Int16", (int16*)tempBuffer, sizeof(tempBuffer)/sizeof(int16));
+	inData->GetInt16("Int16", (int16*)tempBuffer, sizeof(tempBuffer)/sizeof(int16));
 	CheckEqual((int16*)tempBuffer, (int16*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int16));
 
-	inData->GetDataInt32("Int32", (int32*)tempBuffer, sizeof(tempBuffer)/sizeof(int32));
+	inData->GetInt32("Int32", (int32*)tempBuffer, sizeof(tempBuffer)/sizeof(int32));
 	CheckEqual((int32*)tempBuffer, (int32*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int32));
 
-	inData->GetDataInt64("Int64", (int64*)tempBuffer, sizeof(tempBuffer)/sizeof(int64));
+	inData->GetInt64("Int64", (int64*)tempBuffer, sizeof(tempBuffer)/sizeof(int64));
 	CheckEqual((int64*)tempBuffer, (int64*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int64));
 
-	inData->GetDataMathSize("MathSize", (Size*)tempBuffer, sizeof(tempBuffer)/sizeof(Size));
+	inData->GetMathSize("MathSize", (Size*)tempBuffer, sizeof(tempBuffer)/sizeof(Size));
 	CheckEqual((Size*)tempBuffer, (Size*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Size));
 
-	inData->GetDataMatrix("Matrix", (Matrix*)tempBuffer, sizeof(tempBuffer)/sizeof(Matrix));
+	inData->GetMatrix("Matrix", (Matrix*)tempBuffer, sizeof(tempBuffer)/sizeof(Matrix));
 	CheckEqual((Matrix*)tempBuffer, (Matrix*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Matrix));
 
-	inData->GetDataPlane("Plane", (Plane*)tempBuffer, sizeof(tempBuffer)/sizeof(Plane));
+	inData->GetPlane("Plane", (Plane*)tempBuffer, sizeof(tempBuffer)/sizeof(Plane));
 	CheckEqual((Plane*)tempBuffer, (Plane*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Plane));
 
-	inData->GetDataPoint("Point", (Point*)tempBuffer, sizeof(tempBuffer)/sizeof(Point));
+	inData->GetPoint("Point", (Point*)tempBuffer, sizeof(tempBuffer)/sizeof(Point));
 	CheckEqual((Point*)tempBuffer, (Point*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Point));
 
-	inData->GetDataPointF("PointF", (PointF*)tempBuffer, sizeof(tempBuffer)/sizeof(PointF));
+	inData->GetPointF("PointF", (PointF*)tempBuffer, sizeof(tempBuffer)/sizeof(PointF));
 	CheckEqual((PointF*)tempBuffer, (PointF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(PointF));
 
-	inData->GetDataQuaternion("Quaternion", (Quaternion*)tempBuffer, sizeof(tempBuffer)/sizeof(Quaternion));
+	inData->GetQuaternion("Quaternion", (Quaternion*)tempBuffer, sizeof(tempBuffer)/sizeof(Quaternion));
 	CheckEqual((Quaternion*)tempBuffer, (Quaternion*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Quaternion));
 
-	inData->GetDataRay("Ray", (Ray*)tempBuffer, sizeof(tempBuffer)/sizeof(Ray));
+	inData->GetRay("Ray", (Ray*)tempBuffer, sizeof(tempBuffer)/sizeof(Ray));
 	CheckEqual((Ray*)tempBuffer, (Ray*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Ray));
 
-	inData->GetDataRectangle("Rectangle", (Apoc3D::Math::Rectangle*)tempBuffer, sizeof(tempBuffer)/sizeof(Apoc3D::Math::Rectangle));
+	inData->GetRectangle("Rectangle", (Apoc3D::Math::Rectangle*)tempBuffer, sizeof(tempBuffer)/sizeof(Apoc3D::Math::Rectangle));
 	CheckEqual((Apoc3D::Math::Rectangle*)tempBuffer, (Apoc3D::Math::Rectangle*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Apoc3D::Math::Rectangle));
 
-	inData->GetDataRectangleF("RectangleF", (RectangleF*)tempBuffer, sizeof(tempBuffer)/sizeof(RectangleF));
+	inData->GetRectangleF("RectangleF", (RectangleF*)tempBuffer, sizeof(tempBuffer)/sizeof(RectangleF));
 	CheckEqual((RectangleF*)tempBuffer, (RectangleF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(RectangleF));
 
-	inData->GetDataSingle("Single", (float*)tempBuffer, sizeof(tempBuffer)/sizeof(float));
+	inData->GetSingle("Single", (float*)tempBuffer, sizeof(tempBuffer)/sizeof(float));
 	CheckEqual((float*)tempBuffer, (float*)sourceBuffer, sizeof(sourceBuffer)/sizeof(float));
 
-	inData->GetDataUInt16("UInt16", (uint16*)tempBuffer, sizeof(tempBuffer)/sizeof(uint16));
+	inData->GetUInt16("UInt16", (uint16*)tempBuffer, sizeof(tempBuffer)/sizeof(uint16));
 	CheckEqual((uint16*)tempBuffer, (uint16*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint16));
 
-	inData->GetDataUInt32("UInt32", (uint32*)tempBuffer, sizeof(tempBuffer)/sizeof(uint32));
+	inData->GetUInt32("UInt32", (uint32*)tempBuffer, sizeof(tempBuffer)/sizeof(uint32));
 	CheckEqual((uint32*)tempBuffer, (uint32*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint32));
 
-	inData->GetDataUInt64("UInt64", (uint64*)tempBuffer, sizeof(tempBuffer)/sizeof(uint64));
+	inData->GetUInt64("UInt64", (uint64*)tempBuffer, sizeof(tempBuffer)/sizeof(uint64));
 	CheckEqual((uint64*)tempBuffer, (uint64*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint64));
 
-	inData->GetDataVector2("Vector2", (Vector2*)tempBuffer, sizeof(tempBuffer)/sizeof(Vector2));
+	inData->GetVector2("Vector2", (Vector2*)tempBuffer, sizeof(tempBuffer)/sizeof(Vector2));
 	CheckEqual((Vector2*)tempBuffer, (Vector2*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector2));
 
-	inData->GetDataVector3("Vector3", (Vector3*)tempBuffer, sizeof(tempBuffer)/sizeof(Vector3));
+	inData->GetVector3("Vector3", (Vector3*)tempBuffer, sizeof(tempBuffer)/sizeof(Vector3));
 	CheckEqual((Vector3*)tempBuffer, (Vector3*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector3));
 
-	inData->GetDataVector4("Vector4", (Vector4*)tempBuffer, sizeof(tempBuffer)/sizeof(Vector4));
+	inData->GetVector4("Vector4", (Vector4*)tempBuffer, sizeof(tempBuffer)/sizeof(Vector4));
 	CheckEqual((Vector4*)tempBuffer, (Vector4*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector4));
 
-	inData->GetDataViewport("Viewport", (Viewport*)tempBuffer, sizeof(tempBuffer)/sizeof(Viewport));
+	inData->GetViewport("Viewport", (Viewport*)tempBuffer, sizeof(tempBuffer)/sizeof(Viewport));
 	CheckEqual((Viewport*)tempBuffer, (Viewport*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Viewport));
 
 	delete inData;

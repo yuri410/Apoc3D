@@ -11,86 +11,62 @@ namespace Apoc3D
 		class Vector4d;
 		class Matrixd;
 
-		/**
-		 * Defines a four component vector.
-		 */
+		/**  Defines a four component vector. */
 		class Vector4d
 		{
 		public:
-			
-			/**
-			 * The X component of the vector.
-			 */
-			double X;
-
-			/**
-			 * The Y component of the vector
-			 */
-			double Y;
-
-			/**
-			 * The Z component of the vector.
-			 */
-			double Z;
-
-			/**
-			 * The W component of the vector.
-			 */
-			double W;
+			double X;			/** The X component of the vector. */
+			double Y;			/** The Y component of the vector */
+			double Z;			/** The Z component of the vector. */
+			double W;			/** The W component of the vector. */
 
 			Vector4d() { }
 
-			explicit Vector4d(const double* ptr)
-				: X(ptr[0]), Y(ptr[1]), Z(ptr[2]), W(ptr[3])
-			{
-			}
-			explicit Vector4d(double value)
-				: X(value), Y(value), Z(value), W(value)
-			{				
-			}
-			Vector4d(double x,double y,double z,double w)
-				: X(x), Y(y), Z(z), W(w)
-			{
-			}
+			Vector4d(const double (&ptr)[4])
+				: X(ptr[0]), Y(ptr[1]), Z(ptr[2]), W(ptr[3]) { }
+
+			Vector4d(double x, double y, double z, double w)
+				: X(x), Y(y), Z(z), W(w) { }
+
 			Vector4d(const Vector3d& v, double w);
 
-			bool operator==(const Vector4d &other) const { return other.X == X && other.Y == Y && other.Z == Z && other.W == W; }
-			bool operator!=(const Vector4d &other) const { return !(*this == other); }
+			bool operator==(const Vector4d &other) const	{ return other.X == X && other.Y == Y && other.Z == Z && other.W == W; }
+			bool operator!=(const Vector4d &other) const	{ return !(*this == other); }
 
-			operator double*() { return &X; }
-			operator const double*() const { return &X; }
+			operator double*()								{ return &X; }
+			operator const double*() const					{ return &X; }
 
-			void operator +=(const Vector4d& vec) { X += vec.X; Y += vec.Y; Z += vec.Z; W += vec.W; }
-			void operator -=(const Vector4d& vec) { X -= vec.X; Y -= vec.Y; Z -= vec.Z; W -= vec.W; }
+			typedef double ArrayType[4];
+			ArrayType& asArray()							{ return *(ArrayType*)(&X); }
+			const ArrayType& asArray() const				{ return *(const ArrayType*)(&X); }
 
-			void operator *=(const Vector4d& vec) { X *= vec.X; Y *= vec.Y; Z *= vec.Z; W *= vec.W; }
-			void operator *=(double scalar) { X *= scalar; Y *= scalar; Z *= scalar; W *= scalar; }
-			void operator /=(double scalar) { double inv = 1.0/scalar; X *= inv; Y *= inv; Z *= inv; W *= inv; }
 
-			Vector4d operator -() const { return Vector4d(-X, -Y, -Z, -W); }
-			Vector4d operator -(const Vector4d& vec) const { return Vector4d(X - vec.X, Y - vec.Y, Z - vec.Z, W - vec.W); }
-			Vector4d operator +(const Vector4d& vec) const { return Vector4d(X + vec.X, Y + vec.Y, Z + vec.Z, W + vec.W); }
-			Vector4d operator *(const Vector4d& vec) const { return Vector4d(X * vec.X, Y * vec.Y, Z * vec.Z, W * vec.W); }
-			Vector4d operator *(double scalar) const { return Vector4d(X * scalar, Y * scalar, Z * scalar, W * scalar); }
-			Vector4d operator /(double scalar) const { scalar = 1/scalar; return Vector4d(X * scalar, Y * scalar, Z * scalar, W * scalar); }
+			void operator +=(const Vector4d& vec)			{ X += vec.X; Y += vec.Y; Z += vec.Z; W += vec.W; }
+			void operator -=(const Vector4d& vec)			{ X -= vec.X; Y -= vec.Y; Z -= vec.Z; W -= vec.W; }
+
+			void operator *=(const Vector4d& vec)			{ X *= vec.X; Y *= vec.Y; Z *= vec.Z; W *= vec.W; }
+			void operator *=(double scalar)					{ X *= scalar; Y *= scalar; Z *= scalar; W *= scalar; }
+			void operator /=(double scalar)					{ double inv = 1.0/scalar; X *= inv; Y *= inv; Z *= inv; W *= inv; }
+
+			Vector4d operator -() const						{ return Vector4d(-X, -Y, -Z, -W); }
+			Vector4d operator -(const Vector4d& vec) const	{ return Vector4d(X - vec.X, Y - vec.Y, Z - vec.Z, W - vec.W); }
+			Vector4d operator +(const Vector4d& vec) const	{ return Vector4d(X + vec.X, Y + vec.Y, Z + vec.Z, W + vec.W); }
+			Vector4d operator *(const Vector4d& vec) const	{ return Vector4d(X * vec.X, Y * vec.Y, Z * vec.Z, W * vec.W); }
+			Vector4d operator *(double scalar) const		{ return Vector4d(X * scalar, Y * scalar, Z * scalar, W * scalar); }
+			Vector4d operator /(double scalar) const		{ scalar = 1 / scalar; return Vector4d(X * scalar, Y * scalar, Z * scalar, W * scalar); }
 			
-			double operator[] (int idx) const { assert(idx<4); return (&X)[idx]; }
+			double operator[] (int idx) const				{ assert(idx < 4); return (&X)[idx]; }
 
-			void Set(const double* ptr) { X = ptr[0]; Y = ptr[1]; Z = ptr[2]; W = ptr[3]; }
-			void Store(double* dest) { dest[0] = X; dest[1] = Y; dest[2] = Z; dest[3] = W; }
+			void Load(const double* ptr)					{ X = ptr[0]; Y = ptr[1]; Z = ptr[2]; W = ptr[3]; }
+			void Store(double* dest)						{ dest[0] = X; dest[1] = Y; dest[2] = Z; dest[3] = W; }
 
-			/**
-			 * Calculates the length of the vector.
-			 */
-			double Length() const { return sqrt(X*X + Y*Y + Z*Z + W*W); }
-			/**
-			 * Calculates the squared length of the vector.
-			 */
-			double LengthSquared() const { return X*X + Y*Y + Z*Z + W*W; }
+			/** Calculates the length of the vector. */
+			double Length() const							{ return sqrt(X*X + Y*Y + Z*Z + W*W); }
 
-			/**
-			 * Converts the vector into a unit vector.
-			 */
+			/** Calculates the squared length of the vector. */
+			double LengthSquared() const					{ return X*X + Y*Y + Z*Z + W*W; }
+
+			/** Converts the vector into a unit vector. */
 			void NormalizeInPlace()
 			{
 				double length = Length();
@@ -103,17 +79,13 @@ namespace Apoc3D
 				X *= inv; Y *= inv;
 				Z *= inv; W *= inv;
 			}
-			Vector4d Normalized() const { Vector4d copy = *this; copy.NormalizeInPlace(); return copy; }
+			Vector4d Normalized() const						{ Vector4d copy = *this; copy.NormalizeInPlace(); return copy; }
 
-			/**
-			 * Reverses the direction of the vector.
-			 */
-			void NegateInPlace() { X = -X; Y = -Y; Z = -Z; W = -W; }
-			Vector4d Negate() const { Vector4d copy = *this; copy.NegateInPlace(); return copy; }
+			/** Reverses the direction of the vector. */
+			void NegateInPlace()							{ X = -X; Y = -Y; Z = -Z; W = -W; }
+			Vector4d Negate() const							{ Vector4d copy = *this; copy.NegateInPlace(); return copy; }
 
-			/**
-			 * Calculates the distance between two vectors.
-			 */
+			/** Calculates the distance between two vectors. */
 			double Distance(const Vector4d& vec) const
 			{
 				double x = X - vec.X;
@@ -123,6 +95,7 @@ namespace Apoc3D
 
 				return sqrt(x * x + y * y + z * z + w * w);
 			}
+
 			double DistanceSquared(const Vector4d& vec) const
 			{
 				double x = X - vec.X;
@@ -133,109 +106,77 @@ namespace Apoc3D
 				return x * x + y * y + z * z + w * w;
 			}
 
-			/**
-			 * Calculates the dot product of two vectors.
-			 */
-			double Dot(const Vector4d& right) const { return X * right.X + Y * right.Y + Z * right.Z + W * right.W; }
+			/** Calculates the dot product of two vectors. */
+			double Dot(const Vector4d& right) const	{ return X * right.X + Y * right.Y + Z * right.Z + W * right.W; }
 
-			/**
-			 * Transforms a 3D vector by the given Matrix
-			 */
+			/** Transforms a 3D vector by the given Matrix */
 			static Vector4d Transform(const Vector4d& vector, const Matrixd& transform);
 			
+			static Vector4d Set(double v) { return Vector4d(v, v, v, v); }
 
-			/** 
-				* a Vector4 with all of its components set to zero.
-				*/
-			static const Vector4d Zero;
-			/**
-				* X unit Vector4 (1, 0, 0, 0).
-				*/
-			static const Vector4d UnitX;
-			/**
-				* Y unit Vector4 (0, 1, 0, 0).
-				*/
-			static const Vector4d UnitY;
-			/**
-				* Z unit Vector4 (0, 0, 1, 0).
-				*/
-			static const Vector4d UnitZ;
-			/**
-				* W unit Vector4 (0, 0, 0, 1).
-				*/
-			static const Vector4d UnitW;
+			
+			static const Vector4d Zero;				/** a Vector4 with all of its components set to zero. */
+			
+			static const Vector4d UnitX;			/** X unit Vector4 (1, 0, 0, 0). */
+			static const Vector4d UnitY;			/** Y unit Vector4 (0, 1, 0, 0). */
+			static const Vector4d UnitZ;			/** Z unit Vector4 (0, 0, 1, 0). */
+			static const Vector4d UnitW;			/** W unit Vector4 (0, 0, 0, 1). */
 			static const Vector4d One;
 
 		};
 
-		/**
-		 * Defines a three component vector.
-		 */
+		/** Defines a three component vector. */
 		class Vector3d
 		{
 		public:
-			/**
-			 * the X component of the vector
-			 */
-			double X;
-			/**
-			 * the Y component of the vector
-			 */
-			double Y;
-			/**
-			 * the Z component of the vector
-			 */
-			double Z;
-
+			double X;		/** the X component of the vector */
+			double Y;		/** the Y component of the vector */
+			double Z;		/** the Z component of the vector */
 
 			Vector3d() { }
-			explicit Vector3d(const double* ptr)
-				: X(ptr[0]), Y(ptr[1]), Z(ptr[2])
-			{ }
-			explicit Vector3d(double value)
-				: X(value), Y(value), Z(value)
-			{ }
-			Vector3d(double x,double y,double z)
-				: X(x), Y(y), Z(z)
-			{ }
-
-			bool operator==(const Vector3d &other) const { return other.X == X && other.Y == Y && other.Z == Z;  }
-			bool operator!=(const Vector3d &other) const { return !(*this == other); }
-
-			operator double*() { return &X; }
-			operator const double*() const { return &X; }
-
-			void operator +=(const Vector3d& vec) { X += vec.X; Y += vec.Y; Z += vec.Z; }
-			void operator -=(const Vector3d& vec) { X -= vec.X; Y -= vec.Y; Z -= vec.Z; }
-
-			void operator *=(const Vector3d& vec) { X *= vec.X; Y *= vec.Y; Z *= vec.Z; }
-			void operator *=(double scalar) { X *= scalar; Y *= scalar; Z *= scalar; }
-			void operator /=(double scalar) { double inv = 1.0f/scalar; X *= inv; Y *= inv; Z *= inv; }
-
-			Vector3d operator -() const { return Vector3d(-X, -Y, -Z); }
-			Vector3d operator -(const Vector3d& vec) const { return Vector3d(X - vec.X, Y - vec.Y, Z - vec.Z); }
-			Vector3d operator +(const Vector3d& vec) const { return Vector3d(X + vec.X, Y + vec.Y, Z + vec.Z); }
-			Vector3d operator *(const Vector3d& vec) const { return Vector3d(X * vec.X, Y * vec.Y, Z * vec.Z); }
-			Vector3d operator *(double scalar) const { return Vector3d(X * scalar, Y * scalar, Z * scalar); }
-			Vector3d operator /(double scalar) const { scalar = 1/scalar; return Vector3d(X * scalar, Y * scalar, Z * scalar); }
+			Vector3d(const double (&ptr)[3])
+				: X(ptr[0]), Y(ptr[1]), Z(ptr[2]) { }
 			
-			double operator[] (int idx) const { assert(idx<3); return (&X)[idx]; }
+			Vector3d(double x, double y, double z)
+				: X(x), Y(y), Z(z) { }
 
-			void Set(const double* ptr) { X = ptr[0]; Y = ptr[1]; Z = ptr[2]; }
-			void Store(double* dest) const { dest[0] = X; dest[1] = Y; dest[2] = Z; }
+			bool operator==(const Vector3d &other) const	{ return other.X == X && other.Y == Y && other.Z == Z;  }
+			bool operator!=(const Vector3d &other) const	{ return !(*this == other); }
 
-			/**
-			 * Calculates the length of the vector.
-			 */
-			double Length() const { return sqrt(X*X+Y*Y+Z*Z); }
-			/**
-			 * Calculates the squared length of the vector.
-			 */
-			double LengthSquared() const { return X*X + Y*Y + Z*Z; }
+			operator double*()								{ return &X; }
+			operator const double*() const					{ return &X; }
 
-			/**
-			 * Converts the vector into a unit vector.
-			 */
+			typedef double ArrayType[3];
+			ArrayType& asArray()							{ return *(ArrayType*)(&X); }
+			const ArrayType& asArray() const				{ return *(const ArrayType*)(&X); }
+
+
+			void operator +=(const Vector3d& vec)			{ X += vec.X; Y += vec.Y; Z += vec.Z; }
+			void operator -=(const Vector3d& vec)			{ X -= vec.X; Y -= vec.Y; Z -= vec.Z; }
+
+			void operator *=(const Vector3d& vec)			{ X *= vec.X; Y *= vec.Y; Z *= vec.Z; }
+			void operator *=(double scalar)					{ X *= scalar; Y *= scalar; Z *= scalar; }
+			void operator /=(double scalar)					{ double inv = 1.0f/scalar; X *= inv; Y *= inv; Z *= inv; }
+
+			Vector3d operator -() const						{ return Vector3d(-X, -Y, -Z); }
+			Vector3d operator -(const Vector3d& vec) const	{ return Vector3d(X - vec.X, Y - vec.Y, Z - vec.Z); }
+			Vector3d operator +(const Vector3d& vec) const	{ return Vector3d(X + vec.X, Y + vec.Y, Z + vec.Z); }
+			Vector3d operator *(const Vector3d& vec) const	{ return Vector3d(X * vec.X, Y * vec.Y, Z * vec.Z); }
+			Vector3d operator *(double scalar) const		{ return Vector3d(X * scalar, Y * scalar, Z * scalar); }
+			Vector3d operator /(double scalar) const		{ scalar = 1 / scalar; return Vector3d(X * scalar, Y * scalar, Z * scalar); }
+			
+			double operator[] (int idx) const				{ assert(idx < 3); return (&X)[idx]; }
+
+			void Load(const double* ptr)					{ X = ptr[0]; Y = ptr[1]; Z = ptr[2]; }
+			void Store(double* dest) const					{ dest[0] = X; dest[1] = Y; dest[2] = Z; }
+
+			/** Calculates the length of the vector. */
+			double Length() const							{ return sqrt(X*X + Y*Y + Z*Z); }
+
+			/** Calculates the squared length of the vector. */
+			double LengthSquared() const					{ return X*X + Y*Y + Z*Z; }
+
+			/** Converts the vector into a unit vector. */
 			void NormalizeInPlace()
 			{
 				double length = Length();
@@ -247,13 +188,11 @@ namespace Apoc3D
 				double invLen = 1.0f / length;
 				X *= invLen; Y *= invLen; Z *= invLen;
 			}
-			Vector3d Normalized() const { Vector3d copy = *this; copy.NormalizeInPlace(); return copy; }
+			Vector3d Normalized() const						{ Vector3d copy = *this; copy.NormalizeInPlace(); return copy; }
 
-			/**
-			 * Reverses the direction of the vector.
-			 */
-			void NegateInPlace() { X = -X; Y = -Y; Z = -Z; }
-			Vector3d Negate() const { Vector3d copy = *this; copy.NegateInPlace(); return copy; }
+			/** Reverses the direction of the vector. */
+			void NegateInPlace()							{ X = -X; Y = -Y; Z = -Z; }
+			Vector3d Negate() const							{ Vector3d copy = *this; copy.NegateInPlace(); return copy; }
 
 			
 			Vector3d Cross(const Vector3d& b) const 
@@ -265,9 +204,7 @@ namespace Apoc3D
 				return result;
 			}
 
-			/**
-			 * Calculates the distance between two vectors.
-			 */
+			/** Calculates the distance between two vectors. */
 			double Distance(const Vector3d& vec) const
 			{
 				double x = X - vec.X;
@@ -285,14 +222,13 @@ namespace Apoc3D
 				return x * x + y * y + z * z;
 			}
 
-			/**
-			 * Calculates the dot product of two vectors.
-			 */
-			double Dot(const Vector3d& right) const { return X * right.X + Y * right.Y + Z * right.Z; }
+			/** Calculates the dot product of two vectors. */
+			double Dot(const Vector3d& right) const			{ return X * right.X + Y * right.Y + Z * right.Z; }
 
-			/**
-			 * Calculates the distance between two vectors.
-			 */
+			static Vector3d Set(double v)					{ return Vector3d(v, v, v); }
+
+
+			/** Calculates the distance between two vectors. */
 			static double Distance(const Vector3d& value1, const Vector3d& value2)
 			{
 				double x = value1.X - value2.X;
@@ -301,9 +237,8 @@ namespace Apoc3D
 
 				return sqrt(x * x + y * y + z * z);
 			}
-			/**
-			 * Calculates the squared distance between two vectors.
-			 */
+
+			/** Calculates the squared distance between two vectors. */
 			static double DistanceSquared(const Vector3d& value1, const Vector3d& value2)
 			{
 				double x = value1.X - value2.X;
@@ -313,14 +248,10 @@ namespace Apoc3D
 				return x * x + y * y + z * z;
 			}
 
-			/**
-			 * Calculates the dot product of two vectors.
-			 */
+			/** Calculates the dot product of two vectors. */
 			static double Dot(const Vector3d& left, const Vector3d& right) { return left.X * right.X + left.Y * right.Y + left.Z * right.Z; }
 
-			/**
-			 * Calculates the cross product of two vectors.
-			 */
+			/** Calculates the cross product of two vectors. */
 			static Vector3d Cross(const Vector3d& left, const Vector3d& right)
 			{
 				Vector3d result;
@@ -331,50 +262,32 @@ namespace Apoc3D
 			}
 
 
-			/**
-			 * Transforms a 3D vector by the given Matrix
-			 */
+			/** Transforms a 3D vector by the given Matrix */
 			static Vector4d Transform(const Vector3d& vector, const Matrixd& transform);
-			/**
-			 * Performs a coordinate transformation using the given Matrix. can not project
-			 */
+			
+			/** Performs a coordinate transformation using the given Matrix. can not project */
 			static Vector3d TransformSimple(const Vector3d& vector, const Matrixd& transform);
-			/**
-			 * Performs a coordinate transformation using the given Matrix
-			 */
+			
+			/** Performs a coordinate transformation using the given Matrix */
 			static Vector3d TransformCoordinate(const Vector3d& vector, const Matrixd& transform);
-			/**
-			 * Performs a normal transformation using the given Matrix
-			 */
+			
+			/** Performs a normal transformation using the given Matrix */
 			static Vector3d TransformNormal(const Vector3d& vector, const Matrixd& transform);
 
-			/**
-			 * a Vector3 with all of its components set to zero.
-			 */
-			static const Vector3d Zero;
-			/**
-			 * X unit Vector3 (1, 0, 0).
-			 */
-			static const Vector3d UnitX;
-			/**
-			 * Y unit Vector3 (0, 1, 0).
-			 */
-			static const Vector3d UnitY;
-			/**
-			 * Z unit Vector3 (0, 0, 1).
-			 */
-			static const Vector3d UnitZ;
+
+
+			static const Vector3d Zero;			/** a Vector3 with all of its components set to zero. */
+			static const Vector3d UnitX;		/** X unit Vector3 (1, 0, 0). */
+			static const Vector3d UnitY;		/** Y unit Vector3 (0, 1, 0). */
+			static const Vector3d UnitZ;		/** Z unit Vector3 (0, 0, 1). */
 			static const Vector3d One;
 		};
 		
 		inline Vector4d::Vector4d(const Vector3d& v, double w)
 			: X(v.X), Y(v.Y), Z(v.Z), W(w)
-		{
-		}
+		{ }
 
-		/**
-		  *  Defines a 4x4 matrix.
-		  */
+		/** Defines a 4x4 matrix. */
 		class Matrixd
 		{
 		public:
@@ -396,9 +309,9 @@ namespace Apoc3D
 			};
 			
 			Matrixd() {  ZeroMatrix(); }
-			explicit Matrixd(const double elements[16])
+			explicit Matrixd(const double(&elements)[16])
 			{		
-				memcpy(Elements, elements, sizeof(Elements));
+				CopyArray(Elements, elements);
 			}
 
 			Matrixd(double f11, double f12, double f13, double f14,
@@ -408,11 +321,12 @@ namespace Apoc3D
 				: M11(f11), M12(f12), M13(f13), M14(f14),
 				M21(f21), M22(f22), M23(f23), M24(f24),
 				M31(f31), M32(f32), M33(f33), M34(f34),
-				M41(f41), M42(f42), M43(f43), M44(f44)
-			{
+				M41(f41), M42(f42), M43(f43), M44(f44) 
+			{ }
 
-			}
-
+			operator double* ()								{ return reinterpret_cast<double*>(this); }
+			operator const double*() const					{ return reinterpret_cast<const double*>(this); }
+			
 			Vector3d GetX() const { return Vector3d(M11, M12, M13); }
 			Vector3d GetY() const { return Vector3d(M21, M22, M23); }
 			Vector3d GetZ() const { return Vector3d(M31, M32, M33); }	
@@ -434,47 +348,40 @@ namespace Apoc3D
 
 			void LoadIdentity()
 			{
-				M11 = M22 = M33 = M44 = 1;
-				M12 = M13 = M14 = 0;
-				M21 = M23 = M24 = 0;
-				M31 = M32 = M34 = 0;
-				M41 = M42 = M43 = 0;
+				M11 = 1; M12 = 0; M13 = 0; M14 = 0;
+				M21 = 0; M22 = 1; M23 = 0; M24 = 0;
+				M31 = 0; M32 = 0; M33 = 1; M34 = 0;
+				M41 = 0; M42 = 0; M43 = 0; M44 = 1;
 			}
 
-			/**
-			 * Transposes the matrix
-			 */
+			/** Transposes the matrix */
 			void Transpose()
 			{
 				double e[16];
-				e[ME(1,1)] = Elements[ME(1,1)];
-				e[ME(1,2)] = Elements[ME(2,1)];
-				e[ME(1,3)] = Elements[ME(3,1)];
-				e[ME(1,4)] = Elements[ME(4,1)];
-				e[ME(2,1)] = Elements[ME(1,2)];
-				e[ME(2,2)] = Elements[ME(2,2)];
-				e[ME(2,3)] = Elements[ME(3,2)];
-				e[ME(2,4)] = Elements[ME(4,2)];
-				e[ME(3,1)] = Elements[ME(1,3)];
-				e[ME(3,2)] = Elements[ME(2,3)];
-				e[ME(3,3)] = Elements[ME(3,3)];
-				e[ME(3,4)] = Elements[ME(4,3)];
-				e[ME(4,1)] = Elements[ME(1,4)];
-				e[ME(4,2)] = Elements[ME(2,4)];
-				e[ME(4,3)] = Elements[ME(3,4)];
-				e[ME(4,4)] = Elements[ME(4,4)];
-				memcpy(Elements, e, sizeof(e));	
+				e[ME(1, 1)] = Elements[ME(1, 1)];
+				e[ME(1, 2)] = Elements[ME(2, 1)];
+				e[ME(1, 3)] = Elements[ME(3, 1)];
+				e[ME(1, 4)] = Elements[ME(4, 1)];
+				e[ME(2, 1)] = Elements[ME(1, 2)];
+				e[ME(2, 2)] = Elements[ME(2, 2)];
+				e[ME(2, 3)] = Elements[ME(3, 2)];
+				e[ME(2, 4)] = Elements[ME(4, 2)];
+				e[ME(3, 1)] = Elements[ME(1, 3)];
+				e[ME(3, 2)] = Elements[ME(2, 3)];
+				e[ME(3, 3)] = Elements[ME(3, 3)];
+				e[ME(3, 4)] = Elements[ME(4, 3)];
+				e[ME(4, 1)] = Elements[ME(1, 4)];
+				e[ME(4, 2)] = Elements[ME(2, 4)];
+				e[ME(4, 3)] = Elements[ME(3, 4)];
+				e[ME(4, 4)] = Elements[ME(4, 4)];
+				memcpy(Elements, e, sizeof(e));
 			}
 
-			/**
-			 *  Inverts the matrix.
-			 */
+			/** Inverts the matrix. */
 			double Inverse();
 			
 
-			/**
-			 *  Calculates the determinant of the matrix.
-			 */
+			/** Calculates the determinant of the matrix. */
 			double Determinant() const
 			{
 				double temp1 = (M33 * M44) - (M34 * M43);
@@ -493,7 +400,8 @@ namespace Apoc3D
 
 			void ZeroMatrix()
 			{
-				for (int i=0;i<16;i++) Elements[i] = 0;
+				for (int i = 0; i < 16; i++) 
+					Elements[i] = 0;
 			}
 
 			/**
@@ -553,9 +461,7 @@ namespace Apoc3D
 	#endif
 			}
 
-			/**
-			 *  Scales a matrix by the given value.
-			 */
+			/** Scales a matrix by the given value. */
 			static void Multiply(Matrixd& res, const Matrixd& ma, double mb)
 			{
 				res.M11 = ma.M11 * mb;
@@ -576,69 +482,45 @@ namespace Apoc3D
 				res.M44 = ma.M44 * mb;
 			}
 
-			/**
-			 *  Creates a matrix that rotates around the x-axis.
-			 */
+			/** Creates a matrix that rotates around the x-axis. */
 			static void CreateRotationX(Matrixd& res, double angle)
 			{
 				double _cos = cos(angle);
 				double _sin = sin(angle);
 				
-				res.M22 = res.M33 = _cos;
-				res.M23 = _sin;
-				res.M32 = -_sin;
-				 
-				res.M44 = res.M11 = 1.0;
+				res.M11 = 1;	res.M12 = 0;		res.M13 = 0;		res.M14 = 0;
+				res.M21 = 0;	res.M22 = _cos;		res.M23 = _sin;		res.M24 = 0;
+				res.M31 = 0;	res.M32 = -_sin;	res.M33 = _cos;	res.M34 = 0;
+				res.M41 = 0;	res.M42 = 0;		res.M43 = 0;		res.M44 = 1;
 
-				res.M12 = res.M13 = res.M14 = res.M21 = 
-				res.M24 = res.M31 = res.M34 = res.M41 = 
-				res.M42 = res.M43 = 0.0;
 			}
 
-			/**
-			 *  Creates a matrix that rotates around the y-axis.
-			 */
+			/** Creates a matrix that rotates around the y-axis. */
 			static void CreateRotationY(Matrixd& res, double angle)
 			{
 				double _cos = cos(angle);
 				double _sin = sin(angle);
 
-				res.M13 = -_sin;
-				res.M31 = _sin;
-				res.M11 = res.M33 = _cos;
-
-				res.M44 = res.M22 = 1.0;
-
-
-				res.M12 = res.M14 = res.M21 = res.M23 = 
-				res.M24 = res.M32 = res.M34 = res.M41 = 
-				res.M42 = res.M43 = 0.0;
+				res.M11 = _cos;	res.M12 = 0;	res.M13 = -_sin;	res.M14 = 0;
+				res.M21 = 0;	res.M22 = 1;	res.M23 = 0;		res.M24 = 0;
+				res.M31 = _sin;	res.M32 = 0;	res.M33 = _cos;		res.M34 = 0;
+				res.M41 = 0;	res.M42 = 0;	res.M43 = 0;		res.M44 = 1;
 			}
 
-			/**
-			 *  Creates a matrix that rotates around the z-axis.
-			 */
+			/** Creates a matrix that rotates around the z-axis. */
 			static void CreateRotationZ(Matrixd& res, double angle)
 			{
 				double _cos = cos(angle);
 				double _sin = sin(angle);
 				
-				res.M12 = _sin;				
-				res.M21 = -_sin;
-				res.M11 = res.M22 = _cos;
-				
-				
-				res.M33 = res.M44 = 1.0;				
+				res.M11 = _cos;	res.M12 = _sin;	res.M13 = 0;	res.M14 = 0;
+				res.M21 = -_sin;	res.M22 = _cos;	res.M23 = 0;	res.M24 = 0;
+				res.M31 = 0;	res.M32 = 0;	res.M33 = 1;	res.M34 = 0;
+				res.M41 = 0;	res.M42 = 0;	res.M43 = 0;	res.M44 = 1;
 
-				res.M13 = res.M14 = 
-				res.M23 = res.M24 =
-				res.M31 = res.M32 = res.M34 =
-				res.M41 = res.M42 = res.M43 = 0.0;
 			}
 
-			/** 
-			 *  Creates a matrix that rotates around an arbitary axis.
-			 */
+			/** Creates a matrix that rotates around an arbitary axis. */
 			static void CreateRotationAxis(Matrixd& res, Vector3d axis, double angle)
 			{
 				if (axis.LengthSquared() != 1.0)
@@ -657,19 +539,23 @@ namespace Apoc3D
 				double xz = x * z;
 				double yz = y * z;
 
-				res.M11 = xx + (_cos * (1.0 - xx));
-				res.M12 = (xy - (_cos * xy)) + (_sin * z);
-				res.M13 = (xz - (_cos * xz)) - (_sin * y);
+				res.M11 = xx + _cos * (1 - xx);
+				res.M12 = xy - _cos * xy + _sin * z;
+				res.M13 = xz - _cos * xz - _sin * y;
+				res.M14 = 0;
 
-				res.M21 = (xy - (_cos * xy)) - (_sin * z);
-				res.M22 = yy + (_cos * (1.0 - yy));
-				res.M23 = (yz - (_cos * yz)) + (_sin * x);
+				res.M21 = xy - _cos * xy - _sin * z;
+				res.M22 = yy + _cos * (1 - yy);
+				res.M23 = yz - _cos * yz + _sin * x;
+				res.M24 = 0;
 
-				res.M31 = (xz - (_cos * xz)) + (_sin * y);
-				res.M32 = (yz - (_cos * yz)) - (_sin * x);
-				res.M33 = zz + (_cos * (1.0 - zz));
-				res.M34 = res.M41 = res.M42 = res.M43 = res.M14 = res.M24 = 0.0;
-				res.M44 = 1.0;
+				res.M31 = xz - _cos * xz + _sin * y;
+				res.M32 = yz - _cos * yz - _sin * x;
+				res.M33 = zz + _cos * (1 - zz);
+				res.M34 = 0;
+
+				res.M41 = res.M42 = res.M43 = 0.0f;
+				res.M44 = 1;
 			}
 
 			static void CreateRotationYawPitchRoll(Matrixd& result, double yaw, double pitch, double roll);
@@ -678,35 +564,26 @@ namespace Apoc3D
 			{
 				CreateTranslation(res, pos.X, pos.Y, pos.Z);
 			}
-			/**
-				*  Creates a translation matrix using the specified offsets.
-				*/
+
+			/** Creates a translation matrix using the specified offsets. */
 			static void CreateTranslation(Matrixd& res, double x, double y, double z)
 			{
-				res.M11 = 1.0;	res.M12 = 0.0;	res.M13 = 0.0;	res.M14 = 0.0;
-				res.M21 = 0.0;	res.M22 = 1.0;	res.M23 = 0.0;	res.M24 = 0.0;
-				res.M31 = 0.0;	res.M32 = 0.0;	res.M33 = 1.0;	res.M34 = 0.0;
-				res.M41 = x;	res.M42 = y;	res.M43 = z;	res.M44 = 1.0;
+				res.M11 = 1; res.M12 = 0; res.M13 = 0; res.M14 = 0;
+				res.M21 = 0; res.M22 = 1; res.M23 = 0; res.M24 = 0;
+				res.M31 = 0; res.M32 = 0; res.M33 = 1; res.M34 = 0;
+				res.M41 = x; res.M42 = y; res.M43 = z; res.M44 = 1;
 			}
 
-			/**
-			 *  Creates a matrix that scales along the x-axis, y-axis, and y-axis.
-			 */
+			/** Creates a matrix that scales along the x-axis, y-axis, and y-axis. */
 			static void CreateScale(Matrixd& res, double x, double y, double z)
 			{
-				res.M11 = x;
-				res.M22 = y;
-				res.M33 = z;
-				res.M44 = 1.0;
-
-				res.M12 = res.M13 = res.M14 = res.M21 =
-				res.M23 = res.M24 = res.M31 = res.M32 = 
-				res.M34 = res.M41 = res.M42 = res.M43 = 0.0;
+				res.M11 = x; res.M12 = 0; res.M13 = 0; res.M14 = 0;
+				res.M21 = 0; res.M22 = y; res.M23 = 0; res.M24 = 0;
+				res.M31 = 0; res.M32 = 0; res.M33 = z; res.M34 = 0;
+				res.M41 = 0; res.M42 = 0; res.M43 = 0; res.M44 = 1;
 			}
 
-			/**
-				*  Creates a left-handed, look-at matrix.
-				*/
+			/** Creates a left-handed, look-at matrix. */
 			static void CreateLookAtLH(Matrixd& res, Vector3d cameraPosition, Vector3d cameraTarget, Vector3d up)
 			{
 				Vector3d zaxis = cameraTarget - cameraPosition;
@@ -720,24 +597,25 @@ namespace Apoc3D
 				res.M11 = xaxis.X;
 				res.M12 = yaxis.X;
 				res.M13 = zaxis.X;
+				res.M14 = 0;
 
 				res.M21 = xaxis.Y;
 				res.M22 = yaxis.Y;
 				res.M23 = zaxis.Y;
+				res.M24 = 0;
 
 				res.M31 = xaxis.Z;
 				res.M32 = yaxis.Z;
 				res.M33 = zaxis.Z;
-				res.M14 = res.M24 = res.M34 = 0.0;
+				res.M34 = 0;
+
 				res.M41 = -Vector3d::Dot(xaxis, cameraPosition);
 				res.M42 = -Vector3d::Dot(yaxis, cameraPosition);
 				res.M43 = -Vector3d::Dot(zaxis, cameraPosition);
-				res.M44 = 1.0f;
+				res.M44 = 1;
 			}
 
-			/** 
-			 *  Creates a right-handed, look-at matrix.
-			 */
+			/** Creates a right-handed, look-at matrix. */
 			static void CreateLookAtRH(Matrixd& res, Vector3d cameraPosition, Vector3d cameraTarget, Vector3d up)
 			{
 				Vector3d zaxis = cameraPosition - cameraTarget;
@@ -751,19 +629,22 @@ namespace Apoc3D
 				res.M11 = xaxis.X;
 				res.M12 = yaxis.X;
 				res.M13 = zaxis.X;
+				res.M14 = 0;
 
 				res.M21 = xaxis.Y;
 				res.M22 = yaxis.Y;
 				res.M23 = zaxis.Y;
+				res.M24 = 0;
 
 				res.M31 = xaxis.Z;
 				res.M32 = yaxis.Z;
 				res.M33 = zaxis.Z;
-				res.M14 = res.M24 = res.M34 = 0.0f;
+				res.M34 = 0;
+
 				res.M41 = -Vector3d::Dot(xaxis, cameraPosition);
 				res.M42 = -Vector3d::Dot(yaxis, cameraPosition);
 				res.M43 = -Vector3d::Dot(zaxis, cameraPosition);
-				res.M44 = 1.0;
+				res.M44 = 1;
 			}
 			
 			/**
@@ -784,18 +665,19 @@ namespace Apoc3D
 			{
 				double yScale = 1.0 / (tan(fieldOfView * 0.5));
 				double xScale = yScale / aspectRatio;
-				res.M11 = xScale;
-				res.M22 = yScale;
 
-				res.M12 = res.M13 = res.M14 =
-				res.M21 = res.M23 = res.M24 =
-				res.M41 = res.M42 = res.M44 =
-				res.M31 = res.M32 = 0.0;
+				res.M11 = xScale;	res.M12 = 0;		res.M13 = 0; res.M14 = 0;
+				res.M21 = 0;		res.M22 = yScale;	res.M23 = 0; res.M24 = 0;
 
+				res.M31 = 0;
+				res.M32 = 0;
 				res.M33 = farPlaneDistance / (farPlaneDistance - nearPlaneDistance);
-				res.M34 = 1.0;
+				res.M34 = 1;
 
+				res.M41 = 0;
+				res.M42 = 0;
 				res.M43 = -(nearPlaneDistance * farPlaneDistance) / (farPlaneDistance - nearPlaneDistance);
+				res.M44 = 0;
 			}
 
 			/**
@@ -816,18 +698,19 @@ namespace Apoc3D
 			{
 				double yScale = 1.0 / (tan(fieldOfView * 0.5));
 				double xScale = yScale / aspectRatio;
-				res.M11 = xScale;
-				res.M22 = yScale;
 
-				res.M12 = res.M13 = res.M14 =
-					res.M21 = res.M23 = res.M24 =
-					res.M41 = res.M42 = res.M44 =
-					res.M31 = res.M32 = 0.0;
+				res.M11 = xScale;	res.M12 = 0;		res.M13 = 0; res.M14 = 0;
+				res.M21 = 0;		res.M22 = yScale;	res.M23 = 0; res.M24 = 0;
 
+				res.M31 = 0;
+				res.M32 = 0;
 				res.M33 = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
-				res.M34 = -1.0;
+				res.M34 = -1;
 
+				res.M41 = 0;
+				res.M42 = 0;
 				res.M43 = (nearPlaneDistance * farPlaneDistance) / (nearPlaneDistance - farPlaneDistance);
+				res.M44 = 0;
 			}
 
 			/**
@@ -841,17 +724,18 @@ namespace Apoc3D
 			 */
 			static void CreateOrthoLH(Matrixd& res, double width, double height, double zNearPlane, double zFarPlane)
 			{
-				res.M11 = 2.0 / width;
-				res.M22 = 2.0 / height;
+				res.M11 = 2 / width;	res.M12 = 0;			res.M13 = 0;	res.M14 = 0;
+				res.M21 = 0;			res.M22 = 2 / height;	res.M23 = 0;	res.M24 = 0;
 
-				res.M12 = res.M13 = res.M14 =
-					res.M21 = res.M23 = res.M24 =
-					res.M31 = res.M32 = res.M34 =
-					res.M41 = res.M42 = 0.0;
+				res.M31 = 0;
+				res.M32 = 0;
+				res.M33 = 1 / (zFarPlane - zNearPlane);
+				res.M34 = 0;
 
-				res.M33 = 1.0 / (zFarPlane - zNearPlane);
+				res.M41 = 0;
+				res.M42 = 0;
 				res.M43 = -zNearPlane / (zFarPlane - zNearPlane);
-				res.M44 = 1.0;
+				res.M44 = 1;
 			}
 
 			/**
@@ -868,17 +752,18 @@ namespace Apoc3D
 			 */
 			static void CreateOrthoRH(Matrixd& res, double width, double height, double zNearPlane, double zFarPlane)
 			{
-				res.M11 = 2.0 / width;
-				res.M22 = 2.0 / height;
+				res.M11 = 2 / width;	res.M12 = 0;			res.M13 = 0;	res.M14 = 0;
+				res.M21 = 0;			res.M22 = 2 / height;	res.M23 = 0;	res.M24 = 0;
 
-				res.M12 = res.M13 = res.M14 =
-					res.M21 = res.M23 = res.M24 =
-					res.M31 = res.M32 = res.M34 =
-					res.M41 = res.M42 = 0.0;
+				res.M31 = 0;
+				res.M32 = 0;
+				res.M33 = 1 / (zNearPlane - zFarPlane);
+				res.M34 = 0;
 
-				res.M33 = 1.0 / (zNearPlane - zFarPlane);
+				res.M41 = 0;
+				res.M42 = 0;
 				res.M43 = zNearPlane / (zNearPlane - zFarPlane);
-				res.M44 = 1.0;
+				res.M44 = 1;
 			}
 
 			static void Inverse(Matrixd& res, const Matrixd& matrix)
@@ -886,9 +771,6 @@ namespace Apoc3D
 				res = matrix;
 				res.Inverse();
 			}
-
-			operator double* () { return reinterpret_cast<double*>(this); }
-			operator const double*() const { return reinterpret_cast<const double*>(this); }
 
 			bool operator ==(const Matrixd& value) const
 			{
@@ -910,14 +792,14 @@ namespace Apoc3D
 		inline Matrixd matftod(Apoc3D::Math::Matrix m)
 		{
 			Matrixd r;
-			for (int32 i=0;i<16;i++)
+			for (int32 i = 0; i < 16; i++)
 				r.Elements[i] = m.Elements[i];
 			return r;
 		}
 		inline Apoc3D::Math::Matrix matdtof(Matrixd m)
 		{
 			Apoc3D::Math::Matrix r;
-			for (int32 i=0;i<16;i++)
+			for (int32 i = 0; i < 16; i++)
 				r.Elements[i] = (float)m.Elements[i];
 			return r;
 		}

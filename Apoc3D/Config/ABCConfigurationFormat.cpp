@@ -87,7 +87,7 @@ namespace Apoc3D
 			// 2 tagged to one
 			bw->WriteTaggedDataBlock([section](TaggedDataWriter* localValues)
 			{
-				localValues->AddEntryString("Value", section->getValue());
+				localValues->AddString("Value", section->getValue());
 
 				if (section->getAttributeCount() > 0)
 				{
@@ -141,7 +141,7 @@ namespace Apoc3D
 			br->ReadTaggedDataBlock([section](TaggedDataReader* localValues)
 			{
 				String svalue;
-				localValues->GetDataString("Value", svalue);
+				localValues->GetString("Value", svalue);
 				section->SetValue(svalue);
 
 				localValues->TryProcessData("Attributes", [section](BinaryReader* br2)

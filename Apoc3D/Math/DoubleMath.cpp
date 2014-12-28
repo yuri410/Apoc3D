@@ -4,18 +4,18 @@ namespace Apoc3D
 {
 	namespace DoubleMath
 	{
-		const Vector3d Vector3d::Zero = Vector3d(0.0f);
+		const Vector3d Vector3d::Zero = Vector3d::Set(0.0);
 		const Vector3d Vector3d::UnitX = Vector3d(1, 0, 0);
 		const Vector3d Vector3d::UnitY = Vector3d(0, 1, 0);
 		const Vector3d Vector3d::UnitZ = Vector3d(0, 0, 1);
-		const Vector3d Vector3d::One = Vector3d(1);
+		const Vector3d Vector3d::One = Vector3d::Set(1.0);
 
-		const Vector4d Vector4d::Zero = Vector4d(0.0f);
+		const Vector4d Vector4d::Zero = Vector4d::Set(0.0);
 		const Vector4d Vector4d::UnitX = Vector4d(1, 0, 0, 0);
 		const Vector4d Vector4d::UnitY = Vector4d(0, 1, 0, 0);
 		const Vector4d Vector4d::UnitZ = Vector4d(0, 0, 1, 0);
 		const Vector4d Vector4d::UnitW = Vector4d(0, 0, 0, 1);
-		const Vector4d Vector4d::One = Vector4d(1);
+		const Vector4d Vector4d::One = Vector4d::Set(1.0);
 
 		Vector4d Vector4d::Transform(const Vector4d& vector, const Matrixd& transform)
 		{
@@ -23,7 +23,7 @@ namespace Apoc3D
 			double y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32 + vector.W * transform.M42;
 			double z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + vector.W * transform.M43;
 			double w = vector.X * transform.M14 + vector.Y * transform.M24 + vector.Z * transform.M34 + vector.W * transform.M44;
-			return Vector4d(x,y,z,w);
+			return Vector4d(x, y, z, w);
 		}
 
 
@@ -34,14 +34,14 @@ namespace Apoc3D
 			double z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + transform.M43;
 			double w = vector.X * transform.M14 + vector.Y * transform.M24 + vector.Z * transform.M34 + transform.M44;
 
-			return Vector4d(x,y,z,w);
+			return Vector4d(x, y, z, w);
 		}
 		Vector3d Vector3d::TransformSimple(const Vector3d& vector, const Matrixd& transform)
 		{
 			double x = vector.X * transform.M11 + vector.Y * transform.M21 + vector.Z * transform.M31 + transform.M41;
 			double y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32 + transform.M42;
 			double z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + transform.M43;
-			return Vector3d(x,y,z);
+			return Vector3d(x, y, z);
 		}
 		Vector3d Vector3d::TransformCoordinate(const Vector3d& vector, const Matrixd& transform)
 		{
@@ -49,18 +49,24 @@ namespace Apoc3D
 			double y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32 + transform.M42;
 			double z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + transform.M43;
 			double w = 1 / (vector.X * transform.M14 + vector.Y * transform.M24 + vector.Z * transform.M34 + transform.M44);
-			return Vector3d(x*w,y*w,z*w);
+			return Vector3d(x*w, y*w, z*w);
 		}
 		Vector3d Vector3d::TransformNormal(const Vector3d& vector, const Matrixd& transform)
 		{
 			double x = vector.X * transform.M11 + vector.Y * transform.M21 + vector.Z * transform.M31;
 			double y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32;
 			double z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33;
-			return Vector3d(x,y,z);
+			return Vector3d(x, y, z);
 		}
 
 
-		const Matrixd Matrixd::Identity = Matrixd(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
+		const Matrixd Matrixd::Identity = 
+		{
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0, 
+			0, 0, 0, 1 
+		};
 
 		double Matrixd::Inverse()
 		{

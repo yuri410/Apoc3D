@@ -73,7 +73,7 @@ namespace Apoc3D
 		}
 		void MeshData::LoadData(TaggedDataReader* data)
 		{
-			uint32 materialCount = data->GetDataUInt32(TAG_3_MaterialCountTag);
+			uint32 materialCount = data->GetUInt32(TAG_3_MaterialCountTag);
 			Materials.Reserve(materialCount);
 
 			// load material set
@@ -124,11 +124,11 @@ namespace Apoc3D
 			}
 
 			// read name
-			data->GetDataString(TAG_3_NameTag, Name);
+			data->GetString(TAG_3_NameTag, Name);
 
 			// read faces
 			{
-				uint32 faceCount = data->GetDataInt32(TAG_3_FaceCountTag);
+				uint32 faceCount = data->GetInt32(TAG_3_FaceCountTag);
 
 				Faces.ResizeDiscard(faceCount);
 
@@ -155,7 +155,7 @@ namespace Apoc3D
 				// latency support
 				// vertex format
 
-				int fvf = data->GetDataInt32(TAG_1_VertexFormatTag);
+				int fvf = data->GetInt32(TAG_1_VertexFormatTag);
 
 				if (fvf == (256 | 2 | 16))
 				{
@@ -188,13 +188,13 @@ namespace Apoc3D
 			
 			if (data->Contains(TAG_3_VertexSizeTag))
 			{
-				VertexSize = data->GetDataUInt32(TAG_3_VertexSizeTag);
+				VertexSize = data->GetUInt32(TAG_3_VertexSizeTag);
 			}
 			else
 			{
 				VertexSize = ComputeVertexSize(VertexElements);
 			}
-			VertexCount = data->GetDataUInt32(TAG_3_VertexCountTag);
+			VertexCount = data->GetUInt32(TAG_3_VertexCountTag);
 
 			// vertex data
 			{
@@ -212,7 +212,7 @@ namespace Apoc3D
 			TaggedDataWriter* data = new TaggedDataWriter(true);
 
 			uint32 materialCount = Materials.getMaterialCount();
-			data->AddEntryUInt32(TAG_3_MaterialCountTag, materialCount);
+			data->AddUInt32(TAG_3_MaterialCountTag, materialCount);
 
 			// save material
 			{
@@ -241,9 +241,9 @@ namespace Apoc3D
 			}
 
 			// write name
-			data->AddEntryString(TAG_3_NameTag, Name);
+			data->AddString(TAG_3_NameTag, Name);
 			
-			data->AddEntryUInt32(TAG_3_FaceCountTag, static_cast<uint32>(Faces.getCount()));
+			data->AddUInt32(TAG_3_FaceCountTag, static_cast<uint32>(Faces.getCount()));
 
 			// write faces
 			{
@@ -274,8 +274,8 @@ namespace Apoc3D
 				delete bw;
 			}
 
-			data->AddEntryUInt32(TAG_3_VertexSizeTag, VertexSize);
-			data->AddEntryUInt32(TAG_3_VertexCountTag, VertexCount);
+			data->AddUInt32(TAG_3_VertexSizeTag, VertexSize);
+			data->AddUInt32(TAG_3_VertexCountTag, VertexCount);
 
 			// save vertex data
 			{
@@ -360,7 +360,7 @@ namespace Apoc3D
 
 		void ModelData::ReadData(TaggedDataReader* data, int32 id)
 		{
-			int32 entCount = data->GetDataInt32(TAG_3_EntityCountTag);
+			int32 entCount = data->GetInt32(TAG_3_EntityCountTag);
 			Entities.ResizeDiscard(entCount);
 
 			for (int32 i=0;i<entCount;i++)
@@ -432,7 +432,7 @@ namespace Apoc3D
 		{
 			TaggedDataWriter* data = new TaggedDataWriter(true);
 
-			data->AddEntryInt32(TAG_3_EntityCountTag, static_cast<int32>(Entities.getCount()));
+			data->AddInt32(TAG_3_EntityCountTag, static_cast<int32>(Entities.getCount()));
 
 			for (int32 i = 0; i < Entities.getCount(); i++)
 			{

@@ -316,7 +316,6 @@ namespace Apoc3D
 				matrix.M43 = cr32_le(&m_buffer[sizeof(float)*6]);
 				matrix.M44 = cr32_le(&m_buffer[sizeof(float)*7]);
 			}
-			
 		}
 
 		void BinaryReader::ReadVector2(Vector2& vec)

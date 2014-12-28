@@ -1406,7 +1406,7 @@ namespace Apoc3D
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 #pragma error "Not implemented"
 #else
-				return reinterpret_cast<float*>(this);
+				return Elements;
 #endif
 			}
 			operator const float*() const
@@ -1414,10 +1414,10 @@ namespace Apoc3D
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 #pragma error "Not implemented"
 #else
-				return reinterpret_cast<const float*>(this);
+				return Elements;
 #endif
 			}
-
+			
 			bool operator ==(const Matrix& value) const
 			{
 				return (M11 == value.M11 && M12 == value.M12 && M13 == value.M13 && M14 == value.M14 &&
