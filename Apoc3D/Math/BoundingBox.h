@@ -37,43 +37,30 @@ namespace Apoc3D
 		class APAPI BoundingBox
 		{
 		public:
-			/**
-			 *  The highest corner of the box.
-			 */
-			Vector3 Maximum;
-
-			/**
-			 *  The lowest corner of the box.
-			 */
-			Vector3 Minimum;
+			Vector3 Minimum;		/** The lowest corner of the box. */
+			Vector3 Maximum;		/** The highest corner of the box. */
 
 			BoundingBox() { }
+
 			BoundingBox(const Vector3& minimum, const Vector3& maximum)
-			{
-				Minimum = minimum;
-				Maximum = maximum;
-			}
+				: Minimum(minimum), Maximum(maximum) { }
+
 
 			Vector3 GetCorner(int index) const
 			{
+				const Vector3& minp = Minimum;
+				const Vector3& maxp = Maximum;
+
 				switch (index)
 				{
-				case 0:
-					return Vector3(Minimum.X, Maximum.Y, Maximum.Z);
-				case 1:
-					return Vector3(Maximum.X, Maximum.Y, Maximum.Z);
-				case 2:
-					return Vector3(Maximum.X, Minimum.Y, Maximum.Z);
-				case 3:
-					return Vector3(Minimum.X, Minimum.Y, Maximum.Z);
-				case 4:
-					return Vector3(Minimum.X, Maximum.Y, Minimum.Z);
-				case 5:
-					return Vector3(Maximum.X, Maximum.Y, Minimum.Z);
-				case 6:
-					return Vector3(Maximum.X, Minimum.Y, Minimum.Z);
-				case 7:
-					return Vector3(Minimum.X, Minimum.Y, Minimum.Z);
+					case 0: return{ minp.X, maxp.Y, maxp.Z };
+					case 1: return{ maxp.X, maxp.Y, maxp.Z };
+					case 2: return{ maxp.X, minp.Y, maxp.Z };
+					case 3: return{ minp.X, minp.Y, maxp.Z };
+					case 4: return{ minp.X, maxp.Y, minp.Z };
+					case 5: return{ maxp.X, maxp.Y, minp.Z };
+					case 6: return{ maxp.X, minp.Y, minp.Z };
+					case 7: return{ minp.X, minp.Y, minp.Z };
 				}
 				return Vector3::Zero;
 			}
@@ -83,9 +70,7 @@ namespace Apoc3D
 				return Intersects(*this, plane);
 			}
 			
-			/**
-			 *  Determines whether the box contains the specified point.
-			 */
+			/** Determines whether the box contains the specified point. */
 			bool Contains(const Vector3& vector) const
 			{
 				if (Vector3::IsGreaterEqual(vector, Minimum) && 
@@ -95,9 +80,8 @@ namespace Apoc3D
 				}
 				return false;
 			}
-			/**
-			 *  Determines whether the box contains the specified box.
-			 */
+
+			/** Determines whether the box contains the specified box. */
 			ContainmentType Contains(const BoundingBox& box) const
 			{
 				if (Maximum.X < box.Minimum.X || Minimum.X > box.Maximum.X)
@@ -120,9 +104,7 @@ namespace Apoc3D
 				return ContainmentType::Intersects;
 			}
 			
-			/** 
-			 *  Determines whether the box contains the specified sphere.
-			 */
+			/** Determines whether the box contains the specified sphere. */
 			ContainmentType Contains(const BoundingSphere& sphere);
 			
 			bool operator==(const BoundingBox &other) const
@@ -132,9 +114,7 @@ namespace Apoc3D
 			bool operator!=(const BoundingBox &other) const { return !(*this == other); }
 
 
-			/**
-			 *  Constructs a BoundingBox that fully contains the given points.
-			 */
+			/** Constructs a BoundingBox that fully contains the given points. */
 			static void CreateFromPoints(BoundingBox& res, const Vector3* points, int count)
 			{
 				Vector3 minv = Vector3::Set(FLT_MAX);
@@ -148,32 +128,25 @@ namespace Apoc3D
 
 				res = BoundingBox(minv, maxv);
 			}
-			/**
-			 *  Constructs a BoundingBox from a given sphere.
-			 */
+
+			/** Constructs a BoundingBox from a given sphere. */
 			static void CreateFromSphere(BoundingBox& res, const BoundingSphere& sphere);
-			/**
-			 *  Constructs a BoundingBox that is the as large as the total combined area of the two specified boxes.
-			 */
+
+			/** Constructs a BoundingBox that is the as large as the total combined area of the two specified boxes. */
 			static void Merge(BoundingBox& res, const BoundingBox& box1, const BoundingBox& box2)
 			{				
 				res.Minimum = Vector3::Minimize(box1.Minimum, box2.Minimum);
 				res.Maximum = Vector3::Maximize(box1.Maximum, box2.Maximum);				
 			}
-			/**
-			 *  Finds the intersection between a plane and a box.
-			 */
+
+			/** Finds the intersection between a plane and a box. 			 */
 			static PlaneIntersectionType Intersects(const BoundingBox& box, const Plane& plane);
 			static bool Intersects(const BoundingBox& box, const Ray& ray, float& distance);
 
-			/**
-			 *  Determines whether a box intersects the specified object.
-			 */
+			/** Determines whether a box intersects the specified object. */
 			static bool Intersects(const BoundingBox& box, const BoundingSphere& sphere);
 
-			/**
-			 *  Determines whether a box intersects the specified object.
-			 */
+			/** Determines whether a box intersects the specified object. */
 			static bool Intersects(const BoundingBox& box1, const BoundingBox& box2)
 			{
 				if (box1.Maximum.X < box2.Minimum.X || box1.Minimum.X > box2.Maximum.X)

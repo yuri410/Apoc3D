@@ -25,7 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Quaternion.h"
 #include "apoc3d/Collections/Stack.h"
-#include "apoc3d/Exception.h"
 
 using namespace Apoc3D::Collections;
 
@@ -33,69 +32,10 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		MatrixStack::MatrixStack(int reserve)
-		{
-			m_stack = new Stack<Matrix>(reserve);
-		}
-		MatrixStack::~MatrixStack()
-		{
-			delete m_stack;
-		}
-
-		void MatrixStack::PushMultply(const Matrix& mat) const
-		{
-			if (m_stack->getCount())
-			{
-				Matrix newMat;
-				Matrix::Multiply(newMat, m_stack->Peek(), mat);
-				m_stack->Push(newMat);
-			}
-			else
-			{
-				m_stack->Push(mat);
-			}
-		}
-		void MatrixStack::PushMatrix(const Matrix& mat) const
-		{
-			m_stack->Push(mat);
-		}
-		bool MatrixStack::PopMatrix() const
-		{
-			if (m_stack->getCount())
-			{
-				m_stack->FastPop();
-				return true;
-			}
-			return false;
-		}
-		bool MatrixStack::PopMatrix(Matrix& mat) const
-		{
-			if (m_stack->getCount())
-			{
-				mat = m_stack->Pop();
-				return true;
-			}
-			return false;
-		}
-		Matrix& MatrixStack::Peek() const
-		{
-			if (m_stack->getCount())
-			{
-				return m_stack->Peek();
-			}
-			throw AP_EXCEPTION(ExceptID::InvalidOperation, L"The stack is empty.");
-		}
-
-		int MatrixStack::getCount() const
-		{
-			return m_stack->getCount();
-		}
-
-
-
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
+
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 		//const __m128 _MASKSIGN_;	// - - - -
 		__m128 _ZERONE_;	// 1 0 0 1
@@ -128,7 +68,14 @@ namespace Apoc3D
 
 		} Initializer;
 #endif
-		const Matrix Matrix::Identity = Matrix(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
+
+		const Matrix Matrix::Identity =
+		{
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1
+		};
 
 		float Matrix::Inverse()
 		{
@@ -261,20 +208,23 @@ namespace Apoc3D
 			float det12 = m33 * m44 - m34 * m43;
 
 			float detMatrix = det01 * det12 - det02 * det11 + det03 * det10 + det04 * det09 - det05 * det08 + det06 * det07;
-			float invDetMatrix = 1.0f / detMatrix;
+			float invDetMatrix = 1 / detMatrix;
 
 			M11 = (+m22 * det12 - m23 * det11 + m24 * det10) * invDetMatrix;
 			M12 = (-m12 * det12 + m13 * det11 - m14 * det10) * invDetMatrix;
 			M13 = (+m42 * det06 - m43 * det05 + m44 * det04) * invDetMatrix;
 			M14 = (-m32 * det06 + m33 * det05 - m34 * det04) * invDetMatrix;
+
 			M21 = (-m21 * det12 + m23 * det09 - m24 * det08) * invDetMatrix;
 			M22 = (+m11 * det12 - m13 * det09 + m14 * det08) * invDetMatrix;
 			M23 = (-m41 * det06 + m43 * det03 - m44 * det02) * invDetMatrix;
 			M24 = (+m31 * det06 - m33 * det03 + m34 * det02) * invDetMatrix;
+
 			M31 = (+m21 * det11 - m22 * det09 + m24 * det07) * invDetMatrix;
 			M32 = (-m11 * det11 + m12 * det09 - m14 * det07) * invDetMatrix;
 			M33 = (+m41 * det05 - m42 * det03 + m44 * det01) * invDetMatrix;
 			M34 = (-m31 * det05 + m32 * det03 - m34 * det01) * invDetMatrix;
+
 			M41 = (-m21 * det10 + m22 * det08 - m23 * det07) * invDetMatrix;
 			M42 = (+m11 * det10 - m12 * det08 + m13 * det07) * invDetMatrix;
 			M43 = (-m41 * det04 + m42 * det02 - m43 * det01) * invDetMatrix;
@@ -339,25 +289,27 @@ namespace Apoc3D
             res.M11 = final.X;
             res.M12 = final.Y;
             res.M13 = final.Z;
-            res.M14 = 0.0f;
+            res.M14 = 0;
+
             res.M21 = crossed.X;
             res.M22 = crossed.Y;
             res.M23 = crossed.Z;
-            res.M24 = 0.0f;
+			res.M24 = 0;
+
             res.M31 = difference.X;
             res.M32 = difference.Y;
             res.M33 = difference.Z;
-            res.M34 = 0.0f;
+			res.M34 = 0;
+
             res.M41 = objectPosition.X;
             res.M42 = objectPosition.Y;
             res.M43 = objectPosition.Z;
-            res.M44 = 1.0f;
+            res.M44 = 1;
 		#endif
 		}
 
 		void Matrix::CreateRotationQuaternion(Matrix& result, const Quaternion& rotation)
 		{
-			
 			float xx = rotation.X * rotation.X;
 			float yy = rotation.Y * rotation.Y;
 			float zz = rotation.Z * rotation.Z;
@@ -367,23 +319,26 @@ namespace Apoc3D
 			float yw = rotation.Y * rotation.W;
 			float yz = rotation.Y * rotation.Z;
 			float xw = rotation.X * rotation.W;
-			result.M11 = 1.0f - (2.0f * (yy + zz));
-			result.M12 = 2.0f * (xy + zw);
-			result.M13 = 2.0f * (zx - yw);
 
-			result.M21 = 2.0f * (xy - zw);
-			result.M22 = 1.0f - (2.0f * (zz + xx));
-			result.M23 = 2.0f * (yz + xw);
-			
-			result.M31 = 2.0f * (zx + yw);
-			result.M32 = 2.0f * (yz - xw);
-			result.M33 = 1.0f - (2.0f * (yy + xx));
+			result.M11 = 1 - 2 * (yy + zz);
+			result.M12 = 2 * (xy + zw);
+			result.M13 = 2 * (zx - yw);
+			result.M14 = 0;
 
+			result.M21 = 2 * (xy - zw);
+			result.M22 = 1 - 2 * (zz + xx);
+			result.M23 = 2 * (yz + xw);
+			result.M24 = 0;
 
-			result.M41 = result.M42 = result.M43 =
-			result.M34 = result.M14 = result.M24 = 0.0f;
+			result.M31 = 2 * (zx + yw);
+			result.M32 = 2 * (yz - xw);
+			result.M33 = 1 - 2 * (yy + xx);
+			result.M34 = 0;
 
-			result.M44 = 1.0f;
+			result.M41 = 0;
+			result.M42 = 0;
+			result.M43 = 0;
+			result.M44 = 1;
 			
 		}
 

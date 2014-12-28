@@ -44,7 +44,7 @@ namespace Apoc3D
 				ComputeFilter(1.0f / (float)mapWidth, 0, SampleWeights, SampleOffsetsX);
 				ComputeFilter(0, 1.0f / (float)mapHeight, SampleWeights, SampleOffsetsY);
 			}
-			~GaussBlurFilter(void)
+			~GaussBlurFilter()
 			{
 				delete[] SampleWeights;
 				delete[] SampleOffsetsX;
@@ -94,7 +94,7 @@ namespace Apoc3D
 			void ComputeFilter(float dx, float dy, float* &sampleWeights, Vector4* &sampleOffsets)
 			{
 				int count = SampleCount;
-				if ((count % 2)==0)
+				if ((count % 2) == 0)
 					count++;
 
 				// Create temporary arrays for computing our filter settings.

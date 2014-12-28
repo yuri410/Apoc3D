@@ -106,9 +106,12 @@ namespace Apoc3D
 				return false;
 			}
 
+			const T& Peek() const { assert(m_size > 0); return m_array[m_size - 1]; }
 			T& Peek() { assert(m_size > 0); return m_array[m_size - 1]; }
+
 			T Pop() { assert(m_size > 0); return m_array[--m_size]; }
 			void FastPop() { assert(m_size > 0); m_size--; }
+
 
 			void Push(const T& item)
 			{

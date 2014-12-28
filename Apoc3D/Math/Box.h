@@ -49,8 +49,8 @@ namespace Apoc3D
 			int32 getDepth() const { return Back - Front; }
 
 			Box(int32 top, int32 left, int32 front, int32 width, int32 height, int32 depth)
-				: Top(top), Left(left), Front(front), 
-				Bottom(top+height), Right(left+width), Back(front+depth)
+				: Top(top), Left(left), Front(front),
+				Bottom(top + height), Right(left + width), Back(front + depth)
 			{
 
 			}

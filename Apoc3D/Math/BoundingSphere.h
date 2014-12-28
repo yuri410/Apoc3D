@@ -38,14 +38,8 @@ namespace Apoc3D
 		class APAPI BoundingSphere
 		{
 		public:
-			/** 
-			 *  Specifies the center point of the sphere.
-			 */
-			Vector3 Center;
-			/**
-			 *  The radius of the sphere.
-			 */
-			float Radius;
+			Vector3 Center;		/** Specifies the center point of the sphere. */
+			float Radius;		/** The radius of the sphere. */
 
 			BoundingSphere() { }
 			BoundingSphere(const Vector3& center, float radius)
@@ -60,9 +54,7 @@ namespace Apoc3D
 			}
 			bool operator!=(const BoundingSphere &other) const { return !(*this == other); }
 
-			/**
-			 *  Determines whether the sphere contains the specified point.
-			 */
+			/** Determines whether the sphere contains the specified point. */
 			bool Contains(const Vector3& vector) const
 			{
 				float distance = Vector3::DistanceSquared(vector, Center);
@@ -82,9 +74,8 @@ namespace Apoc3D
 
 			bool IntersectsTriangle(const Vector3& a, const Vector3& b, const Vector3& c, const Vector3* triN,
 				Vector3* pos, Vector3* n, float* depth) const;
-			/**
-			 *  Determines whether a sphere intersects the specified object.
-			 */
+
+			/** Determines whether a sphere intersects the specified object. */
 			bool Intersects(const BoundingSphere& sphere) const
 			{
 				float distance = Vector3::DistanceSquared(Center, sphere.Center);
@@ -131,14 +122,10 @@ namespace Apoc3D
 
 			
 
-			/**
-			 *  Constructs a BoundingSphere from a given box.
-			 */
+			/** Constructs a BoundingSphere from a given box. */
 			static void CreateFromBox(BoundingSphere& res, const BoundingBox& box);
 
-			/**
-			 *  Constructs a BoundingSphere that fully contains the given points.
-			 */
+			/** Constructs a BoundingSphere that fully contains the given points. */
 			static void CreateFromPoints(BoundingSphere& res, const Vector3* points, int count)
 			{
 				Vector3 center = Vector3::Zero;
@@ -161,14 +148,10 @@ namespace Apoc3D
 
 			}
 
-			/**
-			 *  Constructs a BoundingSphere that is the as large as the total combined area of the two specified spheres.
-			 */
+			/** Constructs a BoundingSphere that is the as large as the total combined area of the two specified spheres. */
 			static void Merge(BoundingSphere& res, const BoundingSphere& sphere1, const BoundingSphere& sphere2);
 
-			/**
-			 *  Determines whether a sphere intersects the specified object.
-			 */
+			/** Determines whether a sphere intersects the specified object. */
 			static bool Intersects(const BoundingSphere& sphere, const BoundingBox& box);
 			
 		};

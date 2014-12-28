@@ -36,8 +36,8 @@ namespace Apoc3D
 	namespace Math
 	{
 		const Vector2 Vector2::Zero = Vector2::Set(0.0f);
-		const Vector2 Vector2::UnitX = Vector2(1,0);
-		const Vector2 Vector2::UnitY = Vector2(0,1);
+		const Vector2 Vector2::UnitX = Vector2(1, 0);
+		const Vector2 Vector2::UnitY = Vector2(0, 1);
 		const Vector2 Vector2::One = Vector2::Set(1.0f);
 
 		const Vector3 Vector3::Zero = Vector3::Set(0.0f);
@@ -127,14 +127,14 @@ namespace Apoc3D
 			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + transform.M43;
 			float w = vector.X * transform.M14 + vector.Y * transform.M24 + vector.Z * transform.M34 + transform.M44;
 			
-			return Vector4(x,y,z,w);
+			return Vector4(x, y, z, w);
 		}
 		Vector3 Vector3::TransformSimple(const Vector3& vector, const Matrix& transform)
 		{
 			float x = vector.X * transform.M11 + vector.Y * transform.M21 + vector.Z * transform.M31 + transform.M41;
 			float y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32 + transform.M42;
 			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + transform.M43;
-			return Vector3(x,y,z);
+			return Vector3(x, y, z);
 		}
 		Vector3 Vector3::TransformCoordinate(const Vector3& vector, const Matrix& transform)
 		{
@@ -142,14 +142,14 @@ namespace Apoc3D
 			float y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32 + transform.M42;
 			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + transform.M43;
 			float w = 1 / (vector.X * transform.M14 + vector.Y * transform.M24 + vector.Z * transform.M34 + transform.M44);
-			return Vector3(x*w,y*w,z*w);
+			return Vector3(x*w, y*w, z*w);
 		}
 		Vector3 Vector3::TransformNormal(const Vector3& vector, const Matrix& transform)
 		{
 			float x = vector.X * transform.M11 + vector.Y * transform.M21 + vector.Z * transform.M31;
 			float y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32;
 			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33;
-			return Vector3(x,y,z);
+			return Vector3(x, y, z);
 		}
 
 
@@ -195,7 +195,7 @@ namespace Apoc3D
 			float y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32 + vector.W * transform.M42;
 			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + vector.W * transform.M43;
 			float w = vector.X * transform.M14 + vector.Y * transform.M24 + vector.Z * transform.M34 + vector.W * transform.M44;
-			return Vector4(x,y,z,w);
+			return Vector4(x, y, z, w);
 		}
 
 

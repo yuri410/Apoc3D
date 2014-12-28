@@ -42,43 +42,17 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-
-		class APAPI MatrixStack
-		{
-		private:
-			Apoc3D::Collections::Stack<Matrix>* m_stack;
-
-		public:
-			MatrixStack(int reserve);
-			~MatrixStack();
-
-			void PushMultply(const Matrix& mat) const;
-			void PushMatrix(const Matrix& mat) const;
-			bool PopMatrix() const;
-			bool PopMatrix(Matrix& mat) const;
-
-			Matrix& Peek() const;
-			
-
-			int getCount() const;
-		};
-
+		
 #define COL_INDEX(x) (x-1)
 #define ELEM_ADDR(i,j) ((i-1)*4*4 + (j-1)*4)
 #define ME(i,j) ((i-1)*4+j-1)
-
-#if APOC3D_MATH_IMPL == APOC3D_SSE
-#pragma pack(push, 16)
-#endif
 
 #ifdef _MSC_VER
 #pragma warning( push )
 #pragma warning( disable : 4201 )
 #endif
 
-		/**
-		 *  Defines a 4x4 matrix.
-		 */
+		/** Defines a 4x4 matrix. */
 		class APAPI Matrix
 		{
 		public:
@@ -122,6 +96,7 @@ namespace Apoc3D
 			
 				
 			Matrix() {  ZeroMatrix(); }
+
 			explicit Matrix(const float (&elements)[16])
 			{
 				CopyArray(Elements, elements);
@@ -215,52 +190,54 @@ namespace Apoc3D
 				Row3 = Identity.Row3;
 				Row4 = Identity.Row4;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				M11 = M22 = M33 = M44 = 1;
-				M12 = M13 = M14 = 0;
-				M21 = M23 = M24 = 0;
-				M31 = M32 = M34 = 0;
-				M41 = M42 = M43 = 0;
-				//memcpy(Elements, Identity.Elements, sizeof(Elements));
+				M11 = 1; M12 = 0; M13 = 0; M14 = 0;
+				M21 = 0; M22 = 1; M23 = 0; M24 = 0;
+				M31 = 0; M32 = 0; M33 = 1; M34 = 0;
+				M41 = 0; M42 = 0; M43 = 0; M44 = 1;
+
+				//M11 = M22 = M33 = M44 = 1;
+				//M12 = M13 = M14 = 0;
+				//M21 = M23 = M24 = 0;
+				//M31 = M32 = M34 = 0;
+				//M41 = M42 = M43 = 0;
 			#endif
 			}
 
-			/**
-			 * Transposes the matrix
-			 */
+			/** Transposes the matrix */
 			void Transpose()
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				_MM_TRANSPOSE4_PS(Row1, Row2, Row3, Row4);
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				float e[16];
-				e[ME(1,1)] = Elements[ME(1,1)];
-				e[ME(1,2)] = Elements[ME(2,1)];
-				e[ME(1,3)] = Elements[ME(3,1)];
-				e[ME(1,4)] = Elements[ME(4,1)];
-				e[ME(2,1)] = Elements[ME(1,2)];
-				e[ME(2,2)] = Elements[ME(2,2)];
-				e[ME(2,3)] = Elements[ME(3,2)];
-				e[ME(2,4)] = Elements[ME(4,2)];
-				e[ME(3,1)] = Elements[ME(1,3)];
-				e[ME(3,2)] = Elements[ME(2,3)];
-				e[ME(3,3)] = Elements[ME(3,3)];
-				e[ME(3,4)] = Elements[ME(4,3)];
-				e[ME(4,1)] = Elements[ME(1,4)];
-				e[ME(4,2)] = Elements[ME(2,4)];
-				e[ME(4,3)] = Elements[ME(3,4)];
-				e[ME(4,4)] = Elements[ME(4,4)];
+				e[ME(1, 1)] = Elements[ME(1, 1)];
+				e[ME(1, 2)] = Elements[ME(2, 1)];
+				e[ME(1, 3)] = Elements[ME(3, 1)];
+				e[ME(1, 4)] = Elements[ME(4, 1)];
+
+				e[ME(2, 1)] = Elements[ME(1, 2)];
+				e[ME(2, 2)] = Elements[ME(2, 2)];
+				e[ME(2, 3)] = Elements[ME(3, 2)];
+				e[ME(2, 4)] = Elements[ME(4, 2)];
+
+				e[ME(3, 1)] = Elements[ME(1, 3)];
+				e[ME(3, 2)] = Elements[ME(2, 3)];
+				e[ME(3, 3)] = Elements[ME(3, 3)];
+				e[ME(3, 4)] = Elements[ME(4, 3)];
+
+				e[ME(4, 1)] = Elements[ME(1, 4)];
+				e[ME(4, 2)] = Elements[ME(2, 4)];
+				e[ME(4, 3)] = Elements[ME(3, 4)];
+				e[ME(4, 4)] = Elements[ME(4, 4)];
 				memcpy(Elements, e, sizeof(e));				
 			#endif
 			}
-			/**
-			 *  Inverts the matrix.
-			 */
+
+			/** Inverts the matrix. */
 			float Inverse(); 
 			
 
-			/**
-			 *  Calculates the determinant of the matrix.
-			 */
+			/** Calculates the determinant of the matrix. */
 			float Determinant() const// TODO: Rewrite
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -292,14 +269,15 @@ namespace Apoc3D
 				return result;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 
-				float temp1 = (M33 * M44) - (M34 * M43);
-				float temp2 = (M32 * M44) - (M34 * M42);
-				float temp3 = (M32 * M43) - (M33 * M42);
-				float temp4 = (M31 * M44) - (M34 * M41);
-				float temp5 = (M31 * M43) - (M33 * M41);
-				float temp6 = (M31 * M42) - (M32 * M41);
+				float temp1 = M33 * M44 - M34 * M43;
+				float temp2 = M32 * M44 - M34 * M42;
+				float temp3 = M32 * M43 - M33 * M42;
+				float temp4 = M31 * M44 - M34 * M41;
+				float temp5 = M31 * M43 - M33 * M41;
+				float temp6 = M31 * M42 - M32 * M41;
 
-				return M11 * (M22 * temp1 - M23 * temp2 + M24 * temp3) - 
+				return 
+					M11 * (M22 * temp1 - M23 * temp2 + M24 * temp3) - 
 					M12 * (M21 * temp1 - M23 * temp4 + M24 * temp5) + 
 					M13 * (M21 * temp2 - M22 * temp4 + M24 * temp6) -
 					M14 * (M21 * temp3 - M22 * temp5 + M23 * temp6);
@@ -311,7 +289,7 @@ namespace Apoc3D
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				Row1 = Row2 = Row3 = Row4 = _mm_setzero_ps();
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				for (int i=0;i<16;i++)
+				for (int i = 0; i < 16; i++)
 					Elements[i] = 0;
 			#endif
 			}
@@ -319,30 +297,30 @@ namespace Apoc3D
 			/**
 			 *  Determines the product of two matrices.
 			 *  The result matrix cannot reference to the memory that ma or mb is referring to, or the result is not correct.
-			*/
+			 */
 			static void Multiply(Matrix& res, const Matrix& ma, const Matrix& mb)
 			{
 				assert(&ma != &res && &mb != &res);
 #if _DEBUG && APOC3D_MATH_IMPL != APOC3D_SSE
-				res.M11 = (ma.M11 * mb.M11) + (ma.M12 * mb.M21) + (ma.M13 * mb.M31) + (ma.M14 * mb.M41);
-				res.M12 = (ma.M11 * mb.M12) + (ma.M12 * mb.M22) + (ma.M13 * mb.M32) + (ma.M14 * mb.M42);
-				res.M13 = (ma.M11 * mb.M13) + (ma.M12 * mb.M23) + (ma.M13 * mb.M33) + (ma.M14 * mb.M43);
-				res.M14 = (ma.M11 * mb.M14) + (ma.M12 * mb.M24) + (ma.M13 * mb.M34) + (ma.M14 * mb.M44);
+				res.M11 = ma.M11 * mb.M11 + ma.M12 * mb.M21 + ma.M13 * mb.M31 + ma.M14 * mb.M41;
+				res.M12 = ma.M11 * mb.M12 + ma.M12 * mb.M22 + ma.M13 * mb.M32 + ma.M14 * mb.M42;
+				res.M13 = ma.M11 * mb.M13 + ma.M12 * mb.M23 + ma.M13 * mb.M33 + ma.M14 * mb.M43;
+				res.M14 = ma.M11 * mb.M14 + ma.M12 * mb.M24 + ma.M13 * mb.M34 + ma.M14 * mb.M44;
 
-				res.M21 = (ma.M21 * mb.M11) + (ma.M22 * mb.M21) + (ma.M23 * mb.M31) + (ma.M24 * mb.M41);
-				res.M22 = (ma.M21 * mb.M12) + (ma.M22 * mb.M22) + (ma.M23 * mb.M32) + (ma.M24 * mb.M42);
-				res.M23 = (ma.M21 * mb.M13) + (ma.M22 * mb.M23) + (ma.M23 * mb.M33) + (ma.M24 * mb.M43);
-				res.M24 = (ma.M21 * mb.M14) + (ma.M22 * mb.M24) + (ma.M23 * mb.M34) + (ma.M24 * mb.M44);
+				res.M21 = ma.M21 * mb.M11 + ma.M22 * mb.M21 + ma.M23 * mb.M31 + ma.M24 * mb.M41;
+				res.M22 = ma.M21 * mb.M12 + ma.M22 * mb.M22 + ma.M23 * mb.M32 + ma.M24 * mb.M42;
+				res.M23 = ma.M21 * mb.M13 + ma.M22 * mb.M23 + ma.M23 * mb.M33 + ma.M24 * mb.M43;
+				res.M24 = ma.M21 * mb.M14 + ma.M22 * mb.M24 + ma.M23 * mb.M34 + ma.M24 * mb.M44;
 
-				res.M31 = (ma.M31 * mb.M11) + (ma.M32 * mb.M21) + (ma.M33 * mb.M31) + (ma.M34 * mb.M41);
-				res.M32 = (ma.M31 * mb.M12) + (ma.M32 * mb.M22) + (ma.M33 * mb.M32) + (ma.M34 * mb.M42);
-				res.M33 = (ma.M31 * mb.M13) + (ma.M32 * mb.M23) + (ma.M33 * mb.M33) + (ma.M34 * mb.M43);
-				res.M34 = (ma.M31 * mb.M14) + (ma.M32 * mb.M24) + (ma.M33 * mb.M34) + (ma.M34 * mb.M44);
+				res.M31 = ma.M31 * mb.M11 + ma.M32 * mb.M21 + ma.M33 * mb.M31 + ma.M34 * mb.M41;
+				res.M32 = ma.M31 * mb.M12 + ma.M32 * mb.M22 + ma.M33 * mb.M32 + ma.M34 * mb.M42;
+				res.M33 = ma.M31 * mb.M13 + ma.M32 * mb.M23 + ma.M33 * mb.M33 + ma.M34 * mb.M43;
+				res.M34 = ma.M31 * mb.M14 + ma.M32 * mb.M24 + ma.M33 * mb.M34 + ma.M34 * mb.M44;
 
-				res.M41 = (ma.M41 * mb.M11) + (ma.M42 * mb.M21) + (ma.M43 * mb.M31) + (ma.M44 * mb.M41);
-				res.M42 = (ma.M41 * mb.M12) + (ma.M42 * mb.M22) + (ma.M43 * mb.M32) + (ma.M44 * mb.M42);
-				res.M43 = (ma.M41 * mb.M13) + (ma.M42 * mb.M23) + (ma.M43 * mb.M33) + (ma.M44 * mb.M43);
-				res.M44 = (ma.M41 * mb.M14) + (ma.M42 * mb.M24) + (ma.M43 * mb.M34) + (ma.M44 * mb.M44);
+				res.M41 = ma.M41 * mb.M11 + ma.M42 * mb.M21 + ma.M43 * mb.M31 + ma.M44 * mb.M41;
+				res.M42 = ma.M41 * mb.M12 + ma.M42 * mb.M22 + ma.M43 * mb.M32 + ma.M44 * mb.M42;
+				res.M43 = ma.M41 * mb.M13 + ma.M42 * mb.M23 + ma.M43 * mb.M33 + ma.M44 * mb.M43;
+				res.M44 = ma.M41 * mb.M14 + ma.M42 * mb.M24 + ma.M43 * mb.M34 + ma.M44 * mb.M44;
 #else
 				/*float r11 =	(ma.M11 * mb.M11) + (ma.M12 * mb.M21) + (ma.M13 * mb.M31) + (ma.M14 * mb.M41);
 				float r12 =	(ma.M11 * mb.M12) + (ma.M12 * mb.M22) + (ma.M13 * mb.M32) + (ma.M14 * mb.M42);
@@ -430,9 +408,7 @@ namespace Apoc3D
 #endif
 			}
 
-			/**
-			 *  Scales a matrix by the given value.
-			 */
+			/** Scales a matrix by the given value. */
 			static void Multiply(Matrix& res, const Matrix& ma, float mb)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -446,14 +422,17 @@ namespace Apoc3D
 				res.M12 = ma.M12 * mb;
 				res.M13 = ma.M13 * mb;
 				res.M14 = ma.M14 * mb;
+
 				res.M21 = ma.M21 * mb;
 				res.M22 = ma.M22 * mb;
 				res.M23 = ma.M23 * mb;
 				res.M24 = ma.M24 * mb;
+
 				res.M31 = ma.M31 * mb;
 				res.M32 = ma.M32 * mb;
 				res.M33 = ma.M33 * mb;
 				res.M34 = ma.M34 * mb;
+
 				res.M41 = ma.M41 * mb;
 				res.M42 = ma.M42 * mb;
 				res.M43 = ma.M43 * mb;
@@ -461,9 +440,7 @@ namespace Apoc3D
 			#endif
 			}
 
-			/** 
-			 *  Determines the sum of two matrices.
-			 */
+			/** Determines the sum of two matrices. */
 			static void Add(Matrix& res, const Matrix& ma, const Matrix& mb)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -476,14 +453,17 @@ namespace Apoc3D
 				res.M12 = ma.M12 + mb.M12;
 				res.M13 = ma.M13 + mb.M13;
 				res.M14 = ma.M14 + mb.M14;
+
 				res.M21 = ma.M21 + mb.M21;
 				res.M22 = ma.M22 + mb.M22;
 				res.M23 = ma.M23 + mb.M23;
 				res.M24 = ma.M24 + mb.M24;
+
 				res.M31 = ma.M31 + mb.M31;
 				res.M32 = ma.M32 + mb.M32;
 				res.M33 = ma.M33 + mb.M33;
 				res.M34 = ma.M34 + mb.M34;
+
 				res.M41 = ma.M41 + mb.M41;
 				res.M42 = ma.M42 + mb.M42;
 				res.M43 = ma.M43 + mb.M43;
@@ -491,9 +471,7 @@ namespace Apoc3D
 			#endif
 			}
 
-			/**
-			 *  Determines the difference between two matrices.
-			 */
+			/** Determines the difference between two matrices. */
 			static void Subtract(Matrix& res, const Matrix& ma, const Matrix& mb)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -506,14 +484,17 @@ namespace Apoc3D
 				res.M12 = ma.M12 - mb.M12;
 				res.M13 = ma.M13 - mb.M13;
 				res.M14 = ma.M14 - mb.M14;
+
 				res.M21 = ma.M21 - mb.M21;
 				res.M22 = ma.M22 - mb.M22;
 				res.M23 = ma.M23 - mb.M23;
 				res.M24 = ma.M24 - mb.M24;
+
 				res.M31 = ma.M31 - mb.M31;
 				res.M32 = ma.M32 - mb.M32;
 				res.M33 = ma.M33 - mb.M33;
 				res.M34 = ma.M34 - mb.M34;
+
 				res.M41 = ma.M41 - mb.M41;
 				res.M42 = ma.M42 - mb.M42;
 				res.M43 = ma.M43 - mb.M43;
@@ -521,9 +502,7 @@ namespace Apoc3D
 			#endif
 			}
 
-			/** 
-			 *  Negates a matrix.
-			 */
+			/** Negates a matrix. */
 			static void Negate(Matrix& res, const Matrix& m)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -536,14 +515,17 @@ namespace Apoc3D
 				res.M12 = -m.M12;
 				res.M13 = -m.M13;
 				res.M14 = -m.M14;
+
 				res.M21 = -m.M21;
 				res.M22 = -m.M22;
 				res.M23 = -m.M23;
 				res.M24 = -m.M24;
+
 				res.M31 = -m.M31;
 				res.M32 = -m.M32;
 				res.M33 = -m.M33;
 				res.M34 = -m.M34;
+
 				res.M41 = -m.M41;
 				res.M42 = -m.M42;
 				res.M43 = -m.M43;
@@ -575,14 +557,17 @@ namespace Apoc3D
 				res.M12 = ma.M12 + (mb.M12 - ma.M12) * amount;
 				res.M13 = ma.M13 + (mb.M13 - ma.M13) * amount;
 				res.M14 = ma.M14 + (mb.M14 - ma.M14) * amount;
+
 				res.M21 = ma.M21 + (mb.M21 - ma.M21) * amount;
 				res.M22 = ma.M22 + (mb.M22 - ma.M22) * amount;
 				res.M23 = ma.M23 + (mb.M23 - ma.M23) * amount;
 				res.M24 = ma.M24 + (mb.M24 - ma.M24) * amount;
+
 				res.M31 = ma.M31 + (mb.M31 - ma.M31) * amount;
 				res.M32 = ma.M32 + (mb.M32 - ma.M32) * amount;
 				res.M33 = ma.M33 + (mb.M33 - ma.M33) * amount;
 				res.M34 = ma.M34 + (mb.M34 - ma.M34) * amount;
+
 				res.M41 = ma.M41 + (mb.M41 - ma.M41) * amount;
 				res.M42 = ma.M42 + (mb.M42 - ma.M42) * amount;
 				res.M43 = ma.M43 + (mb.M43 - ma.M43) * amount;
@@ -591,9 +576,7 @@ namespace Apoc3D
 			#endif
 			}
 
-			/**
-			 *  Creates a matrix that rotates around the x-axis.
-			 */
+			/** Creates a matrix that rotates around the x-axis. */
 			static void CreateRotationX(Matrix& res, float angle)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -620,22 +603,24 @@ namespace Apoc3D
 				float cos = cosf(angle);
 				float sin = sinf(angle);
 				
-				res.M22 = res.M33 = cos;
-				res.M23 = sin;
-				res.M32 = -sin;
-				 
-				res.M44 = res.M11 = 1.0f;
+				res.M11 = 1;	res.M12 = 0;	res.M13 = 0;	res.M14 = 0;
+				res.M21 = 0;	res.M22 = cos;	res.M23 = sin;	res.M24 = 0;
+				res.M31 = 0;	res.M32 = -sin;	res.M33 = cos;	res.M34 = 0;
+				res.M41 = 0;	res.M42 = 0;	res.M43 = 0;	res.M44 = 1;
 
-				res.M12 = res.M13 = res.M14 = res.M21 = 
-				res.M24 = res.M31 = res.M34 = res.M41 = 
-				res.M42 = res.M43 =  0.0f;
-
-
+				//res.M22 = res.M33 = cos;
+				//res.M23 = sin;
+				//res.M32 = -sin;
+				// 
+				//res.M44 = res.M11 = 1.0f;
+				//
+				//res.M12 = res.M13 = res.M14 = res.M21 = 
+				//res.M24 = res.M31 = res.M34 = res.M41 = 
+				//res.M42 = res.M43 =  0.0f;
 			#endif
 			}
-			/**
-			 *  Creates a matrix that rotates around the y-axis.
-			 */
+
+			/** Creates a matrix that rotates around the y-axis. */
 			static void CreateRotationY(Matrix& res, float angle)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -662,21 +647,24 @@ namespace Apoc3D
 				float cos = cosf(angle);
 				float sin = sinf(angle);
 
-				res.M13 = -sin;
-				res.M31 = sin;
-				res.M11 = res.M33 = cos;
+				res.M11 = cos;	res.M12 = 0;	res.M13 = -sin;	res.M14 = 0;
+				res.M21 = 0;	res.M22 = 1;	res.M23 = 0;	res.M24 = 0;
+				res.M31 = sin;	res.M32 = 0;	res.M33 = cos;	res.M34 = 0;
+				res.M41 = 0;	res.M42 = 0;	res.M43 = 0;	res.M44 = 1;
 
-				res.M44 = res.M22 = 1.0f;
-
-
-				res.M12 = res.M14 = res.M21 = res.M23 = 
-				res.M24 = res.M32 = res.M34 = res.M41 = 
-				res.M42 = res.M43 = 0.0f;
+				//res.M13 = -sin;
+				//res.M31 = sin;
+				//res.M11 = res.M33 = cos;
+				//
+				//res.M44 = res.M22 = 1.0f;
+				//
+				//res.M12 = res.M14 = res.M21 = res.M23 =
+				//	res.M24 = res.M32 = res.M34 = res.M41 =
+				//	res.M42 = res.M43 = 0.0f;
 			#endif
 			}
-			/**
-			 *  Creates a matrix that rotates around the z-axis.
-			 */
+
+			/** Creates a matrix that rotates around the z-axis. */
 			static void CreateRotationZ(Matrix& res, float angle)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -702,23 +690,25 @@ namespace Apoc3D
 				float cos = cosf(angle);
 				float sin = sinf(angle);
 				
-				res.M12 = sin;				
-				res.M21 = -sin;
-				res.M11 = res.M22 = cos;
-				
-				
-				res.M33 = res.M44 = 1.0f;				
+				res.M11 = cos;	res.M12 = sin;	res.M13 = 0;	res.M14 = 0;
+				res.M21 = -sin;	res.M22 = cos;	res.M23 = 0;	res.M24 = 0;
+				res.M31 = 0;	res.M32 = 0;	res.M33 = 1;	res.M34 = 0;
+				res.M41 = 0;	res.M42 = 0;	res.M43 = 0;	res.M44 = 1;
 
-				res.M13 = res.M14 = 
-				res.M23 = res.M24 =
-				res.M31 = res.M32 = res.M34 =
-				res.M41 = res.M42 = res.M43 = 0.0f;
+				//res.M12 = sin;				
+				//res.M21 = -sin;
+				//res.M11 = res.M22 = cos;
+				//
+				//res.M33 = res.M44 = 1.0f;				
+				//
+				//res.M13 = res.M14 = 
+				//res.M23 = res.M24 =
+				//res.M31 = res.M32 = res.M34 =
+				//res.M41 = res.M42 = res.M43 = 0.0f;
 			#endif
 			}
 
-			/** 
-			 *  Creates a matrix that rotates around an arbitary axis.
-			 */
+			/** Creates a matrix that rotates around an arbitrary axis. */
 			static void CreateRotationAxis(Matrix& res, Vector3 axis, float angle)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -816,20 +806,23 @@ namespace Apoc3D
 				float xz = x * z;
 				float yz = y * z;
 
-				res.M11 = xx + (cos * (1.0f - xx));
-				res.M12 = (xy - (cos * xy)) + (sin * z);
-				res.M13 = (xz - (cos * xz)) - (sin * y);
+				res.M11 = xx + cos * (1 - xx);
+				res.M12 = xy - cos * xy + sin * z;
+				res.M13 = xz - cos * xz - sin * y;
+				res.M14 = 0;
 
-				res.M21 = (xy - (cos * xy)) - (sin * z);
-				res.M22 = yy + (cos * (1.0f - yy));
-				res.M23 = (yz - (cos * yz)) + (sin * x);
+				res.M21 = xy - cos * xy - sin * z;
+				res.M22 = yy + cos * (1 - yy);
+				res.M23 = yz - cos * yz + sin * x;
+				res.M24 = 0;
 
-				res.M31 = (xz - (cos * xz)) + (sin * y);
-				res.M32 = (yz - (cos * yz)) - (sin * x);
-				res.M33 = zz + (cos * (1.0f - zz));
-				res.M34 = res.M41 = res.M42 = res.M43 = res.M14 = res.M24 = 0.0f;
-				res.M44 = 1.0f;
+				res.M31 = xz - cos * xz + sin * y;
+				res.M32 = yz - cos * yz - sin * x;
+				res.M33 = zz + cos * (1 - zz);
+				res.M34 = 0;
 
+				res.M41 = res.M42 = res.M43 = 0.0f;
+				res.M44 = 1;
 			#endif
 			}
 
@@ -840,9 +833,8 @@ namespace Apoc3D
 			{
 				CreateTranslation(res, pos.X, pos.Y, pos.Z);
 			}
-			/**
-			 *  Creates a translation matrix using the specified offsets.
-			 */
+
+			/** Creates a translation matrix using the specified offsets. */
 			static void CreateTranslation(Matrix& res, float x, float y, float z)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -867,15 +859,14 @@ namespace Apoc3D
 					fstp	float ptr [eax+ELEM_ADDR(4,3)]
 				}
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				res.M11 = 1.0f; res.M12 = 0.0f; res.M13 = 0.0f; res.M14 = 0.0f;
-				res.M21 = 0.0f; res.M22 = 1.0f; res.M23 = 0.0f; res.M24 = 0.0f;
-				res.M31 = 0.0f; res.M32 = 0.0f; res.M33 = 1.0f; res.M34 = 0.0f;
-				res.M41 = x;	res.M42 = y;	res.M43 = z;	res.M44 = 1.0f;
+				res.M11 = 1; res.M12 = 0; res.M13 = 0; res.M14 = 0;
+				res.M21 = 0; res.M22 = 1; res.M23 = 0; res.M24 = 0;
+				res.M31 = 0; res.M32 = 0; res.M33 = 1; res.M34 = 0;
+				res.M41 = x; res.M42 = y; res.M43 = z; res.M44 = 1;
 			#endif
 			}
-			/**
-			 *  Creates a matrix that scales along the x-axis, y-axis, and y-axis.
-			 */
+
+			/** Creates a matrix that scales along the x-axis, y-axis, and y-axis. */
 			static void CreateScale(Matrix& res, float x, float y, float z)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -898,21 +889,14 @@ namespace Apoc3D
 					fstp	float ptr [eax+ELEM_ADDR(4,4)]	// set element _44
 				}
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				res.M11 = x;
-				res.M22 = y;
-				res.M33 = z;
-				res.M44 = 1.0f;
-
-
-				res.M12 = res.M13 = res.M14 = res.M21 =
-				res.M23 = res.M24 = res.M31 = res.M32 = 
-				res.M34 = res.M41 = res.M42 = res.M43 = 0.0f;
+				res.M11 = x; res.M12 = 0; res.M13 = 0; res.M14 = 0;
+				res.M21 = 0; res.M22 = y; res.M23 = 0; res.M24 = 0;
+				res.M31 = 0; res.M32 = 0; res.M33 = z; res.M34 = 0;
+				res.M41 = 0; res.M42 = 0; res.M43 = 0; res.M44 = 1;
 			#endif
 			}
 
-			/**
-			 *  Creates a left-handed, look-at matrix.
-			 */
+			/** Creates a left-handed, look-at matrix. */
 			static void CreateLookAtLH(Matrix& res, Vector3 cameraPosition, Vector3 cameraTarget, Vector3 up)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -983,24 +967,26 @@ namespace Apoc3D
 				res.M11 = xaxis.X;
 				res.M12 = yaxis.X;
 				res.M13 = zaxis.X;
+				res.M14 = 0;
 
 				res.M21 = xaxis.Y;
 				res.M22 = yaxis.Y;
 				res.M23 = zaxis.Y;
+				res.M24 = 0;
 
 				res.M31 = xaxis.Z;
 				res.M32 = yaxis.Z;
 				res.M33 = zaxis.Z;
-				res.M14 = res.M24 = res.M34 = 0.0f;
+				res.M34 = 0;
+
 				res.M41 = -Vector3::Dot(xaxis, cameraPosition);
 				res.M42 = -Vector3::Dot(yaxis, cameraPosition);
 				res.M43 = -Vector3::Dot(zaxis, cameraPosition);
-				res.M44 = 1.0f;
+				res.M44 = 1;
 			#endif
 			}
-			/** 
-			 *  Creates a right-handed, look-at matrix.
-			 */
+
+			/** Creates a right-handed, look-at matrix. */
 			static void CreateLookAtRH(Matrix& res, Vector3 cameraPosition, Vector3 cameraTarget, Vector3 up)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -1071,19 +1057,22 @@ namespace Apoc3D
 				res.M11 = xaxis.X;
 				res.M12 = yaxis.X;
 				res.M13 = zaxis.X;
+				res.M14 = 0;
 
 				res.M21 = xaxis.Y;
 				res.M22 = yaxis.Y;
 				res.M23 = zaxis.Y;
+				res.M24 = 0;
 
 				res.M31 = xaxis.Z;
 				res.M32 = yaxis.Z;
 				res.M33 = zaxis.Z;
-				res.M14 = res.M24 = res.M34 = 0.0f;
+				res.M34 = 0;
+
 				res.M41 = -Vector3::Dot(xaxis, cameraPosition);
 				res.M42 = -Vector3::Dot(yaxis, cameraPosition);
 				res.M43 = -Vector3::Dot(zaxis, cameraPosition);
-				res.M44 = 1.0f;
+				res.M44 = 1;
 			#endif
 			}
 			
@@ -1142,20 +1131,31 @@ namespace Apoc3D
 
 				}
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				float yScale = 1.0f / (tanf(fieldOfView * 0.5f));
+				float yScale = 1 / (tanf(fieldOfView * 0.5f));
 				float xScale = yScale / aspectRatio;
-				res.M11 = xScale;
-				res.M22 = yScale;
 
-				res.M12 = res.M13 = res.M14 =
-				res.M21 = res.M23 = res.M24 =
-				res.M41 = res.M42 = res.M44 =
-				res.M31 = res.M32 = 0.0f;
+				res.M11 = xScale;	res.M12 = 0;		res.M13 = 0; res.M14 = 0;
+				res.M21 = 0;		res.M22 = yScale;	res.M23 = 0; res.M24 = 0;
 
+				res.M31 = 0;
+				res.M32 = 0;		
 				res.M33 = farPlaneDistance / (farPlaneDistance - nearPlaneDistance);
-				res.M34 = 1.0f;
+				res.M34 = 1;
 
+				res.M41 = 0;
+				res.M42 = 0;
 				res.M43 = -(nearPlaneDistance * farPlaneDistance) / (farPlaneDistance - nearPlaneDistance);
+				res.M44 = 0;
+
+				//res.M12 = res.M13 = res.M14 =
+				//res.M21 = res.M23 = res.M24 =
+				//res.M41 = res.M42 = res.M44 =
+				//res.M31 = res.M32 = 0.0f;
+				//
+				//res.M33 = farPlaneDistance / (farPlaneDistance - nearPlaneDistance);
+				//res.M34 = 1.0f;
+				//
+				//res.M43 = -(nearPlaneDistance * farPlaneDistance) / (farPlaneDistance - nearPlaneDistance);
 			#endif
 			}
 
@@ -1214,20 +1214,34 @@ namespace Apoc3D
 
 				}
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				float yScale = 1.0f / (tanf(fieldOfView * 0.5f));
+				float yScale = 1 / (tanf(fieldOfView * 0.5f));
 				float xScale = yScale / aspectRatio;
-				res.M11 = xScale;
-				res.M22 = yScale;
 
-				res.M12 = res.M13 = res.M14 =
-				res.M21 = res.M23 = res.M24 =
-				res.M41 = res.M42 = res.M44 =
-				res.M31 = res.M32 = 0.0f;
+				res.M11 = xScale;	res.M12 = 0;		res.M13 = 0; res.M14 = 0;
+				res.M21 = 0;		res.M22 = yScale;	res.M23 = 0; res.M24 = 0;
 
+				res.M31 = 0;
+				res.M32 = 0;
 				res.M33 = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
-				res.M34 = -1.0f;
+				res.M34 = -1;
 
+				res.M41 = 0;
+				res.M42 = 0;
 				res.M43 = (nearPlaneDistance * farPlaneDistance) / (nearPlaneDistance - farPlaneDistance);
+				res.M44 = 0;
+
+				//res.M11 = xScale;
+				//res.M22 = yScale;
+				//
+				//res.M12 = res.M13 = res.M14 =
+				//res.M21 = res.M23 = res.M24 =
+				//res.M41 = res.M42 = res.M44 =
+				//res.M31 = res.M32 = 0.0f;
+				//
+				//res.M33 = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
+				//res.M34 = -1.0f;
+				//
+				//res.M43 = (nearPlaneDistance * farPlaneDistance) / (nearPlaneDistance - farPlaneDistance);
 
 			#endif
 			}
@@ -1278,17 +1292,27 @@ namespace Apoc3D
 					fstp		float ptr [eax+ELEM_ADDR(4,3)] 
 				}
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				res.M11 = 2.0f / width;
-				res.M22 = 2.0f / height;
+				res.M11 = 2 / width;	res.M12 = 0;			res.M13 = 0;	res.M14 = 0;
+				res.M21 = 0;			res.M22 = 2 / height;	res.M23 = 0;	res.M24 = 0;
 
-				res.M12 = res.M13 = res.M14 =
-				res.M21 = res.M23 = res.M24 =
-				res.M31 = res.M32 = res.M34 =
-				res.M41 = res.M42 = 0.0f;
+				res.M31 = 0;
+				res.M32 = 0;
+				res.M33 = 1 / (zFarPlane - zNearPlane);
+				res.M34 = 0;
 
-				res.M33 = 1.0f / (zFarPlane - zNearPlane);
+				res.M41 = 0;
+				res.M42 = 0;
 				res.M43 = -zNearPlane / (zFarPlane - zNearPlane);
-				res.M44 = 1.0f;
+				res.M44 = 1;
+
+				//res.M12 = res.M13 = res.M14 =
+				//res.M21 = res.M23 = res.M24 =
+				//res.M31 = res.M32 = res.M34 =
+				//res.M41 = res.M42 = 0;
+				//
+				//res.M33 = 1 / (zFarPlane - zNearPlane);
+				//res.M43 = -zNearPlane / (zFarPlane - zNearPlane);
+				//res.M44 = 1;
 			#endif
 			}
 
@@ -1339,17 +1363,30 @@ namespace Apoc3D
 					fstp	float ptr [eax+ELEM_ADDR(4,3)] 
 				}
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				res.M11 = 2.0f / width;
-				res.M22 = 2.0f / height;
+				res.M11 = 2 / width;	res.M12 = 0;			res.M13 = 0;	res.M14 = 0;
+				res.M21 = 0;			res.M22 = 2 / height;	res.M23 = 0;	res.M24 = 0;
 
-				res.M12 = res.M13 = res.M14 =
-				res.M21 = res.M23 = res.M24 =
-				res.M31 = res.M32 = res.M34 =
-				res.M41 = res.M42 = 0.0f;
+				res.M31 = 0;
+				res.M32 = 0;
+				res.M33 = 1 / (zNearPlane - zFarPlane);
+				res.M34 = 0;
 
-				res.M33 = 1.0f / (zNearPlane - zFarPlane);
+				res.M41 = 0;
+				res.M42 = 0;
 				res.M43 = zNearPlane / (zNearPlane - zFarPlane);
-				res.M44 = 1.0f;
+				res.M44 = 1;
+
+				//res.M11 = 2 / width;
+				//res.M22 = 2 / height;
+
+				//res.M12 = res.M13 = res.M14 =
+				//res.M21 = res.M23 = res.M24 =
+				//res.M31 = res.M32 = res.M34 =
+				//res.M41 = res.M42 = 0;
+
+				//res.M33 = 1 / (zNearPlane - zFarPlane);
+				//res.M43 = zNearPlane / (zNearPlane - zFarPlane);
+				//res.M44 = 1;
 			#endif
 			}
 
@@ -1395,10 +1432,6 @@ namespace Apoc3D
 
 #ifdef _MSC_VER
 #pragma warning (pop)
-#endif
-
-#if APOC3D_MATH_IMPL == APOC3D_SSE
-#pragma pack(pop)
 #endif
 
 

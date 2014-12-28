@@ -26,8 +26,8 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Math/Rectangle.h"
+#include "apoc3d/Math/MatrixStack.h"
 
 using namespace Apoc3D::Math;
 

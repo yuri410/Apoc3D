@@ -29,16 +29,16 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		Frustum::Frustum(void)
+		Frustum::Frustum()
 		{
-			for (int i=0;i<ClipPlaneCount;i++)
-			{				
+			for (int i = 0; i < ClipPlaneCount; i++)
+			{
 				m_planes[i].X = m_planes[i].Y = m_planes[i].Z = m_planes[i].D = 0;
 			}
 		}
 
 
-		Frustum::~Frustum(void)
+		Frustum::~Frustum()
 		{
 		}
 

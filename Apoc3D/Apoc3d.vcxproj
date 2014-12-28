@@ -232,6 +232,7 @@
     <ClInclude Include="Math\GaussBlurFilter.h" />
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Math\MathCommon.h" />
+    <ClInclude Include="Math\MatrixStack.h" />
     <ClInclude Include="Math\OctreeBox.h" />
     <ClInclude Include="Math\PerlinNoise.h" />
     <ClInclude Include="Math\RandomUtils.h" />
@@ -390,6 +391,7 @@
     <ClCompile Include="Math\ColorValue.cpp" />
     <ClCompile Include="Math\DoubleMath.cpp" />
     <ClCompile Include="Math\Math.cpp" />
+    <ClCompile Include="Math\MatrixStack.cpp" />
     <ClCompile Include="Math\OctreeBox.cpp" />
     <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\RandomUtils.cpp" />

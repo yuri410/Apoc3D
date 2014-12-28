@@ -104,7 +104,7 @@ namespace Apoc3D
 		CharType* end() { return c_str() + m_length; }
 
 		const CharType* c_str() const { return isAllocated() ? m_content.allocatedBuffer : m_content.localBuffer; }
-		CharType* c_str() { return const_cast<CharType*>(c_str()); }
+		CharType* c_str() { return isAllocated() ? m_content.allocatedBuffer : m_content.localBuffer; }
 
 	private:
 		bool isAllocated() const { return m_capacity > LocalBufferLength; }

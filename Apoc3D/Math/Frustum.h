@@ -53,18 +53,18 @@ namespace Apoc3D
 		class APAPI Frustum
 		{
 		public:
-			Frustum(void);
-			~Frustum(void);
+			Frustum();
+			~Frustum();
 
 			/*
 			 *  Check if a bounding sphere is intersecting the frustum
 			 */
 			bool Intersects(const BoundingSphere& sp) const
 			{
-				for (int i=0;i<ClipPlaneCount;i++)
+				for (int i = 0; i < ClipPlaneCount; i++)
 				{
 					float d = m_planes[i].Dot3(sp.Center);
-					if (d<=-sp.Radius)
+					if (d <= -sp.Radius)
 					{
 						return false;
 					}
