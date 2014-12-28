@@ -52,7 +52,7 @@ namespace Apoc3D
 			float y = -(2 * (source.Y - Y) / static_cast<float>(Height) - 1.0f);
 			float z = (source.Z - MinZ) / (MaxZ - MinZ);
 
-			Vector3 ts(x,y,z);
+			Vector3 ts(x, y, z);
 
 			Vector3 vector = Vector3::TransformSimple(ts, matrix);
 			float a = source.X * matrix.M14 + source.Y * matrix.M24 + source.Z * matrix.M34 + matrix.M44;
@@ -74,13 +74,13 @@ namespace Apoc3D
 			float invWidth = 1.0f / Width;
 			float invHeight = 1.0f / Height;
 			float invZ = 1.0f / (MaxZ - MinZ);
-			for (int32 i=0;i<count;i++)
+			for (int32 i = 0; i < count; i++)
 			{
 				float x = 2 * (source->X - X) * invWidth - 1.0f;
 				float y = -(2 * (source->Y - Y) * invHeight - 1.0f);
 				float z = (source->Z - MinZ) * invZ;
 
-				Vector3 ts(x,y,z);
+				Vector3 ts(x, y, z);
 
 				Vector3 vector = Vector3::TransformSimple(ts, matrix);
 				float a = source->X * matrix.M14 + source->Y * matrix.M24 + source->Z * matrix.M34 + matrix.M44;
@@ -156,7 +156,7 @@ namespace Apoc3D
 		}
 		void Viewport::ProjectFast(Vector2* dest, const Vector3* source, int32 count, const Matrix& wvp) const
 		{
-			for (int32 i=0;i<count;i++)
+			for (int32 i = 0; i < count; i++)
 			{
 				const Vector3& s = *source;
 				Vector2 result;
@@ -170,14 +170,14 @@ namespace Apoc3D
 				}
 				result.X = (result.X + 1.0f) * 0.5f * Width + X;
 				result.Y = (-result.Y + 1.0f) * 0.5f * Height + Y;
-				
+
 				*dest++ = result;
 				source++;
 			}
 		}
 		void Viewport::ProjectFast(Vector3* dest, const Vector3* source, int32 count, const Matrix& wvp) const
 		{
-			for (int32 i=0;i<count;i++)
+			for (int32 i = 0; i < count; i++)
 			{
 				const Vector3& s = *source;
 				Vector2 result;
@@ -205,7 +205,7 @@ namespace Apoc3D
 			Matrix::Multiply(temp, world, view);
 			Matrix::Multiply(matrix, temp, projection);
 
-			for (int32 i=0;i<count;i++)
+			for (int32 i = 0; i < count; i++)
 			{
 				Vector3 vector = Vector3::TransformSimple(*source, matrix);
 
