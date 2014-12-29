@@ -53,6 +53,7 @@ void TestXml();
 void TestRandom();
 
 void TestIterator();
+void TestIterator2();
 
 void TestHalfFloat();
 
@@ -82,6 +83,7 @@ void main()
 
 	//TestRandom();
 	TestIterator();
+	TestIterator2();
 	//TestHalfFloat();
 	
 }
@@ -648,6 +650,52 @@ void TestIterator()
 			eterTime = getTimeDiff(t1, t2);
 		}
 		printf("vector:\t\tIter=%lld,\tIndex=%lld\n", iterTime, eterTime);
+	}
+}
+
+bool TestCond(int32& r) { return r > 100 && r < 10240; }
+
+void TestIterator2()
+{
+	using namespace std::chrono;
+
+	const int Count = 100000;
+	const int Iterations = 1000;
+
+	List<int> test3(Count);
+	
+	for (int32 i = 0; i < Count; i++)
+	{
+		test3.Add(i);
+	}
+
+	volatile int64 ifTime;
+	volatile int64 cndTime;
+
+	if (1)
+	{
+		{
+			volatile auto t1 = high_resolution_clock::now();
+			for (int k = 0; k < Iterations; k++)
+			{
+				for (auto e : ConditionalAccessor<int32, int32, TestCond>(test3.begin(), test3.end()))
+					OptimizationBlocker(e);
+			}
+			volatile auto t2 = high_resolution_clock::now();
+			cndTime = getTimeDiff(t1, t2);
+		}
+		{
+			volatile auto t1 = high_resolution_clock::now();
+			for (int k = 0; k < Iterations; k++)
+			{
+				for (auto& e : test3)
+					if (TestCond(e))
+						OptimizationBlocker(e);
+			}
+			volatile auto t2 = high_resolution_clock::now();
+			ifTime = getTimeDiff(t1, t2);
+		}
+		printf("ConditionalAccessor:\tif=%lld,\tcond=%lld\n", ifTime, cndTime);
 	}
 }
 

@@ -862,4 +862,44 @@ namespace UnitTestVC
 		}
 
 	};
+
+	TEST_CLASS(ConditionalAccessorTest)
+	{
+	public:
+		TEST_METHOD(ConditionalAccessorTest_Iterate)
+		{
+			List<int32> lst = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+			List<int32> result;
+
+			for (int32 v : ConditionalAccessor<int32>(lst.begin(), lst.end()))
+			{
+				result.Add(v);
+			}
+
+			Assert::AreEqual(lst.getCount(), result.getCount());
+			for (int32 i = 0; i < lst.getCount(); i++)
+			{
+				Assert::AreEqual(lst[i], result[i]);
+			}
+		}
+
+		static bool TestCond(int32& r) { return r > 1 && r < 7; }
+
+		TEST_METHOD(ConditionalAccessorTest_TestCond)
+		{
+			List<int32> lst = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+			List<int32> result;
+
+			for (int32 v : ConditionalAccessor<int32, int32, TestCond>(lst.begin(), lst.end()))
+			{
+				result.Add(v);
+			}
+
+			Assert::AreEqual(5, result.getCount());
+			for (int32 v : result)
+			{
+				Assert::IsTrue(TestCond(v));
+			}
+		}
+	};
 }
