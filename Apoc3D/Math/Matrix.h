@@ -118,7 +118,7 @@ namespace Apoc3D
 				 M41(f41), M42(f42), M43(f43), M44(f44)
 			{ }
 
-			void LoadFromPointer(const float* elements) { FillArray(Elements, Elements); }
+			void LoadFromPointer(const float* elements) { FillArray(Elements, elements); }
 
 			Vector3 GetX() const
 			{
