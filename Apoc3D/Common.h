@@ -64,8 +64,8 @@
 #include <type_traits>
 #include <initializer_list>
 
-#include "FastDelegate\FastDelegate.h"
-#include "FunctorReference.h"
+#include "Library/FastDelegate.h"
+#include "Meta/FunctorReference.h"
 
 typedef int16_t int16;
 typedef int32_t int32;
@@ -117,8 +117,6 @@ namespace tthread
 
 namespace Apoc3D
 {
-	template class APAPI fastdelegate::FastDelegate0<void>;
-
 	typedef std::wstring String;
 	typedef std::u32string String32;
 

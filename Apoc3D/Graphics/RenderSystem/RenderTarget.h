@@ -27,7 +27,7 @@
  */
 
 #include "apoc3d/Graphics/LockData.h"
-#include "apoc3d/EventDelegate.h"
+#include "apoc3d/Meta/EventDelegate.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Core;
@@ -80,7 +80,7 @@ namespace Apoc3D
 
 				static bool IsMultisampleModeStringNone(const String& aamode);
 
-				EventDelegate1<RenderTarget*> eventReseted;
+				EventDelegate<RenderTarget*> eventReseted;
 
 			protected:
 				virtual DataRectangle lock(LockMode mode, const Apoc3D::Math::Rectangle& rect) = 0;

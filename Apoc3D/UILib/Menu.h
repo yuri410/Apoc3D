@@ -66,7 +66,7 @@ namespace Apoc3D
 				ForceCreateSubMenu(forceSubMenu), ResultItem(resultItem), ResultSubMenu(resultSubMenu)
 			{ }
 
-			MenuItemSetupInfo(const String& text, fastdelegate::FastDelegate1<MenuItem*> handler, 
+			MenuItemSetupInfo(const String& text, fastdelegate::FastDelegate<void(MenuItem*)> handler, 
 				MenuItem** resultItem = nullptr, SubMenu** resultSubMenu = nullptr, bool forceSubMenu = false)
 				: Text(text), 
 				ForceCreateSubMenu(forceSubMenu), ResultItem(resultItem), ResultSubMenu(resultSubMenu)
@@ -74,7 +74,7 @@ namespace Apoc3D
 				EventHandler.Bind(handler);
 			}
 
-			MenuItemSetupInfo(const String& text, fastdelegate::FastDelegate1<MenuItem*> handler, std::initializer_list<MenuItemSetupInfo> subItems, 
+			MenuItemSetupInfo(const String& text, fastdelegate::FastDelegate<void(MenuItem*)> handler, std::initializer_list<MenuItemSetupInfo> subItems, 
 				MenuItem** resultItem = nullptr, SubMenu** resultSubMenu = nullptr, bool forceSubMenu = false)
 				: Text(text), SubMenuItemsInfo(subItems), 
 				ForceCreateSubMenu(forceSubMenu), ResultItem(resultItem), ResultSubMenu(resultSubMenu)

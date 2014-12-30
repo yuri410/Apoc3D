@@ -42,7 +42,7 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(ScrollBar, Control);
 		public:
-			typedef EventDelegate1<ScrollBar*> ScrollBarEvent;
+			typedef EventDelegate<ScrollBar*> ScrollBarEvent;
 
 			ScrollBar(const ScrollBarVisualSettings& settings, const Point& position, BarDirection type, int32 length);
 			ScrollBar(const StyleSkin* skin, const Point& position, BarDirection type, int32 length);
@@ -142,7 +142,7 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(SliderBar, Control);
 		public:
-			typedef EventDelegate2<SliderBar*, bool> SliderBarEvent;
+			typedef EventDelegate<SliderBar*, bool> SliderBarEvent;
 
 			SliderBar(const SliderBarVisualSettings& settings, const Point& position, BarDirection type, int32 length);
 			SliderBar(const StyleSkin* skin, const Point& position, BarDirection type, int32 length);

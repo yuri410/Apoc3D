@@ -29,7 +29,7 @@
 #include "apoc3d/Common.h"
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Collections/List.h"
-#include "apoc3d/EventDelegate.h"
+#include "apoc3d/Meta/EventDelegate.h"
 
 namespace Apoc3D
 {
@@ -53,7 +53,7 @@ namespace Apoc3D
 			static const int MsgBox_OK = DLGRES_OK;
 			static const int MsgBox_OKCancel = DLGRES_OK | DLGRES_Cancel;
 			static const int MsgBox_YesNo = DLGRES_Yes | DLGRES_No;
-			typedef EventDelegate1<DialogResult> InputHandler;
+			typedef EventDelegate<DialogResult> InputHandler;
 
 			MessageDialogBox(Apoc3D::Graphics::RenderSystem::RenderDevice* device, const StyleSkin* skin,
 				const String& title, const String& text, int buttonsFlags);
@@ -83,7 +83,7 @@ namespace Apoc3D
 		class APAPI InputDialogBox
 		{
 		public:
-			typedef EventDelegate1<InputDialogBox*> ConfirmInputHandler;
+			typedef EventDelegate<InputDialogBox*> ConfirmInputHandler;
 
 			InputDialogBox(Apoc3D::Graphics::RenderSystem::RenderDevice* device, const StyleSkin* skin,
 				const String& title, const String& text, bool multiline);

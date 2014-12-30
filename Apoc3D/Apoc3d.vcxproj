@@ -182,9 +182,9 @@
     <ClInclude Include="Core\ResourceManager.h" />
     <ClInclude Include="Core\Streaming\GenerationTable.h" />
     <ClInclude Include="Engine.h" />
-    <ClInclude Include="EventDelegate.h" />
+    <ClInclude Include="Meta\EventDelegate.h" />
     <ClInclude Include="ApocExportSettings.h" />
-    <ClInclude Include="FunctorReference.h" />
+    <ClInclude Include="Meta\FunctorReference.h" />
     <ClInclude Include="Graphics\Animation\AnimationData.h" />
     <ClInclude Include="Graphics\Animation\AnimationManager.h" />
     <ClInclude Include="Graphics\Animation\AnimationPlayers.h" />
@@ -221,6 +221,7 @@
     <ClInclude Include="IOLib\TextData.h" />
     <ClInclude Include="IOLib\TextureData.h" />
     <ClInclude Include="Library\ConvertUTF.h" />
+    <ClInclude Include="Library\FastDelegate.h" />
     <ClInclude Include="Library\lz4.h" />
     <ClInclude Include="Library\lz4hc.h" />
     <ClInclude Include="Library\squish.h" />

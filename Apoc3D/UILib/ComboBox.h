@@ -48,7 +48,7 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(ComboBox, Control);
 		public:
-			typedef EventDelegate1<ComboBox*> ComboBoxEvent;
+			typedef EventDelegate<ComboBox*> ComboBoxEvent;
 
 			ComboBox(const ComboBoxVisualSettings& settings, const Point& position, int width, const List<String>& items);
 			ComboBox(const StyleSkin* skin, const Point& position, int width, const List<String>& items);

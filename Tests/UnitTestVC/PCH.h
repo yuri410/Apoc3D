@@ -15,7 +15,8 @@
 #include "apoc3d/Library/lz4.h"
 #include "apoc3d/Library/lz4hc.h"
 
-#include "apoc3d/EventDelegate.h"
+#include "apoc3d/Meta/EventDelegate.h"
+#include "apoc3d/Meta/FunctorReference.h"
 
 #include "apoc3d/Collections/CollectionsCommon.h"
 #include "apoc3d/Collections/BitArray.h"

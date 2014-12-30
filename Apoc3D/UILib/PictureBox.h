@@ -34,13 +34,13 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		typedef EventDelegate2<Sprite*, Apoc3D::Math::Rectangle*> PictureDrawEventHandler;
+		typedef EventDelegate<Sprite*, Apoc3D::Math::Rectangle*> PictureDrawEventHandler;
 
 		class APAPI PictureBox : public Control
 		{
 			RTTI_DERIVED(PictureBox, Control);
 		public:
-			typedef EventDelegate2<PictureBox*, const GameTime*> InteractiveUpdateEventHandler;
+			typedef EventDelegate<PictureBox*, const GameTime*> InteractiveUpdateEventHandler;
 
 			PictureBox(const Point& position, int border);
 			PictureBox(const Point& position, int border, Texture* texture);

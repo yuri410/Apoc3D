@@ -26,7 +26,8 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "..\EventDelegate.h"
+#include "apoc3d/Meta/EventDelegate.h"
+#include "apoc3d/Collections/LinkedList.h"
 
 using namespace Apoc3D::Collections;
 
@@ -91,7 +92,7 @@ namespace Apoc3D
 			String ToString() const;
 		};
 
-		typedef EventDelegate1<LogEntry> NewLogWrittenHandler;
+		typedef EventDelegate<LogEntry> NewLogWrittenHandler;
 
 		/** 
 		 *  A singleton providing possibilities to log messages anywhere in the code.

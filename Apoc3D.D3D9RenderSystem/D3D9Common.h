@@ -35,7 +35,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <d3d9types.h>
-#include "apoc3d/EventDelegate.h"
+#include "apoc3d/Meta/EventDelegate.h"
 
 #pragma comment(lib, "Apoc3D.lib")
 
@@ -70,8 +70,8 @@ typedef IDirect3DVertexDeclaration9 D3DVertexDeclaration;
 
 namespace Apoc3D
 {
-	typedef EventDelegate1<bool*> CancellableEventHandler;
-	typedef EventDelegate0 EventHandler;
+	typedef EventDelegate<bool*> CancellableEventHandler;
+	typedef EventDelegate<> EventHandler;
 
 	namespace Graphics
 	{

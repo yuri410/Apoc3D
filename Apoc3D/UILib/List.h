@@ -29,8 +29,8 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(ListBox, ScrollableControl);
 		public:
-			typedef EventDelegate1<ListBox*> ListBoxEvent;
-			typedef EventDelegate3<ListBox*, int32, const Apoc3D::Math::Rectangle&> ListBoxItemEvent;
+			typedef EventDelegate<ListBox*> ListBoxEvent;
+			typedef EventDelegate<ListBox*, int32, const Apoc3D::Math::Rectangle&> ListBoxItemEvent;
 
 			ListBox(const StyleSkin* skin, const Point& position, int width, int height, const List<String>& items);
 			ListBox(const ListBoxVisualSettings& settings, const Point& position, int width, int height, const List<String>& items);
@@ -208,7 +208,7 @@ namespace Apoc3D
 			bool m_mouseHover = false;
 		};
 
-		typedef EventDelegate2<int, int> ListViewSelectionHandler;
+		typedef EventDelegate<int, int> ListViewSelectionHandler;
 
 		class APAPI ListView : public ScrollableControl
 		{

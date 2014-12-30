@@ -40,7 +40,8 @@ namespace Apoc3D
 	{
 		namespace Animation
 		{
-			typedef fastdelegate::FastDelegate0<void> AnimationCompeletedHandler;
+			typedef fastdelegate::FastDelegate<void()> AnimationCompeletedHandler;
+
 			/**
 			 *  This class serves as a base class for various animation players.  It contains
 			 *  common functionality to deal with a clip, playing it back at a speed, 

@@ -40,7 +40,7 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(Button, Control);
 		public:
-			typedef EventDelegate1<Button*> ButtonEvent;
+			typedef EventDelegate<Button*> ButtonEvent;
 
 			Button(const ButtonVisualSettings& settings, const Point& position, const String& text);
 			Button(const ButtonVisualSettings& settings, const Point& position, int width, const String& text);
@@ -140,8 +140,8 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(ButtonRow, Control);
 		public:
-			typedef EventDelegate1<int> SelectedChangedHandler;
-			typedef EventDelegate1<ButtonRow*> ButtonEvent;
+			typedef EventDelegate<int> SelectedChangedHandler;
+			typedef EventDelegate<ButtonRow*> ButtonEvent;
 
 			ButtonRow(const StyleSkin* skin, const Point& position, int32 width, const List<String>& titles);
 			ButtonRow(const StyleSkin* skin, const Point& position, int32 width, int32 colCount, const List<String>& titles);
@@ -235,7 +235,7 @@ namespace Apoc3D
 		class APAPI ButtonGroupTextured
 		{
 		public:
-			typedef EventDelegate2<ButtonGroupTextured*, int32> ButtonEvent;
+			typedef EventDelegate<ButtonGroupTextured*, int32> ButtonEvent;
 
 			template <int32 N>
 			ButtonGroupTextured(const Point& position, const ButtonGroupTexturedVisualSettings<N>& settings)

@@ -58,13 +58,12 @@ namespace APDesigner
 
 	EditorExtension* EditorExtensionManager::FindSuitableExtension(const ProjectItem* item)
 	{
-		EditorExtension* result = 0;
-		for (HashMap<String, EditorExtension*>::Enumerator e = m_extensions.GetEnumerator();e.MoveNext();)
+		EditorExtension* result = nullptr;
+		for (EditorExtension* ee : m_extensions.getValueAccessor())
 		{
-			EditorExtension* ee = e.getCurrentValue();
 			if (ee->SupportsItem(item))
 			{
-				result = e.getCurrentValue();
+				result = ee;
 				break;
 			}
 		}

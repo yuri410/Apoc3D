@@ -27,8 +27,8 @@
  */
 
 #include "apoc3d/Common.h"
-#include "apoc3d/EventDelegate.h"
 #include "apoc3d/Collections/List.h"
+#include "apoc3d/Meta/EventDelegate.h"
 
 namespace Apoc3D
 {

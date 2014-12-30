@@ -199,10 +199,8 @@ namespace APDesigner
 			SubMenu* toolSubMenu = new SubMenu(m_UIskin, nullptr);
 
 
-			for (EditorExtensionManager::ExtensionEnumerator e = EditorExtensionManager::getSingleton().GetEnumerator();e.MoveNext();)
+			for (EditorExtension* ext : EditorExtensionManager::getSingleton().GetExtensions())
 			{
-				EditorExtension* ext = e.getCurrentValue();
-
 				if (ext->SupportsIndependentEditing())
 				{
 					SubMenu* subMenu = new SubMenu(m_UIskin, nullptr);

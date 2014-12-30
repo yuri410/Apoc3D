@@ -4,7 +4,7 @@
 
 #include "../Common.h"
 #include "apoc3d/Collections/Queue.h"
-#include "apoc3d/EventDelegate.h"
+#include "apoc3d/Meta/EventDelegate.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::IO;
@@ -102,7 +102,7 @@ namespace Apoc3D
 			void Update(const GameTime* time);
 
 			bool Enabled = true;
-			EventDelegate3<const FrameInputData&, const char*, int64 > eventStreamData;
+			EventDelegate<const FrameInputData&, const char*, int64> eventStreamData;
 		private:
 			void FlushLiveStreamData();
 

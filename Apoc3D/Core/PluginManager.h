@@ -36,9 +36,9 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		typedef fastdelegate::FastDelegate3<const Plugin*, int32, int32, void> PluginLoadCallBack;
+		typedef fastdelegate::FastDelegate<void(const Plugin*, int32, int32)> PluginLoadCallBack;
 
-		typedef fastdelegate::FastDelegate1<const Plugin*, void> PluginErrorBack;
+		typedef fastdelegate::FastDelegate<void(const Plugin*)> PluginErrorBack;
 
 		/** A 
 		*/

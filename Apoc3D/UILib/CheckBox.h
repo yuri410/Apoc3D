@@ -58,7 +58,7 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(CheckBox, Control);
 		public:
-			typedef EventDelegate1<CheckBox*> CheckBoxEvent;
+			typedef EventDelegate<CheckBox*> CheckBoxEvent;
 
 			CheckBox(const CheckboxVisualSettings& settings, const Point& position, const String& text, bool checked);
 			CheckBox(const CheckboxVisualSettings& settings, const Point& position, const String& text, const Point& sz, bool checked);

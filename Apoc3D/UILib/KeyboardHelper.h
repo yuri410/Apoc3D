@@ -51,8 +51,8 @@ namespace Apoc3D
 			KeyboardEventsArgs() { }
 		};
 		
-		typedef EventDelegate1<String> PasteEventHandler;
-		typedef EventDelegate2<KeyboardKeyCode, KeyboardEventsArgs> KeyboardEventHandler;
+		typedef EventDelegate<String> PasteEventHandler;
+		typedef EventDelegate<KeyboardKeyCode, KeyboardEventsArgs> KeyboardEventHandler;
 
 		class APAPI KeyboardHelper
 		{
@@ -67,8 +67,8 @@ namespace Apoc3D
 			KeyboardEventHandler eventKeyRelease;
 			PasteEventHandler eventKeyPaste;
 
-			EventDelegate0 eventKeyboardSelectionStart;
-			EventDelegate0 eventKeyboardSelectionEnd;
+			EventDelegate<> eventKeyboardSelectionStart;
+			EventDelegate<> eventKeyboardSelectionEnd;
 		private:
 			KeyboardKeyCode m_currentKey = KEY_UNASSIGNED;
 			KeyboardKeyCode m_previousKey = KEY_UNASSIGNED;
@@ -121,10 +121,10 @@ namespace Apoc3D
 			bool AllowMouseSelection = false;
 			bool AllowSelection = false;
 
-			EventDelegate0 eventEnterPressed;
-			EventDelegate0 eventContentChanged;
-			EventDelegate0 eventUpPressedSingleline;
-			EventDelegate0 eventDownPressedSingleline;
+			EventDelegate<> eventEnterPressed;
+			EventDelegate<> eventContentChanged;
+			EventDelegate<> eventUpPressedSingleline;
+			EventDelegate<> eventDownPressedSingleline;
 
 		private:
 			bool isKeyboardSelecting() const { return m_keyboard.isShiftDown(); }

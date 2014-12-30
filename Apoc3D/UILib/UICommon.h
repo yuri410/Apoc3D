@@ -29,8 +29,8 @@
 #include "apoc3d/Common.h"
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Math/ColorValue.h"
-#include "apoc3d/EventDelegate.h"
 #include "apoc3d/Collections/List.h"
+#include "apoc3d/Meta/EventDelegate.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -39,8 +39,8 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		typedef EventDelegate1<Control*> UIEventHandler;
-		typedef EventDelegate1<MenuItem*> MenuItemEventHandler;
+		typedef EventDelegate<Control*> UIEventHandler;
+		typedef EventDelegate<MenuItem*> MenuItemEventHandler;
 
 		enum struct TextHAlign
 		{

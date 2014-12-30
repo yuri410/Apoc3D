@@ -31,14 +31,14 @@
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Collections/HashMap.h"
 
-#include "..\EventDelegate.h"
+#include "apoc3d/Meta/EventDelegate.h"
 
 namespace Apoc3D
 {
 	namespace Core
 	{
 		typedef const Apoc3D::Collections::List<String>& CommandArgsConstRef;
-		typedef fastdelegate::FastDelegate1<CommandArgsConstRef> CommandHandler;
+		typedef fastdelegate::FastDelegate<void(CommandArgsConstRef)> CommandHandler;
 
 		struct CommandDescription
 		{
@@ -79,7 +79,7 @@ namespace Apoc3D
 
 		};
 
-		typedef EventDelegate2<String, Apoc3D::Collections::List<String>*> RawCommandHandler;
+		typedef EventDelegate<String, Apoc3D::Collections::List<String>*> RawCommandHandler;
 		class APAPI CommandInterpreter
 		{
 			SINGLETON_DECL(CommandInterpreter);

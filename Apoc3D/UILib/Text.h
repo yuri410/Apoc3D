@@ -13,7 +13,7 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(Label, Control);
 		public:
-			typedef EventDelegate1<Label*> LabelEvent;
+			typedef EventDelegate<Label*> LabelEvent;
 
 			Label(Font* font, const Point& position, const String& text);
 			Label(Font* font, const Point& position, const String& text, int width, TextHAlign alignment = TextHAlign::Left);
@@ -72,7 +72,7 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(TextBox, ScrollableControl);
 		public:
-			typedef EventDelegate1<TextBox*> TextBoxEvent;
+			typedef EventDelegate<TextBox*> TextBoxEvent;
 
 			TextBox(const TextBoxVisualSettings& settings, const Point& position, int width);
 			TextBox(const TextBoxVisualSettings& settings, const Point& position, int width, const String& text);

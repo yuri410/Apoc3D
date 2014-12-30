@@ -29,7 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace APDesigner
 {
-	typedef Apoc3D::EventDelegate1<Document*> DocumentActivationHandler;
+	typedef Apoc3D::EventDelegate<Document*> DocumentActivationHandler;
 
 	class APDAPI Document
 	{

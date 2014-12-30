@@ -45,7 +45,7 @@ namespace Apoc3D
 		class APAPI Console
 		{
 		public:
-			typedef EventDelegate1<LogEntry*> ConsoleNewLog;
+			typedef EventDelegate<LogEntry*> ConsoleNewLog;
 			
 			
 			static const int MaxLogEntries = 500;

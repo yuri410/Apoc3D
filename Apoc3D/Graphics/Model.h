@@ -31,7 +31,7 @@
 #include "RenderOperationBuffer.h"
 #include "ModelTypes.h"
 #include "Animation/AnimationTypes.h"
-#include "../EventDelegate.h"
+#include "apoc3d/Meta/EventDelegate.h"
 
 #include "apoc3d/Core/Resource.h"
 
@@ -90,7 +90,7 @@ namespace Apoc3D
 			ANIMTYPE_Material = 4
 		};
 
-		typedef EventDelegate1<AnimationType> ModelAnimationCompletedHandler;
+		typedef EventDelegate<AnimationType> ModelAnimationCompletedHandler;
 
 		/**
 		 *  A model is a set of subsets called Mesh, with additionally animation controller and data.

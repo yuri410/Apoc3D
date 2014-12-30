@@ -72,7 +72,7 @@ namespace APDesigner
 		SINGLETON_DECL(EditorExtensionManager);
 
 	public:
-		typedef HashMap<String, EditorExtension*>::Enumerator ExtensionEnumerator;
+		typedef HashMap<String, EditorExtension*>::ValueAccessor ExtensionAccessor;
 
 		EditorExtension* FindSuitableExtension(const ProjectItem* item);
 		
@@ -83,12 +83,12 @@ namespace APDesigner
 			{
 				return ext;
 			}
-			return 0;
+			return nullptr;
 		}
 		void RegisterExtension(EditorExtension* ext);
 		void UnregisterExtension(EditorExtension* ext);
 
-		ExtensionEnumerator GetEnumerator() const { return m_extensions.GetEnumerator(); }
+		ExtensionAccessor GetExtensions() const { return m_extensions.getValueAccessor(); }
 
 		EditorExtensionManager() { }
 	private:

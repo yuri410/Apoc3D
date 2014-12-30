@@ -10,7 +10,7 @@
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Core/BackgroundSequencialWorker.h"
 
-#include "apoc3d/FunctorReference.h"
+#include "apoc3d/Meta/FunctorReference.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;
