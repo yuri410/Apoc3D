@@ -741,13 +741,7 @@ public:
 	{
 		m_Closure.bindmemfunc(detail::implicit_cast<X*>(pthis), function_to_bind);
 	}
-
-	template < class X, class Y >
-	void bind(Y *pthis, RetType(X::* function_to_bind)(ArgTypes...))
-	{
-		m_Closure.bindmemfunc(detail::implicit_cast<X*>(pthis), function_to_bind);
-	}
-
+	
 	// Binding to const member functions.
 	template < class X, class Y >
 	FastDelegate(const Y *pthis, RetType(X::* function_to_bind)(ArgTypes...) const)
@@ -755,17 +749,25 @@ public:
 		m_Closure.bindconstmemfunc(detail::implicit_cast<const X*>(pthis), function_to_bind);
 	}
 
-	template < class X, class Y >
-	void bind(const Y *pthis, RetType(X::* function_to_bind)(ArgTypes...) const)
-	{
-		m_Closure.bindconstmemfunc(detail::implicit_cast<const X *>(pthis), function_to_bind);
-	}
 	// Static functions. We convert them into a member function call.
 	// This constructor also provides implicit conversion
 	FastDelegate(RetType(*function_to_bind)(ArgTypes...))
 	{
 		bind(function_to_bind);
 	}
+
+	template < class X, class Y >
+	void bind(Y *pthis, RetType(X::* function_to_bind)(ArgTypes...))
+	{
+		m_Closure.bindmemfunc(detail::implicit_cast<X*>(pthis), function_to_bind);
+	}
+
+	template < class X, class Y >
+	void bind(const Y *pthis, RetType(X::* function_to_bind)(ArgTypes...) const)
+	{
+		m_Closure.bindconstmemfunc(detail::implicit_cast<const X *>(pthis), function_to_bind);
+	}
+
 	// for efficiency, prevent creation of a temporary
 	void operator = (RetType(*function_to_bind)(ArgTypes...))
 	{

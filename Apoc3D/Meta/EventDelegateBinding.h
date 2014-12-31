@@ -71,6 +71,7 @@ namespace Apoc3D
 	class EventDelegateBindingGroup
 	{
 		typedef EventDelegateBindingInterface<ClassType, TargetType> BindingInterfaceType;
+		
 	public:
 
 		class BindingStorage
