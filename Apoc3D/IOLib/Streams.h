@@ -299,6 +299,8 @@ namespace Apoc3D
 			const char* getDataPointer() const { return m_data.getElements(); }
 			char* getDataPointer() { return m_data.getElements(); }
 
+			char* AllocateArrayCopy() const { return m_data.AllocateArrayCopy(); }
+
 		private:
 			int64 m_length = 0;
 			int64 m_position = 0;
