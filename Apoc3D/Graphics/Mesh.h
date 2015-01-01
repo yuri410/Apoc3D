@@ -53,7 +53,7 @@ namespace Apoc3D
 		{
 		public:
 			Mesh(RenderDevice* device, const MeshData* data);
-			~Mesh(void);
+			~Mesh();
 
 
 			/**

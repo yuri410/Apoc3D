@@ -170,7 +170,7 @@ namespace Apoc3D
 		}
 
 
-		OctreeSceneManager::~OctreeSceneManager(void)
+		OctreeSceneManager::~OctreeSceneManager()
 		{
 			delete m_octRootNode;	
 		}

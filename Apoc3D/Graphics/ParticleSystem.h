@@ -77,7 +77,7 @@ namespace Apoc3D
 		{
 		public:
 			ParticleSystem(RenderDevice* device, Material* mtrl);
-			virtual ~ParticleSystem(void);
+			virtual ~ParticleSystem();
 
 			void Reset()
 			{

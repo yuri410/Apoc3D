@@ -86,7 +86,7 @@ namespace Apoc3D
 		}
 
 
-		ScenePass::~ScenePass(void)
+		ScenePass::~ScenePass()
 		{
 			delete m_quadBuffer;
 			delete m_quadVtxDecl;

@@ -28,11 +28,11 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		SceneNode::SceneNode(void)
+		SceneNode::SceneNode()
 		{
 		}
 
-		SceneNode::~SceneNode(void)
+		SceneNode::~SceneNode()
 		{
 			for (int i=0;i<m_attached.getCount();i++)
 			{

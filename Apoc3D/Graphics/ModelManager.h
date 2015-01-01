@@ -52,8 +52,8 @@ namespace Apoc3D
 			static int64 CacheSize;
 			static bool UseCache;
 
-			ModelManager(void);
-			~ModelManager(void);
+			ModelManager();
+			~ModelManager();
 
 			ModelSharedData* CreateInstanceUnmanaged(RenderDevice* renderDevice, const ResourceLocation& rl);
 			ResourceHandle<ModelSharedData>* CreateInstance(RenderDevice* renderDevice, const ResourceLocation& rl);

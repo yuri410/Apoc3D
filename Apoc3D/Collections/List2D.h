@@ -84,7 +84,7 @@ namespace Apoc3D
 			{
 				if (this != &rhs)
 				{
-					~List2D();
+					this->~List2D();
 
 					m_internalPointer = rhs.m_internalPointer;
 					m_width = rhs.m_width;
@@ -107,7 +107,7 @@ namespace Apoc3D
 			{
 				if (this != &rhs)
 				{
-					~List2D();
+					this->~List2D();
 					
 					m_data = rhs.m_data;
 					m_internalPointer = rhs.m_internalPointer;

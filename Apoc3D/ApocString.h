@@ -47,7 +47,7 @@ namespace Apoc3D
 			{
 				if (m_capacity != other.m_capacity)
 				{
-					~StringBase();
+					this->~StringBase();
 
 					m_capacity = LocalBufferLength;
 					m_length = 0;
@@ -66,7 +66,7 @@ namespace Apoc3D
 		{
 			if (this != &other)
 			{
-				~StringBase();
+				this->~StringBase();
 
 				m_content = other.m_content;
 				m_length = other.m_length;

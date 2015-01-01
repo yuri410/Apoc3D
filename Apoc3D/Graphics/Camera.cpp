@@ -117,7 +117,7 @@ namespace Apoc3D
 			//m_frustum = Frustum(&m_proj);
 		}
 
-		ChaseCamera::~ChaseCamera(void)
+		ChaseCamera::~ChaseCamera()
 		{
 		}
 

@@ -422,7 +422,7 @@ namespace Apoc3D
 		}
 
 
-		SceneRenderer::~SceneRenderer(void)
+		SceneRenderer::~SceneRenderer()
 		{
 			for (int i=0;i<m_procFallbacks.getCount();i++)
 			{

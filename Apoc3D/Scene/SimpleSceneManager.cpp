@@ -50,14 +50,14 @@ namespace Apoc3D
 			obj->NotifyParentNode(0);
 		}
 
-		SimpleSceneManager::SimpleSceneManager(void)
+		SimpleSceneManager::SimpleSceneManager()
 		{
 			m_defaultNode = new SimpleSceneNode();
 
 		}
 
 
-		SimpleSceneManager::~SimpleSceneManager(void)
+		SimpleSceneManager::~SimpleSceneManager()
 		{
 			delete m_defaultNode;
 		}

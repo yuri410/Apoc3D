@@ -133,7 +133,7 @@ namespace Apoc3D
 		}
 
 
-		Model::~Model(void)
+		Model::~Model()
 		{
 			for (int i=0;i<m_animInstance.getCount();i++)
 			{

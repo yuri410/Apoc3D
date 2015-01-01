@@ -57,8 +57,8 @@ namespace Apoc3D
 		class APAPI SceneManager
 		{
 		public:
-			SceneManager(void);
-			virtual ~SceneManager(void);
+			SceneManager();
+			virtual ~SceneManager();
 		
 			/**
 			 *  Adds a new scene object into scene

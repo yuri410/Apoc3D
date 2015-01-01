@@ -44,8 +44,8 @@ namespace Apoc3D
 		class APAPI RenderOperationBuffer
 		{
 		public:
-			RenderOperationBuffer(void) { }
-			~RenderOperationBuffer(void) { }
+			RenderOperationBuffer() { }
+			~RenderOperationBuffer() { }
 
 			/**
 			 *  Adds a new RenderOperation to the buffer

@@ -185,7 +185,7 @@ namespace Apoc3D
 		}
 
 
-		Mesh::~Mesh(void)
+		Mesh::~Mesh()
 		{
 			delete m_vertexBuffer;
 			for (int i=0;i<m_indexBuffers.getCount();i++)

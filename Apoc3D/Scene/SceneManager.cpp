@@ -32,12 +32,12 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		SceneManager::SceneManager(void)
+		SceneManager::SceneManager()
 		{
 		}
 
 
-		SceneManager::~SceneManager(void)
+		SceneManager::~SceneManager()
 		{
 		}
 

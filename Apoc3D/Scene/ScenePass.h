@@ -54,7 +54,7 @@ namespace Apoc3D
 		public:
 
 			ScenePass(RenderDevice* dev, SceneRenderer* renderer, SceneProcedure* parent, const ScenePassData* passData);
-			~ScenePass(void);
+			~ScenePass();
 
 			/**
 			 *  Begins executing the pass' procedure for once.

@@ -73,7 +73,7 @@ namespace Apoc3D
 
 
 			OctreeSceneNode(OctreeSceneManager* mgr, OctreeSceneNode* parent, const OctreeBox& volume);
-			~OctreeSceneNode(void);
+			~OctreeSceneNode();
 
 			virtual void AddObject(SceneObject* sceObj);
 			virtual void RemoveObject(SceneObject* sceObj);
@@ -114,7 +114,7 @@ namespace Apoc3D
 		{
 		public:
 			OctreeSceneManager(const OctreeBox& range, float minBVSize);
-			~OctreeSceneManager(void);
+			~OctreeSceneManager();
 
 			virtual void AddObject(SceneObject* const obj);
 			virtual bool RemoveObject(SceneObject* const obj);

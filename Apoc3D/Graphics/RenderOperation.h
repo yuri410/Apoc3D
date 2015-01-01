@@ -82,13 +82,13 @@ namespace Apoc3D
 			 */
 			bool RootTransformIsFinal;
 
-			RenderOperation(void)
+			RenderOperation()
 				: GeometryData(0), Material(0), RootTransformIsFinal(false), UserData(0)
 			{
 				memset(&RootTransform, 0, sizeof(Matrix));
 				memset(&PartTransform, 0, sizeof(PartTransforms));
 			}
-			~RenderOperation(void) { }
+			~RenderOperation() { }
 
 			bool operator ==(const RenderOperation& other)
 			{

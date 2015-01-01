@@ -49,11 +49,11 @@ namespace Apoc3D
 			virtual RenderOperationBuffer* GetRenderOperation() { return GetRenderOperation(0); }
 
 		protected:
-			Renderable(void)
+			Renderable()
 			{
 			}
 
-			virtual ~Renderable(void)
+			virtual ~Renderable()
 			{
 			}
 		};

@@ -112,7 +112,7 @@ namespace Apoc3D
 			 *   The AnimationData need to be deleted manually when no longer used, as the Model class will not modify it.
 			 */
 			Model(ResourceHandle<ModelSharedData>* data, const AnimationData* animData = 0);
-			~Model(void);
+			~Model();
 		
 			/**
 			 *  Gets the ModelSharedData currently being used. 

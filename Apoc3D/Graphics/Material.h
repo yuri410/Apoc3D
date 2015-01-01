@@ -169,7 +169,7 @@ namespace Apoc3D
 
 			Material(const Material& m);
 			Material(RenderDevice* device);
-			~Material(void);
+			~Material();
 
 			/** 
 			 *  Reloads all textures in this material if their name have been changed.

@@ -85,13 +85,13 @@ namespace Apoc3D
 				CalculateMatrices();
 			}
 
-			Camera(void)
+			Camera()
 			{
 				m_view.LoadIdentity();
 				m_proj.LoadIdentity();
 				m_viewProj.LoadIdentity();
 			}
-			~Camera(void) {}
+			~Camera() { }
 
 		protected:
 
@@ -222,7 +222,7 @@ namespace Apoc3D
 		{
 		public:
 			ChaseCamera(float fov = ToRadian(45));
-			~ChaseCamera(void);
+			~ChaseCamera();
 
 			/**
 			 *  Resets the camera to its desired position

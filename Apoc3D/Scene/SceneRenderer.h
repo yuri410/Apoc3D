@@ -162,7 +162,7 @@ namespace Apoc3D
 		{
 		public:
 			SceneRenderer(RenderDevice* dev);
-			~SceneRenderer(void);
+			~SceneRenderer();
 
 			/**
 			 *  The scene renderer loads from a config which lists several render script (SceneProcedure) files.

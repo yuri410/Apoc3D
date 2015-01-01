@@ -42,8 +42,8 @@ namespace Apoc3D
 		class APAPI SceneNode
 		{
 		public:
-			SceneNode(void);
-			virtual ~SceneNode(void);
+			SceneNode();
+			virtual ~SceneNode();
 
 			int32 getCount() { return m_attached.getCount(); }
 			SceneObject* operator [](int i) { return m_attached[i]; }

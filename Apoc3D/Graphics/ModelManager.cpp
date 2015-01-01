@@ -41,7 +41,7 @@ namespace Apoc3D
 		int64 ModelManager::CacheSize = 100 * 1048576;
 		bool ModelManager::UseCache = true;
 
-		ModelManager::ModelManager(void)
+		ModelManager::ModelManager()
 			: ResourceManager(L"Model Manager ", CacheSize, UseCache)
 		{
 			LogManager::getSingleton().Write(LOG_System, 
@@ -50,7 +50,7 @@ namespace Apoc3D
 		}
 
 
-		ModelManager::~ModelManager(void)
+		ModelManager::~ModelManager()
 		{
 		}
 

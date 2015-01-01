@@ -38,8 +38,8 @@ namespace Apoc3D
 		class APAPI SimpleSceneNode : public SceneNode
 		{
 		public:
-			SimpleSceneNode(void){}
-			~SimpleSceneNode(void){}
+			SimpleSceneNode(){}
+			~SimpleSceneNode(){}
 
 			virtual void AddObject(SceneObject* sceObj);
 			virtual void RemoveObject(SceneObject* sceObj);
@@ -51,8 +51,8 @@ namespace Apoc3D
 			SimpleSceneNode* m_defaultNode;
 
 		public:
-			SimpleSceneManager(void);
-			~SimpleSceneManager(void);
+			SimpleSceneManager();
+			~SimpleSceneManager();
 
 			virtual void AddObject(SceneObject* const obj);
 			virtual bool RemoveObject(SceneObject* const obj);

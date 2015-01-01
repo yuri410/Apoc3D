@@ -92,9 +92,9 @@ namespace Apoc3D
 #endif
 		}
 
-		Material::~Material(void)
+		Material::~Material()
 		{
-			for (int i=0;i<MaxTextures;i++)
+			for (int i = 0; i < MaxTextures; i++)
 			{
 				if (m_tex[i])
 				{

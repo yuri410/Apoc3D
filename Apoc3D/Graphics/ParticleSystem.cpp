@@ -60,7 +60,7 @@ namespace Apoc3D
 			memset(&m_settings,0, sizeof(m_settings));
 		}
 
-		ParticleSystem::~ParticleSystem(void)
+		ParticleSystem::~ParticleSystem()
 		{
 			if (m_particles)
 			{

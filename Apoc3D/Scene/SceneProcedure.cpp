@@ -49,7 +49,7 @@ namespace Apoc3D
 		}
 
 
-		SceneProcedure::~SceneProcedure(void)
+		SceneProcedure::~SceneProcedure()
 		{
 			for (int i=0;i<m_passes.getCount();i++)
 			{

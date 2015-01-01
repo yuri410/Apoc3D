@@ -89,7 +89,7 @@ namespace Apoc3D
 		{
 		public:
 			SceneProcedure(RenderDevice* device);
-			~SceneProcedure(void);
+			~SceneProcedure();
 
 			/**
 			 *  Check if the SceneProcedure is available. A SceneProcedure is unavailable if the techniques
