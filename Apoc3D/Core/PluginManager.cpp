@@ -148,9 +148,9 @@ namespace Apoc3D
 		{
 			Configuration* conf = ConfigurationManager::getSingleton().getConfiguration(L"PLUGIN");
 			
-			for (Configuration::ChildTable::Enumerator iter = conf->GetEnumerator(); iter.MoveNext();)
+			for (ConfigurationSection* ss : conf->getSubSections())
 			{
-				String name = iter.getCurrentValue()->getAttribute(L"Library");
+				String name = ss->getAttribute(L"Library");
 				LoadPlugin(name);
 			}
 		}

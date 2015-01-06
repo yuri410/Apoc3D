@@ -83,8 +83,7 @@ namespace Apoc3D
 
 			const String& getName() const { return m_name; }
 
-			/** Gets the top section enumerator */
-			ChildTable::Enumerator GetEnumerator() { return m_sections.GetEnumerator(); }
+			/** Gets the top level sections */
 			ChildTable::ValueAccessor getSubSections() const { return m_sections.getValueAccessor(); }
 
 		private:

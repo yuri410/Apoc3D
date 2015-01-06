@@ -34,7 +34,7 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			static const D3DVERTEXELEMENT9 Elements[2] = 
+			static const D3DVERTEXELEMENT9 InstanceVertexElements[2] = 
 			{
 				{1, 0, D3DDECLTYPE_FLOAT1, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 15},
 				D3DDECL_END()
@@ -53,9 +53,9 @@ namespace Apoc3D
 				m_vertexBuffer->Lock(0,0, &dstData, 0);
 
 				float* dst = reinterpret_cast<float*>(dstData);
-				for (int i=0;i<MaxOneTimeInstances;i++)
+				for (int i = 0; i < MaxOneTimeInstances; i++)
 				{
-					dst[i] = (float)(i);
+					dst[i] = (float)i;
 				}
 
 				m_vertexBuffer->Unlock();
@@ -64,10 +64,8 @@ namespace Apoc3D
 
 			D3D9InstancingData::~D3D9InstancingData()
 			{
-				for (HashMap<void*, IDirect3DVertexDeclaration9*>::Enumerator e 
-					= m_vtxDeclExpansionTable.GetEnumerator(); e.MoveNext();)
+				for (IDirect3DVertexDeclaration9* decl : m_vtxDeclExpansionTable.getValueAccessor())
 				{
-					IDirect3DVertexDeclaration9* decl = e.getCurrentValue();
 					decl->Release();
 				}
 				m_vertexBuffer->Release();
@@ -85,8 +83,8 @@ namespace Apoc3D
 				IDirect3DVertexDeclaration9* result;
 				if (!m_vtxDeclExpansionTable.TryGetValue(decl, result))
 				{
-					D3DVERTEXELEMENT9* elems = new D3DVERTEXELEMENT9[decl->getElementCount()+2];
-					for (int i=0;i<decl->getElementCount();i++)
+					D3DVERTEXELEMENT9* elems = new D3DVERTEXELEMENT9[decl->getElementCount() + 2];
+					for (int i = 0; i < decl->getElementCount(); i++)
 					{
 						const VertexElement& e = decl->getElement(i);
 						elems[i].Method = D3DDECLMETHOD_DEFAULT;
@@ -97,13 +95,15 @@ namespace Apoc3D
 						elems[i].UsageIndex = (BYTE)e.getIndex();
 					}
 
-					elems[decl->getElementCount()] = Elements[0];
-					elems[decl->getElementCount()+1] = Elements[1];
+					elems[decl->getElementCount()] = InstanceVertexElements[0];
+					elems[decl->getElementCount() + 1] = InstanceVertexElements[1];
 
 					HRESULT hr = m_d3ddev->getDevice()->CreateVertexDeclaration(elems, &result);
 					assert(SUCCEEDED(hr));
 
 					m_vtxDeclExpansionTable.Add(decl, result);
+
+					delete[] elems;
 				}
 				return result;
 			}

@@ -17,6 +17,7 @@ namespace Apoc3D
 		{
 		public:
 			explicit SizedPool(int32 instanceSize);
+			~SizedPool();
 
 			bool Checkin(void* o);
 

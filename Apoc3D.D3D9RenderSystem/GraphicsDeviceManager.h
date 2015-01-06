@@ -77,7 +77,7 @@ namespace Apoc3D
 
 				/* Toggles between full screen and windowed mode. */
 				void ToggleFullScreen();
-				void ReleaseDevice();
+				void ReleaseDevice(bool isDeviceReset);
 
 				D3DDevice* getDevice() const { return m_device; }
 				IDirect3D9* getDirect3D() const { return m_direct3D9; }
@@ -93,7 +93,7 @@ namespace Apoc3D
 				void Window_UserResized();
 				void Window_MonitorChanged();
 
-				void InitializeDevice();
+				void InitializeDevice(bool isDeviceReset);
 				HRESULT ResetDevice();
 
 				int32 GetAdapterOrdinal(HMONITOR mon);

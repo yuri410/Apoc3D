@@ -49,19 +49,19 @@ namespace Apoc3D
 				{
 					result.ResizeDiscard(count);
 
-					for (size_t i=0;i<count-1;i++)
+					for (size_t i = 0; i < count - 1; i++)
 					{
-						VertexElement elem(static_cast<int32>(elements[i].Offset), 
-							D3D9Utils::ConvertBackVertexElementFormat((D3DDECLTYPE)elements[i].Type), 
+						VertexElement elem(static_cast<int32>(elements[i].Offset),
+							D3D9Utils::ConvertBackVertexElementFormat((D3DDECLTYPE)elements[i].Type),
 							D3D9Utils::ConvertBackVertexElementUsage((D3DDECLUSAGE)elements[i].Usage), elements[i].UsageIndex);
 						result.Add(elem);
 					}
-
 				}
 				
 				delete[] elements;
 				return result;
 			}
+
 			D3D9VertexDeclaration::D3D9VertexDeclaration(D3D9RenderDevice* device, const List<VertexElement>& elements)
 				: VertexDeclaration(elements), m_device(device)
 			{

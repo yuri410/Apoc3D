@@ -177,47 +177,52 @@ namespace Apoc3D
 			{
 				m_gameWindow->Load(params.BackBufferWidth, params.BackBufferHeight, params.IsFixedWindow);
 
-				D3D9RenderDevice* device = new D3D9RenderDevice(m_graphicsDeviceManager);
-				m_renderDevice = device;
+				m_renderDevice = new D3D9RenderDevice(m_graphicsDeviceManager);
 				//m_window->m_game->getWindow()->MakeFixedSize(params.IsFixedWindow);
 
-				LogManager::getSingleton().Write(LOG_Graphics,
-					L"[D3D9]Creating render window. ",
-					LOGLVL_Infomation);
+				ApocLog(LOG_Graphics, L"[D3D9]Creating render window.", LOGLVL_Infomation);
 
 				m_graphicsDeviceManager->UserIgnoreMonitorChanges() = params.IgnoreMonitorChange;
 
 				// Initialize() and Load() are called as the device is being created.
 				m_graphicsDeviceManager->ChangeDevice(params);
 
-				LogManager::getSingleton().Write(LOG_Graphics,
-					L"[D3D9]Render window created. ",
-					LOGLVL_Infomation);
+				ApocLog(LOG_Graphics, L"[D3D9]Render window created.", LOGLVL_Infomation);
 			}
 
 			void D3D9RenderWindow::D3D9_Release()
 			{
-				m_graphicsDeviceManager->ReleaseDevice();
-				OnFinalize();
+				// Unload() and Finalize() will be called here
+				m_graphicsDeviceManager->ReleaseDevice(false);
+				delete m_renderDevice;
 			}
 
 
-			void D3D9RenderWindow::D3D9_Initialize()
+			void D3D9RenderWindow::D3D9_Initialize(bool isDeviceReset)
 			{
 				D3DADAPTER_IDENTIFIER9 did;
 				m_graphicsDeviceManager->getDirect3D()->GetAdapterIdentifier(m_graphicsDeviceManager->getCurrentSetting()->AdapterOrdinal, NULL, &did);
 				m_hardwareName = StringUtils::toPlatformWideString(did.Description);
 
-				// The window will be only initialized once, even in some cases, like device lost
-				// when this is called again.
-				D3D9RenderDevice* device = static_cast<D3D9RenderDevice*>(m_renderDevice);
-
-				if (!device->isInitialized())
+				if (!isDeviceReset)
 				{
+					// The window will be only initialized once, even in some cases, like device lost
+					// when this is called again.
+					D3D9RenderDevice* device = static_cast<D3D9RenderDevice*>(m_renderDevice);
+
+					assert(!device->isInitialized());
+
 					device->Initialize();
 					OnInitialize(); // will make the event handler interface to process the event
 				}
+				
 			}
+			void D3D9RenderWindow::D3D9_Finalize(bool isDeviceReset)
+			{
+				if (!isDeviceReset)
+					OnFinalize();
+			}
+
 			void D3D9RenderWindow::D3D9_LoadContent() { OnLoad(); }
 			void D3D9RenderWindow::D3D9_UnloadContent() { OnUnload(); }
 

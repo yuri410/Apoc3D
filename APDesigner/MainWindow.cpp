@@ -469,9 +469,9 @@ namespace APDesigner
 		resultNameList.Add(std::make_pair(name, comment));
 
 		// go into sub sections
-		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator(); e.MoveNext();)
+		for (ConfigurationSection* ss : sect->getSubSections())
 		{
-			ParseMaterialTree(name, e.getCurrentValue(), resultNameList);
+			ParseMaterialTree(name, ss, resultNameList);
 		}
 	}
 

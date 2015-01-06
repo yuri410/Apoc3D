@@ -30,6 +30,7 @@
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Core/Pool.h"
+#include "apoc3d/Utility/TypeConverter.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Core;
@@ -70,9 +71,6 @@ namespace Apoc3D
 			typedef HashMap<String, String> AttributeTable;
 			typedef HashMap<String, ConfigurationSection*> SubSectionTable;
 
-			typedef SubSectionTable::Enumerator SubSectionEnumerator;
-			typedef AttributeTable::Enumerator AttributeEnumerator;
-
 			class AttributeAccessor
 			{
 			public:
@@ -95,9 +93,6 @@ namespace Apoc3D
 			void AddSection(ConfigurationSection* section);
 			void SetValue(const String& value);
 
-			AttributeTable::Enumerator GetAttributeEnumrator() const { return m_attributes.GetEnumerator(); }
-			SubSectionTable::Enumerator GetSubSectionEnumrator() const { return m_subSection.GetEnumerator(); }
-
 			AttributeAccessor getAttributes() const { return AttributeAccessor(m_attributes); }
 			SubSectionTable::ValueAccessor getSubSections() const { return m_subSection.getValueAccessor(); }
 
@@ -105,12 +100,8 @@ namespace Apoc3D
 			int getSubSectionCount() const { return m_subSection.getCount(); }
 
 			const String& getName() const { return m_name; }
-
-			/**
-			 *  Gets the value of the sub-section with the given name.
-			 */
 			const String& getValue() const { return m_value; }
-			const String& getValue(const String& name) const;
+			const String& getValue(const String& name) const;			/** Gets the value of the sub-section with the given name. */
 			const String& getAttribute(const String& name) const;
 			ConfigurationSection* getSection(const String& name) const;
 
@@ -208,8 +199,10 @@ namespace Apoc3D
 
 #define CONFIG_SECT_COMBINER_DECL_NOLIST(type, typeName) \
 			void Add##typeName(const String& key, const type* v, int32 count); \
-			void AddAttribute##typeName(const String& name, const type* v, int32 count);
-			
+			void AddAttribute##typeName(const String& name, const type* v, int32 count); \
+			template <int32 N> void Add##typeName(const String& key, const type (&v)[N]) { Add##typeName(key, v, N); } \
+			template <int32 N> void AddAttribute##typeName(const String& name, const type (&v)[N]) { AddAttribute##typeName(name, v, N); }
+
 #define CONFIG_SECT_COMBINER_DECL(type, typeName) \
 			CONFIG_SECT_COMBINER_DECL_NOLIST(type, typeName); \
 			void Add##typeName(const String& key, const List<type>& v) { Add##typeName(key, v.getElements(), v.getCount()); } \
@@ -244,7 +237,7 @@ namespace Apoc3D
 			void SetUInts(const uint32* v, int count);
 			void SetVector3s(const Vector3* v, int count);
 
-			void SetStrings(const List<String>& v)			{ SetStrings(&v[0], v.getCount()); }
+			void SetStrings(const List<String>& v)		{ SetStrings(&v[0], v.getCount()); }
 			void SetSingles(const List<float>& v)		{ SetSingles(&v[0],  v.getCount()); }
 			void SetPercentages(const List<float>& v)	{ SetPercentages(&v[0],  v.getCount()); }
 			void SetInts(const List<int32>& v)			{ SetInts(&v[0],  v.getCount()); }
@@ -259,9 +252,94 @@ namespace Apoc3D
 			void SetColorValue(const String& name, ColorValue value);
 			void SetVector3(const String& name, const Vector3& v);
 
-			
-		protected:
 
+			template <typename T>
+			bool TryGetEnum(const String& name, const Utility::TypeDualConverter<T>& conv, T& result) const
+			{
+				String tmp;
+				if (tryGetValue(name, tmp))
+					return conv.TryParse(tmp, result);
+				return false;
+			}
+
+			template <typename T>
+			bool TryGetAttributeEnum(const String& name, const Utility::TypeDualConverter<T>& conv, T& result) const
+			{
+				String tmp;
+				if (tryGetAttribute(name, tmp))
+					return conv.TryParse(tmp, result);
+				return false;
+			}
+
+
+			template <typename T>
+			T GetEnum(const Utility::TypeDualConverter<T>& conv) const { return conv.Parse(m_value); }
+
+			template <typename T>
+			T GetEnum(const String& name, const Utility::TypeDualConverter<T>& conv) const { return conv.Parse(getValue(name)); }
+
+			template <typename T>
+			T GetAttributeEnum(const String& name, const Utility::TypeDualConverter<T>& conv) const { return conv.Parse(getAttribute(name)); }
+
+
+			template <typename T>
+			void AddEnum(const String& name, const Utility::TypeDualConverter<T>& conv, T result) { AddStringValue(name, conv.ToString(result)); }
+
+			template <typename T>
+			void AddAttributeEnum(const String& name, const Utility::TypeDualConverter<T>& conv, T result) { AddAttributeString(name, conv.ToString(result)); }
+
+			template <typename T>
+			void SetEnum(const String& name, const Utility::TypeDualConverter<T>& conv, T result) { SetStringValue(name, conv.ToString(result)); }
+
+
+
+
+			template <typename T>
+			bool TryGetGeneric(const String& name, T& result) const
+			{
+				String tmp;
+				if (tryGetValue(name, tmp))
+				{
+					result.Parse(tmp);
+					return true;
+				}
+				return false;
+			}
+
+			template <typename T>
+			bool TryGetAttributeGeneric(const String& name, T& result) const
+			{
+				String tmp;
+				if (tryGetAttribute(name, tmp))
+				{
+					result.Parse(tmp);
+					return true;
+				}
+				return false;
+			}
+
+
+			template <typename T>
+			void GetGeneric(T& r) const { return r.Parse(m_value); }
+
+			template <typename T>
+			void GetGeneric(const String& name, T& r) const { return r.Parse(getValue(name)); }
+
+			template <typename T>
+			void GetAttributeGeneric(const String& name, T& r) const { return r.Parse(getAttribute(name)); }
+
+
+			template <typename T>
+			void AddGeneric(const String& name, T& result) { AddStringValue(name, result.ToString()); }
+
+			template <typename T>
+			void AddAttributeGeneric(const String& name, T& result) { AddAttributeString(name, result.ToString()); }
+
+			template <typename T>
+			void SetGeneric(const String& name, T& result) { SetStringValue(name, result.ToString()); }
+
+
+		protected:
 			String m_name;
 			String m_value;
 
@@ -269,7 +347,6 @@ namespace Apoc3D
 			SubSectionTable m_subSection;
 
 		};
-
 
 
 		class ParameterDictionary : public HashMap<String, String>
@@ -358,6 +435,32 @@ namespace Apoc3D
 #undef CONFIG_SECT_COMBINER_DECL
 #undef CONFIG_SECT_COMBINER_DECL_NOLIST
 
+			template <typename T>
+			bool TryGetEnum(const String& name, const Utility::TypeDualConverter<T>& conv, T& result) const
+			{
+				String tmp;
+				if (TryGetValue(name, tmp))
+					return conv.TryParse(tmp, result);
+				return false;
+			}
+
+			template <typename T>
+			T GetEnum(const String& name, const Utility::TypeDualConverter<T>& conv) const 
+			{
+				return conv.Parse(operator[](name));
+			}
+
+			template <typename T>
+			void AddEnum(const String& name, const Utility::TypeDualConverter<T>& conv, T result)
+			{
+				AddStringValue(name, conv.ToString(result));
+			}
+
+			template <typename T>
+			void SetEnum(const String& name, const Utility::TypeDualConverter<T>& conv, T result)
+			{
+				SetStringValue(name, conv.ToString(result));
+			}
 		};
 	}
 }

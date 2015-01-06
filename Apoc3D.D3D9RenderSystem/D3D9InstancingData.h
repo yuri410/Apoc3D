@@ -60,10 +60,9 @@ namespace Apoc3D
 
 				int getInstanceDataSize() const { return sizeof(float); }
 			private:
-				HashMap<void*, IDirect3DVertexDeclaration9*> m_vtxDeclExpansionTable;
+				HashMap<VertexDeclaration*, IDirect3DVertexDeclaration9*> m_vtxDeclExpansionTable;
 
-				/** Per-instance index stored in this vertex buffer
-				*/
+				/** Per-instance index stored in this vertex buffer */
 				IDirect3DVertexBuffer9* m_vertexBuffer;
 				D3D9RenderDevice* m_d3ddev;
 			};

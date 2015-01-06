@@ -99,19 +99,6 @@ namespace Apoc3D
 				m_game->D3D9_OnDeviceReset();
 				return hr;
 			}
-			void GraphicsDeviceManager::ReleaseDevice()
-			{
-				if (!m_device)
-					return;
-
-				if (m_game)
-				{
-					m_game->D3D9_UnloadContent();
-				}
-
-				m_device->Release();
-				m_device = 0;
-			}
 
 			void GraphicsDeviceManager::UpdateDeviceInformation()
 			{
@@ -122,7 +109,7 @@ namespace Apoc3D
 			{
 				const AdapterInfo* adapter = 0;
 				const List<AdapterInfo*> adInfo = Enumeration::getAdapters();
-				for (int32 i=0;i<adInfo.getCount();i++)
+				for (int32 i = 0; i < adInfo.getCount(); i++)
 				{
 					if (m_direct3D9->GetAdapterMonitor(adInfo[i]->AdapterIndex) == mon)
 					{
@@ -144,13 +131,8 @@ namespace Apoc3D
 				if (!m_device)
 					return;
 
-//#ifdef _DEBUG
-				//if (m_deviceLost)
-					//Sleep(50);
-//#else
 				if (m_deviceLost || !m_game->getIsActive())
 					Sleep(50);
-//#endif
 
 				if (m_deviceLost)
 				{
@@ -237,7 +219,7 @@ namespace Apoc3D
 				CreateDevice(newSettings);
 			}
 
-			void GraphicsDeviceManager::InitializeDevice()
+			void GraphicsDeviceManager::InitializeDevice(bool isDeviceReset)
 			{
 				HWND sss = m_game->getWindow()->getHandle();
 				HRESULT result = m_direct3D9->CreateDevice(m_currentSetting->AdapterOrdinal,
@@ -298,9 +280,25 @@ namespace Apoc3D
 						LOGLVL_Infomation);
 				}
 
- 				m_game->D3D9_Initialize();
+				m_game->D3D9_Initialize(isDeviceReset);
 				m_game->D3D9_LoadContent();
 			}
+
+			void GraphicsDeviceManager::ReleaseDevice(bool isDeviceReset)
+			{
+				if (m_device == nullptr)
+					return;
+
+				if (m_game)
+				{
+					m_game->D3D9_UnloadContent();
+					m_game->D3D9_Finalize(isDeviceReset);
+				}
+
+				m_device->Release();
+				m_device = 0;
+			}
+
 			void GraphicsDeviceManager::CreateDevice(const RawSettings& settings)
 			{
 				RawSettings* oldSettings = m_currentSetting;
@@ -388,12 +386,13 @@ namespace Apoc3D
 				{
 					if (oldSettings)
 					{
-						LogManager::getSingleton().Write(LOG_Graphics, 
-							L"[D3D9]Recreating Device. ", 
-							LOGLVL_Default);
-						ReleaseDevice();
+						ApocLog(LOG_Graphics, L"[D3D9]Recreating Device. ", LOGLVL_Default);
+
+						ReleaseDevice(true);
+						InitializeDevice(true);
 					}
-					InitializeDevice();
+					else
+						InitializeDevice(false);
 				}
 
 				UpdateDeviceInformation();

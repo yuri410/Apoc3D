@@ -22,6 +22,8 @@ namespace Apoc3D
 			MF_Used = 1 << 2
 		};
 
+		
+
 		static bool tagCheckInMemoryBlock(void*& b)
 		{
 			char* ptr = (char*)b;
@@ -68,6 +70,30 @@ namespace Apoc3D
 
 			EnsureReserve(false, PreallocationCount);
 		}
+		SizedPool::~SizedPool()
+		{
+			m_poolLock.lock();
+
+			List<void*> blocksToClear;
+			for (int32 i = 0; i < m_pool.getCount();i++)
+			{
+				char* buf = (char*)m_pool.GetElement(i);
+				uint32 id = *(uint32*)buf;
+
+				assert((id & 0xffffff00U) == PoolMemorySignature);
+
+				byte flags = (byte)(id & 0xff);
+				if (flags & MF_PreallocatedHead)
+				{
+					blocksToClear.Add(buf);
+				}
+			}
+
+			for (void* m : blocksToClear)
+				free(m);
+
+			m_poolLock.unlock();
+		}
 
 		bool SizedPool::Checkin(void* o)
 		{
@@ -106,14 +132,6 @@ namespace Apoc3D
 			if (m_pool.getCount() == 0)
 			{
 				const int32 PaddedInstanceSize = m_instanceSize + sizeof(PoolMemorySignature);
-
-				/*for (int32 i = 0; i < amount; i++)
-				{
-					char* buf = (char*)malloc(PaddedInstanceSize);
-					tagMemeoryBlock(buf, MF_PreallocatedHead);
-					m_pool.Enqueue(buf);
-				}*/
-				
 				const int32 PreallocationSize = amount * PaddedInstanceSize;
 
 				char* buf = (char*)malloc(PreallocationSize);

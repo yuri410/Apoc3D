@@ -94,14 +94,12 @@ int PrepareBuild(int argc, _TCHAR* argv[])
 			Configuration config;
 			XMLConfigurationFormat::Instance.Load(FileLocation(configPath), &config);
 
-			// find the first section in the build config
-			Configuration::ChildTable::Enumerator e = config.GetEnumerator();
-			e.MoveNext();
-		
+			ConfigurationSection* firstSection = *config.getSubSections().begin();
+
 			ConfigurationSection* attachmentSect = config.get(ProjectUtils::BuildAttachmentSectionGUID);
 
 			// build the node
-			return BuildSystem::Build(e.getCurrentValue(), attachmentSect);
+			return BuildSystem::Build(firstSection, attachmentSect);
 		}
 	}
 	else PrintUsage();

@@ -73,6 +73,9 @@ namespace Apoc3D
 		void Vector3sToString(const Vector3* v, int count, String& result);
 		void PointsToString(const Point* v, int count, String& result);
 
+		template <int32 N> void IntsToString(const int32(&v)[N], String& result) { IntsToString(v, N, result); }
+
+
 		void SplitSingles(const String& str, List<float>& result);
 		void SplitPercentages(const String& str, List<float>& result);
 		void SplitInt(const String& str, List<int32>& result);
@@ -548,22 +551,22 @@ namespace Apoc3D
 
 		ColorValue ParseColorValue(const String& str)
 		{
-			List<String> val;
-			StringUtils::Split(str, val, L",");
-			if (val.getCount() == 4)
+			int32 val[4];
+			int32 count = StringUtils::SplitParseInts(str, val, countof(val),  L",");
+			if (count == 4)
 			{
-				const uint r = StringUtils::ParseUInt32(val[0]);
-				const uint g = StringUtils::ParseUInt32(val[1]);
-				const uint b = StringUtils::ParseUInt32(val[2]);
-				const uint a = StringUtils::ParseUInt32(val[3]);
+				const uint r = val[0];
+				const uint g = val[1];
+				const uint b = val[2];
+				const uint a = val[3];
 
 				return CV_PackColor(r, g, b, a);
 			}
-			else if (val.getCount() == 3)
+			else if (count == 3)
 			{
-				const uint r = StringUtils::ParseUInt32(val[0]);
-				const uint g = StringUtils::ParseUInt32(val[1]);
-				const uint b = StringUtils::ParseUInt32(val[2]);
+				const uint r = val[0];
+				const uint g = val[1];
+				const uint b = val[2];
 				const uint a = 0xff;
 
 				return CV_PackColor(r, g, b, a);
@@ -580,22 +583,19 @@ namespace Apoc3D
 			String result;
 			if (a == 0xff)
 			{
-				result.append(StringUtils::UIntToString(r));
-				result.append(StringUtils::UIntToString(g));
-				result.append(StringUtils::UIntToString(b));
+				int32 vals[3] = { r, g, b };
+				IntsToString(vals, result);
 			}
 			else
 			{
-				result.append(StringUtils::UIntToString(r));
-				result.append(StringUtils::UIntToString(g));
-				result.append(StringUtils::UIntToString(b));
-				result.append(StringUtils::UIntToString(a));
+				int32 vals[4] = { r, g, b, a };
+				IntsToString(vals, result);
 			}
 			return result;
 		}
 
-		Vector3 ParseVector3(const String& str) { Vector3 v; v.Parse(str); return v; }
-		String Vector3ToString(const Vector3& vec) { return vec.ToParsableString(ConfigurationSection::FloatPointStoringPrecision); }
+		Vector3 ParseVector3(const String& str)		{ Vector3 v; v.Parse(str); return v; }
+		String Vector3ToString(const Vector3& vec)	{ return vec.ToParsableString(ConfigurationSection::FloatPointStoringPrecision); }
 
 		Point ParsePoint(const String& str)
 		{
@@ -608,7 +608,7 @@ namespace Apoc3D
 		{
 			int32 vals[2] = { vec.X, vec.Y };
 			String result;
-			IntsToString(vals, 2, result);
+			IntsToString(vals, result);
 			return result;
 		}
 
@@ -716,10 +716,10 @@ namespace Apoc3D
 		}
 
 
-		void SplitSingles(const String& text, List<float>& result) { StringUtils::SplitParseSingles(text, result, L", "); } 
-		void SplitInt(const String& text, List<int32>& result) { StringUtils::SplitParseInts(text, result, L", "); } 
-		void SplitPercentages(const String& text, List<float>& result) { SplitT<List<float>, float, ParsePercentage>(text, result, L", "); }
-		void SplitUint(const String& text, List<uint32>& result) { SplitT<List<uint32>, uint32, StringUtils::ParseUInt32>(text, result, L", "); }
+		void SplitSingles(const String& text, List<float>& result)		{ StringUtils::SplitParseSingles(text, result, L", "); } 
+		void SplitInt(const String& text, List<int32>& result)			{ StringUtils::SplitParseInts(text, result, L", "); } 
+		void SplitPercentages(const String& text, List<float>& result)	{ SplitT<List<float>, float, ParsePercentage>(text, result, L", "); }
+		void SplitUint(const String& text, List<uint32>& result)		{ SplitT<List<uint32>, uint32, StringUtils::ParseUInt32>(text, result, L", "); }
 		void SplitVector3s(const String& str, List<Vector3>& result)
 		{
 			List<float> buffer;
@@ -754,17 +754,16 @@ namespace Apoc3D
 
 
 
-		String SimpleInt32ToString(const int32& v) { return StringUtils::IntToString(v); }
-		String SimpleUInt32ToString(const uint32& v) { return StringUtils::UIntToString(v); }
-		String SimpleFloatToString(const float& v) { return StringUtils::SingleToString(v, GetCurrentFPFlags()); }
+		String SimpleInt32ToString(const int32& v)		{ return StringUtils::IntToString(v); }
+		String SimpleUInt32ToString(const uint32& v)	{ return StringUtils::UIntToString(v); }
+		String SimpleFloatToString(const float& v)		{ return StringUtils::SingleToString(v, GetCurrentFPFlags()); }
 		
-
-		void IntsToString(const int32* v, int count, String& result) { GenericToString<int32, SimpleInt32ToString>(v, count, result); }
-		void UIntsToString(const uint32* v, int count, String& result) { GenericToString<uint32, SimpleUInt32ToString>(v, count, result); }
-		void SinglesToString(const float* v, int count, String& result) { GenericToString<float, SimpleFloatToString>(v, count, result); }
+		void IntsToString(const int32* v, int count, String& result)		{ GenericToString<int32, SimpleInt32ToString>(v, count, result); }
+		void UIntsToString(const uint32* v, int count, String& result)		{ GenericToString<uint32, SimpleUInt32ToString>(v, count, result); }
+		void SinglesToString(const float* v, int count, String& result)		{ GenericToString<float, SimpleFloatToString>(v, count, result); }
 		void PrecentagesToString(const float* v, int count, String& result) { GenericToString<float, PercentageToString>(v, count, result); }
-		void Vector3sToString(const Vector3* v, int count, String& result) { GenericToString<Vector3, Vector3ToString>(v, count, result); }
-		void PointsToString(const Point* v, int count, String& result) { GenericToString<Point, PointToString>(v, count, result); }
+		void Vector3sToString(const Vector3* v, int count, String& result)	{ GenericToString<Vector3, Vector3ToString>(v, count, result); }
+		void PointsToString(const Point* v, int count, String& result)		{ GenericToString<Point, PointToString>(v, count, result); }
 
 
 
@@ -785,19 +784,17 @@ namespace Apoc3D
 		}
 		int32 SplitVector3sArr(const String& str, Vector3* result, int32 expectedCount)
 		{
-			int32 actual = StringUtils::SplitParseSingles(str, (float*)result, expectedCount*3, L", ");
+			int32 actual = StringUtils::SplitParseSingles(str, (float*)result, expectedCount * 3, L", ");
 
 			assert((actual % 3) == 0);
-
-			return actual/3;
+			return actual / 3;
 		}
 		int32 SplitPointsArr(const String& str, Point* result, int32 expectedCount)
 		{
-			int32 actual = StringUtils::SplitParseInts(str, (int32*)result, expectedCount*2, L", ");
-			
-			assert((actual % 2) == 0);
+			int32 actual = StringUtils::SplitParseInts(str, (int32*)result, expectedCount * 2, L", ");
 
-			return actual/2;
+			assert((actual % 2) == 0);
+			return actual / 2;
 		}
 
 

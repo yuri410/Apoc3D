@@ -83,7 +83,8 @@ namespace Apoc3D
 				virtual void SetVisible(bool v) override;
 				virtual void SetupFixedFrameTime(bool enabled, float targetTime) override;
 
-				void D3D9_Initialize();
+				void D3D9_Initialize(bool isDeviceReset);
+				void D3D9_Finalize(bool isDeviceReset);
 
 				void D3D9_OnDeviceLost();
 				void D3D9_OnDeviceReset();

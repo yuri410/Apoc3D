@@ -236,9 +236,9 @@ namespace APBuild
 
 
 		// go into sub sections
-		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator(); e.MoveNext();)
+		for (ConfigurationSection* ss : sect->getSubSections())
 		{
-			ParseMaterialTree(table, newNode, name, e.getCurrentValue(), pallets);
+			ParseMaterialTree(table, newNode, name, ss, pallets);
 		}
 
 		table.Add(name, newNode);
