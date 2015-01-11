@@ -234,11 +234,15 @@ namespace Apoc3D
 		/*  FileOutStream                                                       */
 		/************************************************************************/
 
-		FileOutStream::FileOutStream(const String& filename)
+		FileOutStream::FileOutStream(const String& filename, bool noTrunc)
 		{
 			m_out.rdbuf()->pubsetbuf(m_buffer, countof(m_buffer));
 
-			m_out.open(filename.c_str(), ios::out | ios::binary | ios::trunc);
+			std::ios::openmode mode = ios::out | ios::binary;
+			if (!noTrunc)
+				mode |= ios::trunc;
+
+			m_out.open(filename.c_str(), mode);
 		}
 
 		FileOutStream::~FileOutStream()
@@ -408,6 +412,21 @@ namespace Apoc3D
 		/************************************************************************/
 		/* MemoryOutStream                                                      */
 		/************************************************************************/
+
+		MemoryOutStream::MemoryOutStream(MemoryOutStream&& rhs)
+			: m_data(std::move(rhs.m_data)), m_position(rhs.m_position), m_length(rhs.m_length)
+		{ }
+
+		MemoryOutStream& MemoryOutStream::operator=(MemoryOutStream&& rhs)
+		{
+			if (this != &rhs)
+			{
+				m_data = std::move(rhs.m_data);
+				m_length = rhs.m_length;
+				m_position = rhs.m_position;
+			}
+			return *this;
+		}
 
 		int64 MemoryOutStream::Read(char* dest, int64 count)
 		{

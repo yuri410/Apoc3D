@@ -42,19 +42,17 @@ namespace Apoc3D
 		{
 			Texture::Texture(RenderDevice* device, const ResourceLocation& rl, TextureUsage usage, bool managed)
 				: Resource(managed ? &TextureManager::getSingleton() : 0, rl.getName()),
-				m_renderDevice(device), m_resourceLocation(rl.Clone()), m_usage(usage),
-				m_levelCount(0), m_width(0), m_height(0), m_depth(0), 
-				m_format(FMT_Unknown), m_type(TT_Texture2D), m_contentSize(0),
-				m_isLocked(false)
+				m_renderDevice(device), m_resourceLocation(managed ? rl.Clone() : nullptr), m_usage(usage),
+				m_format(FMT_Unknown), m_type(TT_Texture2D)
 			{
 
 			}
+
 			Texture::Texture(RenderDevice* device, int32 width, int32 height, int32 depth, 
 				int32 levelCount, PixelFormat format, TextureUsage usage)
-				: m_renderDevice(device), m_resourceLocation(0), m_usage(usage),
+				: m_renderDevice(device), m_usage(usage),
 				m_levelCount(levelCount), m_width(width), m_height(height),
-				m_depth(depth),  m_format(format), 
-				m_isLocked(false)
+				m_depth(depth),  m_format(format)
 			{
 				if (depth == 1)
 				{
@@ -74,22 +72,18 @@ namespace Apoc3D
 				RecalculateContentSize();
 			}
 			Texture::Texture(RenderDevice* device, int length, int levelCount, TextureUsage usage, PixelFormat format)
-				: m_renderDevice(device), m_resourceLocation(0), m_usage(usage), 
+				: m_renderDevice(device), m_usage(usage), 
 				m_levelCount(levelCount), m_width(length), m_height(length), 
 				m_depth(1), m_format(format),
-				m_type(TT_CubeTexture),
-				m_isLocked(false)
+				m_type(TT_CubeTexture)
 			{
 				RecalculateContentSize();
 			}
 			Texture::~Texture()
 			{
-				if (m_resourceLocation)
-				{
-					delete m_resourceLocation;
-					m_resourceLocation = 0;
-				}
+				DELETE_AND_NULL(m_resourceLocation);
 			}
+
 			void Texture::UpdateInfo(const TextureData& data)
 			{
 				m_contentSize = data.ContentSize;
@@ -121,13 +115,13 @@ namespace Apoc3D
 
 				// One assumption is made here:
 				//  All sub levels' size in the texture is the same as the mipmap's.
-				for (int i=0;i<m_levelCount;i++)
+				for (int i = 0; i < m_levelCount; i++)
 				{
-					m_contentSize += PixelFormatUtils::GetMemorySize(width, height, depth, m_format);	
+					m_contentSize += PixelFormatUtils::GetMemorySize(width, height, depth, m_format);
 
-					if (width>1) width = width/2;//>>= 1;
-					if (height>1) height = height/2;// >>= 1;
-					if (depth>1) depth =depth/2;//>>= 1;
+					if (width > 1) width = width / 2;//>>= 1;
+					if (height > 1) height = height / 2;// >>= 1;
+					if (depth > 1) depth = depth / 2;//>>= 1;
 				}
 
 				if (m_type == TT_CubeTexture)

@@ -151,19 +151,20 @@ namespace Apoc3D
 				 */
 				virtual void unlock(CubeMapFace cubemapFace, int32 surface) = 0;
 
+				
 			private:
 				RenderDevice* m_renderDevice;
-				ResourceLocation* m_resourceLocation;
+				ResourceLocation* m_resourceLocation = nullptr;
 				TextureType m_type;
-				int32 m_width;
-				int32 m_height;
-				int32 m_depth;
-				int32 m_contentSize;
-				int32 m_levelCount;
+				int32 m_width = 0;
+				int32 m_height = 0;
+				int32 m_depth = 0;
+				int32 m_contentSize = 0;
+				int32 m_levelCount = 0;
 				TextureUsage m_usage;
 				PixelFormat m_format;
 
-				bool m_isLocked;
+				bool m_isLocked = false;
 
 				void RecalculateContentSize();
 				

@@ -91,7 +91,8 @@ namespace Apoc3D
 
 		APAPI uint32 CalculateCRC32(const void *buf, int32 size, uint32 crc = 0);
 
-
+		APAPI uint32 CalculateCRC32(Apoc3D::IO::Stream& strm);
+		
 	}
 }
 

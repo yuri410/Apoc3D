@@ -142,7 +142,7 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(FileOutStream, Stream);
 		public:
-			FileOutStream(const String& filename);
+			FileOutStream(const String& filename, bool noTrunc = false);
 			virtual ~FileOutStream();
 
 			virtual bool IsReadEndianIndependent() const override { return true; }
@@ -265,15 +265,16 @@ namespace Apoc3D
 
 		};
 
-		/** 
-		 *  Provides access to a dynamic length of space in memory as a stream
-		 */
+		/** Provides access to a dynamic length of space in memory as a stream */
 		class APAPI MemoryOutStream : public Stream
 		{
 			RTTI_DERIVED(MemoryOutStream, Stream);
 		public:
 			MemoryOutStream(int64 preserved)
 				: m_data((int32)preserved) { }
+
+			MemoryOutStream(MemoryOutStream&&);
+			MemoryOutStream& operator=(MemoryOutStream&&);
 
 			virtual ~MemoryOutStream()
 			{ }

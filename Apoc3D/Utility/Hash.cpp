@@ -1,4 +1,5 @@
 #include "Hash.h"
+#include "apoc3d/IOLib/Streams.h"
 
 namespace Apoc3D
 {
@@ -61,6 +62,23 @@ namespace Apoc3D
 				crc = crc32_tab[(crc ^ *p++) & 0xFF] ^ (crc >> 8);
 
 			return crc ^ ~0U;
+		}
+
+		uint32 CalculateCRC32(Apoc3D::IO::Stream& strm)
+		{
+			char buf[4096];
+
+			uint32 result = 0;
+			int32 count;
+			do
+			{
+				count = (int32)strm.Read(buf, countof(buf));
+
+				result = CalculateCRC32(buf, count, result);
+
+			} while (count == countof(buf));
+
+			return result;
 		}
 	}
 }

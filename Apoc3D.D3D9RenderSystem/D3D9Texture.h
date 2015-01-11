@@ -99,8 +99,9 @@ namespace Apoc3D
 				void ReleaseVolatileResource() override;
 				void ReloadVolatileResource() override;
 
+				void LoadTexture(const ResourceLocation* rl);
 
-				String getResourceLocationName();
+				String getResourceLocationName(const ResourceLocation* rl);
 
 				/** As the specification of the Apoc3D::Graphics::RenderSystem::Texture class,
 				 *  a Texture can be one of the following: 1D, 2D, 3D, Cube.

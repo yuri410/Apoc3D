@@ -214,14 +214,11 @@ namespace Apoc3D
 				 * @remarks
 				 *  Texture Manager use this to create managed textures, with managed=true. 
 				 *  The client application can call this:
-				 *    1. with managed=false. This will be almost the same as TextureManager::CreateUnmanagedInstance.
-				 *       But keep in mind that TextureManager have more features like ResourceLocation redirecting for 
-				 *       debugging purposes.
-				 *       And by the way. As the texture is unmanaged, it is loaded with this call.
-				 *    2. with managed=true. No sense.
-				 *       The texture can be created and use. No matter async or not, it should be loaded manually.
-				 *       However the resource manager will not care about it at all. This will just bring more
-				 *       trivia for developers *unless* special cases like making custom resource managers.
+				 *    1. with managed=false. This will be almost the same as TextureManager::CreateUnmanagedInstance,
+				 *       except that TextureManager have more features like ResourceLocation redirecting for 
+				 *       debugging purposes. If the texture is unmanaged, it will be loaded with this call.
+				 *    2. with managed=true. The texture should be managed by the TextureManager.
+				 *       The texture can still be created here without using TextureManager. In this case the texture should be loaded manually.
 				 */
 				virtual Texture* CreateTexture(const ResourceLocation& rl, TextureUsage usage, bool managed) = 0;
 

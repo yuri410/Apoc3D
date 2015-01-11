@@ -94,7 +94,7 @@ namespace Apoc3D
 			{
 				if (!managed)
 				{
-					load();
+					LoadTexture(&rl);
 				}
 			}
 			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, int32 width, int32 height, int32 depth, int32 level, 
@@ -239,13 +239,14 @@ namespace Apoc3D
 			}
 
 
-			
-			void D3D9Texture::load()
+
+
+			void D3D9Texture::LoadTexture(const ResourceLocation* rl)
 			{
 				// load texture data into memory from the ResourceLocation
 				TextureData data;
-				data.Load(*getResourceLocation());
-				
+				data.Load(*rl);
+
 				D3DDevice* dev = m_renderDevice->getDevice();
 				D3D9Capabilities* caps = static_cast<D3D9Capabilities*>(m_renderDevice->getCapabilities());
 
@@ -275,16 +276,16 @@ namespace Apoc3D
 					{
 						switch (data.Type)
 						{
-						case (int)TT_Texture1D:
-						case (int)TT_Texture2D:
-							impossible |= !caps->FindCompatibleTextureDimension(newWidth, newHeight, levels);
-							break;
-						case (int)TT_CubeTexture:
-							impossible |= !caps->FindCompatibleCubeTextureDimension(newWidth, levels);
-							break;
-						case (int)TT_Texture3D:
-							impossible |= !caps->FindCompatibleVolumeTextureDimension(newWidth, newHeight, newDepth, levels);
-							break;
+							case TT_Texture1D:
+							case TT_Texture2D:
+								impossible |= !caps->FindCompatibleTextureDimension(newWidth, newHeight, levels);
+								break;
+							case TT_CubeTexture:
+								impossible |= !caps->FindCompatibleCubeTextureDimension(newWidth, levels);
+								break;
+							case TT_Texture3D:
+								impossible |= !caps->FindCompatibleVolumeTextureDimension(newWidth, newHeight, newDepth, levels);
+								break;
 						}
 					}
 
@@ -293,14 +294,14 @@ namespace Apoc3D
 					if (!impossible && data.Type == TT_Texture3D &&
 						(newHeight != height || newWidth != width || newDepth != depth))
 					{
-						String name = getResourceLocationName();
+						String name = getResourceLocationName(rl);
 						ApocLog(LOG_Graphics, L"[D3D9Texture] Texture " + name + L" can not be resized.", LOGLVL_Warning);
 						impossible = true;
 					}
 
 					if (impossible)
 					{
-						String name = getResourceLocationName();
+						String name = getResourceLocationName(rl);
 						ApocLog(LOG_Graphics, L"[D3D9Texture] Texture " + name + L" impossible to support.", LOGLVL_Error);
 					}
 					else
@@ -309,9 +310,9 @@ namespace Apoc3D
 						// usually happens when the hardware does not support non power of 2 textures
 						if ((newHeight != height || newWidth != width) && (newDepth == 1) && (depth == 1))
 						{
-							String name = getResourceLocationName();
+							String name = getResourceLocationName(rl);
 
-							LogManager::getSingleton().Write(LOG_Graphics,
+							ApocLog(LOG_Graphics,
 								L"[D3D9Texture]" + name + L" Dimension " +
 								StringUtils::IntToString(width) + L"x" + StringUtils::IntToString(height)
 								+ L" is not supported by hardware. Resizing to " +
@@ -324,9 +325,9 @@ namespace Apoc3D
 						// automatically converts to the preferred format
 						if (newFmt != fmt)
 						{
-							String name = getResourceLocationName();
+							String name = getResourceLocationName(rl);
 
-							LogManager::getSingleton().Write(LOG_Graphics,
+							ApocLog(LOG_Graphics,
 								L"[D3D9Texture]" + name + L" " + PixelFormatUtils::ToString(data.Format)
 								+ L" Pixel format is not supported by hardware. Converting to " +
 								PixelFormatUtils::ToString(newFmt), LOGLVL_Warning);
@@ -336,7 +337,7 @@ namespace Apoc3D
 
 					}
 				}
-				
+
 				// update using the checked data
 				UpdateInfo(data);
 
@@ -347,81 +348,81 @@ namespace Apoc3D
 
 					switch (data.Type)
 					{
-					case (int)TT_Texture1D:
-					case (int)TT_Texture2D:
-						hr = dev->CreateTexture(getWidth(), getHeight(), getLevelCount(), 
-							usage, D3D9Utils::ConvertPixelFormat(newFmt), 
-							D3DPOOL_MANAGED, &m_tex2D, NULL);
-						assert(SUCCEEDED(hr));
+						case TT_Texture1D:
+						case TT_Texture2D:
+							hr = dev->CreateTexture(getWidth(), getHeight(), getLevelCount(),
+								usage, D3D9Utils::ConvertPixelFormat(newFmt),
+								D3DPOOL_MANAGED, &m_tex2D, NULL);
+							assert(SUCCEEDED(hr));
 
-						if (FAILED(hr))
-						{
-							String name = getResourceLocationName();
-							String msg = L"[D3D9Texture] Failed creating " + name + L" " + PixelFormatUtils::ToString(newFmt);
-							msg.append(L" ");
-							msg.append(StringUtils::IntToString(getWidth()));
-							msg.append(L"x");
-							msg.append(StringUtils::IntToString(getHeight()));
-							msg.append(L" L=");
-							msg.append(StringUtils::IntToString(getLevelCount()));
+							if (FAILED(hr))
+							{
+								String name = getResourceLocationName(rl);
+								String msg = L"[D3D9Texture] Failed creating " + name + L" " + PixelFormatUtils::ToString(newFmt);
+								msg.append(L" ");
+								msg += StringUtils::IntToString(getWidth());
+								msg.append(L"x");
+								msg += StringUtils::IntToString(getHeight());
+								msg.append(L" L=");
+								msg += StringUtils::IntToString(getLevelCount());
 
-							LogManager::getSingleton().Write(LOG_Graphics, msg, LOGLVL_Warning);
-						}
-						else
-						{
-							setData(data, m_tex2D);
-						}				
-						break;
+								ApocLog(LOG_Graphics, msg, LOGLVL_Warning);
+							}
+							else
+							{
+								setData(data, m_tex2D);
+							}
+							break;
 
-					case (int)TT_CubeTexture:
-						hr = dev->CreateCubeTexture(getWidth(), getLevelCount(), 
-							usage, D3D9Utils::ConvertPixelFormat(newFmt), 
-							D3DPOOL_MANAGED, &m_cube, NULL);
-						assert(SUCCEEDED(hr));
+						case TT_CubeTexture:
+							hr = dev->CreateCubeTexture(getWidth(), getLevelCount(),
+								usage, D3D9Utils::ConvertPixelFormat(newFmt),
+								D3DPOOL_MANAGED, &m_cube, NULL);
+							assert(SUCCEEDED(hr));
 
-						if (FAILED(hr))
-						{
-							String name = getResourceLocationName();
-							String msg = L"[D3D9Texture] Failed creating " + name + L" " + PixelFormatUtils::ToString(newFmt);
-							msg.append(L" ");
-							msg.append(StringUtils::IntToString(getWidth()));
-							msg.append(L" L=");
-							msg.append(StringUtils::IntToString(getLevelCount()));
+							if (FAILED(hr))
+							{
+								String name = getResourceLocationName(rl);
+								String msg = L"[D3D9Texture] Failed creating " + name + L" " + PixelFormatUtils::ToString(newFmt);
+								msg.append(L" ");
+								msg += StringUtils::IntToString(getWidth());
+								msg.append(L" L=");
+								msg += StringUtils::IntToString(getLevelCount());
 
-							LogManager::getSingleton().Write(LOG_Graphics, msg, LOGLVL_Warning);
-						}
-						else
-						{
-							setData(data, m_cube);
-						}
-						break;
+								ApocLog(LOG_Graphics, msg, LOGLVL_Warning);
+							}
+							else
+							{
+								setData(data, m_cube);
+							}
+							break;
 
-					case (int)TT_Texture3D:
-						hr = dev->CreateVolumeTexture(getWidth(), getHeight(), getDepth(), getLevelCount(),
-							usage, D3D9Utils::ConvertPixelFormat(newFmt), 
-							D3DPOOL_MANAGED, &m_tex3D, NULL);
-						assert(SUCCEEDED(hr));
+						case TT_Texture3D:
+							hr = dev->CreateVolumeTexture(getWidth(), getHeight(), getDepth(), getLevelCount(),
+								usage, D3D9Utils::ConvertPixelFormat(newFmt),
+								D3DPOOL_MANAGED, &m_tex3D, NULL);
+							assert(SUCCEEDED(hr));
 
-						if (FAILED(hr))
-						{
-							String name = getResourceLocationName();
-							String msg = L"[D3D9Texture] Failed creating " + name + L" " + PixelFormatUtils::ToString(newFmt);
-							msg.append(L" ");
-							msg.append(StringUtils::IntToString(getWidth()));
-							msg.append(L"x");
-							msg.append(StringUtils::IntToString(getHeight()));
-							msg.append(L"x");
-							msg.append(StringUtils::IntToString(getDepth()));
-							msg.append(L" L=");
-							msg.append(StringUtils::IntToString(getLevelCount()));
+							if (FAILED(hr))
+							{
+								String name = getResourceLocationName(rl);
+								String msg = L"[D3D9Texture] Failed creating " + name + L" " + PixelFormatUtils::ToString(newFmt);
+								msg.append(L" ");
+								msg += StringUtils::IntToString(getWidth());
+								msg.append(L"x");
+								msg += StringUtils::IntToString(getHeight());
+								msg.append(L"x");
+								msg += StringUtils::IntToString(getDepth());
+								msg.append(L" L=");
+								msg += StringUtils::IntToString(getLevelCount());
 
-							LogManager::getSingleton().Write(LOG_Graphics, msg, LOGLVL_Warning);
-						}
-						else
-						{
-							setData(data, m_tex3D);
-						}
-						break;
+								ApocLog(LOG_Graphics, msg, LOGLVL_Warning);
+							}
+							else
+							{
+								setData(data, m_tex3D);
+							}
+							break;
 					}
 				}
 				else
@@ -431,6 +432,11 @@ namespace Apoc3D
 					m_cube = nullptr;
 				}
 
+			}
+			
+			void D3D9Texture::load()
+			{
+				LoadTexture(getResourceLocation());
 			}
 			void D3D9Texture::unload()
 			{
@@ -470,16 +476,16 @@ namespace Apoc3D
 				data.Flags = TextureData::TDF_None;
 				switch (data.Type)
 				{
-				case (int)TT_Texture1D:
-				case (int)TT_Texture2D:
-					getData(data, m_tex2D);
-					break;
-				case (int)TT_CubeTexture:
-					getData(data, m_cube);
-					break;
-				case (int)TT_Texture3D:
-					getData(data, m_tex3D);
-					break;
+					case TT_Texture1D:
+					case TT_Texture2D:
+						getData(data, m_tex2D);
+						break;
+					case TT_CubeTexture:
+						getData(data, m_cube);
+						break;
+					case TT_Texture3D:
+						getData(data, m_tex3D);
+						break;
 				}
 
 				// The resource is free now.
@@ -587,17 +593,21 @@ namespace Apoc3D
 					newLevelCount, newFormat, D3D9Utils::GetD3DTextureUsage(tex));
 			}
 
-			String D3D9Texture::getResourceLocationName()
+
+			String D3D9Texture::getResourceLocationName(const ResourceLocation* rl)
 			{
-				const FileLocation* fl = up_cast<const FileLocation*>(getResourceLocation());
-
-				if (fl)
+				if (rl)
 				{
-					return PathUtils::GetFileNameNoExt( fl->getPath());
-				}
-				return getResourceLocation()->getName();
-			}
+					const FileLocation* fl = up_cast<const FileLocation*>(rl);
 
+					if (fl)
+					{
+						return PathUtils::GetFileNameNoExt(fl->getPath());
+					}
+					return rl->getName();
+				}
+				return getHashString();
+			}
 		}
 	}
 }
