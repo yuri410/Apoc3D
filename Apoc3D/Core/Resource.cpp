@@ -256,8 +256,8 @@ namespace Apoc3D
 			}
 		}
 
-		void Resource::Lock_Unloadable() { assert(m_lock); m_lock->lock(); m_unloadableLock = true; m_lock->unlock(); }
-		void Resource::Unlock_Unloadable() { assert(m_lock); m_lock->lock(); m_unloadableLock = false; m_lock->unlock(); }
+		void Resource::Lock_Unloadable() { if (m_lock){ m_lock->lock(); m_unloadableLock = true; m_lock->unlock(); } }
+		void Resource::Unlock_Unloadable() { if (m_lock) { m_lock->lock(); m_unloadableLock = false; m_lock->unlock(); } }
 
 		void Resource::ProcessResourceOperation(const ResourceOperation& resOp)
 		{

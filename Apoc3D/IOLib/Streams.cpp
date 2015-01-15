@@ -241,6 +241,8 @@ namespace Apoc3D
 			std::ios::openmode mode = ios::out | ios::binary;
 			if (!noTrunc)
 				mode |= ios::trunc;
+			else
+				mode |= ios::in;
 
 			m_out.open(filename.c_str(), mode);
 		}
