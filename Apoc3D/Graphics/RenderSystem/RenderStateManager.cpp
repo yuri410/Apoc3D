@@ -85,6 +85,8 @@ namespace Apoc3D
 				{
 					m_additionalOldRenderTarget.Add(idx, oldRt);
 				}
+
+				m_device->SetRenderTarget(idx, rt);
 			}
 
 		}
