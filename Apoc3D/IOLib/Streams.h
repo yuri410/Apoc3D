@@ -227,10 +227,41 @@ namespace Apoc3D
 			}
 
 			VirtualStream(Stream* strm, int64 baseOffset, int64 length)
-				: m_baseStream(strm), m_length(length), m_baseOffset(baseOffset), m_isOutput(false)
+				: VirtualStream(strm, baseOffset, length, false) { }
+
+			VirtualStream(Stream* strm, int64 baseOffset, int64 length, bool releaseStream)
+				: m_baseStream(strm), m_length(length), m_baseOffset(baseOffset), m_releaseStream(releaseStream)
 			{
 				strm->setPosition(baseOffset);
 			}
+
+			~VirtualStream()
+			{
+				if (m_releaseStream)
+					DELETE_AND_NULL(m_baseStream);
+			}
+
+			VirtualStream(VirtualStream&& other)
+				: m_baseStream(other.m_baseStream), m_length(other.m_length), m_baseOffset(other.m_baseOffset),
+				m_isOutput(other.m_isOutput), m_releaseStream(other.m_releaseStream)
+			{
+				other.m_releaseStream = false;
+				other.m_baseStream = 0;
+			}
+			
+			VirtualStream& operator=(VirtualStream&& other)
+			{
+				if (this != &other)
+				{
+					this->~VirtualStream();
+					new (this)VirtualStream(std::move(other));
+				}
+				return *this;
+			}
+
+
+			VirtualStream(const VirtualStream&) = delete;
+			VirtualStream& operator=(const VirtualStream&) = delete;
 
 			virtual bool IsReadEndianIndependent() const override { return m_baseStream->IsReadEndianIndependent(); }
 			virtual bool IsWriteEndianIndependent() const override { return m_baseStream->IsWriteEndianIndependent(); }
@@ -255,14 +286,13 @@ namespace Apoc3D
 			int64 getBaseOffset() const { return m_baseOffset; }
 			int64 getAbsolutePosition() const { return m_baseStream->getPosition(); }
 
-
 		private:
 			Stream* m_baseStream;
 			int64 m_length;
 			int64 m_baseOffset = 0;
 
-			bool m_isOutput;
-
+			bool m_isOutput = false;
+			bool m_releaseStream = false;
 		};
 
 		/** Provides access to a dynamic length of space in memory as a stream */
