@@ -31,8 +31,8 @@ namespace Apoc3D
 	template <typename ClassType>
 	struct DictionaryFieldInterface
 	{
-		virtual void Read(ClassType* inst, IO::TaggedDataReader* data);
-		virtual void Write(ClassType* inst, IO::TaggedDataWriter* data);
+		virtual void Read(ClassType* inst, IO::TaggedDataReader* data) = 0;
+		virtual void Write(ClassType* inst, IO::TaggedDataWriter* data) = 0;
 	};
 
 	template <typename ClassType, typename T>
