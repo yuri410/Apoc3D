@@ -55,15 +55,11 @@ namespace Apoc3D
 				Vector4 Normal;
 			};
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			/** 
-			 *  The normal vector of the plane.
-			 */
+			/** The normal vector of the plane. */
 			float X;
 			float Y;
 			float Z;
-			/**
-			 *  The distance of the plane along its normal from the origin.
-			 */
+			/** The distance of the plane along its normal from the origin. */
 			float D;
 
 #endif
@@ -77,6 +73,7 @@ namespace Apoc3D
 				Z = another.Z; D = another.D;
 			#endif
 			}
+
 			Plane(float a, float b, float c, float d)
 			{
 				X = a; Y = b; Z = c;
@@ -393,14 +390,10 @@ namespace Apoc3D
 			#endif
 			}
 
-			/**
-			 *  Transforms a normalized plane by a quaternion rotation.
-			 */
+			/** Transforms a normalized plane by a quaternion rotation. */
 			static Plane Transform(const Plane &plane, const Quaternion &rotation);
 
-			/**
-			 *  Finds the intersection between a plane and a box.
-			 */
+			/** Finds the intersection between a plane and a box. */
 			static PlaneIntersectionType Intersects(const Plane &plane, const BoundingBox& box);
 		};
 	}

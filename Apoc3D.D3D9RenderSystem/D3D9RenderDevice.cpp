@@ -619,24 +619,21 @@ namespace Apoc3D
 				ProfileTable* profileTable = EnsureCurrentAAModes(pixFormat, depthFormat);
 
 				List<AAProfile> profileListing;
-				for (ProfileTable::Enumerator e = profileTable->GetEnumerator();e.MoveNext();)
-				{
-					profileListing.Add(e.getCurrentValue());
-				}
+				profileTable->FillValues(profileListing);
 				profileListing.Sort(AAProfileComparison);
 
-				for (int32 i=0;i<profileListing.getCount();i++)
-					modes.Add(profileListing[i].Name);
+				for (AAProfile& aap : profileListing)
+					modes.Add(aap.Name);
 			}
 			const String* D3D9Capabilities::FindClosesetMultisampleMode(uint32 sampleCount, PixelFormat pixFormat, DepthFormat depthFormat)
 			{
 				const String* closest = nullptr;
 				int32 closestD = 0x7fffffff;
 
-				ProfileTable* profileTable = EnsureCurrentAAModes(pixFormat, depthFormat);
-				for (ProfileTable::Enumerator e = profileTable->GetEnumerator();e.MoveNext();)
+				ProfileTable& profileTable = *EnsureCurrentAAModes(pixFormat, depthFormat);
+
+				for (const AAProfile& ap : profileTable.getValueAccessor())
 				{
-					const AAProfile& ap = e.getCurrentValue();
 					uint32 cnt = D3D9Utils::ConvertBackMultiSample(ap.SampleType);
 					int32 d = (int32)sampleCount - cnt;
 					if (d < 0) d = -d;

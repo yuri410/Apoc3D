@@ -103,11 +103,8 @@ namespace Apoc3D
 					for (int i=MaxGeneration-1;i>1 && predictSize > m_manager->getTotalCacheSize(); i--)
 					{
 						m_genLock->lock();
-						HashSet<Resource*>::Enumerator iter = m_generations[i].GetEnumerator();
-
-						while (iter.MoveNext())
+						for (Resource* r : m_generations[i])
 						{
-							Resource* r = iter.getCurrent();
 
 							if (CanUnload(r) && r->IsUnloadable())
 							{
@@ -125,9 +122,8 @@ namespace Apoc3D
 				}
 				{
 					m_genLock->lock();
-					for (HashSet<Resource*>::Enumerator iter = m_generations[MaxGeneration-1].GetEnumerator();iter.MoveNext();)
+					for (Resource* r : m_generations[MaxGeneration - 1])
 					{
-						Resource* r = iter.getCurrent();
 						if (!r->getReferenceCount())
 						{
 							if (CanUnload(r) && r->IsUnloadable())
@@ -148,7 +144,7 @@ namespace Apoc3D
 			void GenerationTable::AddResource(Resource* res)
 			{
 				int g = res->GetGeneration();
-				if (g!=-1)
+				if (g != -1)
 				{
 					m_genLock->lock();
 					m_generations[g].Add(res);
@@ -160,7 +156,7 @@ namespace Apoc3D
 			void GenerationTable::RemoveResource(Resource* res)
 			{
 				int g = res->GetGeneration();
-				if (g!=-1)
+				if (g != -1)
 				{
 					m_genLock->lock();
 					m_generations[g].Remove(res);

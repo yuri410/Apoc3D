@@ -58,12 +58,12 @@ namespace Apoc3D
 		{
 			if (m_hashTable.getCount())
 			{
-				for (ResHashTable::Enumerator e = m_hashTable.GetEnumerator();e.MoveNext();)
+				for (auto e : m_hashTable)
 				{
-					if (e.getCurrentValue()->getState() == ResourceState::Loaded)
+					if (e.Value->getState() == ResourceState::Loaded)
 					{
 						LogManager::getSingleton().Write(LOG_System, 
-							L"ResMgr: Resource leak detected: " + e.getCurrentKey(), LOGLVL_Warning);
+							L"ResMgr: Resource leak detected: " + e.Key, LOGLVL_Warning);
 					}
 				}
 			}

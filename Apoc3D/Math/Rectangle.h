@@ -32,178 +32,112 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		class APAPI RectangleF
+		template <typename T>
+		class RectBase
 		{
+			static const bool IsFloat = std::is_floating_point<T>::value;
 		public:
-			float X;
-			float Y;
-			float Width;
-			float Height;
+			using PointType = typename std::conditional<IsFloat, PointF, Point>::type;
 
-			RectangleF() : X(0), Y(0), Width(0), Height(0) { }
-			RectangleF(const PointF& pos, const PointF& size)
-				: X(pos.X), Y(pos.Y), Width(size.X), Height(size.Y) { }
+			T X = 0;				/** Specifies the x-coordinate of the rectangle. */
+			T Y = 0;				/** Specifies the y-coordinate of the rectangle. */
+			T Width = 0;			/** Specifies the width of the rectangle. */
+			T Height = 0;			/** Specifies the height of the rectangle. */
 
-			RectangleF(float x, float y, float width, float height)
-				: X(x), Y(y), Width(width), Height(height) { }
+			T getLeft() const { return X; }					/** Returns the x-coordinate of the left side of the rectangle. */
+			T getRight() const { return X + Width; }		/** Returns the x-coordinate of the right side of the rectangle. */
+			T getTop() const { return Y; }					/** Returns the y-coordinate of the top of the rectangle. */
+			T getBottom() const { return Y + Height; }		/** Returns the y-coordinate of the bottom of the rectangle. */
 
-			float getLeft() const { return X; }
-			float getRight() const { return X + Width; }
-			float getTop() const { return Y; }
-			float getBottom() const { return Y + Height; }
-
-			PointF getCenter() const { return PointF(X + Width / 2, Y + Height / 2); }
-
-			PointF getTopLeft() const { return PointF(X, Y); }
-			PointF getTopRight() const { return PointF(X + Width, Y); }
-
-			PointF getBottomLeft() const { return PointF(X, Y + Height); }
-			PointF getBottomRight() const { return PointF(X + Width, Y + Height); }
-
-			PointF getPosition() const { return PointF(X, Y); }
-			void setPosition(const PointF& pt) { X = pt.X; Y = pt.Y; }
-
-			PointF getSize() const { return PointF(Width, Height); }
+			T getCenterX() const { return X + Width / 2; }
+			T getCenterY() const { return Y + Height / 2; }
 
 			bool IsEmpty() const { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
 
+			PointType getCenter() const { return{ getCenterX(), getCenterY() }; }			/** Gets the Point that specifies the center of the rectangle. */
+			PointType getCenterLeft() const { return{ X, getCenterY() }; }
+			PointType getCenterRight() const { return{ X + Width, getCenterY() }; }
 
-			void Offset(const PointF &amount)
-			{
-				X += amount.X; Y += amount.Y;
-			}
-			void Offset(float offsetX, float offsetY)
-			{
-				X += offsetX; Y += offsetY;
-			}
-			void Inflate(float horizontalAmount, float verticalAmount)
-			{
-				X -= horizontalAmount;
-				Y -= verticalAmount;
-				Width += horizontalAmount * 2;
-				Height += verticalAmount * 2;
-			}
-			bool Contains(float x, float y) const
-			{
-				return (X <= x) && x < (X + Width) && (Y <= y) && y < (Y + Height);
-			}
-			bool Contains(const PointF &value) const
-			{
-				return (X <= value.X) &&
-					(value.X < X + Width) &&
-					(Y <= value.Y) &&
-					(value.Y < Y + Height);
-			}
-			bool Contains(const RectangleF &value) const
-			{
-				return (X <= value.X) &&
-					((value.X + value.Width) <=
-					(X + Width)) &&
-					(Y <= value.Y) &&
-					((value.Y + value.Height) <= (Y + Height));
-			}
-			bool Intersects(const RectangleF &value) const
-			{
-				return (value.X < (X + Width)) &&
-					(X < (value.X + value.Width)) &&
-					(value.Y < (Y + Height)) &&
-					(Y < (value.Y + value.Height));
-			}
+			PointType getTopLeft() const { return{ X, Y }; }
+			PointType getTopRight() const { return{ X + Width, Y }; }
+			PointType getTopCenter() const { return{ getCenterX(), Y }; }
 
-			RectangleF GetCenterRegion(const Point& sz) const
-			{
-				return RectangleF(getCenter() - sz / 2, sz);
-			}
+			PointType getBottomLeft() const { return{ X, Y + Height }; }
+			PointType getBottomRight() const { return{ X + Width, Y + Height }; }
+			PointType getBottomCenter() const { return{ getCenterX(), Y + Height }; }
 
-			static RectangleF Intersect(const RectangleF &a, const RectangleF &b);
-			static RectangleF Union(const RectangleF &a, const RectangleF &b);
+			PointType getPosition() const { return{ X, Y }; }
+			void setPosition(PointType pt) { X = pt.X; Y = pt.Y; }
+			void setPosition(T x, T y) { X = x; Y = y; }
 
-			bool operator==(const RectangleF &other) const
-			{
-				return (X  == other.X) && (Y == other.Y) && (Width == other.Width) && (Height == other.Height);	
-			}
-			bool operator!=(const RectangleF &other) const { return !(*this == other); }
+			PointType getSize() const { return{ Width, Height }; }
 
-			const static RectangleF Empty;
-		};
-
-		class APAPI Rectangle
-		{
-		public:
-			int X;				/** Specifies the x-coordinate of the rectangle. */
-			int Y;				/** Specifies the y-coordinate of the rectangle. */
-			int Width;			/** Specifies the width of the rectangle. */
-			int Height;			/** Specifies the height of the rectangle. */
-
-			Rectangle() : X(0), Y(0), Width(0), Height(0) { }
-			
-			Rectangle(const Point& pos, const Point& size)
-				: X(pos.X), Y(pos.Y), Width(size.X), Height(size.Y) { }
-
-			Rectangle(int x, int y, int width, int height)
-				: X(x), Y(y), Width(width), Height(height) { }
-
-			/** Returns the x-coordinate of the left side of the rectangle. */
-			int getLeft() const { return X; }
-
-			/** Returns the x-coordinate of the right side of the rectangle. */
-			int getRight() const { return X + Width; }
-
-			/** Returns the y-coordinate of the top of the rectangle. */
-			int getTop() const { return Y; }
-
-			/** Returns the y-coordinate of the bottom of the rectangle. */
-			int getBottom() const { return Y + Height; }
-
-			/** Gets the Point that specifies the center of the rectangle. */
-			Point getCenter() const { return Point(X + Width / 2, Y + Height / 2); }
-
-			Point getTopLeft() const { return Point(X, Y); }
-			Point getTopRight() const { return Point(X + Width, Y); }
-
-			Point getBottomLeft() const { return Point(X, Y + Height); }
-			Point getBottomRight() const { return Point(X + Width, Y + Height); }
-
-			Point getPosition() const { return Point(X, Y); }
-			void setPosition(const Point& pt) { X = pt.X; Y = pt.Y; }
-
-			Point getSize() const { return Point(Width, Height); }
 
 			float getAspectRatio() const { return static_cast<float>(Width) / Height; }
 
-			bool IsEmpty() const { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
 
 			/** Changes the position of the Rectangle. */
-			void Offset(const Point &amount)
+			void Offset(PointType amount)
 			{
 				X += amount.X; Y += amount.Y;
 			}
 
 			/** Changes the position of the Rectangle. */
-			void Offset(int offsetX, int offsetY)
+			void Offset(T offsetX, T offsetY)
 			{
 				X += offsetX; Y += offsetY;
 			}
 
 			/** Pushes the edges of the Rectangle out by the horizontal and vertical values specified. */
-			void Inflate(int horizontalAmount, int verticalAmount)
+			void Inflate(T horizontalAmount, T verticalAmount)
 			{
 				X -= horizontalAmount;
 				Y -= verticalAmount;
 				Width += horizontalAmount * 2;
 				Height += verticalAmount * 2;
 			}
+			void InflateVert(T top, T bottom)
+			{
+				Y -= top;
+				Height += top + bottom;
+			}
+			void InflateHorizonal(T left, T right)
+			{
+				X -= left;
+				Width += left + right;
+			}
 
-			/** Determines whether this Rectangle contains a specified point 
-			    represented by its x- and y-coordinates.
-			*/
-			bool Contains(int x, int y) const
+			void SplitVert(T ypos, RectBase& top, RectBase& bottom)
+			{
+				top = *this;
+				top.Height = ypos;
+
+				bottom = *this;
+				bottom.Y = Y + ypos;
+				bottom.Height = Height - (ypos - Y);
+			}
+
+			void SplitHorizontal(T xpos, RectBase& left, RectBase& right)
+			{
+				left = *this;
+				left.X = X;
+				left.Width = xpos;
+
+				right = *this;
+				right.X = X + xpos;
+				right.Width = Width - (xpos - X);
+			}
+
+			/** Determines whether this Rectangle contains a specified point
+			 *  represented by its x- and y-coordinates.
+			 */
+			bool Contains(T x, T y) const
 			{
 				return (X <= x) && x < (X + Width) && (Y <= y) && y < (Y + Height);
 			}
 
 			/** Determines whether this Rectangle contains a specified Point. */
-			bool Contains(const Point& value) const
+			bool Contains(PointType value) const
 			{
 				return (X <= value.X) &&
 					(value.X < X + Width) &&
@@ -212,27 +146,75 @@ namespace Apoc3D
 			}
 
 			/** Determines whether this Rectangle entirely contains a specified Rectangle. */
-			bool Contains(const Rectangle& value) const
+			bool Contains(const RectBase& value) const
 			{
 				return (X <= value.X) &&
-					((value.X + value.Width) <=
-					(X + Width)) &&
+					(value.X + value.Width <= X + Width) &&
 					(Y <= value.Y) &&
-					((value.Y + value.Height) <= (Y + Height));
+					(value.Y + value.Height <= Y + Height);
 			}
 
 			/** Determines whether a specified Rectangle intersects with this Rectangle. */
-			bool Intersects(const Rectangle& value) const
+			bool Intersects(const RectBase& value) const
 			{
-				return (value.X < (X + Width)) &&
-					(X < (value.X + value.Width)) &&
-					(value.Y < (Y + Height)) &&
-					(Y < (value.Y + value.Height));
+				return (value.X < X + Width) &&
+					(X < value.X + value.Width) &&
+					(value.Y < Y + Height) &&
+					(Y < value.Y + value.Height);
 			}
+
+
+		protected:
+			RectBase() { }
+			RectBase(T x, T y, T w, T h)
+				: X(x), Y(y), Width(w), Height(h) { }
+
+		};
+
+		class APAPI RectangleF : public RectBase<float>
+		{
+		public:
+			RectangleF() { }
+			RectangleF(const PointF& pos, const PointF& size)
+				: RectBase(pos.X, pos.Y, size.X, size.Y) { }
+
+			RectangleF(float x, float y, float width, float height)
+				: RectBase(x, y, width, height) { }
+
+			RectangleF GetCenterRegion(const PointF& sz) const
+			{
+				return{ getCenter() - sz / 2, sz };
+			}
+
+			static RectangleF Intersect(const RectangleF& a, const RectangleF& b);
+			static RectangleF Union(const RectangleF& a, const RectangleF& b);
+
+			static RectangleF Lerp(const RectangleF& r1, const RectangleF& r2, float amount);
+
+			bool operator==(const RectangleF& other) const
+			{
+				return (X  == other.X) && (Y == other.Y) && (Width == other.Width) && (Height == other.Height);	
+			}
+			bool operator!=(const RectangleF& other) const { return !(*this == other); }
+
+			const static RectangleF Empty;
+		};
+
+		class APAPI Rectangle : public RectBase<int32>
+		{
+		public:
+			Rectangle() { }
+			
+			Rectangle(const Point& pos, const Point& size)
+				: RectBase(pos.X, pos.Y, size.X, size.Y) { }
+
+			Rectangle(int x, int y, int width, int height)
+				: RectBase(x, y, width, height) { }
+
 
 			Rectangle GetCenterRegion(const Point& sz) const
 			{
-				return Rectangle(getCenter() - sz / 2, sz);
+				return{ getCenter() - sz / 2, sz };
 			}
 
 			/** Creates a Rectangle defining the area where one rectangle overlaps another rectangle. */
@@ -246,11 +228,11 @@ namespace Apoc3D
 				return RectangleF(static_cast<float>(X), static_cast<float>(Y), static_cast<float>(Width), static_cast<float>(Height)); 
 			} 
 
-			bool operator==(const Rectangle &other) const
+			bool operator==(const Rectangle& other) const
 			{
 				return (X == other.X) && (Y == other.Y) && (Width == other.Width) && (Height == other.Height);	
 			}
-			bool operator!=(const Rectangle &other) const { return !(*this == other); }
+			bool operator!=(const Rectangle& other) const { return !(*this == other); }
 
 			const static Rectangle Empty;
 		};

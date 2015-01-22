@@ -126,10 +126,10 @@ namespace APBuild
 
 			List<FaceEdge> border; // the border edges, unsorted
 			// dump out from the map
-			for (HashMap<FaceEdge, int, FaceEdgeEqualityComparer>::Enumerator e = edgeUsageCounter.GetEnumerator();e.MoveNext();)
+			for (auto e : edgeUsageCounter)
 			{
-				if (e.getCurrentValue() == 1)
-					border.Add(e.getCurrentKey());
+				if (e.Value == 1)
+					border.Add(e.Key);
 			}
 
 			if (border.getCount()>0)

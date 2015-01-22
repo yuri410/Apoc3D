@@ -757,12 +757,6 @@ namespace UnitTestVC
 				Assert::AreEqual(srcs[e.Value], e.Key);
 			}
 
-			for (auto e = m2.GetEnumerator(); e.MoveNext();)
-			{
-				Assert::IsTrue(added[e.getCurrentValue()]);
-				Assert::AreEqual(srcs[e.getCurrentValue()], e.getCurrentKey());
-				
-			}
 		}
 
 	};
@@ -818,11 +812,6 @@ namespace UnitTestVC
 			for (const auto& e : m2)
 			{
 				int32 idx = StringUtils::ParseInt32(e);
-				Assert::IsTrue(added[idx]);
-			}
-			for (auto e = m2.GetEnumerator(); e.MoveNext();)
-			{
-				int32 idx = StringUtils::ParseInt32(e.getCurrent());
 				Assert::IsTrue(added[idx]);
 			}
 		}

@@ -52,7 +52,6 @@ void TestXml();
 
 void TestRandom();
 
-void TestIterator();
 void TestIterator2();
 
 void TestHalfFloat();
@@ -82,7 +81,6 @@ void main()
 	TestXml();
 
 	//TestRandom();
-	TestIterator();
 	TestIterator2();
 	//TestHalfFloat();
 	
@@ -515,143 +513,6 @@ private:
 	int32 m_index = 0;
 };
 
-
-
-void TestIterator()
-{
-	using namespace std::chrono;
-
-	const int Count = 100000;
-	const int Iterations = 1000;
-
-	HashMap<int, int> test1(Count);
-	HashSet<int> test2(Count);
-	List<int> test3(Count);
-	std::vector<int> test4(Count);
-
-	for (int32 i = 0; i < Count; i++)
-	{
-		test1.Add(i, i);
-		test2.Add(i);
-		test3.Add(i);
-		test4.push_back(i);
-	}
-
-	volatile int64 iterTime;
-	volatile int64 eterTime;
-	
-	if (1)
-	{
-		{
-			volatile auto t1 = high_resolution_clock::now();
-			for (int k = 0; k < Iterations; k++)
-			{
-				for (auto e = test1.GetEnumerator(); e.MoveNext();)
-					OptimizationBlocker(e);
-			}
-			volatile auto t2 = high_resolution_clock::now();
-			eterTime = getTimeDiff(t1, t2);
-		}
-		{
-			volatile auto t1 = high_resolution_clock::now();
-			for (int k = 0; k < Iterations; k++)
-			{
-				for (const auto& e : test1)
-					OptimizationBlocker(e);
-			}
-			volatile auto t2 = high_resolution_clock::now();
-			iterTime = getTimeDiff(t1, t2);
-		}
-		printf("HashMap:\tIter=%lld,\tEnum=%lld\n", iterTime, eterTime);
-	}
-
-	if (1)
-	{
-		{
-			volatile auto t1 = high_resolution_clock::now();
-			for (int k = 0; k < Iterations; k++)
-			{
-				for (const auto& e : test2)
-					OptimizationBlocker(e);
-			}
-			volatile auto t2 = high_resolution_clock::now();
-			iterTime = getTimeDiff(t1, t2);
-		}
-		{
-			volatile auto t1 = high_resolution_clock::now();
-			for (int k = 0; k < Iterations; k++)
-			{
-				for (auto e = test2.GetEnumerator(); e.MoveNext();)
-					OptimizationBlocker(e);
-			}
-			volatile auto t2 = high_resolution_clock::now();
-			eterTime = getTimeDiff(t1, t2);
-		}
-		printf("HashSet:\tIter=%lld,\tEnum=%lld\n", iterTime, eterTime);
-	}
-
-	if (1)
-	{
-		{
-			volatile auto t1 = high_resolution_clock::now();
-			for (int k = 0; k < Iterations; k++)
-			{
-				for (const auto& e : test3)
-					OptimizationBlocker(e);
-			}
-			volatile auto t2 = high_resolution_clock::now();
-			iterTime = getTimeDiff(t1, t2);
-		}
-		{
-			volatile auto t1 = high_resolution_clock::now();
-			for (int k = 0; k < Iterations; k++)
-			{
-				for (int32 i = 0; i < test3.getCount(); i++)
-					OptimizationBlocker(test3[i]);
-			}
-			volatile auto t2 = high_resolution_clock::now();
-			eterTime = getTimeDiff(t1, t2);
-		}
-
-		volatile int64 largeIterTime;
-		{
-			volatile auto t1 = high_resolution_clock::now();
-			for (int k = 0; k < Iterations; k++)
-			{
-				for (LargerListIter<int> i = LargerListIter<int>(test3); i != LargerListIter<int>::ssend(test3); ++i)
-					OptimizationBlocker(*i);
-			}
-			volatile auto t2 = high_resolution_clock::now();
-			largeIterTime = getTimeDiff(t1, t2);
-		}
-		printf("List:\t\tIter=%lld,\tIndex=%lld,\tBigIter=%lld\n", iterTime, eterTime, largeIterTime);
-	}
-
-	if (1)
-	{
-		{
-			volatile auto t1 = high_resolution_clock::now();
-			for (int k = 0; k < Iterations; k++)
-			{
-				for (const auto& e : test4)
-					OptimizationBlocker(e);
-			}
-			volatile auto t2 = high_resolution_clock::now();
-			iterTime = getTimeDiff(t1, t2);
-		}
-		{
-			volatile auto t1 = high_resolution_clock::now();
-			for (int k = 0; k < Iterations; k++)
-			{
-				for (size_t i = 0; i < test4.size(); i++)
-					OptimizationBlocker(test4[i]);
-			}
-			volatile auto t2 = high_resolution_clock::now();
-			eterTime = getTimeDiff(t1, t2);
-		}
-		printf("vector:\t\tIter=%lld,\tIndex=%lld\n", iterTime, eterTime);
-	}
-}
 
 bool TestCond(int32& r) { return r > 100 && r < 10240; }
 

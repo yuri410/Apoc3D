@@ -73,11 +73,8 @@ namespace Apoc3D
 			{
 				bool passed = false;
 
-				for (PlatformTable::Enumerator e = m_factories.GetEnumerator();
-					e.MoveNext(); )
+				for (APIList* list : m_factories.getValueAccessor())
 				{
-					APIList* list = e.getCurrentValue();
-
 					for (int32 i=list->getCount()-1; i>=0;i--)
 					{
 						if (list->operator[](i).Factory->getName() == name)

@@ -156,16 +156,16 @@ namespace Apoc3D
 		}
 		void PluginManager::UnloadPlugins()
 		{
-			for (PluginTable::Enumerator e = m_plugins.GetEnumerator(); e.MoveNext();)
+			for (Plugin* plg : m_plugins.getValueAccessor())
 			{
 				try
 				{
-					e.getCurrentValue()->Unload();
+					plg->Unload();
 				}
 				catch (const Exception& ex)
 				{
 					(void)ex;
-					OnPluginError(e.getCurrentValue());
+					OnPluginError(plg);
 				}
 			}
 			m_plugins.Clear();

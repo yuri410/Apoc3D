@@ -309,42 +309,6 @@ namespace Apoc3D
 			typedef HashMap<T, S, ComparerType> HashMapType;
 			typedef Utils::HashMapEntryPair<T, S> Entry;
 		public:
-			class Enumerator
-			{
-				friend class HashMap;
-			public:
-				bool MoveNext()
-				{
-					while (m_next < m_dict->m_touchedSlots)
-					{
-						int cur = m_next++;
-						if (m_dict->m_entries[cur].hashCode >= 0)
-						{
-							m_current = &m_dict->m_entries[cur].data;
-							m_currentVal = &m_dict->m_entries[cur].value;
-							return true;
-						}
-					}
-
-					m_next = m_dict->m_touchedSlots + 1;
-					m_current = nullptr;
-					m_currentVal = nullptr;
-					return false;
-				}
-
-				const T& getCurrentKey() const { return *m_current; }
-				S& getCurrentValue() const { return *m_currentVal; }
-
-			private:
-				Enumerator(const HashMapType* dict)
-					: m_dict(dict) { }
-
-				const HashMapType* m_dict;
-				int m_next = 0;
-				T* m_current = nullptr;
-				S* m_currentVal = nullptr;
-			};
-
 			class IteratorBase
 			{
 				friend class HashMap;
@@ -528,16 +492,14 @@ namespace Apoc3D
 
 			void DeleteValuesAndClear()
 			{
-				for (Enumerator e = GetEnumerator(); e.MoveNext();)
+				auto& c = *this;
+				for (S& val : c.getValueAccessor())
 				{
-					S val = e.getCurrentValue();
 					delete val;
 				}
 
 				Clear();
 			}
-
-			Enumerator GetEnumerator() const { return Enumerator(this); }
 
 			void FillKeys(List<T>& list) const
 			{
@@ -574,38 +536,7 @@ namespace Apoc3D
 			typedef Utils::HashMapEntry<T> Entry;
 
 		public:
-			class Enumerator
-			{
-				friend class HashSet;
-			public:
-				bool MoveNext()
-				{
-					while (m_next < m_dict->m_touchedSlots)
-					{
-						int cur = m_next++;
-						if (m_dict->m_entries[cur].hashCode >= 0)
-						{
-							m_current = &m_dict->m_entries[cur].data;
-							return true;
-						}
-					}
-					m_next = m_dict->m_touchedSlots + 1;
-					m_current = nullptr;
-					return false;
-				}
-
-				const T& getCurrent() const { return *m_current; }
-
-			private:
-				Enumerator(const HashSetType* dict)
-					: m_dict(dict) { }
-
-				const HashSetType* m_dict;
-				int m_next = 0;
-				const T* m_current = nullptr;
-
-			};
-
+		
 			class Iterator
 			{
 				friend class HashSet;
@@ -683,15 +614,14 @@ namespace Apoc3D
 
 			void Add(const T& item) { InsertEntry(item); }
 
-			Enumerator GetEnumerator() const { return Enumerator(this); }
-
 			void FillItems(List<T>& list) const
 			{
 				if (list.getCount() == 0)
 					list.ResizeDiscard(getCount());
 
-				for (Enumerator e = GetEnumerator(); e.MoveNext();)
-					list.Add(e.getCurrent());
+				auto& c = *this;
+				for (const T& key : c)
+					list.Add(key);
 			}
 
 

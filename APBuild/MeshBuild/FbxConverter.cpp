@@ -981,13 +981,10 @@ namespace APBuild
 		const FIMesh** meshList = new const FIMesh*[m_meshes.getCount()];
 		HashSet<std::string> seenAnimation;
 		int idxCounter = 0;
-		for (HashMap<std::string, FIMesh*>::Enumerator i=m_meshes.GetEnumerator();i.MoveNext();)
+		for (const FIMesh* mesh : m_meshes.getValueAccessor())
 		{
-			const FIMesh* mesh = i.getCurrentValue();
-			for (HashMap<std::string, FIPartialAnimation*>::Enumerator j=mesh->m_AnimationKeyFrames.GetEnumerator();j.MoveNext();)
+			for (FIPartialAnimation* anim : mesh->m_AnimationKeyFrames.getValueAccessor()) 
 			{
-				FIPartialAnimation* anim = j.getCurrentValue();
-
 				const std::string& name = anim->GetAnimationName();
 
 				if (!seenAnimation.Contains(name))
@@ -998,10 +995,8 @@ namespace APBuild
 			meshList[idxCounter++] = mesh;
 		}
 
-		for (HashSet<std::string>::Enumerator e = seenAnimation.GetEnumerator();e.MoveNext();)
+		for (const std::string& animName : seenAnimation)
 		{
-			const std::string& animName = e.getCurrent();
-
 			uint frameIndex = 0;
 			bool finished = false;
 			List<ModelKeyframe> frames;
@@ -1231,9 +1226,8 @@ namespace APBuild
 		
 		// mesh
 		{
-			for (HashMap<std::string, FIMesh*>::Enumerator i=fbx.m_meshes.GetEnumerator();i.MoveNext();)
+			for (FIMesh* mesh : fbx.m_meshes.getValueAccessor())
 			{
-				FIMesh* mesh = i.getCurrentValue();
 				const std::vector<FIMeshPart*>& parts = mesh->getParts();
 				List<MaterialData*> materialData;
 				// materials

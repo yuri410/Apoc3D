@@ -40,41 +40,23 @@ namespace Apoc3D
 		class APAPI Viewport
 		{
 		public:
-			/**
-			 *  the viewport's X position.
-			 */
-			int X;
-			/**
-			 *  the viewport's Y position.
-			 */
-			int Y;
-			/**
-			 *  the viewport's width.
-			 */
-			int Width;
-			/**
-			 *  the viewport's height.
-			 */
-			int Height;
-			/**
-			 *  the viewport's minimum Z depth.
-			 */
-			float MinZ;
-			/**
-			 *  the viewport's maximum Z depth.
-			 */
-			float MaxZ;
+			
+			int X;			/** the viewport's X position. */
+			int Y;			/** the viewport's Y position. */
+			int Width;		/** the viewport's width. */
+			int Height;		/** the viewport's height. */
+			
+			float MinZ;		/** the viewport's minimum Z depth. */
+			float MaxZ;		/** the viewport's maximum Z depth. */
 
 			Viewport(int x, int y, int width, int height)
 				: X(x), Y(y), Width(width), Height(height),
 				MinZ(0), MaxZ(1)
-			{
-			}
+			{ }
 			Viewport(int x, int y, int width, int height, float minZ, float maxZ)
 				: X(x), Y(y), Width(width), Height(height),
 				MinZ(minZ), MaxZ(maxZ)
-			{
-			}
+			{ }
 
 			/**
 			 *  Converts a screen space point into a corresponding point in world space.

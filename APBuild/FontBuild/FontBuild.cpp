@@ -267,11 +267,10 @@ namespace APBuild
 
 		int maxGWidth = 0;
 		int maxGHeight = 0;
-		for (GlyphBitmapTable::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+		for (const GlyphBitmap& g : glyphHashTable.getKeyAccessor())
 		{
-			const GlyphBitmap* g = &i.getCurrentKey();
-			if (g->Width > maxGWidth) maxGWidth = g->Width;
-			if (g->Height > maxGHeight) maxGHeight = g->Height;
+			if (g.Width > maxGWidth) maxGWidth = g.Width;
+			if (g.Height > maxGHeight) maxGHeight = g.Height;
 		}
 
 		int32 cellWidth = maxGWidth + config.GlyphMargin*2;
@@ -289,12 +288,12 @@ namespace APBuild
 
 			int32 xPos = 0;
 			int32 yPos = 0;
-			for (GlyphBitmapTable::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+
+			for (const GlyphBitmap& g : glyphHashTable.getKeyAccessor())
 			{
-				const GlyphBitmap* g = &i.getCurrentKey();
-				bw.WriteInt32(g->Index);
-				bw.WriteInt32(g->Width + config.GlyphMargin*2);
-				bw.WriteInt32(g->Height + config.GlyphMargin*2);
+				bw.WriteInt32(g.Index);
+				bw.WriteInt32(g.Width + config.GlyphMargin*2);
+				bw.WriteInt32(g.Height + config.GlyphMargin*2);
 
 				int32 regionX = xPos * cellWidth;
 				int32 regionY = yPos * cellHeight;
@@ -306,11 +305,11 @@ namespace APBuild
 
 				char* pixelRowAddr = (char*)bmpData.Scan0 + bmpData.Stride * regionY + regionX * sizeof(uint32);
 
-				for (int i=0;i<g->Height;i++)
+				for (int i = 0; i < g.Height; i++)
 				{
-					for (int j=0;j<g->Width;j++)
+					for (int j = 0; j < g.Width; j++)
 					{
-						int32 gray = *(g->PixelData + g->Width * i + j);
+						int32 gray = *(g.PixelData + g.Width * i + j);
 						uint32* pa = ((uint32*)pixelRowAddr) + j;
 
 						*pa = (uint32)gray << 24 | 0xffffff;
@@ -319,7 +318,7 @@ namespace APBuild
 					pixelRowAddr += bmpData.Stride;
 				}
 				
-				delete[] g->PixelData;
+				delete[] g.PixelData;
 
 				xPos++;
 				if (xPos >= edgeCount)
@@ -438,33 +437,29 @@ namespace APBuild
 		}
 		int64 baseOfs = fs.getPosition();
 
-		for (GlyphBitmapTable::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+		for (const GlyphBitmap& g : glyphHashTable.getKeyAccessor())
 		{
-			const GlyphBitmap* g = &i.getCurrentKey();
-
 			if (info.HasLuminance)
-				bw.Write(g->PixelData, g->Width * g->Height * 2);
+				bw.Write(g.PixelData, g.Width * g.Height * 2);
 			else
-				bw.Write(g->PixelData, g->Width * g->Height);
+				bw.Write(g.PixelData, g.Width * g.Height);
 		}
 
 		fs.Seek(glyRecPos, SeekMode::Begin);
 
-		for (GlyphBitmapTable::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+		for (const GlyphBitmap& g : glyphHashTable.getKeyAccessor())
 		{
-			const GlyphBitmap* g = &i.getCurrentKey();
-
-			bw.WriteInt32((int32)g->Index);
-			bw.WriteInt32((int32)g->Width);
-			bw.WriteInt32((int32)g->Height);
+			bw.WriteInt32((int32)g.Index);
+			bw.WriteInt32((int32)g.Width);
+			bw.WriteInt32((int32)g.Height);
 			bw.WriteInt64((int64)baseOfs);
 
 			if (info.HasLuminance)
-				baseOfs += g->Width * g->Height * 2;
+				baseOfs += g.Width * g.Height * 2;
 			else
-				baseOfs += g->Width * g->Height;
+				baseOfs += g.Width * g.Height;
 
-			delete[] g->PixelData;
+			delete[] g.PixelData;
 		}
 	}
 

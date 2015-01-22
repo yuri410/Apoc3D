@@ -445,13 +445,10 @@ namespace APBuild
 			{
 				HashSet<std::string> seenAnimation;
 				
-				for (int i=0;i<m_SkeletonBones.getCount();i++)
+				for (const FISkeletonBone* bone : m_SkeletonBones)
 				{
-					const FISkeletonBone* bone = m_SkeletonBones[i];
-					for (HashMap<std::string, FIPartialAnimation*>::Enumerator j=bone->m_AnimationKeyFrames.GetEnumerator();j.MoveNext();)
+					for (FIPartialAnimation* anim : bone->m_AnimationKeyFrames.getValueAccessor()) 
 					{
-						FIPartialAnimation* anim = j.getCurrentValue();
-
 						const std::string& name = anim->GetAnimationName();
 
 						if (!seenAnimation.Contains(name))
@@ -461,10 +458,8 @@ namespace APBuild
 					}
 				}
 
-				for (HashSet<std::string>::Enumerator e = seenAnimation.GetEnumerator();e.MoveNext();)
+				for (const std::string& animName : seenAnimation)
 				{
-					const std::string& animName = e.getCurrent();
-					
 					uint frameIndex = 0;
 					bool finished = false;
 					List<ModelKeyframe> frames;

@@ -75,26 +75,11 @@ namespace Apoc3D
 			bool DepthWriteEnabled;
 			bool DepthTestEnabled;
 
-			/**
-			 *   the ambient component of this material
-			 */
-			Color4 Ambient;
-			/**
-			 *   the diffuse component of this material
-			 */
-			Color4 Diffuse;
-			/**
-			 *  the emissive component of this material
-			 */
-			Color4 Emissive;
-			/** 
-			 *  the specular component of this material
-			 */
-			Color4 Specular;
-			/**
-			 *  the specular shininess
-			 */
-			float Power;
+			Color4 Ambient;		/** the ambient component of this material */
+			Color4 Diffuse;		/** the diffuse component of this material */
+			Color4 Emissive;	/** the emissive component of this material */
+			Color4 Specular;	/** the specular component of this material */
+			float Power;		/** the specular shininess */
 
 
 			const MaterialCustomParameter* getCustomParameter(const String& usage) const;
@@ -129,13 +114,10 @@ namespace Apoc3D
 			Effect* getPassEffect(int index) const { if (index==-1) return GetFirstValidEffect(); return m_effects[index]; }
 			void setPassEffect(int index, Effect* eff) { m_effects[index] = eff; }
 
-			/**
-			 *  Gets the texture at texture layer idx
-			 */
+			/** Gets the texture at texture layer idx */
 			ResourceHandle<Texture>* getTexture(int idx) const { return m_tex[idx]; }
-			/**
-			 *  Sets the texture at texture layer idx
- 			 */
+
+			/** Sets the texture at texture layer idx */
 			void setTexture(int idx, ResourceHandle<Texture>* value) { m_tex[idx] = value; }
 
 			/** 
@@ -190,11 +172,11 @@ namespace Apoc3D
 			/** 
 			 *  A map of effect names
 			 */
-			HashMap<int, String> m_effectName;//[MaxScenePass];
+			HashMap<int, String> m_effectName;
 
 			CustomParamTable m_customParametrs;
 			ResourceHandle<Texture>* m_tex[MaxTextures];
-			HashMap<int, String> m_texName;//[MaxTextures];
+			HashMap<int, String> m_texName;
 			bool m_texDirty[MaxTextures];
 
 			/** 

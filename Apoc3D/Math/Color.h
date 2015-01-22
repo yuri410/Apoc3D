@@ -42,12 +42,12 @@ namespace Apoc3D
 		class Color4
 		{
 		public:
-			float Red;					/** the color's red component. */
-			float Green;				/** the color's green component. */
-			float Blue;					/** the color's blue component. */
-			float Alpha;				/** the color's alpha component. */ 
+			float Red = 0;				/** the color's red component. */
+			float Green = 0;			/** the color's green component. */
+			float Blue = 0;				/** the color's blue component. */
+			float Alpha = 0;			/** the color's alpha component. */
 
-			Color4() : Red(0), Green(0), Blue(0), Alpha(0) { }
+			Color4() { }
 
 			explicit Color4(const Vector3& color)
 				: Red(color.X), Green(color.Y), Blue(color.Z), Alpha(1) { }

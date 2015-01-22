@@ -35,11 +35,10 @@ namespace Apoc3D
 		class APAPI OctreeBox
 		{
 		public:
-			OctreeBox()
-				: Length(0), Center(Vector3::Zero)
-			{ }
+			OctreeBox() { }
+
 			explicit OctreeBox(float length)
-				: Length(length), Center(Vector3::Zero)
+				: Length(length)
 			{ }
 
 			OctreeBox(const BoundingBox& aabb);
@@ -47,8 +46,8 @@ namespace Apoc3D
 
 			void GetBoundingSphere(BoundingSphere& sp) const;
 
-			Vector3 Center;
-			float Length;
+			Vector3 Center = Vector3::Zero;
+			float Length = 0;
 		};
 	}
 }

@@ -56,9 +56,9 @@ namespace Apoc3D
 			Cull(CULL_None),
 			UsePointSprite(false)
 		{
-			memset(m_tex, 0, sizeof(m_tex));
-			memset(m_effects, 0, sizeof(m_effects));
-			memset(m_texDirty, 0, sizeof(m_texDirty));
+			ZeroArray(m_tex);
+			ZeroArray(m_effects);
+			ZeroArray(m_texDirty);
 		}
 
 		Material::Material(const Material& m)
@@ -74,15 +74,15 @@ namespace Apoc3D
 			ExternalReferenceName(m.ExternalReferenceName),
 			m_customParametrs(m.m_customParametrs), m_effectName(m.m_effectName), m_texName(m.m_texName)
 		{
-			memcpy(m_texDirty, m.m_texDirty, sizeof(m_texDirty));
-			memset(m_tex, 0, sizeof(m_tex));
-			memset(m_effects, 0, sizeof(m_effects));
+			CopyArray(m_texDirty, m.m_texDirty);
+			ZeroArray(m_tex);
+			ZeroArray(m_effects);
 
-			for (int i=0;i<MaxScenePass;i++)
+			for (int i = 0; i < MaxScenePass; i++)
 			{
 				LoadEffect(i);
 			}
-			for (int i=0;i<MaxTextures;i++)
+			for (int i = 0; i < MaxTextures; i++)
 			{
 				LoadTexture(i);
 			}
@@ -94,13 +94,9 @@ namespace Apoc3D
 
 		Material::~Material()
 		{
-			for (int i = 0; i < MaxTextures; i++)
+			for (ResourceHandle<Texture>*& tex : m_tex)
 			{
-				if (m_tex[i])
-				{
-					delete m_tex[i];
-					m_tex[i] = 0;
-				}
+				DELETE_AND_NULL(tex);
 			}
 		}
 		const MaterialCustomParameter* Material::getCustomParameter(const String& usage) const
@@ -160,7 +156,7 @@ namespace Apoc3D
 		{
 			// re load using a newly loaded MaterialData
 			MaterialData newData;
-			//FileLocation* fl = FileSystem::getSingleton().TryLocate(mtrlName, FileLocateRule::Materials);
+			
 			FileLocation fl;
 			if (FileSystem::getSingleton().TryLocate(mtrlName, FileLocateRule::Materials, fl))
 			{
@@ -217,13 +213,13 @@ namespace Apoc3D
 			m_effectName = mdata.EffectName;
 			m_texName = mdata.TextureName;
 
-			for (HashMap<int, String>::Enumerator e = m_effectName.GetEnumerator(); e.MoveNext();)
+			for (int idx : m_effectName.getKeyAccessor())
 			{
-				LoadEffect(e.getCurrentKey());
+				LoadEffect(idx);
 			}
-			for (HashMap<int, String>::Enumerator e = m_texName.GetEnumerator(); e.MoveNext();)
+			for (int idx : m_texName.getKeyAccessor())
 			{
-				LoadTexture(e.getCurrentKey());
+				LoadTexture(idx);
 			}
 		}
 		void Material::Save(MaterialData& data)
@@ -285,12 +281,12 @@ namespace Apoc3D
 
 		Effect* Material::GetFirstValidEffect() const
 		{
-			for (int i=0;i<MaxScenePass;i++)
+			for (Effect* fx : m_effects)
 			{
-				if (m_effects[i])
-					return m_effects[i];
+				if (fx)
+					return fx;
 			}
-			return 0;
+			return nullptr;
 		}
 
 		const String& Material::getTextureName(int index) const 

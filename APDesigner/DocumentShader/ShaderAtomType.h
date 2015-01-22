@@ -100,9 +100,8 @@ namespace APDesigner
 	{
 		SINGLETON_DECL(ShaderAtomLibraryManager);
 	public:
+		typedef HashMap<String, ShaderAtomType*> AtomTable;
 		ShaderAtomLibraryManager() { }
-
-		typedef HashMap<String, ShaderAtomType*>::Enumerator LibraryEnumerator;
 
 		/** Load all atom types from give file.
 		 *  Before that all previous loaded atom types will be unloaded,
@@ -114,9 +113,12 @@ namespace APDesigner
 
 		ShaderAtomType* FindAtomType(const String& name);
 
-		LibraryEnumerator GetEnumerator() { return m_table.GetEnumerator(); }
+		//LibraryEnumerator GetEnumerator() { return m_table.GetEnumerator(); }
+		AtomTable::Iterator begin() const { return m_table.begin(); }
+		AtomTable::Iterator end() const { return m_table.end(); }
+
 	private:
-		HashMap<String, ShaderAtomType*> m_table;
+		AtomTable m_table;
 	};
 
 }

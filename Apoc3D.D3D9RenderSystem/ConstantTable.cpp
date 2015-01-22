@@ -106,7 +106,7 @@ namespace Apoc3D
 			{
 				int32 constantCount = br->ReadInt32();
 
-				for (int32 i=0;i<constantCount;i++)
+				for (int32 i = 0; i < constantCount; i++)
 				{
 					ShaderConstant sc;
 
@@ -140,10 +140,8 @@ namespace Apoc3D
 			{
 				bw->WriteInt32(m_table.getCount());
 
-				for (HashMap<String, ShaderConstant>::Enumerator e = m_table.GetEnumerator();e.MoveNext();)
+				for (const ShaderConstant& sc : m_table.getValueAccessor())
 				{
-					const ShaderConstant& sc = e.getCurrentValue();
-
 					std::string name = StringUtils::toASCIINarrowString(sc.Name);
 					bw->Write(name.c_str(), name.size()+1);
 

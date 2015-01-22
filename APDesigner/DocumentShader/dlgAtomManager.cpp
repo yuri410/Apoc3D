@@ -104,13 +104,12 @@ namespace APDesigner
 	{
 		m_atomList->getItems().Clear();
 
-		ShaderAtomLibraryManager::LibraryEnumerator e = ShaderAtomLibraryManager::getSingleton().GetEnumerator();
-		for (;e.MoveNext();)
+		for (auto e : ShaderAtomLibraryManager::getSingleton())
 		{
-			ShaderAtomType* type = e.getCurrentValue();
+			ShaderAtomType* type = e.Value;
 
 			String row[3];
-			row[0] = e.getCurrentKey();
+			row[0] = e.Key;
 			
 			row[1] = GraphicsCommonUtils::ToString(type->getShaderType());
 			

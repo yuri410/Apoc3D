@@ -266,11 +266,10 @@ namespace Apoc3D
 
 			if (!hasMetrics)
 			{
-				for (auto i = m_charTable.GetEnumerator();i.MoveNext();)
+				for (Character& ch : m_charTable.getValueAccessor())
 				{
-					Character* ch = &i.getCurrentValue();
-					Glyph& g = m_glyphList[ch->GlyphIndex];
-					ch->AdvanceX = static_cast<float>(g.Width);
+					Glyph& g = m_glyphList[ch.GlyphIndex];
+					ch.AdvanceX = static_cast<float>(g.Width);
 				}
 			}
 				
@@ -1487,9 +1486,8 @@ namespace Apoc3D
 			int32 bytesUsed = 0;
 			int32 numCmpFont = 0;
 			int32 numLargeFont = 0;
-			for (HashMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
+			for (Font* fnt : m_fontTable.getValueAccessor())
 			{
-				Font* fnt = iter.getCurrentValue();
 				bytesUsed += fnt->m_selectTextureSize * fnt->m_selectTextureSize * 2;
 
 				if (fnt->m_isUsingCaching)
@@ -1528,10 +1526,9 @@ namespace Apoc3D
 				msg = L"[FontManager] Complex fonts: ";
 
 				int32 counter = 0;
-				for (HashMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
+				
+				for (Font* fnt : m_fontTable.getValueAccessor())
 				{
-					Font* fnt = iter.getCurrentValue();
-					
 					if (fnt->m_isUsingCaching)
 					{
 						FileLocation* fl = up_cast<FileLocation*>(fnt->m_resource);
@@ -1555,10 +1552,8 @@ namespace Apoc3D
 				msg = L"[FontManager] Large fonts: ";
 
 				int32 counter = 0;
-				for (HashMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
+				for (Font* fnt : m_fontTable.getValueAccessor())
 				{
-					Font* fnt = iter.getCurrentValue();
-
 					if (!fnt->m_isUsingCaching && fnt->m_selectTextureSize == MaxTextureSize)
 					{
 						FileLocation* fl = up_cast<FileLocation*>(fnt->m_resource);

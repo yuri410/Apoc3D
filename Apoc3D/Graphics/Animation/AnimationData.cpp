@@ -307,12 +307,12 @@ namespace Apoc3D
 					data->AddInt32(TAG_3_SkinnedAnimationClipCountTag, m_skinnedAnimationClips.getCount());
 
 					BinaryWriter* bw = data->AddEntry(TAG_3_SkinnedAnimationClipTag);
-					for (ClipTable::Enumerator e = m_skinnedAnimationClips.GetEnumerator(); e.MoveNext();)
+					for (auto& e : m_skinnedAnimationClips)
 					{
-						const String& name = e.getCurrentKey();
-						bw->WriteString(name);
+						const String& name = e.Key;
+						const ModelAnimationClip* clip = e.Value;
 
-						const ModelAnimationClip* clip = e.getCurrentValue();
+						bw->WriteString(name);
 						bw->WriteDouble(static_cast<double>(clip->getDuration()));
 
 						const List<ModelKeyframe>& keyFrames = clip->getKeyframes();
