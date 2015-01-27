@@ -407,7 +407,7 @@ namespace Apoc3D
 			{
 				Control* ctrl = m_elements[i];
 
-				if (ctrl != overridingControl && ctrl->Enabled)
+				if (ctrl != overridingControl)
 				{
 					ctrl->Update(time);
 				}
@@ -440,7 +440,7 @@ namespace Apoc3D
 				{
 					overridingControl = ctrl;
 				}
-				if (ctrl->Enabled)
+				if (ctrl->Visible)
 				{
 					ctrl->Draw(sprite);
 				}

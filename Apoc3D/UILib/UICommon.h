@@ -214,6 +214,8 @@ namespace Apoc3D
 				return *this;
 			}
 
+			void Clear() { m_isSet = false; }
+
 			bool isSet() const { return m_isSet; }
 			operator T() { return m_data; }
 			operator T() const { return m_data; }

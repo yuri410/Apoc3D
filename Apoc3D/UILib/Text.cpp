@@ -427,6 +427,9 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle textArea = GetTextArea();
 			m_visibleLines = (int)ceilf((float)textArea.Height / m_fontRef->getLineHeightInt());
 
+			if (!Enabled)
+				return;
+
 			CheckFocus();
 			Point cursorPos = m_textEdit.getCursorPosition();
 

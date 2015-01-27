@@ -74,7 +74,15 @@ namespace Apoc3D
 			m_fontRef = settings.ContentTextBox.FontRef;
 			m_textbox = new TextBox(settings.ContentTextBox, Position, m_size.X);
 			
-			Point dropButtonPos = CalculateDropButtonPos(m_textbox, nullptr, settings.DropdownButton.NormalGraphic.getWidth());
+			int32 dropBtnWidth = settings.DropdownButton.NormalGraphic.getWidth();
+
+			if (settings.DropdownButton.Margin.isSet())
+				dropBtnWidth -= settings.DropdownButton.Margin.getContent().getHorizontalSum();
+
+			Point dropButtonPos = CalculateDropButtonPos(m_textbox, nullptr, dropBtnWidth);
+			if (settings.DropdownButton.Margin.isSet())
+				dropButtonPos += { settings.DropdownButton.Margin.getContent().Left, settings.DropdownButton.Margin.getContent().Top };
+
 			m_button = new Button(settings.DropdownButton, dropButtonPos, L"");
 			m_listBox = new ListBox(settings.DropdownList, Position + Point(0, m_textbox->getHeight()), m_size.X, 
 				8 * settings.DropdownList.FontRef->getLineHeightInt(), m_items);
@@ -103,12 +111,16 @@ namespace Apoc3D
 		{
 			SetControlBasicStates({ m_textbox, m_button, m_listBox });
 
-			if (!Enabled || !Visible)
-				return;
+			m_textbox->Enabled = Enabled;
+			m_button->Enabled = Enabled;
+			m_listBox->Enabled = Enabled;
 
 			m_textbox->Position = Position;
 			m_button->Position = CalculateDropButtonPos(m_textbox, m_button, m_button->getWidth());
 			m_listBox->Position = Position + Point(0, m_textbox->getHeight());
+
+			if (!Enabled || !Visible)
+				return;
 
 			m_textbox->Update(time);
 			m_button->Update(time);
