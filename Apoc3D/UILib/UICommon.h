@@ -219,6 +219,7 @@ namespace Apoc3D
 			operator T() const { return m_data; }
 
 			T& getContent() { return m_data; }
+			const T& getContent() const { return m_data; }
 		private:
 			T m_data;
 			bool m_isSet = false;

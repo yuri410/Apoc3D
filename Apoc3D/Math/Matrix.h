@@ -1427,7 +1427,16 @@ namespace Apoc3D
 			}
 			bool operator!=(const Matrix& rhs) const { return !(*this == rhs); }
 
+			Matrix& operator*=(const Matrix& rhs)
+			{
+				assert(&rhs != this);
 
+				Matrix temp;
+				Matrix::Multiply(temp, *this, rhs);
+				*this = temp;
+
+				return *this;
+			}
 		};
 
 #ifdef _MSC_VER
