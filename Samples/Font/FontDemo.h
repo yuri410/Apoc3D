@@ -51,6 +51,10 @@ namespace SampleFont
 		Sprite* m_sprite;
 
 		int32 m_currentPressure;
+
+		float m_lengthDissolveProgress = 0;
+		float m_wordDissolveProgress = 0;
+		float m_allDissolveProgress = 0;
 	};
 }
 #endif

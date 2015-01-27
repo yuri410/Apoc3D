@@ -72,6 +72,19 @@ namespace SampleFont
 			if (m_currentPressure<1)
 				m_currentPressure = 1;
 		}
+
+		m_lengthDissolveProgress += time->ElapsedTime * 60;
+		if (m_lengthDissolveProgress > 200)
+			m_lengthDissolveProgress = 0;
+
+		m_allDissolveProgress += time->getElapsedTime();
+		if (m_allDissolveProgress > 2)
+			m_allDissolveProgress = 0;
+
+		m_wordDissolveProgress += time->getElapsedTime() * 5;
+		if (m_wordDissolveProgress > 5)
+			m_wordDissolveProgress = 0;
+
 	}
 	void FontDemo::Draw(const GameTime* time)
 	{
@@ -125,25 +138,11 @@ namespace SampleFont
 		Font* english = FontManager::getSingleton().getFont(L"english");
 		english->DrawString(m_sprite, L"FPS: " + StringUtils::SingleToString(time->getFPS(), StrFmt::fp<2>::val), Point(0, areaSize.Height - 50), CV_White);
 
-		static int32 disCurLen = 0;
-		disCurLen++;
-		if (disCurLen>200)
-			disCurLen = 0;
+		int32 disCurLen = Math::Round(m_lengthDissolveProgress);
+
 		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, areaSize.Height - 110.0f, CV_White, disCurLen*0.5f, 10, Point(3, 3), 0.3f);
-
-		static float wordDisProgress = 0;
-		wordDisProgress += time->getElapsedTime()*5;
-		if (wordDisProgress>5)
-			wordDisProgress = 0;
-
-		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, areaSize.Height - 90.0f, CV_White, wordDisProgress, -2, Point(3, 3), 0.3f);
-
-		static float allDisProgress = 0;
-		allDisProgress += time->getElapsedTime();
-		if (allDisProgress>2)
-			allDisProgress = 0;
-
-		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, areaSize.Height - 70.0f, CV_White, 1 - Math::Saturate(allDisProgress), 0, Point(3, 3), 0.3f);
+		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, areaSize.Height - 90.0f, CV_White, m_wordDissolveProgress, -2, Point(3, 3), 0.3f);
+		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, areaSize.Height - 70.0f, CV_White, 1 - Math::Saturate(m_allDissolveProgress), 0, Point(3, 3), 0.3f);
 
 		english->DrawString(m_sprite, L"Color Control Code: " + Font::MakeColorControl(CV_Red) + L"Red " + Font::MakeColorControl(CV_Green) + L"Green",
 			Point(200, areaSize.Height - 110), CV_White);
