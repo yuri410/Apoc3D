@@ -222,6 +222,9 @@ namespace Apoc3D
 
 			T& getContent() { return m_data; }
 			const T& getContent() const { return m_data; }
+
+			bool operator ==(const OptionalSetting& o) const { return m_isSet == o.m_isSet && m_data == o.m_data; }
+			bool operator !=(const OptionalSetting& o) const { return !this->operator=(o); }
 		private:
 			T m_data;
 			bool m_isSet = false;
