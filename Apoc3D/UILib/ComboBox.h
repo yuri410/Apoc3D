@@ -50,8 +50,8 @@ namespace Apoc3D
 		public:
 			typedef EventDelegate<ComboBox*> ComboBoxEvent;
 
-			ComboBox(const ComboBoxVisualSettings& settings, const Point& position, int width, const List<String>& items);
-			ComboBox(const StyleSkin* skin, const Point& position, int width, const List<String>& items);
+			ComboBox(const ComboBoxVisualSettings& settings, const Point& position, int width, const List<String>& items, int32 listItemCount = 8);
+			ComboBox(const StyleSkin* skin, const Point& position, int width, const List<String>& items, int32 listItemCount = 8);
 			virtual ~ComboBox();
 
 			virtual void Update(const GameTime* time) override;
@@ -85,8 +85,8 @@ namespace Apoc3D
 
 			Point DropdownButtonOffset;
 		private:
-			void Initialize(const StyleSkin* skin);
-			void Initialize(const ComboBoxVisualSettings& settings);
+			void Initialize(const StyleSkin* skin, int32 listItemCount);
+			void Initialize(const ComboBoxVisualSettings& settings, int32 listItemCount);
 			void PostInit();
 			
 			Point CalculateDropButtonPos(TextBox* ctb, Button* btn, int32 btnWidth);
@@ -103,6 +103,7 @@ namespace Apoc3D
 			ListBox* m_listBox = nullptr;
 			List<String> m_items;
 
+			
 			bool m_justOpened = false;
 
 		};

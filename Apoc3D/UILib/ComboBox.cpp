@@ -17,16 +17,16 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		ComboBox::ComboBox(const ComboBoxVisualSettings& settings, const Point& position, int width, const List<String>& items)
+		ComboBox::ComboBox(const ComboBoxVisualSettings& settings, const Point& position, int width, const List<String>& items, int32 listItemCount)
 			: Control(nullptr, position, width), m_items(items)
 		{
-			Initialize(settings);
+			Initialize(settings, listItemCount);
 		}
 
-		ComboBox::ComboBox(const StyleSkin* skin, const Point& position, int width, const List<String>& items)
+		ComboBox::ComboBox(const StyleSkin* skin, const Point& position, int width, const List<String>& items, int32 listItemCount)
 			: Control(skin, position, width), m_items(items)
 		{
-			Initialize(skin);
+			Initialize(skin, listItemCount);
 		}
 
 
@@ -51,7 +51,7 @@ namespace Apoc3D
 			return dropButtonPos;
 		}
 
-		void ComboBox::Initialize(const StyleSkin* skin)
+		void ComboBox::Initialize(const StyleSkin* skin, int32 listItemCount)
 		{
 			m_textbox = new TextBox(skin, Position, m_size.X);
 			
@@ -63,13 +63,13 @@ namespace Apoc3D
 
 			Point dropButtonPos = CalculateDropButtonPos(m_textbox, nullptr, skin->DropdownButtonNormalRegion.Width);
 			m_button = new Button(bvs, dropButtonPos, L"");
-			m_listBox = new ListBox(skin, Position + Point(0, 19), m_size.X, 8 * m_fontRef->getLineHeightInt(), m_items);
+			m_listBox = new ListBox(skin, Position + Point(0, 19), m_size.X, listItemCount * m_fontRef->getLineHeightInt(), m_items);
 			
 			DropdownButtonOffset = skin->DropdownButtonOffset;
 
 			PostInit();
 		}
-		void ComboBox::Initialize(const ComboBoxVisualSettings& settings)
+		void ComboBox::Initialize(const ComboBoxVisualSettings& settings, int32 listItemCount)
 		{
 			m_fontRef = settings.ContentTextBox.FontRef;
 			m_textbox = new TextBox(settings.ContentTextBox, Position, m_size.X);
@@ -85,7 +85,7 @@ namespace Apoc3D
 
 			m_button = new Button(settings.DropdownButton, dropButtonPos, L"");
 			m_listBox = new ListBox(settings.DropdownList, Position + Point(0, m_textbox->getHeight()), m_size.X, 
-				8 * settings.DropdownList.FontRef->getLineHeightInt(), m_items);
+				listItemCount * settings.DropdownList.FontRef->getLineHeightInt(), m_items);
 
 			if (settings.DropdownButtonOffset.isSet())
 				DropdownButtonOffset = settings.DropdownButtonOffset;
