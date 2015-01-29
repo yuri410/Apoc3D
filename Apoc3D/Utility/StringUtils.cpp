@@ -1017,7 +1017,9 @@ namespace Apoc3D
 					else if (pos == StrType::npos)
 					{
 						// Copy the rest of the nstring
-						result.Add(str.substr(start));
+						if (start < str.size())
+							result.Add(str.substr(start));
+
 						break;
 					}
 					else

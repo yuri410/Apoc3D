@@ -670,39 +670,6 @@ namespace Apoc3D
 			}
 		}
 
-		template <typename ListElementT, typename ElementT, ElementT (*TConverter)(const String&) >
-		void SplitT(const String& str, ListElementT& result, const String& delims)
-		{
-			assert(result.getCount() == 0);
-
-			// Use STL methods 
-			size_t start, pos;
-			start = 0;
-			do 
-			{
-				pos = str.find_first_of(delims, start);
-				if (pos == start)
-				{
-					// Do nothing
-					start = pos + 1;
-				}
-				else if (pos == String::npos)
-				{
-					// Copy the rest of the string
-					result.Add(TConverter(str.substr(start) ));
-					break;
-				}
-				else
-				{
-					// Copy up to delimiter
-					result.Add(TConverter(str.substr(start, pos - start) ));
-					start = pos + 1;
-				}
-				// parse up to next real data
-				start = str.find_first_not_of(delims, start);
-
-			} while (pos != String::npos);
-		}
 
 		template <typename ElementT, String (*ToStringConverter)(const ElementT&) >
 		void GenericToString(const ElementT* array, int32 count, String& result)
@@ -718,8 +685,8 @@ namespace Apoc3D
 
 		void SplitSingles(const String& text, List<float>& result)		{ StringUtils::SplitParseSingles(text, result, L", "); } 
 		void SplitInt(const String& text, List<int32>& result)			{ StringUtils::SplitParseInts(text, result, L", "); } 
-		void SplitPercentages(const String& text, List<float>& result)	{ SplitT<List<float>, float, ParsePercentage>(text, result, L", "); }
-		void SplitUint(const String& text, List<uint32>& result)		{ SplitT<List<uint32>, uint32, StringUtils::ParseUInt32>(text, result, L", "); }
+		void SplitPercentages(const String& text, List<float>& result)	{ StringUtils::SplitParse<String, List<float>, float, ParsePercentage>(text, result, L", "); }
+		void SplitUint(const String& text, List<uint32>& result)		{ StringUtils::SplitParse<String, List<uint32>, uint32, StringUtils::ParseUInt32>(text, result, L", "); }
 		void SplitVector3s(const String& str, List<Vector3>& result)
 		{
 			List<float> buffer;
@@ -772,14 +739,14 @@ namespace Apoc3D
 		int32 SplitPercentagesArr(const String& str, float* result, int32 expectedCount)
 		{
 			WrappedList<float> lst(result, expectedCount);
-			SplitT<WrappedList<float>, float, ParsePercentage>(str, lst, L", ");
+			StringUtils::SplitParse<String, WrappedList<float>, float, ParsePercentage>(str, lst, L", ");
 			return lst.getCount();
 		}
 		int32 SplitIntArr(const String& str, int32* result, int32 expectedCount) { return StringUtils::SplitParseInts(str, result, expectedCount, L", "); }
 		int32 SplitUintArr(const String& str, uint32* result, int32 expectedCount)
 		{
 			WrappedList<uint32> lst(result, expectedCount);
-			SplitT<WrappedList<uint32>, uint32, StringUtils::ParseUInt32>(str, lst, L", ");
+			StringUtils::SplitParse<String, WrappedList<uint32>, uint32, StringUtils::ParseUInt32>(str, lst, L", ");
 			return lst.getCount();
 		}
 		int32 SplitVector3sArr(const String& str, Vector3* result, int32 expectedCount)

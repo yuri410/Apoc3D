@@ -407,6 +407,16 @@ namespace UnitTestVC
 			Assert::AreEqual(L"s", results[0].c_str());
 			Assert::AreEqual(L"sad", results[1].c_str());
 			Assert::AreEqual(L"a", results[2].c_str());
+
+			test = L",";
+			results.Clear();
+			StringUtils::Split(test, results, L", ");
+			Assert::AreEqual(0, results.getCount());
+
+			test = L"";
+			results.Clear();
+			StringUtils::Split(test, results, L", ");
+			Assert::AreEqual(0, results.getCount());
 		}
 
 		TEST_METHOD(StringUtils_SplitParseInts)

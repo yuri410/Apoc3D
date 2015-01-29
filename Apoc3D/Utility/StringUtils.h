@@ -382,7 +382,8 @@ namespace Apoc3D
 				else if (pos == StrType::npos)
 				{
 					// Copy the rest of the string
-					result.Add(TConverter(str.substr(start)));
+					if (start < str.size())
+						result.Add(TConverter(str.substr(start)));
 					break;
 				}
 				else
