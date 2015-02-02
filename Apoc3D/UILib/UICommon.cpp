@@ -56,6 +56,19 @@ namespace Apoc3D
 			SourceRects.AddList(srcRect);
 		}
 
+
+		UIGraphic::UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect, int32 left, int32 right, int32 top, int32 bottom)
+			: UIGraphic(tex, srcRect, left, right, top, bottom, CV_White) { }
+
+		UIGraphic::UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect, int32 left, int32 right, int32 top, int32 bottom, ColorValue color)
+			: Graphic(tex), ModColor(color)
+		{
+			Apoc3D::Math::Rectangle regions[9];
+			srcRect.DivideTo9Regions(left, right, top, bottom, regions);
+			SourceRects.AddArray(regions);
+		}
+
+
 		void UIGraphic::Draw(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, bool vertical) const
 		{
 			if (isSet() && CV_GetColorA(ModColor))
@@ -216,25 +229,20 @@ namespace Apoc3D
 		{
 			switch (idx)
 			{
-			case Apoc3D::UI::ControlBounds::SI_Left:
-				return Left;
-			case Apoc3D::UI::ControlBounds::SI_Top:
-				return Top;
-			case Apoc3D::UI::ControlBounds::SI_Right:
-				return Right;
-			case Apoc3D::UI::ControlBounds::SI_Bottom:
-				return Bottom;
-			default:
-				return 0;
+				case SI_Left: return Left;
+				case SI_Top: return Top;
+				case SI_Right: return Right;
+				case SI_Bottom: return Bottom;
 			}
+			return 0;
 		}
 
 		void ControlBounds::SetFromLeftTopRightBottom(int32 padding[4])
 		{
-			Left = padding[ControlBounds::SI_Left];
-			Right = padding[ControlBounds::SI_Right];
-			Top = padding[ControlBounds::SI_Top];
-			Bottom = padding[ControlBounds::SI_Bottom];
+			Left = padding[SI_Left];
+			Right = padding[SI_Right];
+			Top = padding[SI_Top];
+			Bottom = padding[SI_Bottom];
 		}
 		void ControlBounds::SetZero()
 		{

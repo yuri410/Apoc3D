@@ -1,5 +1,6 @@
 #include "Rectangle.h"
 #include "Math.h"
+#include "apoc3d/UILib/UICommon.h"
 
 namespace Apoc3D
 {
@@ -64,6 +65,46 @@ namespace Apoc3D
 
 		Rectangle Rectangle::Intersect(const Rectangle& a, const Rectangle& b) { return IntersectRect(a, b); }
 		Rectangle Rectangle::Union(const Rectangle& a, const Rectangle& b) { return UnionRect(a, b); }
+
+		void Rectangle::DivideTo9Regions(int32 left, int32 right, int32 top, int32 bottom, Rectangle(&result)[9]) const
+		{
+			UI::ControlBounds bounds(left, right, top, bottom);
+
+			result[1] = result[4] = result[7] =
+				result[3] = result[5] = bounds.ShrinkRect(*this);
+
+			result[1].Y = Y;
+			result[1].Height = top;
+
+			result[7].Y = result[4].getBottom();
+			result[7].Height = bottom;
+
+			result[3].X = X;
+			result[3].Width = left;
+
+			result[5].X = result[4].getRight();
+			result[5].Width = right;
+
+			result[0] = { getPosition(), { left, top } };
+			result[2] = { result[1].getTopRight(), { right, top } };
+
+			result[6] = { result[3].getBottomLeft(), { left, bottom } };
+			result[8] = { result[4].getBottomRight(), { right, bottom } };
+		}
+		
+		void Rectangle::DivideTo3RegionsX(int32 left, int32 right, Rectangle(&result)[3]) const
+		{
+			result[0] = { X, Y, left, Height };
+			result[1] = { X + left, Y, Width - left - right, Height };
+			result[2] = { X + Width - right, Y, right, Height };
+		}
+
+		void Rectangle::DivideTo3RegionsY(int32 top, int32 bottom, Rectangle(&result)[3]) const
+		{
+			result[0] = { X, Y, Width, top };
+			result[1] = { X, Y + top, Width, Height - top - bottom };
+			result[2] = { X, Y + Height - bottom, Width, bottom };
+		}
 
 	}
 }

@@ -107,26 +107,6 @@ namespace Apoc3D
 				Width += left + right;
 			}
 
-			void SplitVert(T ypos, RectBase& top, RectBase& bottom)
-			{
-				top = *this;
-				top.Height = ypos;
-
-				bottom = *this;
-				bottom.Y = Y + ypos;
-				bottom.Height = Height - (ypos - Y);
-			}
-
-			void SplitHorizontal(T xpos, RectBase& left, RectBase& right)
-			{
-				left = *this;
-				left.X = X;
-				left.Width = xpos;
-
-				right = *this;
-				right.X = X + xpos;
-				right.Width = Width - (xpos - X);
-			}
 
 			/** Determines whether this Rectangle contains a specified point
 			 *  represented by its x- and y-coordinates.
@@ -217,11 +197,41 @@ namespace Apoc3D
 				return{ getCenter() - sz / 2, sz };
 			}
 
+
+			void SplitVert(int32 ypos, Rectangle& top, Rectangle& bottom)
+			{
+				top = *this;
+				top.Height = ypos;
+
+				bottom = *this;
+				bottom.Y = Y + ypos;
+				bottom.Height = Height - (ypos - Y);
+			}
+
+			void SplitHorizontal(int32 xpos, Rectangle& left, Rectangle& right)
+			{
+				left = *this;
+				left.X = X;
+				left.Width = xpos;
+
+				right = *this;
+				right.X = X + xpos;
+				right.Width = Width - (xpos - X);
+			}
+
+			void DivideTo9Regions(int32 xpad, int32 ypad, Rectangle(&result)[9]) const { DivideTo9Regions(xpad, xpad, ypad, ypad, result); }
+
+			void DivideTo9Regions(int32 left, int32 right, int32 top, int32 bottom, Rectangle(&result)[9]) const;
+			void DivideTo3RegionsX(int32 left, int32 right, Rectangle(&result)[3]) const;
+			void DivideTo3RegionsY(int32 top, int32 bottom, Rectangle(&result)[3]) const;
+
+
 			/** Creates a Rectangle defining the area where one rectangle overlaps another rectangle. */
 			static Rectangle Intersect(const Rectangle &a, const Rectangle &b);
 
 			/** Creates a new Rectangle that exactly contains two other rectangles. */
 			static Rectangle Union(const Rectangle &a, const Rectangle &b);
+
 
 			operator RectangleF() const
 			{

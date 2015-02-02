@@ -93,6 +93,9 @@ namespace Apoc3D
 				SourceRects.AddArray(srcRect);
 			}
 
+			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect, int32 left, int32 right, int32 top, int32 bottom);
+			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect, int32 left, int32 right, int32 top, int32 bottom, ColorValue color);
+
 			UIGraphic(Texture* tex, std::initializer_list<Apoc3D::Math::Rectangle> srcRect);
 			UIGraphic(Texture* tex, std::initializer_list<Apoc3D::Math::Rectangle> srcRect, ColorValue modColor);
 
