@@ -35,14 +35,10 @@ namespace Apoc3D
 		class APAPI Ray
 		{
 		public:
-			/**
-			 *  Specifies the location of the ray's origin.
-			 */
+			/** Specifies the location of the ray's origin. */
 			Vector3 Position;
 
-			/**
-			 *  A unit vector specifying the direction in which the ray is pointing.
-			 */
+			/** A unit vector specifying the direction in which the ray is pointing. */
 			Vector3 Direction;
 
 			Ray() { }
@@ -65,6 +61,13 @@ namespace Apoc3D
 			 */
 			static bool Intersects(const Ray& ray, const BoundingBox& box, float& distance);
 
+		};
+
+		class RaySegment
+		{
+		public:
+			Vector3 Start;
+			Vector3 End;
 		};
 	}
 }

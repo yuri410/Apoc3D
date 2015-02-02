@@ -27,6 +27,7 @@
  */
 
 #include "apoc3d/Math/Frustum.h"
+#include "apoc3d/Math/Ray.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Core;
@@ -42,44 +43,25 @@ namespace Apoc3D
 		{
 		public:
 			Frustum& getFrustum() { return m_frustum; }
-			/**
-			 *  Gets the view transform matrix
-			 */
-			const Matrix &getViewMatrix() const { return m_view; }
-			/** 
-			 *  Gets the projection matrix
-			 */
-			const Matrix &getProjMatrix() const { return m_proj; }
+
+			const Matrix& getViewMatrix() const { return m_view; }		/** Gets the view transform matrix */
+			const Matrix& getProjMatrix() const { return m_proj; }		/** Gets the projection matrix */
 
 			const Matrix& getInvViewMatrix() const { return m_invView; }
 
 			const Matrix& getViewProjMatrix() const { return m_viewProj; }
 
-			/**
-			 *  Gets the up vector of the camera view
-			 */
-			Vector3 getUp() const { return Vector3(m_invView.M21, m_invView.M22, m_invView.M23); }
-			/**
-			 *   Gets the right vector of the camera view
-			 */
-			Vector3 getRight() const { return Vector3(m_invView.M11, m_view.M12, m_invView.M13); }
-			/**
-			 *   Gets the forward vector of the camera view
-			 */
-			Vector3 getForward() const { return Vector3(m_invView.M31, m_invView.M32, m_invView.M33); }
+			Vector3 getUp() const { return Vector3(m_invView.M21, m_invView.M22, m_invView.M23); }			/** Gets the up vector of the camera view */
+			Vector3 getRight() const { return Vector3(m_invView.M11, m_view.M12, m_invView.M13); }			/** Gets the right vector of the camera view */
+			Vector3 getForward() const { return Vector3(m_invView.M31, m_invView.M32, m_invView.M33); }		/** Gets the forward vector of the camera view */
 
-			/**
-			 *  Sets the view transform matrix
-			 */
-			void setViewMatrix(const Matrix &value) { m_view = value; }
-			/**
-			 *  Sets the projection transform matrix
-			 */
-			void setProjMatrix(const Matrix &value) { m_proj = value; }
+			void GetCornerRays(RaySegment* topLeft, RaySegment* topRight, RaySegment* bottomLeft, RaySegment* bottomRight);
+			void GetEdgeRays(RaySegment* left, RaySegment* right, RaySegment* top, RaySegment* bottom);
 
-			/**
-			 *  Update the camera's state. 
-			 */
+			void setViewMatrix(const Matrix &value) { m_view = value; }		/** Sets the view transform matrix */
+			void setProjMatrix(const Matrix &value) { m_proj = value; }		/** Sets the projection transform matrix */
+
+			/** Update the camera's state.  */
 			virtual void Update(const GameTime* time) 
 			{
 				CalculateMatrices();
@@ -108,15 +90,14 @@ namespace Apoc3D
 
 			Frustum m_frustum;
 		};
+
 		class APAPI FpsCamera : public Camera
 		{
 		public:
 			FpsCamera(float aspectRatio);
-			~FpsCamera(void);
+			~FpsCamera();
 
-			/**
-			 *  Gets the position of the view point
-			 */
+			/** Gets the position of the view point */
 			const Vector3& getPosition() const { return m_position; }
 			
 			float getAspectRatio() const { return m_aspectRatio; }
@@ -128,13 +109,9 @@ namespace Apoc3D
 				Vector3 dir = m_invView.GetZ();
 				dir.NormalizeInPlace();
 				Move(dir);
-				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitZ, m_velocity);
-				//m_velChange = Vector3Utils::Add(m_velChange, Vector3Utils::UnitZ);
 			}
 			void MoveBackward()
 			{
-				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitZ, m_velocity);
-				//m_velChange = Vector3Utils::Subtract(m_velChange, Vector3Utils::UnitZ);				
 				Vector3 dir = -m_invView.GetZ();
 				dir.NormalizeInPlace();
 				Move(dir);
@@ -144,37 +121,27 @@ namespace Apoc3D
 				Vector3 dir = -m_invView.GetX();
 				dir.NormalizeInPlace();
 				Move(dir);
-
-				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitX, m_velocity);
-				//m_velChange = Vector3Utils::Subtract(m_velChange, Vector3Utils::UnitX);
 			}
 			void MoveRight() 
 			{
 				Vector3 dir = m_invView.GetX();
 				dir.NormalizeInPlace();
 				Move(dir);
-				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitX, m_velocity);
-				//m_velChange = Vector3Utils::Add(m_velChange, Vector3Utils::UnitX);
 			}
 			void MoveUp()
 			{
 				Vector3 dir = m_invView.GetY();
 				dir.NormalizeInPlace();
 				Move(dir);
-				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitY, m_velocity);
-				//m_velChange = Vector3Utils::Add(m_velChange, Vector3Utils::UnitY);
 			}
 			void MoveDown() 
 			{
 				Vector3 dir = -m_invView.GetY();
 				dir.NormalizeInPlace();
 				Move(dir);
-				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitY, m_velocity);
-				//m_velChange = Vector3Utils::Subtract(m_velChange, Vector3Utils::UnitY);
 			}
 			void Move(const Vector3 &dir)
 			{
-				//Vector3 ofs = Vector3Utils::Multiply(dir, m_velocity);
 				m_velChange += dir;
 			}
 			
@@ -183,9 +150,9 @@ namespace Apoc3D
 				m_rotX += ToRadian(dx);
 				m_rotY += ToRadian(dy);
 
-				if (m_rotY<ToRadian(-89))
+				if (m_rotY < ToRadian(-89))
 					m_rotY = ToRadian(-89);
-				else if (m_rotY>ToRadian(89))
+				else if (m_rotY > ToRadian(89))
 					m_rotY = ToRadian(89);
 			}
 
@@ -262,47 +229,19 @@ namespace Apoc3D
 			 *  This is relative to the chase direction.
 			 */
 			const Vector3& getDesiredOffset() const { return m_desiredPositionOfs; }
-			/**
-			 *  Gets the offset from the target to the look at position, in world space
-			 */
-			const Vector3& getLookAtOffset() const { return m_lootAtOfs; }
-			/**
-			 *  Get the current camera's position desired to be moving to.
-			 */
-			const Vector3& getDesiredPosition() const { return m_desiredPosition; }
-			/**
-			 *  Gets the current camera's look at position in world space
-			 */
-			const Vector3& getLookAt() const { return m_lootAt; }
+			
+			const Vector3& getLookAtOffset() const { return m_lootAtOfs; }				/**  Gets the offset from the target to the look at position, in world space */
+			const Vector3& getDesiredPosition() const { return m_desiredPosition; }		/**  Get the current camera's position desired to be moving to. */
+			const Vector3& getLookAt() const { return m_lootAt; }						/**  Gets the current camera's look at position in world space */
 
-			/**
-			 *  How rigid the movement is.
-			 */
-			float getStiffness() const { return m_stiffness; }
-			/**
-			 *  The friction applied to movement using the damping model: f = vel*damp
-			 */
-			float getDamping() const { return m_damping; }
-			/**
-			 *  The mass of the camera
-			 */
-			float getMass() const { return m_mass; }
-			/**
-			 *  The near plane of the frustum
-			 */
-			float getNear() const { return m_near; }
-			/**
-			 *  The far plane of the frustum
-			 */
-			float getFar() const { return m_far; }
-			/**
-			 *  The aspect ratio of the projection
-			 */
-			float getAspectRatio() const { return m_aspectRatio; }
-			/**
-			 *  The y direction fov angle in radians
-			 */
-			float getFieldOfView() const { return m_fieldOfView; }
+			float getStiffness() const { return m_stiffness; }			/** How rigid the movement is. */
+			float getDamping() const { return m_damping; }				/** The friction applied to movement using the damping model: f = vel*damp */
+			float getMass() const { return m_mass; }					/** The mass of the camera */
+			
+			float getNear() const { return m_near; }					/** The near plane of the frustum */
+			float getFar() const { return m_far; }						/** The far plane of the frustum */
+			float getAspectRatio() const { return m_aspectRatio; }		/** The aspect ratio of the projection */
+			float getFieldOfView() const { return m_fieldOfView; }		/** The y direction fov angle in radians */
 
 
 			void setStiffness(float val) { m_stiffness = val; }
@@ -322,9 +261,8 @@ namespace Apoc3D
 			void setLookAtOffset(const Vector3& val) { m_lootAtOfs = val; }
 
 		private:
-			// Matrix properties
-			//Matrix m_view;
-			//Matrix m_proj;
+			void UpdateWorldPositions();
+			void UpdateMatrices();
 
 			// Perspective properties
 			float m_aspectRatio;
@@ -353,8 +291,6 @@ namespace Apoc3D
 			float m_mass;
 
 
-			void UpdateWorldPositions();
-			void UpdateMatrices();
 		};
 	};
 };

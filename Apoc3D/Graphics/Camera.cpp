@@ -30,6 +30,68 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
+
+		void Camera::GetCornerRays(RaySegment* topLeft, RaySegment* topRight, RaySegment* bottomLeft, RaySegment* bottomRight)
+		{
+			Matrix matrix = m_viewProj;
+			matrix.Inverse();
+
+			if (topLeft)
+			{
+				topLeft->Start = Vector3::TransformCoordinate(Vector3(-1, -1, 0), matrix);
+				topLeft->End = Vector3::TransformCoordinate(Vector3(-1, -1, 1), matrix);
+			}
+
+			if (topRight)
+			{
+				topRight->Start = Vector3::TransformCoordinate(Vector3(1, -1, 0), matrix);
+				topRight->End = Vector3::TransformCoordinate(Vector3(1, -1, 1), matrix);
+			}
+			
+			if (bottomLeft)
+			{
+				bottomLeft->Start = Vector3::TransformCoordinate(Vector3(-1, 1, 0), matrix);
+				bottomLeft->End = Vector3::TransformCoordinate(Vector3(-1, 1, 1), matrix);
+			}
+			
+			if (bottomRight)
+			{
+				bottomRight->Start = Vector3::TransformCoordinate(Vector3(1, 1, 0), matrix);
+				bottomRight->End = Vector3::TransformCoordinate(Vector3(1, 1, 1), matrix);
+			}
+		}
+		void Camera::GetEdgeRays(RaySegment* left, RaySegment* right, RaySegment* top, RaySegment* bottom)
+		{
+			Matrix matrix = m_viewProj;
+			matrix.Inverse();
+
+			if (left)
+			{
+				left->Start = Vector3::TransformCoordinate(Vector3(-1, 0, 0), matrix);
+				left->End = Vector3::TransformCoordinate(Vector3(-1, 0, 1), matrix);
+			}
+			
+			if (right)
+			{
+				right->Start = Vector3::TransformCoordinate(Vector3(1, 0, 0), matrix);
+				right->End = Vector3::TransformCoordinate(Vector3(1, 0, 1), matrix);
+			}
+
+			if (top)
+			{
+				top->Start = Vector3::TransformCoordinate(Vector3(0, -1, 0), matrix);
+				top->End = Vector3::TransformCoordinate(Vector3(0, -1, 1), matrix);
+			}
+			
+			if (bottom)
+			{
+				bottom->Start = Vector3::TransformCoordinate(Vector3(0, 1, 0), matrix);
+				bottom->End = Vector3::TransformCoordinate(Vector3(0, 1, 1), matrix);
+			}
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
 		FpsCamera::FpsCamera(float aspectRatio)
 			: m_aspectRatio(aspectRatio), m_maxVelocity(5), m_position(Vector3::Zero),
 			m_fieldOfView(ToRadian(50)), m_near(0.5f), m_far(1500), m_velocity(Vector3::Zero), m_velChange(Vector3::Zero),
@@ -39,7 +101,7 @@ namespace Apoc3D
 		}
 
 
-		FpsCamera::~FpsCamera(void)
+		FpsCamera::~FpsCamera()
 		{
 		}
 
@@ -136,9 +198,8 @@ namespace Apoc3D
 			Matrix::CreateLookAtLH(m_view, m_position, m_lootAt, m_up);
 
 			Matrix::CreatePerspectiveFovLH(m_proj, m_fieldOfView, m_aspectRatio, m_near, m_far);
-			//D3DXMatrixPerspectiveFovLH(&m_proj, m_fieldOfView, m_aspectRatio, m_near, m_far);
+			
 			getFrustum().Update(m_view, m_proj);
-			//m_frustum.SetMatrix(&m_proj);
 		}
 		void ChaseCamera::UpdateWorldPositions()
 		{
