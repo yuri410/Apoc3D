@@ -254,6 +254,7 @@ namespace Apoc3D
 		class Plane;
 
 		class Ray;
+		class RaySegment;
 
 		class Point;
 		class PointF;

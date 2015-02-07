@@ -179,30 +179,22 @@ namespace Apoc3D
 				}
 			}
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			/**
-			 *  Calculates the dot product of a specified vector and the normal of the plane plus the distance value of the plane.
-			 */
+			/** Calculates the dot product of a specified vector and the normal of the plane plus the distance value of the plane. */
 			float Dot3(const Vector3& a) const
 			{
 				return X * a.X + Y * a.Y + Z * a.Z + D;
 			}
-			/**
-			 *  Calculates the dot product of the specified vector and plane.
-			 */
+			/** Calculates the dot product of the specified vector and plane. */
 			float Dot4(const Vector4& a) const
 			{
 				return X * a.X + Y * a.Y + Z * a.Z + D * a.W;
 			}
-			/**
-			 *  Calculates the dot product of the specified vector and the normal of the plane.
-			 */
+			/** Calculates the dot product of the specified vector and the normal of the plane. */
 			float DotNormal(const Vector3& n) const
 			{
 				return X * n.X + Y * n.Y + Z * n.Z;
 			}
-			/**
-			 *  Changes the coefficients of the normal vector of the plane to make it of unit length.
-			 */
+			/** Changes the coefficients of the normal vector of the plane to make it of unit length. */
 			void NormalizeInPlace()
 			{
 				float mag = sqrtf(X * X + Y * Y + Z * Z);
@@ -222,16 +214,12 @@ namespace Apoc3D
 
 			void ProjectLine(const Vector3& start, const Vector3& end, Vector3& ps, Vector3 pe) const;
 
-			/**
-			 *  Projects a directional vector on to the plane surface
-			 */
+			/** Projects a directional vector on to the plane surface */
 			Vector3 ProjectVector(const Vector3& vec) const;
 
 			
-			/**
-			 *  Finds the intersection between a plane and a line.
-			 */
-			bool IntersectsLineSegment(const Vector3& start, const Vector3& end, Vector3 &intersectPoint) const
+			/** Finds the intersection between a plane and a line. */
+			bool IntersectsLineSegment(const Vector3& start, const Vector3& end, Vector3& intersectPoint) const
 			{
 				Vector3 dir = end - start;
 				float dirLen = dir.Length();
@@ -262,6 +250,8 @@ namespace Apoc3D
 				intersectPoint = start + off;
 				return true;
 			}
+			bool IntersectsLineSegment(const RaySegment& ray, Vector3& intersectPoint) const;
+
 			bool IntersectsRay(const Vector3& start, const Vector3& dir, Vector3& intersectionPoint) const
 			{
 				float cos = DotNormal(dir);
@@ -282,6 +272,8 @@ namespace Apoc3D
 				}
 				return false;
 			}
+			bool IntersectsRay(const Ray& ray, Vector3& intersectionPoint) const;
+
 
 			bool operator==(const Plane &other) const
 			{
@@ -289,15 +281,11 @@ namespace Apoc3D
 			}
 			bool operator!=(const Plane &other) const { return !(*this == other); }
 
-			/**
-			 *  Changes the coefficients of the normal vector of the plane to make it of unit length.
-			 */
+			/** Changes the coefficients of the normal vector of the plane to make it of unit length. */
 			static Plane Normalize(const Plane &plane) { Plane np = plane; np.NormalizeInPlace(); return np; }
 
 
-			/**
-			 *  Scales the plane by the given scaling factor.
-			 */
+			/** Scales the plane by the given scaling factor. */
 			static Plane Multiply(const Plane &plane, float scale)
 			{
 				Plane result;
@@ -308,9 +296,7 @@ namespace Apoc3D
 				return result;
 			}
 			
-			/**
-			 *  Scales the plane by the given scaling factor.
-			 */
+			/** Scales the plane by the given scaling factor. */
 			static void Multiply(Plane& result, const Plane &plane, float scale)
 			{				
 				result.D = plane.D * scale;
@@ -319,9 +305,7 @@ namespace Apoc3D
 				result.Z = plane.Z * scale;				
 			}
 
-			/**
-			 * Transforms a normalized plane by a quaternion rotation.
-			 */
+			/** Transforms a normalized plane by a quaternion rotation. */
 			static Plane Transform(const Plane &plane, const Matrix &transformation)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -353,9 +337,7 @@ namespace Apoc3D
 			#endif
 			}
 
-			/**
-			 *   Transforms an array of normalized planes by a quaternion rotation.
-			 */
+			/** Transforms an array of normalized planes by a quaternion rotation. */
 			static void Transform(Plane* result, const Plane* planes, int count, const Matrix &transformation)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE

@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BoundingSphere.h"
 
 #include "Quaternion.h"
+#include "Ray.h"
 
 namespace Apoc3D
 {
@@ -82,7 +83,7 @@ namespace Apoc3D
 		}
 
 
-		Plane Plane::Transform(const Plane &plane, const Quaternion &rotation)
+		Plane Plane::Transform(const Plane& plane, const Quaternion& rotation)
 		{
 			float x2 = rotation.X + rotation.X;
 			float y2 = rotation.Y + rotation.Y;
@@ -107,6 +108,16 @@ namespace Apoc3D
 			result.Z = ((x * (xz - wy)) + (y * (yz + wx))) + (z * ((1.0f - xx) - yy));
 			result.D = plane.D;
 			return result;
+		}
+
+
+		bool Plane::IntersectsLineSegment(const RaySegment& ray, Vector3& intersectPoint) const
+		{
+			return IntersectsLineSegment(ray.Start, ray.End, intersectPoint);
+		}
+		bool Plane::IntersectsRay(const Ray& ray, Vector3& intersectionPoint) const
+		{
+			return IntersectsRay(ray.Position, ray.Direction, intersectionPoint);
 		}
 
 	}
