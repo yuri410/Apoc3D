@@ -64,7 +64,7 @@ namespace Apoc3D
 				{ L"v3_camerax", EPUSAGE_V3_CameraX },
 				{ L"v3_cameray", EPUSAGE_V3_CameraY },
 				{ L"v3_cameraz", EPUSAGE_V3_CameraZ },
-
+				{ L"v3_camerapos", EPUSAGE_V3_CameraPos },
 
 				{ L"tex_0", EPUSAGE_Tex0 },
 				{ L"tex_1", EPUSAGE_Tex1 },
@@ -85,9 +85,11 @@ namespace Apoc3D
 				{ L"tex_default", EPUSAGE_DefaultTexture },
 
 				{ L"lv3_lightdir", EPUSAGE_LV3_LightDir },
+				{ L"lv3_lightpos", EPUSAGE_LV3_LightPos },
 				{ L"lc4_ambient", EPUSAGE_LC4_Ambient },
 				{ L"lc4_diffuse", EPUSAGE_LC4_Diffuse },
 				{ L"lc4_specular", EPUSAGE_LC4_Specular },
+
 				{ L"pv3_viewpos", EPUSAGE_PV3_ViewPos },
 				{ L"sv2_viewportsize", EPUSAGE_SV2_ViewportSize },
 				{ L"sv2_invviewportsize", EPUSAGE_SV2_InvViewportSize },
@@ -164,11 +166,8 @@ namespace Apoc3D
 
 			EffectParamUsage EffectParameter::ParseParamUsage(const String& val)
 			{
-				String v = val;
-				StringUtils::ToLowerCase(v);
-
 				EffectParamUsage usage;
-				if (EffectParameterUsageConverter.TryParse(v, usage))
+				if (EffectParameterUsageConverter.TryParse(val, usage))
 					return usage;
 				
 				if (val.size())
@@ -196,6 +195,8 @@ namespace Apoc3D
 
 			Camera* RendererEffectParams::CurrentCamera = 0;
 			Vector3 RendererEffectParams::LightDirection(0.707f, 0.707f,0);
+			Vector3 RendererEffectParams::LightPosition(0, 0, 0);
+
 			Color4 RendererEffectParams::LightAmbient(0.5f,0.5f,0.5f);
 			Color4 RendererEffectParams::LightDiffuse(1.0f,1.0f,1.0f);
 			Color4 RendererEffectParams::LightSpecular(1.0f,1.0f,1.0f);

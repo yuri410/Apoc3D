@@ -786,8 +786,7 @@ namespace Apoc3D
 
 		String method = L"ass";
 		sect->tryGetAttribute(L"Method", method);
-		StringUtils::ToLowerCase(method);
-
+		
 		Method = ProjectUtils::MeshBuildMethodConv.Parse(method);
 
 		UseVertexFormatConversion = false;

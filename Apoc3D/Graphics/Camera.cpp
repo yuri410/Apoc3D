@@ -92,57 +92,55 @@ namespace Apoc3D
 
 		//////////////////////////////////////////////////////////////////////////
 
-		FpsCamera::FpsCamera(float aspectRatio)
-			: m_aspectRatio(aspectRatio), m_maxVelocity(5), m_position(Vector3::Zero),
-			m_fieldOfView(ToRadian(50)), m_near(0.5f), m_far(1500), m_velocity(Vector3::Zero), m_velChange(Vector3::Zero),
-			m_rotX(0), m_rotY(0)
+		FreeCamera::FreeCamera(float aspectRatio, bool rightHand)
+			: m_aspectRatio(aspectRatio), 
+			m_fieldOfView(ToRadian(50)), m_near(0.5f), m_far(1500), m_rightHand(rightHand)
 		{
 			
 		}
 
 
-		FpsCamera::~FpsCamera()
+		FreeCamera::~FreeCamera()
 		{
 		}
 
-		void FpsCamera::Update(const GameTime* time)
+		void FreeCamera::Update(const GameTime* time)
 		{
-			m_velocity += m_velChange;
+			float dt = time->ElapsedTime;
+
+			m_velocity += m_velChange * (Acceleration + Deacceleration) * dt;
 			m_velChange = Vector3::Zero;
-			Vector2 hozV(m_velocity.X, m_velocity.Z);
-
-			if (hozV.LengthSquared()>1)
+			
 			{
-				hozV.NormalizeInPlace();
-			}
-
-			{
-				float vLen = hozV.Length();
-
-				if (vLen > 0.05f)
+				float vLen = m_velocity.Length();
+				if (vLen > 0.01f)
 				{
-					vLen -= time->getElapsedTime() * 1.5f;
+					m_velocity.NormalizeInPlace();
 
-					hozV.NormalizeInPlace();
-					hozV *= vLen;;
-					m_velocity.X = hozV.X;
-					m_velocity.Z = hozV.Y;
+					vLen -= dt * Deacceleration;
+
+					if (vLen > MaxVelocity)
+						vLen = MaxVelocity;
+
+					if (vLen < 0)
+						vLen = 0;
+
+					m_velocity *= vLen;
 				}
 				else
 				{
-					m_velocity.X = m_velocity.Z = 0;
+					m_velocity = Vector3::Zero;
 				}
-
 			}
 
-			Vector3 dp = m_velocity * (time->getElapsedTime() * m_maxVelocity);
+			Vector3 dp = m_velocity * dt;
 			m_position += dp;
 
 
 			UpdateTransform();
 			Camera::Update(time);
 		}
-		void FpsCamera::UpdateTransform()
+		void FreeCamera::UpdateTransform()
 		{
 			Vector3 dir = Vector3::UnitZ;
 
@@ -156,16 +154,26 @@ namespace Apoc3D
 			dir = Vector3::TransformNormal(dir, temp);
 
 			Vector3 at = m_position + dir;
-			Matrix::CreateLookAtLH(m_view, m_position, at, Vector3::UnitY);
 
-			Matrix::CreatePerspectiveFovLH(m_proj, m_fieldOfView, m_aspectRatio, m_near, m_far);
-
+			if (m_rightHand)
+			{
+				Matrix::CreateLookAtRH(m_view, m_position, at, Vector3::UnitY);
+				Matrix::CreatePerspectiveFovRH(m_proj, m_fieldOfView, m_aspectRatio, m_near, m_far);
+			}
+			else
+			{
+				Matrix::CreateLookAtLH(m_view, m_position, at, Vector3::UnitY);
+				Matrix::CreatePerspectiveFovLH(m_proj, m_fieldOfView, m_aspectRatio, m_near, m_far);
+			}
+			
 			getFrustum().Update(m_view, m_proj);
 
 		}
+
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
+
 		ChaseCamera::ChaseCamera(float fov)
 			: m_velocity(Vector3::Zero), m_position(Vector3::Zero), m_lootAt(Vector3::Zero), m_desiredPosition(Vector3::Zero),
 			m_up(Vector3::UnitY), m_chasePosition(Vector3::Zero), m_chaseDirection(Vector3::Zero),

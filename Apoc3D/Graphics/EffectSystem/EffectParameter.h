@@ -101,6 +101,7 @@ namespace Apoc3D
 				EPUSAGE_V3_CameraX,				/** v3_camerax */
 				EPUSAGE_V3_CameraY,				/** v3_cameray */
 				EPUSAGE_V3_CameraZ,				/** v3_cameraz */
+				EPUSAGE_V3_CameraPos,			/** v3_camerapos */
 
 
 				EPUSAGE_Tex0 = 200,				/** tex_0 */
@@ -123,10 +124,11 @@ namespace Apoc3D
 				EPUSAGE_DefaultTexture,				/** tex_default */
 
 				EPUSAGE_LV3_LightDir = 500,			/** lv3_lightDir */
+				EPUSAGE_LV3_LightPos,				/** lv3_lightPos */
 				EPUSAGE_LC4_Ambient,				/** lc4_ambient */
 				EPUSAGE_LC4_Diffuse,				/** lc4_diffuse */
-				
 				EPUSAGE_LC4_Specular,				/** lc4_specular */
+
 				EPUSAGE_PV3_ViewPos = 1000,			/** pv3_viewPos */
 				EPUSAGE_SV2_ViewportSize,			/** sv2_viewportSize */
 				EPUSAGE_SV2_InvViewportSize,		/**  sv2_invviewportSize */
@@ -165,6 +167,7 @@ namespace Apoc3D
 			{
 				extern Camera* CurrentCamera;
 				extern Vector3 LightDirection;
+				extern Vector3 LightPosition;
 				extern Color4 LightAmbient;
 				extern Color4 LightDiffuse;
 				extern Color4 LightSpecular;

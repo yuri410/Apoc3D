@@ -58,6 +58,8 @@ namespace Apoc3D
 				MinZ(minZ), MaxZ(maxZ)
 			{ }
 
+			float getAspectRatio() const { return Width / static_cast<float>(Height); }
+
 			/**
 			 *  Converts a screen space point into a corresponding point in world space.
 			 */

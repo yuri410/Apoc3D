@@ -196,6 +196,7 @@ namespace Apoc3D
 						case EPUSAGE_LC4_Diffuse:
 						case EPUSAGE_LC4_Specular:
 						case EPUSAGE_LV3_LightDir:
+						case EPUSAGE_LV3_LightPos:
 						case EPUSAGE_PV3_ViewPos:
 						case EPUSAGE_SV2_ViewportSize:
 						case EPUSAGE_SV2_InvViewportSize:
@@ -209,6 +210,7 @@ namespace Apoc3D
 						case EPUSAGE_V3_CameraX:
 						case EPUSAGE_V3_CameraY:
 						case EPUSAGE_V3_CameraZ:
+						case EPUSAGE_V3_CameraPos:
 						case EPUSAGE_S_UnifiedTime:
 						case EPUSAGE_DefaultTexture:
 							rep.RS_SetupAtBeginingOnly = true;
@@ -600,6 +602,9 @@ namespace Apoc3D
 						case EPUSAGE_LV3_LightDir:
 							ep.SetVector3(RendererEffectParams::LightDirection);
 							break;
+						case EPUSAGE_LV3_LightPos:
+							ep.SetVector3(RendererEffectParams::LightDirection);
+							break;
 						case EPUSAGE_PV3_ViewPos:
 							if (RendererEffectParams::CurrentCamera)
 							{
@@ -671,6 +676,9 @@ namespace Apoc3D
 							break;
 						case EPUSAGE_V3_CameraZ:
 							ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetZ());
+							break;
+						case EPUSAGE_V3_CameraPos:
+							ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetTranslation());
 							break;
 						case EPUSAGE_Tex0:
 						case EPUSAGE_Tex1:

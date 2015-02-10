@@ -349,7 +349,7 @@ namespace Apoc3D
 		enum PixelFormat;
 
 		class Camera;
-		class FpsCamera;
+		class FreeCamera;
 		class ChaseCamera;
 
 		class Renderable;

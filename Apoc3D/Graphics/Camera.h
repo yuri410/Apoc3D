@@ -91,19 +91,15 @@ namespace Apoc3D
 			Frustum m_frustum;
 		};
 
-		class APAPI FpsCamera : public Camera
+		class APAPI FreeCamera : public Camera
 		{
 		public:
-			FpsCamera(float aspectRatio);
-			~FpsCamera();
+			FreeCamera(float aspectRatio, bool rightHand=false);
+			~FreeCamera();
 
 			/** Gets the position of the view point */
 			const Vector3& getPosition() const { return m_position; }
 			
-			float getAspectRatio() const { return m_aspectRatio; }
-			void setAspectRatio(float ar) { m_aspectRatio = ar; }
-			//const float getVelocity() const { return m_velocity; } 
-
 			void MoveForward()
 			{
 				Vector3 dir = m_invView.GetZ();
@@ -163,22 +159,39 @@ namespace Apoc3D
 			{
 				m_position = p;
 			}
+
+			float getNear() const { return m_near; }					/** The near plane of the frustum */
+			float getFar() const { return m_far; }						/** The far plane of the frustum */
+
+			float getAspectRatio() const { return m_aspectRatio; }		/** The aspect ratio of the projection */
+			float getFieldOfView() const { return m_fieldOfView; }		/** The y direction fov angle in radians */
+
+			void setNear(float val) { m_near = val; }
+			void setFar(float val) { m_far = val; }
+
+			void setAspectRatio(float val) { m_aspectRatio = val; }
+			void setFieldOfView(float val) { m_fieldOfView = val; }
+
+
+			float MaxVelocity = 5;
+			float Deacceleration = 5;
+			float Acceleration = 5;
 		protected:
-			Vector3 m_position;
-			float m_maxVelocity;
-			Vector3 m_velocity;
-			Vector3 m_velChange;
+			Vector3 m_position = Vector3::Zero;
+			Vector3 m_velocity = Vector3::Zero;
+			Vector3 m_velChange = Vector3::Zero;
 
 		private:
+			bool m_rightHand = false;
+
 			float m_aspectRatio;
-			
 			
 			float m_fieldOfView;
 			float m_near;
 			float m_far;
 
-			float m_rotX;
-			float m_rotY;
+			float m_rotX = 0;
+			float m_rotY = 0;
 
 		};
 
@@ -238,20 +251,11 @@ namespace Apoc3D
 			float getDamping() const { return m_damping; }				/** The friction applied to movement using the damping model: f = vel*damp */
 			float getMass() const { return m_mass; }					/** The mass of the camera */
 			
-			float getNear() const { return m_near; }					/** The near plane of the frustum */
-			float getFar() const { return m_far; }						/** The far plane of the frustum */
-			float getAspectRatio() const { return m_aspectRatio; }		/** The aspect ratio of the projection */
-			float getFieldOfView() const { return m_fieldOfView; }		/** The y direction fov angle in radians */
-
 
 			void setStiffness(float val) { m_stiffness = val; }
 			void setDamping(float val) { m_damping = val; }
 			void setMass(float val) { m_mass = val; }
-			void setNear(float val) { m_near = val; }
-			void setFar(float val) { m_far = val; }
-			void setAspectRatio(float val) { m_aspectRatio = val; }
-			void setFieldOfView(float val) { m_fieldOfView = val; }
-
+			
 			void setChasePosition(const Vector3& val) { m_chasePosition = val; }
 			void setChaseDirection(const Vector3& val) { m_chaseDirection = val; }
 			void setVelocity(const Vector3& val) { m_velocity = val; }
@@ -259,6 +263,19 @@ namespace Apoc3D
 			void setPosition(const Vector3& val) { m_position = val; }
 			void setDesiredOffset(const Vector3& val) { m_desiredPositionOfs = val; }
 			void setLookAtOffset(const Vector3& val) { m_lootAtOfs = val; }
+
+
+			float getNear() const { return m_near; }					/** The near plane of the frustum */
+			float getFar() const { return m_far; }						/** The far plane of the frustum */
+
+			float getAspectRatio() const { return m_aspectRatio; }		/** The aspect ratio of the projection */
+			float getFieldOfView() const { return m_fieldOfView; }		/** The y direction fov angle in radians */
+
+			void setNear(float val) { m_near = val; }
+			void setFar(float val) { m_far = val; }
+
+			void setAspectRatio(float val) { m_aspectRatio = val; }
+			void setFieldOfView(float val) { m_fieldOfView = val; }
 
 		private:
 			void UpdateWorldPositions();
