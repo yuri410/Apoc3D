@@ -67,7 +67,7 @@ namespace SampleAtmosphere
 		Material* m_skyMtrl;
 		Model* m_unitBall;
 		
-		void UpdateCamera();
+		void UpdateCamera(const GameTime* time);
 
 		void DrawQuad(AutomaticEffect* fx);
 	};

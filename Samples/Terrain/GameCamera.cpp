@@ -46,7 +46,6 @@ namespace SampleTerrain
 
 	void GameCamera::Update(const GameTime* time)
 	{
-		
 		float gravity = 50;
 
 		float groundHeight = Terrain::GetHeightAt(m_position.X, m_position.Z);
@@ -136,7 +135,7 @@ namespace SampleTerrain
 
 
 		UpdateTransform();
-		Camera::Update(time);
+		CalculateMatrices();
 
 		MaxVelocity = 20;
 		m_isSprinting = false;

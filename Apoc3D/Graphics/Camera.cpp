@@ -136,9 +136,7 @@ namespace Apoc3D
 			Vector3 dp = m_velocity * dt;
 			m_position += dp;
 
-
 			UpdateTransform();
-			Camera::Update(time);
 		}
 		void FreeCamera::UpdateTransform()
 		{
@@ -166,8 +164,7 @@ namespace Apoc3D
 				Matrix::CreatePerspectiveFovLH(m_proj, m_fieldOfView, m_aspectRatio, m_near, m_far);
 			}
 			
-			getFrustum().Update(m_view, m_proj);
-
+			CalculateMatrices();
 		}
 
 		/************************************************************************/
@@ -204,11 +201,11 @@ namespace Apoc3D
 		void ChaseCamera::UpdateMatrices()
 		{
 			Matrix::CreateLookAtLH(m_view, m_position, m_lootAt, m_up);
-
 			Matrix::CreatePerspectiveFovLH(m_proj, m_fieldOfView, m_aspectRatio, m_near, m_far);
 			
-			getFrustum().Update(m_view, m_proj);
+			CalculateMatrices();
 		}
+
 		void ChaseCamera::UpdateWorldPositions()
 		{
 			// Construct a matrix to transform from the chase space to world space
@@ -241,6 +238,7 @@ namespace Apoc3D
 			m_desiredPosition = m_chasePosition + desiredPositionOfsT;
 			m_lootAt = m_chasePosition + lookAtOfsT;
 		}
+
 		void ChaseCamera::Update(const GameTime* time)
 		{
 			UpdateWorldPositions();
@@ -253,8 +251,6 @@ namespace Apoc3D
 			m_position += m_velocity * time->getElapsedTime();
 
 			UpdateMatrices();
-
-			Camera::Update(time);
 		}
 
 	};

@@ -42,7 +42,7 @@ namespace Apoc3D
 		class APAPI Camera
 		{
 		public:
-			Frustum& getFrustum() { return m_frustum; }
+			const Frustum& getFrustum() { return m_frustum; }
 
 			const Matrix& getViewMatrix() const { return m_view; }		/** Gets the view transform matrix */
 			const Matrix& getProjMatrix() const { return m_proj; }		/** Gets the projection matrix */
@@ -58,14 +58,11 @@ namespace Apoc3D
 			void GetCornerRays(RaySegment* topLeft, RaySegment* topRight, RaySegment* bottomLeft, RaySegment* bottomRight);
 			void GetEdgeRays(RaySegment* left, RaySegment* right, RaySegment* top, RaySegment* bottom);
 
-			void setViewMatrix(const Matrix &value) { m_view = value; }		/** Sets the view transform matrix */
-			void setProjMatrix(const Matrix &value) { m_proj = value; }		/** Sets the projection transform matrix */
+			void setViewMatrix(const Matrix& value) { m_view = value; }		/** Sets the view transform matrix */
+			void setProjMatrix(const Matrix& value) { m_proj = value; }		/** Sets the projection transform matrix */
 
 			/** Update the camera's state.  */
-			virtual void Update(const GameTime* time) 
-			{
-				CalculateMatrices();
-			}
+			
 
 			Camera()
 			{
@@ -81,6 +78,7 @@ namespace Apoc3D
 			{
 				Matrix::Inverse(m_invView, m_view);
 				Matrix::Multiply(m_viewProj, m_view, m_proj);
+				m_frustum.Update(m_view, m_proj);
 			}
 
 			Matrix m_view;

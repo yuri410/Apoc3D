@@ -216,14 +216,7 @@ namespace SampleAtmosphere
 	{
 		Game::Update(time);
 
-	
-
-		m_camera->Update(time);
-
-
-
-
-		UpdateCamera();
+		UpdateCamera(time);
 	}
 	void AtmosphereDemo::Draw(const GameTime* time)
 	{
@@ -231,16 +224,16 @@ namespace SampleAtmosphere
 
 		RendererEffectParams::CurrentCamera = m_camera;
 
-		AutomaticEffect* atfx = up_cast<AutomaticEffect*>(EffectManager::getSingleton().getEffect(L"atmosphere"));
+		//AutomaticEffect* atfx = up_cast<AutomaticEffect*>(EffectManager::getSingleton().getEffect(L"atmosphere"));
 
-		int32 idx = atfx->FindParameterIndex(L"irradianceSampler");
-		atfx->SetParameterTexture(idx, m_irradianceTex);
+		//int32 idx = atfx->FindParameterIndex(L"irradianceSampler");
+		//atfx->SetParameterTexture(idx, m_irradianceTex);
 
-		idx = atfx->FindParameterIndex(L"inscatterSampler");
-		atfx->SetParameterTexture(idx, m_inscatterTex);
+		//idx = atfx->FindParameterIndex(L"inscatterSampler");
+		//atfx->SetParameterTexture(idx, m_inscatterTex);
 
-		idx = atfx->FindParameterIndex(L"transmittanceSampler");
-		atfx->SetParameterTexture(idx, m_transmittanceTex);
+		//idx = atfx->FindParameterIndex(L"transmittanceSampler");
+		//atfx->SetParameterTexture(idx, m_transmittanceTex);
 		//AutomaticEffect* atfx = up_cast<AutomaticEffect*>(EffectManager::getSingleton().getEffect(L"TexturedQuad"));
 
 		//int32 idx = atfx->FindParameterIndex(L"tex");
@@ -268,7 +261,7 @@ namespace SampleAtmosphere
 	void AtmosphereDemo::OnFrameStart() { }
 	void AtmosphereDemo::OnFrameEnd() { }
 
-	void AtmosphereDemo::UpdateCamera()
+	void AtmosphereDemo::UpdateCamera(const GameTime* time)
 	{
 		if (SystemUI::TopMostForm == nullptr)
 		{
@@ -309,6 +302,20 @@ namespace SampleAtmosphere
 			{
 				m_camera->Turn(mouse->getDX()*0.25f, mouse->getDY()*0.25f);
 			}
+		}
+
+		m_camera->Update(time);
+
+		const float Rg = 6420.0 - 500.0 + 0.1;
+
+		Vector3 camPos = m_camera->getPosition();
+		if (camPos.Length() < Rg)
+		{
+			camPos.NormalizeInPlace();
+			camPos *= Rg;
+
+			m_camera->setPosition(camPos);
+			m_camera->UpdateTransform();
 		}
 	}
 
