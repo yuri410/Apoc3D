@@ -35,7 +35,7 @@ namespace SampleTerrain
 	 *  When sprinting, the max velocity will be modified to a bigger value for faster movement, good for
 	 *  keeping other logic code remains unchanged.
 	 */
-	class GameCamera : public FpsCamera
+	class GameCamera : public FreeCamera
 	{
 	public:
 		GameCamera(float aspectRatio);

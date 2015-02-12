@@ -61,6 +61,8 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 #endif
 
 	escon.WorkingDirectories.Add(workingDir);
+	escon.WorkingDirectories.Add(PathUtils::Combine(workingDir, L".."));
+
 	escon.TextureCacheSize = 512 * 1048576;
 	escon.ModelCacheSize = 192 * 1048576;
 #if _DEBUG

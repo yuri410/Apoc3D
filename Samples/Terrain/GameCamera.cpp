@@ -34,7 +34,7 @@ namespace SampleTerrain
 	float GameCamera::FlyingAlt = 25;
 
 	GameCamera::GameCamera(float aspectRatio)
-		: FpsCamera(aspectRatio), m_isOnGround(false), m_isSprinting(false)//m_height(100), m_fallSpeed(0)
+		: FreeCamera(aspectRatio), m_isOnGround(false), m_isSprinting(false)//m_height(100), m_fallSpeed(0)
 	{
 		
 		//m_lastHeight = m_height;
@@ -113,8 +113,8 @@ namespace SampleTerrain
 
 					hozV.NormalizeInPlace();
 					hozV = Vector2::Multiply(hozV, vLen);
-					v.X = hozV.X* m_maxVelocity;
-					v.Z = hozV.Y* m_maxVelocity;
+					v.X = hozV.X* MaxVelocity;
+					v.Z = hozV.Y* MaxVelocity;
 
 					m_velocity.X = hozV.X;
 					m_velocity.Z = hozV.Y;
@@ -138,12 +138,12 @@ namespace SampleTerrain
 		UpdateTransform();
 		Camera::Update(time);
 
-		m_maxVelocity = 20;
+		MaxVelocity = 20;
 		m_isSprinting = false;
 	}
 	void GameCamera::Sprint()
 	{
-		m_maxVelocity = 60;
+		MaxVelocity = 60;
 		m_isSprinting = true;
 	}
 	void GameCamera::Jump()

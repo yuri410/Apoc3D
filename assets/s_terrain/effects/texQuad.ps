@@ -1,9 +1,4 @@
-
-
-#define SAMPLE_COUNT 5
-
-sampler2D tex : register(s0);
-
+sampler3D tex : register(s0);
 
 struct PSInput
 {
@@ -17,5 +12,5 @@ struct PSOutput
 
 float4 main(PSInput ip) : COLOR
 {
-    return tex2D(tex, ip.TexCoord);
+    return tex3D(tex, float3(ip.TexCoord, 0.2));
 }

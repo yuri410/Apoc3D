@@ -181,7 +181,8 @@ namespace APBuild
 
 	void ParseEffectParameter(const AFXBuildConfig& config, ConfigurationSection* ps, EffectParameter& ep)
 	{
-		ep.Usage = EffectParameter::ParseParamUsage(ps->getAttribute(L"Usage"));
+		const String& usageText = ps->getAttribute(L"Usage");
+		ep.Usage = EffectParameter::ParseParamUsage(usageText);
 		if (ep.Usage == EPUSAGE_CustomMaterialParam)
 		{
 			if (!ps->hasAttribute(L"CustomUsage"))
@@ -203,6 +204,11 @@ namespace APBuild
 			{
 				ep.InstanceBlobIndex = ps->GetAttributeInt(L"BlobIndex");
 			}	
+		}
+
+		if (ep.Usage == EPUSAGE_Unknown && usageText.size())
+		{
+			BuildSystem::LogWarning(config.PListFile, L"Usage " + usageText + L" is invalid for param " + ep.Name);
 		}
 
 		ps->tryGetAttribute(L"DefaultTextureName", ep.DefaultTextureName);
