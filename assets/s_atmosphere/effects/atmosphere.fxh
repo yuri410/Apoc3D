@@ -53,9 +53,9 @@ static const float AVERAGE_GROUND_REFLECTANCE = 0.1;
 
 // Rayleigh
 static const float HR = 8.0 * 2.5;
-//const vec3 betaR = vec3(5.8e-3, 1.35e-2, 1.75e-2); // = vec3(5.8e-3, 1.35e-2, 3.31e-2);
+static const float3 betaR = float3(5.8e-3, 1.35e-2, 3.31e-2);
 //static const float3 betaR = float3(5.8e-3, 1.35e-2, 1.75e-2); // = vec3(5.8e-3, 1.35e-2, 3.31e-2);
-static const float3 betaR = float3(5.8e-3, 6.8e-3, 7.8e-3); // = vec3(5.8e-3, 1.35e-2, 3.31e-2);
+//static const float3 betaR = float3(5.8e-3, 6.8e-3, 7.8e-3); // = vec3(5.8e-3, 1.35e-2, 3.31e-2);
 
 // Mie
 // DEFAULT
@@ -70,7 +70,7 @@ static const float mieG = 0.8;
 
 static const float M_PI = 3.141592657;
 
-static const float exposure = 0.2;
+static const float exposure = 0.4;
 static const float ISun = 100.0;
 
 sampler2D transmittanceSampler : register(s0);
