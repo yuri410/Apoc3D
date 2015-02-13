@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Root>
+  <VS>
+    <!--<mvp Usage="tr_worldvieworiproj"/>-->
+    <viewportSize Usage="sv2_viewportSize"/>
+
+    <projInverse Usage="tr_invproj" />
+    <viewInverse Usage="tr_invview" />
+  </VS>
+  <PS>
+    <irradianceSampler Usage="" MinFilter="Linear" MagFilter="Linear" AddressU="Clamp" AddressV="Clamp"/>
+    <inscatterSampler Usage="" MinFilter="Linear" MagFilter="Linear" AddressU="Clamp" AddressV="Clamp"/>
+    <transmittanceSampler Usage="" MinFilter="Linear" MagFilter="Linear" AddressU="Clamp" AddressV="Clamp"/>
+    
+    <c Usage="v3_camerapos" />
+    <s Usage="lv3_lightdir" />
+
+  </PS>
+</Root>

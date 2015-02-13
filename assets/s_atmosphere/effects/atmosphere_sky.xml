@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Root>
+  <VS>
+
+    <mvp Usage="tr_worldviewproj" />
+    
+  </VS>
+  <PS>
+    <transmittanceSampler Usage="tex_0" MinFilter="Linear" MagFilter="Linear" AddressU="Clamp" AddressV="Clamp"/>
+    <reflectanceSampler Usage="tex_1" MinFilter="Linear" MagFilter="Linear" AddressU="Clamp" AddressV="Clamp"/>
+    <irradianceSampler Usage="tex_2" MinFilter="Linear" MagFilter="Linear" AddressU="Clamp" AddressV="Clamp"/>
+    <inscatterSampler Usage="tex_3" MinFilter="Linear" MagFilter="Linear" AddressU="Clamp" AddressV="Clamp"/>
+
+    <c Usage="v3_camerapos" />
+    <s Usage="lv3_lightdir" />
+
+  </PS>
+</Root>

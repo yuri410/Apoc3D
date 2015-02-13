@@ -1,0 +1,184 @@
+/**
+* Precomputed Atmospheric Scattering
+* Copyright (c) 2008 INRIA
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions
+* are met:
+* 1. Redistributions of source code must retain the above copyright
+*    notice, this list of conditions and the following disclaimer.
+* 2. Redistributions in binary form must reproduce the above copyright
+*    notice, this list of conditions and the following disclaimer in the
+*    documentation and/or other materials provided with the distribution.
+* 3. Neither the name of the copyright holders nor the names of its
+*    contributors may be used to endorse or promote products derived from
+*    this software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+* THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/**
+* Author: Eric Bruneton
+* This copy is a modified.
+*/
+
+#include "atmosphere.fxh"
+
+float3 c : register(c0);
+float3 s : register(c1);
+
+sampler2D reflectanceSampler : register(s1); //ground reflectance texture
+sampler2D irradianceSampler : register(s2); //precomputed skylight irradiance (E table)
+sampler3D inscatterSampler : register(s3); //precomputed inscattered light (S table)
+
+
+//void DebugBlackout(inout float3 v)
+//{
+//	v = saturate(v)*0.001f;
+//}
+//
+float mySqrt(float v)
+{
+	return v < 0 ? 999999999999999999.0 : sqrt(v);
+}
+
+//inscattered light along ray x+tv, when sun in direction s (=S[L]-T(x,x0)S[L]|x0)
+float3 Inscatter(inout float3 camPos, inout float t, float3 v, inout float r, inout float mu, inout float3 attenuation)
+{
+	float d = -r * mu - mySqrt(r * r * (mu * mu - 1.0) + Rt * Rt);
+	//float d = r * mu - mySqrt(Rt * Rt - r * r * (mu * mu - 1.0));
+
+	if (d > 0.0) 
+	{ // if camPos in space and ray intersects atmosphere
+
+		// move camPos to nearest intersection of ray with top atmosphere boundary
+		camPos += d * v;
+		mu = (r * mu + d) / Rt;
+		t -= d;
+		r = Rt;
+	}
+
+	if (r <= Rt) 
+	{ // if ray intersects atmosphere
+		
+		float nu = dot(v, s);
+		float muS = dot(camPos, s) / r;
+		float phaseR = phaseFunctionR(nu);
+		float phaseM = phaseFunctionM(nu);
+		float4 inscatter = max(texture4D(inscatterSampler, r, mu, muS, nu), 0.0);
+
+		if (t > 0.0) 
+		{ // intersects ground
+			
+			float3 x0 = camPos + t * v;
+			float r0 = length(x0);
+			float rMu0 = dot(x0, v);
+			float mu0 = rMu0 / r0;
+			float muS0 = dot(x0, s) / r0;
+
+			attenuation = transmittance(r, mu, v, x0);
+
+
+		}
+
+#ifdef FIX
+		// avoids imprecision problems in Mie scattering when sun is below horizon
+		inscatter.w *= smoothstep(0.00, 0.02, muS);
+#endif
+		float3 result = max(inscatter.rgb * phaseR + getMie(inscatter) * phaseM, 0.0);
+		return result * ISun;
+	}
+
+	// x in space and ray looking in space
+	return 0;
+}
+
+//ground radiance at end of ray x+tv, when sun in direction s
+//attenuated bewteen ground and viewer (=R[L0]+R[L*])
+float3 GroundColor(float3 camPos, float t, float3 v, float r, float mu, float3 attenuation)
+{
+	//t = -r * mu - mySqrt(r * r * (mu * mu - 1.0) + Rg * Rg);
+
+	if (t > 0.0)
+	{ // if ray hits ground surface
+		
+		// ground reflectance at end of ray, x0
+		float3 x0 = camPos + t * v;
+		float r0 = length(x0);
+		float3 n = x0 / r0;
+		float2 texCoord = float2(atan2(n.z, n.x), acos(n.y)) * float2(0.5, 1.0) / M_PI + float2(0.5, 0.0);
+		float4 reflectance = tex2D(reflectanceSampler, texCoord) * float4(0.2, 0.2, 0.2, 0.0);
+		
+		// direct sun light (radiance) reaching x0
+		float muS = dot(n, s);
+		float3 sunLight = transmittanceWithShadow(r0, muS);
+
+		// precomputed sky light (irradiance) (=E[L*]) at x0
+		float3 groundSkyLight = irradiance(irradianceSampler, r0, muS);
+
+		// light reflected at x0 (=(R[L0]+R[L*])/T(x,x0))
+		float3 groundColor = reflectance.rgb * (max(muS, 0.0) * sunLight + groundSkyLight) * ISun / M_PI;
+
+		// water specular color due to sunLight
+		if (reflectance.w > 0.0)
+		{
+			float3 h = normalize(s - v);
+			float fresnel = 0.02 + 0.98 * pow(1.0 - dot(-v, h), 5.0);
+			float waterBrdf = fresnel * pow(max(dot(h, n), 0.0), 150.0);
+			groundColor += reflectance.w * max(waterBrdf, 0.0) * sunLight * ISun;
+		}
+
+		return attenuation * groundColor; //=R[L0]+R[L*]
+	}
+
+	return 0; // ray looking at the sky
+}
+
+
+// direct sun light for ray x+tv, when sun in direction s (=L0)
+//float3 SunColor(float3 v, float3 s, float r, float mu) 
+//{
+//	float3 transmittance = r <= Rt ? transmittanceWithShadow(r, mu) : 1; // T(x,xo)
+//	float isun = step(cos(M_PI / 180.0), dot(v, s)) * ISun; // Lsun
+//	return transmittance * isun; // Eq (9)
+//}
+
+float4 main(float2 texCoord : TEXCOORD0, float3 TopPos : TEXCOORD1) : COLOR0
+{
+	float3 camPos = c;
+	float3 ray = TopPos - c;
+	float3 v = normalize(ray);
+
+	float r = length(camPos);
+	float mu = dot(camPos, v) / r;
+	
+	float t = -r * mu - mySqrt(r * r * (mu * mu - 1.0) + Rg * Rg);
+
+	// t is the t in p=x+tv, where p is an intersection point on the ground of the sphere
+
+	float3 attenuation = 1;
+	float3 inscatterColor = Inscatter(camPos, t, v, r, mu, attenuation); //S[L]-T(x,xs)S[l]|xs
+	float3 groundColor = GroundColor(camPos, t, v, r, mu, attenuation); //R[L0]+R[L*]
+		//float3 sunColor = SunColor(v, s, r, mu); //L0
+
+		//DebugBlackout(groundColor);
+		//DebugBlackout(inscatterColor);
+		//DebugBlackout(sunColor);
+
+	float4 result = float4(HDR(inscatterColor + groundColor), 1.0); // Eq (16)
+		//result.rgb += 0.5;
+		//result.rgb += 0.5 * v;
+	
+	return result;
+}

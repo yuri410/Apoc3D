@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<Root>
+    <Project Name="Sample Atmosphere" TexturePath="textures" MaterialPath="">
+       
+        <models Type="folder" SubItemsSourceRelativeBase="s_atmosphere\models" SubItemsDestinationRelativeBase="s_atmosphere\models" LastModTime="1325265047">
+          <unitsphere Type="model" SourceFile="unitsphere.X" DestinationFile="unitsphere.mesh" Method="D3D" LastModTime="1325265047" />
+        </models>
+        <effects Type="folder" SubItemsSourceRelativeBase="s_atmosphere\effects" SubItemsDestinationRelativeBase="s_atmosphere\effects" LastModTime="1325265047">
+          <atmosphere Type="effect" Source="VS:atmosphere.vs | PS:atmosphere.ps" DestinationFile="atmosphere.afx" ParamList="atmosphere.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1325265047" />
+          <atmosphere_sky Type="effect" Source="VS:atmosphere_sky.vs | PS:atmosphere_sky.ps" DestinationFile="atmosphere_sky.afx" ParamList="atmosphere_sky.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1325265047" />
+          
+          <TexturedQuad Type="effect" Source="VS:postQuad.vs | PS:texQuad.ps" DestinationFile="TexturedQuad.afx" ParamList="texQuad.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1325265047" />
+          <EffectList Type="EffectList" DestinationFile="effectList.xml" LastModTime="1325265047" />
+        </effects>
+        <textures Type="folder" SubItemsSourceRelativeBase="s_atmosphere\textures" SubItemsDestinationRelativeBase="s_atmosphere\textures" LastModTime="1325265047">
+          <planet Type="texture" Method="D3D" SourceFile="planet.png" DestinationFile="planet.tex" GenerateMipmaps="true" LastModTime="1325617097" />
+        </textures>
+        <materials Type="folder" Pack="pak" DestinationPack="s_atmosphere\materials.pak" SubItemsSourceRelativeBase="s_atmosphere" SubItemsDestinationRelativeBase="s_atmosphere\materials" LastModTime="1345833064">
+          <Lab Type="materialset" SourceFile="mtrl.xml" DestinationLocation="" DestinationToken="listing.xml" LastModTime="1345833064"/>
+        </materials>
+      
+    </Project>
+</Root>

@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<Root>
+  <Pallet>
+    
+  </Pallet>
+
+  <Materials>
+    <!--<map_movegrid Ambient="80, 80, 80, 255" PassFlag="1000000000" Effect="P10:movgrid" Priority="11"
+              IsBlendTransparent="true" SourceBlend="One" DestinationBlend="One"
+              DepthTestEnabled="true" DepthWriteEnabled="true" >
+      <preZ Effect="P10:movgrid_prez" Priority="10" 
+             IsBlendTransparent="true" SourceBlend="SourceAlpha" DestinationBlend="InverseSourceAlpha" />
+    </map_movegrid>
+              
+
+    <skybox Texture1="environment.tex" Cull="None" Priority="1" PassFlag="11 00000 00000 00001" Effect="P1:skybox_mrt;P16:skybox_diffuse;P17:skybox_diffuse_opaque;" 
+            DepthTestEnabled="false" DepthWriteEnabled="false" />-->
+
+    <atmosphere_sky Cull="None" Priority="1" PassFlag="1" Effect="P1:atmosphere_sky" 
+                    Texture1="transmittanceTexture.tex" Texture2="planet.tex"
+                    Texture3="irradianceTexture.tex" Texture4="inscatterTexture.tex"
+                    />
+    <!--<atmosphere_ground Cull="None" Priority="1" PassFlag="1" Effect="P1:atmosphere_ground" Texture1="transmittanceTexture.tex" Texture2="transmittanceTexture.tex" />-->
+    <!--<atmosphere_sun Cull="None" Priority="1" PassFlag="1" Effect="P1:atmosphere_sun" Texture1="inscatterTexture.tex" Texture2="transmittanceTexture.tex" />-->
+  </Materials>
+</Root>
