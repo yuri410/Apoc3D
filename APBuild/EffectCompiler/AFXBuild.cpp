@@ -121,14 +121,14 @@ namespace APBuild
 			{
 				prof.SetImplType(impType);
 
-				if (!CompileShader(config.VS, config.EntryPointVS, prof, SHDT_Vertex, config.IsDebug))
+				if (!CompileShader(config.VS, config.EntryPointVS, prof, SHDT_Vertex, config.IsDebug, config.NoOptimization))
 					return;
-				if (!CompileShader(config.PS, config.EntryPointPS, prof, SHDT_Pixel, config.IsDebug))
+				if (!CompileShader(config.PS, config.EntryPointPS, prof, SHDT_Pixel, config.IsDebug, config.NoOptimization))
 					return;
 
 				if (config.GS.size())
 				{
-					if (!CompileShader(config.GS, config.EntryPointGS, prof, SHDT_Geometry, config.IsDebug))
+					if (!CompileShader(config.GS, config.EntryPointGS, prof, SHDT_Geometry, config.IsDebug, config.NoOptimization))
 						return;
 				}
 

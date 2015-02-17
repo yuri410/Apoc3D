@@ -155,9 +155,13 @@ namespace Apoc3D
 			}
 			else if (mouseHover)
 			{
+				if (mouseHover)
+				{
+					(obj->*onMouseOut)();
+				}
+
 				mouseHover = false;
 				mouseDown = false;
-				(obj->*onMouseOut)();
 			}
 		}
 

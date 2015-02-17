@@ -113,8 +113,8 @@ namespace Apoc3D
 				Reload(rl);
 
 				ObjectFactory* objFac = m_device->getObjectFactory();
-				m_texture = objFac->CreateTexture(1, 1, 1, TU_Static, FMT_A8R8G8B8);
-				m_texture->FillColor(CV_White);
+				m_whiteTexture = objFac->CreateTexture(1, 1, 1, TU_Static, FMT_A8R8G8B8);
+				m_whiteTexture->FillColor(CV_White);
 			}
 
 			AutomaticEffect::~AutomaticEffect()
@@ -126,7 +126,7 @@ namespace Apoc3D
 
 				DELETE_AND_NULL(m_vertexShader);
 				DELETE_AND_NULL(m_pixelShader);
-				DELETE_AND_NULL(m_texture);
+				DELETE_AND_NULL(m_whiteTexture);
 			}
 
 			bool AutomaticEffect::SupportsInstancing()
@@ -203,10 +203,11 @@ namespace Apoc3D
 						case EPUSAGE_S_FarPlane:
 						case EPUSAGE_S_NearPlane:
 						case EPUSAGE_Trans_View:
-						case EPUSAGE_Trans_InvView:
 						case EPUSAGE_Trans_ViewProj:
 						case EPUSAGE_Trans_Projection:
+						case EPUSAGE_Trans_InvView:
 						case EPUSAGE_Trans_InvProj:
+						case EPUSAGE_Trans_InvViewProj:
 						case EPUSAGE_V3_CameraX:
 						case EPUSAGE_V3_CameraY:
 						case EPUSAGE_V3_CameraZ:
@@ -531,7 +532,7 @@ namespace Apoc3D
 					tex = value->ObtainLoaded();
 
 				if (tex == nullptr)
-					tex = m_texture;
+					tex = m_whiteTexture;
 
 				param.RS_TargetShader->SetSamplerState(param.SamplerIndex, param.SamplerState);
 				param.RS_TargetShader->SetTexture(param.SamplerIndex, tex);
@@ -615,15 +616,13 @@ namespace Apoc3D
 						case EPUSAGE_SV2_ViewportSize:
 						{
 							Viewport vp = m_device->getViewport();
-							Vector2 size((float)vp.Width, (float)vp.Height);
-							ep.SetVector2(size);
+							ep.SetVector2({ static_cast<float>(vp.Width), static_cast<float>(vp.Height) });
 							break;
 						}
 						case EPUSAGE_SV2_InvViewportSize:
 						{
 							Viewport vp = m_device->getViewport();
-							Vector2 size(1.f / vp.Width, 1.f / vp.Height);
-							ep.SetVector2(size);
+							ep.SetVector2({ 1.f / vp.Width, 1.f / vp.Height });
 							break;
 						}
 						case EPUSAGE_S_FarPlane:
@@ -649,18 +648,18 @@ namespace Apoc3D
 							ep.SetFloat(n);
 							break;
 						}
-						case EPUSAGE_Trans_View:
-							ep.SetMatrix(RendererEffectParams::CurrentCamera->getViewMatrix());
+						case EPUSAGE_Trans_View:		ep.SetMatrix(RendererEffectParams::CurrentCamera->getViewMatrix()); break;
+						case EPUSAGE_Trans_ViewProj:	ep.SetMatrix(RendererEffectParams::CurrentCamera->getViewProjMatrix()); break;
+						case EPUSAGE_Trans_Projection:	ep.SetMatrix(RendererEffectParams::CurrentCamera->getProjMatrix()); break;
+
+						case EPUSAGE_Trans_InvView:		ep.SetMatrix(RendererEffectParams::CurrentCamera->getInvViewMatrix()); break;
+						case EPUSAGE_Trans_InvViewProj:
+						{
+							Matrix invViewProj;
+							Matrix::Inverse(invViewProj, RendererEffectParams::CurrentCamera->getViewProjMatrix());
+							ep.SetMatrix(invViewProj);
 							break;
-						case EPUSAGE_Trans_InvView:
-							ep.SetMatrix(RendererEffectParams::CurrentCamera->getInvViewMatrix());
-							break;
-						case EPUSAGE_Trans_ViewProj:
-							ep.SetMatrix(RendererEffectParams::CurrentCamera->getViewProjMatrix());
-							break;
-						case EPUSAGE_Trans_Projection:
-							ep.SetMatrix(RendererEffectParams::CurrentCamera->getProjMatrix());
-							break;
+						}
 						case EPUSAGE_Trans_InvProj:
 						{
 							Matrix invProj;
@@ -668,18 +667,12 @@ namespace Apoc3D
 							ep.SetMatrix(invProj);
 							break;
 						}
-						case EPUSAGE_V3_CameraX:
-							ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetX());
-							break;
-						case EPUSAGE_V3_CameraY:
-							ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetY());
-							break;
-						case EPUSAGE_V3_CameraZ:
-							ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetZ());
-							break;
-						case EPUSAGE_V3_CameraPos:
-							ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetTranslation());
-							break;
+
+						case EPUSAGE_V3_CameraX:	ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetX()); break;
+						case EPUSAGE_V3_CameraY:	ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetY()); break;
+						case EPUSAGE_V3_CameraZ:	ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetZ()); break;
+						case EPUSAGE_V3_CameraPos:	ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetTranslation()); break;
+
 						case EPUSAGE_Tex0:
 						case EPUSAGE_Tex1:
 						case EPUSAGE_Tex2:
@@ -727,13 +720,13 @@ namespace Apoc3D
 					tex = value->ObtainLoaded();
 
 				if (tex == nullptr)
-					tex = m_texture;
+					tex = m_whiteTexture;
 
 				param.RS_TargetShader->SetTexture(param.SamplerIndex, tex);
 			}
 			void AutomaticEffect::SetTexture(ResolvedEffectParameter& param, Texture* value)
 			{
-				param.RS_TargetShader->SetTexture(param.SamplerIndex, value == nullptr ? m_texture : value);
+				param.RS_TargetShader->SetTexture(param.SamplerIndex, value == nullptr ? m_whiteTexture : value);
 			}
 			
 

@@ -255,7 +255,7 @@ namespace Apoc3D
 
 		class Ray;
 		class RaySegment;
-
+		
 		class Point;
 		class PointF;
 		class Size;

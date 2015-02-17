@@ -30,6 +30,12 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
+		void Camera::CalculateMatrices()
+		{
+			Matrix::Inverse(m_invView, m_view);
+			Matrix::Multiply(m_viewProj, m_view, m_proj);
+			m_frustum.Update(m_view, m_proj);
+		}
 
 		void Camera::GetCornerRays(RaySegment* topLeft, RaySegment* topRight, RaySegment* bottomLeft, RaySegment* bottomRight)
 		{
@@ -38,26 +44,26 @@ namespace Apoc3D
 
 			if (topLeft)
 			{
-				topLeft->Start = Vector3::TransformCoordinate(Vector3(-1, -1, 0), matrix);
-				topLeft->End = Vector3::TransformCoordinate(Vector3(-1, -1, 1), matrix);
+				topLeft->Start = Vector3::TransformCoordinate(Vector3(-1, 1, 0), matrix);
+				topLeft->End = Vector3::TransformCoordinate(Vector3(-1, 1, 1), matrix);
 			}
 
 			if (topRight)
 			{
-				topRight->Start = Vector3::TransformCoordinate(Vector3(1, -1, 0), matrix);
-				topRight->End = Vector3::TransformCoordinate(Vector3(1, -1, 1), matrix);
+				topRight->Start = Vector3::TransformCoordinate(Vector3(1, 1, 0), matrix);
+				topRight->End = Vector3::TransformCoordinate(Vector3(1, 1, 1), matrix);
 			}
 			
 			if (bottomLeft)
 			{
-				bottomLeft->Start = Vector3::TransformCoordinate(Vector3(-1, 1, 0), matrix);
-				bottomLeft->End = Vector3::TransformCoordinate(Vector3(-1, 1, 1), matrix);
+				bottomLeft->Start = Vector3::TransformCoordinate(Vector3(-1, -1, 0), matrix);
+				bottomLeft->End = Vector3::TransformCoordinate(Vector3(-1, -1, 1), matrix);
 			}
 			
 			if (bottomRight)
 			{
-				bottomRight->Start = Vector3::TransformCoordinate(Vector3(1, 1, 0), matrix);
-				bottomRight->End = Vector3::TransformCoordinate(Vector3(1, 1, 1), matrix);
+				bottomRight->Start = Vector3::TransformCoordinate(Vector3(1, -1, 0), matrix);
+				bottomRight->End = Vector3::TransformCoordinate(Vector3(1, -1, 1), matrix);
 			}
 		}
 		void Camera::GetEdgeRays(RaySegment* left, RaySegment* right, RaySegment* top, RaySegment* bottom)
@@ -79,14 +85,14 @@ namespace Apoc3D
 
 			if (top)
 			{
-				top->Start = Vector3::TransformCoordinate(Vector3(0, -1, 0), matrix);
-				top->End = Vector3::TransformCoordinate(Vector3(0, -1, 1), matrix);
+				top->Start = Vector3::TransformCoordinate(Vector3(0, 1, 0), matrix);
+				top->End = Vector3::TransformCoordinate(Vector3(0, 1, 1), matrix);
 			}
 			
 			if (bottom)
 			{
-				bottom->Start = Vector3::TransformCoordinate(Vector3(0, 1, 0), matrix);
-				bottom->End = Vector3::TransformCoordinate(Vector3(0, 1, 1), matrix);
+				bottom->Start = Vector3::TransformCoordinate(Vector3(0, -1, 0), matrix);
+				bottom->End = Vector3::TransformCoordinate(Vector3(0, -1, 1), matrix);
 			}
 		}
 

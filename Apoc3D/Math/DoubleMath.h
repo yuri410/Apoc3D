@@ -783,26 +783,35 @@ namespace Apoc3D
 
 		};
 
-		inline Vector3d vec3ftod(Apoc3D::Math::Vector3 v) { return Vector3d(v.X, v.Y, v.Z); }
-		inline Apoc3D::Math::Vector3 vec3dtof(Vector3d v) { return Apoc3D::Math::Vector3((float)v.X, (float)v.Y, (float)v.Z); }
+		inline Vector3d vec3ftod(Math::Vector3 v) { return Vector3d(v.X, v.Y, v.Z); }
+		inline Math::Vector3 vec3dtof(Vector3d v) { return Math::Vector3((float)v.X, (float)v.Y, (float)v.Z); }
 		
-		inline Vector4d vec4ftod(Apoc3D::Math::Vector4 v) { return Vector4d(v.X, v.Y, v.Z, v.W); }
-		inline Apoc3D::Math::Vector4 vec4dtof(Vector4d v) { return Apoc3D::Math::Vector4((float)v.X, (float)v.Y, (float)v.Z, (float)v.W); }
+		inline Vector4d vec4ftod(Math::Vector4 v) { return Vector4d(v.X, v.Y, v.Z, v.W); }
+		inline Math::Vector4 vec4dtof(Vector4d v) { return Math::Vector4((float)v.X, (float)v.Y, (float)v.Z, (float)v.W); }
 
-		inline Matrixd matftod(Apoc3D::Math::Matrix m)
+		inline Matrixd matftod(Math::Matrix m)
 		{
 			Matrixd r;
 			for (int32 i = 0; i < 16; i++)
 				r.Elements[i] = m.Elements[i];
 			return r;
 		}
-		inline Apoc3D::Math::Matrix matdtof(Matrixd m)
+		inline Math::Matrix matdtof(Matrixd m)
 		{
-			Apoc3D::Math::Matrix r;
+			Math::Matrix r;
 			for (int32 i = 0; i < 16; i++)
 				r.Elements[i] = (float)m.Elements[i];
 			return r;
 		}
+
+		class RaySegmentd
+		{
+		public:
+			Vector3d Start;
+			Vector3d End;
+		};
+
+		RaySegmentd raysegdtof(const Math::RaySegment& m);
 	}
 
 }

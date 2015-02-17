@@ -43,7 +43,7 @@ namespace APBuild
 	void WriteCompileError(const std::string& logs, const String& sourceFile);
 	void FillEffectProfileData(EffectProfileData& pd, const char* data, const int32 length, ShaderType type);
 
-	bool CompileShader(const String& src, const String& entryPoint, EffectProfileData& profData, ShaderType type, bool debugEnabled)
+	bool CompileShader(const String& src, const String& entryPoint, EffectProfileData& profData, ShaderType type, bool debugEnabled, bool noOptimization)
 	{
 		if (profData.MatchImplType(EffectProfileData::Imp_HLSL))
 		{
@@ -58,8 +58,16 @@ namespace APBuild
 				}
 				else
 				{
-					dwShaderFlags |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
+					if (noOptimization)
+					{
+						dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION | D3DCOMPILE_NO_PRESHADER | D3DCOMPILE_IEEE_STRICTNESS;
+					}
+					else
+					{
+						dwShaderFlags |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
+					}
 				}
+
 
 
 				ID3DBlob* pBlobOut;
@@ -98,7 +106,14 @@ namespace APBuild
 				}
 				else
 				{
-					flags |= D3DXSHADER_OPTIMIZATION_LEVEL3;
+					if (noOptimization)
+					{
+						flags |= D3DXSHADER_SKIPOPTIMIZATION | D3DXSHADER_IEEE_STRICTNESS;
+					}
+					else
+					{
+						flags |= D3DXSHADER_OPTIMIZATION_LEVEL3;
+					}
 				}
 
 				//flags |= D3DXCONSTTABLE_LARGEADDRESSAWARE;

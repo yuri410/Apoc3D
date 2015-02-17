@@ -75,7 +75,6 @@ namespace Apoc3D
 				EPUSAGE_MtrlC4_Specular,			/** mc4_specular */
 				EPUSAGE_MtrlC_Power,				/** mc_power */
 				
-
 				
 				EPUSAGE_Trans_WorldViewProj = 100,		/** tr_worldviewproj */
 				EPUSAGE_Trans_WorldViewOriProj,			/** tr_worldvieworiproj */
@@ -83,7 +82,10 @@ namespace Apoc3D
 				EPUSAGE_Trans_WorldView,				/** tr_worldview */
 				EPUSAGE_Trans_View,						/** tr_view */
 				EPUSAGE_Trans_ViewProj,					/** tr_viewproj */
+				EPUSAGE_Trans_Projection,				/** tr_proj */
+				EPUSAGE_Trans_InvProj,					/** tr_invproj */
 				EPUSAGE_Trans_InvView,					/** tr_invview */
+				EPUSAGE_Trans_InvViewProj,				/** tr_invviewproj */
 
 				/**
 				 * tr_instanceworld
@@ -92,8 +94,6 @@ namespace Apoc3D
 				 */
 				EPUSAGE_Trans_InstanceWorlds,
 				
-				EPUSAGE_Trans_Projection,		/** tr_proj */
-				EPUSAGE_Trans_InvProj,			/** tr_invproj */
 
 				EPUSAGE_M4X3_BoneTrans,			/** m4x3_bonestransform */
 				EPUSAGE_M4X4_BoneTrans,			/** m4x4_bonestransform */

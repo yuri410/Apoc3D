@@ -97,6 +97,8 @@ namespace Apoc3D
 
 			String LineBreakString(const String& text, int width, bool byWord, int& lineCount);
 			Point MeasureString(const String& text);
+			Point MeasureString(const String& text, int32 start, int32 end);
+
 			int FitSingleLineString(const String& str, int width);
 
 			int CalculateLineCount(const String& text, int width);
@@ -113,8 +115,6 @@ namespace Apoc3D
 
 			Texture* getInternalTexture() const { return m_font; }
 
-			static String MakeColorControl(uint32 argb);
-			static String MakeMoveControl(const Point& position, bool passConditionCheck = false, bool relative = false);
 		private:
 			static const int MaxFreq = 10;
 			struct Character
@@ -174,11 +174,12 @@ namespace Apoc3D
 				int32 seed, const Apoc3D::Math::RectangleF& srcRect, int32 glyphLeft, int32 glyphTop, int32 glyphWidth, int32 glyphHeight, uint32 color,
 				const Point& dissolvePatchSize, float progress);
 
-			template <typename SizeType>
-			static bool ScanMoveControlCode(const String& str, wchar_t& cur, SizeType& i, SizeType len, const PointF* orig, PointF* pos);
+			static bool ScanMoveControlCode(const String& str, wchar_t& cur, int32& i, int32 len, const PointF* orig, PointF* pos);
 
-			template <typename SizeType>
-			static bool ScanColorControlCodes(const String& str, wchar_t& cur, SizeType& i, SizeType len, uint* color);
+			static bool ScanColorControlCodes(const String& str, wchar_t& cur, int32& i, int32 len, uint* color);
+
+			static void ScanUselessControlCodes(const String& str, wchar_t& cur, int32& i, int32 len);
+
 
 			PointF GetOrigin(int32 x, int32 y) const;
 			PointF GetOrigin(float x, float y) const;

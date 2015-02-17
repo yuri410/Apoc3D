@@ -14,6 +14,7 @@ namespace Apoc3D
 			RTTI_DERIVED(Label, Control);
 		public:
 			typedef EventDelegate<Label*> LabelEvent;
+			typedef EventDelegate<Label*, int16> LabelHyperLinkEvent;
 
 			Label(Font* font, const Point& position, const String& text);
 			Label(Font* font, const Point& position, const String& text, int width, TextHAlign alignment = TextHAlign::Left);
@@ -49,11 +50,36 @@ namespace Apoc3D
 			LabelEvent eventPress;
 			LabelEvent eventRelease;
 
+			LabelHyperLinkEvent eventHyperlinkMouseHover;
+			LabelHyperLinkEvent eventHyperlinkMouseOut;
+			LabelHyperLinkEvent eventHyperlinkPress;
+			LabelHyperLinkEvent eventHyperlinkRelease;
+
 		private:
+			struct HyperLinkRange
+			{
+				int32 StartLine = 0;
+				int32 StartIndex = 0;
+				int32 EndLine = 0;
+				int32 EndIndex = 0;
+
+				uint16 ID = 0;
+
+				bool MouseHover = false;
+				bool MouseDown = false;
+
+				List<String> LinkTextLines;
+
+				void GetLineMetrics(int32 idx, const String& line, Font* fnt, TextRenderSettings& ts, Point& size, Point& off) const;
+			};
+
 			void Initialize(const StyleSkin* skin);
 			void Initialize(Font* font);
 
 			void UpdateText();
+
+			bool GotoNextCharacter(int32& lineIdx, int32& chIdx);
+			void GotoPreviousCharacter(int32& lineIdx, int32& chIdx);
 
 			void OnMouseHover();
 			void OnMouseOut();
@@ -62,6 +88,7 @@ namespace Apoc3D
 
 			String m_text;
 			List<String> m_lines;
+			List<HyperLinkRange> m_hyperLinks;
 
 			bool m_mouseHover = false;
 			bool m_mouseDown = false;

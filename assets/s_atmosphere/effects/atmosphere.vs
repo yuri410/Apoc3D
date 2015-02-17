@@ -66,11 +66,11 @@ VSOutput main(VSInput ip)
 	o.Position.xy = (ip.Position - b) * float2(2, -2) - float2(1, -1);
 
 	float4 rawPos;
-	rawPos.xy = ip.Position * float2(2, -2) - float2(1, -1);
+	rawPos.xy = (ip.Position -b) * float2(2, -2) - float2(1, -1);
 	rawPos.z = 1;
 	rawPos.w = 1;
 
-	o.Ray = mul(float4((mul(rawPos, projInverse)).xyz, 0.0), viewInverse).xyz;
+	o.Ray = mul(mul(rawPos, projInverse), viewInverse).xyz;
 	
     return o;
 }

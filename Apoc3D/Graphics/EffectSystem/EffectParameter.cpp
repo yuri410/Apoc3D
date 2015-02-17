@@ -53,10 +53,13 @@ namespace Apoc3D
 				{ L"tr_worldview", EPUSAGE_Trans_WorldView },
 				{ L"tr_view", EPUSAGE_Trans_View },
 				{ L"tr_viewproj", EPUSAGE_Trans_ViewProj },
-				{ L"tr_invview", EPUSAGE_Trans_InvView },
-				{ L"tr_instanceworld", EPUSAGE_Trans_InstanceWorlds },
 				{ L"tr_proj", EPUSAGE_Trans_Projection },
+
 				{ L"tr_invproj", EPUSAGE_Trans_InvProj },
+				{ L"tr_invview", EPUSAGE_Trans_InvView },
+				{ L"tr_invviewproj", EPUSAGE_Trans_InvViewProj },
+
+				{ L"tr_instanceworld", EPUSAGE_Trans_InstanceWorlds },
 
 				{ L"m4x3_bonestransform", EPUSAGE_M4X3_BoneTrans },
 				{ L"m4x4_bonestransform", EPUSAGE_M4X4_BoneTrans },

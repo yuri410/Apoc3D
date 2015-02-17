@@ -191,13 +191,18 @@ namespace Apoc3D
 
 			ControlBounds TextPadding;
 
+
 			void Draw(Sprite* sprite, Font* font, const String& text, const Point& pos, const Point& size, bool enabled) const;
 			void Draw(Sprite* sprite, Font* font, const String& text, const Apoc3D::Math::Rectangle& area, bool enabled) const;
+
+			void DrawNoAlignment(Sprite* sprite, Font* font, const String& text, const Point& pos, bool enabled) const;
+			void DrawHyperLinkText(Sprite* sprite, Font* font, const String& text, const Point& pos, bool enabled, bool selected, float underlineWidth) const;
 
 			void DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Point& pos, const Point& size, bool enabled) const;
 			void DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Apoc3D::Math::Rectangle& area, bool enabled) const;
 
-		private:
+			void DrawTextLine(Sprite* sprite, const Point& start, const Point& end, float width, bool enabled, bool selected) const;
+
 			Point GetTextOffset(const Point& textSize, const Point& areaSize) const;
 			Point GetTextOffset(Font* font, const String& text, const Point& size) const;
 		};
@@ -476,6 +481,26 @@ namespace Apoc3D
 			Texture* texture, const Apoc3D::Math::Rectangle (&bgSrcRects)[3], const Apoc3D::Math::Rectangle (&barSrcRects)[3],
 			const ControlBounds& margin, int32 barStartPad, int32 barEndPad);
 
+
+		namespace ControlCodes
+		{
+			// UTF-16 BMP(0) private range: U+E000..U+F8FF
+			// U+F8C0..U+F8CF for UI text control codes
+			// U+F8E0..U+F8EF for font system control codes
+			const uint16 Font_Color = 0xF8E0;
+			const uint16 Font_Font = 0xF8E1;
+			const uint16 Font_Move = 0xF8E2;		// move drawing position
+
+			const uint16 Label_HyperLinkStart = 0xF8C0;
+			const uint16 Label_HyperLinkEnd = 0xF8C1;
+
+			inline bool isControlCode(int32 code) { return code >= 0xF8C0 && code < 0xF8F0; }
+
+			String MakeColorControl(uint32 argb);
+			String MakeMoveControl(const Point& position, bool passConditionCheck = false, bool relative = false);
+
+			String MakeHyperLink(const String& linkText, uint16 linkID);
+		}
 	}
 }
 

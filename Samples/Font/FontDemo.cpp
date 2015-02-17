@@ -144,16 +144,16 @@ namespace SampleFont
 		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, areaSize.Height - 90.0f, CV_White, m_wordDissolveProgress, -2, Point(3, 3), 0.3f);
 		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, areaSize.Height - 70.0f, CV_White, 1 - Math::Saturate(m_allDissolveProgress), 0, Point(3, 3), 0.3f);
 
-		english->DrawString(m_sprite, L"Color Control Code: " + Font::MakeColorControl(CV_Red) + L"Red " + Font::MakeColorControl(CV_Green) + L"Green",
+		english->DrawString(m_sprite, L"Color Control Code: " + ControlCodes::MakeColorControl(CV_Red) + L"Red " + ControlCodes::MakeColorControl(CV_Green) + L"Green",
 			Point(200, areaSize.Height - 110), CV_White);
 
-		english->DrawString(m_sprite, L"Move Control Code: " + Font::MakeMoveControl({ 115, 0 }, false) + L"[P]",
+		english->DrawString(m_sprite, L"Move Control Code: " + ControlCodes::MakeMoveControl({ 115, 0 }, false) + L"[P]",
 			Point(200, areaSize.Height - 90), CV_White);
 
-		english->DrawString(m_sprite, L"Move Control Code: " + Font::MakeMoveControl({ 115, 0 }, true) + L"[P]",
+		english->DrawString(m_sprite, L"Move Control Code: " + ControlCodes::MakeMoveControl({ 115, 0 }, true) + L"[P]",
 			Point(200, areaSize.Height - 70), CV_White);
 
-		english->DrawString(m_sprite, L"Move Control Code: " + Font::MakeMoveControl({ 15, 0 }, false, true) + L"[P]",
+		english->DrawString(m_sprite, L"Move Control Code: " + ControlCodes::MakeMoveControl({ 15, 0 }, false, true) + L"[P]",
 			Point(200, areaSize.Height - 50), CV_White);
 
 		m_sprite->End();

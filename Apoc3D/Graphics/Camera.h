@@ -41,7 +41,22 @@ namespace Apoc3D
 		 */
 		class APAPI Camera
 		{
+			RTTI_BASE;
 		public:
+
+			Camera()
+			{
+				m_view.LoadIdentity();
+				m_proj.LoadIdentity();
+				m_viewProj.LoadIdentity();
+			}
+			~Camera() { }
+
+			void CalculateMatrices();
+
+			void GetCornerRays(RaySegment* topLeft, RaySegment* topRight, RaySegment* bottomLeft, RaySegment* bottomRight);
+			void GetEdgeRays(RaySegment* left, RaySegment* right, RaySegment* top, RaySegment* bottom);
+
 			const Frustum& getFrustum() { return m_frustum; }
 
 			const Matrix& getViewMatrix() const { return m_view; }		/** Gets the view transform matrix */
@@ -55,31 +70,10 @@ namespace Apoc3D
 			Vector3 getRight() const { return Vector3(m_invView.M11, m_view.M12, m_invView.M13); }			/** Gets the right vector of the camera view */
 			Vector3 getForward() const { return Vector3(m_invView.M31, m_invView.M32, m_invView.M33); }		/** Gets the forward vector of the camera view */
 
-			void GetCornerRays(RaySegment* topLeft, RaySegment* topRight, RaySegment* bottomLeft, RaySegment* bottomRight);
-			void GetEdgeRays(RaySegment* left, RaySegment* right, RaySegment* top, RaySegment* bottom);
-
 			void setViewMatrix(const Matrix& value) { m_view = value; }		/** Sets the view transform matrix */
 			void setProjMatrix(const Matrix& value) { m_proj = value; }		/** Sets the projection transform matrix */
 
-			/** Update the camera's state.  */
-			
-
-			Camera()
-			{
-				m_view.LoadIdentity();
-				m_proj.LoadIdentity();
-				m_viewProj.LoadIdentity();
-			}
-			~Camera() { }
-
 		protected:
-
-			void CalculateMatrices()
-			{
-				Matrix::Inverse(m_invView, m_view);
-				Matrix::Multiply(m_viewProj, m_view, m_proj);
-				m_frustum.Update(m_view, m_proj);
-			}
 
 			Matrix m_view;
 			Matrix m_invView;

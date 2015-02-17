@@ -585,6 +585,9 @@ namespace Apoc3D
 			StringUtils::Trim(Targets[i]);
 			StringUtils::ToLowerCase(Targets[i]);
 		}
+
+		sect->TryGetAttributeBool(L"IsDebug", IsDebug);
+		sect->TryGetAttributeBool(L"NoOptimization", NoOptimization);
 	}
 	void ProjectResEffect::Save(ConfigurationSection* sect, bool savingBuild)
 	{
@@ -639,7 +642,12 @@ namespace Apoc3D
 				targetsStr.append(L" | ");
 		}
 		sect->AddAttributeString(L"Targets", targetsStr);
+
+
+		sect->AddAttributeBool(L"IsDebug", IsDebug);
+		sect->AddAttributeBool(L"NoOptimization", NoOptimization);
 	}
+
 	List<String> ProjectResEffect::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }
 	bool ProjectResEffect::IsOutdated()
 	{

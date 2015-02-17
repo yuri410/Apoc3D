@@ -117,9 +117,10 @@ namespace APBuild
 
 		String DestFile;
 
-		bool IsDebug;
-
 		List<String> Targets;
+
+		bool IsDebug = false;
+		bool NoOptimization = false;
 
 		void Parse(const ConfigurationSection* sect);
 	};

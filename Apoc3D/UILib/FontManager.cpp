@@ -23,6 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "FontManager.h"
+#include "UICommon.h"
+
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
 #include "apoc3d/Graphics/RenderSystem/Texture.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
@@ -47,7 +49,7 @@ namespace Apoc3D
 		enum FontFlags
 		{
 			FF_None,
-			FF_HasLuminance = 1,
+			FF_HasLuminance = 1,	// Some fonts has luminance in addition to alpha
 			FF_HasDrawOffset = 2
 		};
 
@@ -157,9 +159,9 @@ namespace Apoc3D
 			}
 			if (!hasMetrics)
 			{
-				m_height = static_cast<float>(maxHeight);
+				m_height = (float)maxHeight;
 			}
-			m_heightInt = static_cast<int>(m_height+0.5f);
+			m_heightInt = (int32)(m_height + 0.5f);
 
 			m_maxGlyphWidth = maxWidth;
 			m_maxGlyphHeight = maxHeight;
@@ -190,7 +192,7 @@ namespace Apoc3D
 					
 					bk.BucketIndex = i * m_edgeCount+j;
 					bk.CurrentGlyph = -1;
-					bk.SrcRect = Apoc3D::Math::RectangleF(static_cast<float>(j*maxHeight), static_cast<float>(i*maxHeight), static_cast<float>(maxHeight), static_cast<float>(maxHeight));
+					bk.SrcRect = Apoc3D::Math::RectangleF((float)(j*maxHeight), (float)(i*maxHeight), (float)maxHeight, (float)maxHeight);
 				}
 			}
 			m_lineBucketsFreqClassificationCount = new int[m_edgeCount*MaxFreq];
@@ -269,7 +271,7 @@ namespace Apoc3D
 				for (Character& ch : m_charTable.getValueAccessor())
 				{
 					Glyph& g = m_glyphList[ch.GlyphIndex];
-					ch.AdvanceX = static_cast<float>(g.Width);
+					ch.AdvanceX = (float)g.Width;
 				}
 			}
 				
@@ -310,51 +312,9 @@ namespace Apoc3D
 			return false;
 		}
 
-		// UTF-16 BMP(0) private range: U+E000..U+F8FF
-		// U+F8E0..U+F8F0 for font system control codes
-		const uint16 ControlCode_Color = 0xF8E0;
-		const uint16 ControlCode_Font = 0xF8E1;
-		const uint16 ControlCode_Move = 0xF8E2;		// move drawing position
-
-		static bool isControlCode(int32 code) { return code >= 0xF8E0 && code <= 0xF8F0; }
-
-		String Font::MakeColorControl(uint32 cv)
-		{
-			String r;
-			r.append(1, ControlCode_Color);
-			char16_t ar = (char16_t)((cv >> 16) & 0xffff);
-			char16_t gb = (char16_t)(cv & 0xffff);
-			r.append(1, ar);
-			r.append(1, gb);
-			return r;
-		}
-		String Font::MakeMoveControl(const Point& position, bool passConditionCheck, bool relative)
-		{
-			String r;
-			r.append(1, ControlCode_Move);
-
-			uint32 flags = passConditionCheck ? 1 : 0;
-			flags |= (relative ? 1 : 0) << 1;
-
-			uint16 x = (uint16)position.X;
-			uint16 y = (uint16)position.Y;
-
-			// 15 bit
-			x &= 0x7FFF;
-			y &= 0x7FFF;
-
-			uint32 data = (flags << 30) | (x << 15) | y;
-
-			char16_t ch1 = (char16_t)((data >> 16) & 0xffff);
-			char16_t ch2 = (char16_t)(data & 0xffff);
-			r.append(1, ch1);
-			r.append(1, ch2);
-			return r;
-		}
-
 		void Font::RegisterCustomGlyph(int32 code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, short top, float advanceX)
 		{
-			assert(!isControlCode(code));
+			assert(!ControlCodes::isControlCode(code));
 
 			CustomGlyph cg;
 			cg._Character = code;
@@ -369,25 +329,25 @@ namespace Apoc3D
 		}
 		void Font::RegisterCustomGlyph(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect)
 		{
-			RegisterCustomGlyph(charCode, graphic, srcRect, 0, 0, static_cast<float>(srcRect.Width));
+			RegisterCustomGlyph(charCode, graphic, srcRect, 0, 0, (float)srcRect.Width);
 		}
 
 		void Font::RegisterCustomGlyphAligned(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect,
 			int32 padLeft, int32 padRight, CustomGlyphAlignment vertAlignment, int32 vaValue)
 		{
 			short left = -padLeft;
-			float advX = static_cast<float>(srcRect.Width - padLeft - padRight);
+			float advX = (float)(srcRect.Width - padLeft - padRight);
 
 			if (vertAlignment == CGA_Center)
 			{
-				int32 top = (getLineHeightInt() - static_cast<int32>(m_descender)-srcRect.Height) / 2 + vaValue;
+				int32 top = (getLineHeightInt() - (int32)m_descender - srcRect.Height) / 2 + vaValue;
 				RegisterCustomGlyph(charCode, graphic, srcRect, left, top, advX);
 			}
 			else if (vertAlignment == CGA_Bottom)
 			{
 				// bottom to baseline
 				int32 adjustedContentHeight = srcRect.Height - vaValue;
-				int32 top = getLineHeightInt() - static_cast<int32>(m_descender)-adjustedContentHeight;
+				int32 top = getLineHeightInt() - (int32)m_descender - adjustedContentHeight;
 				RegisterCustomGlyph(charCode, graphic, srcRect, left, top, advX);
 			}
 			else if (vertAlignment == CGA_Top)
@@ -428,14 +388,14 @@ namespace Apoc3D
 
 					srcRect.X += offX;
 					srcRect.Y += offY;
-					srcRect.Width = static_cast<float>(patchWidth);
-					srcRect.Height = static_cast<float>(patchHeight);
+					srcRect.Width = (float)patchWidth;
+					srcRect.Height = (float)patchHeight;
 
 					Apoc3D::Math::RectangleF rect;
 					rect.X = x + glyphLeft + offX;
 					rect.Y = y + glyphTop + offY;
-					rect.Width = static_cast<float>(patchWidth);
-					rect.Height = static_cast<float>(patchHeight);
+					rect.Width = (float)patchWidth;
+					rect.Height = (float)patchHeight;
 
 					rect.X += rndDir.X * _srcRect.Width * progress;
 					rect.Y += rndDir.Y * _srcRect.Height * progress;
@@ -580,8 +540,8 @@ namespace Apoc3D
 							Apoc3D::Math::RectangleF rect;
 							rect.X = x + chdef.Left;
 							rect.Y = y + chdef.Top;
-							rect.Width = static_cast<float>(glyph.Width);
-							rect.Height = static_cast<float>(glyph.Height);
+							rect.Width = (float)glyph.Width;
+							rect.Height = (float)glyph.Height;
 							
 							sprite->Draw(m_font, rect, &glyph.MappedRectF, color);
 						}
@@ -604,8 +564,8 @@ namespace Apoc3D
 								Apoc3D::Math::RectangleF rect;
 								rect.X = x + cgdef->Left;
 								rect.Y = y + cgdef->Top;
-								rect.Width = static_cast<float>(cgdef->SrcRectF.Width);
-								rect.Height = static_cast<float>(cgdef->SrcRectF.Height);
+								rect.Width = (float)cgdef->SrcRectF.Width;
+								rect.Height = (float)cgdef->SrcRectF.Height;
 
 								sprite->Draw(cgdef->Graphic, rect, &cgdef->SrcRectF, color);
 							}
@@ -629,13 +589,13 @@ namespace Apoc3D
 		void Font::DrawStringDissolving(Sprite* sprite, const String& text, const Point& pos, uint color, float length, 
 			int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale)
 		{
-			DrawStringDissolving(sprite, text, static_cast<float>(pos.X), static_cast<float>(pos.Y), color, length, 
+			DrawStringDissolving(sprite, text, (float)pos.X, (float)pos.Y, color, length,
 				dissolvingCount, dissolvePatchSize, maxDissolvingScale);
 		}
 
-		static size_t GetLength(const String& text, int32 length)
+		static int32 GetLength(const String& text, int32 length)
 		{
-			return length != -1 ? Math::Min((size_t)length, text.length()) : text.length();
+			return length != -1 ? Math::Min(length, (int32)text.length()) : text.length();
 		}
 
 		void Font::DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length, float extLineSpace, wchar_t suffix, float hozShrink)
@@ -669,18 +629,19 @@ namespace Apoc3D
 		void Font::DrawStringExT(Sprite* sprite, const String& text, UnitType x, UnitType y, uint color, 
 			int _width, int length, UnitType _extLineSpace, wchar_t suffix, float hozShrink)
 		{
-			const float extLineSpace = static_cast<float>(_extLineSpace);
-			const float width = static_cast<float>(_width);
+			const float extLineSpace = (float)_extLineSpace;
+			const float width = (float)_width;
 
-			const size_t len = GetLength(text, length);
+			const int32 len = GetLength(text, length);
 			const PointF orig = GetOrigin(x, y);
 			PointF pos = orig;
 
-			for (size_t i = 0; i < len; i++)
+			for (int32 i = 0; i < len; i++)
 			{
 				wchar_t ch = text[i];
 				ScanColorControlCodes(text, ch, i, len, &color);
 				ScanMoveControlCode(text, ch, i, len, &orig, &pos);
+				ScanUselessControlCodes(text, ch, i, len);
 
 				DrawCharacter(sprite, ch, pos, color, hozShrink, extLineSpace, width, orig.X, true);
 			}
@@ -697,7 +658,7 @@ namespace Apoc3D
 
 		void Font::DrawStringGradient(Sprite* sprite, const String& text, int _x, int _y, uint _startColor, uint _endColor)
 		{
-			const size_t len = text.length();
+			const int32 len = (int32)text.length();
 
 			const Color4 startColor(_startColor);
 			const Color4 endColor(_endColor);
@@ -705,7 +666,7 @@ namespace Apoc3D
 			const PointF orig = GetOrigin(_x, _y);
 			PointF pos = orig;
 
-			for (size_t i = 0; i < len; i++)
+			for (int32 i = 0; i < len; i++)
 			{
 				float lerpAmount = len > 1 ? (i / (float)(len - 1)) : 0;
 
@@ -763,8 +724,8 @@ namespace Apoc3D
 					if (pixelAligned)
 					{
 						Apoc3D::Math::Rectangle rect;
-						rect.X = static_cast<int32>(x+0.5f) + chdef.Left;
-						rect.Y = static_cast<int32>(y+0.5f) + chdef.Top;
+						rect.X = (int32)(x + 0.5f) + chdef.Left;
+						rect.Y = (int32)(y + 0.5f) + chdef.Top;
 						rect.Width = glyph.Width;
 						rect.Height = glyph.Height;
 						SetUseFreq(glyph);
@@ -776,8 +737,8 @@ namespace Apoc3D
 						Apoc3D::Math::RectangleF rect;
 						rect.X = x + chdef.Left;
 						rect.Y = y + chdef.Top;
-						rect.Width = static_cast<float>(glyph.Width);
-						rect.Height = static_cast<float>(glyph.Height);
+						rect.Width = (float)glyph.Width;
+						rect.Height = (float)glyph.Height;
 						SetUseFreq(glyph);
 
 						sprite->Draw(m_font, rect, &glyph.MappedRectF, color);
@@ -805,18 +766,18 @@ namespace Apoc3D
 						if (pixelAligned)
 						{
 							Apoc3D::Math::Rectangle rect;
-							rect.X = static_cast<int32>(x+0.5f) + cgdef->Left;
-							rect.Y = static_cast<int32>(y+0.5f) + cgdef->Top;
-							rect.Width = static_cast<int32>(cgdef->SrcRectF.Width);
-							rect.Height = static_cast<int32>(cgdef->SrcRectF.Height);
+							rect.X = (int32)(x + 0.5f) + cgdef->Left;
+							rect.Y = (int32)(y + 0.5f) + cgdef->Top;
+							rect.Width = (int32)cgdef->SrcRectF.Width;
+							rect.Height = (int32)cgdef->SrcRectF.Height;
 
 							sprite->Draw(cgdef->Graphic, rect, &cgdef->SrcRect, color);
 						}
 						else
 						{
 							Apoc3D::Math::RectangleF rect;
-							rect.X = x + static_cast<float>(cgdef->Left);
-							rect.Y = y + static_cast<float>(cgdef->Top);
+							rect.X = x + (float)cgdef->Left;
+							rect.Y = y + (float)cgdef->Top;
 							rect.Width = cgdef->SrcRectF.Width;
 							rect.Height = cgdef->SrcRectF.Height;
 
@@ -834,10 +795,9 @@ namespace Apoc3D
 			}
 		}
 		
-		template <typename SizeType>
-		FORCE_INLINE bool Font::ScanColorControlCodes(const String& str, wchar_t& cur, SizeType& i, SizeType len, uint* color)
+		FORCE_INLINE bool Font::ScanColorControlCodes(const String& str, wchar_t& cur, int32& i, int32 len, uint* color)
 		{
-			if (cur == ControlCode_Color)
+			if (cur == ControlCodes::Font_Color)
 			{
 				if (i + 3 < len)
 				{
@@ -856,13 +816,9 @@ namespace Apoc3D
 			return false;
 		}
 
-		template bool Font::ScanColorControlCodes<size_t>(const String& str, wchar_t& cur, size_t& i, size_t len, uint* color);
-		template bool Font::ScanColorControlCodes<int32>(const String& str, wchar_t& cur, int32& i, int32 len, uint* color);
-
-		template <typename SizeType>
-		FORCE_INLINE bool Font::ScanMoveControlCode(const String& str, wchar_t& cur, SizeType& i, SizeType len, const PointF* orig, PointF* pos)
+		FORCE_INLINE bool Font::ScanMoveControlCode(const String& str, wchar_t& cur, int32& i, int32 len, const PointF* orig, PointF* pos)
 		{
-			if (cur == ControlCode_Move)
+			if (cur == ControlCodes::Font_Move)
 			{
 				if (i + 3 < len)
 				{
@@ -875,11 +831,17 @@ namespace Apoc3D
 
 						uint32 flags = data >> 30;
 
-						uint16 dstxi = (data >> 15) & 0x7FFF;
-						uint16 dstyi = data & 0x7FFF;
+						uint16 dstxi = (data >> 15) & 0xffff;
+						uint16 dstyi = data & 0xffff;
 
-						float dstx = static_cast<float>(dstxi);
-						float dsty = static_cast<float>(dstyi);
+						dstxi = ~dstxi;
+						dstyi = ~dstyi;
+
+						dstxi &= 0x7FFF;
+						dstyi &= 0x7FFF;
+
+						float dstx = (float)dstxi;
+						float dsty = (float)dstyi;
 
 						bool passConditionCheck = flags & 1;
 						bool relative = (flags & 2) != 0;
@@ -914,17 +876,35 @@ namespace Apoc3D
 			return false;
 		}
 
-		template bool Font::ScanMoveControlCode<size_t>(const String& str, wchar_t& cur, size_t& i, size_t len, const PointF* orig, PointF* pos);
-		template bool Font::ScanMoveControlCode<int32>(const String& str, wchar_t& cur, int32& i, int32 len, const PointF* orig, PointF* pos);
+		FORCE_INLINE void Font::ScanUselessControlCodes(const String& str, wchar_t& cur, int32& i, int32 len)
+		{
+			if (cur == ControlCodes::Label_HyperLinkStart)
+			{
+				if (i + 2 < len)
+				{
+					i += 2;
+					cur = str[i];
+				}
+			}
+			else if (cur == ControlCodes::Label_HyperLinkEnd)
+			{
+				if (i + 1 < len)
+				{
+					i++;
+					cur = str[i];
+				}
+			}
+		}
+
 
 
 		PointF Font::GetOrigin(int32 x, int32 y) const
 		{
-			PointF r = { static_cast<float>(x), static_cast<float>(y) + m_descender };
+			PointF r = { (float)x, (float)y + m_descender };
 			if (m_hasDrawOffset)
 			{
-				r.X -= static_cast<int32>(m_drawOffset.X);
-				r.Y -= static_cast<int32>(m_drawOffset.Y);
+				r.X -= (int32)m_drawOffset.X;
+				r.Y -= (int32)m_drawOffset.Y;
 			}
 			return r;
 		}
@@ -939,15 +919,16 @@ namespace Apoc3D
 
 		int Font::CalculateLineCount(const String& text, int width)
 		{
-			const size_t len = text.length();
+			const int32 len = (int32)text.length();
 
 			int lineCount = 1;
 			float x = 0;
-			for (size_t i = 0; i < len; i++)
+			for (int32 i = 0; i < len; i++)
 			{
 				wchar_t ch = text[i]; 
 				ScanColorControlCodes(text, ch, i, len, nullptr);
 				ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
+				ScanUselessControlCodes(text, ch, i, len);
 
 				if (ch != '\n')
 				{
@@ -979,18 +960,23 @@ namespace Apoc3D
 			}
 			return lineCount;
 		}
-		Point Font::MeasureString(const String& text)
+		Point Font::MeasureString(const String& text, int32 start, int32 end)
 		{
 			PointF result = PointF(0, m_height);
-			const size_t len = text.length();
+			
+			if (start < 0) start = 0;
+			if (end >= (int32)text.size()) end = (int32)text.size() - 1;
+
+			const int32 len = end + 1;
 
 			float x = 0.f;
 			float y = m_height + m_lineGap + m_descender;
-			for (size_t i = 0; i < len; i++)
+			for (int32 i = start; i <= end; i++)
 			{
 				wchar_t ch = text[i];
 				ScanColorControlCodes(text, ch, i, len, nullptr);
 				ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
+				ScanUselessControlCodes(text, ch, i, len);
 
 				if (ch != '\n')
 				{
@@ -1023,24 +1009,29 @@ namespace Apoc3D
 					result.Y = y;
 			}
 
-			return Point(static_cast<int32>(result.X), static_cast<int32>(result.Y));
+			return Point((int32)result.X, (int32)result.Y);
+		}
+		Point Font::MeasureString(const String& text)
+		{
+			return MeasureString(text, 0, (int32)text.size() - 1);
 		}
 		int Font::FitSingleLineString(const String& text, int width)
 		{
 			int chCount = 0;
 
 			PointF result = PointF(0, m_height);
-			const size_t len = text.length();
+			const int32 len = (int32)text.length();
 
-			int lineSpacing = static_cast<int>(m_height + m_lineGap+0.5f);
+			int32 lineSpacing = (int32)(m_height + m_lineGap + 0.5f);
 
 			float x = 0.f;
 			float y = lineSpacing + m_descender;
-			for (size_t i = 0; i < len; i++)
+			for (int32 i = 0; i < len; i++)
 			{
 				wchar_t ch = text[i];
 				ScanColorControlCodes(text, ch, i, len, nullptr);
 				ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
+				ScanUselessControlCodes(text, ch, i, len);
 
 				if (IgnoreCharDrawing(ch))
 					continue;
@@ -1090,6 +1081,7 @@ namespace Apoc3D
 					wchar_t ch = text[i];
 					ScanColorControlCodes(text, ch, i, len, nullptr);
 					ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
+					ScanUselessControlCodes(text, ch, i, len);
 
 					bool isBlankCh = ch == ' ' || ch == '\t';
 					if (isBlankCh)
@@ -1154,6 +1146,7 @@ namespace Apoc3D
 					wchar_t ch = text[i]; 
 					ScanColorControlCodes(text, ch, i, len, nullptr);
 					ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
+					ScanUselessControlCodes(text, ch, i, len);
 
 					wchar_t nch = text[i+1];
 
@@ -1244,8 +1237,8 @@ namespace Apoc3D
 			assert(glyph.Height <= m_selectTextureSize && glyph.Height >=0);
 
 
-			Apoc3D::Math::Rectangle lockRect(static_cast<int32>(glyph.MappedRect.X), static_cast<int32>(glyph.MappedRect.Y),
-				static_cast<int32>(glyph.MappedRect.Width), static_cast<int32>(glyph.MappedRect.Height));
+			Apoc3D::Math::Rectangle lockRect((int32)glyph.MappedRect.X, (int32)glyph.MappedRect.Y,
+				(int32)glyph.MappedRect.Width, (int32)glyph.MappedRect.Height);
 			DataRectangle dataRect = m_font->Lock(0, LOCK_None, lockRect);
 
 			if (m_hasLuminance)
@@ -1412,8 +1405,8 @@ namespace Apoc3D
 				{
 					m_buckets[i*m_edgeCount+j+k].CurrentGlyph = g->Index;
 				}
-				g->MappedRect = Apoc3D::Math::Rectangle(static_cast<int>(bukRect.X), static_cast<int>(bukRect.Y), g->Width, g->Height);
-				g->MappedRectF = Apoc3D::Math::RectangleF(bukRect.X, bukRect.Y, static_cast<float>(g->Width), static_cast<float>(g->Height));
+				g->MappedRect = Apoc3D::Math::Rectangle((int32)bukRect.X, (int32)bukRect.Y, g->Width, g->Height);
+				g->MappedRectF = Apoc3D::Math::RectangleF(bukRect.X, bukRect.Y, (float)g->Width, (float)g->Height);
 				g->IsMapped = true;
 			}
 			else
@@ -1502,15 +1495,15 @@ namespace Apoc3D
 			bytesUsed /= 1048576;
 
 			String msg = L"[FontManager] ";
-			msg.append(StringUtils::IntToString(m_fontTable.getCount()));
+			msg += StringUtils::IntToString(m_fontTable.getCount());
 			msg.append(L" fonts currently loaded using ");
-			msg.append(StringUtils::IntToString(bytesUsed));
+			msg += StringUtils::IntToString(bytesUsed);
 			msg.append(L"MB");
 
 			if (numCmpFont>0)
 			{
 				msg.append(L" including ");
-				msg.append(StringUtils::IntToString(numCmpFont));
+				msg += StringUtils::IntToString(numCmpFont);
 				msg.append(L" complex fonts.");
 			}
 			else
@@ -1558,9 +1551,9 @@ namespace Apoc3D
 					{
 						FileLocation* fl = up_cast<FileLocation*>(fnt->m_resource);
 						String name = fl ? PathUtils::GetFileNameNoExt(fl->getName()) : fnt->m_resource->getName();
-						msg.append(name);
+						msg += name;
 						msg.append(L"(");
-						msg.append(StringUtils::IntToString(fnt->m_selectTextureSize));
+						msg += StringUtils::IntToString(fnt->m_selectTextureSize);
 						msg.append(L")");
 						counter++;
 

@@ -1,4 +1,5 @@
 #include "DoubleMath.h"
+#include "Ray.h"
 
 namespace Apoc3D
 {
@@ -124,6 +125,15 @@ namespace Apoc3D
 
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+
+		RaySegmentd raysegdtof(const Math::RaySegment& m)
+		{
+			RaySegmentd r;
+			r.Start = vec3ftod(m.Start);
+			r.End = vec3ftod(m.End);
+			return r;
+		}
 	}
 
 }

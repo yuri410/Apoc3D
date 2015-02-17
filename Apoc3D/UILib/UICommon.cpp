@@ -31,6 +31,8 @@
 #include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
 #include "apoc3d/Platform/API.h"
 
+#include "apoc3d/Math/Color.h"
+
 #include "FontManager.h"
 #include "SystemUIImpl.h"
 
@@ -263,19 +265,28 @@ namespace Apoc3D
 		
 		void TextRenderSettings::Draw(Sprite* sprite, Font* font, const String& text, const Apoc3D::Math::Rectangle& area, bool enabled) const
 		{
-			ColorValue textColor = enabled ? TextColor : TextColorDisabled;
-			ColorValue textShadowColor = enabled ? TextShadowColor : TextShadowColorDisabled;
-
-			if (CV_GetColorA(textColor) == 0 && (!HasTextShadow || CV_GetColorA(textShadowColor) == 0))
-				return;
-
 			Apoc3D::Math::Rectangle modArea = TextPadding.ShrinkRect(area);
 
 			Point pos = modArea.getTopLeft();
 			Point size = modArea.getSize();
 
-			// x dir alignment
 			Point textPos = pos + GetTextOffset(font, text, size);
+
+			DrawNoAlignment(sprite, font, text, textPos, enabled);
+		}
+
+		void TextRenderSettings::Draw(Sprite* sprite, Font* font, const String& text, const Point& pos, const Point& size, bool enabled) const
+		{
+			Draw(sprite, font, text, Apoc3D::Math::Rectangle(pos, size), enabled);
+		}
+
+		void TextRenderSettings::DrawNoAlignment(Sprite* sprite, Font* font, const String& text, const Point& textPos, bool enabled) const
+		{
+			ColorValue textColor = enabled ? TextColor : TextColorDisabled;
+			ColorValue textShadowColor = enabled ? TextShadowColor : TextShadowColorDisabled;
+
+			if (CV_GetColorA(textColor) == 0 && (!HasTextShadow || CV_GetColorA(textShadowColor) == 0))
+				return;
 
 			if (HasTextShadow)
 			{
@@ -285,12 +296,63 @@ namespace Apoc3D
 
 			font->DrawString(sprite, text, textPos, textColor);
 		}
-
-		void TextRenderSettings::Draw(Sprite* sprite, Font* font, const String& text, const Point& pos, const Point& size, bool enabled) const
+		void TextRenderSettings::DrawHyperLinkText(Sprite* sprite, Font* font, const String& text, const Point& pos, bool enabled, bool selected, float underlineWidth) const
 		{
-			Draw(sprite, font, text, Apoc3D::Math::Rectangle(pos, size), enabled);
-		}
+			ColorValue textColor;
+			if (selected)
+			{
+				textColor = enabled ? TextSelectionColor : TextSelectionColorDisabled;
+			}
+			else
+			{
+				textColor = enabled ? TextColor : TextColorDisabled;
+			}
 
+			ColorValue shadowColor;
+			Point shadowOffset;
+			if (!HasTextShadow)
+			{
+				Color4 c(textColor);
+				Color4::Negate(c, c);
+				c.Alpha = 1;
+
+				shadowColor = c.ToArgb();
+				shadowOffset = Point(1, 1);
+			}
+			else
+			{
+				shadowColor = TextShadowColor;
+				shadowOffset = TextShadowOffset;
+			}
+
+			ColorValue textShadowColor = 0;
+			if (selected && enabled)
+			{
+				textShadowColor = shadowColor;
+			}
+
+			float ascender, descender;
+			font->getStandardMetrics(ascender, descender);
+
+			Point textSize = font->MeasureString(text);
+			Point underlineStart = pos +Point(0, textSize.Y);
+			Point underlineEnd = pos + textSize;
+			underlineStart.Y -= (int32)descender;
+			underlineEnd.Y -= (int32)descender;
+			if (textShadowColor)
+			{
+				sprite->DrawLine(SystemUI::GetWhitePixel(), underlineStart + shadowOffset,
+					underlineEnd + shadowOffset, textShadowColor, underlineWidth, LineCapOptions::Butt);
+
+				font->DrawString(sprite, text, pos + shadowOffset, textShadowColor);
+			}
+
+			sprite->DrawLine(SystemUI::GetWhitePixel(), underlineStart,
+				underlineEnd, textColor, underlineWidth, LineCapOptions::Butt);
+
+			font->DrawString(sprite, text, pos, textColor);
+		}
+		
 		void TextRenderSettings::DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Apoc3D::Math::Rectangle& area, bool enabled) const
 		{
 			Apoc3D::Math::Rectangle modArea = TextPadding.ShrinkRect(area);
@@ -315,6 +377,27 @@ namespace Apoc3D
 		void TextRenderSettings::DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Point& pos, const Point& size, bool enabled) const
 		{
 			DrawBG(sprite, font, text, selStart, selEnd, Apoc3D::Math::Rectangle(pos, size), enabled);
+		}
+
+		void TextRenderSettings::DrawTextLine(Sprite* sprite, const Point& start, const Point& end, float width, bool enabled, bool selected) const
+		{
+			if (HasTextShadow)
+			{
+				sprite->DrawLine(SystemUI::GetWhitePixel(), start + TextShadowOffset, end + TextShadowOffset,
+					enabled ? TextShadowColor : TextShadowColorDisabled, 1, LineCapOptions::Butt);
+			}
+
+			ColorValue lineColor;
+			if (selected)
+			{
+				lineColor = enabled ? TextSelectionColor : TextSelectionColorDisabled;
+			}
+			else
+			{
+				lineColor = enabled ? TextColor : TextColorDisabled;
+			}
+
+			sprite->DrawLine(SystemUI::GetWhitePixel(), start, end, lineColor, width, LineCapOptions::Butt);
 		}
 
 		Point TextRenderSettings::GetTextOffset(Font* font, const String& text, const Point& areaSize) const
@@ -912,5 +995,61 @@ namespace Apoc3D
 
 		}
 
+
+		/************************************************************************/
+		/* Control Codes                                                        */
+		/************************************************************************/
+
+		String ControlCodes::MakeColorControl(uint32 cv)
+		{
+			if (cv == 0)
+			{
+				// avoid being treated as null terminator
+				// transparent white
+				cv = CV_PackLA(255, 0);
+			}
+
+			String r;
+			r.append(1, Font_Color);
+			char16_t ar = (char16_t)((cv >> 16) & 0xffff);
+			char16_t gb = (char16_t)(cv & 0xffff);
+			r.append(1, ar);
+			r.append(1, gb);
+			return r;
+		}
+		String ControlCodes::MakeMoveControl(const Point& position, bool passConditionCheck, bool relative)
+		{
+			String r;
+			r.append(1, Font_Move);
+
+			uint32 flags = passConditionCheck ? 1 : 0;
+			flags |= (relative ? 1 : 0) << 1;
+
+			uint16 x = ~(uint16)position.X; // avoid being treated as null terminator
+			uint16 y = ~(uint16)position.Y;
+
+			// 15 bit
+			x &= 0x7FFF;
+			y &= 0x7FFF;
+
+			uint32 data = (flags << 30) | (x << 15) | y;
+
+			char16_t ch1 = (char16_t)((data >> 16) & 0xffff);
+			char16_t ch2 = (char16_t)(data & 0xffff);
+			r.append(1, ch1);
+			r.append(1, ch2);
+			return r;
+		}
+
+		String ControlCodes::MakeHyperLink(const String& linkText, uint16 linkID)
+		{
+			String r;
+			r.append(1, Label_HyperLinkStart);
+			r.append(1, ~linkID); // avoid being treated as null terminator
+			r += linkText;
+			r.append(1, Label_HyperLinkEnd);
+
+			return r;
+		}
 	}
 }

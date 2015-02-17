@@ -43,6 +43,8 @@ namespace Sample_GUI
 
 		TextBox* m_testTB;
 
+		Label* m_testLabel;
+
 		float m_signal1 = 0;
 		float m_signal2 = 0;
 

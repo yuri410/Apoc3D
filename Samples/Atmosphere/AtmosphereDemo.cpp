@@ -217,30 +217,30 @@ namespace SampleAtmosphere
 
 		RendererEffectParams::CurrentCamera = m_camera;
 
-		//AutomaticEffect* atfx = up_cast<AutomaticEffect*>(EffectManager::getSingleton().getEffect(L"atmosphere"));
+		AutomaticEffect* atfx = up_cast<AutomaticEffect*>(EffectManager::getSingleton().getEffect(L"atmosphere"));
 
-		//int32 idx = atfx->FindParameterIndex(L"irradianceSampler");
-		//atfx->SetParameterTexture(idx, m_irradianceTex);
+		int32 idx = atfx->FindParameterIndex(L"irradianceSampler");
+		atfx->SetParameterTexture(idx, m_irradianceTex);
 
-		//idx = atfx->FindParameterIndex(L"inscatterSampler");
-		//atfx->SetParameterTexture(idx, m_inscatterTex);
+		idx = atfx->FindParameterIndex(L"inscatterSampler");
+		atfx->SetParameterTexture(idx, m_inscatterTex);
 
-		//idx = atfx->FindParameterIndex(L"transmittanceSampler");
-		//atfx->SetParameterTexture(idx, m_transmittanceTex);
+		idx = atfx->FindParameterIndex(L"transmittanceSampler");
+		atfx->SetParameterTexture(idx, m_transmittanceTex);
 		//AutomaticEffect* atfx = up_cast<AutomaticEffect*>(EffectManager::getSingleton().getEffect(L"TexturedQuad"));
 
 		//int32 idx = atfx->FindParameterIndex(L"tex");
 		//atfx->SetParameterTexture(idx, m_irradianceTex);
-		
-		//DrawQuad(atfx);
 
-		m_device->Clear(CLEAR_ColorAndDepth, CV_Black, 1, 0);
+		DrawQuad(atfx);
 
-		RenderOperationBuffer* ops = m_unitBall->GetRenderOperation(0);
-		if (ops)
-		{
-			m_device->Render(m_skyMtrl, &ops->get(0), ops->getCount(), 0);
-		}
+		//m_device->Clear(CLEAR_ColorAndDepth, CV_Black, 1, 0);
+
+		//RenderOperationBuffer* ops = m_unitBall->GetRenderOperation(0);
+		//if (ops)
+		//{
+		//	m_device->Render(m_skyMtrl, &ops->get(0), ops->getCount(), 0);
+		//}
 
 
 		Game::Draw(time);

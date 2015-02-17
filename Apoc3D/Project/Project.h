@@ -362,6 +362,9 @@ namespace Apoc3D
 
 		List<String> Targets;
 
+		bool IsDebug = false;
+		bool NoOptimization = false;
+
 		virtual ProjectItemType getType() const override { return ProjectItemType::Effect; }
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;

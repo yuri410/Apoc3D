@@ -199,9 +199,7 @@ namespace APBuild
 	void AFXBuildConfig::Parse(const ConfigurationSection* sect)
 	{
 		Name = sect->getName();
-		IsDebug = false;
-		sect->TryGetAttributeBool(L"Debug", IsDebug);
-
+		
 		String srcDesc = sect->getAttribute(L"Source");
 		List<String> srcSets = StringUtils::Split(srcDesc, L"|");
 
@@ -279,6 +277,9 @@ namespace APBuild
 			StringUtils::Trim(tgt);
 			StringUtils::ToLowerCase(tgt);
 		}
+
+		sect->TryGetAttributeBool(L"IsDebug", IsDebug);
+		sect->TryGetAttributeBool(L"NoOptimization", NoOptimization);
 	}
 	void CFXBuildConfig::Parse(const ConfigurationSection* sect)
 	{

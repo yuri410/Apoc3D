@@ -211,7 +211,7 @@ namespace Apoc3D
 				List<ResolvedEffectParameter> m_parameters;
 
 				RenderDevice* m_device;
-				Texture* m_texture;
+				Texture* m_whiteTexture;
 
 				bool m_supportsInstancing = false;
 

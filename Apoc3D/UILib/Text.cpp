@@ -103,6 +103,8 @@ namespace Apoc3D
 
 		void Label::UpdateText()
 		{
+			bool hasHyperLink = m_text.find(ControlCodes::Label_HyperLinkStart) != String::npos;
+
 			if (AutosizeX)
 			{
 				m_lines.Clear();
@@ -112,7 +114,7 @@ namespace Apoc3D
 			{
 				List<String> lines;
 				StringUtils::Split(m_text, lines, L"\n\r");
-
+				
 				List<String> newLines(lines.getCount());
 				for (String& line : lines)
 				{
@@ -151,12 +153,177 @@ namespace Apoc3D
 			{
 				m_size.Y = static_cast<int>(m_fontRef->getTextBackgroundHeight(m_lines.getCount()));
 			}
+
+
+			if (hasHyperLink)
+			{
+				bool isInLink = false;
+				HyperLinkRange hlr;
+
+				for (int32 i = 0; i < m_lines.getCount(); i++)
+				{
+					String linkTextLine;
+
+					const String& line = m_lines[i];
+
+					const wchar_t* str = line.c_str();
+					for (int32 j = 0; j < (int32)line.length(); j++)
+					{
+						if (str[j] == ControlCodes::Label_HyperLinkStart)
+						{
+							if (GotoNextCharacter(i,j))
+							{
+								hlr.ID = ~(uint16)(str[j]);
+
+								if (GotoNextCharacter(i,j))
+								{
+									isInLink = true;
+
+									linkTextLine.append(1, str[j]);
+									hlr.LinkTextLines.Clear();
+									hlr.StartLine = i;
+									hlr.StartIndex = j;
+								}
+							}
+						}
+						else if (str[j] == ControlCodes::Label_HyperLinkEnd)
+						{
+							isInLink = false;
+
+							// goto previous character
+							hlr.EndLine = i;
+							hlr.EndIndex = j;
+
+							GotoPreviousCharacter(hlr.EndLine, hlr.EndIndex);
+
+							if (linkTextLine.size())
+								hlr.LinkTextLines.Add(linkTextLine);
+
+							m_hyperLinks.Add(hlr);
+						}
+						else if (isInLink)
+						{
+							linkTextLine.append(1, str[j]);
+						}
+
+
+						if (i >= m_lines.getCount())
+							break;
+					}
+
+					if (linkTextLine.size())
+						hlr.LinkTextLines.Add(linkTextLine);
+
+				}
+			}
+		}
+
+		bool Label::GotoNextCharacter(int32& lineIdx, int32& chIdx)
+		{
+			chIdx++;
+
+			if (chIdx >= (int32)m_lines[lineIdx].length())
+			{
+				chIdx = 0;
+				lineIdx++;
+
+				while (lineIdx < m_lines.getCount() - 1 && m_lines[lineIdx].length() == 0)
+				{
+					lineIdx++;
+				}
+
+				if (lineIdx >= m_lines.getCount() || chIdx >= (int32)m_lines[lineIdx].length())
+					return false;
+			}
+			return true;
+		}
+		void Label::GotoPreviousCharacter(int32& lineIdx, int32& chIdx)
+		{
+			chIdx--;
+
+			if (chIdx < 0)
+			{
+				lineIdx--;
+
+				while (lineIdx >= 0 && m_lines[lineIdx].length() == 0)
+				{
+					lineIdx--;
+				}
+
+				if (lineIdx < 0)
+				{
+					lineIdx = 0;
+					chIdx = 0;
+				}
+				else
+				{
+					chIdx = Math::Max((int32)m_lines[lineIdx].length() - 1, 0);
+				}
+			}
 		}
 
 		void Label::Update(const GameTime* time)
 		{
 			UpdateEvents_StandardButton(m_mouseHover, m_mouseDown, getAbsoluteArea(),
 				&Label::OnMouseHover, &Label::OnMouseOut, &Label::OnPress, &Label::OnRelease);
+
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			Point cursorPos = mouse->GetPosition();
+			Point drawPos = GetAbsolutePosition();
+
+			for (auto& e : m_hyperLinks)
+			{
+				bool isInteracting = Visible && Enabled && IsInteractive;
+				
+				if (isInteracting)
+				{
+					bool isInteractingArea = false;
+					for (int32 i = e.StartLine; i <= e.EndLine;i++)
+					{
+						Point lineSize;
+						Point lineOff;
+						e.GetLineMetrics(i, m_lines[i], m_fontRef, TextSettings, lineSize, lineOff);
+
+						Apoc3D::Math::Rectangle area(drawPos + lineOff, lineSize);
+
+						if (area.Contains(cursorPos))
+						{
+							isInteractingArea = true;
+							break;
+						}
+					}
+
+					isInteracting &= isInteractingArea;
+				}
+				if (isInteracting)
+				{
+					if (!e.MouseHover)
+					{
+						e.MouseHover = true;
+						eventHyperlinkMouseHover.Invoke(this, e.ID);
+					}
+					if (!e.MouseDown && mouse && mouse->IsLeftPressed())
+					{
+						e.MouseDown = true;
+						eventHyperlinkPress.Invoke(this, e.ID);
+					}
+					else if (e.MouseDown && mouse && mouse->IsLeftUp())
+					{
+						e.MouseDown = false;
+						eventHyperlinkRelease.Invoke(this, e.ID);
+					}
+				}
+				else
+				{
+					if (e.MouseHover)
+					{
+						eventHyperlinkMouseOut.Invoke(this, e.ID);
+					}
+					e.MouseDown = false;
+					e.MouseHover = false;
+				}
+			}
+			
 		}
 		
 		void Label::Draw(Sprite* sprite)
@@ -174,6 +341,25 @@ namespace Apoc3D
 
 					drawPos.Y += m_fontRef->getLineHeightInt();
 				}
+			}
+
+			drawPos = GetAbsolutePosition();
+			for (const auto& e : m_hyperLinks)
+			{
+				for (int32 i = 0; i < e.LinkTextLines.getCount(); i++)
+				{
+					int32 lineIdx = i + e.StartLine;
+					if (!m_lines.isIndexInRange(lineIdx))
+						break;
+
+					Point lineSize;
+					Point lineOff;
+					e.GetLineMetrics(lineIdx, m_lines[lineIdx], m_fontRef, TextSettings, lineSize, lineOff);
+
+
+					TextSettings.DrawHyperLinkText(sprite, m_fontRef, e.LinkTextLines[i], lineOff + drawPos, Enabled, e.MouseHover, 1);
+				}
+
 			}
 		}
 
@@ -204,6 +390,40 @@ namespace Apoc3D
 				UpdateText();
 			}
 		}
+
+		void Label::HyperLinkRange::GetLineMetrics(int32 i, const String& line, Font* fnt, TextRenderSettings& ts, Point& size, Point& off) const
+		{
+			Point lineSize = fnt->MeasureString(line);
+			Point tofs = ts.GetTextOffset(lineSize, lineSize);
+
+			if (i == StartLine)
+			{
+				off.X = fnt->MeasureString(line, 0, StartIndex - 2).X;
+			}
+			else
+			{
+				off.X = 0;
+			}
+			off.Y = fnt->getLineHeightInt() * i;
+
+			if (i == StartLine && i == EndLine)
+			{
+				size = fnt->MeasureString(line, StartIndex, EndIndex);
+			}
+			else if (i == EndLine)
+			{
+				size = fnt->MeasureString(line, 0, EndIndex);
+			}
+			else if (i == StartLine)
+			{
+				size = fnt->MeasureString(line, StartIndex, (int32)line.size());
+			}
+			else
+			{
+				size = fnt->MeasureString(line);
+			}
+		}
+		
 		/************************************************************************/
 		/*   TextBox                                                            */
 		/************************************************************************/
