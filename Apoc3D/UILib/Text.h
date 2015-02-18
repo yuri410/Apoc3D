@@ -14,7 +14,7 @@ namespace Apoc3D
 			RTTI_DERIVED(Label, Control);
 		public:
 			typedef EventDelegate<Label*> LabelEvent;
-			typedef EventDelegate<Label*, int16> LabelHyperLinkEvent;
+			typedef EventDelegate<Label*, uint16> LabelHyperLinkEvent;
 
 			Label(Font* font, const Point& position, const String& text);
 			Label(Font* font, const Point& position, const String& text, int width, TextHAlign alignment = TextHAlign::Left);
@@ -39,6 +39,9 @@ namespace Apoc3D
 			void setWidth(int v);
 
 			bool isMouseHover() const { return m_mouseHover; }
+			bool isMouseHoverLinks() const { return m_mouseHoverLinks; }
+
+			const Apoc3D::Math::Rectangle& getMouseHoverLinksArea() const { return m_mouseHoverLinkArea; }
 
 			TextRenderSettings TextSettings;
 
@@ -92,7 +95,9 @@ namespace Apoc3D
 
 			bool m_mouseHover = false;
 			bool m_mouseDown = false;
-			
+			bool m_mouseHoverLinks = false;
+
+			Apoc3D::Math::Rectangle m_mouseHoverLinkArea;
 		};
 
 		class APAPI TextBox : public ScrollableControl

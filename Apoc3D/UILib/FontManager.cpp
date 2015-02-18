@@ -1079,9 +1079,9 @@ namespace Apoc3D
 				for (int32 i = 0; i < len; i++)
 				{
 					wchar_t ch = text[i];
-					ScanColorControlCodes(text, ch, i, len, nullptr);
-					ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
-					ScanUselessControlCodes(text, ch, i, len);
+					//ScanColorControlCodes(text, ch, i, len, nullptr);
+					//ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
+					//ScanUselessControlCodes(text, ch, i, len);
 
 					bool isBlankCh = ch == ' ' || ch == '\t';
 					if (isBlankCh)
@@ -1144,9 +1144,9 @@ namespace Apoc3D
 				for (int32 i = 0; i < len; i++)
 				{
 					wchar_t ch = text[i]; 
-					ScanColorControlCodes(text, ch, i, len, nullptr);
-					ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
-					ScanUselessControlCodes(text, ch, i, len);
+					//ScanColorControlCodes(text, ch, i, len, nullptr);
+					//ScanMoveControlCodeNoSkip(text, ch, i, len, nullptr, nullptr);
+					//ScanUselessControlCodes(text, ch, i, len);
 
 					wchar_t nch = text[i+1];
 

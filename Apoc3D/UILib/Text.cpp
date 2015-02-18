@@ -179,6 +179,7 @@ namespace Apoc3D
 								{
 									isInLink = true;
 
+									linkTextLine.clear();
 									linkTextLine.append(1, str[j]);
 									hlr.LinkTextLines.Clear();
 									hlr.StartLine = i;
@@ -271,6 +272,8 @@ namespace Apoc3D
 			Point cursorPos = mouse->GetPosition();
 			Point drawPos = GetAbsolutePosition();
 
+			m_mouseHoverLinks = false;
+
 			for (auto& e : m_hyperLinks)
 			{
 				bool isInteracting = Visible && Enabled && IsInteractive;
@@ -278,6 +281,9 @@ namespace Apoc3D
 				if (isInteracting)
 				{
 					bool isInteractingArea = false;
+
+					bool firstArea = true;
+					Apoc3D::Math::Rectangle totalArea;
 					for (int32 i = e.StartLine; i <= e.EndLine;i++)
 					{
 						Point lineSize;
@@ -289,8 +295,21 @@ namespace Apoc3D
 						if (area.Contains(cursorPos))
 						{
 							isInteractingArea = true;
+
+							if (firstArea)
+								totalArea = area;
+							else
+								totalArea = Apoc3D::Math::Rectangle::Union(totalArea, area);
+
+							m_mouseHoverLinks = true;
 							break;
 						}
+					}
+
+					if (isInteractingArea)
+					{
+						m_mouseHoverLinks = true;
+						m_mouseHoverLinkArea = totalArea;
 					}
 
 					isInteracting &= isInteractingArea;
@@ -324,6 +343,7 @@ namespace Apoc3D
 				}
 			}
 			
+
 		}
 		
 		void Label::Draw(Sprite* sprite)
