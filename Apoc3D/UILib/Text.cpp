@@ -103,6 +103,8 @@ namespace Apoc3D
 
 		void Label::UpdateText()
 		{
+			m_hyperLinks.Clear();
+
 			bool hasHyperLink = m_text.find(ControlCodes::Label_HyperLinkStart) != String::npos;
 
 			if (AutosizeX)

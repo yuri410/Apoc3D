@@ -1,0 +1,20 @@
+#include "blurtest.fxh"
+
+sampler2D tex : register(s0);
+
+float4 main(float2 uv : TEXCOORD0) : COLOR
+{
+	float2 c = float2(TEX_WIDTH, TEX_HEIGHT) * uv / 2;
+
+	float2 cfrac = frac(c);
+
+	float4 colors = tex2D(tex, uv);
+
+	float lvl = lerp(
+		lerp(colors[0], colors[1], cfrac.x),
+		lerp(colors[2], colors[3], cfrac.x), cfrac.y);
+	//int idx = ic.y * 2 + ic.x;
+	
+	//float lvl = tex2D(tex, uv)[idx];
+	return float4(lvl, lvl, lvl, 1);
+}

@@ -1,0 +1,13 @@
+#include "blurtest.fxh"
+
+sampler2D tex : register(s0);
+
+float4 main(float2 uv : TEXCOORD0) : COLOR
+{
+	float4 r;
+	r[0] = tex2D(tex, uv).r;
+	r[1] = tex2D(tex, uv + float2(1.0 / TEX_WIDTH, 0.0)).r;
+	r[2] = tex2D(tex, uv + float2(0.0, 1.0 / TEX_HEIGHT)).r;
+	r[3] = tex2D(tex, uv + float2(1.0 / TEX_WIDTH, 1.0 / TEX_HEIGHT)).r;
+	return r;
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<Root>
+    <VS>
+        <viewportSize Usage="sv2_viewportsize" />
+        <world Usage="tr_world" />
+    </VS>
+    <PS>
+        <tex Usage="" AddressU="Clamp" AddressV="Clamp" MagFilter="Linear" MinFilter="Linear" MipFilter="None" />
+      <weights Usage="" />
+      <offsets Usage="" />
+    </PS>
+</Root>

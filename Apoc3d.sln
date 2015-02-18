@@ -48,6 +48,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Atmosphere", "Samples\Atmosphere\Atmosphere.vcxproj", "{0BA36C1A-725E-4A71-9AEA-3453AE7F012F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BlurTest", "Samples\BlurTest\BlurTest.vcxproj", "{007D67B8-EF36-4A3D-8916-C812324AA97A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -190,6 +192,15 @@ Global
 		{0BA36C1A-725E-4A71-9AEA-3453AE7F012F}.Release_Static|Win32.ActiveCfg = Release_Static|Win32
 		{0BA36C1A-725E-4A71-9AEA-3453AE7F012F}.Release_Static|Win32.Build.0 = Release_Static|Win32
 		{0BA36C1A-725E-4A71-9AEA-3453AE7F012F}.Release_Static|x64.ActiveCfg = Release_Static|Win32
+		{007D67B8-EF36-4A3D-8916-C812324AA97A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{007D67B8-EF36-4A3D-8916-C812324AA97A}.Debug|Win32.Build.0 = Debug|Win32
+		{007D67B8-EF36-4A3D-8916-C812324AA97A}.Debug|x64.ActiveCfg = Debug|Win32
+		{007D67B8-EF36-4A3D-8916-C812324AA97A}.Release_DynLib|Win32.ActiveCfg = Release_DynLib|Win32
+		{007D67B8-EF36-4A3D-8916-C812324AA97A}.Release_DynLib|Win32.Build.0 = Release_DynLib|Win32
+		{007D67B8-EF36-4A3D-8916-C812324AA97A}.Release_DynLib|x64.ActiveCfg = Release_DynLib|Win32
+		{007D67B8-EF36-4A3D-8916-C812324AA97A}.Release_Static|Win32.ActiveCfg = Release_Static|Win32
+		{007D67B8-EF36-4A3D-8916-C812324AA97A}.Release_Static|Win32.Build.0 = Release_Static|Win32
+		{007D67B8-EF36-4A3D-8916-C812324AA97A}.Release_Static|x64.ActiveCfg = Release_Static|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -204,5 +215,6 @@ Global
 		{97AE3894-52C7-4402-9229-ED3792848A59} = {45ED24E8-AA1C-445A-B295-DDF16DDB16B8}
 		{348E1F98-7F78-476E-8507-E667BB56FD0B} = {45ED24E8-AA1C-445A-B295-DDF16DDB16B8}
 		{0BA36C1A-725E-4A71-9AEA-3453AE7F012F} = {967EA61A-D303-411C-9D65-6CB72489F5CE}
+		{007D67B8-EF36-4A3D-8916-C812324AA97A} = {967EA61A-D303-411C-9D65-6CB72489F5CE}
 	EndGlobalSection
 EndGlobal

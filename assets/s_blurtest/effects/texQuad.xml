@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Root>
+  <VS>
+    <viewportSize Usage="sv2_viewportSize"/>
+    <world Usage="tr_world" />
+  </VS>
+  <PS>
+    <tex Usage=""  MinFilter="Point" MagFilter="Point" AddressU="Clamp" AddressV="Clamp" />
+  </PS>
+</Root>

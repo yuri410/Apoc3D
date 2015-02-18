@@ -31,6 +31,7 @@ namespace Sample_GUI
 
 		void Slider_Changed(SliderBar* sb, bool finishing);
 		
+		void Label_Link(Label*, uint16);
 
 		Form* m_aboutDlg;
 
@@ -47,6 +48,7 @@ namespace Sample_GUI
 
 		float m_signal1 = 0;
 		float m_signal2 = 0;
+		int32 m_testVal = 0;
 
 		Sprite* m_sprite;
     };
