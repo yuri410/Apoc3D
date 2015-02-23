@@ -143,11 +143,30 @@ namespace Apoc3D
 
 				template<typename T>
 				void SetParameterValue(int index, const T* value, int count);
-				void SetParameterTexture(int index, ResourceHandle<Texture>* value);
-				void SetParameterTexture(int index, Texture* value);
+
+
+				void SetParameterValue(int index, const Vector2* value, int count);
+				void SetParameterValue(int index, const Vector3* value, int count);
+				void SetParameterValue(int index, const Vector4* value, int count);
+				void SetParameterValue(int index, const Matrix* value, int count);
+
+				void SetParameterValue(int index, bool value) { SetParameterValue(index, &value, 1); }
+				void SetParameterValue(int index, float value) { SetParameterValue(index, &value, 1); }
+				void SetParameterValue(int index, const Vector2& value) { SetParameterValue(index, &value, 1); }
+				void SetParameterValue(int index, const Vector3& value) { SetParameterValue(index, &value, 1); }
+				void SetParameterValue(int index, const Vector4& value) { SetParameterValue(index, &value, 1); }
+				void SetParameterValue(int index, const Matrix& value) { SetParameterValue(index, &value, 1); }
+
 
 				template<typename T>
 				void SetParameterValueByName(const String& name, const T* value, int count);
+
+				template<typename T>
+				void SetParameterValueByName(const String& name, const T& value);
+
+
+				void SetParameterTexture(int index, ResourceHandle<Texture>* value);
+				void SetParameterTexture(int index, Texture* value);
 				void SetParameterTextureByName(const String& name, ResourceHandle<Texture>* value);
 				void SetParameterTextureByName(const String& name, Texture* value);
 
@@ -230,6 +249,15 @@ namespace Apoc3D
 				assert(idx != -1);
 				SetParameterValue(idx, value, count);
 			}
+
+			template<typename T>
+			void AutomaticEffect::SetParameterValueByName(const String& name, const T& value)
+			{
+				int32 idx = FindParameterIndex(name);
+				assert(idx != -1);
+				SetParameterValue(idx, value);
+			}
+
 
 			/** 
 			 *  Represents a kind of shader effect which needs to be set up in client code by inheriting form this class.

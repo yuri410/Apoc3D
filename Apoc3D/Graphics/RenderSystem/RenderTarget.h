@@ -86,6 +86,8 @@ namespace Apoc3D
 				virtual DataRectangle lock(LockMode mode, const Apoc3D::Math::Rectangle& rect) = 0;
 				virtual void unlock() = 0;
 
+				Point EvaluatePerferredSize() const;
+
 				RenderDevice* m_device;
 
 				float m_widthPercentage = 0;
@@ -98,10 +100,11 @@ namespace Apoc3D
 			private:
 				DepthFormat m_depthFormat;
 				PixelFormat m_pixelFormat;
+				
+				bool m_isLocked = false;
 				bool m_isMultisampled;
 				String m_multisampleMode;
 
-				bool m_isLocked = false;
 			};
 		}
 

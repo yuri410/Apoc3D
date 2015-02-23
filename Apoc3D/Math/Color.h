@@ -99,9 +99,13 @@ namespace Apoc3D
 			}
 
 			/** Converts the color into a vector. */
-			Vector3 ToVector() const
+			Vector3 ToVector3() const
 			{
 				return Vector3(Red, Green, Blue);
+			}
+			Vector4 ToVector4() const
+			{
+				return Vector4(Red, Green, Blue, Alpha);
 			}
 
 			void ClampInPlace();

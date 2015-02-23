@@ -66,20 +66,34 @@ namespace Apoc3D
 
 			void RenderTarget::SetPercentageLock(float wp, float hp)
 			{
-				Viewport vp = m_device->getViewport();
-
-				int estWidth = static_cast<int>(vp.Width * wp + 0.5f);
-				int estHeight = static_cast<int>(vp.Height * hp + 0.5f);
 				m_hasPercentangeLock = true;
 				m_widthPercentage = wp;
 				m_heightPercentage = hp;
 
-				if (estWidth != m_width || estHeight != m_height)
+				Point estSize = EvaluatePerferredSize();
+
+				if (estSize.X != m_width || estSize.Y != m_height)
 				{
 					ApocLog(LOG_Graphics, L"[RT] Dimension percentage does not match current size.", LOGLVL_Warning);
 				}
 			}
 
+			Point RenderTarget::EvaluatePerferredSize() const
+			{
+				assert(m_hasPercentangeLock);
+
+				Viewport vp = m_device->getViewport();
+
+				//if (m_isMultOfTwoPercentageLock)
+				//{
+				//	if (vp.Width % 1) vp.Width++;
+				//	if (vp.Height % 1) vp.Height++;
+				//}
+
+				int estWidth = static_cast<int>(vp.Width * m_widthPercentage + 0.5f);
+				int estHeight = static_cast<int>(vp.Height * m_heightPercentage + 0.5f);
+				return Point(estWidth, estHeight);
+			}
 
 			DataRectangle RenderTarget::Lock(LockMode mode, const Apoc3D::Math::Rectangle& rect)
 			{

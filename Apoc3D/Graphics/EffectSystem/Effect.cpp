@@ -520,9 +520,31 @@ namespace Apoc3D
 			void AutomaticEffect::SetParameterValue(int index, const T* value, int count)
 			{
 				ResolvedEffectParameter& param = m_parameters[index];
-				
 				param.RS_TargetShader->SetValue(param.RegisterIndex, value, count);
 			}
+
+			void AutomaticEffect::SetParameterValue(int index, const Vector2* value, int count)
+			{
+				ResolvedEffectParameter& param = m_parameters[index];
+				param.RS_TargetShader->SetVector2(param.RegisterIndex, value, count);
+			}
+			void AutomaticEffect::SetParameterValue(int index, const Vector3* value, int count)
+			{
+				ResolvedEffectParameter& param = m_parameters[index];
+				param.RS_TargetShader->SetVector3(param.RegisterIndex, value, count);
+			}
+			void AutomaticEffect::SetParameterValue(int index, const Vector4* value, int count)
+			{
+				ResolvedEffectParameter& param = m_parameters[index];
+				param.SetVector4(value, count);
+			}
+			void AutomaticEffect::SetParameterValue(int index, const Matrix* value, int count)
+			{
+				ResolvedEffectParameter& param = m_parameters[index];
+				param.SetMatrix(value, count);
+			}
+
+
 			void AutomaticEffect::SetParameterTexture(int index, ResourceHandle<Texture>* value)
 			{
 				ResolvedEffectParameter& param = m_parameters[index];

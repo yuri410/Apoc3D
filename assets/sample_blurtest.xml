@@ -7,8 +7,8 @@
           <p_blur_color13 Type="effect" Source="VS:postQuad.vs | PS:p_blur_color13.fx" DestinationFile="p_blur_color13.afx" ParamList="p_blur_color.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1345833064"/>
           <p_blur_color25 Type="effect" Source="VS:postQuad.vs | PS:p_blur_color25.fx" DestinationFile="p_blur_color25.afx" ParamList="p_blur_color.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1345833064"/>
 
-          <blur_pack Type="effect" Source="VS:postQuad.vs | PS:blur_pack.ps" DestinationFile="blur_pack.afx" ParamList="texQuad.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1345833064"/>
-          <blur_unpack Type="effect" Source="VS:postQuad.vs | PS:blur_unpack.ps" DestinationFile="blur_unpack.afx" ParamList="texQuad.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1345833064"/>
+          <blur_pack Type="effect" Source="VS:postQuad.vs | PS:blur_pack.ps" DestinationFile="blur_pack.afx" ParamList="blur_pack.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1345833064"/>
+          <blur_unpack Type="effect" Source="VS:postQuad.vs | PS:blur_unpack.ps" DestinationFile="blur_unpack.afx" ParamList="blur_pack.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1345833064"/>
 
           <TexturedQuad Type="effect" Source="VS:postQuad.vs | PS:texQuad.ps" DestinationFile="TexturedQuad.afx" ParamList="texQuad.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1325265047" />
           <EffectList Type="EffectList" DestinationFile="effectList.xml" LastModTime="1325265047" />
@@ -17,6 +17,7 @@
         <textures Type="folder" SubItemsSourceRelativeBase="s_blurtest\textures" SubItemsDestinationRelativeBase="s_blurtest\textures" LastModTime="1325265047">
           <image1 Type="texture" Method="D3D" SourceFile="image1.png" DestinationFile="image1.tex" GenerateMipmaps="true" LastModTime="1325617097" />
           <image2 Type="texture" Method="D3D" SourceFile="image2.png" DestinationFile="image2.tex" GenerateMipmaps="true" LastModTime="1325617097" />
+
         </textures>
       
     </Project>

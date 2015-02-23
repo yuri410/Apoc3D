@@ -1,13 +1,19 @@
-#include "blurtest.fxh"
 
 sampler2D tex : register(s0);
+float2 texSize : register(c0);
+//float2 uvScale : register(c1);
 
 float4 main(float2 uv : TEXCOORD0) : COLOR
 {
+	float2 ts = texSize + fmod(texSize, 2);
+	uv *= ts / texSize;
+	//float2 ts = texSize;// *uvScale;
+	//uv *= uvScale;
+
 	float4 r;
 	r[0] = tex2D(tex, uv).r;
-	r[1] = tex2D(tex, uv + float2(1.0 / TEX_WIDTH, 0.0)).r;
-	r[2] = tex2D(tex, uv + float2(0.0, 1.0 / TEX_HEIGHT)).r;
-	r[3] = tex2D(tex, uv + float2(1.0 / TEX_WIDTH, 1.0 / TEX_HEIGHT)).r;
+	r[1] = tex2D(tex, uv + float2(1, 0) / ts).r;
+	r[2] = tex2D(tex, uv + float2(0, 1) / ts).r;
+	r[3] = tex2D(tex, uv + float2(1, 1) / ts).r;
 	return r;
 }

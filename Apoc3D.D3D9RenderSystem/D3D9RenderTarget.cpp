@@ -123,10 +123,10 @@ namespace Apoc3D
 				bool hasSizeChanged = false;
 				if (m_hasPercentangeLock)
 				{
-					Viewport vp = m_device->getViewport();
+					Point estSize = EvaluatePerferredSize();
 
-					int estWidth = static_cast<int>(vp.Width * m_widthPercentage + 0.5f);
-					int estHeight = static_cast<int>(vp.Height * m_heightPercentage + 0.5f);
+					int estWidth = estSize.X;
+					int estHeight = estSize.Y;
 
 					if (estWidth != m_width || estHeight != m_height)
 					{
