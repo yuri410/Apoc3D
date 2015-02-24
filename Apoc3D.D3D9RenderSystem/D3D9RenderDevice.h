@@ -143,6 +143,7 @@ namespace Apoc3D
 				virtual const String* FindClosesetMultisampleMode(uint32 sampleCount, PixelFormat pixFormat, DepthFormat depthFormat);
 				
 				virtual int GetMRTCount();
+				virtual bool SupportsMRTDifferentBits();
 
 				const AAProfile* LookupAAProfile(const String& name, PixelFormat pixFormat, DepthFormat depthFormat);
 

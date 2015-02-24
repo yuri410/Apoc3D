@@ -608,7 +608,10 @@ namespace Apoc3D
 			{
 				return m_caps.NumSimultaneousRTs;
 			}
-
+			bool D3D9Capabilities::SupportsMRTDifferentBits()
+			{
+				return (m_caps.PrimitiveMiscCaps & D3DPMISCCAPS_MRTINDEPENDENTBITDEPTHS) != 0;
+			}
 			int32 AAProfileComparison(const D3D9Capabilities::AAProfile& a, const D3D9Capabilities::AAProfile& b)
 			{
 				return Apoc3D::Collections::OrderComparer(a.Sorter, b.Sorter);
