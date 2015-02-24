@@ -43,7 +43,8 @@ namespace APBuild
 	void WriteCompileError(const std::string& logs, const String& sourceFile);
 	void FillEffectProfileData(EffectProfileData& pd, const char* data, const int32 length, ShaderType type);
 
-	bool CompileShader(const String& src, const String& entryPoint, EffectProfileData& profData, ShaderType type, bool debugEnabled, bool noOptimization)
+	bool CompileShader(const String& src, const String& entryPoint, EffectProfileData& profData, ShaderType type, 
+		bool debugEnabled, bool noOptimization, const List<std::pair<std::string, std::string>>* defines)
 	{
 		if (profData.MatchImplType(EffectProfileData::Imp_HLSL))
 		{
@@ -68,12 +69,26 @@ namespace APBuild
 					}
 				}
 
+				D3D10_SHADER_MACRO* macros = nullptr;
+				if (defines)
+				{
+					macros = new D3D10_SHADER_MACRO[defines->getCount() + 1];
+					memset(macros, 0, (defines->getCount() + 1) * sizeof(D3D10_SHADER_MACRO));
 
+					for (int32 i = 0; i < defines->getCount(); i++)
+					{
+						macros[i].Name = defines->operator[](i).first.c_str();
+						macros[i].Definition = defines->operator[](i).second.c_str();
+					}
+				}
 
 				ID3DBlob* pBlobOut;
 				ID3DBlob* pErrorBlob;
-				HRESULT hr = D3DX11CompileFromFile(src.c_str(), NULL, NULL, StringUtils::toPlatformNarrowString(entryPoint).c_str(), pfName,
+				HRESULT hr = D3DX11CompileFromFile(src.c_str(), macros, NULL, StringUtils::toPlatformNarrowString(entryPoint).c_str(), pfName,
 					dwShaderFlags, 0, NULL, &pBlobOut, &pErrorBlob, NULL);
+
+				delete[] macros;
+
 				if (FAILED(hr))
 				{
 					if (pErrorBlob != NULL)
@@ -118,9 +133,25 @@ namespace APBuild
 
 				//flags |= D3DXCONSTTABLE_LARGEADDRESSAWARE;
 
-				HRESULT hr = D3DXCompileShaderFromFile(src.c_str(), 0, 0,
+				D3DXMACRO* macros = nullptr;
+				if (defines && defines->getCount())
+				{
+					macros = new D3DXMACRO[defines->getCount() + 1];
+					memset(macros, 0, (defines->getCount() + 1) * sizeof(D3DXMACRO));
+
+					for (int32 i = 0; i < defines->getCount(); i++)
+					{
+						macros[i].Name = defines->operator[](i).first.c_str();
+						macros[i].Definition = defines->operator[](i).second.c_str();
+					}
+				}
+				
+				HRESULT hr = D3DXCompileShaderFromFile(src.c_str(), macros, 0,
 					StringUtils::toPlatformNarrowString(entryPoint).c_str(), pfName,
 					flags, &shader, &error, NULL);
+
+				delete[] macros;
+
 
 				if (FAILED(hr))
 				{

@@ -506,72 +506,33 @@ namespace Apoc3D
 	void ProjectResEffect::Parse(const ConfigurationSection* sect)
 	{
 		String srcDesc = sect->getAttribute(L"Source");
-		List<String> srcSets;
-		StringUtils::Split(srcDesc, srcSets, L"|");
-
-		for (int i=0;i<srcSets.getCount();i++)
+		for (const auto& e : Split(srcDesc))
 		{
-			String e = srcSets[i];
-			StringUtils::Trim(e);
-
-			if (e.size() <= 3)
-				continue;
-
-			if (StringUtils::StartsWith(e, L"VS:"))
+			if (e.first == L"VS")
+				VS = e.second;
+			else if (e.first == L"PS")
+				PS = e.second;
+			else if (e.first == L"GS")
+				GS = e.second;
+			else if (e.first == L"ALL")
 			{
-				VS = e.substr(3);
-				StringUtils::Trim(VS);
-			}
-			else if (StringUtils::StartsWith(e, L"PS:"))
-			{
-				PS = e.substr(3);
-				StringUtils::Trim(PS);
-			}
-			else if (StringUtils::StartsWith(e, L"GS:"))
-			{
-				GS = e.substr(3);
-				StringUtils::Trim(GS);
-			}
-			else if (StringUtils::StartsWith(e, L"ALL:"))
-			{
-				String fileName = e.substr(4);
-				StringUtils::Trim(fileName);
-				VS = PS = GS = fileName;
+				VS = PS = GS = e.second;
 				break;
 			}
 		}
 
 		String entryPointsDesc = sect->getAttribute(L"EntryPoints");
-		srcSets.Clear();
-		StringUtils::Split(entryPointsDesc, srcSets, L"|");
-		for (int i = 0; i < srcSets.getCount(); i++)
+		for (const auto& e : Split(entryPointsDesc))
 		{
-			String e = srcSets[i];
-			StringUtils::Trim(e);
-
-			if (e.size() <= 3)
-				continue;
-
-			if (StringUtils::StartsWith(e, L"VS:"))
+			if (e.first == L"VS")
+				EntryPointVS = e.second;
+			else if (e.first == L"PS")
+				EntryPointPS = e.second;
+			else if (e.first == L"GS")
+				EntryPointGS = e.second;
+			else if (e.first == L"ALL")
 			{
-				EntryPointVS = e.substr(3);
-				StringUtils::Trim(EntryPointVS);
-			}
-			else if (StringUtils::StartsWith(e, L"PS:"))
-			{
-				EntryPointPS = e.substr(3);
-				StringUtils::Trim(EntryPointPS);
-			}
-			else if (StringUtils::StartsWith(e, L"GS:"))
-			{
-				EntryPointGS = e.substr(3);
-				StringUtils::Trim(EntryPointGS);
-			}
-			else if (StringUtils::StartsWith(e, L"ALL:"))
-			{
-				String funcName = e.substr(4);
-				StringUtils::Trim(funcName);
-				EntryPointVS = EntryPointPS = EntryPointGS = funcName;
+				EntryPointVS = EntryPointPS = EntryPointGS = e.second;
 				break;
 			}
 		}
@@ -580,14 +541,20 @@ namespace Apoc3D
 		PListFile = sect->getAttribute(L"ParamList");
 
 		StringUtils::Split(sect->getAttribute(L"Targets"), Targets, L"|");
-		for (int i = 0; i < Targets.getCount(); i++)
+		for (String& s : Targets)
 		{
-			StringUtils::Trim(Targets[i]);
-			StringUtils::ToLowerCase(Targets[i]);
+			StringUtils::Trim(s);
+			StringUtils::ToLowerCase(s);
 		}
 
 		sect->TryGetAttributeBool(L"IsDebug", IsDebug);
 		sect->TryGetAttributeBool(L"NoOptimization", NoOptimization);
+
+		String defineDesc;
+		if (sect->tryGetAttribute(L"Defines", defineDesc))
+		{
+			Defines = Split(defineDesc);
+		}
 	}
 	void ProjectResEffect::Save(ConfigurationSection* sect, bool savingBuild)
 	{
@@ -637,7 +604,7 @@ namespace Apoc3D
 		String targetsStr;
 		for (int i = 0; i < Targets.getCount(); i++)
 		{
-			targetsStr.append(Targets[i]);
+			targetsStr += Targets[i];
 			if (i != Targets.getCount() - 1)
 				targetsStr.append(L" | ");
 		}
@@ -646,6 +613,49 @@ namespace Apoc3D
 
 		sect->AddAttributeBool(L"IsDebug", IsDebug);
 		sect->AddAttributeBool(L"NoOptimization", NoOptimization);
+
+		String definesStr;
+		for (int i = 0; i < Defines.getCount(); i++)
+		{
+			definesStr += Defines[i].first;
+			
+			if (Defines[i].second.size())
+			{
+				definesStr.append(1, ':');
+				definesStr += Defines[i].second;
+			}
+
+			if (i != Defines.getCount() - 1)
+				definesStr.append(L" | ");
+		}
+		sect->AddAttributeString(L"Defines", definesStr);
+
+	}
+
+	std::pair<String, String> ParseFXSettingItem(const String& p)
+	{
+		size_t pos = p.find(':');
+		if (pos != String::npos)
+		{
+			String first = p.substr(0, pos);
+			String second = p.substr(pos + 1);
+
+			StringUtils::Trim(first);
+			StringUtils::Trim(second);
+
+			return{ first, second };
+		}
+		else
+		{
+			String c = p;
+			StringUtils::Trim(c);
+			return{c, L""};
+		}
+	}
+
+	List<std::pair<String, String>> ProjectResEffect::Split(const String& text)
+	{
+		return StringUtils::SplitParse<String, List<std::pair<String, String>>, std::pair<String, String>, ParseFXSettingItem>(text, L"|");
 	}
 
 	List<String> ProjectResEffect::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }

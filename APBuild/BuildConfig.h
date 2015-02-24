@@ -122,6 +122,8 @@ namespace APBuild
 		bool IsDebug = false;
 		bool NoOptimization = false;
 
+		List<std::pair<std::string, std::string>> Defines;
+
 		void Parse(const ConfigurationSection* sect);
 	};
 	struct CFXBuildConfig

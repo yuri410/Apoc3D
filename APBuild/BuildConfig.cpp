@@ -201,69 +201,33 @@ namespace APBuild
 		Name = sect->getName();
 		
 		String srcDesc = sect->getAttribute(L"Source");
-		List<String> srcSets = StringUtils::Split(srcDesc, L"|");
-
-		for (String e : srcSets)
+		for (const auto& e : ProjectResEffect::Split(srcDesc))
 		{
-			StringUtils::Trim(e);
-
-			if (e.size() <= 3)
-				continue;
-
-			if (StringUtils::StartsWith(e, L"VS:"))
+			if (e.first == L"VS")
+				VS = e.second;
+			else if (e.first == L"PS")
+				PS = e.second;
+			else if (e.first == L"GS")
+				GS = e.second;
+			else if (e.first == L"ALL")
 			{
-				VS = e.substr(3);
-				StringUtils::Trim(VS);
-			}
-			else if (StringUtils::StartsWith(e, L"PS:"))
-			{
-				PS = e.substr(3);
-				StringUtils::Trim(PS);
-			}
-			else if (StringUtils::StartsWith(e, L"GS:"))
-			{
-				GS = e.substr(3);
-				StringUtils::Trim(GS);
-			}
-			else if (StringUtils::StartsWith(e, L"ALL:"))
-			{
-				String fileName = e.substr(4);
-				StringUtils::Trim(fileName);
-				VS = PS = GS = fileName;
+				VS = PS = GS = e.second;
 				break;
 			}
 		}
 
 		String entryPointsDesc = sect->getAttribute(L"EntryPoints");
-		srcSets = StringUtils::Split(entryPointsDesc, L"|");
-
-		for (String e : srcSets)
+		for (const auto& e : ProjectResEffect::Split(entryPointsDesc))
 		{
-			StringUtils::Trim(e);
-
-			if (e.size() <= 3)
-				continue;
-
-			if (StringUtils::StartsWith(e, L"VS:"))
+			if (e.first == L"VS")
+				EntryPointVS = e.second;
+			else if (e.first == L"PS")
+				EntryPointPS = e.second;
+			else if (e.first == L"GS")
+				EntryPointGS = e.second;
+			else if (e.first == L"ALL")
 			{
-				EntryPointVS = e.substr(3);
-				StringUtils::Trim(EntryPointVS);
-			}
-			else if (StringUtils::StartsWith(e, L"PS:"))
-			{
-				EntryPointPS = e.substr(3);
-				StringUtils::Trim(EntryPointPS);
-			}
-			else if (StringUtils::StartsWith(e, L"GS:"))
-			{
-				EntryPointGS = e.substr(3);
-				StringUtils::Trim(EntryPointGS);
-			}
-			else if (StringUtils::StartsWith(e, L"ALL:"))
-			{
-				String funcName = e.substr(4);
-				StringUtils::Trim(funcName);
-				EntryPointVS = EntryPointPS = EntryPointGS = funcName;
+				EntryPointVS = EntryPointPS = EntryPointGS = e.second;
 				break;
 			}
 		}
@@ -280,6 +244,15 @@ namespace APBuild
 
 		sect->TryGetAttributeBool(L"IsDebug", IsDebug);
 		sect->TryGetAttributeBool(L"NoOptimization", NoOptimization);
+
+		String defineDesc;
+		if (sect->tryGetAttribute(L"Defines", defineDesc))
+		{
+			for (const auto& e : ProjectResEffect::Split(defineDesc))
+			{
+				Defines.Add({ StringUtils::toPlatformNarrowString(e.first), StringUtils::toPlatformNarrowString(e.second) });
+			}
+		}
 	}
 	void CFXBuildConfig::Parse(const ConfigurationSection* sect)
 	{

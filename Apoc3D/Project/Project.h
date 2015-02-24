@@ -346,6 +346,8 @@ namespace Apoc3D
 	{
 		RTTI_DERIVED(ProjectResEffect, ProjectAssetItemData);
 	public:
+		typedef List<std::pair<String, String>> SettingList;
+
 		ProjectResEffect(Project* prj, ProjectItem* item)
 			: ProjectAssetItemData(prj, item) { }
 
@@ -365,6 +367,8 @@ namespace Apoc3D
 		bool IsDebug = false;
 		bool NoOptimization = false;
 
+		SettingList Defines;
+
 		virtual ProjectItemType getType() const override { return ProjectItemType::Effect; }
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
@@ -373,6 +377,8 @@ namespace Apoc3D
 
 		virtual bool IsNotBuilt() override;
 		virtual bool IsOutdated() override;
+
+		static SettingList Split(const String& text);
 
 	};
 	class APAPI ProjectResCustomEffect : public ProjectAssetItemData
