@@ -216,19 +216,24 @@ namespace APBuild
 			}
 		}
 
-		String entryPointsDesc = sect->getAttribute(L"EntryPoints");
-		for (const auto& e : ProjectResEffect::Split(entryPointsDesc))
+		EntryPointVS = EntryPointPS = EntryPointGS = L"main";
+
+		String entryPointsDesc;
+		if (sect->tryGetAttribute(L"EntryPoints", entryPointsDesc))
 		{
-			if (e.first == L"VS")
-				EntryPointVS = e.second;
-			else if (e.first == L"PS")
-				EntryPointPS = e.second;
-			else if (e.first == L"GS")
-				EntryPointGS = e.second;
-			else if (e.first == L"ALL")
+			for (const auto& e : ProjectResEffect::Split(entryPointsDesc))
 			{
-				EntryPointVS = EntryPointPS = EntryPointGS = e.second;
-				break;
+				if (e.first == L"VS")
+					EntryPointVS = e.second;
+				else if (e.first == L"PS")
+					EntryPointPS = e.second;
+				else if (e.first == L"GS")
+					EntryPointGS = e.second;
+				else if (e.first == L"ALL")
+				{
+					EntryPointVS = EntryPointPS = EntryPointGS = e.second;
+					break;
+				}
 			}
 		}
 
