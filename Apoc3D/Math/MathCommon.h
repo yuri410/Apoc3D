@@ -261,6 +261,18 @@ namespace Apoc3D
 			}
 			return true;
 		}
+
+
+		inline float ComputeGaussian(float n, float blurAmount)
+		{
+			float theta = blurAmount;
+
+			return (float)((1.0 / sqrtf(2 * Math::PI * theta)) *
+				expf(-(n * n) / (2 * theta * theta)));
+		}
+
+		void ComputeGaussianFilter(float dx, float dy, int32 sampleCount,
+			float blurAmount, float kernelScale, float* sampleWeights, Vector4* sampleOffsets);
 	}
 }
 #endif

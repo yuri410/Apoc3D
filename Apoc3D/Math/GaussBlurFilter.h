@@ -33,16 +33,32 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		class GaussBlurFilter
+		class GaussBlurFilterInterface
+		{
+		public:
+			virtual void ChangeSettings(float blurAmount, int32 mapWidth, int32 mapHeight) = 0;
+			virtual void ChangeSettings(float blurAmount, int32 mapWidth, int32 mapHeight, float kernelXScale) = 0;
+
+			virtual int32 getSampleCount() const = 0;
+			virtual float getBlurAmount() const = 0;
+			virtual float getKernelXScale() const = 0;
+
+			virtual int getMapWidth() const = 0;
+			virtual int getMapHeight() const = 0;
+
+		protected:
+			~GaussBlurFilterInterface() { }
+		};
+
+		class GaussBlurFilter final : public GaussBlurFilterInterface
 		{
 		public:
 			GaussBlurFilter(int32 sampleCount, float blurAmount, int32 mapWidth, int32 mapHeight, float kernelXScale = 1)
-				: SampleCount(sampleCount), BlurAmount(blurAmount), 
+				: SampleCount(sampleCount + 1 - (sampleCount % 2)), BlurAmount(blurAmount),
 				m_mapWidth(mapWidth), m_mapHeight(mapHeight),
 				m_kernelXScale(kernelXScale)
 			{
-				ComputeFilter(1.0f / (float)mapWidth, 0, SampleWeights, SampleOffsetsX);
-				ComputeFilter(0, 1.0f / (float)mapHeight, SampleWeights, SampleOffsetsY);
+				ComputeFilters();
 			}
 			~GaussBlurFilter()
 			{
@@ -51,27 +67,39 @@ namespace Apoc3D
 				delete[] SampleOffsetsY;
 			}
 
-			void ChangeSettings(float blurAmount, int32 mapWidth, int32 mapHeight)
+			void ChangeSettings(float blurAmount, int32 mapWidth, int32 mapHeight) override
 			{
 				BlurAmount = blurAmount;
 				m_mapHeight = mapHeight;
 				m_mapWidth = mapWidth;
 				
-				ComputeFilter(1.0f / (float)mapWidth, 0, SampleWeights, SampleOffsetsX);
-				ComputeFilter(0, 1.0f / (float)mapHeight, SampleWeights, SampleOffsetsY);
+				ComputeFilters();
+			}
+			void ChangeSettings(float blurAmount, int32 mapWidth, int32 mapHeight, float kernelXScale) override
+			{
+				m_kernelXScale = kernelXScale;
+
+				ChangeSettings(blurAmount, mapWidth, mapHeight);
 			}
 
 			const float* const getSampleWeights() const { return SampleWeights; }
 			const Vector4* const getSampleOffsetX() const { return SampleOffsetsX; }
 			const Vector4* const getSampleOffsetY() const { return SampleOffsetsY; }
 
-			int32 getSampleCount() const { return SampleCount; }
-			int getMapWidth() const { return m_mapWidth; }
-			int getMapHeight() const { return m_mapHeight; }
-			float getBlurAmount() const { return BlurAmount; }
-
-			float getKernelXScale() const { return m_kernelXScale; }
+			int32 getSampleCount() const override { return SampleCount; }
+			float getBlurAmount() const override { return BlurAmount; }
+			float getKernelXScale() const override { return m_kernelXScale; }
+			
+			int getMapWidth() const override { return m_mapWidth; }
+			int getMapHeight() const override { return m_mapHeight; }
+			
 		private:
+			void ComputeFilters()
+			{
+				ComputeGaussianFilter(1.0f / m_mapWidth, 0, SampleCount, BlurAmount, m_kernelXScale, SampleWeights, SampleOffsetsX);
+				ComputeGaussianFilter(0, 1.0f / m_mapHeight, SampleCount, BlurAmount, m_kernelXScale, nullptr, SampleOffsetsY);
+			}
+
 			float BlurAmount;
 			int32 SampleCount;
 			float* SampleWeights = nullptr;
@@ -82,73 +110,70 @@ namespace Apoc3D
 
 			int m_mapWidth;
 			int m_mapHeight;
+		};
 
-			float ComputeGaussian(float n) const
+		template <int32 _SampleCount>
+		class GaussBlurFilterSized final : public GaussBlurFilterInterface
+		{
+			static const int SampleCount = _SampleCount + 1 - (_SampleCount % 2);
+		public:
+			GaussBlurFilterSized() 
 			{
-				n *= m_kernelXScale;
-				float theta = BlurAmount;
-				
-				return (float)((1.0 / sqrtf(2 * Math::PI * theta)) *
-					expf(-(n * n) / (2 * theta * theta)));
+				ZeroArray(SampleWeights);
+				ZeroArray(SampleOffsetsX);
+				ZeroArray(SampleOffsetsY);
 			}
-			void ComputeFilter(float dx, float dy, float* &sampleWeights, Vector4* &sampleOffsets)
+
+			GaussBlurFilterSized(float blurAmount, int32 mapWidth, int32 mapHeight, float kernelXScale = 1)
+				: BlurAmount(blurAmount),
+				m_mapWidth(mapWidth), m_mapHeight(mapHeight),
+				m_kernelXScale(kernelXScale)
 			{
-				int count = SampleCount;
-				if ((count % 2) == 0)
-					count++;
-
-				// Create temporary arrays for computing our filter settings.
-				if (sampleWeights == nullptr)
-					sampleWeights = new float[count];
-				if (sampleOffsets == nullptr)
-					sampleOffsets = new Vector4[count];
-
-				// The first sample always has a zero offset.
-				sampleWeights[0] = ComputeGaussian(0);
-				sampleOffsets[0] = Vector4(0,0,0,0);
-
-				// Maintain a sum of all the weighting values.
-				float totalWeights = sampleWeights[0];
-
-				// Add pairs of additional sample taps, positioned
-				// along a line in both directions from the center.
-				for (int i = 0; i < count / 2; i++)
-				{
-					// Store weights for the positive and negative taps.
-					float weight = ComputeGaussian(static_cast<float>(i + 1));
-
-					sampleWeights[i * 2 + 1] = weight;
-					sampleWeights[i * 2 + 2] = weight;
-
-					totalWeights += weight * 2;
-
-					// To get the maximum amount of blurring from a limited number of
-					// pixel shader samples, we take advantage of the bilinear filtering
-					// hardware inside the texture fetch unit. If we position our texture
-					// coordinates exactly halfway between two texels, the filtering unit
-					// will average them for us, giving two samples for the price of one.
-					// This allows us to step in units of two texels per sample, rather
-					// than just one at a time. The 1.5 offset kicks things off by
-					// positioning us nicely in between two texels.
-					float sampleOffset = i * 2 + 1.5f;
-
-					Vector4 delta(dx*sampleOffset, dy*sampleOffset,0,0);
-
-					// Store texture coordinate offsets for the positive and negative taps.
-					sampleOffsets[i * 2 + 1] = delta;
-					sampleOffsets[i * 2 + 2] = Vector4::Negate(delta);
-				}
-
-				// Normalize the list of sample weightings, so they will always sum to one.
-				for (int i = 0; i < count; i++)
-				{
-					sampleWeights[i] /= totalWeights;
-				}
+				ComputeFilters();
 			}
+
+
+			void ChangeSettings(float blurAmount, int32 mapWidth, int32 mapHeight) override
+			{
+				BlurAmount = blurAmount;
+				m_mapHeight = mapHeight;
+				m_mapWidth = mapWidth;
+
+				ComputeFilters();
+			}
+			void ChangeSettings(float blurAmount, int32 mapWidth, int32 mapHeight, float kernelXScale) override
+			{
+				m_kernelXScale = kernelXScale;
+
+				ChangeSettings(blurAmount, mapWidth, mapHeight);
+			}
+
+			float SampleWeights[SampleCount];
+			Vector4 SampleOffsetsX[SampleCount];
+			Vector4 SampleOffsetsY[SampleCount];
+
+			int32 getSampleCount() const override { return SampleCount; }
+			float getBlurAmount() const override { return BlurAmount; }
+			float getKernelXScale() const override { return m_kernelXScale; }
+
+			int getMapWidth() const override { return m_mapWidth; }
+			int getMapHeight() const override { return m_mapHeight; }
+			
+		private:
+			void ComputeFilters()
+			{
+				ComputeGaussianFilter(1.0f / m_mapWidth, 0, SampleCount, BlurAmount, m_kernelXScale, SampleWeights, SampleOffsetsX);
+				ComputeGaussianFilter(0, 1.0f / m_mapHeight, SampleCount, BlurAmount, m_kernelXScale, nullptr, SampleOffsetsY);
+			}
+
+			float BlurAmount = 0;
+			float m_kernelXScale = 1;
+
+			int m_mapWidth = 0;
+			int m_mapHeight = 0;
 
 
 		};
-
 	}
 }
 #endif

@@ -6,7 +6,7 @@
 
           <p_blur_color13 Type="effect" Source="VS:postQuad.vs | PS:p_blur_color13.fx" DestinationFile="p_blur_color13.afx" ParamList="p_blur_color.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1345833064"/>
           <p_blur_color25 Type="effect" Source="VS:postQuad.vs | PS:p_blur_color25.fx" DestinationFile="p_blur_color25.afx" ParamList="p_blur_color.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1345833064"/>
-
+          
           <blur_pack Type="effect" Source="VS:postQuad.vs | PS:blur_pack.ps" DestinationFile="blur_pack.afx" ParamList="blur_pack.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1345833064"/>
           <blur_unpack Type="effect" Source="VS:postQuad.vs | PS:blur_unpack.ps" DestinationFile="blur_unpack.afx" ParamList="blur_pack.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1345833064"/>
 
