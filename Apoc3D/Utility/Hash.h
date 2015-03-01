@@ -11,12 +11,9 @@ namespace Apoc3D
 		class FNVHash32
 		{
 		public:
-			FNVHash32()
-				: m_result(2166136261) { }
-
 			void Accumulate(const void* buffer, int32 size)
 			{
-				const int32 p = 16777619;
+				const uint32 p = 16777619;
 				const byte* src = (const byte*)buffer;
 
 				while (--size >= 0)
@@ -25,18 +22,29 @@ namespace Apoc3D
 				}
 			}
 
-			int32 GetResult() const 
-			{
-				int32 hash = m_result;
-				hash += hash << 13;
-				hash ^= hash >> 7;
-				hash += hash << 3;
-				hash ^= hash >> 17;
-				hash += hash << 5;
-				return hash; 
-			}
+			uint32 getResult() const { return m_result; }
+
 		private:
-			int32 m_result;
+			uint32 m_result = 2166136261;
+		};
+
+		class FNVHash64
+		{
+		public:
+			void Accumulate(const void* buffer, int32 size)
+			{
+				const uint64 p = 1099511628211;
+				const byte* src = (const byte*)buffer;
+
+				while (--size >= 0)
+				{
+					m_result = (*src++ ^ m_result) * p;
+				}
+			}
+
+			uint64 getResult() const { return m_result; }
+		private:
+			uint64 m_result = 14695981039346656037;
 		};
 
 
@@ -87,8 +95,7 @@ namespace Apoc3D
 
 			return h;
 		}
-
-
+		
 		APAPI uint32 CalculateCRC32(const void *buf, int32 size, uint32 crc = 0);
 
 		APAPI uint32 CalculateCRC32(Apoc3D::IO::Stream& strm);

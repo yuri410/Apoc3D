@@ -44,7 +44,7 @@ namespace Apoc3D
 		{
 			FNVHash32 fnv;
 			fnv.Accumulate(obj.c_str(), obj.size());
-			return fnv.GetResult();
+			return static_cast<int32>(fnv.getResult());
 		}
 
 		bool EqualityComparer<String>::Equals(const String& x, const String& y) { return x == y; }
@@ -88,10 +88,10 @@ namespace Apoc3D
 			for (char c : obj)
 			{
 				c = StringUtils::ToLowerCase(c);
-				fnv.Accumulate(&c, 1);
+				fnv.Accumulate(&c, sizeof(c));
 			}
 
-			return fnv.GetResult();
+			return static_cast<int32>(fnv.getResult());
 		}
 		bool StringEqualityComparerNoCase::Equals(const String& x, const String& y) { return StringUtils::EqualsNoCase(x, y); }
 		int32 StringEqualityComparerNoCase::GetHashCode(const String& obj)
@@ -100,9 +100,9 @@ namespace Apoc3D
 			for (wchar_t c : obj)
 			{
 				c = StringUtils::ToLowerCase(c);
-				fnv.Accumulate(&c, 1);
+				fnv.Accumulate(&c, sizeof(c));
 			}
-			return fnv.GetResult();
+			return static_cast<int32>(fnv.getResult());
 		}
 
 		namespace Utils

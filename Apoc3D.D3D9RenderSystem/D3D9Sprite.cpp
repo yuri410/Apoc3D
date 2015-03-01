@@ -131,7 +131,7 @@ namespace Apoc3D
 					mgr->SetCullMode(CULL_None);
 
 					if ((getSettings() & SPR_AlphaBlended) == SPR_AlphaBlended)
-						mgr->SetAlphaBlend(true, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, m_storedState.oldBlendFactor);
+						mgr->SetAlphaBlend(true, BlendFunction::Add, Blend::SourceAlpha, Blend::InverseSourceAlpha, m_storedState.oldBlendFactor);
 
 					m_rawDevice->SetStreamSource(0, m_quadBuffer->getD3DBuffer(), 0, sizeof(QuadVertex));
 					m_rawDevice->SetIndices(m_quadIndices->getD3DBuffer());
@@ -146,8 +146,8 @@ namespace Apoc3D
 						state.MinFilter = TFLT_Linear;
 						state.MagFilter = TFLT_Linear;
 						state.MipFilter = TFLT_None;
-						state.AddressU = TA_Clamp;
-						state.AddressV = TA_Clamp;
+						state.AddressU = TextureAddressMode::Clamp;
+						state.AddressV = TextureAddressMode::Clamp;
 						state.MaxMipLevel = 0;
 						state.MipMapLODBias = 0;
 
@@ -366,15 +366,15 @@ namespace Apoc3D
 				if (isExtended)
 				{
 					ShaderSamplerState state = mgr->getPixelSampler(0);
-					state.AddressU = TA_Wrap;
-					state.AddressV = TA_Wrap;
+					state.AddressU = TextureAddressMode::Wrap;
+					state.AddressV = TextureAddressMode::Wrap;
 					mgr->SetPixelSampler(0, state);
 				}
 				else
 				{
 					ShaderSamplerState state = mgr->getPixelSampler(0);
-					state.AddressU = TA_Clamp;
-					state.AddressV = TA_Clamp;
+					state.AddressU = TextureAddressMode::Clamp;
+					state.AddressV = TextureAddressMode::Clamp;
 					mgr->SetPixelSampler(0, state);
 				}
 			}

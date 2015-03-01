@@ -243,6 +243,53 @@ namespace Apoc3D
 				int32 r = SplitParseInts(str, ints, maxCount, delims); assert(r == maxCount);
 			}
 			
+			template <typename ElementT, String(*ToStringConverter)(const ElementT&), bool UseQuotes = false >
+			void Pack(const ElementT* v, int count, String& result, wchar_t sep = ',')
+			{
+				for (int i = 0; i < count; i++)
+				{
+					String p = ToStringConverter(v[i]);
+
+					if (UseQuotes && p.find(',') != String::npos)
+					{
+						result.append(1, '"');
+						result += p;
+						result.append(1, '"');
+					}
+					else
+					{
+						result += p;
+					}
+
+					if (i != count - 1)
+					{
+						result.append(1, sep);
+						result.append(1, ' ');
+					}
+				}
+			}
+
+			template <typename ElementT, String(*ToStringConverter)(const ElementT&), bool UseQuotes = false >
+			String Pack(const ElementT* v, int count, wchar_t sep = ',')
+			{
+				String r; Pack<ElementT, ToStringConverter, UseQuotes>(v, count, r, sep); return r;
+			}
+
+			template <typename ElementT, String(*ToStringConverter)(const ElementT&), bool UseQuotes = false >
+			void Pack(const Apoc3D::Collections::List<ElementT>& v, String& result, wchar_t sep = ',')
+			{
+				Pack<ElementT, ToStringConverter, UseQuotes>(v.getElements(), v.getCount(), result, sep);
+			}
+
+			template <typename ElementT, String(*ToStringConverter)(const ElementT&), bool UseQuotes = false >
+			String Pack(const Apoc3D::Collections::List<ElementT>& v, wchar_t sep = ',')
+			{
+				String r; Pack<ElementT, ToStringConverter, UseQuotes>(v, r, sep); return r;
+			}
+
+			APAPI String PackStrings(const Apoc3D::Collections::List<String>& v, bool useQuotes, wchar_t sep = ',');
+
+
 			//////////////////////////////////////////////////////////////////////////
 
 			APAPI bool StartsWith(const String& str, const String& v, bool caseInsensitive = false);

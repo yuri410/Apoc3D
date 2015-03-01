@@ -54,7 +54,7 @@ namespace Apoc3D
 				virtual void SetTexture(const String& paramName, Texture* tex);
 				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState &state);
 
-				virtual ShaderType getType() const { return SHDT_Pixel; }
+				virtual ShaderType getType() const { return ShaderType::Pixel; }
 			};
 
 			class D3D9VertexShader : public D3D9Shader<IDirect3DVertexShader9, 
@@ -78,7 +78,7 @@ namespace Apoc3D
 				virtual void SetTexture(const String& paramName, Texture* tex);
 				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState& state);
 
-				virtual ShaderType getType() const { return SHDT_Vertex; }
+				virtual ShaderType getType() const { return ShaderType::Vertex; }
 			};
 		}
 	}

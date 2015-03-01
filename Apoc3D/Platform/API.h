@@ -34,36 +34,27 @@ namespace Apoc3D
 {
 	namespace Platform
 	{
-		/** 
-		 *  Define how well a platform is supported based on score.
-		 */
+		/** Define how well a platform is supported based on score. */
 		struct APAPI PlatformAPISupport
 		{
-			/**
-			 *  A score on a scale of 0-100 showing how well the API supports the platform
-			 */
+			/** A score on a scale of 0-100 showing how well the API supports the platform */
 			int Score;
 			String PlatformName;
 		};
 
-		/**
-		 *  Contains information of an API
-		 */
+		/** Contains information of an API */
 		struct APAPI APIDescription
 		{
-			/**
-			 *  The name of the graphics API.
-			 */
+			/** The name of the graphics API. */
 			String Name;
-			/**
-			 *  A vector containing all platform supported by this API.
-			 */
+			/** A vector containing all platform supported by this API. */
 			Apoc3D::Collections::List<PlatformAPISupport> SupportedPlatforms;
 		};
 
 		APAPI uint64 GetInstalledSystemMemorySizeInKB();
 
 		APAPI int32 GetSystemDoubleClickIntervalInMS();
+
 	}
 }
 

@@ -95,8 +95,8 @@ namespace SampleAtmosphere
 		m_quadBuffer->Unlock();
 
 		m_quadTempMtrl = new Material(m_device);
-		m_quadTempMtrl->SourceBlend = BLEND_SourceAlpha;
-		m_quadTempMtrl->DestinationBlend = BLEND_InverseSourceAlpha;
+		m_quadTempMtrl->SourceBlend = Blend::SourceAlpha;
+		m_quadTempMtrl->DestinationBlend = Blend::InverseSourceAlpha;
 
 		//ConvertDataTexture(L"inscatterTexture.dat", true);
 		//ConvertDataTexture(L"irradianceTexture.dat", false);

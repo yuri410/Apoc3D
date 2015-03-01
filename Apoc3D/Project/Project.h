@@ -93,22 +93,26 @@ namespace Apoc3D
 		D3D
 	};
 	
-	/**
-	 *  Represent the build configuration for a specific type of assert in the project.
-	 */
+	//struct ProjectItemBuildStamp 
+	//{
+	//	int32 SettingsHash = 0;
+	//	int64 BuildTimeHash = 0;
+
+	//	bool operator==(const ProjectItemBuildStamp& h) const { return SettingsHash == h.SettingsHash && BuildTimeHash == h.BuildTimeHash; }
+	//	bool operator!=(const ProjectItemBuildStamp& h) const { return !operator==(h); }
+	//};
+
+	/** Represent the build configuration for a specific type of assert in the project. */
 	class APAPI ProjectItemData
 	{
 		RTTI_BASE;
 	public:
 		virtual ProjectItemType getType() const = 0;
 		
-		/** Check if the item is not built yet */
-		virtual bool IsNotBuilt() = 0;
-		/** Check if the item's built is earlier than the given time or not */
-		virtual bool IsOutdated() = 0;
-
 		/** Indicates if the item's required further editing on the built file after building */
-		virtual bool RequiresPostEdit() { return false; }
+		virtual bool RequiresPostEdit() const { return false; }
+		virtual bool AlwaysBuild() const { return false; }
+
 		virtual void Parse(const ConfigurationSection* sect) = 0;
 
 		ProjectItem* getParentItem() const { return m_parentItem; }
@@ -117,6 +121,8 @@ namespace Apoc3D
 		 *  @param savingBuild If true, build information in the section will be generated.
 		 */
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) = 0;
+		
+		virtual List<String> GetAllInputFiles() = 0;
 		virtual List<String> GetAllOutputFiles() = 0;
 
 		virtual ~ProjectItemData() { }
@@ -137,14 +143,23 @@ namespace Apoc3D
 		String WrapSourcePath(const String& path, bool isAbsolute) const;
 		String WrapDestinationPath(const String& path, bool isAbsolute) const;
 
-		bool IsSourceFileNewer(const String& srcFile, time_t t) const;
-		bool IsSettingsNewerThan(const String& destinationFile) const;
-		bool IsSettingsNewerThan(const String& destinationFile, time_t& dstFileTime) const;
+		//bool IsSourceFileNewer(const String& srcFile, time_t t) const;
+		//bool IsSettingsNewerThan(const String& destinationFile) const;
+		//bool IsSettingsNewerThan(const String& destinationFile, time_t& dstFileTime) const;
 
-		bool IsOutdatedSimple(const String& srcFile, const String& destinationFile) const;
+		//bool IsOutdatedSimple(const String& srcFile, const String& destinationFile) const;
 
-		List<String> GetDestFileOutputSimple(const String& destinationFile);
-		bool IsDestFileNotBuilt(const String& destinationFile);
+		List<String> MakeOutputFileList(const String& destinationFile);
+		List<String> MakeOutputFileList(const String& f1, const String& f2);
+		List<String> MakeOutputFileList(const String& f1, const String& f2, const String& f3);
+		List<String> MakeOutputFileList(const List<String>& files);
+
+		List<String> MakeInputFileList(const String& srcFile);
+		List<String> MakeInputFileList(const String& f1, const String& f2);
+		List<String> MakeInputFileList(const String& f1, const String& f2, const String& f3);
+		List<String> MakeInputFileList(const List<String>& files);
+
+		//bool IsDestFileNotBuilt(const String& destinationFile);
 	};
 
 	class APAPI ProjectCustomItem : public ProjectItemData
@@ -160,21 +175,15 @@ namespace Apoc3D
 
 		HashMap<String, String> Properties;
 
-		virtual bool IsNotBuilt() override;
-
-		virtual bool IsOutdated() override;
-
-		virtual List<String> GetAllOutputFiles() override;
+		virtual List<String> GetAllInputFiles() override { return MakeInputFileList(SourceFile); }
+		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DestFile); }
 
 		virtual ProjectItemType getType() const override { return ProjectItemType::Custom; }
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
-
 	};
 
-	/**
-	 *  Represents the type of asset that is natively supported by the engine.
-	 */
+	/** Represents the type of asset that is natively supported by the engine. */
 	class APAPI ProjectAssetItemData : public ProjectItemData
 	{
 		RTTI_DERIVED(ProjectAssetItemData, ProjectItemData);
@@ -206,10 +215,9 @@ namespace Apoc3D
 
 		List<ProjectItem*> SubItems;
 
-		virtual bool IsNotBuilt() override { return true; }
-		virtual bool IsOutdated() override { return true; }
+		virtual bool AlwaysBuild() const { return true; }
 
-
+		virtual List<String> GetAllInputFiles() override;
 		virtual List<String> GetAllOutputFiles() override;
 		
 		virtual ProjectItemType getType() const override { return ProjectItemType::Folder; }
@@ -260,11 +268,8 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
+		virtual List<String> GetAllInputFiles() override;
 		virtual List<String> GetAllOutputFiles() override;
-
-		virtual bool IsNotBuilt() override;
-		virtual bool IsOutdated() override;
-
 	};
 
 	class APAPI ProjectResMaterial : public ProjectAssetItemData
@@ -280,10 +285,8 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
+		virtual List<String> GetAllInputFiles() override;
 		virtual List<String> GetAllOutputFiles() override;
-
-		virtual bool IsNotBuilt() override;
-		virtual bool IsOutdated() override;
 	};
 
 	class APAPI ProjectResMaterialSet : public ProjectAssetItemData
@@ -301,10 +304,8 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
+		virtual List<String> GetAllInputFiles() override;
 		virtual List<String> GetAllOutputFiles() override;
-
-		virtual bool IsNotBuilt() override;
-		virtual bool IsOutdated() override;
 	};
 
 	/**
@@ -331,15 +332,13 @@ namespace Apoc3D
 
 		bool CollapseMeshs = false;
 
-		virtual bool RequiresPostEdit() override { return true; }
+		virtual bool RequiresPostEdit() const override { return true; }
 		virtual ProjectItemType getType() const override { return ProjectItemType::Model; }
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles() override;
-
-		virtual bool IsNotBuilt() override;
-		virtual bool IsOutdated() override;
+		virtual List<String> GetAllInputFiles() override { return MakeInputFileList(SrcFile); }
+		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DstAnimationFile, DstFile); }
 	};
 	
 	class APAPI ProjectResEffect : public ProjectAssetItemData
@@ -373,12 +372,11 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
+		virtual List<String> GetAllInputFiles() override;
 		virtual List<String> GetAllOutputFiles() override;
 
-		virtual bool IsNotBuilt() override;
-		virtual bool IsOutdated() override;
-
 		static SettingList Split(const String& text);
+		static String Pack(const SettingList& lst);
 
 	};
 	class APAPI ProjectResCustomEffect : public ProjectAssetItemData
@@ -399,10 +397,8 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles() override;
-
-		virtual bool IsNotBuilt() override;
-		virtual bool IsOutdated() override;
+		virtual List<String> GetAllInputFiles() override { return MakeInputFileList(SrcVSFile, SrcPSFile); }
+		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DestFile); }
 	};
 
 	class APAPI ProjectResEffectList : public ProjectAssetItemData
@@ -414,14 +410,14 @@ namespace Apoc3D
 
 		String DestFile;
 
+		virtual bool AlwaysBuild() const override { return true; }
+
 		virtual ProjectItemType getType() const override { return ProjectItemType::EffectList; }
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles() override;
-
-		virtual bool IsNotBuilt() override;
-		virtual bool IsOutdated() override { return true; }
+		virtual List<String> GetAllInputFiles() override { return{}; }
+		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DestFile); }
 	};
 
 	class APAPI ProjectResShaderNetwork : public ProjectAssetItemData
@@ -438,10 +434,8 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles() override;
-
-		virtual bool IsNotBuilt() override;
-		virtual bool IsOutdated() override;
+		virtual List<String> GetAllInputFiles() override { return MakeInputFileList(SrcFile); }
+		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DestFile); }
 	};
 
 	/**
@@ -474,10 +468,8 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles() override;
-
-		virtual bool IsNotBuilt() override;
-		virtual bool IsOutdated() override;
+		virtual List<String> GetAllInputFiles() override { return MakeInputFileList(SourceFile); }
+		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DestFile); }
 	};
 
 	class APAPI ProjectResFontGlyphDist : public ProjectAssetItemData
@@ -494,10 +486,8 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles() override;
-
-		virtual bool IsNotBuilt() override;
-		virtual bool IsOutdated() override;
+		virtual List<String> GetAllInputFiles() override { return MakeInputFileList(SourceFile); }
+		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DestFile); }
 	};
 
 	class APAPI ProjectResTAnim : public ProjectAssetItemData
@@ -517,10 +507,8 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles() override;
-
-		virtual bool IsNotBuilt() override;
-		virtual bool IsOutdated() override;
+		virtual List<String> GetAllInputFiles() override { return MakeInputFileList(SourceFile); }
+		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DestinationFile); }
 	};
 
 	class APAPI ProjectResMAnim : public ProjectAssetItemData
@@ -537,10 +525,8 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles() override;
-
-		virtual bool IsNotBuilt() override;
-		virtual bool IsOutdated() override;
+		virtual List<String> GetAllInputFiles() override { return MakeInputFileList(SourceFile); }
+		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DestinationFile); }
 	};
 
 	class APAPI ProjectResUILayout : public ProjectAssetItemData
@@ -557,10 +543,8 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles() override;
-
-		virtual bool IsNotBuilt() override;
-		virtual bool IsOutdated() override;
+		virtual List<String> GetAllInputFiles() override { return MakeInputFileList(SourceFile); }
+		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DestinationFile); }
 	};
 
 
@@ -578,12 +562,40 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllOutputFiles() override;
-
-		virtual bool IsNotBuilt() override;
-		virtual bool IsOutdated() override;
+		virtual List<String> GetAllInputFiles() override { return MakeInputFileList(SourceFile); }
+		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DestinationFile); }
 	};
 
+
+	class APAPI ProjectBuildStamp
+	{
+	public:
+		void Load(IO::Stream& strm);
+		void Save(IO::Stream& strm);
+
+		void Clear();
+
+		int64 LookupSourceTimestamp(const String& path) const;
+		void SetSourceTimestamp(const String& path, time_t t);
+
+		uint32 LookupItemSettingStamp(const String& path) const;
+		void SetItemSettingStamp(const String& path, uint32 hash);
+
+		bool hasData() const { return m_hasData; }
+	private:
+		HashMap<String, int64> m_sourceTimeStamps;
+		HashMap<String, uint32> m_itemSettingStamps;
+
+		bool m_hasData = false;
+	};
+
+	enum struct ProjectItemOutdateType
+	{
+		Current,
+		NewerSource,
+		DifferentSetting,
+		DifferentSource
+	};
 
 	/**
 	 *  Represents one asset in the project.
@@ -606,17 +618,15 @@ namespace Apoc3D
 		void Parse(const ConfigurationSection* sect);
 		ConfigurationSection* Save(bool savingBuild);
 
-		/** Check if the item's built version is outdated */
-		bool IsOutDated() const 
-		{
-			if (m_typeData)
-			{
-				return m_typeData->IsNotBuilt() || m_typeData->IsOutdated();
-			}
-			return false;
-		}
-		void NotifyModified();
+		bool IsNotBuilt() const;
 
+		bool IsOutDated();		/** Check if the item's built version is outdated */
+		ProjectItemOutdateType GetOutDatedType();
+
+
+		void LoadPrevBuildStamp(const String& path);
+		void SaveCurrentBuildStamp(const String& path, ProjectBuildStamp& stmp);
+		void MarkOutdatedOutputs();
 
 		const String& getName() const { return m_name; }
 		ProjectItemType getType() const { return m_typeData->getType(); }
@@ -624,17 +634,17 @@ namespace Apoc3D
 		ProjectFolder* getParentFolder() const { return m_parentFolder; }
 		Project* getProject() const { return m_project; }
 
-		bool isSettingsNewerThan(time_t t) const { return t < m_timeStamp; }
 	private:
+		uint32 GetCurrentBuildSettingStamp();
+
 		Project* m_project = nullptr;
 		ProjectFolder* m_parentFolder = nullptr;
 
 		ProjectItemData* m_typeData = nullptr;
 
 		String m_name;
-		
-		/** The time of the last modification time */
-		time_t m_timeStamp = 0;
+
+		uint32 m_prevBuildSettingStamp = 0;
 	};
 
 	struct ProjectBuildScript
@@ -660,11 +670,17 @@ namespace Apoc3D
 		/**  Saves the project into a file */
 		void Save(const String& file);
 
+		void LoadBuildStamp(IO::Stream& strm);
+		void SaveBuildStamp(IO::Stream& strm);
+		void MarkOutdatedOutputs();
+
 		/**
 		 *  Generate a series of build action represented by ConfigurationSection object.
 		 *  The sequence is based on the dependency of project items.
 		 */
 		void GenerateBuildScripts(List<ProjectBuildScript>& result);
+
+		
 
 		/**  Sets the absolute paths for the project. */
 		void SetPath(const String& basePath, const String* outputPath);
@@ -672,22 +688,15 @@ namespace Apoc3D
 
 		const String& getName() const { return m_name; }
 
-		/**  Gets the relative path for textures */
-		const String& getTexturePath() const { return m_texturePath; }
+		const String& getTexturePath() const { return m_texturePath; }		/**  Gets the relative path for textures */
+		const String& getMaterialPath() const { return m_materialPath; }	/**  Gets the relative path for materials */
 
-		/**  Gets the relative path for materials */
-		const String& getMaterialPath() const { return m_materialPath; }
-
-
-
-		/**  Gets the absolute path for placing imported assets or project items */
-		const String& getOutputPath() const { return m_outputPath; }
-
-
-		/** Gets the absolute path for the project's source assets. */
-		const String& getBasePath() const { return m_basePath; }
+		const String& getOutputPath() const { return m_outputPath; }		/**  Gets the absolute path for placing imported assets or project items */
+		const String& getBasePath() const { return m_basePath; }			/** Gets the absolute path for the project's source assets. */
 
 		const List<ProjectItem*>& getItems() const { return m_items; }
+
+		const ProjectBuildStamp& getBuildStamp() const { return m_buildStamp; }
 
 		void setTexturePath(const String& path) { m_texturePath = path; }
 
@@ -703,6 +712,8 @@ namespace Apoc3D
 		String m_basePath;
 		String m_outputPath;
 		String m_originalOutputPath;
+
+		ProjectBuildStamp m_buildStamp;
 	};
 
 

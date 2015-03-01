@@ -246,12 +246,17 @@ namespace APDesigner
 			Notify(L"Build Started - " + m_currentProject->getName(), L" - Apoc3D Build Service");
 
 			UpdateProject();
-			BuildInterface::getSingleton().AddBuild(m_currentProject);
+			BuildInterface::getSingleton().AddBuild(m_currentProject, GetProjectStampFilePath());
 			BuildInterface::getSingleton().Execute();
 		}
 	}
 	void ServWindow::BtnExit_Release(Button* ctrl)
 	{
 		m_window->Exit();
+	}
+
+	String ServWindow::GetProjectStampFilePath()
+	{
+		return PathUtils::Combine(PathUtils::GetDirectory(m_projectFilePath), PathUtils::GetFileNameNoExt(m_projectFilePath)) + L".stamp";
 	}
 }

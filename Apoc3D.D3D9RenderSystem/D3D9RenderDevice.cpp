@@ -368,15 +368,13 @@ namespace Apoc3D
 				if (m_nativeState->getAlphaTestEnable() != mtrl->AlphaTestEnabled ||
 					m_nativeState->getAlphaReference() != mtrl->AlphaReference)
 				{
-					m_nativeState->SetAlphaTestParameters(mtrl->AlphaTestEnabled, COMFUN_GreaterEqual,
-						mtrl->AlphaReference);
+					m_nativeState->SetAlphaTestParameters(mtrl->AlphaTestEnabled, CompareFunction::GreaterEqual, mtrl->AlphaReference);
 				}
 
 				if (m_nativeState->getDepthBufferEnabled() != mtrl->DepthTestEnabled ||
 					m_nativeState->getDepthBufferWriteEnabled() != mtrl->DepthWriteEnabled)
 				{
-					m_nativeState->SetDepth(mtrl->DepthTestEnabled,
-						mtrl->DepthWriteEnabled);
+					m_nativeState->SetDepth(mtrl->DepthTestEnabled, mtrl->DepthWriteEnabled);
 				}
 
 				D3DDevice* d3dd = getDevice();

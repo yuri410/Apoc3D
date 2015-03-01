@@ -64,9 +64,9 @@ namespace APBuild
 		{
 			proData.SetImplType(impType);
 
-			if (!CompileShader(config.SrcVSFile, config.EntryPointVS, data.Profiles[0], SHDT_Vertex, false, false, nullptr))
+			if (!CompileShader(config.SrcVSFile, config.EntryPointVS, data.Profiles[0], ShaderType::Vertex, false, false, nullptr, nullptr))
 				return;
-			if (!CompileShader(config.SrcPSFile, config.EntryPointPS, data.Profiles[0], SHDT_Pixel, false, false, nullptr))
+			if (!CompileShader(config.SrcPSFile, config.EntryPointPS, data.Profiles[0], ShaderType::Pixel, false, false, nullptr, nullptr))
 				return;
 		}
 		else

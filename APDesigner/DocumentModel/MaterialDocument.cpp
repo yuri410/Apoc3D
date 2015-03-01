@@ -140,9 +140,9 @@ namespace APDesigner
 
 			sy += 25;
 			List<String> items;
-			items.Add(GraphicsCommonUtils::ToString(CULL_None));
-			items.Add(GraphicsCommonUtils::ToString(CULL_Clockwise));
-			items.Add(GraphicsCommonUtils::ToString(CULL_CounterClockwise));
+			items.Add(CullModeConverter[CULL_None]);
+			items.Add(CullModeConverter[CULL_Clockwise]);
+			items.Add(CullModeConverter[CULL_CounterClockwise]);
 			lbl = new Label(skin, Point(sx, sy), L"Cull Mode", 100);
 			m_mtrlPanelLabels.Add(lbl);
 			m_cbCull = new ComboBox(skin, Point(sx + 100, sy), 200, items);
@@ -160,29 +160,29 @@ namespace APDesigner
 			m_cbTransparent = new CheckBox(skin, Point(sx + 250 + 100, sy), L"Transparent", false);
 
 			items.Clear();
-			items.Add(GraphicsCommonUtils::ToString(BLFUN_Add));
-			items.Add(GraphicsCommonUtils::ToString(BLFUN_Subtract));
-			items.Add(GraphicsCommonUtils::ToString(BLFUN_ReverseSubtract));
-			items.Add(GraphicsCommonUtils::ToString(BLFUN_Max));
-			items.Add(GraphicsCommonUtils::ToString(BLFUN_Min));
+			items.Add(BlendFunctionConverter[BlendFunction::Add]);
+			items.Add(BlendFunctionConverter[BlendFunction::Subtract]);
+			items.Add(BlendFunctionConverter[BlendFunction::ReverseSubtract]);
+			items.Add(BlendFunctionConverter[BlendFunction::Max]);
+			items.Add(BlendFunctionConverter[BlendFunction::Min]);
 			lbl = new Label(skin, Point(sx, sy), L"Blend Func", 100);
 			m_mtrlPanelLabels.Add(lbl);
 			m_cbBlendFunction = new ComboBox(skin, Point(sx + 100, sy), 200, items);
 
 			items.Clear();
-			items.Add(GraphicsCommonUtils::ToString(BLEND_Zero));
-			items.Add(GraphicsCommonUtils::ToString(BLEND_One));
-			items.Add(GraphicsCommonUtils::ToString(BLEND_SourceColor));
-			items.Add(GraphicsCommonUtils::ToString(BLEND_InverseSourceColor));
-			items.Add(GraphicsCommonUtils::ToString(BLEND_SourceAlpha));
-			items.Add(GraphicsCommonUtils::ToString(BLEND_InverseSourceAlpha));
-			items.Add(GraphicsCommonUtils::ToString(BLEND_DestinationAlpha));
-			items.Add(GraphicsCommonUtils::ToString(BLEND_InverseDestinationAlpha));
-			items.Add(GraphicsCommonUtils::ToString(BLEND_DestinationColor));
-			items.Add(GraphicsCommonUtils::ToString(BLEND_InverseDestinationColor));
+			items.Add(BlendConverter[Blend::Zero]);
+			items.Add(BlendConverter[Blend::One]);
+			items.Add(BlendConverter[Blend::SourceColor]);
+			items.Add(BlendConverter[Blend::InverseSourceColor]);
+			items.Add(BlendConverter[Blend::SourceAlpha]);
+			items.Add(BlendConverter[Blend::InverseSourceAlpha]);
+			items.Add(BlendConverter[Blend::DestinationAlpha]);
+			items.Add(BlendConverter[Blend::InverseDestinationAlpha]);
+			items.Add(BlendConverter[Blend::DestinationColor]);
+			items.Add(BlendConverter[Blend::InverseDestinationColor]);
 
-			items.Add(GraphicsCommonUtils::ToString(BLEND_SourceAlphaSaturation));
-			items.Add(GraphicsCommonUtils::ToString(BLEND_BlendFactor));
+			items.Add(BlendConverter[Blend::SourceAlphaSaturation]);
+			items.Add(BlendConverter[Blend::BlendFactor]);
 			
 			sy += 25;
 			lbl = new Label(skin, Point(sx, sy), L"Src Blend", 100);
@@ -469,24 +469,20 @@ namespace APDesigner
 
 		if (m_cbSrcBlend->getSelectedIndex()!=-1)
 		{
-			mtrl->SourceBlend = GraphicsCommonUtils::ParseBlend(
-				m_cbSrcBlend->getItems()[m_cbSrcBlend->getSelectedIndex()]);
+			mtrl->SourceBlend = BlendConverter[m_cbSrcBlend->getItems()[m_cbSrcBlend->getSelectedIndex()]];
 		}
 		if (m_cbDstBlend->getSelectedIndex()!=-1)
 		{
-			mtrl->DestinationBlend = GraphicsCommonUtils::ParseBlend(
-				m_cbDstBlend->getItems()[m_cbDstBlend->getSelectedIndex()]);
+			mtrl->DestinationBlend = BlendConverter[m_cbDstBlend->getItems()[m_cbDstBlend->getSelectedIndex()]];
 		}
 		if (m_cbBlendFunction->getSelectedIndex() !=-1)
 		{
-			mtrl->BlendFunction = GraphicsCommonUtils::ParseBlendFunction(
-				m_cbBlendFunction->getItems()[m_cbBlendFunction->getSelectedIndex()]);
+			mtrl->BlendFunction = BlendFunctionConverter[m_cbBlendFunction->getItems()[m_cbBlendFunction->getSelectedIndex()]];
 		}
 
 		if (m_cbCull->getSelectedIndex() !=-1)
 		{
-			mtrl->Cull = GraphicsCommonUtils::ParseCullMode(
-				m_cbCull->getItems()[m_cbCull->getSelectedIndex()]);
+			mtrl->Cull = CullModeConverter[m_cbCull->getItems()[m_cbCull->getSelectedIndex()]];
 		}
 
 		mtrl->Reload();
@@ -548,10 +544,10 @@ namespace APDesigner
 
 			m_cbTransparent->Checked = mtrl->IsBlendTransparent;
 
-			m_cbSrcBlend->SetSelectionByName(GraphicsCommonUtils::ToString(mtrl->SourceBlend));
-			m_cbDstBlend->SetSelectionByName(GraphicsCommonUtils::ToString(mtrl->DestinationBlend));
-			m_cbBlendFunction->SetSelectionByName(GraphicsCommonUtils::ToString(mtrl->BlendFunction));
-			m_cbCull->SetSelectionByName(GraphicsCommonUtils::ToString(mtrl->Cull));
+			m_cbSrcBlend->SetSelectionByName(BlendConverter[mtrl->SourceBlend]);
+			m_cbDstBlend->SetSelectionByName(BlendConverter[mtrl->DestinationBlend]);
+			m_cbBlendFunction->SetSelectionByName(BlendFunctionConverter[mtrl->BlendFunction]);
+			m_cbCull->SetSelectionByName(CullModeConverter[mtrl->Cull]);
 		}
 		else
 		{

@@ -52,8 +52,7 @@ namespace Apoc3D
 			String DebugName;
 #endif
 
-			/** Name for retiring material reference  */
-			String ExternalRefName;
+			String ExternalRefName;		/** Name for retiring material reference  */
 
 
 			HashMap<int, String> EffectName;
@@ -95,9 +94,9 @@ namespace Apoc3D
 				DepthTestEnabled = DepthWriteEnabled = true;
 				Cull = CULL_CounterClockwise;
 				IsBlendTransparent = false;
-				BlendFunction = BLFUN_Add;
-				SourceBlend = BLEND_One;
-				DestinationBlend = BLEND_Zero;
+				BlendFunction = BlendFunction::Add;
+				SourceBlend = Blend::One;
+				DestinationBlend = Blend::Zero;
 				Priority = DefaultMaterialPriority;
 				PassFlags = 1;
 				UsePointSprite = false;
@@ -112,7 +111,6 @@ namespace Apoc3D
 				Power = 0;
 			}
 
-			//MaterialData(const Material* mtrl);
 			MaterialData() { }
 			~MaterialData() { }
 

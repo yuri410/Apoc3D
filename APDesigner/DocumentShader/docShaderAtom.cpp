@@ -47,9 +47,9 @@ namespace APDesigner
 			m_labels.Add(lbl);
 
 			List<String> items;
-			items.Add(GraphicsCommonUtils::ToString(SHDT_Vertex));
-			items.Add(GraphicsCommonUtils::ToString(SHDT_Pixel));
-			items.Add(GraphicsCommonUtils::ToString(SHDT_All));
+			items.Add(ShaderTypeConverter.ToString(ShaderType::Vertex));
+			items.Add(ShaderTypeConverter.ToString(ShaderType::Pixel));
+			items.Add(ShaderTypeConverter.ToString(ShaderType::All));
 			m_cbShaderType = new ComboBox(skin, Point(330, 33), 120, items);
 
 
@@ -131,15 +131,15 @@ namespace APDesigner
 
 			switch (m_currentWorkingCopy->getShaderType())
 			{
-			case SHDT_All:
-				m_cbShaderType->setSelectedIndex(2);
-				break;
-			case SHDT_Pixel:
-				m_cbShaderType->setSelectedIndex(1);
-				break;
-			case SHDT_Vertex:
-				m_cbShaderType->setSelectedIndex(0);
-				break;
+				case ShaderType::All:
+					m_cbShaderType->setSelectedIndex(2);
+					break;
+				case ShaderType::Pixel:
+					m_cbShaderType->setSelectedIndex(1);
+					break;
+				case ShaderType::Vertex:
+					m_cbShaderType->setSelectedIndex(0);
+					break;
 			}
 
 			for (int i=0;i<m_currentWorkingCopy->Ports().getCount();i++)

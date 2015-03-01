@@ -48,8 +48,8 @@ namespace Apoc3D
 		Material::Material(RenderDevice* device)
 			: m_device(device),
 			m_passFlags(0), m_priority(DefaultMaterialPriority), 
-			BlendFunction(BLFUN_Add), IsBlendTransparent(false), 
-			SourceBlend(BLEND_SourceAlpha), DestinationBlend(BLEND_InverseSourceAlpha),
+			BlendFunction(BlendFunction::Add), IsBlendTransparent(false), 
+			SourceBlend(Blend::SourceAlpha), DestinationBlend(Blend::InverseSourceAlpha),
 			AlphaTestEnabled(false), AlphaReference(0),
 			DepthWriteEnabled(true), DepthTestEnabled(true),
 			Ambient(0,0,0,0), Diffuse(1.f,1.f,1.f,1.f), Specular(0,0,0,0), Emissive(0,0,0,0), Power(0),

@@ -21,7 +21,7 @@ namespace APDesigner
 		~BuildInterface();
 
 		void AddSingleBuildItem(ProjectItem* item);
-		void AddBuild(Project* project);
+		void AddBuild(Project* project, const String& stampFile);
 		void Execute();
 
 		bool MainThreadUpdate(const GameTime* time, BuildResult* result);

@@ -30,10 +30,6 @@ using namespace Apoc3D::Graphics::D3D9RenderSystem;
 
 namespace APBuild
 {
-	struct ShaderModel3ConstantTable : public ConstantTable
-	{
-		ShaderModel3ConstantTable(ID3DXConstantTable* constants);
-	};
-
-	void ProcessShaderModel3ByteCode(ShaderModel3ConstantTable& ct, const DWORD* byteCode, int32 codeSize, DWORD*& newByteCode, int32& newCodeSize);
+	bool CompileAsHLSLDX9(const String& src, const String& entryPoint, const char* pfName, bool debugEnabled, bool noOptimization,
+		const List<std::pair<std::string, std::string>>* defines, ConstantTable*& constantTable, char*& codePtr, int32& codeSize);
 }

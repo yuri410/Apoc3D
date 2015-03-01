@@ -110,6 +110,9 @@ namespace Apoc3D
 			bool tryGetValue(const String& name, String& result) const;
 			bool tryGetAttribute(const String& name, String& result) const;
 
+			const String* tryGetValue(const String& name) const;
+			const String* tryGetAttribute(const String& name) const;
+
 
 #define CONFIG_SECT_GETER_DECL(type, typeName) \
 			type Get##typeName() const; \
@@ -254,20 +257,20 @@ namespace Apoc3D
 
 
 			template <typename T>
-			bool TryGetEnum(const String& name, const Utility::TypeDualConverter<T>& conv, T& result) const
+			bool TryGetEnum(const String& name, T& result, const Utility::TypeDualConverter<T>& conv) const
 			{
-				String tmp;
-				if (tryGetValue(name, tmp))
-					return conv.TryParse(tmp, result);
+				const String* tmp = tryGetValue(name);
+				if (tmp)
+					return conv.TryParse(*tmp, result);
 				return false;
 			}
 
 			template <typename T>
-			bool TryGetAttributeEnum(const String& name, const Utility::TypeDualConverter<T>& conv, T& result) const
+			bool TryGetAttributeEnum(const String& name, T& result, const Utility::TypeDualConverter<T>& conv) const
 			{
-				String tmp;
-				if (tryGetAttribute(name, tmp))
-					return conv.TryParse(tmp, result);
+				const String* tmp = tryGetAttribute(name);
+				if (tmp)
+					return conv.TryParse(*tmp, result);
 				return false;
 			}
 
@@ -283,13 +286,13 @@ namespace Apoc3D
 
 
 			template <typename T>
-			void AddEnum(const String& name, const Utility::TypeDualConverter<T>& conv, T result) { AddStringValue(name, conv.ToString(result)); }
+			void AddEnum(const String& name, T result, const Utility::TypeDualConverter<T>& conv) { AddStringValue(name, conv.ToString(result)); }
 
 			template <typename T>
-			void AddAttributeEnum(const String& name, const Utility::TypeDualConverter<T>& conv, T result) { AddAttributeString(name, conv.ToString(result)); }
+			void AddAttributeEnum(const String& name, T result, const Utility::TypeDualConverter<T>& conv) { AddAttributeString(name, conv.ToString(result)); }
 
 			template <typename T>
-			void SetEnum(const String& name, const Utility::TypeDualConverter<T>& conv, T result) { SetStringValue(name, conv.ToString(result)); }
+			void SetEnum(const String& name, T result, const Utility::TypeDualConverter<T>& conv) { SetStringValue(name, conv.ToString(result)); }
 
 
 
@@ -297,10 +300,10 @@ namespace Apoc3D
 			template <typename T>
 			bool TryGetGeneric(const String& name, T& result) const
 			{
-				String tmp;
-				if (tryGetValue(name, tmp))
+				const String* tmp = tryGetValue(name);
+				if (tmp)
 				{
-					result.Parse(tmp);
+					result.Parse(*tmp);
 					return true;
 				}
 				return false;
@@ -309,10 +312,10 @@ namespace Apoc3D
 			template <typename T>
 			bool TryGetAttributeGeneric(const String& name, T& result) const
 			{
-				String tmp;
-				if (tryGetAttribute(name, tmp))
+				const String* tmp = tryGetAttribute(name);
+				if (tmp)
 				{
-					result.Parse(tmp);
+					result.Parse(*tmp);
 					return true;
 				}
 				return false;
@@ -338,8 +341,10 @@ namespace Apoc3D
 			template <typename T>
 			void SetGeneric(const String& name, T& result) { SetStringValue(name, result.ToString()); }
 
+			int32 GetHashCode() const;
 
 		protected:
+
 			String m_name;
 			String m_value;
 
@@ -438,9 +443,9 @@ namespace Apoc3D
 			template <typename T>
 			bool TryGetEnum(const String& name, const Utility::TypeDualConverter<T>& conv, T& result) const
 			{
-				String tmp;
-				if (TryGetValue(name, tmp))
-					return conv.TryParse(tmp, result);
+				const String* tmp = TryGetValue(name);
+				if (tmp)
+					return conv.TryParse(*tmp, result);
 				return false;
 			}
 

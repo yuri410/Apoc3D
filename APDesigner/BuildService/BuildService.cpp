@@ -31,9 +31,12 @@ namespace APDesigner
 		m_taskLock.unlock();
 	}
 
-	void BuildInterface::AddBuild(Project* project)
+	void BuildInterface::AddBuild(Project* project, const String& stampFile)
 	{
 		//project->Save(L"build.xml", true);
+
+		project->SaveBuildStamp(FileOutStream(stampFile));
+
 		List<ProjectBuildScript> scripts;
 		project->GenerateBuildScripts(scripts);
 
@@ -46,6 +49,7 @@ namespace APDesigner
 			{
 				ConfigurationSection* attachmentSect = new ConfigurationSection(ProjectUtils::BuildAttachmentSectionGUID);
 				attachmentSect->AddStringValue(L"BaseOutputPath", pbs.BaseOutputDir);
+				attachmentSect->AddStringValue(L"StampFile", stampFile);
 				xc->Add(attachmentSect);
 			}
 

@@ -1,4 +1,7 @@
 #include "API.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include <dirent.h>
+#include <sys/utime.h>
 
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 #include <Windows.h>
@@ -35,5 +38,15 @@ namespace Apoc3D
 			return 500;
 #endif
 		}
+
+		void TimetToFileTime(time_t t, FILETIME& ft)
+		{
+			int64 temp = t * 10000000 + 116444736000000000LL;
+			
+			ft.dwLowDateTime = static_cast<DWORD>(temp);
+			ft.dwHighDateTime = static_cast<DWORD>(temp >> 32);
+		}
+
+
 	}
 }

@@ -44,22 +44,23 @@ namespace Apoc3D
 			 */
 			struct APAPI ShaderSamplerState 
 			{
-				TextureAddressMode AddressU;
-				TextureAddressMode AddressV;
-				TextureAddressMode AddressW;
+				TextureAddressMode AddressU = TextureAddressMode::Wrap;
+				TextureAddressMode AddressV = TextureAddressMode::Wrap;
+				TextureAddressMode AddressW = TextureAddressMode::Wrap;
 
-				uint BorderColor;
-				TextureFilter MagFilter;
-				TextureFilter MinFilter;
-				TextureFilter MipFilter;
-				int32 MaxAnisotropy;
-				int32 MaxMipLevel;
-				int32 MipMapLODBias;
+				uint BorderColor = 0;
+				TextureFilter MagFilter = TFLT_Point;
+				TextureFilter MinFilter = TFLT_Point;
+				TextureFilter MipFilter = TFLT_None;
+				int32 MaxAnisotropy = 1;
+				int32 MaxMipLevel = 0;
+				int32 MipMapLODBias = 0;
 
-				ShaderSamplerState();
+				ShaderSamplerState() { }
 				void Parse(const ConfigurationSection* sect);
 				void Save(ConfigurationSection* sect);
 			};
+
 			class APAPI Shader
 			{
 			public:

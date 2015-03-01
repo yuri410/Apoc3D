@@ -32,6 +32,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/IOLib/BinaryReader.h"
+#include "apoc3d/IOLib/BinaryWriter.h"
 #include "apoc3d/Math/RandomUtils.h"
 #include "apoc3d/Utility/TypeConverter.h"
 #include "apoc3d/Utility/StringUtils.h"
@@ -127,7 +129,8 @@ namespace Apoc3D
 		}
 	}
 
-	List<String> ProjectFolder::GetAllOutputFiles()  { return GetDestFileOutputSimple(DestinationPack); }
+	List<String> ProjectFolder::GetAllInputFiles() { return{}; }
+	List<String> ProjectFolder::GetAllOutputFiles()  { return MakeOutputFileList(DestinationPack); }
 
 	/************************************************************************/
 	/*  ProjectResTexture                                                   */
@@ -326,31 +329,41 @@ namespace Apoc3D
 			sect->AddAttributeString(L"Compression", ProjectUtils::TextureCompressionTypeConv.ToString(CompressionType));
 		}
 	}
-	bool ProjectResTexture::IsOutdated()
+	//bool ProjectResTexture::IsOutdated()
+	//{
+	//	time_t destFileTime;
+	//	
+	//	if (IsSettingsNewerThan(DestinationFile, destFileTime))
+	//		return true;
+	//	
+	//	if (AssembleCubemap || AssembleVolumeMap)
+	//	{
+	//		for (const String& srcFile : SubMapTable.getValueAccessor())
+	//		{
+	//			if (IsSourceFileNewer(srcFile, destFileTime))
+	//				return true;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		if (IsSourceFileNewer(SourceFile, destFileTime))
+	//			return true;
+	//	}
+	//	return false;
+	//}
+
+	List<String> ProjectResTexture::GetAllInputFiles() 
 	{
-		time_t destFileTime;
-		
-		if (IsSettingsNewerThan(DestinationFile, destFileTime))
-			return true;
-		
 		if (AssembleCubemap || AssembleVolumeMap)
 		{
-			for (const String& srcFile : SubMapTable.getValueAccessor())
-			{
-				if (IsSourceFileNewer(srcFile, destFileTime))
-					return true;
-			}
-		}
-		else
-		{
-			if (IsSourceFileNewer(SourceFile, destFileTime))
-				return true;
-		}
-		return false;
-	}
-	bool ProjectResTexture::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
+			List<String > srcFiles;
+			SubMapTable.FillValues(srcFiles);
 
-	List<String> ProjectResTexture::GetAllOutputFiles() { return GetDestFileOutputSimple(DestinationFile); }
+			return MakeInputFileList(srcFiles);
+		}
+		return MakeInputFileList(SourceFile);
+	}
+	List<String> ProjectResTexture::GetAllOutputFiles() { return MakeOutputFileList(DestinationFile); }
 
 	/************************************************************************/
 	/*  ProjectResMaterial                                                  */
@@ -364,10 +377,10 @@ namespace Apoc3D
 	{
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationFile, savingBuild));
 	}
-	List<String> ProjectResMaterial::GetAllOutputFiles() { return GetDestFileOutputSimple(DestinationFile); }
-	bool ProjectResMaterial::IsOutdated() { return IsSettingsNewerThan(DestinationFile); }
-	bool ProjectResMaterial::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
 
+	List<String> ProjectResMaterial::GetAllInputFiles() { return{}; }
+	List<String> ProjectResMaterial::GetAllOutputFiles() { return MakeOutputFileList(DestinationFile); }
+	
 	/************************************************************************/
 	/*   ProjectResMaterialSet                                              */
 	/************************************************************************/
@@ -403,6 +416,8 @@ namespace Apoc3D
 		mtrlList.Add(name);
 	}
 
+	List<String> ProjectResMaterialSet::GetAllInputFiles() { return MakeInputFileList(SourceFile); }
+
 	List<String> ProjectResMaterialSet::GetAllOutputFiles()
 	{
 		List<String> res;
@@ -434,8 +449,6 @@ namespace Apoc3D
 			res.Add(WrapDestinationPath(DestinationToken, true));
 		return res;
 	}
-	bool ProjectResMaterialSet::IsOutdated() { return IsOutdatedSimple(SourceFile, DestinationToken); }
-	bool ProjectResMaterialSet::IsNotBuilt() { return IsDestFileNotBuilt(DestinationToken); }
 
 	/************************************************************************/
 	/*   ProjectResFont                                                     */
@@ -477,9 +490,6 @@ namespace Apoc3D
 			sect->AddSection(ss);
 		}
 	}
-	List<String> ProjectResFont::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }
-	bool ProjectResFont::IsOutdated() { return IsOutdatedSimple(SourceFile, DestFile); }
-	bool ProjectResFont::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
 	/************************************************************************/
 	/*   ProjectResFontGlyphDist                                            */
@@ -495,9 +505,6 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
 	}
-	List<String> ProjectResFontGlyphDist::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }
-	bool ProjectResFontGlyphDist::IsOutdated() { return IsOutdatedSimple(SourceFile, DestFile); }
-	bool ProjectResFontGlyphDist::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
 	/************************************************************************/
 	/*   ProjectResEffect                                                   */
@@ -543,7 +550,7 @@ namespace Apoc3D
 		}
 
 		DestFile = sect->getAttribute(L"DestinationFile");
-		PListFile = sect->getAttribute(L"ParamList");
+		sect->tryGetAttribute(L"ParamList", PListFile);
 
 		StringUtils::Split(sect->getAttribute(L"Targets"), Targets, L"|");
 		for (String& s : Targets)
@@ -569,18 +576,13 @@ namespace Apoc3D
 		}
 		else
 		{
-			String srcText = L"VS:";
-			srcText.append(WrapSourcePath(VS, savingBuild));
-
-			srcText.append(L" | PS:");
-			srcText.append(WrapSourcePath(PS, savingBuild));
-
+			SettingList lst;
+			lst.Add({ L"VS", WrapSourcePath(VS, savingBuild) });
+			lst.Add({ L"PS", WrapSourcePath(PS, savingBuild) });
 			if (GS.size())
-			{
-				srcText.append(L" | GS:");
-				srcText.append(WrapSourcePath(GS, savingBuild));
-			}
-			sect->AddAttributeString(L"Source", srcText);
+				lst.Add({ L"GS", WrapSourcePath(GS, savingBuild) });
+			
+			sect->AddAttributeString(L"Source", Pack(lst));
 		}
 
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
@@ -592,48 +594,21 @@ namespace Apoc3D
 		}
 		else
 		{
-			String srcText = L"VS:";
-			srcText.append(EntryPointVS);
-
-			srcText.append(L" | PS:");
-			srcText.append(EntryPointPS);
-
+			SettingList lst;
+			lst.Add({ L"VS", EntryPointVS });
+			lst.Add({ L"PS", EntryPointPS });
 			if (GS.size())
-			{
-				srcText.append(L" | GS:");
-				srcText.append(EntryPointGS);
-			}
-			sect->AddAttributeString(L"EntryPoints", srcText);
+				lst.Add({ L"GS", EntryPointGS });
+
+			sect->AddAttributeString(L"EntryPoints", Pack(lst));
 		}
 
-		String targetsStr;
-		for (int i = 0; i < Targets.getCount(); i++)
-		{
-			targetsStr += Targets[i];
-			if (i != Targets.getCount() - 1)
-				targetsStr.append(L" | ");
-		}
-		sect->AddAttributeString(L"Targets", targetsStr);
-
+		sect->AddAttributeString(L"Targets", StringUtils::PackStrings(Targets, false, '|'));
 
 		sect->AddAttributeBool(L"IsDebug", IsDebug);
 		sect->AddAttributeBool(L"NoOptimization", NoOptimization);
 
-		String definesStr;
-		for (int i = 0; i < Defines.getCount(); i++)
-		{
-			definesStr += Defines[i].first;
-			
-			if (Defines[i].second.size())
-			{
-				definesStr.append(1, ':');
-				definesStr += Defines[i].second;
-			}
-
-			if (i != Defines.getCount() - 1)
-				definesStr.append(L" | ");
-		}
-		sect->AddAttributeString(L"Defines", definesStr);
+		sect->AddAttributeString(L"Defines", Pack(Defines));
 
 	}
 
@@ -658,41 +633,30 @@ namespace Apoc3D
 		}
 	}
 
-	List<std::pair<String, String>> ProjectResEffect::Split(const String& text)
+	ProjectResEffect::SettingList ProjectResEffect::Split(const String& text)
 	{
-		return StringUtils::SplitParse<String, List<std::pair<String, String>>, std::pair<String, String>, ParseFXSettingItem>(text, L"|");
+		return StringUtils::SplitParse<String, SettingList, std::pair<String, String>, ParseFXSettingItem>(text, L"|");
+	}
+	String ProjectResEffect::Pack(const SettingList& lst)
+	{
+		String result;
+		for (int32 i = 0; i < lst.getCount();i++)
+		{
+			result += lst[i].first;
+			if (lst[i].second.size())
+			{
+				result.append(1, ':');
+				result += lst[i].second;
+			}
+
+			if (i != lst.getCount() - 1)
+				result.append(L" | ");
+		}
+		return result;
 	}
 
-	List<String> ProjectResEffect::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }
-	bool ProjectResEffect::IsOutdated()
-	{
-		time_t destFileTime;
-		if (IsSettingsNewerThan(DestFile, destFileTime))
-			return true;
-
-		if (VS.size())
-		{
-			if (IsSourceFileNewer(VS, destFileTime))
-				return true;
-		}
-		if (PS.size())
-		{
-			if (IsSourceFileNewer(PS, destFileTime))
-				return true;
-		}
-		if (GS.size())
-		{
-			if (IsSourceFileNewer(GS, destFileTime))
-				return true;
-		}
-		if (PListFile.size())
-		{
-			if (IsSourceFileNewer(PListFile, destFileTime))
-				return true;
-		}
-		return false;
-	}
-	bool ProjectResEffect::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
+	List<String> ProjectResEffect::GetAllInputFiles() { return MakeInputFileList({ VS, PS, GS, PListFile }); }
+	List<String> ProjectResEffect::GetAllOutputFiles() { return MakeOutputFileList(DestFile); }
 
 	/************************************************************************/
 	/*   ProjectResCustomEffect                                             */
@@ -716,23 +680,7 @@ namespace Apoc3D
 		sect->AddAttributeString(L"EntryPointPS", EntryPointPS);
 		sect->AddAttributeString(L"Profile", Profile);
 	}
-	List<String> ProjectResCustomEffect::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }
-	bool ProjectResCustomEffect::IsOutdated()
-	{
-		time_t destFileTime;
-		if (IsSettingsNewerThan(DestFile, destFileTime))
-			return true;
-
-		if (IsSourceFileNewer(SrcVSFile, destFileTime))
-			return true;
-
-		if (IsSourceFileNewer(SrcPSFile, destFileTime))
-			return true;
-		
-		return false;
-	}
-	bool ProjectResCustomEffect::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
-
+	
 	/************************************************************************/
 	/*  ProjectResEffectList                                                */
 	/************************************************************************/
@@ -774,10 +722,7 @@ namespace Apoc3D
 				sect->AddSection(ss);
 			}
 		}
-		
 	}
-	List<String> ProjectResEffectList::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }
-	bool ProjectResEffectList::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
 	/************************************************************************/
 	/*  ProjectResShaderNetwork                                             */
@@ -793,9 +738,6 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SrcFile, savingBuild));
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
 	}
-	List<String> ProjectResShaderNetwork::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }
-	bool ProjectResShaderNetwork::IsOutdated() { return IsOutdatedSimple(SrcFile, DestFile); }
-	bool ProjectResShaderNetwork::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
 
 	/************************************************************************/
 	/*  ProjectResModel                                                     */
@@ -819,7 +761,7 @@ namespace Apoc3D
 			UseVertexFormatConversion = true;
 			for (const ConfigurationSection* ent : subs->getSubSections())
 			{
-				VertexElementUsage usage = GraphicsCommonUtils::ParseVertexElementUsage(ent->getName());
+				VertexElementUsage usage = VertexElementUsageConverter[ent->getName()];
 				int index = 0;
 				if (usage == VEU_TextureCoordinate)
 				{
@@ -855,12 +797,12 @@ namespace Apoc3D
 				{
 					String idxText = StringUtils::IntToString(ve.getIndex());
 
-					vs = new ConfigurationSection(GraphicsCommonUtils::ToString(ve.getUsage()) + idxText);
+					vs = new ConfigurationSection(VertexElementUsageConverter[ve.getUsage()] + idxText);
 					vs->SetValue(idxText);
 				}
 				else
 				{
-					vs = new ConfigurationSection(GraphicsCommonUtils::ToString(ve.getUsage()));
+					vs = new ConfigurationSection(VertexElementUsageConverter[ve.getUsage()]);
 				}
 
 				subs->AddSection(vs);
@@ -874,48 +816,40 @@ namespace Apoc3D
 			sect->AddAttributeBool(L"CollapseMeshs", CollapseMeshs);
 		}
 	}
-	List<String> ProjectResModel::GetAllOutputFiles()
-	{
-		List<String> e;
-		if (DstAnimationFile.size())
-			e.Add(WrapDestinationPath(DstAnimationFile, true));
-		if (DstFile.size())
-			e.Add(WrapDestinationPath(DstFile, true));
-		return e;
-	}
-	bool ProjectResModel::IsOutdated()
-	{
-		time_t destFileTime;
-		if (IsSettingsNewerThan(DstFile, destFileTime))
-			return true;
 
-		// check if the source file is newer than the built ones.
-		String path = WrapSourcePath(SrcFile, true);
-		if (File::FileExists(path))
-		{
-			time_t srcTime = File::GetFileModifiyTime(path);
-			if (srcTime > destFileTime)
-				return true;
-
-			if (DstAnimationFile.size())
-			{
-				destFileTime = File::GetFileModifiyTime(WrapDestinationPath(DstAnimationFile, true));
-
-				if (srcTime > destFileTime)
-					return true;
-			}
-		}
-
-		return false;
-	}
-	bool ProjectResModel::IsNotBuilt()
-	{
-		if (DstAnimationFile.size())
-			if (!File::FileExists(WrapDestinationPath(DstAnimationFile, true)))
-				return true;
-
-		return !File::FileExists(WrapDestinationPath(DstFile, true));
-	}
+	//bool ProjectResModel::IsOutdated()
+	//{
+	//	time_t destFileTime;
+	//	if (IsSettingsNewerThan(DstFile, destFileTime))
+	//		return true;
+	//
+	//	// check if the source file is newer than the built ones.
+	//	String path = WrapSourcePath(SrcFile, true);
+	//	if (File::FileExists(path))
+	//	{
+	//		time_t srcTime = File::GetFileModifiyTime(path);
+	//		if (srcTime > destFileTime)
+	//			return true;
+	//
+	//		if (DstAnimationFile.size())
+	//		{
+	//			destFileTime = File::GetFileModifiyTime(WrapDestinationPath(DstAnimationFile, true));
+	//
+	//			if (srcTime > destFileTime)
+	//				return true;
+	//		}
+	//	}
+	//
+	//	return false;
+	//}
+	//bool ProjectResModel::IsNotBuilt()
+	//{
+	//	if (DstAnimationFile.size())
+	//		if (!File::FileExists(WrapDestinationPath(DstAnimationFile, true)))
+	//			return true;
+	//
+	//	return !File::FileExists(WrapDestinationPath(DstFile, true));
+	//}
 
 	/************************************************************************/
 	/*   ProjectResMAnim                                                    */
@@ -931,11 +865,7 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationFile, savingBuild));
 	}
-	List<String> ProjectResMAnim::GetAllOutputFiles() { return GetDestFileOutputSimple(DestinationFile); }
-	bool ProjectResMAnim::IsOutdated() { return IsOutdatedSimple(SourceFile, DestinationFile); }
-	bool ProjectResMAnim::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
-
-
+	
 	/************************************************************************/
 	/*    ProjectResTAnim                                                   */
 	/************************************************************************/
@@ -970,9 +900,6 @@ namespace Apoc3D
 			sect->AddSection(ss);
 		}
 	}
-	List<String> ProjectResTAnim::GetAllOutputFiles() { return GetDestFileOutputSimple(DestinationFile); }
-	bool ProjectResTAnim::IsOutdated() { return IsOutdatedSimple(SourceFile, DestinationFile); }
-	bool ProjectResTAnim::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
 
 	/************************************************************************/
 	/*   ProjectResUILayout                                                 */
@@ -988,9 +915,6 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationFile, savingBuild));
 	}
-	List<String> ProjectResUILayout::GetAllOutputFiles() { return GetDestFileOutputSimple(DestinationFile); }
-	bool ProjectResUILayout::IsOutdated() { return IsSettingsNewerThan(DestinationFile); }
-	bool ProjectResUILayout::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
 
 	/************************************************************************/
 	/*   ProjectResCopy                                                     */
@@ -1007,10 +931,6 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationFile, savingBuild));
 	}
-	List<String> ProjectResCopy::GetAllOutputFiles() { return GetDestFileOutputSimple(DestinationFile); }
-	bool ProjectResCopy::IsOutdated() { return IsSettingsNewerThan(DestinationFile); }
-	bool ProjectResCopy::IsNotBuilt() { return IsDestFileNotBuilt(DestinationFile); }
-
 
 	/************************************************************************/
 	/*    ProjectCustomItem                                                 */
@@ -1029,7 +949,6 @@ namespace Apoc3D
 	}
 	void ProjectCustomItem::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		//SourceFile = sect->getAttribute(L"SourceFile");
 		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
 		if (EditorExtension.size())
@@ -1046,9 +965,9 @@ namespace Apoc3D
 		}
 	}
 
-	List<String> ProjectCustomItem::GetAllOutputFiles() { return GetDestFileOutputSimple(DestFile); }
-	bool ProjectCustomItem::IsOutdated() { return IsSettingsNewerThan( DestFile); }
-	bool ProjectCustomItem::IsNotBuilt() { return IsDestFileNotBuilt(DestFile); }
+	/************************************************************************/
+	/*  ProjectItemData                                                     */
+	/************************************************************************/
 
 	String ProjectItemData::GetAbsoluteSourcePathBase() const
 	{
@@ -1092,39 +1011,45 @@ namespace Apoc3D
 	String ProjectItemData::GetAbsoluteSourcePath(const String& path) const { return PathUtils::Combine(GetAbsoluteSourcePathBase(), path); }
 	String ProjectItemData::GetAbsoluteDestinationPath(const String& path) const { return PathUtils::Combine(GetAbsoluteDestinationPathBase(), path); }
 
-	bool ProjectItemData::IsSourceFileNewer(const String& srcFile, time_t t) const
-	{
-		String p = WrapSourcePath(srcFile, true);
-		return File::FileExists(p) && File::GetFileModifiyTime(p) > t;
-	}
+	//bool ProjectItemData::IsSourceFileNewer(const String& srcFile, time_t t) const
+	//{
+	//	String p = WrapSourcePath(srcFile, true);
+	//	return File::FileExists(p) && File::GetFileModifiyTime(p) > t;
+	//}
 
-	bool ProjectItemData::IsSettingsNewerThan(const String& destinationFile) const
-	{
-		time_t t;
-		return IsSettingsNewerThan(destinationFile, t);
-	}
-	bool ProjectItemData::IsSettingsNewerThan(const String& destinationFile, time_t& dstFileTime) const
-	{
-		String p = WrapDestinationPath(destinationFile, true);
+	//bool ProjectItemData::IsSettingsNewerThan(const String& destinationFile) const
+	//{
+	//	time_t t;
+	//	return IsSettingsNewerThan(destinationFile, t);
+	//}
+	//bool ProjectItemData::IsSettingsNewerThan(const String& destinationFile, time_t& dstFileTime) const
+	//{
+	//	String p = WrapDestinationPath(destinationFile, true);
 
-		if (!File::FileExists(p))
-			return true;
+	//	if (!File::FileExists(p))
+	//		return true;
 
-		dstFileTime = File::GetFileModifiyTime(p);
-		return m_parentItem->isSettingsNewerThan(dstFileTime);
-	}
+	//	//dstFileTime = File::GetFileModifiyTime(p);
+	//	return m_parentItem->HasModifiedSinceLastBuild();// dstFileTime);
+	//}
 
-	bool ProjectItemData::IsOutdatedSimple(const String& srcFile, const String& destinationFile) const
-	{
-		time_t destFileTime;
-		if (IsSettingsNewerThan(destinationFile, destFileTime))
-			return true;
+	//bool ProjectItemData::IsOutdatedSimple(const String& srcFile, const String& destinationFile) const
+	//{
+	//	time_t destFileTime;
+	//	todo;
+	//	//if (IsSettingsNewerThan(destinationFile, destFileTime))
+	//	//	return true;
 
-		if (IsSourceFileNewer(srcFile, destFileTime))
-			return true;
+	//	if (IsSourceFileNewer(srcFile, destFileTime))
+	//		return true;
 
-		return false;
-	}
+	//	return false;
+	//}
+
+	//bool ProjectItemData::IsDestFileNotBuilt(const String& destinationFile)
+	//{
+	//	return !File::FileExists(WrapDestinationPath(destinationFile, true));
+	//}
 
 	String ProjectItemData::WrapSourcePath(const String& path, bool isAbsolute) const
 	{
@@ -1143,17 +1068,160 @@ namespace Apoc3D
 		return path;
 	}
 
-	List<String> ProjectItemData::GetDestFileOutputSimple(const String& destinationFile)
+
+	List<String> ProjectItemData::MakeOutputFileList(const String& destinationFile)
 	{
 		List<String> e;
-		if (destinationFile.size())
-			e.Add(WrapDestinationPath(destinationFile, true));
+		if (destinationFile.size()) e.Add(WrapDestinationPath(destinationFile, true));
+		return e;
+	}
+	List<String> ProjectItemData::MakeOutputFileList(const String& f1, const String& f2)
+	{
+		List<String> e;
+		if (f1.size()) e.Add(WrapDestinationPath(f1, true));
+		if (f2.size()) e.Add(WrapDestinationPath(f2, true));
+		return e;
+	}
+	List<String> ProjectItemData::MakeOutputFileList(const String& f1, const String& f2, const String& f3)
+	{
+		List<String> e;
+		if (f1.size()) e.Add(WrapDestinationPath(f1, true));
+		if (f2.size()) e.Add(WrapDestinationPath(f2, true));
+		if (f3.size()) e.Add(WrapDestinationPath(f3, true));
+		return e;
+	}
+	List<String> ProjectItemData::MakeOutputFileList(const List<String>& files)
+	{
+		List<String> e(files.getCount());
+		for (const String& fn : files)
+			if (fn.size()) e.Add(WrapDestinationPath(fn, true));
 		return e;
 	}
 
-	bool ProjectItemData::IsDestFileNotBuilt(const String& destinationFile)
+
+	List<String> ProjectItemData::MakeInputFileList(const String& srcFile)
 	{
-		return !File::FileExists(WrapDestinationPath(destinationFile, true));
+		List<String> e;
+		if (srcFile.size()) e.Add(WrapSourcePath(srcFile, true));
+		return e;
+	}
+	List<String> ProjectItemData::MakeInputFileList(const String& f1, const String& f2)
+	{
+		List<String> e;
+		if (f1.size()) e.Add(WrapSourcePath(f1, true));
+		if (f2.size()) e.Add(WrapSourcePath(f2, true));
+		return e;
+	}
+	List<String> ProjectItemData::MakeInputFileList(const String& f1, const String& f2, const String& f3)
+	{
+		List<String> e;
+		if (f1.size()) e.Add(WrapSourcePath(f1, true));
+		if (f2.size()) e.Add(WrapSourcePath(f2, true));
+		if (f3.size()) e.Add(WrapSourcePath(f3, true));
+		return e;
+	}
+	List<String> ProjectItemData::MakeInputFileList(const List<String>& files)
+	{
+		List<String> e(files.getCount());
+		for (const String& fn : files)
+			if (fn.size()) e.Add(WrapSourcePath(fn, true));
+		return e;
+	}
+
+	/************************************************************************/
+	/* ProjectBuildStamp                                                    */
+	/************************************************************************/
+
+	const int32 ProjectBuildStampID = 'PBST';
+
+	void ProjectBuildStamp::Load(Stream& strm)
+	{
+		BinaryReader br(&strm, false);
+
+		if (br.ReadInt32() == ProjectBuildStampID)
+		{
+			br.ReadInt32();
+
+			int32 count = br.ReadInt32();
+			m_sourceTimeStamps.Resize(count);
+			for (int32 i = 0; i < count;i++)
+			{
+				String p = br.ReadString();
+				int64 t = br.ReadInt64();
+
+				m_sourceTimeStamps.Add(p, t);
+			}
+
+			count = br.ReadInt32();
+			m_itemSettingStamps.Resize(count);
+			for (int32 i = 0; i < count;i++)
+			{
+				String p = br.ReadString();
+				uint32 t = br.ReadUInt32();
+
+				m_itemSettingStamps.Add(p, t);
+			}
+
+			m_hasData = true;
+		}
+	}
+
+	void ProjectBuildStamp::Save(Stream& strm)
+	{
+		BinaryWriter bw(&strm, false);
+
+		bw.WriteInt32(ProjectBuildStampID);
+		bw.WriteInt32(0);
+
+		bw.WriteInt32(m_sourceTimeStamps.getCount());
+		for (auto e : m_sourceTimeStamps)
+		{
+			bw.WriteString(e.Key);
+			bw.WriteInt64(e.Value);
+		}
+
+		bw.WriteInt32(m_itemSettingStamps.getCount());
+		for (auto e : m_itemSettingStamps)
+		{
+			bw.WriteString(e.Key);
+			bw.WriteUInt32(e.Value);
+		}
+	}
+	
+	void ProjectBuildStamp::Clear()
+	{
+		m_sourceTimeStamps.Clear();
+		m_itemSettingStamps.Clear();
+		m_hasData = false;
+	}
+
+	int64 ProjectBuildStamp::LookupSourceTimestamp(const String& path) const
+	{
+		int64 r = 0;
+		m_sourceTimeStamps.TryGetValue(path, r);
+		return r;
+	}
+
+	void ProjectBuildStamp::SetSourceTimestamp(const String& path, time_t t) 
+	{
+		if (!m_sourceTimeStamps.Contains(path))
+			m_sourceTimeStamps.Add(path, t);
+		else
+			m_sourceTimeStamps[path] = t;
+	}
+
+	uint32 ProjectBuildStamp::LookupItemSettingStamp(const String& path) const
+	{
+		uint32 r = 0;
+		m_itemSettingStamps.TryGetValue(path, r);
+		return r;
+	}
+	void ProjectBuildStamp::SetItemSettingStamp(const String& path, uint32 hash)
+	{
+		if (!m_itemSettingStamps.Contains(path))
+			m_itemSettingStamps.Add(path, hash);
+		else
+			m_itemSettingStamps[path] = hash;
 	}
 
 	/************************************************************************/
@@ -1193,7 +1261,7 @@ namespace Apoc3D
 
 		if (!savingBuild)
 		{
-			sect->AddAttributeString(L"LastModTime", StringUtils::IntToString(m_timeStamp));
+			//sect->AddAttributeString(L"LastModTime", StringUtils::IntToString(m_timeStamp));
 		}
 		return sect;
 	}
@@ -1202,14 +1270,14 @@ namespace Apoc3D
 	{
 		m_name = sect->getName();
 
-		if (sect->hasAttribute(L"LastModTime"))
-		{
-			m_timeStamp = StringUtils::ParseInt64(sect->getAttribute(L"LastModTime"));
-		}
-		else
-		{
-			m_timeStamp = time(0);
-		}
+		//if (sect->hasAttribute(L"LastModTime"))
+		//{
+		//	m_timeStamp = StringUtils::ParseInt64(sect->getAttribute(L"LastModTime"));
+		//}
+		//else
+		//{
+		//	m_timeStamp = time(0);
+		//}
 		
 
 		ProjectItemType itemType = ProjectUtils::ProjectItemTypeConv.Parse(sect->getAttribute(L"Type"));
@@ -1271,8 +1339,187 @@ namespace Apoc3D
 		m_typeData->Parse(sect);
 	}
 
+	bool ProjectItem::IsNotBuilt() const
+	{
+		if (m_typeData)
+		{
+			if (m_typeData->AlwaysBuild())
+				return true;
+
+			for (const String& fn : m_typeData->GetAllOutputFiles())
+			{
+				if (!File::FileExists(fn))
+					return true;
+			}
+		}
+		return false;
+	}
 
 
+	ProjectItemOutdateType ProjectItem::GetOutDatedType()
+	{
+		if (m_typeData)
+		{
+			if (m_typeData->AlwaysBuild())
+				return ProjectItemOutdateType::NewerSource;
+
+			{
+				// check if source is newer
+				int64 maxSourceTime = 0;
+				int64 minDestTime = INT64_MAX;
+
+				for (const String& fn : m_typeData->GetAllInputFiles())
+				{
+					if (File::FileExists(fn))
+					{
+						time_t mt = File::GetFileModifiyTime(fn);
+						if (mt && mt > maxSourceTime)
+							maxSourceTime = mt;
+					}
+				}
+				for (const String& fn : m_typeData->GetAllOutputFiles())
+				{
+					if (File::FileExists(fn))
+					{
+						time_t mt = File::GetFileModifiyTime(fn);
+						if (mt && mt < minDestTime)
+							minDestTime = mt;
+					}
+				}
+				if (maxSourceTime > minDestTime)
+					return ProjectItemOutdateType::NewerSource;
+			}
+
+			if (m_project->getBuildStamp().hasData() && !m_typeData->RequiresPostEdit())
+			{
+				// check if the setting stamp matches current
+				if (GetCurrentBuildSettingStamp() != m_prevBuildSettingStamp)
+					return ProjectItemOutdateType::DifferentSetting;
+
+				// check if any sources have different mod time than the one in the build stamp
+				for (const String& fn : m_typeData->GetAllInputFiles())
+				{
+					if (File::FileExists(fn))
+					{
+						time_t mt = File::GetFileModifiyTime(fn);
+
+						if (mt && m_project->getBuildStamp().LookupSourceTimestamp(fn) != mt)
+							return ProjectItemOutdateType::DifferentSource;
+					}
+				}
+
+			}
+
+		}
+		return ProjectItemOutdateType::Current;
+	}
+	
+	bool ProjectItem::IsOutDated()
+	{
+		return GetOutDatedType() != ProjectItemOutdateType::Current;
+	}
+
+
+	uint32 ProjectItem::GetCurrentBuildSettingStamp()
+	{
+		ConfigurationSection* s = Save(false);
+
+		int32 r = s->GetHashCode();
+
+		delete s;
+
+		return r;
+	}
+	
+	void ProjectItem::LoadPrevBuildStamp(const String& path)
+	{
+		const String curPath = PathUtils::Combine(path, m_name);
+		m_prevBuildSettingStamp = m_project->getBuildStamp().LookupItemSettingStamp(curPath);
+
+		if (m_typeData == nullptr)
+			return;
+
+		if (getType() == ProjectItemType::Folder)
+		{
+			ProjectFolder* fld = static_cast<ProjectFolder*>(m_typeData);
+
+			for (ProjectItem* pi : fld->SubItems)
+			{
+				pi->LoadPrevBuildStamp(curPath);
+			}
+		}
+	}
+	void ProjectItem::SaveCurrentBuildStamp(const String& path, ProjectBuildStamp& stmp)
+	{
+		const String curPath = PathUtils::Combine(path, m_name);
+		uint32 hash = GetCurrentBuildSettingStamp();
+		stmp.SetItemSettingStamp(curPath, hash);
+
+		if (m_typeData == nullptr)
+			return;
+
+		for (const String& fn : m_typeData->GetAllInputFiles())
+		{
+			if (File::FileExists(fn))
+			{
+				time_t mt = File::GetFileModifiyTime(fn);
+
+				if (mt)
+					stmp.SetSourceTimestamp(fn, mt);
+			}
+		}
+		if (getType() == ProjectItemType::Folder)
+		{
+			ProjectFolder* fld = static_cast<ProjectFolder*>(m_typeData);
+
+			for (ProjectItem* pi : fld->SubItems)
+			{
+				pi->SaveCurrentBuildStamp(curPath, stmp);
+			}
+		}
+	}
+	void ProjectItem::MarkOutdatedOutputs()
+	{
+		ProjectItemOutdateType ot = GetOutDatedType();
+		if (ot == ProjectItemOutdateType::DifferentSource || ot == ProjectItemOutdateType::DifferentSetting)
+		{
+			// change all output file's last write time to a second earlier than the source's
+			// This is to prevent the item being treated as up to date if build fails and the stamps are updated to current
+
+			time_t minSourceTime = ULONG_MAX;
+
+			for (const String& fn : m_typeData->GetAllInputFiles())
+			{
+				if (File::FileExists(fn))
+				{
+					time_t t = File::GetFileModifiyTime(fn);
+					if (t && t < minSourceTime)
+						minSourceTime = t;
+				}
+			}
+
+			if (minSourceTime != ULONG_MAX)
+			{
+				for (const String& fn : m_typeData->GetAllOutputFiles())
+				{
+					if (File::FileExists(fn))
+					{
+						File::SetFileModifiyTime(fn, minSourceTime - 1); // one second earlier
+					}
+				}
+			}
+		}
+
+		if (getType() == ProjectItemType::Folder)
+		{
+			ProjectFolder* fld = static_cast<ProjectFolder*>(m_typeData);
+
+			for (ProjectItem* pi : fld->SubItems)
+			{
+				pi->MarkOutdatedOutputs();
+			}
+		}
+	}
 	/************************************************************************/
 	/*    Project                                                           */
 	/************************************************************************/
@@ -1315,6 +1562,37 @@ namespace Apoc3D
 
 		return sect;
 	}
+
+	void Project::LoadBuildStamp(Stream& strm)
+	{
+		m_buildStamp.Clear();
+
+		m_buildStamp.Load(strm);
+
+		for (ProjectItem* pi : m_items)
+		{
+			pi->LoadPrevBuildStamp(L"");
+		}
+	}
+	void Project::SaveBuildStamp(Stream& strm)
+	{
+		m_buildStamp.Clear();
+
+		for (ProjectItem* pi : m_items)
+		{
+			pi->SaveCurrentBuildStamp(L"", m_buildStamp);
+		}
+
+		m_buildStamp.Save(strm);
+	}
+	void Project::MarkOutdatedOutputs()
+	{
+		for (ProjectItem* pi : m_items)
+		{
+			pi->MarkOutdatedOutputs();
+		}
+	}
+
 	void Project::GenerateBuildScripts(List<ProjectBuildScript>& result)
 	{
 		List<ConfigurationSection*> subtrees;
@@ -1368,6 +1646,7 @@ namespace Apoc3D
 		}
 	}
 
+
 	// this function is for parsing all sub items in a section
 	void ProjectParseSubItems(Project* prj, List<ProjectItem*>& parentContainer, const ConfigurationSection* sect)
 	{
@@ -1419,7 +1698,7 @@ namespace Apoc3D
 		}
 	}
 
-	void ProjectItem::NotifyModified() { m_timeStamp = time(0); }
+	//void ProjectItem::NotifyModified() { m_timeStamp = time(0); }
 
 	//////////////////////////////////////////////////////////////////////////
 

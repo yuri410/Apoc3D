@@ -184,7 +184,7 @@ namespace APDesigner
 
 			Parse(ps, ep);
 
-			ep.ProgramType = SHDT_Vertex;
+			ep.ProgramType = ShaderType::Vertex;
 			ep.SamplerState.Parse(ps);
 			m_parameters.Add(ep);
 		}
@@ -195,7 +195,7 @@ namespace APDesigner
 
 			Parse(ps, ep);
 
-			ep.ProgramType = SHDT_Pixel;
+			ep.ProgramType = ShaderType::Pixel;
 			ep.SamplerState.Parse(ps);
 			m_parameters.Add(ep);
 		}
@@ -237,7 +237,7 @@ namespace APDesigner
 			if (ep.RegisterIndex == 99)
 				ep.SamplerState.Save(sect);
 
-			if (ep.ProgramType == SHDT_Vertex)
+			if (ep.ProgramType == ShaderType::Vertex)
 				vs->AddSection(sect);
 			else
 				ps->AddSection(sect);
@@ -304,11 +304,11 @@ namespace APDesigner
 		m_labels.Add(lbl);
 
 		items.Clear();
-		items.Add(GraphicsCommonUtils::ToString(TA_Wrap));
-		items.Add(GraphicsCommonUtils::ToString(TA_Clamp));
-		items.Add(GraphicsCommonUtils::ToString(TA_Border));
-		items.Add(GraphicsCommonUtils::ToString(TA_Mirror));
-		items.Add(GraphicsCommonUtils::ToString(TA_MirrorOnce));
+		items.Add(TextureAddressModeConverter.ToString(TextureAddressMode::Wrap));
+		items.Add(TextureAddressModeConverter.ToString(TextureAddressMode::Clamp));
+		items.Add(TextureAddressModeConverter.ToString(TextureAddressMode::Border));
+		items.Add(TextureAddressModeConverter.ToString(TextureAddressMode::Mirror));
+		items.Add(TextureAddressModeConverter.ToString(TextureAddressMode::MirrorOnce));
 		m_cbVsAddressU = new ComboBox(skin, Point(sx+100, sy), 140, items);
 
 		sy+= lineHeight;
@@ -334,11 +334,9 @@ namespace APDesigner
 		m_labels.Add(lbl);
 
 		items.Clear();
-		items.Add(GraphicsCommonUtils::ToString(TFLT_Point));
-		items.Add(GraphicsCommonUtils::ToString(TFLT_Linear));
-		items.Add(GraphicsCommonUtils::ToString(TFLT_Anisotropic));
-		items.Add(GraphicsCommonUtils::ToString(TFLT_PyramidalQuad));
-		items.Add(GraphicsCommonUtils::ToString(TFLT_GaussianQuad));
+		items.Add(TextureFilterConverter.ToString(TFLT_Point));
+		items.Add(TextureFilterConverter.ToString(TFLT_Linear));
+		items.Add(TextureFilterConverter.ToString(TFLT_Anisotropic));
 		m_cbVsMagFilter = new ComboBox(skin, Point(sx+100, sy), 140, items);
 
 		sy+= lineHeight;
@@ -351,9 +349,9 @@ namespace APDesigner
 		m_labels.Add(lbl);
 
 		items.Clear();
-		items.Add(GraphicsCommonUtils::ToString(TFLT_None));
-		items.Add(GraphicsCommonUtils::ToString(TFLT_Point));
-		items.Add(GraphicsCommonUtils::ToString(TFLT_Linear));
+		items.Add(TextureFilterConverter.ToString(TFLT_None));
+		items.Add(TextureFilterConverter.ToString(TFLT_Point));
+		items.Add(TextureFilterConverter.ToString(TFLT_Linear));
 		m_cbVsMipFilter = new ComboBox(skin, Point(sx+100, sy), 140, items);
 
 		sy+= lineHeight;
@@ -415,11 +413,11 @@ namespace APDesigner
 		m_labels.Add(lbl);
 
 		items.Clear();
-		items.Add(GraphicsCommonUtils::ToString(TA_Wrap));
-		items.Add(GraphicsCommonUtils::ToString(TA_Clamp));
-		items.Add(GraphicsCommonUtils::ToString(TA_Border));
-		items.Add(GraphicsCommonUtils::ToString(TA_Mirror));
-		items.Add(GraphicsCommonUtils::ToString(TA_MirrorOnce));
+		items.Add(TextureAddressModeConverter.ToString(TextureAddressMode::Wrap));
+		items.Add(TextureAddressModeConverter.ToString(TextureAddressMode::Clamp));
+		items.Add(TextureAddressModeConverter.ToString(TextureAddressMode::Border));
+		items.Add(TextureAddressModeConverter.ToString(TextureAddressMode::Mirror));
+		items.Add(TextureAddressModeConverter.ToString(TextureAddressMode::MirrorOnce));
 		m_cbPsAddressU = new ComboBox(skin, Point(sx+100, sy), 140, items);
 
 		sy+= lineHeight;
@@ -445,11 +443,9 @@ namespace APDesigner
 		m_labels.Add(lbl);
 
 		items.Clear();
-		items.Add(GraphicsCommonUtils::ToString(TFLT_Point));
-		items.Add(GraphicsCommonUtils::ToString(TFLT_Linear));
-		items.Add(GraphicsCommonUtils::ToString(TFLT_Anisotropic));
-		items.Add(GraphicsCommonUtils::ToString(TFLT_PyramidalQuad));
-		items.Add(GraphicsCommonUtils::ToString(TFLT_GaussianQuad));
+		items.Add(TextureFilterConverter.ToString(TFLT_Point));
+		items.Add(TextureFilterConverter.ToString(TFLT_Linear));
+		items.Add(TextureFilterConverter.ToString(TFLT_Anisotropic));
 		m_cbPsMagFilter = new ComboBox(skin, Point(sx+100, sy), 140, items);
 
 		sy+= lineHeight;
@@ -462,9 +458,9 @@ namespace APDesigner
 		m_labels.Add(lbl);
 
 		items.Clear();
-		items.Add(GraphicsCommonUtils::ToString(TFLT_None));
-		items.Add(GraphicsCommonUtils::ToString(TFLT_Point));
-		items.Add(GraphicsCommonUtils::ToString(TFLT_Linear));
+		items.Add(TextureFilterConverter.ToString(TFLT_None));
+		items.Add(TextureFilterConverter.ToString(TFLT_Point));
+		items.Add(TextureFilterConverter.ToString(TFLT_Linear));
 		m_cbPsMipFilter = new ComboBox(skin, Point(sx+100, sy), 140, items);
 
 		sy+= lineHeight;
@@ -505,7 +501,7 @@ namespace APDesigner
 			items[0] = m_parameters[i].Name;
 			items[1] = usage;
 			
-			if (m_parameters[i].ProgramType == SHDT_Vertex)
+			if (m_parameters[i].ProgramType == ShaderType::Vertex)
 			{
 				m_vsParams->getItems().AddRow(items);
 			}
@@ -546,29 +542,29 @@ namespace APDesigner
 			p.RegisterIndex = 99;
 			cbTemp = (isVS ? m_cbVsAddressU : m_cbPsAddressU);
 			if (cbTemp->getSelectedIndex() !=-1)
-				p.SamplerState.AddressU = GraphicsCommonUtils::ParseTextureAddressMode(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
+				p.SamplerState.AddressU = TextureAddressModeConverter.Parse(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
 
 			cbTemp = (isVS ? m_cbVsAddressV : m_cbPsAddressV);
 			if (cbTemp->getSelectedIndex() !=-1)
-				p.SamplerState.AddressV = GraphicsCommonUtils::ParseTextureAddressMode(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
+				p.SamplerState.AddressV = TextureAddressModeConverter.Parse(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
 
 			cbTemp = (isVS ? m_cbVsAddressW : m_cbPsAddressW);
 			if (cbTemp->getSelectedIndex() !=-1)
-				p.SamplerState.AddressW = GraphicsCommonUtils::ParseTextureAddressMode(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
+				p.SamplerState.AddressW = TextureAddressModeConverter.Parse(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
 
 			p.SamplerState.BorderColor = (isVS? m_cfVsBorderColor : m_cfPsBorderColor)->GetValue();
 
 			cbTemp = (isVS ? m_cbVsMagFilter : m_cbPsMagFilter);
 			if (cbTemp->getSelectedIndex() !=-1)
-				p.SamplerState.MagFilter = GraphicsCommonUtils::ParseTextureFilter(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
+				p.SamplerState.MagFilter = TextureFilterConverter.Parse(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
 
 			cbTemp = (isVS ? m_cbVsMinFilter : m_cbPsMinFilter);
 			if (cbTemp->getSelectedIndex() !=-1)
-				p.SamplerState.MinFilter = GraphicsCommonUtils::ParseTextureFilter(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
+				p.SamplerState.MinFilter = TextureFilterConverter.Parse(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
 
 			cbTemp = (isVS ? m_cbVsMipFilter : m_cbPsMipFilter);
 			if (cbTemp->getSelectedIndex() !=-1)
-				p.SamplerState.MipFilter = GraphicsCommonUtils::ParseTextureFilter(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
+				p.SamplerState.MipFilter = TextureFilterConverter.Parse(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
 
 			p.SamplerState.MaxAnisotropy = StringUtils::ParseInt32((isVS ? m_tbVsMaxAnisotropy : m_tbPsMaxAnisotropy)->getText());
 			p.SamplerState.MaxMipLevel = StringUtils::ParseInt32((isVS ? m_tbVsMaxMipLevel : m_tbPsMaxMipLevel)->getText());
@@ -609,7 +605,7 @@ namespace APDesigner
 
 		bool hasSamplerState = false;
 		idx = -1;
-		strV = GraphicsCommonUtils::ToString(p.SamplerState.AddressU);
+		strV = TextureAddressModeConverter.ToString(p.SamplerState.AddressU);
 		cbTemp = isVS ? m_cbVsAddressU : m_cbPsAddressU;
 		for (int i=0;i<cbTemp->getItems().getCount();i++)
 			if (cbTemp->getItems()[i]==strV)
@@ -617,10 +613,10 @@ namespace APDesigner
 				idx = i;break;
 			}
 		cbTemp->setSelectedIndex(idx);
-		hasSamplerState |= p.SamplerState.AddressU != TA_Wrap;
+		hasSamplerState |= p.SamplerState.AddressU != TextureAddressMode::Wrap;
 
 		idx = -1;
-		strV = GraphicsCommonUtils::ToString(p.SamplerState.AddressV);
+		strV = TextureAddressModeConverter.ToString(p.SamplerState.AddressV);
 		cbTemp = isVS ? m_cbVsAddressV : m_cbPsAddressV;
 		for (int i=0;i<cbTemp->getItems().getCount();i++)
 			if (cbTemp->getItems()[i]==strV)
@@ -628,10 +624,10 @@ namespace APDesigner
 				idx = i;break;
 			}
 		cbTemp->setSelectedIndex(idx);
-		hasSamplerState |= p.SamplerState.AddressV != TA_Wrap;
+		hasSamplerState |= p.SamplerState.AddressV != TextureAddressMode::Wrap;
 
 		idx = -1;
-		strV = GraphicsCommonUtils::ToString(p.SamplerState.AddressW);
+		strV = TextureAddressModeConverter.ToString(p.SamplerState.AddressW);
 		cbTemp = isVS ? m_cbVsAddressW : m_cbPsAddressW;
 		for (int i=0;i<cbTemp->getItems().getCount();i++)
 			if (cbTemp->getItems()[i]==strV)
@@ -639,13 +635,13 @@ namespace APDesigner
 				idx = i;break;
 			}
 		cbTemp->setSelectedIndex(idx);
-		hasSamplerState |= p.SamplerState.AddressW != TA_Wrap;
+		hasSamplerState |= p.SamplerState.AddressW != TextureAddressMode::Wrap;
 
 		(isVS? m_cfVsBorderColor : m_cfPsBorderColor)->SetValue(Color4(p.SamplerState.BorderColor));
 		hasSamplerState |= !!p.SamplerState.BorderColor;
 
 		idx = -1;
-		strV = GraphicsCommonUtils::ToString(p.SamplerState.MagFilter);
+		strV = TextureFilterConverter.ToString(p.SamplerState.MagFilter);
 		cbTemp = isVS ? m_cbVsMagFilter : m_cbPsMagFilter;
 		for (int i=0;i<cbTemp->getItems().getCount();i++)
 			if (cbTemp->getItems()[i]==strV)
@@ -656,7 +652,7 @@ namespace APDesigner
 		hasSamplerState |= p.SamplerState.MagFilter != TFLT_Point;
 
 		idx = -1;
-		strV = GraphicsCommonUtils::ToString(p.SamplerState.MinFilter);
+		strV = TextureFilterConverter.ToString(p.SamplerState.MinFilter);
 		cbTemp = isVS ? m_cbVsMinFilter : m_cbPsMinFilter;
 		for (int i=0;i<cbTemp->getItems().getCount();i++)
 			if (cbTemp->getItems()[i]==strV)
@@ -667,7 +663,7 @@ namespace APDesigner
 		hasSamplerState |= p.SamplerState.MinFilter != TFLT_Point;
 
 		idx = -1;
-		strV = GraphicsCommonUtils::ToString(p.SamplerState.MipFilter);
+		strV = TextureFilterConverter.ToString(p.SamplerState.MipFilter);
 		cbTemp = isVS ? m_cbVsMipFilter : m_cbPsMipFilter;
 		for (int i=0;i<cbTemp->getItems().getCount();i++)
 			if (cbTemp->getItems()[i]==strV)
@@ -702,7 +698,7 @@ namespace APDesigner
 		String name = m_vsParams->getItems().at(x,0);
 		for (int i=0;i<m_parameters.getCount();i++)
 		{
-			if (m_parameters[i].ProgramType == SHDT_Vertex && 
+			if (m_parameters[i].ProgramType == ShaderType::Vertex && 
 				m_parameters[i].Name == name)
 			{
 				DownloadParameter(m_parameters[i], true);
@@ -715,7 +711,7 @@ namespace APDesigner
 		String name = m_psParams->getItems().at(x,0);
 		for (int i=0;i<m_parameters.getCount();i++)
 		{
-			if (m_parameters[i].ProgramType == SHDT_Pixel && 
+			if (m_parameters[i].ProgramType == ShaderType::Pixel &&
 				m_parameters[i].Name == name)
 			{
 				DownloadParameter(m_parameters[i], false);
@@ -733,7 +729,7 @@ namespace APDesigner
 			if (name.size())
 			{
 				EffectParameter ep(name);
-				ep.ProgramType = SHDT_Vertex;
+				ep.ProgramType = ShaderType::Vertex;
 				m_parameters.Add(ep);
 				RefreshParameterList();
 			}
@@ -747,7 +743,7 @@ namespace APDesigner
 
 			for (int i=0;i<m_parameters.getCount();i++)
 			{
-				if (m_parameters[i].ProgramType == SHDT_Vertex && 
+				if (m_parameters[i].ProgramType == ShaderType::Vertex &&
 					m_parameters[i].Name == name)
 				{
 					m_parameters.RemoveAt(i);
@@ -765,7 +761,7 @@ namespace APDesigner
 			String name = m_vsParams->getItems().at(x,0);
 			for (int i=0;i<m_parameters.getCount();i++)
 			{
-				if (m_parameters[i].ProgramType == SHDT_Vertex && 
+				if (m_parameters[i].ProgramType == ShaderType::Vertex &&
 					m_parameters[i].Name == name)
 				{
 					UploadParameter(m_parameters[i], true);
@@ -785,7 +781,7 @@ namespace APDesigner
 			if (name.size())
 			{
 				EffectParameter ep(name);
-				ep.ProgramType = SHDT_Pixel;
+				ep.ProgramType = ShaderType::Pixel;
 				m_parameters.Add(ep);
 				RefreshParameterList();
 			}
@@ -799,7 +795,7 @@ namespace APDesigner
 
 			for (int i=0;i<m_parameters.getCount();i++)
 			{
-				if (m_parameters[i].ProgramType == SHDT_Pixel && 
+				if (m_parameters[i].ProgramType == ShaderType::Pixel &&
 					m_parameters[i].Name == name)
 				{
 					m_parameters.RemoveAt(i);
@@ -817,7 +813,7 @@ namespace APDesigner
 			String name = m_psParams->getItems().at(x, 0);
 			for (int i = 0; i < m_parameters.getCount(); i++)
 			{
-				if (m_parameters[i].ProgramType == SHDT_Pixel &&
+				if (m_parameters[i].ProgramType == ShaderType::Pixel &&
 					m_parameters[i].Name == name)
 				{
 					UploadParameter(m_parameters[i], false);

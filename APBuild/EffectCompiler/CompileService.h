@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 namespace APBuild
 {
 	bool CompileShader(const String& src, const String& entryPoint, EffectProfileData& prof, ShaderType shdType,
-		bool debugEnabled, bool noOptimization, const List<std::pair<std::string, std::string>>* defines);
+		bool debugEnabled, bool noOptimization, bool parseParamsFromSource, const List<std::pair<std::string, std::string>>* defines);
 
 	bool ParseShaderProfileString(const String& text, std::string& implType, int& majorVer, int& minorVer);
 }

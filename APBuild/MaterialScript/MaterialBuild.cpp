@@ -156,10 +156,10 @@ namespace APBuild
 
 		if (sect->tryGetAttribute(L"PassFlag", temp))
 			newNode->PassFlags = StringUtils::ParseUInt64Bin(temp);
-		if (sect->tryGetAttribute(L"SourceBlend", temp))		newNode->SourceBlend = GraphicsCommonUtils::ParseBlend(temp);
-		if (sect->tryGetAttribute(L"DestinationBlend", temp))	newNode->DestinationBlend = GraphicsCommonUtils::ParseBlend(temp);
-		if (sect->tryGetAttribute(L"BlendFunction", temp))		newNode->BlendFunction = GraphicsCommonUtils::ParseBlendFunction(temp);
-		if (sect->tryGetAttribute(L"Cull", temp))				newNode->Cull = GraphicsCommonUtils::ParseCullMode(temp);
+		if (sect->tryGetAttribute(L"SourceBlend", temp))		newNode->SourceBlend = BlendConverter.Parse(temp);
+		if (sect->tryGetAttribute(L"DestinationBlend", temp))	newNode->DestinationBlend = BlendConverter.Parse(temp);
+		if (sect->tryGetAttribute(L"BlendFunction", temp))		newNode->BlendFunction = BlendFunctionConverter.Parse(temp);
+		if (sect->tryGetAttribute(L"Cull", temp))				newNode->Cull = CullModeConverter.Parse(temp);
 
 		if (sect->tryGetAttribute(L"Ambient", temp))			newNode->Ambient = ResolveColor4(temp, pallets);
 		if (sect->tryGetAttribute(L"Diffuse", temp))			newNode->Diffuse = ResolveColor4(temp, pallets);

@@ -76,7 +76,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\include\fbx;$(SolutionDir)\extra;$(SolutionDir)\extra\freetype-2.4.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -103,7 +103,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;APOC3D_DYNLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;APOC3D_DYNLIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
@@ -129,7 +129,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;APOC3D_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;APOC3D_MT;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\include\fbx;$(SolutionDir)\extra;$(SolutionDir)\extra\freetype-2.4.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -155,6 +155,13 @@
     <ClInclude Include="APBCommon.h" />
     <ClInclude Include="BuildConfig.h" />
     <ClInclude Include="EffectCompiler\CompilerService_SM3.h" />
+    <ClInclude Include="Library\hlslparser\CodeWriter.h" />
+    <ClInclude Include="Library\hlslparser\Engine.h" />
+    <ClInclude Include="Library\hlslparser\GLSLGenerator.h" />
+    <ClInclude Include="Library\hlslparser\HLSLGenerator.h" />
+    <ClInclude Include="Library\hlslparser\HLSLParser.h" />
+    <ClInclude Include="Library\hlslparser\HLSLTokenizer.h" />
+    <ClInclude Include="Library\hlslparser\HLSLTree.h" />
     <ClInclude Include="StringTableBuild\CSFBuild.h" />
     <ClInclude Include="TextureBuild\D3DTextureBuild.h" />
     <ClInclude Include="Utils\D3DHelper.h" />
@@ -195,6 +202,13 @@
     <ClCompile Include="EffectCompiler\CompilerService_SM3.cpp" />
     <ClCompile Include="EffectCompiler\FXListBuild.cpp" />
     <ClCompile Include="EffectCompiler\CompileService.cpp" />
+    <ClCompile Include="Library\hlslparser\CodeWriter.cpp" />
+    <ClCompile Include="Library\hlslparser\Engine.cpp" />
+    <ClCompile Include="Library\hlslparser\GLSLGenerator.cpp" />
+    <ClCompile Include="Library\hlslparser\HLSLGenerator.cpp" />
+    <ClCompile Include="Library\hlslparser\HLSLParser.cpp" />
+    <ClCompile Include="Library\hlslparser\HLSLTokenizer.cpp" />
+    <ClCompile Include="Library\hlslparser\HLSLTree.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="BuildConfig.cpp" />
     <ClCompile Include="StringTableBuild\CSFBuild.cpp" />

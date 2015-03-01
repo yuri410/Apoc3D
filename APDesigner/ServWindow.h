@@ -52,6 +52,8 @@ namespace APDesigner
 		void Notify(const String& title, const String& message);
 		void UpdateProject();
 
+		String GetProjectStampFilePath();
+
 		StyleSkin* m_UIskin;
 
 		RenderWindow* m_window;

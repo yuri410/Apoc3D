@@ -37,15 +37,15 @@ namespace Apoc3D
 			D3DDECLUSAGE D3D9Utils::veuTable[VEU_Count];
 			D3DFILLMODE D3D9Utils::fillTable[FILL_Count];
 			D3DCULL D3D9Utils::cullTable[CULL_Count];
-			D3DBLEND D3D9Utils::blendTable[BLEND_Count];
-			D3DCMPFUNC D3D9Utils::comfunTable[COMFUN_Count];
-			D3DBLENDOP D3D9Utils::blendopTable[BLFUN_Count];
-			D3DSTENCILOP D3D9Utils::stencilTable[STOP_Count];
+			D3DBLEND D3D9Utils::blendTable[(int)Blend::Count];
+			D3DCMPFUNC D3D9Utils::comfunTable[(int)CompareFunction::Count];
+			D3DBLENDOP D3D9Utils::blendopTable[(int)BlendFunction::Count];
+			D3DSTENCILOP D3D9Utils::stencilTable[(int)StencilOperation::Count];
 			D3DFORMAT D3D9Utils::pixFmtTable[FMT_Count];
 			D3DFORMAT D3D9Utils::depFmtTable[DEPFMT_Count];
 			D3DTEXTUREFILTERTYPE D3D9Utils::tfltTable[TFLT_Count];
 			D3DCUBEMAP_FACES D3D9Utils::cubeTable[CUBE_Count];
-			D3DTEXTUREADDRESS D3D9Utils::taTable[TA_Count];
+			D3DTEXTUREADDRESS D3D9Utils::taTable[(int)TextureAddressMode::Count];
 
 			D3D9Utils D3D9Utils::s_initlaizer;
 
@@ -153,24 +153,15 @@ namespace Apoc3D
 				//depFmtTable[DEPFMT_Depth32Single] = D3DFMT_D32F_LOCKABLE;
 				switch (format)
 				{
-				case D3DFMT_D15S1:
-					return DEPFMT_Depth15Stencil1;
-				case D3DFMT_D16:
-					return DEPFMT_Depth16;
-				case D3DFMT_D16_LOCKABLE:
-					return DEPFMT_Depth16Lockable;
-				case D3DFMT_D24X8:
-					return DEPFMT_Depth24X8;
-				case D3DFMT_D24X4S4:
-					return DEPFMT_Depth24Stencil4;
-				case D3DFMT_D24S8:
-					return DEPFMT_Depth24Stencil8;
-				case D3DFMT_D24FS8:
-					return DEPFMT_Depth24Stencil8Single;
-				case D3DFMT_D32:
-					return DEPFMT_Depth32;
-				case D3DFMT_D32_LOCKABLE:
-					return DEPFMT_Depth32Lockable;
+					case D3DFMT_D15S1:			return DEPFMT_Depth15Stencil1;
+					case D3DFMT_D16:			return DEPFMT_Depth16;
+					case D3DFMT_D16_LOCKABLE:	return DEPFMT_Depth16Lockable;
+					case D3DFMT_D24X8:			return DEPFMT_Depth24X8;
+					case D3DFMT_D24X4S4:		return DEPFMT_Depth24Stencil4;
+					case D3DFMT_D24S8:			return DEPFMT_Depth24Stencil8;
+					case D3DFMT_D24FS8:			return DEPFMT_Depth24Stencil8Single;
+					case D3DFMT_D32:			return DEPFMT_Depth32;
+					case D3DFMT_D32_LOCKABLE:	return DEPFMT_Depth32Lockable;
 				}
 				throw AP_EXCEPTION(ExceptID::NotSupported, L"ConvertBackDepthFormat");
 			}
@@ -239,38 +230,22 @@ namespace Apoc3D
 			{
 				switch (type)
 				{
-				case D3DMULTISAMPLE_NONE:
-					return 0;
-				case D3DMULTISAMPLE_2_SAMPLES:
-					return 2;
-				case D3DMULTISAMPLE_3_SAMPLES:
-					return 3;
-				case D3DMULTISAMPLE_4_SAMPLES:
-					return 4;
-				case D3DMULTISAMPLE_5_SAMPLES:
-					return 5;
-				case D3DMULTISAMPLE_6_SAMPLES:
-					return 6;
-				case D3DMULTISAMPLE_7_SAMPLES:
-					return 7;
-				case D3DMULTISAMPLE_8_SAMPLES:
-					return 8;
-				case D3DMULTISAMPLE_9_SAMPLES:
-					return 9;
-				case D3DMULTISAMPLE_10_SAMPLES:
-					return 10;
-				case D3DMULTISAMPLE_11_SAMPLES:
-					return 11;
-				case D3DMULTISAMPLE_12_SAMPLES:
-					return 12;
-				case D3DMULTISAMPLE_13_SAMPLES:
-					return 13;
-				case D3DMULTISAMPLE_14_SAMPLES:
-					return 14;
-				case D3DMULTISAMPLE_15_SAMPLES:
-					return 15;
-				case D3DMULTISAMPLE_16_SAMPLES:
-					return 16;
+					case D3DMULTISAMPLE_NONE:		return 0;
+					case D3DMULTISAMPLE_2_SAMPLES:	return 2;
+					case D3DMULTISAMPLE_3_SAMPLES:	return 3;
+					case D3DMULTISAMPLE_4_SAMPLES:	return 4;
+					case D3DMULTISAMPLE_5_SAMPLES:	return 5;
+					case D3DMULTISAMPLE_6_SAMPLES:	return 6;
+					case D3DMULTISAMPLE_7_SAMPLES:	return 7;
+					case D3DMULTISAMPLE_8_SAMPLES:	return 8;
+					case D3DMULTISAMPLE_9_SAMPLES:	return 9;
+					case D3DMULTISAMPLE_10_SAMPLES:	return 10;
+					case D3DMULTISAMPLE_11_SAMPLES:	return 11;
+					case D3DMULTISAMPLE_12_SAMPLES:	return 12;
+					case D3DMULTISAMPLE_13_SAMPLES:	return 13;
+					case D3DMULTISAMPLE_14_SAMPLES:	return 14;
+					case D3DMULTISAMPLE_15_SAMPLES:	return 15;
+					case D3DMULTISAMPLE_16_SAMPLES:	return 16;
 				}
 				// to make the compiler happy
 				return 0;
@@ -279,39 +254,26 @@ namespace Apoc3D
 			{
 				switch (sampleCount)
 				{
-				case 0:
-					return D3DMULTISAMPLE_NONE;
-				case 1:
-				case 2:
-					return D3DMULTISAMPLE_2_SAMPLES;
-				case 3:
-					return D3DMULTISAMPLE_3_SAMPLES;
-				case 4:
-					return D3DMULTISAMPLE_4_SAMPLES;
-				case 5:
-					return D3DMULTISAMPLE_5_SAMPLES;
-				case 6:
-					return D3DMULTISAMPLE_6_SAMPLES;
-				case 7:
-					return D3DMULTISAMPLE_7_SAMPLES;
-				case 8:
-					return D3DMULTISAMPLE_8_SAMPLES;
-				case 9:
-					return D3DMULTISAMPLE_9_SAMPLES;
-				case 10:
-					return D3DMULTISAMPLE_10_SAMPLES;
-				case 11:
-					return D3DMULTISAMPLE_11_SAMPLES;
-				case 12:
-					return D3DMULTISAMPLE_12_SAMPLES;
-				case 13:
-					return D3DMULTISAMPLE_13_SAMPLES;
-				case 14:
-					return D3DMULTISAMPLE_14_SAMPLES;
-				case 15:
-					return D3DMULTISAMPLE_15_SAMPLES;
-				case 16:
-					return D3DMULTISAMPLE_16_SAMPLES;
+					case 0:
+						return D3DMULTISAMPLE_NONE;
+					case 1:
+					case 2:
+						return D3DMULTISAMPLE_2_SAMPLES;
+
+					case 3:		return D3DMULTISAMPLE_3_SAMPLES;
+					case 4:		return D3DMULTISAMPLE_4_SAMPLES;
+					case 5:		return D3DMULTISAMPLE_5_SAMPLES;
+					case 6:		return D3DMULTISAMPLE_6_SAMPLES;
+					case 7:		return D3DMULTISAMPLE_7_SAMPLES;
+					case 8:		return D3DMULTISAMPLE_8_SAMPLES;
+					case 9:		return D3DMULTISAMPLE_9_SAMPLES;
+					case 10:	return D3DMULTISAMPLE_10_SAMPLES;
+					case 11:	return D3DMULTISAMPLE_11_SAMPLES;
+					case 12:	return D3DMULTISAMPLE_12_SAMPLES;
+					case 13:	return D3DMULTISAMPLE_13_SAMPLES;
+					case 14:	return D3DMULTISAMPLE_14_SAMPLES;
+					case 15:	return D3DMULTISAMPLE_15_SAMPLES;
+					case 16:	return D3DMULTISAMPLE_16_SAMPLES;
 				}
 				// to make the compiler happy
 				return D3DMULTISAMPLE_NONE;
@@ -377,48 +339,48 @@ namespace Apoc3D
 			}
 			void D3D9Utils::InitBlendTable()
 			{
-				blendTable[BLEND_Zero] = D3DBLEND_ZERO;
-				blendTable[BLEND_One] = D3DBLEND_ONE;
-				blendTable[BLEND_SourceColor] = D3DBLEND_SRCCOLOR;
-				blendTable[BLEND_InverseSourceColor] = D3DBLEND_INVSRCCOLOR;
-				blendTable[BLEND_SourceAlpha] = D3DBLEND_SRCALPHA;
-				blendTable[BLEND_InverseSourceAlpha] = D3DBLEND_INVSRCALPHA;
-				blendTable[BLEND_DestinationAlpha] = D3DBLEND_DESTALPHA;
-				blendTable[BLEND_InverseDestinationAlpha] = D3DBLEND_INVDESTALPHA;
-				blendTable[BLEND_DestinationColor] = D3DBLEND_DESTCOLOR;
-				blendTable[BLEND_InverseDestinationColor] = D3DBLEND_INVDESTCOLOR;
-				blendTable[BLEND_SourceAlphaSaturation] = D3DBLEND_SRCALPHASAT;
-				blendTable[BLEND_BlendFactor] = D3DBLEND_BLENDFACTOR;
+				blendTable[(int)Blend::Zero] = D3DBLEND_ZERO;
+				blendTable[(int)Blend::One] = D3DBLEND_ONE;
+				blendTable[(int)Blend::SourceColor] = D3DBLEND_SRCCOLOR;
+				blendTable[(int)Blend::InverseSourceColor] = D3DBLEND_INVSRCCOLOR;
+				blendTable[(int)Blend::SourceAlpha] = D3DBLEND_SRCALPHA;
+				blendTable[(int)Blend::InverseSourceAlpha] = D3DBLEND_INVSRCALPHA;
+				blendTable[(int)Blend::DestinationAlpha] = D3DBLEND_DESTALPHA;
+				blendTable[(int)Blend::InverseDestinationAlpha] = D3DBLEND_INVDESTALPHA;
+				blendTable[(int)Blend::DestinationColor] = D3DBLEND_DESTCOLOR;
+				blendTable[(int)Blend::InverseDestinationColor] = D3DBLEND_INVDESTCOLOR;
+				blendTable[(int)Blend::SourceAlphaSaturation] = D3DBLEND_SRCALPHASAT;
+				blendTable[(int)Blend::BlendFactor] = D3DBLEND_BLENDFACTOR;
 			}
 			void D3D9Utils::InitCompareFunctionTable()
 			{
-				comfunTable[COMFUN_Never] = D3DCMP_NEVER;
-				comfunTable[COMFUN_Less] = D3DCMP_LESS;
-				comfunTable[COMFUN_Equal] = D3DCMP_EQUAL;
-				comfunTable[COMFUN_LessEqual] = D3DCMP_LESSEQUAL;
-				comfunTable[COMFUN_Greater] = D3DCMP_GREATER;
-				comfunTable[COMFUN_NotEqual] = D3DCMP_NOTEQUAL;
-				comfunTable[COMFUN_GreaterEqual] = D3DCMP_GREATEREQUAL;
-				comfunTable[COMFUN_Always] = D3DCMP_ALWAYS;
+				comfunTable[(int)CompareFunction::Never] = D3DCMP_NEVER;
+				comfunTable[(int)CompareFunction::Less] = D3DCMP_LESS;
+				comfunTable[(int)CompareFunction::Equal] = D3DCMP_EQUAL;
+				comfunTable[(int)CompareFunction::LessEqual] = D3DCMP_LESSEQUAL;
+				comfunTable[(int)CompareFunction::Greater] = D3DCMP_GREATER;
+				comfunTable[(int)CompareFunction::NotEqual] = D3DCMP_NOTEQUAL;
+				comfunTable[(int)CompareFunction::GreaterEqual] = D3DCMP_GREATEREQUAL;
+				comfunTable[(int)CompareFunction::Always] = D3DCMP_ALWAYS;
 			}
 			void D3D9Utils::InitBlendOperationTable()
 			{
-				blendopTable[BLFUN_Add] = D3DBLENDOP_ADD;
-				blendopTable[BLFUN_Subtract] = D3DBLENDOP_SUBTRACT;
-				blendopTable[BLFUN_ReverseSubtract] = D3DBLENDOP_REVSUBTRACT;
-				blendopTable[BLFUN_Min] = D3DBLENDOP_MIN;
-				blendopTable[BLFUN_Max] = D3DBLENDOP_MAX;
+				blendopTable[(int)BlendFunction::Add] = D3DBLENDOP_ADD;
+				blendopTable[(int)BlendFunction::Subtract] = D3DBLENDOP_SUBTRACT;
+				blendopTable[(int)BlendFunction::ReverseSubtract] = D3DBLENDOP_REVSUBTRACT;
+				blendopTable[(int)BlendFunction::Min] = D3DBLENDOP_MIN;
+				blendopTable[(int)BlendFunction::Max] = D3DBLENDOP_MAX;
 			}
 			void D3D9Utils::InitStencilTable()
 			{
-				stencilTable[STOP_Keep] = D3DSTENCILOP_KEEP;
-				stencilTable[STOP_Zero] = D3DSTENCILOP_ZERO;
-				stencilTable[STOP_Replace] = D3DSTENCILOP_REPLACE;
-				stencilTable[STOP_IncrementSaturation] = D3DSTENCILOP_INCRSAT;
-				stencilTable[STOP_DecrementSaturation] = D3DSTENCILOP_DECRSAT;
-				stencilTable[STOP_Invert] = D3DSTENCILOP_INVERT;
-				stencilTable[STOP_Increment] = D3DSTENCILOP_INCR;
-				stencilTable[STOP_Decrement] = D3DSTENCILOP_DECR;
+				stencilTable[(int)StencilOperation::Keep] = D3DSTENCILOP_KEEP;
+				stencilTable[(int)StencilOperation::Zero] = D3DSTENCILOP_ZERO;
+				stencilTable[(int)StencilOperation::Replace] = D3DSTENCILOP_REPLACE;
+				stencilTable[(int)StencilOperation::IncrementSaturation] = D3DSTENCILOP_INCRSAT;
+				stencilTable[(int)StencilOperation::DecrementSaturation] = D3DSTENCILOP_DECRSAT;
+				stencilTable[(int)StencilOperation::Invert] = D3DSTENCILOP_INVERT;
+				stencilTable[(int)StencilOperation::Increment] = D3DSTENCILOP_INCR;
+				stencilTable[(int)StencilOperation::Decrement] = D3DSTENCILOP_DECR;
 			}
 			void D3D9Utils::InitPixelFormatTable()
 			{
@@ -482,8 +444,6 @@ namespace Apoc3D
 				tfltTable[TFLT_Point] = D3DTEXF_POINT;
 				tfltTable[TFLT_Linear] = D3DTEXF_LINEAR;
 				tfltTable[TFLT_Anisotropic] = D3DTEXF_ANISOTROPIC;
-				tfltTable[TFLT_PyramidalQuad] = D3DTEXF_PYRAMIDALQUAD;
-				tfltTable[TFLT_GaussianQuad] = D3DTEXF_GAUSSIANQUAD;
 			}
 			void D3D9Utils::InitCubeTable()
 			{
@@ -496,11 +456,11 @@ namespace Apoc3D
 			}
 			void D3D9Utils::InitTATable()
 			{
-				taTable[TA_Border] = D3DTADDRESS_BORDER;
-				taTable[TA_Clamp] = D3DTADDRESS_CLAMP;
-				taTable[TA_Mirror] = D3DTADDRESS_MIRROR;
-				taTable[TA_MirrorOnce] = D3DTADDRESS_MIRRORONCE;
-				taTable[TA_Wrap] = D3DTADDRESS_WRAP;
+				taTable[(int)TextureAddressMode::Border] = D3DTADDRESS_BORDER;
+				taTable[(int)TextureAddressMode::Clamp] = D3DTADDRESS_CLAMP;
+				taTable[(int)TextureAddressMode::Mirror] = D3DTADDRESS_MIRROR;
+				taTable[(int)TextureAddressMode::MirrorOnce] = D3DTADDRESS_MIRRORONCE;
+				taTable[(int)TextureAddressMode::Wrap] = D3DTADDRESS_WRAP;
 
 			}
 

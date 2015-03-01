@@ -126,7 +126,7 @@ namespace Apoc3D
 					h.Accumulate(&obj.RefreshRate, sizeof(obj.RefreshRate));
 
 					h.Accumulate(&obj.FullScreen, sizeof(obj.FullScreen));
-					return h.GetResult();
+					return h.getResult();
 				}
 			};
 

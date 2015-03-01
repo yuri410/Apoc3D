@@ -33,400 +33,82 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			 Blend GraphicsCommonUtils::ParseBlend(const String& value)
-			 {
-				 String v = value;
-				 StringUtils::ToLowerCase(v);
+			const TypeDualConverter<Blend> BlendConverter = 
+			{
+				{ Blend::Zero, L"Zero" },
+				{ Blend::One, L"One" },
+				{ Blend::SourceColor, L"SourceColor" },
+				{ Blend::InverseSourceColor, L"InverseSourceColor" },
+				{ Blend::SourceAlpha, L"SourceAlpha" },
+				{ Blend::InverseSourceAlpha, L"InverseSourceAlpha" },
+				{ Blend::DestinationAlpha, L"DestinationAlpha" },
+				{ Blend::InverseDestinationAlpha, L"InverseDestinationAlpha" },
+				{ Blend::DestinationColor, L"DestinationColor" },
+				{ Blend::InverseDestinationColor, L"InverseDestinationColor" },
+				{ Blend::SourceAlphaSaturation, L"SourceAlphaSaturation" },
+				{ Blend::BlendFactor, L"BlendFactor" },
+			};
 
-				 if (v == L"zero")
-				 {
-					 return BLEND_Zero;
-				 }
-				 else if (v == L"one")
-				 {
-					 return BLEND_One;
-				 }
-				 else if (v == L"sourcecolor")
-				 {
-					 return BLEND_SourceColor;
-				 }
-				 else if (v == L"inversesourcecolor")
-				 {
-					 return BLEND_InverseSourceColor;
-				 }
-				 else if (v == L"sourcealpha")
-				 {
-					 return BLEND_SourceAlpha;
-				 }
-				 else if (v == L"inversesourcealpha")
-				 {
-					 return BLEND_InverseSourceAlpha;
-				 }
-				 else if (v == L"destinationalpha")
-				 {
-					 return BLEND_DestinationAlpha;
-				 }
-				 else if (v == L"inversedestinationalpha")
-				 {
-					 return BLEND_InverseDestinationAlpha;
-				 }
-				 else if (v == L"destinationcolor")
-				 {
-					 return BLEND_DestinationColor;
-				 }
-				 else if (v == L"inversedestinationcolor")
-				 {
-					 return BLEND_InverseDestinationColor;
-				 }
-				 else if (v == L"sourcealphasaturation")
-				 {
-					 return BLEND_SourceAlphaSaturation;
-				 }
-				 else if (v == L"blendfactor")
-				 {
-					 return BLEND_BlendFactor;
-				 }
-				 return BLEND_One;
-			 }
-			 String GraphicsCommonUtils::ToString(Blend blend)
-			 {
-				 switch (blend)
-				 {
-				 case BLEND_Zero:
-					 return L"Zero";
-				 case BLEND_One:
-					 return L"One";
-				 case BLEND_SourceColor:
-					 return L"SourceColor";
-				 case BLEND_InverseSourceColor:
-					 return L"InverseSourceColor";
-				 case BLEND_SourceAlpha:
-					 return L"SourceAlpha";
-				 case BLEND_InverseSourceAlpha:
-					 return L"InverseSourceAlpha";
-				 case BLEND_DestinationAlpha:
-					 return L"DestinationAlpha";
-				 case BLEND_InverseDestinationAlpha:
-					 return L"InverseDestinationAlpha";
-				 case BLEND_DestinationColor:
-					 return L"DestinationColor";
-				 case BLEND_InverseDestinationColor:
-					 return L"InverseDestinationColor";
-				 case BLEND_SourceAlphaSaturation:
-					 return L"SourceAlphaSaturation";
-				 case BLEND_BlendFactor:
-					 return L"BlendFactor";
-				 }
-				 return L"One";
-			 }
+			const TypeDualConverter<BlendFunction> BlendFunctionConverter = 
+			{
+				{ BlendFunction::Add, L"Add" },
+				{ BlendFunction::Subtract, L"Subtract" },
+				{ BlendFunction::ReverseSubtract, L"ReverseSubtract" },
+				{ BlendFunction::Min, L"Min" },
+				{ BlendFunction::Max, L"Max" }
+			};
 
-			 BlendFunction GraphicsCommonUtils::ParseBlendFunction(const String& value)
-			 {
-				 String v = value;
-				 StringUtils::ToLowerCase(v);
-				 if (v == L"add")
-				 {
-					 return BLFUN_Add;
-				 }
-				 else if (v == L"subtract")
-				 {
-					 return BLFUN_Subtract;
-				 }
-				 else if (v == L"reversesubtract")
-				 {
-					 return BLFUN_ReverseSubtract;
-				 }
-				 else if (v == L"min")
-				 {
-					 return BLFUN_Min;
-				 }
-				 else if (v == L"max")
-				 {
-					 return BLFUN_Max;
-				 }
-				 return BLFUN_Add;
-			 }
-			 String GraphicsCommonUtils::ToString(BlendFunction func)
-			 {
-				 switch (func)
-				 {
-				 case BLFUN_Add:
-					 return L"Add";
-				 case BLFUN_Subtract:
-					 return L"Subtract";
-				 case BLFUN_ReverseSubtract:
-					 return L"ReverseSubtract";
-				 case BLFUN_Min:
-					 return L"Min";
-				 case BLFUN_Max:
-					 return L"Max";
-				 }
-				 return L"Add";
-			 }
+			const TypeDualConverter<CullMode> CullModeConverter = 
+			{
+				{ CULL_None, L"None" },
+				{ CULL_Clockwise, L"Clockwise" },
+				{ CULL_CounterClockwise, L"CounterClockwise" }
+			};
 
-			 CullMode GraphicsCommonUtils::ParseCullMode(const String& value)
-			 {
-				 String v = value;
-				 StringUtils::ToLowerCase(v);
-				 if (v == L"none")
-				 {
-					 return CULL_None;
-				 }
-				 else if (v == L"clockwise")
-				 {
-					 return CULL_Clockwise;
-				 }
-				 else if (v == L"counterclockwise")
-				 {
-					 return CULL_CounterClockwise;
-				 }
-				 return CULL_None;
-			 }
-			 String GraphicsCommonUtils::ToString(CullMode cull)
-			 {
-				 switch (cull)
-				 {
-				 case CULL_Clockwise:
-					 return L"Clockwise";
-				 case CULL_CounterClockwise:
-					 return L"CounterClockwise";
-				 case CULL_None:
-					 return L"None";
-				 }
-				 return L"None";
-			 }
+			const TypeDualConverter<TextureAddressMode> TextureAddressModeConverter = 
+			{
+				{ TextureAddressMode::Wrap, L"Wrap" },
+				{ TextureAddressMode::Mirror, L"Mirror" },
+				{ TextureAddressMode::Clamp, L"Clamp" },
+				{ TextureAddressMode::Border, L"Border" },
+				{ TextureAddressMode::MirrorOnce, L"MirrorOnce" }
+			};
 
-			 TextureAddressMode GraphicsCommonUtils::ParseTextureAddressMode(const String& value)
-			 {
-				 String v = value;
-				 StringUtils::ToLowerCase(v);
+			const TypeDualConverter<TextureFilter> TextureFilterConverter = 
+			{
+				{ TFLT_None, L"None" },
+				{ TFLT_Point, L"Point" },
+				{ TFLT_Linear, L"Linear" },
+				{ TFLT_Anisotropic, L"Anisotropic" }
 
-				 if (v == L"wrap")
-				 {
-					 return TA_Wrap;
-				 }
-				 else if (v == L"mirror")
-				 {
-					 return TA_Mirror;
-				 }
-				 else if (v == L"clamp")
-				 {
-					 return TA_Clamp;
-				 }
-				 else if (v == L"border")
-				 {
-					 return TA_Border;
-				 }
-				 else if (v == L"mirroronce")
-				 {
-					 return TA_MirrorOnce;
-				 }
-				 return TA_Wrap;
-			 }
-			 String GraphicsCommonUtils::ToString(TextureAddressMode mode)
-			 {
-				 switch (mode)
-				 {
-				 case TA_Wrap:
-					 return L"Wrap";
-				 case TA_Mirror:
-					 return L"Mirror";
-				 case TA_Clamp:
-					 return L"Clamp";
-				 case TA_Border:
-					 return L"Border";
-				 case TA_MirrorOnce:
-					 return L"MirrorOnce";
-				 }
-				 return L"Wrap";
-			 }
+			};
 
-			 TextureFilter GraphicsCommonUtils::ParseTextureFilter(const String& value)
-			 {
-				 String v = value;
-				 StringUtils::ToLowerCase(v);
+			const TypeDualConverter<ShaderType> ShaderTypeConverter = 
+			{
+				{ ShaderType::Pixel, L"PixelShader" },
+				{ ShaderType::Vertex, L"VertexShader" },
+				{ ShaderType::Geometry, L"GeometryShader" },
+				{ ShaderType::All, L"All" }
+			};
 
-				 if (v == L"none")
-				 {
-					 return TFLT_None;
-				 }
-				 else if (v == L"point")
-				 {
-					 return TFLT_Point;
-				 }
-				 else if (v == L"linear")
-				 {
-					 return TFLT_Linear;
-				 }
-				 else if (v == L"anisotropic")
-				 {
-					 return TFLT_Anisotropic;
-				 }
-				 else if (v == L"pyramidalquad")
-				 {
-					 return TFLT_PyramidalQuad;
-				 }
-				 else if (v == L"gaussianquad")
-				 {
-					 return TFLT_GaussianQuad;
-				 }
-				 return TFLT_None;
-			 }
-			 String GraphicsCommonUtils::ToString(TextureFilter filter)
-			 {
-				 switch (filter)
-				 {
-				 case TFLT_None:
-					 return L"None";
-				 case TFLT_Point:
-					 return L"Point";
-				 case TFLT_Linear:
-					 return L"Linear";
-				 case TFLT_Anisotropic:
-					 return L"Anisotropic";
-				 case TFLT_PyramidalQuad:
-					 return L"PyramidalQuad";
-				 case TFLT_GaussianQuad:
-					 return L"GaussianQuad";
-				 }
-				 return L"None";
-			 }
+			const TypeDualConverter<VertexElementUsage> VertexElementUsageConverter = 
+			{
+				{ VEU_Position, L"VEU_Position" },
+				{ VEU_BlendWeight, L"VEU_BlendWeight" },
+				{ VEU_BlendIndices, L"VEU_BlendIndices" },
+				{ VEU_Normal, L"VEU_Normal" },
+				{ VEU_PointSize, L"VEU_PointSize" },
+				{ VEU_TextureCoordinate, L"VEU_TextureCoordinate" },
+				{ VEU_Tangent, L"VEU_Tangent" },
+				{ VEU_Binormal, L"VEU_Binormal" },
+				{ VEU_TessellateFactor, L"VEU_TessellateFactor" },
+				{ VEU_PositionTransformed, L"VEU_PositionTransformed" },
+				{ VEU_Color, L"VEU_Color" },
+				{ VEU_Fog, L"VEU_Fog" },
+				{ VEU_Depth, L"VEU_Depth" },
+				{ VEU_Sample, L"VEU_Sample" }
+			};
 
-			 ShaderType GraphicsCommonUtils::ParseShaderType(const String& value)
-			 {
-				 String v = value;
-				 StringUtils::ToLowerCase(v);
-
-				 if (v==L"vertexshader")
-				 {
-					 return SHDT_Vertex;
-				 }
-				 else if (v==L"pixelshader")
-				 {
-					 return SHDT_Pixel;
-				 }
-				 else if (v==L"all")
-				 {
-					 return SHDT_All;
-				 }
-				 return SHDT_Pixel;
-			 }
-			 String GraphicsCommonUtils::ToString(ShaderType type)
-			 {
-				 switch (type)
-				 {
-				 case SHDT_Pixel:
-					 return L"PixelShader";
-				 case SHDT_Vertex:
-					 return L"VertexShader";
-				 case SHDT_All:
-					 return L"All";
-				 }
-				 return L"VertexShader";
-			 }
-
-			 VertexElementUsage GraphicsCommonUtils::ParseVertexElementUsage(const String& value)
-			 {
-				 String v = value;
-				 StringUtils::ToLowerCase(v);
-
-				 if (v==L"veu_position")
-				 {
-					 return VEU_Position;
-				 }
-				 else if (v==L"veu_blendweight")
-				 {
-					 return VEU_BlendWeight;
-				 }
-				 else if (v==L"veu_blendindices")
-				 {
-					 return VEU_BlendIndices;
-				 }
-				 else if (v==L"veu_normal")
-				 {
-					 return VEU_Normal;
-				 }
-				 else if (v==L"veu_pointsize")
-				 {
-					 return VEU_PointSize;
-				 }
-				 else if (v==L"veu_texturecoordinate")
-				 {
-					 return VEU_TextureCoordinate;
-				 }
-				 else if (v==L"veu_tangent")
-				 {
-					 return VEU_Tangent;
-				 }
-				 else if (v==L"veu_binormal")
-				 {
-					 return VEU_Binormal;
-				 }
-				 else if (v==L"veu_tessellatefactor")
-				 {
-					 return VEU_TessellateFactor;
-				 }
-				 else if (v==L"veu_positiontransformed")
-				 {
-					 return VEU_PositionTransformed;
-				 }
-				 else if (v==L"veu_color")
-				 {
-					 return VEU_Color;
-				 }
-				 else if (v==L"veu_fog")
-				 {
-					 return VEU_Fog;
-				 }
-				 else if (v==L"veu_depth")
-				 {
-					 return VEU_Depth;
-				 }
-				 else if (v==L"veu_sample")
-				 {
-					 return VEU_Sample;
-				 }
-				 else if (StringUtils::StartsWith(v, L"veu_texturecoordinate"))
-				 {
-					 return VEU_TextureCoordinate;
-				 }
-				 return VEU_Position;
-			 }
-			 String GraphicsCommonUtils::ToString(VertexElementUsage usage)
-			 {
-				 switch (usage)
-				 {
-					case VEU_Position:
-						return L"VEU_Position";
-					case VEU_BlendWeight:
-						return L"VEU_BlendWeight";
-					case VEU_BlendIndices:
-						return L"VEU_BlendIndices";
-					case VEU_Normal:
-						return L"VEU_Normal";
-					case VEU_PointSize:
-						return L"VEU_PointSize";
-					case VEU_TextureCoordinate:
-						return L"VEU_TextureCoordinate";
-					case VEU_Tangent:
-						return L"VEU_Tangent";
-					case VEU_Binormal:
-						return L"VEU_Binormal";
-					case VEU_TessellateFactor:
-						return L"VEU_TessellateFactor";
-					case VEU_PositionTransformed:
-						return L"VEU_PositionTransformed";
-					case VEU_Color:
-						return L"VEU_Color";
-					case VEU_Fog:
-						return L"VEU_Fog";
-					case VEU_Depth:
-						return L"VEU_Depth";
-					case VEU_Sample:
-						return L"VEU_Sample";
-				 }
-				 return L"VEU_Position";
-			 }
 		}
 	}
 }

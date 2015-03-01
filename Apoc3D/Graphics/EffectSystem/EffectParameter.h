@@ -216,13 +216,14 @@ namespace Apoc3D
 				String CustomMaterialParamName;
 				int32 InstanceBlobIndex = -1;
 
-				ShaderType ProgramType = SHDT_Vertex;
+				ShaderType ProgramType = ShaderType::Vertex;
 
 				int32 RegisterIndex = -1;
 				
 				int32 SamplerIndex = -1;
 				ShaderSamplerState SamplerState;
 
+				String SamplerStateOverridenGroupName;
 				String DefaultTextureName;
 
 				EffectParameter() { }

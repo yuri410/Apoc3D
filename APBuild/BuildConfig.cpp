@@ -238,7 +238,7 @@ namespace APBuild
 		}
 
 		DestFile = sect->getAttribute(L"DestinationFile");
-		PListFile = sect->getAttribute(L"ParamList");
+		sect->tryGetAttribute(L"ParamList", PListFile);
 
 		Targets = StringUtils::Split(sect->getAttribute(L"Targets"), L"|");
 		for (String& tgt : Targets)
@@ -295,7 +295,7 @@ namespace APBuild
 
 			for (const ConfigurationSection* ent : subs->getSubSections())
 			{
-				VertexElementUsage usage = GraphicsCommonUtils::ParseVertexElementUsage(ent->getName());
+				VertexElementUsage usage = VertexElementUsageConverter[ent->getName()];
 				int index = 0;
 				if (usage == VEU_TextureCoordinate)
 				{

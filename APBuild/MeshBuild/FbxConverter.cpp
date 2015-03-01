@@ -1211,7 +1211,7 @@ namespace APBuild
 
 			hasher.Accumulate(&obj, sizeof(FIVertex));
 
-			return hasher.GetResult();
+			return hasher.getResult();
 		}
 	};
 

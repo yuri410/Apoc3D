@@ -108,6 +108,8 @@ namespace Apoc3D
 				void Read(BinaryReader* br);
 				void Write(BinaryWriter* bw);
 
+				void GetAllConstantNames(List<String>& list) const { return m_table.FillKeys(list); }
+
 			protected:
 				ConstantTable() { }
 

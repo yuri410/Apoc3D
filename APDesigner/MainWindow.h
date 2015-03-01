@@ -67,8 +67,9 @@ namespace APDesigner
 		void RefreshMaterialList(const List<ProjectItem*>& items);
 		void SetProjectWorkingDir(const Project* prj);
 
-		void LoadMenus();
+		String GetProjectStampFilePath(const String* projectFilePath);
 
+		void LoadMenus();
 
 		void Menu_Tools_AtomManager(MenuItem* itm);
 

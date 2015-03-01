@@ -44,20 +44,21 @@ namespace Apoc3D
 			{
 			private:
 				static D3D9Utils s_initlaizer;
-				static D3DPRIMITIVETYPE ptTable[PT_Count];
-				static D3DDECLTYPE vefTable[VEF_Count];
-				static D3DDECLUSAGE veuTable[VEU_Count];
-				static D3DFILLMODE fillTable[FILL_Count];
-				static D3DCULL cullTable[CULL_Count];
-				static D3DBLEND blendTable[BLEND_Count];
-				static D3DCMPFUNC comfunTable[COMFUN_Count];
-				static D3DBLENDOP blendopTable[BLFUN_Count];
-				static D3DSTENCILOP stencilTable[STOP_Count];
-				static D3DFORMAT pixFmtTable[FMT_Count];
-				static D3DFORMAT depFmtTable[DEPFMT_Count];
-				static D3DTEXTUREFILTERTYPE tfltTable[TFLT_Count];
-				static D3DCUBEMAP_FACES cubeTable[CUBE_Count];
-				static D3DTEXTUREADDRESS taTable[TA_Count];
+				static D3DPRIMITIVETYPE ptTable[];
+				static D3DDECLTYPE vefTable[];
+				static D3DDECLUSAGE veuTable[];
+				static D3DFILLMODE fillTable[];
+				static D3DCULL cullTable[];
+				static D3DBLEND blendTable[];
+				static D3DCMPFUNC comfunTable[];
+				static D3DBLENDOP blendopTable[];
+				static D3DSTENCILOP stencilTable[];
+				static D3DFORMAT pixFmtTable[];
+				static D3DFORMAT depFmtTable[];
+				static D3DTEXTUREFILTERTYPE tfltTable[];
+				static D3DCUBEMAP_FACES cubeTable[];
+				static D3DTEXTUREADDRESS taTable[];
+
 			private:
 				static void InitPrimitiveTable();
 				static void InitVertexElementFormat();

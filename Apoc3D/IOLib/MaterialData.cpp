@@ -41,8 +41,7 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		/** Used only when storing a material as a file
-		*/
+		/** Used only when storing a material as a file */
 		const int MtrlId_V3 = ((byte)'M' << 24) | ((byte)'T' << 16) | ((byte)'R' << 8) | ((byte)'L');
 
 		// =============================================================

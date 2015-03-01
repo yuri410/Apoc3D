@@ -137,11 +137,14 @@ namespace Apoc3D
 				SamplerState.MipFilter = static_cast<TextureFilter>(br->ReadUInt32());
 				SamplerState.MipMapLODBias = br->ReadUInt32();
 
+				if (version == 2)
+					SamplerStateOverridenGroupName = br->ReadString();
+
 				DefaultTextureName = br->ReadString();
 			}
 			void EffectParameter::Write(BinaryWriter* bw)
 			{
-				bw->WriteInt32(1);
+				bw->WriteInt32(2);
 
 				bw->WriteString(Name);
 				bw->WriteString(EffectParameter::ToString(Usage));
@@ -162,6 +165,8 @@ namespace Apoc3D
 				bw->WriteUInt32((uint32)SamplerState.MinFilter);
 				bw->WriteUInt32((uint32)SamplerState.MipFilter);
 				bw->WriteUInt32((uint32)SamplerState.MipMapLODBias);
+
+				bw->WriteString(SamplerStateOverridenGroupName);
 
 				bw->WriteString(DefaultTextureName);
 			}

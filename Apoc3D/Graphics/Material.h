@@ -166,13 +166,10 @@ namespace Apoc3D
 			 *  for the material
 			 */
 			Effect* m_effects[MaxScenePass];
-			// NB: it is found that an array of Strings will use up considerable
+			// @@: it is found that an array of Strings will use up considerable
 			// amount of memory as the Stl String will initialize their inner objects. 
 			// Thousands of Materials are space consuming if not using map.
-			/** 
-			 *  A map of effect names
-			 */
-			HashMap<int, String> m_effectName;
+			HashMap<int, String> m_effectName;			/** A map of effect names */
 
 			CustomParamTable m_customParametrs;
 			ResourceHandle<Texture>* m_tex[MaxTextures];

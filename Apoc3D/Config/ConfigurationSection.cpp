@@ -47,6 +47,9 @@ namespace Apoc3D
 			return flags;
 		}
 
+		template <typename T>
+		T SimpleReturn(const T& v) { return v; }
+
 		String SimpleFloatToString(const float& v);
 
 		/** Actual parsing/printing functions */
@@ -62,8 +65,7 @@ namespace Apoc3D
 		Point ParsePoint(const String& str);
 		String PointToString(const Point& vec);
 
-
-		void CombineString(const String* v, int count, String& result);
+		void CombineString(const String* v, int32 count, String& result) { StringUtils::Pack<String, SimpleReturn<String>>(v, count, result); }
 		void SplitString(const String& str, List<String>& result);
 
 		void SinglesToString(const float* v, int count, String& result);
@@ -149,7 +151,8 @@ namespace Apoc3D
 		}
 		void ConfigurationSection::SetValue( const String& value)
 		{
-			if (m_value != value && !m_value.empty())
+			if (m_value != value && 
+				!m_value.empty())
 			{
 				LogManager::getSingleton().Write(LOG_System,  L"Overwriting the value of configuration section '" + m_name + L"'. ", LOGLVL_Warning);
 			}
@@ -192,6 +195,18 @@ namespace Apoc3D
 			return m_attributes.TryGetValue(name, result);
 		}
 
+		const String* ConfigurationSection::tryGetValue(const String& name) const
+		{
+			ConfigurationSection* sect;
+			if (m_subSection.TryGetValue(name, sect))
+				return &sect->getValue();
+			return nullptr;
+		}
+		const String* ConfigurationSection::tryGetAttribute(const String& name) const
+		{
+			return m_attributes.TryGetValue(name);
+		}
+
 
 #define CONFIG_SECT_GETER_IMP(type, typeName, parser) \
 		type ConfigurationSection::Get##typeName() const { return parser(m_value); } \
@@ -199,20 +214,20 @@ namespace Apoc3D
 		type ConfigurationSection::GetAttribute##typeName(const String& key) const { return parser(getAttribute(key)); } \
 		bool ConfigurationSection::TryGet##typeName(const String& key, type& result) const \
 		{ \
-			String str; \
-			if (tryGetValue(key, str)) \
+			const String* str = tryGetValue(key); \
+			if (str) \
 			{ \
-				result = parser(str); \
+				result = parser(*str); \
 				return true; \
 			} \
 			return false; \
 		} \
 		bool ConfigurationSection::TryGetAttribute##typeName(const String& key, type& result) const \
 		{ \
-			String str; \
-			if (tryGetAttribute(key, str)) \
+			const String* str = tryGetAttribute(key); \
+			if (str) \
 			{ \
-				result = parser(str); \
+				result = parser(*str); \
 				return true; \
 			} \
 			return false; \
@@ -252,20 +267,20 @@ namespace Apoc3D
 		void ConfigurationSection::GetAttribute##typeName(const String& key, type& result) const { splitParser(getAttribute(key), result); } \
 		bool ConfigurationSection::TryGet##typeName(const String& key, type& result) const \
 		{ \
-			String str; \
-			if (tryGetValue(key, str)) \
+			const String* str = tryGetValue(key); \
+			if (str) \
 			{ \
-				splitParser(str, result); \
+				splitParser(*str, result); \
 				return true; \
 			} \
 			return false; \
 		} \
 		bool ConfigurationSection::TryGetAttribute##typeName(const String& key, type& result) const \
 		{ \
-			String str; \
-			if (tryGetAttribute(key, str)) \
+			const String* str = tryGetAttribute(key); \
+			if (str) \
 			{ \
-				splitParser(str, result); \
+				splitParser(*str, result); \
 				return true; \
 			} \
 			return false; \
@@ -299,10 +314,10 @@ namespace Apoc3D
 		} \
 		bool ConfigurationSection::TryGet##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount) const \
 		{ \
-			String str; \
-			if (tryGetValue(key, str)) \
+			const String* str = tryGetValue(key); \
+			if (str) \
 			{ \
-				int32 actual = splitParser(str, v, maxCount); \
+				int32 actual = splitParser(*str, v, maxCount); \
 				if (acutallCount) *acutallCount = actual; \
 				return true; \
 			} \
@@ -310,10 +325,10 @@ namespace Apoc3D
 		} \
 		bool ConfigurationSection::TryGetAttribute##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount) const \
 		{ \
-			String str; \
-			if (tryGetAttribute(key, str)) \
+			const String* str = tryGetAttribute(key); \
+			if (str) \
 			{ \
-				int32 actual = splitParser(str, v, maxCount); \
+				int32 actual = splitParser(*str, v, maxCount); \
 				if (acutallCount) *acutallCount = actual; \
 				return true; \
 			} \
@@ -421,6 +436,27 @@ namespace Apoc3D
 		void ConfigurationSection::SetUInts(const uint32* v, int32 count)				{ UIntsToString(v, count, m_value); }
 		void ConfigurationSection::SetVector3s(const Vector3* v, int count)				{ Vector3sToString(v, count, m_value); }
 
+		int32 ConfigurationSection::GetHashCode() const
+		{
+			FNVHash32 hasher;
+
+			hasher.Accumulate(m_name.c_str(), sizeof(String::value_type) * m_name.size());
+			hasher.Accumulate(m_value.c_str(), sizeof(String::value_type) * m_value.size());
+
+			for (auto e : m_attributes)
+			{
+				hasher.Accumulate(e.Key.c_str(), sizeof(String::value_type) * e.Key.size());
+				hasher.Accumulate(e.Value.c_str(), sizeof(String::value_type) * e.Value.size());
+			}
+
+			int32 h = static_cast<int32>(hasher.getResult());
+
+			for (ConfigurationSection* s : m_subSection.getValueAccessor())
+			{
+				h ^= s->GetHashCode();
+			}
+			return h;
+		}
 
 		/************************************************************************/
 		/* ParameterDictionary                                                  */
@@ -430,10 +466,10 @@ namespace Apoc3D
 		type ParameterDictionary::Get##typeName(const String& key) const { return parser(this->operator[](key)); } \
 		bool ParameterDictionary::TryGet##typeName(const String& key, type& result) const \
 		{ \
-			String str; \
-			if (TryGetValue(key, str)) \
+			const String* str = TryGetValue(key); \
+			if (str) \
 			{ \
-				result = parser(str); \
+				result = parser(*str); \
 				return true; \
 			} \
 			return false; \
@@ -449,10 +485,10 @@ namespace Apoc3D
 		void ParameterDictionary::Get##typeName(const String& key, type& result) const { splitParser(this->operator[](key), result); } \
 		bool ParameterDictionary::TryGet##typeName(const String& key, type& result) const \
 		{ \
-			String str; \
-			if (TryGetValue(key, str)) \
+			const String* str = TryGetValue(key); \
+			if (str) \
 			{ \
-				splitParser(str, result); \
+				splitParser(*str, result); \
 				return true; \
 			} \
 			return false; \
@@ -466,10 +502,10 @@ namespace Apoc3D
 		} \
 		bool ParameterDictionary::TryGet##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount) const \
 		{ \
-			String str; \
-			if (TryGetValue(key, str)) \
+			const String* str = TryGetValue(key); \
+			if (str) \
 			{ \
-				int32 actual = splitParser(str, v, maxCount); \
+				int32 actual = splitParser(*str, v, maxCount); \
 				if (acutallCount) *acutallCount = actual; \
 				return true; \
 			} \
@@ -613,24 +649,7 @@ namespace Apoc3D
 		}
 
 
-		void CombineString(const String* v, int count, String& result)
-		{
-			for (int i = 0; i < count; i++)
-			{
-				if (v[i].find(',') != String::npos)
-				{
-					result.append(1, '"');
-					result.append(v[i]);
-					result.append(1, '"');
-				}
-				else
-				{
-					result.append(v[i]);
-				}
-				if (i != count - 1)
-					result.append(1, ',');
-			}
-		}
+
 		void SplitString(const String& str, List<String>& result)
 		{
 			bool isIn = false;
@@ -670,17 +689,6 @@ namespace Apoc3D
 			}
 		}
 
-
-		template <typename ElementT, String (*ToStringConverter)(const ElementT&) >
-		void GenericToString(const ElementT* array, int32 count, String& result)
-		{
-			for (int32 i = 0; i < count; i++)
-			{
-				result.append(ToStringConverter(array[i]));
-				if (i != count - 1)
-					result.append(L", ");
-			}
-		}
 
 
 		void SplitSingles(const String& text, List<float>& result)		{ StringUtils::SplitParseSingles(text, result, L", "); } 
@@ -725,12 +733,12 @@ namespace Apoc3D
 		String SimpleUInt32ToString(const uint32& v)	{ return StringUtils::UIntToString(v); }
 		String SimpleFloatToString(const float& v)		{ return StringUtils::SingleToString(v, GetCurrentFPFlags()); }
 		
-		void IntsToString(const int32* v, int count, String& result)		{ GenericToString<int32, SimpleInt32ToString>(v, count, result); }
-		void UIntsToString(const uint32* v, int count, String& result)		{ GenericToString<uint32, SimpleUInt32ToString>(v, count, result); }
-		void SinglesToString(const float* v, int count, String& result)		{ GenericToString<float, SimpleFloatToString>(v, count, result); }
-		void PrecentagesToString(const float* v, int count, String& result) { GenericToString<float, PercentageToString>(v, count, result); }
-		void Vector3sToString(const Vector3* v, int count, String& result)	{ GenericToString<Vector3, Vector3ToString>(v, count, result); }
-		void PointsToString(const Point* v, int count, String& result)		{ GenericToString<Point, PointToString>(v, count, result); }
+		void IntsToString(const int32* v, int count, String& result)		{ StringUtils::Pack<int32, SimpleInt32ToString>(v, count, result); }
+		void UIntsToString(const uint32* v, int count, String& result)		{ StringUtils::Pack<uint32, SimpleUInt32ToString>(v, count, result); }
+		void SinglesToString(const float* v, int count, String& result)		{ StringUtils::Pack<float, SimpleFloatToString>(v, count, result); }
+		void PrecentagesToString(const float* v, int count, String& result) { StringUtils::Pack<float, PercentageToString>(v, count, result); }
+		void Vector3sToString(const Vector3* v, int count, String& result)	{ StringUtils::Pack<Vector3, Vector3ToString>(v, count, result); }
+		void PointsToString(const Point* v, int count, String& result)		{ StringUtils::Pack<Point, PointToString>(v, count, result); }
 
 
 

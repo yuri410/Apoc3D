@@ -42,63 +42,33 @@ namespace Apoc3D
 				
 			}
 
-
-			ShaderSamplerState::ShaderSamplerState()
-				: AddressU(TA_Wrap), AddressV(TA_Wrap), AddressW(TA_Wrap),
-				BorderColor(0), MagFilter(TFLT_Point), MinFilter(TFLT_Point), MipFilter(TFLT_None), MaxAnisotropy(1), MaxMipLevel(0), MipMapLODBias(0)
-			{
-
-			}
 			void ShaderSamplerState::Parse(const ConfigurationSection* sect)
-			{
-				String v = GraphicsCommonUtils::ToString(TA_Wrap);
+			{	
+				sect->TryGetAttributeEnum(L"AddressU", AddressU, TextureAddressModeConverter);
+				sect->TryGetAttributeEnum(L"AddressV", AddressV, TextureAddressModeConverter);
+				sect->TryGetAttributeEnum(L"AddressW", AddressW, TextureAddressModeConverter);
 
-				sect->tryGetAttribute(L"AddressU", v);
-				AddressU = GraphicsCommonUtils::ParseTextureAddressMode(v);
-
-				v = GraphicsCommonUtils::ToString(TA_Wrap);
-				sect->tryGetAttribute(L"AddressV", v);
-				AddressV = GraphicsCommonUtils::ParseTextureAddressMode(v);
-
-				v = GraphicsCommonUtils::ToString(TA_Wrap);
-				sect->tryGetAttribute(L"AddressW", v);
-				AddressW = GraphicsCommonUtils::ParseTextureAddressMode(v);
-
-				v = L"0x00000000";
-				sect->tryGetAttribute(L"BorderColor", v);
-				BorderColor = StringUtils::ParseUInt32Hex(v);
+				if (const String* v = sect->tryGetAttribute(L"BorderColor"))
+					BorderColor = StringUtils::ParseUInt32Hex(*v);
 				
-				v = GraphicsCommonUtils::ToString(TFLT_Point);
-				sect->tryGetAttribute(L"MagFilter", v);
-				MagFilter = GraphicsCommonUtils::ParseTextureFilter(v);
-
-				v = GraphicsCommonUtils::ToString(TFLT_Point);
-				sect->tryGetAttribute(L"MinFilter", v);
-				MinFilter = GraphicsCommonUtils::ParseTextureFilter(v);
-
-				v = GraphicsCommonUtils::ToString(TFLT_None);
-				sect->tryGetAttribute(L"MipFilter", v);
-				MipFilter = GraphicsCommonUtils::ParseTextureFilter(v);
+				sect->TryGetAttributeEnum(L"MagFilter", MagFilter, TextureFilterConverter);
+				sect->TryGetAttributeEnum(L"MinFilter", MinFilter, TextureFilterConverter);
+				sect->TryGetAttributeEnum(L"MipFilter", MipFilter, TextureFilterConverter);
 
 
-				MaxAnisotropy = 1;
 				sect->TryGetAttributeInt(L"MaxAnisotropy", MaxAnisotropy);
-
-				MaxMipLevel = 0;
 				sect->TryGetAttributeInt(L"MaxMipLevel", MaxMipLevel);
-
-				MipMapLODBias = 0;
 				sect->TryGetAttributeInt(L"MipMapLODBias", MipMapLODBias);
 			}
 			void ShaderSamplerState::Save(ConfigurationSection* sect)
 			{
-				sect->AddAttributeString(L"AddressU", GraphicsCommonUtils::ToString(AddressU));
-				sect->AddAttributeString(L"AddressV", GraphicsCommonUtils::ToString(AddressU));
-				sect->AddAttributeString(L"AddressW", GraphicsCommonUtils::ToString(AddressU));
+				sect->AddAttributeString(L"AddressU", TextureAddressModeConverter.ToString(AddressU));
+				sect->AddAttributeString(L"AddressV", TextureAddressModeConverter.ToString(AddressU));
+				sect->AddAttributeString(L"AddressW", TextureAddressModeConverter.ToString(AddressU));
 
-				sect->AddAttributeString(L"MagFilter", GraphicsCommonUtils::ToString(MagFilter));
-				sect->AddAttributeString(L"MinFilter", GraphicsCommonUtils::ToString(MinFilter));
-				sect->AddAttributeString(L"MipFilter", GraphicsCommonUtils::ToString(MipFilter));
+				sect->AddAttributeString(L"MagFilter", TextureFilterConverter.ToString(MagFilter));
+				sect->AddAttributeString(L"MinFilter", TextureFilterConverter.ToString(MinFilter));
+				sect->AddAttributeString(L"MipFilter", TextureFilterConverter.ToString(MipFilter));
 
 				sect->AddAttributeString(L"BorderColor", StringUtils::UIntToStringHex(BorderColor, StringUtils::SF_ShowHexBase));
 

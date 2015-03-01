@@ -1307,7 +1307,17 @@ namespace Apoc3D
 		}
 		
 		//////////////////////////////////////////////////////////////////////////
+		String DummyRet(const String& r) { return r; }
 
+		String StringUtils::PackStrings(const Apoc3D::Collections::List<String>& v, bool useQuotes, wchar_t sep)
+		{
+			String r;
+			if (useQuotes)
+				Pack<String, DummyRet, true>(v, r, sep);
+			else
+				Pack<String, DummyRet, false>(v, r, sep);
+			return r;
+		}
 
 
 		bool StringUtils::StartsWith(const String& str, const String& v, bool caseInsensitive) { return Impl::StartsWith(str, v, caseInsensitive); }

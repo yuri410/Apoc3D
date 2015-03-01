@@ -26,6 +26,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace APBuild
 {
+	struct ShaderModel3ConstantTable : public ConstantTable
+	{
+		ShaderModel3ConstantTable(ID3DXConstantTable* constants);
+	};
+
 	ShaderModel3ConstantTable::ShaderModel3ConstantTable(ID3DXConstantTable* constants)
 	{
 		D3DXCONSTANTTABLE_DESC desc;
@@ -214,4 +219,89 @@ namespace APBuild
 		newCodeSize = (int32)newCodeBuffer.getLength();
 		memcpy(newByteCode, newCodeBuffer.getDataPointer(), newCodeSize);
 	}
+
+	bool CompileAsHLSLDX9(const String& src, const String& entryPoint, const char* pfName, bool debugEnabled, bool noOptimization,
+		const List<std::pair<std::string, std::string>>* defines, ConstantTable*& _constantTable, char*& codePtr, int32& codeSize)
+	{
+		DWORD flags = D3DXSHADER_PACKMATRIX_ROWMAJOR;
+		if (debugEnabled)
+		{
+			flags |= D3DXSHADER_DEBUG;
+		}
+		else
+		{
+			if (noOptimization)
+			{
+				flags |= D3DXSHADER_SKIPOPTIMIZATION | D3DXSHADER_IEEE_STRICTNESS;
+			}
+			else
+			{
+				flags |= D3DXSHADER_OPTIMIZATION_LEVEL3;
+			}
+		}
+
+		D3DXMACRO* macros = nullptr;
+		if (defines && defines->getCount())
+		{
+			macros = new D3DXMACRO[defines->getCount() + 1];
+			memset(macros, 0, (defines->getCount() + 1) * sizeof(D3DXMACRO));
+
+			for (int32 i = 0; i < defines->getCount(); i++)
+			{
+				macros[i].Name = defines->operator[](i).first.c_str();
+				macros[i].Definition = defines->operator[](i).second.c_str();
+			}
+		}
+
+		ID3DXBuffer* error = 0;
+		ID3DXBuffer* shader = 0;
+
+		HRESULT hr = D3DXCompileShaderFromFile(src.c_str(), macros, 0,
+			StringUtils::toPlatformNarrowString(entryPoint).c_str(), pfName,
+			flags, &shader, &error, NULL);
+
+		delete[] macros;
+
+		if (FAILED(hr))
+		{
+			if (error)
+			{
+				std::string errmsg(reinterpret_cast<const char*>(error->GetBufferPointer()), error->GetBufferSize());
+				BuildSystem::LogError(StringUtils::toPlatformWideString(errmsg), src);
+				error->Release();
+			}
+			else
+			{
+				BuildSystem::LogError(L"Shader compiling failed due to unknown problem.", src);
+			}
+			return false;
+		}
+
+		ID3DXConstantTable* constants;
+		hr = D3DXGetShaderConstantTableEx((const DWORD*)shader->GetBufferPointer(), D3DXCONSTTABLE_LARGEADDRESSAWARE, &constants);
+		if (FAILED(hr))
+		{
+			BuildSystem::LogError(L"Unable to obtain constant information from shader.", src);
+			shader->Release();
+			return false;
+		}
+
+		ShaderModel3ConstantTable* constantTable = new ShaderModel3ConstantTable(constants);
+		constants->Release();
+
+		DWORD* newShaderCode;
+		int32 newShaderCodeSize;
+		ProcessShaderModel3ByteCode(*constantTable,
+			(const DWORD*)shader->GetBufferPointer(), shader->GetBufferSize(),
+			newShaderCode, newShaderCodeSize);
+
+		shader->Release();
+
+		codePtr = (char*)(newShaderCode);
+		codeSize = newShaderCodeSize;
+		_constantTable = constantTable;
+
+		return true;
+	}
+
 }

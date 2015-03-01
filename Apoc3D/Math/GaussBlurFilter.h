@@ -96,6 +96,18 @@ namespace Apoc3D
 		private:
 			void ComputeFilters()
 			{
+				if (SampleWeights == nullptr)
+				{
+					SampleWeights = new float[SampleCount];
+				}
+				if (SampleOffsetsX == nullptr)
+				{
+					SampleOffsetsX = new Vector4[SampleCount];
+				}
+				if (SampleOffsetsY == nullptr)
+				{
+					SampleOffsetsY = new Vector4[SampleCount];
+				}
 				ComputeGaussianFilter(1.0f / m_mapWidth, 0, SampleCount, BlurAmount, m_kernelXScale, SampleWeights, SampleOffsetsX);
 				ComputeGaussianFilter(0, 1.0f / m_mapHeight, SampleCount, BlurAmount, m_kernelXScale, nullptr, SampleOffsetsY);
 			}

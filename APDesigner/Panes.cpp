@@ -732,7 +732,7 @@ namespace APDesigner
 
 				ApplyProperties(item->getData());
 
-				item->NotifyModified();
+				//item->NotifyModified();
 			}
 		}
 		NukePropertyList(true);

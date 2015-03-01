@@ -111,7 +111,7 @@ namespace APDesigner
 			String row[3];
 			row[0] = e.Key;
 			
-			row[1] = GraphicsCommonUtils::ToString(type->getShaderType());
+			row[1] = ShaderTypeConverter.ToString(type->getShaderType());
 			
 			row[2] = L"SM ";
 			row[2].append(StringUtils::IntToString(type->getMajorSMVersion()));

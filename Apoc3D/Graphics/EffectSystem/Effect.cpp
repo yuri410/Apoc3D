@@ -178,11 +178,11 @@ namespace Apoc3D
 					ResolvedEffectParameter rep(profileSelected->Parameters[i]);
 
 					Shader* shader = nullptr;
-					if (rep.ProgramType == SHDT_Vertex)
+					if (rep.ProgramType == ShaderType::Vertex)
 					{
 						shader = m_vertexShader;
 					}
-					else if (rep.ProgramType == SHDT_Pixel)
+					else if (rep.ProgramType == ShaderType::Pixel)
 					{
 						shader = m_pixelShader;
 					}

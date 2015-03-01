@@ -350,6 +350,12 @@ namespace APDesigner
 			m_project->Parse(conf->get(L"Project"));
 			delete conf;
 
+			String stampFile = GetProjectStampFilePath(nullptr);
+			if (File::FileExists(stampFile))
+			{
+				m_project->LoadBuildStamp(FileStream(stampFile));
+			}
+
 			UpdateWindowTitle();
 			
 			m_resourcePane->UpdateToNewProject(m_project);
@@ -536,6 +542,12 @@ namespace APDesigner
 		}
 	}
 
+	String MainWindow::GetProjectStampFilePath(const String* projectFilePath)
+	{
+		const String& path = projectFilePath ? *projectFilePath : m_projectFilePath;
+		return PathUtils::Combine(PathUtils::GetDirectory(path), PathUtils::GetFileNameNoExt(path)) + L".stamp";
+	}
+
 	void MainWindow::Menu_CloseProject(MenuItem* itm)
 	{
 		//delete m_project;
@@ -600,7 +612,7 @@ namespace APDesigner
 		if (m_project)
 		{
 			LogManager::getSingleton().Write(LOG_System, String(L"Building project '") + m_project->getName() + String(L"'..."));
-			BuildInterface::getSingleton().AddBuild(m_project);
+			BuildInterface::getSingleton().AddBuild(m_project, GetProjectStampFilePath(nullptr));
 			BuildInterface::getSingleton().Execute();
 		}
 	}
@@ -632,16 +644,16 @@ namespace APDesigner
 			String path = prjs.GetElement(idx).second;
 			if (File::FileExists(path))
 			{
-				Project* prj = new Project();
+				Project prj;
 				FileLocation fl(path);
 				Configuration* conf = ConfigurationManager::getSingleton().CreateInstance(fl);
 				
-				prj->Parse(conf->get(L"Project"));
+				prj.Parse(conf->get(L"Project"));
 
-				prj->SetPath(PathUtils::GetDirectory(path), nullptr);
+				prj.SetPath(PathUtils::GetDirectory(path), nullptr);
 				delete conf;
 
-				BuildInterface::getSingleton().AddBuild(prj);
+				BuildInterface::getSingleton().AddBuild(&prj, GetProjectStampFilePath(&path));
 				BuildInterface::getSingleton().Execute();
 			}
 			else

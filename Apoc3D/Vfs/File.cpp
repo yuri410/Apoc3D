@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Utility/StringUtils.h"
 #include <sys/types.h> 
 #include <sys/stat.h> 
+#include <sys/utime.h>
 #include <io.h>
 #include <dirent.h>
 
@@ -90,7 +91,7 @@ namespace Apoc3D
 					return 0;
 				}
 				return status.st_size;
-			}			
+			}
 			return 0;
 		}
 		bool File::FileExists(const std::string& path)
@@ -105,7 +106,7 @@ namespace Apoc3D
 					return false;
 				}
 				return true;
-			}			
+			}
 			return false;
 		}
 		time_t File::GetFileModifiyTime(const std::string& path)
@@ -116,7 +117,7 @@ namespace Apoc3D
 				stat(path.c_str(), &status);
 
 				return status.st_mtime;
-			}			
+			}
 			return 0;
 		}
 		bool File::DirectoryExists(const std::string& path)
@@ -130,9 +131,27 @@ namespace Apoc3D
 				{
 					return true;
 				}
-			}			
+			}
 			return false;
 		}
+
+		bool File::SetFileModifiyTime(const String& path, time_t mt)
+		{
+			std::string spath = Utility::StringUtils::toPlatformNarrowString(path);
+
+			struct stat path_stat;
+
+			if (stat(spath.c_str(), &path_stat))
+				return false;
+
+			utimbuf buf;
+			buf.actime = path_stat.st_atime;
+			buf.modtime = mt;
+			if (utime(spath.c_str(), &buf))
+				return false;
+			return true;
+		}
+
 
 		bool ListDirectoryFilesRecursiveGeneric(const char* path, const String& basePath, List<String>& items, int32 depth, int32 maxDepth)
 		{

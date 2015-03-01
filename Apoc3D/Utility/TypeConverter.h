@@ -84,6 +84,9 @@ namespace Apoc3D
 
 			bool TryToString(T e, String& r) const { return m_invCast.TryGetValue(e, r); }
 			
+			T operator[](const String& name) const { return m_cast[name]; }
+			const String& operator[](T e) const { return m_invCast[e]; }
+
 			void DumpNames(NameList& names) const { m_invCast.FillValues(names); }
 			void DumpValues(ValueList& values) const { m_cast.FillValues(values); }
 
@@ -190,6 +193,8 @@ namespace Apoc3D
 			T Parse(const String& name) const { return m_cast[name]; }
 			T ParseFlags(const String& combo, const String& delim) const;
 			bool TryParse(const String& name, T& r) const { return m_cast.TryGetValue(name, r); }
+
+			T operator[](const String& name) const { return m_cast[name]; }
 
 			void DumpValues(ValueList& values) const { m_cast.FillKeys(values); }
 

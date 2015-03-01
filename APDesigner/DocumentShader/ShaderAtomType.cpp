@@ -140,7 +140,7 @@ namespace APDesigner
 
 		ConfigurationSection* sect = config[L"Basic"];
 		m_name = sect->getValue(L"Name");
-		m_type = GraphicsCommonUtils::ParseShaderType(sect->getValue(L"Type"));
+		m_type = ShaderTypeConverter.Parse(sect->getValue(L"Type"));
 		m_majorSMVersion = sect->GetInt(L"MajorSMVersion");
 		m_minorSMVersion = sect->GetInt(L"MinorSMVersion");
 		m_codeBody = sect->getValue(L"Code");

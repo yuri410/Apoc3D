@@ -86,16 +86,16 @@ namespace APBuild
 
 			hasher.Accumulate(PixelData, size);
 
-			HashCode = hasher.GetResult();
+			HashCode = static_cast<int32>(hasher.getResult());
 		}
 
-		friend bool operator ==(const GlyphBitmap& x, const GlyphBitmap& y)
+		bool operator ==(const GlyphBitmap& y) const
 		{
-			if (x.Width == y.Width && x.Height == y.Height && x.HashCode == y.HashCode)
+			if (Width == y.Width && Height == y.Height && HashCode == y.HashCode)
 			{
-				for (int i=0;i<x.Width*x.Height;i++)
+				for (int i=0;i<Width*Height;i++)
 				{
-					if (x.PixelData[i] != y.PixelData[i])
+					if (PixelData[i] != y.PixelData[i])
 					{
 						return false;
 					}

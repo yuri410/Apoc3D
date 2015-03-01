@@ -533,17 +533,17 @@ namespace Apoc3D
 				DWORD zEnabled;
 				dev->GetRenderState(D3DRS_ZENABLE, &zEnabled);
 
-				SetAlphaTestParameters(false, COMFUN_Always, 0);
-				SetAlphaBlend(false, BLFUN_Add, BLEND_One, BLEND_Zero, 0xffffffff);
-				SetSeparateAlphaBlend(false, BLFUN_Add, BLEND_One, BLEND_Zero);
-				SetDepth(zEnabled == TRUE, zEnabled == TRUE, 0, 0, COMFUN_LessEqual);
+				SetAlphaTestParameters(false, CompareFunction::Always, 0);
+				SetAlphaBlend(false, BlendFunction::Add, Blend::One, Blend::Zero, 0xffffffff);
+				SetSeparateAlphaBlend(false, BlendFunction::Add, Blend::One, Blend::Zero);
+				SetDepth(zEnabled == TRUE, zEnabled == TRUE, 0, 0, CompareFunction::LessEqual);
 
 				float psize;
 				dev->GetRenderState(D3DRS_POINTSIZE, reinterpret_cast<DWORD*>(&psize));
 				SetPointParameters(psize, 256, 1, false);
 
-				SetStencil(false, STOP_Keep, STOP_Keep, STOP_Keep, 0, COMFUN_Always, 0xFFFFFFFF, 0xFFFFFFFF);
-				SetStencilTwoSide(false, STOP_Keep, STOP_Keep, STOP_Keep, COMFUN_Always);
+				SetStencil(false, StencilOperation::Keep, StencilOperation::Keep, StencilOperation::Keep, 0, CompareFunction::Always, 0xFFFFFFFF, 0xFFFFFFFF);
+				SetStencilTwoSide(false, StencilOperation::Keep, StencilOperation::Keep, StencilOperation::Keep, CompareFunction::Always);
 
 				SetFillMode(FILL_Solid);
 				SetCullMode(CULL_None);
@@ -564,9 +564,9 @@ namespace Apoc3D
 					m_vertexSamplers = new ShaderSamplerState[4];
 					for (int i=0;i<4;i++)
 					{
-						m_vertexSamplers[i].AddressU = TA_Wrap;
-						m_vertexSamplers[i].AddressV = TA_Wrap;
-						m_vertexSamplers[i].AddressW = TA_Wrap;
+						m_vertexSamplers[i].AddressU = TextureAddressMode::Wrap;
+						m_vertexSamplers[i].AddressV = TextureAddressMode::Wrap;
+						m_vertexSamplers[i].AddressW = TextureAddressMode::Wrap;
 						m_vertexSamplers[i].BorderColor = 0x00000000;
 						m_vertexSamplers[i].MagFilter = TFLT_Point;
 						m_vertexSamplers[i].MinFilter = TFLT_Point;
@@ -598,9 +598,9 @@ namespace Apoc3D
 				m_pixelSamplers = new ShaderSamplerState[caps.MaxSimultaneousTextures];
 				for (DWORD i=0;i<caps.MaxSimultaneousTextures;i++)
 				{
-					m_pixelSamplers[i].AddressU = TA_Wrap;
-					m_pixelSamplers[i].AddressV = TA_Wrap;
-					m_pixelSamplers[i].AddressW = TA_Wrap;
+					m_pixelSamplers[i].AddressU = TextureAddressMode::Wrap;
+					m_pixelSamplers[i].AddressV = TextureAddressMode::Wrap;
+					m_pixelSamplers[i].AddressW = TextureAddressMode::Wrap;
 					m_pixelSamplers[i].BorderColor = 0x00000000;
 					m_pixelSamplers[i].MagFilter = TFLT_Point;
 					m_pixelSamplers[i].MinFilter = TFLT_Point;
