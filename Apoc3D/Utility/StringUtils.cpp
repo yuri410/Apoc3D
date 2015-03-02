@@ -210,7 +210,7 @@ namespace Apoc3D
 		inline char32_t GetFill(uint64 flags)
 		{
 			if (flags & StringUtils::SF_CustomFillChar)
-				return (char32_t)(0xffffff & ((flags & StringUtils::SF_FillChar) >> 32));
+				return (char32_t)(0xffffff & ((flags & StringUtils::SF_FillCharMask) >> 32));
 			return ' ';
 		}
 		//////////////////////////////////////////////////////////////////////////

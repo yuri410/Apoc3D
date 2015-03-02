@@ -41,25 +41,24 @@ namespace Apoc3D
 				SF_Left = 1 << 0,
 
 				SF_UpperCase = 1 << 1,
-				SF_Exponential = 1 << 2,
 
-				SF_ShowHexBase = 1 << 3,
-				SF_ShowPositiveSign = 1 << 4,
+				SF_ShowHexBase = 1 << 2,
+				SF_ShowPositiveSign = 1 << 3,
 
-				SF_FPDecimal = 1 << 5,
-				SF_FPScientific = 1 << 6,
+				SF_FPDecimal = 1 << 4,
+				SF_FPScientific = 1 << 5,
 
-				SF_FPCustomPrecision = 1 << 7,
+				SF_FPCustomPrecision = 1 << 6,
 
 				// the default fill char is space. set this to use custom fill char
-				SF_CustomFillChar = 1 << 8,
+				SF_CustomFillChar = 1 << 7,
 
 
-				// masks after first 12 bits
+				// masks after first 8 bits
 
 				SF_FPCustomPrecisionMask =	0x00000000000ff000UL,
 				SF_WidthMask =				0x00000000fff00000UL,
-				SF_FillChar =				0x00ffffff00000000UL
+				SF_FillCharMask =			0x00ffffff00000000UL
 			};
 
 

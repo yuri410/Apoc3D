@@ -460,6 +460,12 @@ namespace Apoc3D
 				ent.value = value;
 			}
 
+			void Add(const T& item, S&& value)
+			{
+				Entry& ent = InsertEntry(item);
+				ent.value = std::move(value);
+			}
+
 			S& operator [](const T& key) const
 			{
 				int index = FindEntry(key);
