@@ -512,9 +512,12 @@ namespace Apoc3D
 
 	void ProjectResEffect::Parse(const ConfigurationSection* sect)
 	{
+		int32 sourceCount = 0;
 		String srcDesc = sect->getAttribute(L"Source");
 		for (const auto& e : Split(srcDesc))
 		{
+			sourceCount++;
+
 			if (e.first == L"VS")
 				VS = e.second;
 			else if (e.first == L"PS")
@@ -528,7 +531,14 @@ namespace Apoc3D
 			}
 		}
 
-		EntryPointVS = EntryPointPS = EntryPointGS = L"main";
+		if (sourceCount==1)
+		{
+			EntryPointVS = L"vs_main";
+			EntryPointPS = L"ps_main";
+			EntryPointGS = L"gs_main";
+		}
+		else
+			EntryPointVS = EntryPointPS = EntryPointGS = L"main";
 
 		String entryPointsDesc;
 		if (sect->tryGetAttribute(L"EntryPoints", entryPointsDesc))
@@ -586,7 +596,8 @@ namespace Apoc3D
 		}
 
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
-		sect->AddAttributeString(L"ParamList", WrapSourcePath(PListFile, savingBuild));
+		if (PListFile.size())
+			sect->AddAttributeString(L"ParamList", WrapSourcePath(PListFile, savingBuild));
 
 		if (EntryPointVS == EntryPointPS && EntryPointGS == EntryPointPS)
 		{
@@ -1358,6 +1369,9 @@ namespace Apoc3D
 
 	ProjectItemOutdateType ProjectItem::GetOutDatedType()
 	{
+		if (IsNotBuilt())
+			return ProjectItemOutdateType::NewerSource;
+
 		if (m_typeData)
 		{
 			if (m_typeData->AlwaysBuild())

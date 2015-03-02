@@ -88,7 +88,7 @@ enum HLSLToken
     HLSLToken_IntLiteral,
     HLSLToken_Identifier,
 
-    HLSLToken_EndOfStream,
+    HLSLToken_EndOfStream
 };
 
 class HLSLTokenizer

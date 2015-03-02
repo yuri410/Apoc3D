@@ -45,6 +45,7 @@ enum HLSLNodeType
     HLSLNodeType_Attribute,
     HLSLNodeType_Pipeline,
     HLSLNodeType_Stage,
+	HLSLNodeType_Preprocessor
 };
 
 enum HLSLBaseType
@@ -699,6 +700,7 @@ struct HLSLStage : public HLSLStatement
     HLSLDeclaration*        inputs;
     HLSLDeclaration*        outputs;
 };
+
 
 
 /**

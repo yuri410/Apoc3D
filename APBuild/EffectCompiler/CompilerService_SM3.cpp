@@ -24,6 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "CompilerService_SM3.h"
 #include "BuildSystem.h"
 
+#include <d3dx11.h>
+
+#include <d3dcompiler.h>
+
 namespace APBuild
 {
 	struct ShaderModel3ConstantTable : public ConstantTable
@@ -304,4 +308,82 @@ namespace APBuild
 		return true;
 	}
 
+	struct IncludeHandler : ID3D10Include
+	{
+		String m_basePath;
+
+		IncludeHandler(const String& basePath)
+			: m_basePath(basePath) { }
+
+
+		HRESULT __stdcall Open(D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes)
+		{
+			String fn = PathUtils::Combine(m_basePath, StringUtils::toPlatformWideString(pFileName));
+
+			if (!File::FileExists(fn))
+			{
+				return D3D10_ERROR_FILE_NOT_FOUND;
+			}
+
+			String cnt = IO::Encoding::ReadAllText(FileLocation(fn), IO::Encoding::TEC_Unknown);
+
+			std::string ncnt = StringUtils::toPlatformNarrowString(cnt);
+
+			char* result = new char[ncnt.size() + 1];
+			memset(result, ncnt.size() + 1, 0);
+
+			memcpy(result, ncnt.c_str(), ncnt.size());
+
+			*ppData = result;
+			*pBytes = ncnt.size() + 1;
+
+			return S_OK;
+		}
+
+		HRESULT __stdcall Close(THIS_ LPCVOID pData)
+		{
+			char* txt = (char*)pData;
+			delete[] txt;
+
+			return S_OK;
+		}
+
+	};
+
+	bool PreprocessShaderCode(const String& srcFile, const List<std::pair<std::string, std::string>>* defines, std::string& result)
+	{
+		D3D10_SHADER_MACRO* macros = nullptr;
+		if (defines)
+		{
+			macros = new D3D10_SHADER_MACRO[defines->getCount() + 1];
+			memset(macros, 0, (defines->getCount() + 1) * sizeof(D3D10_SHADER_MACRO));
+
+			for (int32 i = 0; i < defines->getCount(); i++)
+			{
+				macros[i].Name = defines->operator[](i).first.c_str();
+				macros[i].Definition = defines->operator[](i).second.c_str();
+			}
+		}
+
+		String code = IO::Encoding::ReadAllText(FileLocation(srcFile), Encoding::TEC_Unknown);
+		std::string ncode = StringUtils::toPlatformNarrowString(code);
+
+		IncludeHandler includer(PathUtils::GetDirectory(srcFile));
+		ID3DBlob* pBlobOut = NULL;
+		ID3DBlob* pErrorBlob = NULL;
+		HRESULT hr = D3DPreprocess(ncode.c_str(), ncode.size(), NULL, macros, &includer, &pBlobOut, &pErrorBlob);
+		delete[] macros;
+
+		if (FAILED(hr))
+			return false;
+
+		result = std::string((char*)pBlobOut->GetBufferPointer(), pBlobOut->GetBufferSize());
+		
+		pBlobOut->Release();
+
+		if (pErrorBlob)
+			pErrorBlob->Release();
+
+		return true;
+	}
 }

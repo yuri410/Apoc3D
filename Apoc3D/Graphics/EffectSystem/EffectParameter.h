@@ -233,8 +233,9 @@ namespace Apoc3D
 				void Read(BinaryReader* br);
 				void Write(BinaryWriter* bw);
 
-
 				static EffectParamUsage ParseParamUsage(const String& val);
+				static bool SupportsParamUsage(const String& val);
+
 				static String ToString(EffectParamUsage usage);
 				static void FillParameterUsageNames(List<String>& results);
 

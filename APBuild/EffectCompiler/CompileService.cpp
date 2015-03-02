@@ -58,22 +58,27 @@ namespace APBuild
 	{
 		const String prefix_BlobIndex = L"bid_";
 
-		bool hadSemantics = false;
+		int32 validSemanticCount = 0;
+		
 		for (int32 i = 0; i < semantics.getCount();i++)
 		{
 			const String& usageText = semantics[i];
-			if (usageText.size())
-				hadSemantics = true;
-
+			
 			if (ep.Usage == EPUSAGE_Unknown)
 			{
+				if (!ep.SupportsParamUsage(usageText))
+					break;
+
 				ep.Usage = EffectParameter::ParseParamUsage(usageText);
+				validSemanticCount++;
 
 				if (ep.Usage == EPUSAGE_CustomMaterialParam)
 				{
 					if (i < semantics.getCount() - 1)
 					{
 						ep.CustomMaterialParamName = semantics[++i];
+						validSemanticCount++;
+
 						continue;
 					}
 					else BuildSystem::LogError(srcFile, L"Expecting CustomUsage semantics for param " + ep.Name);
@@ -88,6 +93,7 @@ namespace APBuild
 							bidx = bidx.substr(prefix_BlobIndex.size());
 
 						ep.InstanceBlobIndex = StringUtils::ParseInt32(bidx);
+						validSemanticCount++;
 
 						continue;
 					}
@@ -107,9 +113,9 @@ namespace APBuild
 			{ L"def_tex_", ep.DefaultTextureName },
 			{ L"ss_grp_", ep.SamplerStateOverridenGroupName },
 
-			{ L"ss_addr_u_", addrU },
-			{ L"ss_addr_v_", addrV },
-			{ L"ss_addr_w_", addrW },
+			{ L"ss_addu_", addrU },
+			{ L"ss_addv_", addrV },
+			{ L"ss_addw_", addrW },
 
 			{ L"ss_bordercolor_", borderColor },
 
@@ -129,6 +135,7 @@ namespace APBuild
 				if (StringUtils::StartsWith(usageText, e.source, true))
 				{
 					e.target = usageText.substr(wcslen(e.source));
+					validSemanticCount++;
 				}
 			}
 		}
@@ -143,7 +150,7 @@ namespace APBuild
 
 		for (auto& e : addrFields)
 		{
-			if (TextureAddressModeConverter.TryParse(e.src, e.target))
+			if (e.src.size() && !TextureAddressModeConverter.TryParse(e.src, e.target))
 				BuildSystem::LogWarning(srcFile, L"Invalid address mode " + e.src + L" for param " + ep.Name);
 		}
 
@@ -156,7 +163,7 @@ namespace APBuild
 
 		for (auto& e : fltFields)
 		{
-			if (TextureFilterConverter.TryParse(e.src, e.target))
+			if (e.src.size() && !TextureFilterConverter.TryParse(e.src, e.target))
 				BuildSystem::LogWarning(srcFile, L"Invalid texture filtering " + e.src + L" for param " + ep.Name);
 		}
 
@@ -167,9 +174,10 @@ namespace APBuild
 		if (maxAnis.size()) ep.SamplerState.MaxAnisotropy = StringUtils::ParseInt32(maxAnis);
 
 
-		if (ep.Usage == EPUSAGE_Unknown && hadSemantics)
+		if (ep.Usage == EPUSAGE_Unknown && validSemanticCount < semantics.getCount())
 		{
-			BuildSystem::LogWarning(srcFile, L"No valid semantic found as valid usage for param " + ep.Name);
+			BuildSystem::LogWarning(srcFile, 
+				StringUtils::IntToString(semantics.getCount() - validSemanticCount) + L" invalid semantic(s) found for param " + ep.Name);
 		}
 	}
 
@@ -202,6 +210,7 @@ namespace APBuild
 						
 						ParseEffectParameter(srcFile, semantics, ep);
 
+						pd.Parameters.Add(ep);
 					}
 				}
 				d = d->nextDeclaration;
@@ -287,12 +296,14 @@ namespace APBuild
 
 				if (parseParamsFromSource)
 				{
-					String code = IO::Encoding::ReadAllText(FileLocation(src), Encoding::TEC_Unknown);
-					std::string ncode = StringUtils::toPlatformNarrowString(code);
+					std::string ncode;
+					PreprocessShaderCode(src, defines, ncode);
+
+					std::string codeFileName = StringUtils::toPlatformNarrowString(PathUtils::GetFileName(src));
 
 					M4::Allocator allocator;
 					M4::HLSLTree tree(&allocator);
-					M4::HLSLParser parser(&allocator, StringUtils::toPlatformNarrowString(PathUtils::GetFileName(src)).c_str(), ncode.c_str(), ncode.length());
+					M4::HLSLParser parser(&allocator, codeFileName.c_str(), ncode.c_str(), ncode.length());
 
 					if (!parser.Parse(&tree))
 					{
@@ -323,12 +334,14 @@ namespace APBuild
 					return false;
 				}
 
-				String code = IO::Encoding::ReadAllText(FileLocation(src), Encoding::TEC_Unknown);
-				std::string ncode = StringUtils::toPlatformNarrowString(code);
+				std::string ncode;
+				PreprocessShaderCode(src, defines, ncode);
+
+				std::string codeFileName = StringUtils::toPlatformNarrowString(PathUtils::GetFileName(src));
 
 				M4::Allocator allocator;
 				M4::HLSLTree tree(&allocator);
-				M4::HLSLParser parser(&allocator, StringUtils::toPlatformNarrowString(PathUtils::GetFileName(src)).c_str(), ncode.c_str(), ncode.length());
+				M4::HLSLParser parser(&allocator, codeFileName.c_str(), ncode.c_str(), ncode.length());
 
 				if (!parser.Parse(&tree)) 
 				{
@@ -364,17 +377,11 @@ namespace APBuild
 					return false;
 				}
 
-				std::string glslCode;
-				if (defines)
-				{
-					for (const auto& e : *defines)
-						glslCode += "#define " + e.first + " " + e.second + "\n";
-				}
-				glslCode += generator.GetResult();
+				std::string glslCode = generator.GetResult();
 
 				int newShaderCodeSize = LZ4_compressBound(glslCode.size());
 				char* newShaderCode = new char[newShaderCodeSize];
-				newShaderCodeSize = LZ4_compressHC2(glslCode.c_str(), newShaderCode, glslCode.size(), 8);
+				newShaderCodeSize = LZ4_compressHC2(glslCode.c_str(), newShaderCode, glslCode.size(), 16);
 
 				FillEffectProfileCodeData(profData, (const char*)newShaderCode, newShaderCodeSize, type);
 

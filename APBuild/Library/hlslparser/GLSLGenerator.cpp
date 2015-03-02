@@ -26,8 +26,13 @@ static const HLSLType kBoolType(HLSLBaseType_Bool);
 
 static const char* _builtInSemantics[] = 
     {
+		"POSITION", "gl_Position",
+		"POSITION0", "gl_Position",
         "SV_POSITION",  "gl_Position",
         "DEPTH",        "gl_FragDepth",
+		"VPOS", "gl_PointCoord",
+		"VFACE", "gl_FrontFacing ? 1.0 : 0.0", // lazy way, this is expected to be used as input expression
+		"PSIZE", "gl_PointSize"
     };
 
 // These are reserved words in GLSL that aren't reserved in HLSL.

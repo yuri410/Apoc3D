@@ -649,11 +649,15 @@ namespace APDesigner
 				Configuration* conf = ConfigurationManager::getSingleton().CreateInstance(fl);
 				
 				prj.Parse(conf->get(L"Project"));
-
+				
 				prj.SetPath(PathUtils::GetDirectory(path), nullptr);
 				delete conf;
 
-				BuildInterface::getSingleton().AddBuild(&prj, GetProjectStampFilePath(&path));
+				String stampPath = GetProjectStampFilePath(&path);
+				if (File::FileExists(stampPath))
+					prj.LoadBuildStamp(FileStream(stampPath));
+
+				BuildInterface::getSingleton().AddBuild(&prj, stampPath);
 				BuildInterface::getSingleton().Execute();
 			}
 			else

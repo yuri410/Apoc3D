@@ -184,6 +184,11 @@ namespace Apoc3D
 				}
 				return EPUSAGE_Unknown;
 			}
+			bool EffectParameter::SupportsParamUsage(const String& val)
+			{
+				return EffectParameterUsageConverter.SupportsName(val);
+			}
+
 			String EffectParameter::ToString(EffectParamUsage usage)
 			{
 				String result;

@@ -1361,7 +1361,7 @@ bool HLSLParser::ParseTopLevel(HLSLStatement*& statement)
     else if (ParsePipeline(statement)) {
         doesNotExpectSemicolon = true;
     }
-    else if (ParseStage(statement)) {
+	else if (ParseStage(statement)) {
         doesNotExpectSemicolon = true;
     }
 

@@ -86,7 +86,7 @@ private:
     bool ParseTechnique(HLSLStatement*& statement);
     bool ParsePass(HLSLPass*& pass);
     bool ParsePipeline(HLSLStatement*& pipeline);
-    bool ParseStage(HLSLStatement*& stage);
+	bool ParseStage(HLSLStatement*& stage);
 
     bool ParseAttributeList(HLSLAttribute*& attribute);
     bool ParseAttributeBlock(HLSLAttribute*& attribute);

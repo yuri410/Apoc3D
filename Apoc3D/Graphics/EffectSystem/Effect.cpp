@@ -153,17 +153,18 @@ namespace Apoc3D
 				const EffectProfileData* profileSelected = nullptr;
 				for (const EffectProfileData& pd : data.Profiles)
 				{
-					if (!caps->SupportsVertexShader(pd.ImplementationType, pd.MajorVer, pd.MinorVer))
+					if (caps->SupportsVertexShader(pd.ImplementationType, pd.MajorVer, pd.MinorVer) && 
+						caps->SupportsPixelShader(pd.ImplementationType, pd.MajorVer, pd.MinorVer))
 					{
-						m_isUnsupported = true;
-						return;
+						profileSelected = &pd;
 					}
-					if (!caps->SupportsPixelShader(pd.ImplementationType, pd.MajorVer, pd.MinorVer))
-					{
-						m_isUnsupported = true;
-						return;
-					}
-					profileSelected = &pd;
+				}
+
+				if (profileSelected == nullptr)
+				{
+					ApocLog(LOG_Graphics, L"Effect not supported: " + m_name, LOGLVL_Warning);
+					m_isUnsupported = true;
+					return;
 				}
 
 				ObjectFactory* objFac = m_device->getObjectFactory();
