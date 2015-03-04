@@ -61,13 +61,13 @@ namespace Apoc3D
 				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage);
 				virtual VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage);
 
-				virtual VertexDeclaration* CreateVertexDeclaration(const FastList<VertexElement> &elements);
+				virtual VertexDeclaration* CreateVertexDeclaration(const List<VertexElement>& elements);
 
-				virtual VertexShader* CreateVertexShader(const ResourceLocation* resLoc);
-				virtual PixelShader* CreatePixelShader(const ResourceLocation* resLoc);
+				virtual Shader* CreateVertexShader(const ResourceLocation* resLoc);
+				virtual Shader* CreatePixelShader(const ResourceLocation* resLoc);
 
-				virtual VertexShader* CreateVertexShader(const byte* byteCode);
-				virtual PixelShader* CreatePixelShader(const byte* byteCode);
+				virtual Shader* CreateVertexShader(const byte* byteCode);
+				virtual Shader* CreatePixelShader(const byte* byteCode);
 
 				virtual Sprite* CreateSprite();
 			};

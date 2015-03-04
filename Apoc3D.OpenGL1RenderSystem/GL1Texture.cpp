@@ -30,7 +30,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/IOLib/TextureData.h"
 #include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/ApocException.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/Vfs/PathUtils.h"

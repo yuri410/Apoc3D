@@ -31,11 +31,10 @@ namespace Apoc3D
 	{
 		namespace GL1RenderSystem
 		{
-			// pre-calculated fast type cast tables
-			GLenum GLUtils::comfunTable[COMFUN_Count];
-			GLenum GLUtils::blendTable[BLEND_Count];
-			GLenum GLUtils::blendopTable[BLFUN_Count];
-			GLenum GLUtils::stencilTable[STOP_Count];
+			// pre-calculated fast type cast tables=
+			GLenum GLUtils::blendTable[(int)Blend::Count];
+			GLenum GLUtils::comfunTable[(int)CompareFunction::Count];
+			GLenum GLUtils::blendopTable[(int)BlendFunction::Count];
 
 			/************************************************************************/
 			/*                                                                      */
@@ -278,49 +277,37 @@ namespace Apoc3D
 			}
 			void GLUtils::InitCompareFunctionTable()
 			{
-				comfunTable[COMFUN_Never] = GL_NEVER;
-				comfunTable[COMFUN_Less] = GL_LESS;
-				comfunTable[COMFUN_Equal] = GL_EQUAL;
-				comfunTable[COMFUN_LessEqual] = GL_LEQUAL;
-				comfunTable[COMFUN_Greater] = GL_GREATER;
-				comfunTable[COMFUN_NotEqual] = GL_NOTEQUAL;
-				comfunTable[COMFUN_GreaterEqual] = GL_GEQUAL;
-				comfunTable[COMFUN_Always] = GL_ALWAYS;
+				comfunTable[(int)CompareFunction::Never] = GL_NEVER;
+				comfunTable[(int)CompareFunction::Less] = GL_LESS;
+				comfunTable[(int)CompareFunction::Equal] = GL_EQUAL;
+				comfunTable[(int)CompareFunction::LessEqual] = GL_LEQUAL;
+				comfunTable[(int)CompareFunction::Greater] = GL_GREATER;
+				comfunTable[(int)CompareFunction::NotEqual] = GL_NOTEQUAL;
+				comfunTable[(int)CompareFunction::GreaterEqual] = GL_GEQUAL;
+				comfunTable[(int)CompareFunction::Always] = GL_ALWAYS;
 			}
 			void GLUtils::InitBlendTable()
 			{
-				blendTable[BLEND_Zero] = GL_ZERO;
-				blendTable[BLEND_One] = GL_ONE;
-				blendTable[BLEND_SourceColor] = GL_SRC_COLOR;
-				blendTable[BLEND_InverseSourceColor] = GL_ONE_MINUS_SRC_COLOR;
-				blendTable[BLEND_SourceAlpha] = GL_SRC_ALPHA;
-				blendTable[BLEND_InverseSourceAlpha] = GL_ONE_MINUS_SRC_ALPHA;
-				blendTable[BLEND_DestinationAlpha] = GL_DST_ALPHA;
-				blendTable[BLEND_InverseDestinationAlpha] = GL_ONE_MINUS_DST_ALPHA;
-				blendTable[BLEND_DestinationColor] = GL_DST_COLOR;
-				blendTable[BLEND_InverseDestinationColor] = GL_ONE_MINUS_DST_COLOR;
-				blendTable[BLEND_SourceAlphaSaturation] = GL_SRC_ALPHA_SATURATE;
-				blendTable[BLEND_BothSourceAlpha] = GL_SRC_ALPHA; // not supported
-				blendTable[BLEND_BlendFactor] = GL_CONSTANT_COLOR;
+				blendTable[(int)Blend::Zero] = GL_ZERO;
+				blendTable[(int)Blend::One] = GL_ONE;
+				blendTable[(int)Blend::SourceColor] = GL_SRC_COLOR;
+				blendTable[(int)Blend::InverseSourceColor] = GL_ONE_MINUS_SRC_COLOR;
+				blendTable[(int)Blend::SourceAlpha] = GL_SRC_ALPHA;
+				blendTable[(int)Blend::InverseSourceAlpha] = GL_ONE_MINUS_SRC_ALPHA;
+				blendTable[(int)Blend::DestinationAlpha] = GL_DST_ALPHA;
+				blendTable[(int)Blend::InverseDestinationAlpha] = GL_ONE_MINUS_DST_ALPHA;
+				blendTable[(int)Blend::DestinationColor] = GL_DST_COLOR;
+				blendTable[(int)Blend::InverseDestinationColor] = GL_ONE_MINUS_DST_COLOR;
+				blendTable[(int)Blend::SourceAlphaSaturation] = GL_SRC_ALPHA_SATURATE;
+				blendTable[(int)Blend::BlendFactor] = GL_CONSTANT_COLOR;
 			}
 			void GLUtils::InitBlendOperationTable()
 			{
-				blendopTable[BLFUN_Add] = GL_FUNC_ADD;
-				blendopTable[BLFUN_Subtract] = GL_FUNC_SUBTRACT;
-				blendopTable[BLFUN_ReverseSubtract] = GL_FUNC_REVERSE_SUBTRACT;
-				blendopTable[BLFUN_Min] = GL_MIN;
-				blendopTable[BLFUN_Max] = GL_MAX;
-			}
-			void GLUtils::InitStencilTable()
-			{
-				stencilTable[STOP_Keep] = GL_KEEP;
-				stencilTable[STOP_Zero] = GL_ZERO;
-				stencilTable[STOP_Replace] = GL_REPLACE;
-				stencilTable[STOP_IncrementSaturation] = GL_INCR_WRAP;
-				stencilTable[STOP_DecrementSaturation] = GL_DECR_WRAP;
-				stencilTable[STOP_Invert] = GL_INVERT;
-				stencilTable[STOP_Increment] = GL_INCR;
-				stencilTable[STOP_Decrement] = GL_DECR;
+				blendopTable[(int)BlendFunction::Add] = GL_FUNC_ADD;
+				blendopTable[(int)BlendFunction::Subtract] = GL_FUNC_SUBTRACT;
+				blendopTable[(int)BlendFunction::ReverseSubtract] = GL_FUNC_REVERSE_SUBTRACT;
+				blendopTable[(int)BlendFunction::Min] = GL_MIN;
+				blendopTable[(int)BlendFunction::Max] = GL_MAX;
 			}
 		}
 	}

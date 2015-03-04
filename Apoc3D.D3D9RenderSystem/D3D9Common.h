@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3DCOMMON_H
 
 #include "apoc3d/Common.h"
+#include "apoc3d.Win32/Win32Common.h"
 
 #if _DEBUG
 #define D3D_DEBUG_INFO
@@ -38,6 +39,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Meta/EventDelegate.h"
 
 #pragma comment(lib, "Apoc3D.lib")
+#pragma comment(lib, "Apoc3D.Win32.lib")
 
 #pragma comment(lib, "d3d9.lib")
 #if _DEBUG
@@ -68,18 +70,14 @@ typedef IDirect3DVertexShader9 D3DVertexShader;
 typedef IDirect3DPixelShader9 D3DPixelShader;
 typedef IDirect3DVertexDeclaration9 D3DVertexDeclaration;
 
+using namespace Apoc3D::Win32;
+
 namespace Apoc3D
 {
-	typedef EventDelegate<bool*> CancellableEventHandler;
-	typedef EventDelegate<> EventHandler;
-
 	namespace Graphics
 	{
 		namespace D3D9RenderSystem
 		{
-			class GameClock;
-			class GameWindow;
-
 			class GraphicsDeviceManager;
 
 			class D3D9RenderWindow;

@@ -23,7 +23,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "GraphicsDeviceManager.h"
 #include "Game.h"
-#include "Win32GameWindow.h"
 
 #include "apoc3d/Core/Logging.h"
 

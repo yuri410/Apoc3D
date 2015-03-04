@@ -33,7 +33,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "GL1Sprite.h"
 
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 
 #include "apoc3d/Graphics/Camera.h"
 #include "apoc3d/Graphics/Material.h"

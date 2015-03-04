@@ -52,10 +52,9 @@ namespace Apoc3D
 			//	static D3DDECLTYPE vefTable[VEF_Count];
 			//	static D3DDECLUSAGE veuTable[VEU_Count];
 
-				static GLenum blendTable[BLEND_Count];
-				static GLenum comfunTable[COMFUN_Count];
-				static GLenum blendopTable[BLFUN_Count];
-				static GLenum stencilTable[STOP_Count];
+				static GLenum blendTable[];
+				static GLenum comfunTable[];
+				static GLenum blendopTable[];
 			//	static D3DFORMAT pixFmtTable[FMT_Count];
 			//	static D3DFORMAT depFmtTable[DEPFMT_Count];
 			//	static D3DTEXTUREFILTERTYPE tfltTable[TFLT_Count];
@@ -70,7 +69,6 @@ namespace Apoc3D
 				static void InitBlendTable();
 				static void InitCompareFunctionTable();
 				static void InitBlendOperationTable();
-				static void InitStencilTable();
 			//	static void InitPixelFormatTable();
 			//	static void InitDepthFormatTable();
 			//	static void InitTFLTTable();

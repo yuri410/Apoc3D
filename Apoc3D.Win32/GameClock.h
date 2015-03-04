@@ -22,51 +22,46 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef APOC3D_D3D9_GAMECLOCK_H
-#define APOC3D_D3D9_GAMECLOCK_H
+#ifndef APOC3D_WIN32_GAMECLOCK_H
+#define APOC3D_WIN32_GAMECLOCK_H
 
-#include "D3D9Common.h"
+#include "Win32Common.h"
 
 namespace Apoc3D
 {
-	namespace Graphics
+	namespace Win32
 	{
-		namespace D3D9RenderSystem
+		/** A clock used to measure time with good accuracy */
+		class GameClock
 		{
-			/**
-			 *  A clock used to measure time with good accuracy
-			 */
-			class GameClock
-			{
-			public:
-				GameClock() { Reset(); }
-				~GameClock() { }
+		public:
+			GameClock() { Reset(); }
+			~GameClock() { }
 
-				void Reset();
-				
-				/** Called every frame to get the time difference */
-				void Step();
+			void Reset();
 
-				double getElapsedTime() const { return m_elapsedTime; }
-				double getCurrentTime() const { return m_currentTimeBase + m_currentTime; }
+			/** Called every frame to get the time difference */
+			void Step();
 
-			private:
-				bool CounterToTimeSpan(uint64 counter, uint64 base, double* result) const;
-				
-				uint64 m_baseCounter;
-				uint64 m_lastCounter;
+			double getElapsedTime() const { return m_elapsedTime; }
+			double getCurrentTime() const { return m_currentTimeBase + m_currentTime; }
 
-				uint64 m_frequency;
+		private:
+			bool CounterToTimeSpan(uint64 counter, uint64 base, double* result) const;
 
-				double m_currentTimeBase;
-				double m_currentTime;
+			uint64 m_baseCounter;
+			uint64 m_lastCounter;
 
-				double m_elapsedTime;
+			uint64 m_frequency;
 
-				bool m_lastRealTimeValid;
+			double m_currentTimeBase;
+			double m_currentTime;
 
-			};
-		}
+			double m_elapsedTime;
+
+			bool m_lastRealTimeValid;
+
+		};
 	}
 };
 #endif

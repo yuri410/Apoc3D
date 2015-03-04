@@ -43,7 +43,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <Windows.h>
 
 #pragma comment(lib, "Apoc3D.lib")
-
+#pragma comment(lib, "Apoc3D.Win32.lib")
 
 #ifdef _DEBUG
 #	ifdef APOC3D_MT

@@ -86,7 +86,7 @@ namespace Apoc3D
 						delete[] title;
 						wchar_t buffer[40];
 						GetClassName(hwnd, buffer, 40);
-						if (StringUtils::StartsWith(String(buffer), L"d5325676b0844be1a06964bc3f6603ec"))
+						if (StringUtils::StartsWith(String(buffer), Win32::WindowClass))
 						{
 							m_hwnd = hwnd;
 

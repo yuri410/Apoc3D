@@ -77,25 +77,25 @@ namespace Apoc3D
 				return nullptr;
 			}
 
-			VertexDeclaration* GL1ObjectFactory::CreateVertexDeclaration(const FastList<VertexElement>& elements)
+			VertexDeclaration* GL1ObjectFactory::CreateVertexDeclaration(const List<VertexElement>& elements)
 			{
 				return nullptr;
 			}
 
-			VertexShader* GL1ObjectFactory::CreateVertexShader(const ResourceLocation* resLoc)
+			Shader* GL1ObjectFactory::CreateVertexShader(const ResourceLocation* resLoc)
 			{
 				return nullptr;
 			}
-			PixelShader* GL1ObjectFactory::CreatePixelShader(const ResourceLocation* resLoc)
+			Shader* GL1ObjectFactory::CreatePixelShader(const ResourceLocation* resLoc)
 			{
 				return nullptr;
 			}
 
-			VertexShader* GL1ObjectFactory::CreateVertexShader(const byte* byteCode)
+			Shader* GL1ObjectFactory::CreateVertexShader(const byte* byteCode)
 			{
 				return nullptr;
 			}
-			PixelShader* GL1ObjectFactory::CreatePixelShader(const byte* byteCode)
+			Shader* GL1ObjectFactory::CreatePixelShader(const byte* byteCode)
 			{
 				return nullptr;
 			}

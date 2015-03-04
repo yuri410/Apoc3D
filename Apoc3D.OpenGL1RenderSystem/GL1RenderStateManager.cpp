@@ -397,17 +397,17 @@ namespace Apoc3D
 			{
 				GLboolean zEnabled = glIsEnabled(GL_DEPTH_TEST);
 
-				SetAlphaTestParameters(false, COMFUN_Always, 0);
-				SetAlphaBlend(false, BLFUN_Add, BLEND_One, BLEND_Zero, 0xffffffff);
-				SetSeparateAlphaBlend(false, BLFUN_Add, BLEND_One, BLEND_Zero);
-				SetDepth(!!zEnabled, !!zEnabled, 0, 0, COMFUN_LessEqual);
+				SetAlphaTestParameters(false, CompareFunction::Always, 0);
+				SetAlphaBlend(false, BlendFunction::Add, Blend::One, Blend::Zero, 0xffffffff);
+				SetSeparateAlphaBlend(false, BlendFunction::Add, Blend::One, Blend::Zero);
+				SetDepth(!!zEnabled, !!zEnabled, 0, 0, CompareFunction::LessEqual);
 
 				float psize;
 				glGetFloatv(GL_POINT_SIZE, &psize);
 				SetPointParameters(psize, 1, 64, false);
 
-				SetStencil(false, STOP_Keep, STOP_Keep, STOP_Keep, 0, COMFUN_Always, 0xFFFFFFFF, 0xFFFFFFFF);
-				SetStencilTwoSide(false, STOP_Keep, STOP_Keep, STOP_Keep, COMFUN_Always);
+				SetStencil(false, StencilOperation::Keep, StencilOperation::Keep, StencilOperation::Keep, 0, CompareFunction::Always, 0xFFFFFFFF, 0xFFFFFFFF);
+				SetStencilTwoSide(false, StencilOperation::Keep, StencilOperation::Keep, StencilOperation::Keep, CompareFunction::Always);
 			}
 
 

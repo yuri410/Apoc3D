@@ -30,7 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include <gl/glew.h>
 
-#include "apoc3d/EventDelegate.h"
+#include "apoc3d/Meta/EventDelegate.h"
 
 #pragma comment(lib, "Apoc3D.lib")
 
@@ -56,9 +56,7 @@ namespace Apoc3D
 	{
 		namespace GL1RenderSystem
 		{
-			class GameClock;
 			class Game;
-			class Win32GameWindow;
 			class GraphicsDeviceManager;
 
 			class GL1RenderView;

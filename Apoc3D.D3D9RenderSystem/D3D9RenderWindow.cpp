@@ -26,12 +26,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9RenderDevice.h"
 #include "D3D9Utils.h"
 #include "GraphicsDeviceManager.h"
-#include "GameWindow.h"
 #include "D3D9DeviceContext.h"
 #include "Enumeration.h"
 #include "D3D9RenderViewSet.h"
 #include "RawSettings.h"
-#include "GameClock.h"
+
+#include "apoc3d.Win32/GameWindow.h"
+#include "apoc3d.Win32/GameClock.h"
 
 #include "apoc3d/Core/GameTime.h"
 #include "apoc3d/Core/Logging.h"
@@ -78,7 +79,7 @@ namespace Apoc3D
 			{
 				m_gameClock = new GameClock();
 
-				m_gameWindow = new GameWindow(L"d5325676b0844be1a06964bc3f6603ec", L"");
+				m_gameWindow = new GameWindow(Win32::WindowClass, L"");
 				m_gameWindow->eventApplicationActivated.Bind(this, &D3D9RenderWindow::Window_ApplicationActivated);
 				m_gameWindow->eventApplicationDeactivated.Bind(this, &D3D9RenderWindow::Window_ApplicationDeactivated);
 				m_gameWindow->eventPaint.Bind(this, &D3D9RenderWindow::Window_Paint);
