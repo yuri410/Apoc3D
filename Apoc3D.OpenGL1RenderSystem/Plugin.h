@@ -30,8 +30,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace Apoc3D::Core;
 
-//extern "C" PLUGIN Plugin* Apoc3DGetPlugin();
-
+#ifdef APOC3D_DYNLIB
+extern "C" PLUGINAPI Plugin* Apoc3DGetPlugin();
+#endif
 
 namespace Apoc3D
 {

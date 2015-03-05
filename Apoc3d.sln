@@ -50,8 +50,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Atmosphere", "Samples\Atmos
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BlurTest", "Samples\BlurTest\BlurTest.vcxproj", "{007D67B8-EF36-4A3D-8916-C812324AA97A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.OpenGL1RenderSystem", "Apoc3D.OpenGL1RenderSystem\Apoc3D.OpenGL1RenderSystem.vcxproj", "{4ECF9A4B-40A2-458D-BCDB-B48440527408}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.Win32", "Apoc3D.Win32\Apoc3D.Win32.vcxproj", "{F8C9BF05-D441-4D98-BAC9-7284E963C383}"
 EndProject
 Global
@@ -205,15 +203,6 @@ Global
 		{007D67B8-EF36-4A3D-8916-C812324AA97A}.Release_Static|Win32.ActiveCfg = Release_Static|Win32
 		{007D67B8-EF36-4A3D-8916-C812324AA97A}.Release_Static|Win32.Build.0 = Release_Static|Win32
 		{007D67B8-EF36-4A3D-8916-C812324AA97A}.Release_Static|x64.ActiveCfg = Release_Static|Win32
-		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Debug|Win32.ActiveCfg = Debug|Win32
-		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Debug|Win32.Build.0 = Debug|Win32
-		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Debug|x64.ActiveCfg = Debug|Win32
-		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_DynLib|Win32.ActiveCfg = Release_DynLib|Win32
-		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_DynLib|Win32.Build.0 = Release_DynLib|Win32
-		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_DynLib|x64.ActiveCfg = Release_DynLib|Win32
-		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|Win32.ActiveCfg = Release_DynLib|Win32
-		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|Win32.Build.0 = Release_DynLib|Win32
-		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|x64.ActiveCfg = Release_DynLib|Win32
 		{F8C9BF05-D441-4D98-BAC9-7284E963C383}.Debug|Win32.ActiveCfg = Debug|Win32
 		{F8C9BF05-D441-4D98-BAC9-7284E963C383}.Debug|Win32.Build.0 = Debug|Win32
 		{F8C9BF05-D441-4D98-BAC9-7284E963C383}.Debug|x64.ActiveCfg = Debug|Win32

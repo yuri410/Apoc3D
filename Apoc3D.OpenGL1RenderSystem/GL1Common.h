@@ -28,29 +28,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include <Windows.h>
 
-#include <gl/glew.h>
+#include "gl/glew.h"
+#include "gl/wglew.h"
 
 #include "apoc3d/Meta/EventDelegate.h"
 
 #pragma comment(lib, "Apoc3D.lib")
 
-#pragma comment(lib, "opengl32.lib")
-#pragma comment(lib, "glu32.lib")
-
-#ifndef APOC3D_DYNLIB
-#	define PLUGIN
-#else
-#	ifdef APOC3D_GL1RS_DYLIB_EXPORT
-#		define PLUGIN __declspec( dllexport )
-#	else
-#		define PLUGIN __declspec( dllimport )
-#	endif
-#endif
-
 namespace Apoc3D
 {
-	typedef EventDelegate1<bool*> CancellableEventHandler;
-	typedef EventDelegate0 EventHandler;
+	typedef EventDelegate<bool*> CancellableEventHandler;
+	typedef EventDelegate<> EventHandler;
 
 	namespace Graphics
 	{

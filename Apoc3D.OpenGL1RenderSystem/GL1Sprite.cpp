@@ -68,7 +68,7 @@ namespace Apoc3D
 					m_oldSepSrcBlend = mgr->getSeparateAlphaSourceBlend();
 					m_oldSepBlendFunc = mgr->getSeparateAlphaBlendOperation();
 
-					mgr->SetAlphaBlend(true, BLFUN_Add, Blend::SourceAlpha, Blend::InverseSourceAlpha, 0);
+					mgr->SetAlphaBlend(true, BlendFunction::Add, Blend::SourceAlpha, Blend::InverseSourceAlpha, 0);
 					mgr->SetSeparateAlphaBlend(false, m_oldSepBlendFunc, m_oldSepSrcBlend, m_oldSepDstBlend);
 				}
 				Sprite::Begin(settings);
@@ -121,7 +121,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					glColor4ub(GetColorR(color), GetColorG(color), GetColorB(color), GetColorA(color));
+					glColor4ub(CV_GetColorR(color), CV_GetColorG(color), CV_GetColorB(color), CV_GetColorA(color));
 
 					//glBindTexture()
 					glBegin(GL_QUADS);
@@ -146,7 +146,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					glColor4ub(GetColorR(color), GetColorG(color), GetColorB(color), GetColorA(color));
+					glColor4ub(CV_GetColorR(color), CV_GetColorG(color), CV_GetColorB(color), CV_GetColorA(color));
 
 					//glBindTexture()
 					glBegin(GL_QUADS);
@@ -171,7 +171,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					glColor4ub(GetColorR(color), GetColorG(color), GetColorB(color), GetColorA(color));
+					glColor4ub(CV_GetColorR(color), CV_GetColorG(color), CV_GetColorB(color), CV_GetColorA(color));
 
 					//glBindTexture()
 					glBegin(GL_QUADS);

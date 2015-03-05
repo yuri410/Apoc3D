@@ -72,16 +72,11 @@ namespace Apoc3D
 				GLenum pm = 0;
 				switch (mode)
 				{
-				case FILL_Point:
-					pm = GL_POINT;
-					break;
-				case FILL_Solid:
-					pm = GL_FILL;
-					break;
-				case FILL_WireFrame:
-					pm = GL_LINE;
-					break;
+					case FILL_Point: pm = GL_POINT; break;
+					case FILL_Solid: pm = GL_FILL; break;
+					case FILL_WireFrame: pm = GL_LINE; break;
 				}
+
 				glPolygonMode(GL_FRONT_AND_BACK, pm);
 			}
 			void NativeGL1StateManager::SetAlphaTestParameters(bool enable, uint32 reference)
@@ -136,7 +131,7 @@ namespace Apoc3D
 
 				glBlendFunc(GLUtils::ConvertBlend(srcBlend), GLUtils::ConvertBlend(dstBlend));
 
-				if (GLEE_ARB_imaging || GLEE_VERSION_1_3)
+				if (GLEW_ARB_imaging || GLEW_VERSION_1_3)
 				{
 					glBlendEquation(GLUtils::ConvertBlendFunction(func));
 				}
@@ -156,10 +151,10 @@ namespace Apoc3D
 
 				glBlendFunc(GLUtils::ConvertBlend(srcBlend), GLUtils::ConvertBlend(dstBlend));
 
-				if (GLEE_ARB_imaging)
+				if (GLEW_ARB_imaging)
 				{
 					glBlendEquation(GLUtils::ConvertBlendFunction(func));
-					glBlendColor(GetColorR(factor)/255.0f,GetColorG(factor)/255.0f,GetColorB(factor)/255.0f,GetColorA(factor)/255.0f);
+					glBlendColor(CV_GetColorR(factor) / 255.0f, CV_GetColorG(factor) / 255.0f, CV_GetColorB(factor) / 255.0f, CV_GetColorA(factor) / 255.0f);
 				}
 
 			}
@@ -176,7 +171,7 @@ namespace Apoc3D
 			void NativeGL1StateManager::setAlphaBlendOperation(BlendFunction func)
 			{
 				m_cachedAlphaBlendFunction = func;
-				if (GLEE_ARB_imaging)
+				if (GLEW_ARB_imaging)
 				{
 					glBlendEquation(GLUtils::ConvertBlendFunction(func));
 				}
@@ -202,7 +197,7 @@ namespace Apoc3D
 				m_cachedSepAlphaSourceBlend = srcBlend;
 				m_cachedSepAlphaDestBlend = dstBlend;
 
-				if (GLEE_ARB_imaging || GLEE_VERSION_1_3)
+				if (GLEW_ARB_imaging || GLEW_VERSION_1_3)
 				{
 
 					if (enable)
@@ -291,23 +286,23 @@ namespace Apoc3D
 
 				glPointSize(size);
 
-				if (GLEE_VERSION_1_4)
+				if (GLEW_VERSION_1_4)
 				{
 					glPointParameterf(GL_POINT_SIZE_MIN, minSize);
 					glPointParameterf(GL_POINT_SIZE_MAX, maxSize);
 				} 
-				else if (GLEE_ARB_point_parameters)
+				else if (GLEW_ARB_point_parameters)
 				{
 					glPointParameterfARB(GL_POINT_SIZE_MIN, minSize);
 					glPointParameterfARB(GL_POINT_SIZE_MAX, maxSize);
 				} 
-				else if (GLEE_EXT_point_parameters)
+				else if (GLEW_EXT_point_parameters)
 				{
 					glPointParameterfEXT(GL_POINT_SIZE_MIN, minSize);
 					glPointParameterfEXT(GL_POINT_SIZE_MAX, maxSize);
 				}
 
-				if (GLEE_VERSION_2_0 ||	GLEE_ARB_point_sprite)
+				if (GLEW_VERSION_2_0 ||	GLEW_ARB_point_sprite)
 				{
 					if (pointSprite)
 					{
@@ -320,8 +315,8 @@ namespace Apoc3D
 
 					// Manually set up tex coord generation for point sprite
 					GLint maxTexCoords = 1;
-					if (GLEE_VERSION_1_3 || 
-						GLEE_ARB_multitexture)
+					if (GLEW_VERSION_1_3 || 
+						GLEW_ARB_multitexture)
 					{
 						GLint units;
 						glGetIntegerv( GL_MAX_TEXTURE_UNITS, &units );
@@ -349,7 +344,7 @@ namespace Apoc3D
 				m_cachedStencilMask = mask;
 				m_cachedStencilWriteMask = writemask;
 				
-				if (GLEE_EXT_stencil_two_side)
+				if (GLEW_EXT_stencil_two_side)
 					glDisable(GL_STENCIL_TEST_TWO_SIDE_EXT);
 				
 				glStencilMask(mask);
@@ -369,7 +364,7 @@ namespace Apoc3D
 				m_cachedCounterClockwiseStencilFunction = func;
 
 				// Front is the 2nd side
-				if(GLEE_VERSION_2_0) 
+				if(GLEW_VERSION_2_0) 
 				{
 					glStencilMaskSeparate(GL_FRONT, m_cachedStencilMask);
 					glStencilFuncSeparate(GL_FRONT, GLUtils::ConvertCompare(func), m_cachedRefrenceStencil, m_cachedStencilMask);
@@ -378,7 +373,7 @@ namespace Apoc3D
 						GLUtils::ConvertStencilOperation(depthFail, true), 
 						GLUtils::ConvertStencilOperation(pass, true));
 				}
-				else if (GLEE_EXT_stencil_two_side)
+				else if (GLEW_EXT_stencil_two_side)
 				{
 					glEnable(GL_STENCIL_TEST_TWO_SIDE_EXT);
 

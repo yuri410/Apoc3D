@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "GL1RenderDevice.h"
 #include "GL1RenderWindow.h"
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 
 #include "apoc3d/Utility/StringUtils.h"
 
@@ -60,7 +60,7 @@ namespace Apoc3D
 			{
 				if (m_window)
 				{
-					throw AP_EXCEPTION(EX_InvalidOperation, L"Cannot create more render view when a render window has been created.");
+					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Cannot create more render view when a render window has been created.");
 				}
 
 				if (!pm.IsFullForm)

@@ -146,9 +146,9 @@ namespace Apoc3D
 				glEnable(GL_TEXTURE_2D);
 				glEnable(GL_TEXTURE_1D);
 
-				if (GLEE_EXT_texture3D)
+				if (GLEW_EXT_texture3D)
 					glEnable(GL_TEXTURE_3D);
-				if (GLEE_EXT_texture_cube_map)
+				if (GLEW_EXT_texture_cube_map)
 					glEnable(GL_TEXTURE_CUBE_MAP);
 
 				//glDisable(GL_LIGHTING);
@@ -195,10 +195,10 @@ namespace Apoc3D
 					field |= GL_COLOR_BUFFER_BIT;
 					
 
-					float r = GetColorR(color) / 255.0f;
-					float g = GetColorG(color) / 255.0f;
-					float b = GetColorB(color) / 255.0f;
-					float a = GetColorA(color) / 255.0f;
+					float r = CV_GetColorR(color) / 255.0f;
+					float g = CV_GetColorG(color) / 255.0f;
+					float b = CV_GetColorB(color) / 255.0f;
+					float a = CV_GetColorA(color) / 255.0f;
 
 					glClearColor(r, g, b, a);
 				}
@@ -319,9 +319,9 @@ namespace Apoc3D
 				return m_cachedRenderTarget[index];
 			}
 
-			void GL1RenderDevice::BindVertexShader(VertexShader* shader)
+			void GL1RenderDevice::BindVertexShader(Shader* shader)
 			{
-				if (GLEE_ARB_vertex_program)
+				if (GLEW_ARB_vertex_program)
 				{
 					//glDisable(GL_VERTEX_PROGRAM_ARB);
 				}
@@ -336,10 +336,10 @@ namespace Apoc3D
 				//	getDevice()->SetVertexShader(0);
 				//}
 			}
-			void GL1RenderDevice::BindPixelShader(PixelShader* shader)
+			void GL1RenderDevice::BindPixelShader(Shader* shader)
 			{
 
-				if (GLEE_ARB_fragment_program)
+				if (GLEW_ARB_fragment_program)
 				{
 					//glDisable(GL_FRAGMENT_PROGRAM_ARB);
 				}
@@ -513,7 +513,7 @@ namespace Apoc3D
 				*major = *minor = 0;
 				if(gl_major == 1)
 				{
-					if (GLEE_ARB_shading_language_100)
+					if (GLEW_ARB_shading_language_100)
 					{
 						*major = 1;
 						*minor = 0;
@@ -640,7 +640,7 @@ namespace Apoc3D
 
 			int GL1Capabilities::GetMRTCount()
 			{
-				if (GLEE_ARB_draw_buffers)
+				if (GLEW_ARB_draw_buffers)
 				{
 					GLint maxbuffers;
 					glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxbuffers);

@@ -77,8 +77,8 @@ namespace Apoc3D
 				//virtual void SetTexture(int index, Texture* texture);
 				//virtual Texture* GetTexture(int index);
 
-				virtual void BindVertexShader(VertexShader* shader);
-				virtual void BindPixelShader(PixelShader* shader);
+				virtual void BindVertexShader(Shader* shader);
+				virtual void BindPixelShader(Shader* shader);
 
 				virtual void Render(Material* mtrl, const RenderOperation* op, int count, int passSelID);
 

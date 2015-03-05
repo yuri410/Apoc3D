@@ -77,13 +77,13 @@ namespace Apoc3D
 			bool Game::OnFrameStart()
 			{
 				bool re = false;
-				m_eFrameStart.Invoke(&re);
+				eventFrameStart.Invoke(&re);
 				return re;
 			}
 
 			void Game::OnFrameEnd()
 			{
-				m_eFrameEnd.Invoke();
+				eventFrameEnd.Invoke();
 			}
 
 			void Game::DrawFrame(const GameTime* const time)

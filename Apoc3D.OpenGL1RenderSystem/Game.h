@@ -47,8 +47,7 @@ namespace Apoc3D
 				virtual void Create();
 
 				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_graphicsDeviceManager; }
-				CancellableEventHandler* eventFrameStart() { return &m_eFrameStart; }
-				EventDelegate0* eventFrameEnd() { return &m_eFrameEnd; }
+				
 
 				Win32GameWindow* getWindow() const { return m_gameWindow; }
 
@@ -58,8 +57,7 @@ namespace Apoc3D
 				virtual void Initialize() = 0;
 				virtual void LoadContent() = 0;
 				virtual void UnloadContent() = 0;
-				/** This should be overrided to draw a frame
-				 */
+				/** This should be overrided to draw a frame */
 				virtual void Render(const GameTime* const time) = 0;
 				/** This should be overrided to allow the game to run logic such as updating the world,
 				 *  checking for collisions, gathering input, playing audio and etc.
@@ -69,6 +67,8 @@ namespace Apoc3D
 				void Tick();
 				void Exit();
 
+				CancellableEventHandler eventFrameStart;
+				EventHandler eventFrameEnd;
 
 			private:
 				GameClock* m_gameClock;
@@ -94,9 +94,6 @@ namespace Apoc3D
 				Win32GameWindow* m_gameWindow;
 
 
-				CancellableEventHandler m_eFrameStart;
-				EventHandler m_eFrameEnd;
-
 				void DrawFrame(const GameTime* const time);
 
 				void Window_ApplicationActivated();
@@ -107,8 +104,8 @@ namespace Apoc3D
 
 			protected:
 
-				Game(GL1DeviceContent* devCont, const String& name);
-				virtual ~Game(void);
+				Game(GL1DeviceContext* devCont, const String& name);
+				virtual ~Game();
 				virtual bool OnFrameStart();
 				virtual void OnFrameEnd();
 

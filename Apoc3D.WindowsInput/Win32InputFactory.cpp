@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Exception.h"
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d.Win32/Win32Common.h"
 
 using namespace Apoc3D::Utility;
 
@@ -86,7 +87,7 @@ namespace Apoc3D
 						delete[] title;
 						wchar_t buffer[40];
 						GetClassName(hwnd, buffer, 40);
-						if (StringUtils::StartsWith(String(buffer), Win32::WindowClass))
+						if (StringUtils::StartsWith(String(buffer), Apoc3D::Win32::WindowClass))
 						{
 							m_hwnd = hwnd;
 

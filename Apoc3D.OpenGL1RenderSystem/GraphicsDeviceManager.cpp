@@ -44,8 +44,8 @@ namespace Apoc3D
 
 				m_game = game;
 
-				m_game->eventFrameStart()->Bind(this, &GraphicsDeviceManager::game_FrameStart);
-				m_game->eventFrameEnd()->Bind(this, &GraphicsDeviceManager::game_FrameEnd);
+				m_game->eventFrameStart.Bind(this, &GraphicsDeviceManager::game_FrameStart);
+				m_game->eventFrameEnd.Bind(this, &GraphicsDeviceManager::game_FrameEnd);
 				m_game->getWindow()->eventUserResized()->Bind(this, &GraphicsDeviceManager::Window_UserResized);
 			}
 
@@ -244,11 +244,11 @@ namespace Apoc3D
 
 			bool InitMultisample(HWND hWnd,PIXELFORMATDESCRIPTOR pfd, int& arbMultisampleFormat)
 			{
-				if (!GLEE_WGL_ARB_multisample)
+				if (!WGLEW_ARB_multisample)
 				{
 					return false;
 				}
-				if (!GLEE_WGL_ARB_pixel_format)
+				if (!WGLEW_ARB_pixel_format)
 				{
 					return false;
 				}
@@ -416,14 +416,14 @@ namespace Apoc3D
 
 
 				// check if we are going to windowed or fullscreen mode
-				if (settings.IsWindowd)
+				if (settings.IsWindowed)
 				{
-					if (oldSettings && !oldSettings->IsWindowd)
+					if (oldSettings && !oldSettings->IsWindowed)
 						SetWindowLong(wnd->getHandle(), GWL_STYLE, (uint32)m_windowedStyle);
 				}
 				else
 				{
-					if (!oldSettings || oldSettings->IsWindowd)
+					if (!oldSettings || oldSettings->IsWindowed)
 					{
 						//m_savedTopmost = wnd->getTopMost();
 						long style = GetWindowLong(wnd->getHandle(), GWL_STYLE);
@@ -455,9 +455,9 @@ namespace Apoc3D
 				}
 
 
-				if (settings.IsWindowd)
+				if (settings.IsWindowed)
 				{
-					if (oldSettings && !oldSettings->IsWindowd)
+					if (oldSettings && !oldSettings->IsWindowed)
 					{
 						m_fullscreenWindowWidth = oldSettings->BackBufferWidth;
 						m_fullscreenWindowHeight = oldSettings->BackBufferHeight;
@@ -465,7 +465,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					if (oldSettings && oldSettings->IsWindowd)
+					if (oldSettings && oldSettings->IsWindowed)
 					{
 						m_windowedWindowWidth = oldSettings->BackBufferWidth;
 						m_windowedWindowHeight = oldSettings->BackBufferHeight;
@@ -488,7 +488,7 @@ namespace Apoc3D
 					//		L"[GL1]Recreating Device. ", 
 					//		LOGLVL_Default);
 
-					if (!settings.IsWindowd)
+					if (!settings.IsWindowed)
 					{
 						assert(mode);
 						ChangeResolution(*mode);
@@ -498,14 +498,14 @@ namespace Apoc3D
 				}
 				else
 				{
-					if (!settings.IsWindowd)
+					if (!settings.IsWindowed)
 					{
 						assert(mode);
 						ChangeResolution(*mode);
 					}
 				}
-
-				if (GLEE_WGL_EXT_swap_control)
+				
+				if (WGLEW_EXT_swap_control)
 				{
 					wglSwapIntervalEXT(settings.EnableVSync ? 1 : 0);
 				}
@@ -515,14 +515,14 @@ namespace Apoc3D
 
 
 				// check if we changed from fullscreen to windowed mode
-				if (oldSettings && !oldSettings->IsWindowd && settings.IsWindowd)
+				if (oldSettings && !oldSettings->IsWindowed && settings.IsWindowed)
 				{
 					SetWindowPlacement(wnd->getHandle(), &m_windowedPlacement);
 					//wnd->setTopMost(m_savedTopmost);
 				}
 
 				// check if we need to resize
-				if (settings.IsWindowd && !keepCurrentWindowSize)
+				if (settings.IsWindowed && !keepCurrentWindowSize)
 				{
 					int width;
 					int height;
@@ -617,7 +617,7 @@ namespace Apoc3D
 					ShowWindow(wnd->getHandle(), SW_SHOW);
 
 				// set the execution state of the thread
-				if (!m_currentSetting->IsWindowd)
+				if (!m_currentSetting->IsWindowed)
 					SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
 				else
 					SetThreadExecutionState(ES_CONTINUOUS);
@@ -637,7 +637,7 @@ namespace Apoc3D
 				RenderParameters validSettings = settings;
 				DEVMODE dmode;
 				float bestModeScore = 0;
-				if (!settings.IsWindowd)
+				if (!settings.IsWindowed)
 				{
 					int index = 0;
 					DEVMODE dm;
@@ -679,7 +679,7 @@ namespace Apoc3D
 			void GraphicsDeviceManager::ChangeDevice(bool windowed, int desiredWidth, int desiredHeight)
 			{
 				RenderParameters desiredSettings = RenderParameters();
-				desiredSettings.IsWindowd = (windowed);
+				desiredSettings.IsWindowed = (windowed);
 				desiredSettings.BackBufferWidth = (desiredWidth);
 				desiredSettings.BackBufferHeight = (desiredHeight);
 
@@ -694,10 +694,10 @@ namespace Apoc3D
 				assert(EnsureDevice());
 
 				RenderParameters newSettings = *m_currentSetting;
-				newSettings.IsWindowd =  !newSettings.IsWindowd;
+				newSettings.IsWindowed = !newSettings.IsWindowed;
 
-				int width = newSettings.IsWindowd ? m_windowedWindowWidth :  m_fullscreenWindowWidth;
-				int height = newSettings.IsWindowd ?  m_windowedWindowHeight :  m_fullscreenWindowHeight;
+				int width = newSettings.IsWindowed ? m_windowedWindowWidth : m_fullscreenWindowWidth;
+				int height = newSettings.IsWindowed ? m_windowedWindowHeight : m_fullscreenWindowHeight;
 
 				newSettings.BackBufferWidth =  width;
 				newSettings.BackBufferHeight =  height;

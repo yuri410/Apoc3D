@@ -23,9 +23,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "GraphicsDeviceManager.h"
 #include "D3D9RenderWindow.h"
-#include "GameWindow.h"
 #include "Enumeration.h"
 
+#include "apoc3d.Win32/GameWindow.h"
 #include "apoc3d/Core/Logging.h"
 
 using namespace Apoc3D::Core;

@@ -53,8 +53,8 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\extra;$(SolutionDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
@@ -75,9 +75,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;APOC3DOPENGLRENDERSYSTEM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;APOC3D_PLUGIN_DYLIB_EXPORT;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\extra;$(SolutionDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Link>
@@ -98,6 +98,8 @@
     <ClInclude Include="GL1Sprite.h" />
     <ClInclude Include="GL1Texture.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="gl\glew.h" />
+    <ClInclude Include="gl\wglew.h" />
     <ClInclude Include="GraphicsDeviceManager.h" />
     <ClInclude Include="GL1RenderWindow.h" />
     <ClInclude Include="GL1GraphicsAPIFactory.h" />
@@ -114,6 +116,7 @@
     <ClCompile Include="GL1Texture.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GL1Utils.cpp" />
+    <ClCompile Include="gl\glew.c" />
     <ClCompile Include="GraphicsDeviceManager.cpp" />
     <ClCompile Include="GL1RenderWindow.cpp" />
     <ClCompile Include="GL1GraphicsAPIFactory.cpp" />

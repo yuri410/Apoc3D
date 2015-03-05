@@ -74,7 +74,7 @@ namespace Apoc3D
 			/************************************************************************/
 			/*                                                                      */
 			/************************************************************************/
-			GL1RenderWindow::GL1RenderWindow(GL1RenderDevice* device, GL1DeviceContent* dc, const RenderParameters& pm)
+			GL1RenderWindow::GL1RenderWindow(GL1RenderDevice* device, GL1DeviceContext* dc, const RenderParameters& pm)
 				: RenderWindow(device, pm), m_dc(dc)
 			{
 				m_game = new GLGame(this, dc);

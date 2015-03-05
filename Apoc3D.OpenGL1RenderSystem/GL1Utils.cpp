@@ -49,27 +49,27 @@ namespace Apoc3D
 
 			GLenum GLUtils::ConvertStencilOperation(StencilOperation so, bool invert)
 			{
-				switch(so)
+				switch (so)
 				{
-				case STOP_Keep:
-					return GL_KEEP;
-				case STOP_Zero:
-					return GL_ZERO;
-				case STOP_Replace:
-					return GL_REPLACE;
-				case STOP_Increment:
-					return invert ? GL_DECR : GL_INCR;
-				case STOP_Decrement:
-					return invert ? GL_INCR : GL_DECR;
-				case STOP_IncrementSaturation:
-					return invert ? GL_DECR_WRAP_EXT : GL_INCR_WRAP_EXT;
-				case STOP_DecrementSaturation:
-					return invert ? GL_INCR_WRAP_EXT : GL_DECR_WRAP_EXT;
-				case STOP_Invert:
-					return GL_INVERT;
+					case StencilOperation::Keep:
+						return GL_KEEP;
+					case StencilOperation::Zero:
+						return GL_ZERO;
+					case StencilOperation::Replace:
+						return GL_REPLACE;
+					case StencilOperation::Increment:
+						return invert ? GL_DECR : GL_INCR;
+					case StencilOperation::Decrement:
+						return invert ? GL_INCR : GL_DECR;
+					case StencilOperation::IncrementSaturation:
+						return invert ? GL_DECR_WRAP_EXT : GL_INCR_WRAP_EXT;
+					case StencilOperation::DecrementSaturation:
+						return invert ? GL_INCR_WRAP_EXT : GL_DECR_WRAP_EXT;
+					case StencilOperation::Invert:
+						return GL_INVERT;
 				};
 				// to make the compiler happy
-				return STOP_Keep;
+				return GL_KEEP;
 			}
 
 			
@@ -211,7 +211,7 @@ namespace Apoc3D
 				case FMT_Palette8Alpha8:
 					break;
 				}
-				throw AP_EXCEPTION(EX_NotSupported, L"");
+				throw AP_EXCEPTION(ExceptID::NotSupported, L"");
 			}
 			GLenum GLUtils::ConvertPixelFormat(PixelFormat fmt)
 			{

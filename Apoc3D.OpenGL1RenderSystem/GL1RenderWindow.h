@@ -67,7 +67,7 @@ namespace Apoc3D
 					GL1RenderWindow* m_window;
 
 				public:
-					GLGame(GL1RenderWindow* wnd, GL1DeviceContent* devCont)
+					GLGame(GL1RenderWindow* wnd, GL1DeviceContext* devCont)
 						: Game(devCont, L"Apoc3D Engine - OpenGL 1.x"), m_window(wnd)
 					{
 					}
@@ -121,7 +121,7 @@ namespace Apoc3D
 
 				virtual void ChangeRenderParameters(const RenderParameters& params);
 
-				GL1RenderWindow(GL1RenderDevice* device, GL1DeviceContent* dc, const RenderParameters& pm);
+				GL1RenderWindow(GL1RenderDevice* device, GL1DeviceContext* dc, const RenderParameters& pm);
 				~GL1RenderWindow();
 
 				virtual void Exit();
@@ -133,7 +133,7 @@ namespace Apoc3D
 				virtual Size getClientSize();
 
 			private:
-				GL1DeviceContent* m_dc;
+				GL1DeviceContext* m_dc;
 				GLGame* m_game;
 
 				void setDevice(RenderDevice* device)
