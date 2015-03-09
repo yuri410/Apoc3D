@@ -82,6 +82,8 @@ namespace Apoc3D
 
 				EventDelegate<RenderTarget*> eventReseted;
 
+				void* UserPointer = nullptr;
+				int32 UserInt32 = 0;
 			protected:
 				virtual DataRectangle lock(LockMode mode, const Apoc3D::Math::Rectangle& rect) = 0;
 				virtual void unlock() = 0;

@@ -93,6 +93,15 @@ namespace Apoc3D
 				m_queueMutex.unlock();
 			}
 
+			void AddWorkItem(T&& item)
+			{
+				m_queueMutex.lock();
+				m_taskQueue.Enqueue(std::move(item));
+
+				m_queueEmptyWait.notify_all();
+				m_queueMutex.unlock();
+			}
+
 		protected:
 			BackgroundSequencialWorker()
 				: m_terminated(true), m_thread(nullptr) { }

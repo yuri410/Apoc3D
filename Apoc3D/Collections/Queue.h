@@ -158,23 +158,25 @@ namespace Apoc3D
 			{
 				assert(m_count > 0);
 
-				const T& local = m_array[m_head];
+				int32 oldHead = m_head;
 				DequeueOnly();
-				return local;
+				return std::move(m_array[oldHead]);
 			}
 
 			void Enqueue(const T& item)
 			{
-				if (m_count == m_arrLength)
-				{
-					int newCapacity = m_arrLength * 2;
-					if (newCapacity < m_arrLength + 4)
-					{
-						newCapacity = m_arrLength + 4;
-					}
-					SetCapacity(newCapacity);
-				}
+				EnsureIncrCapacity();
+
 				m_array[m_tail] = item;
+				m_tail = (m_tail + 1) % m_arrLength;
+				m_count++;
+			}
+
+			void Enqueue(T&& item)
+			{
+				EnsureIncrCapacity();
+
+				m_array[m_tail] = std::move(item);
 				m_tail = (m_tail + 1) % m_arrLength;
 				m_count++;
 			}
@@ -221,6 +223,19 @@ namespace Apoc3D
 				m_arrLength = capacity;
 				m_head = 0;
 				m_tail = (m_count == capacity) ? 0 : m_count;
+			}
+
+			void EnsureIncrCapacity()
+			{
+				if (m_count == m_arrLength)
+				{
+					int newCapacity = m_arrLength * 2;
+					if (newCapacity < m_arrLength + 4)
+					{
+						newCapacity = m_arrLength + 4;
+					}
+					SetCapacity(newCapacity);
+				}
 			}
 
 			T* m_array;
