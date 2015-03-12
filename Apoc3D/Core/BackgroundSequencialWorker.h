@@ -102,6 +102,14 @@ namespace Apoc3D
 				m_queueMutex.unlock();
 			}
 
+			int32 QueryTaskCount()
+			{
+				int32 r;
+				m_queueMutex.lock();
+				r = m_taskQueue.getCount();
+				m_queueMutex.unlock();
+				return r;
+			}
 		protected:
 			BackgroundSequencialWorker()
 				: m_terminated(true), m_thread(nullptr) { }
