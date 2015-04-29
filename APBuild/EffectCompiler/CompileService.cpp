@@ -194,17 +194,22 @@ namespace APBuild
 
 			while (d)
 			{
-				if (d->semanticCount>0)
+				//if (d->semanticCount>0)
 				{
 					String name = StringUtils::toPlatformWideString(d->name);
 
 					if (allNames.Contains(name))
 					{
-						List<String> semantics(d->semanticCount);
+						List<String> semantics;
 
-						for (int32 j = 0; j < d->semanticCount; j++)
-							semantics.Add(StringUtils::toPlatformWideString(d->semantic[j]));
+						if (d->semanticCount>0)
+						{
+							semantics.ResizeDiscard(d->semanticCount);
 
+							for (int32 j = 0; j < d->semanticCount; j++)
+								semantics.Add(StringUtils::toPlatformWideString(d->semantic[j]));
+						}
+						
 						EffectParameter ep(name);
 						ep.ProgramType = type;
 						
