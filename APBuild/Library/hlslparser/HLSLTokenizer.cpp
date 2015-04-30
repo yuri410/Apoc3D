@@ -89,6 +89,7 @@ static bool GetIsSymbol(char c)
     case '.':
     case '<': case '>':
     case '|': case '&': case '^': case '~':
+	case '%':
         return true;
     }
     return false;
@@ -195,7 +196,7 @@ void HLSLTokenizer::Next()
         m_buffer += 2;
         return;
     }
-
+	
     // ++, --
     if ((m_buffer[0] == '-' || m_buffer[0] == '+') && (m_buffer[1] == m_buffer[0]))
     {

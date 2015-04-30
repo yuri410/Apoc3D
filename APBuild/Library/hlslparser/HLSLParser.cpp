@@ -571,7 +571,8 @@ const int _binaryOpPriority[] =
         7, 7, //  <,  >,
         7, 7, //  <=, >=,
         6, 6, //  ==, !=
-        5, 3, 4, // &, |, ^
+        5, 3, 4, // &, |, ^,
+		9 // %
     };
 
 const BaseTypeDescription _baseTypeDescriptions[HLSLBaseType_Count] = 
@@ -825,6 +826,7 @@ static const char* GetBinaryOpName(HLSLBinaryOp binaryOp)
     case HLSLBinaryOp_SubAssign:    return "-=";
     case HLSLBinaryOp_MulAssign:    return "*=";
     case HLSLBinaryOp_DivAssign:    return "/=";
+	case HLSLBinaryOp_Remainder:	return "%";
     default:
         ASSERT(0);
         return "???";
@@ -1772,6 +1774,7 @@ bool HLSLParser::AcceptBinaryOperator(int priority, HLSLBinaryOp& binaryOp)
     case '&':                       binaryOp = HLSLBinaryOp_BitAnd;       break;
     case '|':                       binaryOp = HLSLBinaryOp_BitOr;        break;
     case '^':                       binaryOp = HLSLBinaryOp_BitXor;       break;
+	case '%':						binaryOp = HLSLBinaryOp_Remainder;    break;
     default:
         return false;
     }

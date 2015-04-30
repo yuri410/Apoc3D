@@ -117,11 +117,12 @@ enum HLSLBinaryOp
     HLSLBinaryOp_BitAnd,
     HLSLBinaryOp_BitOr,
     HLSLBinaryOp_BitXor,
+	HLSLBinaryOp_Remainder,
     HLSLBinaryOp_Assign,
     HLSLBinaryOp_AddAssign,
     HLSLBinaryOp_SubAssign,
     HLSLBinaryOp_MulAssign,
-    HLSLBinaryOp_DivAssign,
+    HLSLBinaryOp_DivAssign
 };
 
 enum HLSLUnaryOp
