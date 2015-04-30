@@ -13,6 +13,7 @@ enum HLSLToken
     HLSLToken_Float2,
     HLSLToken_Float3,
     HLSLToken_Float4,
+	HLSLToken_Float2x2,
     HLSLToken_Float3x3,
     HLSLToken_Float4x4,
     HLSLToken_Half,

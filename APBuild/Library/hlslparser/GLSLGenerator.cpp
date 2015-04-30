@@ -54,6 +54,7 @@ static const char* GetTypeName(const HLSLType& type)
     case HLSLBaseType_Float2:       return "vec2";
     case HLSLBaseType_Float3:       return "vec3";
     case HLSLBaseType_Float4:       return "vec4";
+	case HLSLBaseType_Float2x2:     return "mat2";
     case HLSLBaseType_Float3x3:     return "mat3";
     case HLSLBaseType_Float4x4:     return "mat4";
     case HLSLBaseType_Half:         return "float";
@@ -440,6 +441,9 @@ void GLSLGenerator::OutputExpression(HLSLExpression* expression, const HLSLType*
         case HLSLBinaryOp_DivAssign:    op = " /= "; dstType2 = &binaryExpression->expressionType; break;
         case HLSLBinaryOp_And:          op = " && "; dstType1 = dstType2 = &binaryExpression->expressionType; break;
         case HLSLBinaryOp_Or:           op = " || "; dstType1 = dstType2 = &binaryExpression->expressionType; break;
+		case HLSLBinaryOp_Remainder:
+			Error("\"%\" operator  not supported by glsl, use mod()");
+			break;
         default:
             ASSERT(0);
         }
@@ -495,7 +499,8 @@ void GLSLGenerator::OutputExpression(HLSLExpression* expression, const HLSLType*
             OutputExpression(memberAccess->object);
             m_writer.Write(")");
 
-            if (memberAccess->object->expressionType.baseType == HLSLBaseType_Float3x3 ||
+			if (memberAccess->object->expressionType.baseType == HLSLBaseType_Float2x2 ||
+				memberAccess->object->expressionType.baseType == HLSLBaseType_Float3x3 ||
                 memberAccess->object->expressionType.baseType == HLSLBaseType_Float4x4)
             {
                 // Handle HLSL matrix "swizzling".
@@ -540,7 +545,8 @@ void GLSLGenerator::OutputExpression(HLSLExpression* expression, const HLSLType*
         HLSLArrayAccess* arrayAccess = static_cast<HLSLArrayAccess*>(expression);
 
         if (!arrayAccess->array->expressionType.array &&
-            (arrayAccess->array->expressionType.baseType == HLSLBaseType_Float3x3 ||
+			(arrayAccess->array->expressionType.baseType == HLSLBaseType_Float2x2 ||
+			 arrayAccess->array->expressionType.baseType == HLSLBaseType_Float3x3 ||
              arrayAccess->array->expressionType.baseType == HLSLBaseType_Float4x4))
         {
             // GLSL access a matrix as m[c][r] while HLSL is m[r][c], so use our

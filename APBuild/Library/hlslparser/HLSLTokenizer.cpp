@@ -20,6 +20,7 @@ static const char* _reservedWords[] =
         "float2",
         "float3",
         "float4",
+		"float2x2",
         "float3x3",
         "float4x4",
         "half",

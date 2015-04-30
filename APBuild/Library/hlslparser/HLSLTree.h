@@ -57,6 +57,7 @@ enum HLSLBaseType
     HLSLBaseType_Float2,
     HLSLBaseType_Float3,
     HLSLBaseType_Float4,
+	HLSLBaseType_Float2x2,
     HLSLBaseType_Float3x3,
     HLSLBaseType_Float4x4,
     HLSLBaseType_Half,
