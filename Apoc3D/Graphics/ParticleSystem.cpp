@@ -50,33 +50,25 @@ namespace Apoc3D
 		};
 
 		ParticleSystem::ParticleSystem(RenderDevice* device, Material* mtrl)
-			: m_device(device), 
-			m_particles(nullptr), m_particleCount(0), 
-			m_vertexBuffer(nullptr), m_vertexDeclaration(nullptr),
-			m_firstActiveParticle(0),m_firstNewParticle(0),m_firstFreeParticle(0),m_firstRetiredParticle(0),
-			m_currentTime(0),m_drawCounter(0),
-			m_mtrl(mtrl)
+			: m_device(device), m_mtrl(mtrl)
 		{
-			memset(&m_settings,0, sizeof(m_settings));
+			memset(&m_settings, 0, sizeof(m_settings));
 		}
 
 		ParticleSystem::~ParticleSystem()
 		{
-			if (m_particles)
-			{
-				delete[] m_particles;
-			}
-			if (m_vertexBuffer)
-			{
-				delete m_vertexBuffer;
-			}
-			if (m_vertexDeclaration)
-			{
-				delete m_vertexDeclaration;
-			}
+			delete[] m_particles;
 			m_particles = nullptr;
-			m_vertexBuffer = nullptr;
-			m_vertexDeclaration = nullptr;
+
+			DELETE_AND_NULL(m_vertexBuffer);
+			DELETE_AND_NULL(m_vertexDeclaration);
+		}
+
+		void ParticleSystem::Setup(FunctorReference<void(ParticleSettings&)> settingsFunc)
+		{
+			settingsFunc(m_settings);
+
+			Load();
 		}
 
 		void ParticleSystem::Load()

@@ -42,31 +42,16 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/**
-		 *  Custom vertex structure for drawing point sprite particles.
-		 */
+		/** Custom vertex structure for drawing point sprite particles. */
 		struct APAPI ParticleVertex
 		{
-			/**
-			 *  Stores the starting position of the particle.
-			 */
-			Vector3 Position;
-			/**
-			 *  Stores the starting velocity of the particle.
-			 */
-			Vector3 Velocity;
-			/**
-			 *  Four random values, used to make each particle look slightly different.
-			 */
-			uint32 Random;
-			/**
-			 *  The time (in seconds) at which this particle was created.
-			 */
-			float Time;
+			Vector3 Position;			/** Stores the starting position of the particle. */
+			Vector3 Velocity;			/** Stores the starting velocity of the particle. */
+			uint32 Random;		/** Four random values, used to make each particle look slightly different. */
+			
+			float Time;		/** The time (in seconds) at which this particle was created. */
 
-			/**
-			 * Describe the layout of this vertex structure.
-			 */
+			/** Describe the layout of this vertex structure. */
 			static const VertexElement VtxElements[];
 		};
 
@@ -79,14 +64,21 @@ namespace Apoc3D
 			ParticleSystem(RenderDevice* device, Material* mtrl);
 			virtual ~ParticleSystem();
 
+			void Setup(FunctorReference<void(ParticleSettings&)> settingsFunc);
+
 			void Reset()
 			{
-				m_firstActiveParticle=0;
-				m_firstNewParticle=0;
-				m_firstFreeParticle=0;
-				m_firstRetiredParticle=0;
-				m_currentTime=0;
-				m_drawCounter=0;
+				m_firstActiveParticle = 0;
+				m_firstNewParticle = 0;
+				m_firstFreeParticle = 0;
+				m_firstRetiredParticle = 0;
+				m_currentTime = 0;
+				m_drawCounter = 0;
+			}
+			void Reset(Material* mtrl)
+			{
+				Reset();
+				changeMaterial(mtrl);
 			}
 
 			float getCurrentTime() const { return m_currentTime; }
@@ -107,34 +99,29 @@ namespace Apoc3D
 			/* Derived particle system classes should override this method
 			   and use it to initialize their tweakable settings.
 			*/
-			virtual void InitializeSettings(ParticleSettings &settings) const = 0;
+			virtual void InitializeSettings(ParticleSettings &settings) const { }
 
 			virtual void Load();
 		private:
 
 			RenderDevice* m_device;
 
-			/**
-			 *  Settings class controls the appearance and animation of this particle system.
-			 */
+			/** Settings class controls the appearance and animation of this particle system. */
 			ParticleSettings m_settings;
 			Material* m_mtrl;
 
-			/**
-			 * An array of particles, treated as a circular queue.
-			 */
-			ParticleVertex* m_particles;
-			int32 m_particleCount;
+			/** An array of particles, treated as a circular queue. */
+			ParticleVertex* m_particles = nullptr;
+			int32 m_particleCount = 0;
 
 			/**
 			 *  A vertex buffer holding our particles. This contains the same data as
 			 *  the particles array, but copied across to where the GPU can access it.
 			 */
-			VertexBuffer* m_vertexBuffer;
-			/**
-			 *  Vertex declaration describes the format of our ParticleVertex structure.
-			 */
-			VertexDeclaration* m_vertexDeclaration;
+			VertexBuffer* m_vertexBuffer = nullptr;
+
+			/** Vertex declaration describes the format of our ParticleVertex structure. */
+			VertexDeclaration* m_vertexDeclaration = nullptr;
 
 			GeometryData m_geoData;
 			GeometryData m_geoDataAlt;
@@ -211,21 +198,19 @@ namespace Apoc3D
 			   using them. These need to be kept around for a few more frames before they
 			   can be reallocated.
 			*/
-			int32 m_firstActiveParticle;
-			int32 m_firstNewParticle;
-			int32 m_firstFreeParticle;
-			int32 m_firstRetiredParticle;
+			int32 m_firstActiveParticle = 0;
+			int32 m_firstNewParticle = 0;
+			int32 m_firstFreeParticle = 0;
+			int32 m_firstRetiredParticle = 0;
 
-			/**
-			 * Store the current time, in seconds.
-			 */
-			float m_currentTime;
+			/** Store the current time, in seconds. */
+			float m_currentTime = 0;
 
 			/**
 			 *  Count how many times Draw has been called. This is used to know
 			 *  when it is safe to retire old particles back into the free list.
 			 */
-			int32 m_drawCounter;
+			int32 m_drawCounter = 0;
 
 
 			/**
