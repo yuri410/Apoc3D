@@ -67,9 +67,7 @@ namespace Apoc3D
 				/** Gets the vertex size defined by this declaration. */
 				virtual int GetVertexSize() const;
 
-				/**
-				 *  Gets the VertexElement at the specified index.
-				 */
+				/** Gets the VertexElement at the specified index. */
 				const VertexElement& getElement(int index) const;
 
 				/** Gets the number of elements in the declaration. */

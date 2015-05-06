@@ -36,7 +36,7 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		Patch::Patch(RenderDevice* device, const void* vertexData, int vertexCount, const List<VertexElement>& vtxElems)
-			: m_opBuffer(0), m_mtrl(0), m_primitiveCount(vertexCount - 3 + 2), m_vertexCount(vertexCount)
+			: m_primitiveCount(vertexCount - 3 + 2), m_vertexCount(vertexCount)
 		{
 			assert(vertexCount>3);
 
@@ -55,9 +55,9 @@ namespace Apoc3D
 		RenderOperationBuffer* Patch::GetRenderOperation(int lod)
 		{
 			if (!m_mtrl)
-				return 0;
+				return nullptr;
 
-			if (!m_opBuffer)
+			if (m_opBuffer.getCount()==0)
 			{
 				m_geoData = new GeometryData();
 				m_geoData->BaseVertex = 0;
@@ -69,17 +69,16 @@ namespace Apoc3D
 				m_geoData->VertexDecl = m_vertexDecl;
 				m_geoData->VertexSize = m_vertexSize;
 
-				m_opBuffer = new RenderOperationBuffer();
 				RenderOperation rop;
 
 				rop.GeometryData = m_geoData;
 
-				m_opBuffer->Add(rop);
+				m_opBuffer.Add(rop);
 			}
 
-			m_opBuffer->operator[](0).Material = m_mtrl;
-			m_opBuffer->operator[](0).RootTransform = m_transfrom;
-			return m_opBuffer;
+			m_opBuffer[0].Material = m_mtrl;
+			m_opBuffer[0].RootTransform = m_transfrom;
+			return &m_opBuffer;
 		}
 	}
 }

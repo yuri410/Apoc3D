@@ -39,9 +39,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			/**
-			 *  An interface for instancing
-			 */
+			/** An interface for instancing */
 			class APAPI InstancingData
 			{
 			public:
@@ -57,13 +55,9 @@ namespace Apoc3D
 				 */
 				virtual int Setup(const RenderOperation* op, int count, int beginIndex) = 0;
 
-
-				///** Retrieve the corresponding vertex declaration expanded with instancing vertex elements
-				//*/
-				//virtual VertexDeclaration* MapVertexDecl(VertexDeclaration* decl) = 0;
 			private:
 				RenderDevice* m_device;
-				//VertexBuffer* m_instanceData;
+				
 			};
 		}
 	}

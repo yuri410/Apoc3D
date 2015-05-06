@@ -56,13 +56,10 @@ namespace Apoc3D
 
 				virtual Capabilities* const getCapabilities() const = 0;
 				
-				/**
-				 *  Gets the color pixel format of default render target.
-				 */
+				/** Gets the color pixel format of default render target. */
 				virtual PixelFormat GetDefaultRTFormat() = 0;
-				/**
-				 *  Gets the depth pixel format of default render target.
-				 */
+
+				/** Gets the depth pixel format of default render target. */
 				virtual DepthFormat GetDefaultDepthStencilFormat() = 0;
 
 				/**
@@ -72,35 +69,20 @@ namespace Apoc3D
 				 */
 				virtual void Initialize() = 0;
 
-				/**
-				 *  Gets the device's name.
-				 */
-				const String& getName() const { return m_rdName; }
+				
+				const String& getName() const { return m_rdName; }						/** Gets the device's name. */
 
-				/**
-				 *  Gets the device's ObjectFactory object.
-				 */
-				ObjectFactory* getObjectFactory() { return m_objectFactory; }
+				ObjectFactory* getObjectFactory() { return m_objectFactory; }			/** Gets the device's ObjectFactory object. */
+				RenderStateManager* getRenderState() { return m_renderStates; }			/** Gets the device's RenderStateManager object. */
 
-				/**
-				 *  Gets the device's RenderStateManager object.
-				 */
-				RenderStateManager* getRenderState() { return m_renderStates; }
-
-				/**
-				 *  Notify the RenderDevice a new frame is began to draw.
-				 */
+				/** Notify the RenderDevice a new frame is began to draw. */
 				virtual void BeginFrame();
-				/**
-				 *  Notify the RenderDevice the current frame rendering is over.
-				 */
+
+				/** Notify the RenderDevice the current frame rendering is over. */
 				virtual void EndFrame();
 
-				//virtual RenderTarget* getDefaultRenderTarget() = 0;
-
-				/**
-				 *  Clears all the currently binded render targets.
-				 */
+				
+				/** Clears all the currently binded render targets. */
 				virtual void Clear(ClearFlags flags, uint color, float depth, int stencil) = 0;
 
 				/**
@@ -127,17 +109,13 @@ namespace Apoc3D
 				virtual Viewport getViewport() = 0;
 				virtual void setViewport(const Viewport& vp) = 0;
 
-				/**
-				 *  Gets the number of draw calls on the last frame if the frame is done, or the current draw call count if not.
-				 */
+				/** Gets the number of draw calls on the last frame if the frame is done, or the current draw call count if not. */
 				uint getBatchCount() const { return m_batchCount; }
-				/**
-				 *  Gets the number of primitives drawn on the last frame if the frame is done, or the current value if not.
-				 */
+
+				/** Gets the number of primitives drawn on the last frame if the frame is done, or the current value if not. */
 				uint getPrimitiveCount() const { return m_primitiveCount; }
-				/**
-				 *  Gets the number of vertices drawn on the last frame if the frame is done, or the current value if not.
-				 */
+
+				/** Gets the number of vertices drawn on the last frame if the frame is done, or the current value if not. */
 				uint getVertexCount() const { return m_vertexCount; }
 
 			private:
@@ -181,9 +159,7 @@ namespace Apoc3D
 					: m_rdName(renderSysName) { }
 			};
 
-			/**
-			 *  An interface for check if some feature are supported.
-			 */
+			/** An interface for check if some feature are supported. */
 			class APAPI Capabilities
 			{
 			public:
@@ -241,20 +217,14 @@ namespace Apoc3D
 				 */
 				virtual Texture* CreateTexture(int width, int height, int depth, int levelCount, TextureUsage usage, PixelFormat format) = 0;
 
-				/**
-				 *  Creates a blank Cube map.
-				 */
+				/** Creates a blank Cube map. */
 				virtual Texture* CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format) = 0;
 
-				/**
-				 *  Creates a RenderTarget with a depth buffer and a color buffer.
-				 */
+				/** Creates a RenderTarget with a depth buffer and a color buffer. */
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt) = 0;
 				RenderTarget* CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, DepthFormat depthFmt);
 
-				/**
-				 *  Creates a RenderTarget with a color buffer only.
-				 */
+				/** Creates a RenderTarget with a color buffer only. */
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt) = 0;
 				RenderTarget* CreateRenderTarget(const Point& size2d, PixelFormat clrFmt);
 

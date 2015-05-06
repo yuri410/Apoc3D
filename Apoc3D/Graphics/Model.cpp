@@ -574,7 +574,7 @@ namespace Apoc3D
 		{
 			if (m_mtrlPlayer)				
 			{
-				m_mtrlPlayer->eventCompleted().clear();
+				m_mtrlPlayer->eventCompleted.clear();
 				delete m_mtrlPlayer;
 				m_mtrlPlayer = nullptr;
 			}
@@ -585,7 +585,7 @@ namespace Apoc3D
 				if (table.getCount())
 				{
 					m_mtrlPlayer = new MaterialAnimationPlayer();
-					m_mtrlPlayer->eventCompleted().bind(this, &Model::MtrlAnim_Completed);
+					m_mtrlPlayer->eventCompleted.bind(this, &Model::MtrlAnim_Completed);
 				}
 			}
 			m_mtrlState = APS_Stopped;
@@ -594,7 +594,7 @@ namespace Apoc3D
 		{
 			if (m_skinPlayer)
 			{
-				m_skinPlayer->eventCompleted().clear();
+				m_skinPlayer->eventCompleted.clear();
 				delete m_skinPlayer;
 				m_skinPlayer = nullptr;
 			}
@@ -611,7 +611,7 @@ namespace Apoc3D
 					m_skinPlayer = new SkinnedAnimationPlayer(bones);
 
 					m_animInstance.Add(m_skinPlayer);
-					m_skinPlayer->eventCompleted().bind(this, &Model::SkinAnim_Completed);
+					m_skinPlayer->eventCompleted.bind(this, &Model::SkinAnim_Completed);
 				}
 			}
 
@@ -621,7 +621,7 @@ namespace Apoc3D
 		{
 			if (m_rigidPlayer)				
 			{
-				m_rigidPlayer->eventCompleted().clear();
+				m_rigidPlayer->eventCompleted.clear();
 				delete m_rigidPlayer;
 				m_rigidPlayer = nullptr;
 			}
@@ -642,7 +642,7 @@ namespace Apoc3D
 
 					m_animInstance.Add(m_rigidPlayer);
 
-					m_rigidPlayer->eventCompleted().bind(this, &Model::RigidAnim_Competed);
+					m_rigidPlayer->eventCompleted.bind(this, &Model::RigidAnim_Competed);
 				}
 			}
 			m_rigidState = APS_Stopped;

@@ -42,9 +42,7 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
-			/**
-			 *  Defines the interface for graphics effect.
-			 */
+			/** Defines the interface for graphics effect. */
 			class APAPI Effect
 			{
 				RTTI_BASE;
@@ -88,9 +86,7 @@ namespace Apoc3D
 				virtual void BeginPass(int passId) = 0;
 				virtual void EndPass() = 0;
 
-				/**
-				 *  Check if the effect supports instancing. 
-				 */
+				/** Check if the effect supports instancing. */
 				virtual bool SupportsInstancing() { return false; }
 
 				bool IsUnsupported() const { return m_isUnsupported; }
@@ -275,21 +271,6 @@ namespace Apoc3D
 				Shader* m_pixelShader;
 			};
 
-			//class APAPI PostEffect
-			//{
-			//public:
-			//	PostEffect(void);
-			//	virtual ~PostEffect(void);
-
-			//	virtual void Setup() = 0;
-
-			//	bool IsUnsupported() const { return m_isUnsupported; }
-			//	const String& getName() const { return m_name; }
-			//protected:				
-
-			//	bool m_isUnsupported;
-			//	String m_name;
-			//};
 		};
 	};
 };

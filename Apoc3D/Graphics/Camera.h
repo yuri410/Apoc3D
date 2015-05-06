@@ -36,9 +36,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/**
-		 *  Represents a view into a 3D scene. 
-		 */
+		/** Represents a view into a 3D scene. */
 		class APAPI Camera
 		{
 			RTTI_BASE;
@@ -187,22 +185,17 @@ namespace Apoc3D
 
 		};
 
-		/**
-		 *  Implements a 3rd person chase camera with inertia
-		 */
+		/** Implements a 3rd person chase camera with inertia */
 		class APAPI ChaseCamera : public Camera
 		{
 		public:
 			ChaseCamera(float fov = ToRadian(45));
 			~ChaseCamera();
 
-			/**
-			 *  Resets the camera to its desired position
-			 */
+			/** Resets the camera to its desired position */
 			void Reset();
-			/**
-			 *  Update the camera's motion simulation and the view
-			 */
+
+			/** Update the camera's motion simulation and the view */
 			virtual void Update(const GameTime* time);
 
 			void ForceUpdateMatrix() { UpdateMatrices(); }
@@ -212,23 +205,11 @@ namespace Apoc3D
 			 *  (0,1,0) will have no rolling
 			 */
 			const Vector3& getChaseUp() const { return m_up; }
-			/**
-			 *  A unit vector representing the view direction to the chase target
-			 */
-			const Vector3& getChaseDirection() const { return m_chaseDirection; }
-			/**
-			 *  The position of the chase target
-			 */
-			const Vector3& getChasePosition() const { return m_chasePosition; }
+			const Vector3& getChaseDirection() const { return m_chaseDirection; }	/** A unit vector representing the view direction to the chase target */
+			const Vector3& getChasePosition() const { return m_chasePosition; }		/** The position of the chase target */
 
-			/**
-			 *  Gets the camera's current eye position in world space
-			 */
-			const Vector3& getPosition() const { return m_position; }
-			/**
-			 *  Gets the camera's current linear velocity in world space
-			 */
-			const Vector3& getVelocity() const { return m_velocity; }
+			const Vector3& getPosition() const { return m_position; }				/** Gets the camera's current eye position in world space */
+			const Vector3& getVelocity() const { return m_velocity; }				/** Gets the camera's current linear velocity in world space */
 			/**
 			 *  Gets the offset from the target to the camera for the camera to move to.
 			 *  This is relative to the chase direction.

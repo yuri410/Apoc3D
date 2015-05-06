@@ -39,46 +39,29 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/**
-		 *  Define buffers and information used to render a geometry
-		 */
+		/** Define buffers and information used to render a geometry */
 		class APAPI GeometryData
 		{
 		public:
-			/**
-			 *  the vertex buffer used to draw the geometry
-			 */
-			VertexBuffer* VertexBuffer;
-			/**
-			 *  the index buffer used to draw the geometry
-			 */
-			IndexBuffer* IndexBuffer;
-			/**
-			 *  the vertex declaration for vertex in the geometry
-			 */
-			VertexDeclaration* VertexDecl;
-			int32 PrimitiveCount;
-			/**
-			 *  The starting vertex offset in the vertex buffer
-			 */
-			int32 BaseVertex;
-			int32 VertexCount;
-			int32 VertexSize;
+			VertexBuffer* VertexBuffer = nullptr;			/** the vertex buffer used to draw the geometry */
+			IndexBuffer* IndexBuffer = nullptr;				/** the index buffer used to draw the geometry */
+			VertexDeclaration* VertexDecl = nullptr;		/** the vertex declaration for vertex in the geometry */
+			int32 PrimitiveCount = 0;
+			
+			int32 BaseVertex = 0;							/** The starting vertex offset in the vertex buffer */
+			int32 VertexCount = 0;
+			int32 VertexSize = 0;
 
-			PrimitiveType PrimitiveType;
-			void* UserData;
+			PrimitiveType PrimitiveType = PT_PointList;
+			void* UserData = nullptr;
 
-			bool Discard;
+			bool Discard = false;
 
 			bool usesIndex() const { return !!IndexBuffer; }
 
 			GeometryData()
-				: UserData(0), BaseVertex(0), PrimitiveCount(0), 
-				VertexDecl(0), IndexBuffer(0), VertexBuffer(0),
-				VertexCount(0), VertexSize(0),
-				PrimitiveType(PT_PointList), Discard(false)
 			{ }
-			~GeometryData(){}
+			~GeometryData() { }
 		};
 	};
 };

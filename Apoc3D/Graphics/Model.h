@@ -139,8 +139,7 @@ namespace Apoc3D
 			RenderOperationBuffer* GetRenderOperationSubEntityRaw(int index);
 
 
-			/** The update will do the animation works if the model has animation.
-			*/
+			/** The update will do the animation works if the model has animation. */
 			void Update(const GameTime* time);
 
 			void PlayAnimation(AnimationType type = (AnimationType)(ANIMTYPE_Material | ANIMTYPE_Rigid | ANIMTYPE_Skinned));
@@ -214,15 +213,10 @@ namespace Apoc3D
 			bool m_isOpBufferBuilt;
 			RenderOperationBuffer m_opBuffer;
 
-			/** table cast render operation index to entity index
-			*/
-			int* m_renderOpEntID;
-			/** table cast render operation index to entity part index
-			*/
-			int* m_renderOpEntPartID;
+			int* m_renderOpEntID;			/** table cast render operation index to entity index */
+			int* m_renderOpEntPartID;		/** table cast render operation index to entity part index */
 
-			/** states used for looping check. does not go public
-			*/
+			/** states used for looping check. does not go public */
 			bool m_rigidAnimCompleted;
 			bool m_skinAnimCompleted;
 			bool m_mtrlAnimCompleted;

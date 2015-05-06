@@ -29,6 +29,7 @@
 #include "Renderable.h"
 #include "RenderSystem/Buffer/HardwareBuffer.h"
 #include "RenderSystem/VertexElement.h"
+#include "RenderOperationBuffer.h"
 
 #include "apoc3d/Math/Matrix.h"
 
@@ -42,30 +43,31 @@ namespace Apoc3D
 	{
 		class APAPI Patch : public Renderable
 		{
-		private:
-			VertexBuffer* m_vertexBuffer;
-			IndexBuffer* m_indexBuffer;
-			VertexDeclaration* m_vertexDecl;
-			
-			int m_vertexSize;
-			int m_vertexCount;
-			int m_primitiveCount;
-
-			Matrix m_transfrom;
-			Material* m_mtrl;
-			GeometryData* m_geoData;
-			RenderOperationBuffer* m_opBuffer;
-
 		public:
+			Patch(RenderDevice* device, const void* vertexData, int vertexCount, const List<VertexElement>& vtxElems);
+			~Patch();
+
+			virtual RenderOperationBuffer* GetRenderOperation(int lod);
+
 			void setMaterial(Material* mtrl)
 			{
 				m_mtrl = mtrl;
 			}
 			void setTransform(const Matrix& trans) { m_transfrom = trans; }
-			Patch(RenderDevice* device, const void* vertexData, int vertexCount, const List<VertexElement>& vtxElems);
-			~Patch();
+		private:
+			VertexBuffer* m_vertexBuffer;
+			IndexBuffer* m_indexBuffer;
+			VertexDeclaration* m_vertexDecl;
 
-			virtual RenderOperationBuffer* GetRenderOperation(int lod);
+			int m_vertexSize;
+			int m_vertexCount;
+			int m_primitiveCount;
+
+			Matrix m_transfrom;
+			Material* m_mtrl = nullptr;
+			GeometryData* m_geoData = nullptr;
+			RenderOperationBuffer m_opBuffer;
+
 		};
 	}
 }

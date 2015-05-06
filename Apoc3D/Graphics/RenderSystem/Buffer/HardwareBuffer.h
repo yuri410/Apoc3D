@@ -53,7 +53,7 @@ namespace Apoc3D
 
 			protected:
 				HardwareBuffer(BufferUsageFlags usage, int sizeInBytes)
-					: m_usage(usage), m_size(sizeInBytes), m_isLocked(false)
+					: m_usage(usage), m_size(sizeInBytes)
 				{
 				}
 				virtual ~HardwareBuffer() { }
@@ -65,7 +65,7 @@ namespace Apoc3D
 				BufferUsageFlags m_usage;
 				int m_size;
 
-				bool m_isLocked;
+				bool m_isLocked = false;
 				int m_lockOffset;
 				int m_lockSize;
 
@@ -77,8 +77,7 @@ namespace Apoc3D
 			protected:
 				VertexBuffer(int size, BufferUsageFlags usage)
 					: HardwareBuffer(usage, size)
-				{
-				}
+				{ }
 
 			public:
 				

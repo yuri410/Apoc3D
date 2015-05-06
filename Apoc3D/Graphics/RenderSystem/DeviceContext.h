@@ -45,9 +45,7 @@ namespace Apoc3D
 
 				bool IsWindowed = false;
 
-				/**
-				 *  Can the window created be resized.
-				 */
+				/** Can the window created be resized. */
 				bool IsFixedWindow = false;
 
 				bool IgnoreMonitorChange = false;

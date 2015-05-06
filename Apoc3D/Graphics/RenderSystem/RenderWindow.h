@@ -39,9 +39,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			/**
-			 * Implements a simple FPS counter
-			 */
+			/** Implements a simple FPS counter */
 			class APAPI FPSCounter
 			{
 			public:
@@ -58,9 +56,7 @@ namespace Apoc3D
 				float m_currentWindowTimePos = 0;
 			};
 
-			/**
-			 *  Represents a view of rendered graphics.
-			 */
+			/** Represents a view of rendered graphics. */
 			class APAPI RenderView
 			{
 				RTTI_BASE;
@@ -74,7 +70,7 @@ namespace Apoc3D
 				 */
 				virtual void ChangeRenderParameters(const RenderParameters& params) { m_presentParams = params; }
 
-				void* UserData;
+				void* UserData = nullptr;
 
 				RenderDevice* getRenderDevice() const { return m_renderDevice; }
 				const RenderParameters& getRenderParams() const { return m_presentParams; }
@@ -86,17 +82,17 @@ namespace Apoc3D
 				RenderDevice* m_renderDevice;
 
 				RenderView(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm, RenderTarget* rt)
-					: m_presentParams(pm), m_renderDevice(rd), m_renderTarget(rt), m_deviceContext(dc), UserData(nullptr)
+					: m_presentParams(pm), m_renderDevice(rd), m_renderTarget(rt), m_deviceContext(dc)
 				{
 				}
 				RenderView(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm)
-					: m_presentParams(pm), m_renderDevice(rd), m_renderTarget(0), m_deviceContext(dc), UserData(nullptr)
+					: m_presentParams(pm), m_renderDevice(rd), m_deviceContext(dc)
 				{
 
 				}
 
 			private:
-				RenderTarget* m_renderTarget;
+				RenderTarget* m_renderTarget = nullptr;
 				RenderParameters m_presentParams;
 
 				FPSCounter m_fpsCounter;
@@ -104,18 +100,14 @@ namespace Apoc3D
 
 			};
 
-			/**
-			 *  Represents a window with rendered graphics displayed in its client area.
-			 */
+			/** Represents a window with rendered graphics displayed in its client area. */
 			class APAPI RenderWindow : public RenderView
 			{
 				RTTI_DERIVED(RenderWindow, RenderView);
 			public:
 				virtual ~RenderWindow();
 
-				/**
-				 *  Quit the rendering app
-				 */
+				/** Quit the rendering app */
 				virtual void Exit() { m_isExiting = true; }
 				/**
 				 *  Enter the main loop. 

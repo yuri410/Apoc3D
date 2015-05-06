@@ -67,18 +67,12 @@ namespace Apoc3D
 				void FillColor(ColorValue cv);
 				void FillColor(ColorValue cv, const Apoc3D::Math::Rectangle& rect);
 
-				/**
-				 *  Unlocks the lock part. Works for all types of textures.
-				 */
+				/** Unlocks the lock part. Works for all types of textures. */
 				void Unlock(int32 surface);
-				/**
-				 *  Unlocks the cube map face.
-				 */
+				/** Unlocks the cube map face. */
 				void Unlock(CubeMapFace cubemapFace, int32 surface);
 
-				/**
-				 *  Save the texture as a TextureData into a Stream.
-				 */
+				/** Save the texture as a TextureData into a Stream. */
 				virtual void Save(Stream& strm) = 0;
 
 				
@@ -99,13 +93,9 @@ namespace Apoc3D
 				 *  This will always return 1 for 1D and 2D textures.
 				 */
 				int32 getDepth() const { return m_depth; }
-				/**
-				 *  Gets the estimated total number of bytes of all mip levels.
-				 */
+				/** Gets the estimated total number of bytes of all mip levels. */
 				int32 getContentSize() const { return m_contentSize; }
-				/**
-				 *  Gets the number of mip level.
-				 */
+				/** Gets the number of mip level. */
 				int32 getLevelCount() const { return m_levelCount; }
 				TextureUsage getUsage() const { return m_usage; }
 				PixelFormat getFormat() const { return m_format; }
@@ -128,27 +118,20 @@ namespace Apoc3D
 					int32 levelCount, PixelFormat format, TextureUsage usage);
 				Texture(RenderDevice* device, int32 length, int32 levelCount, TextureUsage usage, PixelFormat format);
 				
-				/**
-				 *  [2DTexture] Implement this at the API render system.
-				 */
+				/** [2DTexture] Implement this at the API render system. */
 				virtual DataRectangle lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rectangle) = 0;
-				/**
-				 *  [3DTexture] Implement this at the API render system.
-				 */
+
+				/** [3DTexture] Implement this at the API render system. */
 				virtual DataBox lock(int32 surface, LockMode mode, const Box& box) = 0;
-				/**
-				 *  [CubeMap] Implement this at the API render system.
-				 */
+
+				/** [CubeMap] Implement this at the API render system. */
 				virtual DataRectangle lock(int32 surface, CubeMapFace cubemapFace, LockMode mode, 
 					const Apoc3D::Math::Rectangle& rectangle) = 0;
 
-				/**
-				 *  [All] Implement this at the API render system.
-				 */
+				/** [All] Implement this at the API render system. */
 				virtual void unlock(int32 surface) = 0;
-				/**
-				 *  [CubeMap] Implement this at the API render system.
-				 */
+
+				/** [CubeMap] Implement this at the API render system. */
 				virtual void unlock(CubeMapFace cubemapFace, int32 surface) = 0;
 
 				

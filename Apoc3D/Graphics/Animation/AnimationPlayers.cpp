@@ -84,8 +84,8 @@ namespace Apoc3D
 				if (m_elapsedPlaybackTime >= m_duration && m_duration != 0 ||
 					m_elapsedPlaybackTime >= m_currentClipValue->getDuration() && m_duration == 0)
 				{
-					if (!m_eventCompeleted.empty())
-						m_eventCompeleted();
+					if (!eventCompleted.empty())
+						eventCompleted();
 
 					m_currentClipValue = 0;
 
@@ -229,8 +229,8 @@ namespace Apoc3D
 				if (m_elapsedPlaybackTime >= m_duration && m_duration != 0 ||
 					m_elapsedPlaybackTime >= m_currentClipValue->Duration && m_duration == 0)
 				{
-					if (!m_eventCompeleted.empty())
-						m_eventCompeleted();
+					if (!eventCompleted.empty())
+						eventCompleted();
 
 					m_currentClipValue = 0;
 

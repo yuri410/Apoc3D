@@ -164,21 +164,19 @@ namespace Apoc3D
 				const Matrix& getTransform() const;
 
 				/**
-				*  When using matrix stack, pop the current matrix and restore to a previous transform
-				*  state. Throws exception if not using matrix stack.
-				*/
+				 *  When using matrix stack, pop the current matrix and restore to a previous transform
+				 *  state. Throws exception if not using matrix stack.
+				 */
 				void PopTransform();
 
 				/**
-				*  Multiply the current transform matrix by a given matrix. If using matrix stack, push
-				*  the result onto the stack as well.
-				*/
+				 *  Multiply the current transform matrix by a given matrix. If using matrix stack, push
+				 *  the result onto the stack as well.
+				 */
 				void MultiplyTransform(const Matrix& matrix);
 				void PreMultiplyTransform(const Matrix& matrix);
 
-				/**
-				*  Set current transform. If using matrix stack, pushes the matrix onto the stack as well.
-				*/
+				/** Set current transform. If using matrix stack, pushes the matrix onto the stack as well. */
 				virtual void SetTransform(const Matrix& matrix);
 
 				RenderDevice* getRenderDevice() const { return m_renderDevice; }

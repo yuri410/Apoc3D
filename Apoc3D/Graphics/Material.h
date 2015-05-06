@@ -108,9 +108,7 @@ namespace Apoc3D
 			 */
 			Effect* GetFirstValidEffect() const;
 
-			/** 
-			 *  Get the effect at the given index in the mtrl's effect table.
-			 */
+			/** Get the effect at the given index in the mtrl's effect table. */
 			Effect* getPassEffect(int index) const { if (index==-1) return GetFirstValidEffect(); return m_effects[index]; }
 			void setPassEffect(int index, Effect* eff) { m_effects[index] = eff; }
 
@@ -143,19 +141,15 @@ namespace Apoc3D
 			void LoadReferencedMaterial(const String& mtrlName);
 
 			void Load(TaggedDataReader* data);
-			/** 
-			 *  Packs the material to a MaterialData. Then save it as
-			 *  TaggedData.
-			 */
+
+			/** Packs the material to a MaterialData. Then save it as TaggedData. */
 			TaggedDataWriter* Save();
 
 			Material(const Material& m);
 			Material(RenderDevice* device);
 			~Material();
 
-			/** 
-			 *  Reloads all textures in this material if their name have been changed.
-			 */
+			/** Reloads all textures in this material if their name have been changed. */
 			void Reload();
 
 		private:

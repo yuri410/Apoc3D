@@ -40,9 +40,7 @@ namespace Apoc3D
 	{
 		namespace Animation
 		{
-			/**
-			 *  Combines all the animation data needed to animate a object.
-			 */
+			/** Combines all the animation data needed to animate a object. */
 			class APAPI AnimationData
 			{
 			public:
@@ -63,6 +61,7 @@ namespace Apoc3D
 				 *  clips for "Walk", "Run", "JumpReallyHigh", etc.
 				 */
 				const ClipTable& getRigidAnimationClips() const { return m_rigidAnimationClips; }
+
 				/** Gets a collection of model animation clips. These are stored by name in a
 				 *  map, so there could for instance be clips for "Walk", "Run",
 				 *  "JumpReallyHigh", etc.

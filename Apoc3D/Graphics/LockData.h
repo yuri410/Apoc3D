@@ -40,15 +40,12 @@ namespace Apoc3D
 		{
 			class APAPI DataRectangle
 			{
-			private:
-				int32 m_pitch;
-				void* m_pointer;
-				int32 m_width;
-				int32 m_height;
-				PixelFormat m_format;
-
 			public:
 				static const DataRectangle Empty;
+
+				DataRectangle(int pitch, void* pointer, int width, int height, PixelFormat fmt)
+					: m_pitch(pitch), m_pointer(pointer), m_width(width), m_height(height), m_format(fmt)
+				{ }
 
 				PixelFormat getFormat() const { return m_format; }
 				int32 getPitch() const { return m_pitch; }
@@ -73,24 +70,17 @@ namespace Apoc3D
 					return m_pitch == m_width;
 				}
 
-				DataRectangle(int pitch, void* pointer, int width, int height, PixelFormat fmt)
-					: m_pitch(pitch), m_pointer(pointer), m_width(width), m_height(height), m_format(fmt)
-				{
-				}
+			private:
+				int32 m_pitch;
+				void* m_pointer;
+				int32 m_width;
+				int32 m_height;
+				PixelFormat m_format;
+
 			};
 
 			class APAPI DataBox
 			{
-			private:
-				int32 m_rowPitch;
-				int32 m_slicePitch;
-				void* m_pointer;
-				int32 m_width;
-				int32 m_height;
-				int32 m_depth;
-
-				PixelFormat m_format;
-
 			public:
 				static const DataBox Empty;
 
@@ -123,10 +113,17 @@ namespace Apoc3D
 				DataBox(int width, int height, int depth, int rowPitch, int slicePitch, 
 					void* pointer, PixelFormat fmt)
 					: m_rowPitch(rowPitch), m_slicePitch(slicePitch), m_pointer(pointer), m_format(fmt),
-					m_width(width), m_height(height), m_depth(depth)
-				{
+					m_width(width), m_height(height), m_depth(depth) { }
 
-				}
+			private:
+				int32 m_rowPitch;
+				int32 m_slicePitch;
+				void* m_pointer;
+				int32 m_width;
+				int32 m_height;
+				int32 m_depth;
+
+				PixelFormat m_format;
 
 
 			};

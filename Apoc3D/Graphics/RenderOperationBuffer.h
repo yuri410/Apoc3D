@@ -47,13 +47,10 @@ namespace Apoc3D
 			RenderOperationBuffer() { }
 			~RenderOperationBuffer() { }
 
-			/**
-			 *  Adds a new RenderOperation to the buffer
-			 */
+			/** Adds a new RenderOperation to the buffer */
 			void Add(const RenderOperation& op) { m_oplist.Add(op); }
-			/**
-			 *  Adds some new RenderOperation to the buffer
-			 */
+
+			/** Adds some new RenderOperation to the buffer */
 			void Add(const RenderOperation* op, int count)
 			{
 				for (int i=0;i<count;i++)

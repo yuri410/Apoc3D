@@ -52,15 +52,10 @@ namespace Apoc3D
 			}
 			bool operator!=(const Ray &other) const { return !(*this == other); }
 
-
 			bool IntersectsTriangle(const Vector3& a, const Vector3& b, const Vector3& c, Vector3& result);
 
-
-			/** 
-			 *  Determines whether a ray intersects the specified object.
-			 */
+			/** Determines whether a ray intersects the specified object. */
 			static bool Intersects(const Ray& ray, const BoundingBox& box, float& distance);
-
 		};
 
 		class RaySegment

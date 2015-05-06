@@ -37,13 +37,11 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/** 
-		 *  The current-frame transformations for all bones/objects in a sequential order. 
-		 */
+		/** The current-frame transformations for all bones/objects in a sequential order.  */
 		struct APAPI PartTransforms
 		{
-			const Matrix* Transfroms;
-			int32 Count;
+			const Matrix* Transfroms = nullptr;
+			int32 Count = 0;
 			
 			bool operator ==(const PartTransforms& another) const
 			{
@@ -58,7 +56,10 @@ namespace Apoc3D
 				}
 				return false;
 			}
+
+			bool operator !=(const PartTransforms& other) const { return !this->operator==(other); }
 		};
+
 		/**
 		 *  Represents an operation to render a mesh part in the scene.
 		 *
@@ -71,22 +72,17 @@ namespace Apoc3D
 		class APAPI RenderOperation
 		{
 		public:
-			GeometryData* GeometryData;
-			Material* Material;
+			GeometryData* GeometryData = nullptr;
+			Material* Material = nullptr;
 			Matrix RootTransform;
 			PartTransforms PartTransform;
-			void* UserData;
+			void* UserData = nullptr;
 
-			/**
-			 *  Let the renderer use RootTransform as the final transformation, not multiplying obj's transform
-			 */
-			bool RootTransformIsFinal;
+			/** Let the renderer use RootTransform as the final transformation, not multiplying obj's transform */
+			bool RootTransformIsFinal = false;
 
 			RenderOperation()
-				: GeometryData(0), Material(0), RootTransformIsFinal(false), UserData(0)
 			{
-				memset(&RootTransform, 0, sizeof(Matrix));
-				memset(&PartTransform, 0, sizeof(PartTransforms));
 			}
 			~RenderOperation() { }
 
@@ -99,15 +95,7 @@ namespace Apoc3D
 					RootTransformIsFinal == other.RootTransformIsFinal &&
 					UserData == other.UserData;
 			}
-			friend static bool operator ==(const RenderOperation& left, const RenderOperation& right)
-			{
-				return left.GeometryData == right.GeometryData && 
-					left.Material == right.Material && 
-					left.RootTransform == right.RootTransform &&
-					left.PartTransform == right.PartTransform &&
-					left.RootTransformIsFinal == right.RootTransformIsFinal &&
-					left.UserData == right.UserData;
-			}
+			bool operator !=(const RenderOperation& other) { return !this->operator==(other); }
 		};
 	};
 };

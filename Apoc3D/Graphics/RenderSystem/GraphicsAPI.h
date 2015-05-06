@@ -76,22 +76,16 @@ namespace Apoc3D
 			};
 
 
-			/**
-			 *  Factory that create device context of particular Graphics API.
-			 */
+			/** Factory that create device context of particular Graphics API. */
 			class APAPI GraphicsAPIFactory
 			{
 			public:
 				const APIDescription& getDescription() const { return m_description; }
 
-				/**
-				 *  Gets the name of the graphics API.
-				 */
+				/** Gets the name of the graphics API. */
 				const String& getName() { return m_description.Name; }
 
-				/**
-				 *  Create the device content of the Graphics API.
-				 */
+				/** Create the device content of the Graphics API. */
 				virtual DeviceContext* CreateDeviceContext() = 0;
 
 

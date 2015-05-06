@@ -55,19 +55,14 @@ namespace Apoc3D
 			Mesh(RenderDevice* device, const MeshData* data);
 			~Mesh();
 
-
-			/**
-			 *  Copies the indices to a given buffer.
-			 */
+			/** Copies the indices to a given buffer. */
 			void GetIndices(uint* dest) const;
 
 			virtual RenderOperationBuffer* GetRenderOperation(int level);
 
 			void Save(MeshData* data);
 
-			/** 
-			 *  Passes triangle primitives one by one, while call the callback for each one.
-			 */
+			/** Passes triangle primitives one by one, while call the callback for each one. */
 			void ProcessAllTriangles(IMeshTriangleCallBack* callback) const;
 
 			int32 CalculateSizeInBytes() const;
@@ -118,9 +113,7 @@ namespace Apoc3D
 			 *  at specific index.
 			 */
 			int32* m_partPrimitiveCount;
-			/** Similar to m_partPrimitiveCount but the vertex count.
-			*/
-			int32* m_partVertexCount;
+			int32* m_partVertexCount;			/** Similar to m_partPrimitiveCount but the vertex count. */
 
 			RenderDevice* m_renderDevice;
 			ObjectFactory* m_factory;
