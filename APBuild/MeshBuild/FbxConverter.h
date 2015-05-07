@@ -584,6 +584,6 @@ namespace APBuild
 		
 		void SetBakeTransform(bool v);
 
-		static void Import(const MeshBuildConfig& config);
+		static void Import(const ProjectResModel& config);
 	};
 }

@@ -1215,7 +1215,7 @@ namespace APBuild
 		}
 	};
 
-	void FbxConverter::Import(const MeshBuildConfig& config)
+	void FbxConverter::Import(const ProjectResModel& config)
 	{
 		ModelData modelData;
 		AnimationData animData;

@@ -31,6 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Exception.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Core/Logging.h"
+#include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Graphics/Material.h"
@@ -77,7 +78,7 @@ namespace Apoc3D
 
 		const char TAG_3_UsePointSprite[] = "UsePointSprite";
 
-
+		
 		void MaterialData::AddCustomParameter(const MaterialCustomParameter& value)
 		{
 			if (value.Usage.empty())
@@ -375,6 +376,204 @@ namespace Apoc3D
 			delete mdlData;
 		}
 
+		Color4 DefaultColor4Parser(const String& str)
+		{
+			List<int32> vals = StringUtils::SplitParseInts(str, L" ,");
+
+			switch (vals.getCount())
+			{
+				case 3: return Color4(vals[0], vals[1], vals[2]);
+				case 4: return Color4(vals[0], vals[1], vals[2], vals[3]);
+				default:
+					ApocLog(LOG_System, L"[MaterialData] Cannot parse " + str, LOGLVL_Error);
+					return Color4();
+			}
+		}
+
+		void MaterialData::Parse(const ConfigurationSection* sect, const String& baseMtrlName, FunctorReference<Color4(const String&)> colorParser)
+		{
+			if (colorParser.isNull())
+			{
+				colorParser = DefaultColor4Parser;
+			}
+
+			// parse attributes
+			String temp;
+
+			sect->TryGetAttributeBool(L"UsePointSprite", UsePointSprite);
+			sect->tryGetAttribute(L"ExternalRefName", ExternalRefName);
+			sect->TryGetAttributeInt(L"Priority", Priority);
+			sect->TryGetAttributeBool(L"IsBlendTransparent", IsBlendTransparent);
+			sect->TryGetAttributeBool(L"AlphaTestEnabled", AlphaTestEnabled);
+			sect->TryGetAttributeUInt(L"AlphaReference", AlphaReference);
+			sect->TryGetAttributeBool(L"DepthWriteEnabled", DepthWriteEnabled);
+			sect->TryGetAttributeBool(L"DepthTestEnabled", DepthTestEnabled);
+
+			if (sect->tryGetAttribute(L"PassFlag", temp))
+				PassFlags = StringUtils::ParseUInt64Bin(temp);
+			if (sect->tryGetAttribute(L"SourceBlend", temp))		SourceBlend = BlendConverter.Parse(temp);
+			if (sect->tryGetAttribute(L"DestinationBlend", temp))	DestinationBlend = BlendConverter.Parse(temp);
+			if (sect->tryGetAttribute(L"BlendFunction", temp))		BlendFunction = BlendFunctionConverter.Parse(temp);
+			if (sect->tryGetAttribute(L"Cull", temp))				Cull = CullModeConverter.Parse(temp);
+
+			if (sect->tryGetAttribute(L"Ambient", temp))			Ambient = colorParser(temp);
+			if (sect->tryGetAttribute(L"Diffuse", temp))			Diffuse = colorParser(temp);
+			if (sect->tryGetAttribute(L"Emissive", temp))			Emissive = colorParser(temp);
+			if (sect->tryGetAttribute(L"Specular", temp))			Specular = colorParser(temp);
+			sect->TryGetAttributeSingle(L"Power", Power);
+
+			for (int32 i = 0; i < MaxTextures; i++)
+			{
+				String attrName = L"Texture" + StringUtils::IntToString(i + 1);
+				
+				if (sect->tryGetAttribute(attrName, temp))
+				{
+					if (TextureName.Contains(i))
+						TextureName[i] = temp;
+					else
+						TextureName.Add(i, temp);
+				}
+			}
+			
+			String customString;
+			if (sect->tryGetAttribute(L"Custom", customString))
+			{
+				ParseMaterialCustomParams(customString, colorParser);
+			}
+
+			String effString;
+			if (sect->tryGetAttribute(L"Effect", effString))
+			{
+				for (const String& v : StringUtils::Split(effString, ';'))
+				{
+					List<String> lr = StringUtils::Split(v, ':');
+
+					if (lr.getCount() == 1)
+					{
+						if (lr[0] == L"RST")
+							EffectName.Clear();
+					}
+					else
+					{
+						int ord = StringUtils::ParseInt32(lr[0].substr(1));
+						String name = lr[1];
+
+						if (!EffectName.Contains(ord - 1))
+							EffectName.Add(ord - 1, name);
+						else
+							EffectName[ord - 1] = name;
+					}
+
+				}
+			}
+
+
+
+		}
+
+
+		void MaterialData::ParseMaterialCustomParams(const String& value, FunctorReference<Color4(const String&)> colorParser)
+		{
+			for (const String& v : StringUtils::Split(value, ';'))
+			{
+				List<String> vals2 = StringUtils::Split(v, '=');
+
+				String& usageName = vals2[0];
+				String& valueStr = vals2[1];
+				MaterialCustomParameter mcp;
+				mcp.Usage = usageName;
+
+				memset(mcp.Value, 0, sizeof(mcp.Value));
+
+				if (StringUtils::StartsWith(valueStr, L"(") && StringUtils::EndsWith(valueStr, L")"))
+				{
+					String vec = valueStr.substr(1, valueStr.length() - 2);
+					List<String> vals3 = StringUtils::Split(v, ',');
+
+					assert(vals3.getCount() == 2 || vals3.getCount() == 4);
+
+					if (vals3.getCount() == 2)
+					{
+						mcp.Type = CEPT_Vector2;
+						float data[2] = { StringUtils::ParseSingle(vals3[0]), StringUtils::ParseSingle(vals3[1]) };
+						memcpy(mcp.Value, data, sizeof(data));
+					}
+					else
+					{
+						mcp.Type = CEPT_Vector4;
+						float data[4] =
+						{
+							StringUtils::ParseSingle(vals3[0]), StringUtils::ParseSingle(vals3[1]),
+							StringUtils::ParseSingle(vals3[2]), StringUtils::ParseSingle(vals3[3])
+						};
+						memcpy(mcp.Value, data, sizeof(data));
+					}
+				}
+				else
+				{
+					StringUtils::Trim(valueStr);
+					//StringUtils::ToLowerCase(valueStr);
+
+					if (valueStr == L"true" || valueStr == L"false")
+					{
+						mcp.Type = CEPT_Boolean;
+						mcp.Value[0] = valueStr == L"true" ? 1 : 0;
+					}
+					else
+					{
+						String::size_type pos = valueStr.find('.');
+						if (pos != String::npos)
+						{
+							mcp.Type = CEPT_Float;
+							float data = StringUtils::ParseSingle(valueStr);
+							memcpy(mcp.Value, &data, sizeof(data));
+						}
+						else
+						{
+							// check if the value str is numerical 
+							bool isNumber = true;
+							for (size_t i = 0; i < valueStr.size(); i++)
+							{
+								if (i == 0 && valueStr[i] == '-')
+								{
+									continue;
+								}
+								if (valueStr[i] <'0' || valueStr[i] > '9' || valueStr[i] != ' ')
+								{
+									isNumber = false;
+								}
+							}
+
+							if (isNumber)
+							{
+								mcp.Type = CEPT_Integer;
+								int data = StringUtils::ParseInt32(valueStr);
+								memcpy(mcp.Value, &data, sizeof(data));
+							}
+							else
+							{
+								mcp.Type = CEPT_Vector4;
+								Color4 v = colorParser(valueStr);
+								memcpy(mcp.Value, &v, sizeof(v));
+							}
+
+						}
+					}
+
+				}
+
+				CustomParametrs.Add(mcp.Usage, mcp);
+			}
+		}
+
+
+		void MaterialData::CheckObsoleteProps()
+		{
+			if (AlphaTestEnabled)
+			{
+				ApocLog(LOG_System, L"Alpha test is obsolete.", LOGLVL_Warning);
+			}
+		}
 
 	}
 }

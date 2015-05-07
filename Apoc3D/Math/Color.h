@@ -36,9 +36,7 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		/**
-		 *  A four component color represented using 4 floats from 0 to 1
-		 */
+		/** A four component color represented using 4 floats from 0 to 1 */
 		class Color4
 		{
 		public:

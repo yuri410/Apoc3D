@@ -42,9 +42,7 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		/**
-		 *  Defines all of one material's data stored in binary form and procedures to load them.
-		 */
+		/** Defines all the data in one material for serialization. */
 		class APAPI MaterialData
 		{
 		public:
@@ -124,10 +122,17 @@ namespace Apoc3D
 			void Load(const ResourceLocation& rl);
 			void Save(Stream& strm);
 			
+			void Parse(const ConfigurationSection* sect, const String& baseName = L"", FunctorReference<Color4(const String&)> colorParser = nullptr);
+
 		private:
 			
+
 			/** Load with format version 3 */
 			void LoadV3(TaggedDataReader* data);
+
+			void ParseMaterialCustomParams(const String& value, FunctorReference<Color4(const String&)> colorParser);
+
+			void CheckObsoleteProps();
 		};
 
 	}

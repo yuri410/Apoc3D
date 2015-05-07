@@ -32,45 +32,38 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace APBuild
 {
-	void BuildByFBX(const MeshBuildConfig& config)
+	void BuildByFBX(ProjectResModel& config)
 	{
 		FbxConverter::Import(config);
 
 	}
-	void BuildByASS(const MeshBuildConfig& config)
+	void BuildByASS(ProjectResModel& config)
 	{
 		ModelData* data = AIImporter::Import(config);
 
-		MeshBuild::ConvertVertexData(data, config);
-		MeshBuild::CollapseMeshs(data, config);
+		MeshBuild::PostProcess(data, config);
 
 		data->Save(FileOutStream(config.DstFile));
 		delete data;
 
 	}
-	void BuildByD3D(const MeshBuildConfig& config)
+	void BuildByD3D(ProjectResModel& config)
 	{
 		ModelData* data = XImporter::Import(config);
 
-		MeshBuild::ConvertVertexData(data, config);
-		MeshBuild::CollapseMeshs(data, config);
+		MeshBuild::PostProcess(data, config);
 
 		FileOutStream fs(config.DstFile);
 		if (config.CompactBuild)
-		{
 			data->SaveLite(fs);
-		}
 		else
-		{
 			data->Save(fs);
-		}
 		delete data;
-
 	}
 
 	void MeshBuild::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
-		MeshBuildConfig config;
+		ProjectResModel config(nullptr, nullptr);
 		config.Parse(sect);
 		
 		if (!File::FileExists(config.SrcFile))
@@ -83,42 +76,62 @@ namespace APBuild
 
 		switch (config.Method)
 		{
-		case MeshBuildMethod::ASS:
-			BuildByASS(config);
-			break;
-		case MeshBuildMethod::FBX:
-			BuildByFBX(config);
-			break;
-		case MeshBuildMethod::D3D:
-			BuildByD3D(config);
-			break;
+			case MeshBuildMethod::ASS: BuildByASS(config); break;
+			case MeshBuildMethod::FBX: BuildByFBX(config); break;
+			case MeshBuildMethod::D3D: BuildByD3D(config); break;
 		}
 
 		BuildSystem::LogEntryProcessed(config.DstFile, hierarchyPath);
 	}
 
-	void MeshBuild::ConvertVertexData(ModelData* data, const MeshBuildConfig& config)
+	void MeshBuild::PostProcess(ModelData* data, ProjectResModel& config)
+	{
+		if (config.CompactBuild)
+			config.CollapseMeshs = true;
+		
+		if (config.PresetFile.size())
+		{
+			if (!File::FileExists(config.PresetFile))
+			{
+				Configuration pc;
+				XMLConfigurationFormat::Instance.Load(FileLocation(config.PresetFile), &pc);
+
+				ModelPreset mp;
+				mp.Parse(pc);
+
+				config.CollapseMeshs |= mp.CollapseMeshs;
+				if (mp.UseVertexFormatConversion)
+				{
+					config.ConversionVertexElements = mp.ConversionVertexElements;
+					config.UseVertexFormatConversion = true;
+				}
+
+				ExecuteMaterialConversion(data, mp, config);
+			}
+		}
+
+		MeshBuild::ConvertVertexData(data, config);
+		MeshBuild::CollapseMeshs(data, config);
+
+		
+	}
+
+	void MeshBuild::ConvertVertexData(ModelData* data, const ProjectResModel& config)
 	{
 		if (config.UseVertexFormatConversion)
 		{
-			for (int i=0;i<data->Entities.getCount();i++)
+			for (MeshData* md : data->Entities)
 			{
 				List<VertexElement> newElements; // to new data buffer
 				List<VertexElement> extractingElements; // from source
 
-				MeshData* md = data->Entities[i];
-				
-				for (int j=0;j<md->VertexElements.getCount();j++)
+				for (const VertexElement& srcElement : md->VertexElements)
 				{
-					const VertexElement& srcElement = md->VertexElements[j];
-
-					for (int k=0;k<config.VertexElements.getCount();k++)
+					for (const VertexElement& targetElement : config.ConversionVertexElements)
 					{
-						const VertexElement& targetElement = config.VertexElements[k];
-
-						if (srcElement.getUsage()==targetElement.getUsage())
+						if (srcElement.getUsage() == targetElement.getUsage())
 						{
-							if (targetElement.getUsage() == VEU_TextureCoordinate && 
+							if (targetElement.getUsage() == VEU_TextureCoordinate &&
 								targetElement.getIndex() == srcElement.getIndex())
 							{
 								extractingElements.Add(srcElement);
@@ -133,10 +146,8 @@ namespace APBuild
 
 				// this will also keep newElements is one to one to extractingElements
 				int newOffset = 0;
-				for (int j=0;j<extractingElements.getCount();j++)
+				for (const VertexElement& ve : extractingElements)
 				{
-					const VertexElement& ve = extractingElements[j];
-					
 					VertexElement newVe(newOffset, ve.getType(), ve.getUsage(), ve.getIndex());
 					newElements.Add(newVe);
 
@@ -146,18 +157,18 @@ namespace APBuild
 
 				char* newVertexData = new char[newVertexSize*md->VertexCount];
 
-				for (uint j=0;j<md->VertexCount;j++)
+				for (uint j = 0; j < md->VertexCount; j++)
 				{
 					int dstOffset = newVertexSize * j;
 					int srcOffset = md->VertexSize*j;
 
-					for (int k=0;k<newElements.getCount();k++)
+					for (int k = 0; k < newElements.getCount(); k++)
 					{
 						const VertexElement& vextr = extractingElements[k];
 						const VertexElement& vstore = newElements[k];
 
-						memcpy(newVertexData+dstOffset + vstore.getOffset(), 
-							md->VertexData+srcOffset + vextr.getOffset(), 
+						memcpy(newVertexData + dstOffset + vstore.getOffset(),
+							md->VertexData + srcOffset + vextr.getOffset(),
 							vextr.getSize());
 					}
 				}
@@ -169,7 +180,7 @@ namespace APBuild
 			}
 		}
 	}
-	void MeshBuild::CollapseMeshs(ModelData* data, const MeshBuildConfig& config)
+	void MeshBuild::CollapseMeshs(ModelData* data, const ProjectResModel& config)
 	{
 		if (config.CollapseMeshs && data->Entities.getCount()>1)
 		{
@@ -266,4 +277,103 @@ namespace APBuild
 		}
 	}
 
+	void MeshBuild::ExecuteMaterialConversion(ModelData* data, const ModelPreset& preset, const ProjectResModel& config)
+	{
+		MaterialData defaultMtrlSetup;
+		defaultMtrlSetup.SetDefaults();
+
+		if (preset.CopyEntireMaterial)
+		{
+			for (MeshData* md : data->Entities)
+			{
+				MaterialData* selectedNewMtrl = preset.SearchMaterial(md->Name);
+
+				if (selectedNewMtrl == nullptr)
+				{
+					BuildSystem::LogWarning(config.SrcFile, L"No preset material found for mesh part '" + md->Name + L"'.");
+					continue;
+				}
+
+				for (MaterialData* mtrl : md->Materials)
+				{
+					new (mtrl)MaterialData(*selectedNewMtrl);
+				}
+			}
+		}
+		else
+		{
+			if (preset.UseTextureNameConversion)
+			{
+				for (MeshData* md : data->Entities)
+				{
+					for (MaterialData* mtrl : md->Materials)
+					{
+						for (auto& e : mtrl->TextureName)
+						{
+							String& tn = e.Value;
+							if (tn.size() && tn.find('.', 0) != String::npos)
+							{
+								tn = PathUtils::GetFileNameNoExt(tn);
+								tn.append(L".tex");
+							}
+						}
+					}
+				}
+			}
+
+			for (MeshData* md : data->Entities)
+			{
+				MaterialData* selectedNewMtrl = preset.SearchMaterial(md->Name);
+
+				if (selectedNewMtrl == nullptr)
+				{
+					BuildSystem::LogWarning(config.SrcFile, L"No preset material found for mesh part '" + md->Name + L"'.");
+					continue;
+				}
+
+				for (MaterialData* mtrl : md->Materials)
+				{
+					if (selectedNewMtrl->ExternalRefName != defaultMtrlSetup.ExternalRefName) mtrl->ExternalRefName = selectedNewMtrl->ExternalRefName;
+
+					if (selectedNewMtrl->EffectName.getCount() > 0)
+					{
+						mtrl->EffectName = selectedNewMtrl->EffectName;
+					}
+
+					if (selectedNewMtrl->CustomParametrs.getCount() > 0)
+					{
+						mtrl->CustomParametrs = selectedNewMtrl->CustomParametrs;
+					}
+
+					if (!preset.UseTextureNameConversion && selectedNewMtrl->TextureName.getCount() > 0)
+					{
+						mtrl->TextureName = selectedNewMtrl->TextureName;
+					}
+
+					if (selectedNewMtrl->PassFlags != defaultMtrlSetup.PassFlags) mtrl->PassFlags = selectedNewMtrl->PassFlags;
+
+					if (selectedNewMtrl->Priority != defaultMtrlSetup.Priority) mtrl->Priority = selectedNewMtrl->Priority;
+
+					if (selectedNewMtrl->UsePointSprite != defaultMtrlSetup.UsePointSprite) mtrl->UsePointSprite = selectedNewMtrl->UsePointSprite;
+
+					if (selectedNewMtrl->SourceBlend != defaultMtrlSetup.SourceBlend) mtrl->SourceBlend = selectedNewMtrl->SourceBlend;
+					if (selectedNewMtrl->DestinationBlend != defaultMtrlSetup.DestinationBlend) mtrl->DestinationBlend = selectedNewMtrl->DestinationBlend;
+					if (selectedNewMtrl->BlendFunction != defaultMtrlSetup.BlendFunction) mtrl->BlendFunction = selectedNewMtrl->BlendFunction;
+					if (selectedNewMtrl->IsBlendTransparent != defaultMtrlSetup.IsBlendTransparent) mtrl->IsBlendTransparent = selectedNewMtrl->IsBlendTransparent;
+
+					if (selectedNewMtrl->Cull != defaultMtrlSetup.Cull) mtrl->Cull = selectedNewMtrl->Cull;
+
+					if (selectedNewMtrl->DepthWriteEnabled != defaultMtrlSetup.DepthWriteEnabled) mtrl->DepthWriteEnabled = selectedNewMtrl->DepthWriteEnabled;
+					if (selectedNewMtrl->DepthTestEnabled != defaultMtrlSetup.DepthTestEnabled) mtrl->DepthTestEnabled = selectedNewMtrl->DepthTestEnabled;
+
+					if (selectedNewMtrl->Ambient != defaultMtrlSetup.Ambient) mtrl->Ambient = selectedNewMtrl->Ambient;
+					if (selectedNewMtrl->Diffuse != defaultMtrlSetup.Diffuse) mtrl->Diffuse = selectedNewMtrl->Diffuse;
+					if (selectedNewMtrl->Emissive != defaultMtrlSetup.Emissive) mtrl->Emissive = selectedNewMtrl->Emissive;
+					if (selectedNewMtrl->Specular != defaultMtrlSetup.Specular) mtrl->Specular = selectedNewMtrl->Specular;
+					if (selectedNewMtrl->Power != defaultMtrlSetup.Power) mtrl->Power = selectedNewMtrl->Power;
+				}
+			}
+		}
+
+	}
 }

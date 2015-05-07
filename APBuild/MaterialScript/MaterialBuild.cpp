@@ -134,6 +134,7 @@ namespace APBuild
 			newNode = new MaterialData();
 			newNode->SetDefaults();
 		}
+
 		// build a name
 		String name = baseMtrlName;
 		if (name.size())
@@ -142,98 +143,10 @@ namespace APBuild
 		}
 		name.append(sect->getName());
 		
-		// parse attributes
-		String temp;
-
-		sect->TryGetAttributeBool(L"UsePointSprite", newNode->UsePointSprite);
-		sect->tryGetAttribute(L"ExternalRefName", newNode->ExternalRefName);
-		sect->TryGetAttributeInt(L"Priority", newNode->Priority);
-		sect->TryGetAttributeBool(L"IsBlendTransparent", newNode->IsBlendTransparent);
-		sect->TryGetAttributeBool(L"AlphaTestEnabled", newNode->AlphaTestEnabled);
-		sect->TryGetAttributeUInt(L"AlphaReference", newNode->AlphaReference);
-		sect->TryGetAttributeBool(L"DepthWriteEnabled", newNode->DepthWriteEnabled);
-		sect->TryGetAttributeBool(L"DepthTestEnabled", newNode->DepthTestEnabled);
-
-		if (sect->tryGetAttribute(L"PassFlag", temp))
-			newNode->PassFlags = StringUtils::ParseUInt64Bin(temp);
-		if (sect->tryGetAttribute(L"SourceBlend", temp))		newNode->SourceBlend = BlendConverter.Parse(temp);
-		if (sect->tryGetAttribute(L"DestinationBlend", temp))	newNode->DestinationBlend = BlendConverter.Parse(temp);
-		if (sect->tryGetAttribute(L"BlendFunction", temp))		newNode->BlendFunction = BlendFunctionConverter.Parse(temp);
-		if (sect->tryGetAttribute(L"Cull", temp))				newNode->Cull = CullModeConverter.Parse(temp);
-
-		if (sect->tryGetAttribute(L"Ambient", temp))			newNode->Ambient = ResolveColor4(temp, pallets);
-		if (sect->tryGetAttribute(L"Diffuse", temp))			newNode->Diffuse = ResolveColor4(temp, pallets);
-		if (sect->tryGetAttribute(L"Emissive", temp))			newNode->Emissive = ResolveColor4(temp, pallets);
-		if (sect->tryGetAttribute(L"Specular", temp))			newNode->Specular = ResolveColor4(temp, pallets);
-		sect->TryGetAttributeSingle(L"Power", newNode->Power);
-
-		
-		if (sect->tryGetAttribute(L"Texture1", temp)) 
+		newNode->Parse(sect, baseMtrlName, [&pallets](const String& colorDesc)->Color4
 		{
-			if (newNode->TextureName.Contains(0))
-				newNode->TextureName[0] = temp;
-			else
-				newNode->TextureName.Add(0, temp);
-		}
-		if (sect->tryGetAttribute(L"Texture2", temp))
-		{
-			if (newNode->TextureName.Contains(1))
-				newNode->TextureName[1] = temp;
-			else
-				newNode->TextureName.Add(1, temp);
-		}
-		if (sect->tryGetAttribute(L"Texture3", temp))
-		{
-			if (newNode->TextureName.Contains(2))
-				newNode->TextureName[2] = temp;
-			else
-				newNode->TextureName.Add(2, temp);
-		}
-		if (sect->tryGetAttribute(L"Texture4", temp))
-		{
-			if (newNode->TextureName.Contains(3))
-				newNode->TextureName[3] = temp;
-			else
-				newNode->TextureName.Add(3, temp);
-		}
-
-		String customString;
-		if (sect->tryGetAttribute(L"Custom", customString))
-		{
-			ParseMaterialCustomParams(*newNode, customString, pallets);
-		}
-
-		String effString;
-		if (sect->tryGetAttribute(L"Effect", effString))
-		{
-			List<String> defs;
-			StringUtils::Split(effString, defs, L";");
-
-			for (int32 i = 0; i < defs.getCount(); i++)
-			{
-				List<String> lr;
-				StringUtils::Split(defs[i], lr, L":");
-
-				if (lr.getCount() == 1)
-				{
-					if (lr[0] == L"RST")
-						newNode->EffectName.Clear();
-				}
-				else
-				{
-					int ord = StringUtils::ParseInt32(lr[0].substr(1));
-					String name = lr[1];
-
-					if (!newNode->EffectName.Contains(ord - 1))
-						newNode->EffectName.Add(ord - 1, name);
-					else
-						newNode->EffectName[ord - 1] = name;
-				}
-
-			}
-		}
-
-
+			return ResolveColor4(colorDesc, pallets);
+		});
 
 		// go into sub sections
 		for (ConfigurationSection* ss : sect->getSubSections())
@@ -243,104 +156,7 @@ namespace APBuild
 
 		table.Add(name, newNode);
 	}
-	void ParseMaterialCustomParams(MaterialData& data, const String& value, const HashMap<String, Pallet*>& pallets)
-	{
-		List<String> vals;
-		StringUtils::Split(value, vals, L";");
-		for (int32 i=0;i<vals.getCount();i++)
-		{
-			List<String> vals2;
-			StringUtils::Split(vals[i], vals2, L"=");
-
-			String& usageName = vals2[0];
-			String& valueStr = vals2[1];
-			MaterialCustomParameter mcp;
-			mcp.Usage = usageName;
-
-			memset(mcp.Value, 0, sizeof(mcp.Value));
-
-			if (StringUtils::StartsWith(valueStr, L"(") && StringUtils::EndsWith(valueStr, L")"))
-			{
-				String vec = valueStr.substr(1, valueStr.length()-2);
-				List<String> vals3;
-				StringUtils::Split(vals[i], vals3, L",");	
-				
-				assert(vals3.getCount() == 2 || vals3.getCount()==4);
-
-				if (vals3.getCount() == 2)
-				{
-					mcp.Type = CEPT_Vector2;
-					float data[2] = { StringUtils::ParseSingle(vals3[0]), StringUtils::ParseSingle(vals3[1]) };
-					memcpy(mcp.Value, data, sizeof(data));
-				}
-				else
-				{
-					mcp.Type = CEPT_Vector4;
-					float data[4] = 
-					{
-						StringUtils::ParseSingle(vals3[0]), StringUtils::ParseSingle(vals3[1]),
-						StringUtils::ParseSingle(vals3[2]), StringUtils::ParseSingle(vals3[3])
-					};
-					memcpy(mcp.Value, data, sizeof(data));
-				}
-			}
-			else
-			{
-				StringUtils::Trim(valueStr);
-				//StringUtils::ToLowerCase(valueStr);
-
-				if (valueStr==L"true" || valueStr == L"false")
-				{
-					mcp.Type = CEPT_Boolean;
-					mcp.Value[0] = valueStr == L"true" ? 1 : 0;
-				}
-				else
-				{
-					String::size_type pos = valueStr.find('.');
-					if (pos != String::npos)
-					{
-						mcp.Type = CEPT_Float;
-						float data = StringUtils::ParseSingle(valueStr);
-						memcpy(mcp.Value, &data, sizeof(data));
-					}
-					else
-					{
-						// check if the value str is numerical 
-						bool isNumber = true;
-						for (size_t i=0;i<valueStr.size();i++)
-						{
-							if (i==0 && valueStr[i] == '-')
-							{
-								continue;
-							}
-							if (valueStr[i] <'0' || valueStr[i] > '9' || valueStr[i] != ' ')
-							{
-								isNumber = false;
-							}
-						}
-
-						if (isNumber)
-						{
-							mcp.Type = CEPT_Integer;
-							int data = StringUtils::ParseInt32(valueStr);
-							memcpy(mcp.Value, &data, sizeof(data));
-						}
-						else
-						{
-							mcp.Type = CEPT_Vector4;
-							Color4 v = ResolveColor4(valueStr, pallets);
-							memcpy(mcp.Value, &v, sizeof(v));
-						}
-						
-					}
-				}
-				
-			}
-
-			data.CustomParametrs.Add(mcp.Usage, mcp);
-		}
-	}
-
+	
 	Color4 ResolveColor4(const String& text, const HashMap<String, Pallet*>& pallets)
 	{
 		bool hasOperation = text.find('*') != String::npos;
@@ -515,25 +331,23 @@ namespace APBuild
 			BuildSystem::LogError(String(L"Cannot parse ") + text, L"");
 			return Color4();
 		}
-		
-	
 	}
 
 
 
 	const Color4* Pallet::FindColor(const String& name) const
 	{
-		for (int i=0;i<Colors.getCount();i++)
+		for (const auto& e : Colors)
 		{
-			if (Colors[i].Name == name)
-				return &Colors[i].Color;
+			if (e.Name == name)
+				return &e.Color;
 		}
 		return nullptr;
 	}
 
 	bool hasLetters(const String& str)
 	{
-		for (size_t i=0;i<str.size();i++)
+		for (size_t i = 0; i < str.size(); i++)
 		{
 			int c = toupper(str[i]);
 			if (c >= 'A' && c <= 'Z')

@@ -325,14 +325,16 @@ namespace Apoc3D
 		String DstFile;
 		String DstAnimationFile;
 
+		String PresetFile;
+
 		MeshBuildMethod Method;
 
+		bool CompactBuild = false;
+		bool CollapseMeshs = false;
+		
 		bool UseVertexFormatConversion = false;
 		List<VertexElement> ConversionVertexElements;
 
-		bool CollapseMeshs = false;
-
-		virtual bool RequiresPostEdit() const override { return true; }
 		virtual ProjectItemType getType() const override { return ProjectItemType::Model; }
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;

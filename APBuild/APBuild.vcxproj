@@ -162,6 +162,7 @@
     <ClInclude Include="Library\hlslparser\HLSLParser.h" />
     <ClInclude Include="Library\hlslparser\HLSLTokenizer.h" />
     <ClInclude Include="Library\hlslparser\HLSLTree.h" />
+    <ClInclude Include="MaterialScript\MaterialStub.h" />
     <ClInclude Include="StringTableBuild\CSFBuild.h" />
     <ClInclude Include="TextureBuild\D3DTextureBuild.h" />
     <ClInclude Include="Utils\D3DHelper.h" />
@@ -173,7 +174,6 @@
     <ClInclude Include="FontBuild\FontBuild.h" />
     <ClInclude Include="ErrorCode.h" />
     <ClInclude Include="MaterialScript\MaterialBuild.h" />
-    <ClInclude Include="MaterialScript\MaterialStub.h" />
     <ClInclude Include="Border\BorderBuilder.h" />
     <ClInclude Include="MeshBuild\FbxConverter.h" />
     <ClInclude Include="MeshBuild\MeshBuild.h" />
@@ -211,12 +211,12 @@
     <ClCompile Include="Library\hlslparser\HLSLTree.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="BuildConfig.cpp" />
+    <ClCompile Include="MaterialScript\MaterialStub.cpp" />
     <ClCompile Include="StringTableBuild\CSFBuild.cpp" />
     <ClCompile Include="TextureBuild\D3DTextureBuild.cpp" />
     <ClCompile Include="Utils\D3DHelper.cpp" />
     <ClCompile Include="FontBuild\FontBuild.cpp" />
     <ClCompile Include="MaterialScript\MaterialBuild.cpp" />
-    <ClCompile Include="MaterialScript\MaterialStub.cpp" />
     <ClCompile Include="MeshBuild\FbxConverter.cpp" />
     <ClCompile Include="MeshBuild\MeshBuild.cpp" />
     <ClCompile Include="MeshBuild\AIImporter.cpp" />

@@ -31,7 +31,7 @@ namespace APBuild
 {
 	namespace XImporter
 	{
-		ModelData* Import(const MeshBuildConfig& config);
+		ModelData* Import(const ProjectResModel& config);
 	}
 }
 

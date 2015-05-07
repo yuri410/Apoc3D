@@ -10,7 +10,6 @@ namespace APBuild
 	struct FontBuildConfig;
 	struct PakBuildConfig;
 	struct AFXBuildConfig;
-	struct MeshBuildConfig;
 	struct TransformAnimBuildConfig;
 }
 

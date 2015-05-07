@@ -70,7 +70,7 @@ namespace APBuild
 		assert(prop->mType == aiPTI_Float);
 		return *reinterpret_cast<const float*>(prop->mData);
 	}
-	ModelData* AIImporter::Import(const MeshBuildConfig& config)
+	ModelData* AIImporter::Import(const ProjectResModel& config)
 	{
 		Importer importer;
 		

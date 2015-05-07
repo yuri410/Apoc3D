@@ -125,6 +125,7 @@
 #include "apoc3d/Platform/Thread.h"
 
 #include "apoc3d/Project/Project.h"
+#include "apoc3d/Project/ModelPreset.h"
 
 #include "apoc3d/Scene/OctreeSceneManager.h"
 #include "apoc3d/Scene/SceneManager.h"
@@ -181,6 +182,7 @@ using namespace Apoc3D::IO;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Platform;
 using namespace Apoc3D::Scene;
+using namespace Apoc3D::ProjectSystem;
 using namespace Apoc3D::UI;
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::VFS;

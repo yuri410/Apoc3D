@@ -32,7 +32,7 @@ namespace APBuild
 {
 	namespace AIImporter
 	{
-		ModelData* Import(const MeshBuildConfig& config);
+		ModelData* Import(const ProjectResModel& config);
 	}
 }
 

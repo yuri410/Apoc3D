@@ -69,11 +69,112 @@ namespace Apoc3D
 		class MeshMaterialSet
 		{
 		public:
-			void AddFrame(M& mtrl, int index)
+			class Iterator
+			{
+				friend class MeshMaterialSet;
+			public:
+				M& operator*() const 
+				{
+					assert(m_set);
+					const List< List<M>* >& set = *m_set;
+					return set[m_index]->operator[](m_frame);
+				}
+
+				M* operator->() const { return &operator*(); }
+
+				bool operator==(const Iterator &other) const
+				{
+					return other.m_set == m_set && other.m_index == m_index && other.m_frame == m_frame;
+				}
+				bool operator!=(const Iterator &other) const { return !(*this == other); }
+
+				Iterator& operator++()
+				{
+					MoveToNext();
+					
+					return *this;
+				}
+				Iterator operator++(int)
+				{
+					Iterator result = *this;
+					++(*this);
+					return result;
+				}
+
+			private:
+				Iterator(const List< List<M>* >* set) : m_set(set)
+				{
+					MoveToNext();
+				}
+				Iterator(const List< List<M>* >* set, int32 idx, int32 frm) : m_set(set), m_index(idx), m_frame(frm) { }
+
+				void MoveToNext()
+				{
+					assert(m_set);
+
+					const List< List<M>* >& set = *m_set;
+
+					if (m_index != -1)
+					{
+						if (m_frame != -1)
+						{
+							m_frame++;
+							if (m_frame >= set[m_index]->getCount())
+							{
+								m_index++;
+								m_frame = 0;
+
+								if (m_index >= set.getCount())
+								{
+									m_index = -1;
+									m_frame = -1;
+								}
+							}
+						}
+						else
+						{
+							// initial. Locate to the first one
+
+							while (set[m_index]->getCount() == 0)
+							{
+								m_index++;
+
+								if (m_index >= set.getCount())
+								{
+									m_index = -1;
+									m_frame = -1;
+									break;
+								}
+							}
+
+							if (m_index != -1)
+								m_frame = 0;
+						}
+					}
+				}
+
+
+				const List< List<M>* >* m_set;
+
+				int32 m_index = 0;
+				int32 m_frame = -1;
+			};
+
+
+			~MeshMaterialSet()
+			{
+				for (int32 i = 0; i < m_set.getCount(); i++)
+				{
+					delete m_set[i];
+				}
+				m_set.Clear();
+			}
+
+			void AddFrame(const M& mtrl, int index)
 			{
 				m_set[index]->Add(mtrl);
 			}
-			void Add(M& mtrl)
+			void Add(const M& mtrl)
 			{
 				m_set.Add(new List<M>());
 				int idx = m_set.getCount();
@@ -100,14 +201,8 @@ namespace Apoc3D
 			int32 getMaterialCount() const { return m_set.getCount(); }
 			int32 getFrameCount(int index) const { return m_set[index]->getCount(); }
 
-			~MeshMaterialSet()
-			{
-				for (int32 i=0;i<m_set.getCount();i++)
-				{
-					delete m_set[i];
-				}
-				m_set.Clear();
-			}
+			Iterator begin() const { return Iterator(&m_set); }
+			Iterator end() const { return Iterator(&m_set, -1, -1); }
 		private:
 			List< List<M>* > m_set;
 

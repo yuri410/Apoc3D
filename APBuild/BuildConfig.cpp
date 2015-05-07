@@ -286,51 +286,6 @@ namespace APBuild
 		Name = sect->getName();
 		DestFile = sect->getAttribute(L"DestinationFile");
 	}
-	void MeshBuildConfig::Parse(const ConfigurationSection* sect)
-	{
-		SrcFile = sect->getAttribute(L"SourceFile");
-		DstFile = sect->getAttribute(L"DestinationFile");
-		sect->tryGetAttribute(L"DestinationAnimFile", DstAnimationFile);
-
-		String strMethod = L"ass";
-		sect->tryGetAttribute(L"Method", strMethod);
-		Method = ProjectUtils::MeshBuildMethodConv.Parse(strMethod);
-
-
-		UseVertexFormatConversion = false;
-
-		ConfigurationSection* subs = sect->getSection(L"VertexFormatConversion");
-		if (subs && subs->getSubSectionCount()>0)
-		{
-			UseVertexFormatConversion = true;
-
-			for (const ConfigurationSection* ent : subs->getSubSections())
-			{
-				VertexElementUsage usage = VertexElementUsageConverter[ent->getName()];
-				int index = 0;
-				if (usage == VEU_TextureCoordinate)
-				{
-					index = StringUtils::ParseInt32( ent->getValue() );
-				}
-				// the vertex elements here only has usage and index. 
-				// They only store info here, not for normal use in graphics
-				VertexElements.Add(VertexElement(0,VEF_Count,usage,index));
-			}
-		}
-
-		CompactBuild = false;
-		sect->TryGetAttributeBool(L"CompactBuild", CompactBuild);
-
-		if (CompactBuild)
-		{
-			CollapseMeshs = true;
-		}
-		else
-		{
-			CollapseMeshs = false;
-			sect->TryGetAttributeBool(L"CollapseMeshs", CollapseMeshs);
-		}
-	}
 
 	void MaterialBuildConfig::Parse(const ConfigurationSection* sect)
 	{

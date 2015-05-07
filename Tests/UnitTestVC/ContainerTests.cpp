@@ -891,4 +891,43 @@ namespace UnitTestVC
 			}
 		}
 	};
+
+	TEST_CLASS(MaterialSetTest)
+	{
+	public:
+		TEST_METHOD(MaterialSetTest_Iterate)
+		{
+			MeshMaterialSet<int> test;
+
+			test.Add(1);
+			test.AddFrame(2, 0);
+			test.AddFrame(3, 0);
+
+			test.Add(4);
+			test.AddFrame(5, 1);
+			test.AddFrame(6, 1);
+			test.AddFrame(7, 1);
+			test.AddFrame(8, 1);
+
+			test.Add(9);
+
+			test.Add(10);
+			test.AddFrame(9, 3);
+
+			List<int32> lst = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9 };
+			List<int32> result;
+
+			for (int32 v : test)
+			{
+				result.Add(v);
+			}
+
+			Assert::AreEqual(lst.getCount(), result.getCount());
+			for (int32 i = 0; i < lst.getCount(); i++)
+			{
+				Assert::AreEqual(lst[i], result[i]);
+			}
+		}
+
+	};
 }

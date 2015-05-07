@@ -760,14 +760,14 @@ namespace Apoc3D
 		DstFile = sect->getAttribute(L"DestinationFile");
 		sect->tryGetAttribute(L"DestinationAnimFile", DstAnimationFile);
 
-		String method = L"ass";
-		sect->tryGetAttribute(L"Method", method);
-		
-		Method = ProjectUtils::MeshBuildMethodConv.Parse(method);
+		sect->tryGetAttribute(L"PresetFile", PresetFile);
 
+		Method = MeshBuildMethod::ASS;
+		sect->TryGetAttributeEnum(L"Method", Method, ProjectUtils::MeshBuildMethodConv);
+		
 		UseVertexFormatConversion = false;
 		ConfigurationSection* subs = sect->getSection(L"VertexFormatConversion");
-		if (subs && subs->getSubSectionCount()>0)
+		if (subs && subs->getSubSectionCount() > 0)
 		{
 			UseVertexFormatConversion = true;
 			for (const ConfigurationSection* ent : subs->getSubSections())
@@ -784,6 +784,10 @@ namespace Apoc3D
 				ConversionVertexElements.Add(VertexElement(0, VEF_Count, usage, index));
 			}
 		}
+
+		CompactBuild = false;
+		sect->TryGetAttributeBool(L"CompactBuild", CompactBuild);
+
 		CollapseMeshs = false;
 		sect->TryGetAttributeBool(L"CollapseMeshs", CollapseMeshs);
 	}
@@ -792,11 +796,12 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SrcFile, savingBuild));
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DstFile, savingBuild));
 		if (DstAnimationFile.size())
-		{
 			sect->AddAttributeString(L"DestinationAnimFile", WrapDestinationPath(DstAnimationFile, savingBuild));
-		}
 
-		sect->AddAttributeString(L"Method", ProjectUtils::MeshBuildMethodConv.ToString(Method));
+		if (PresetFile.size())
+			sect->AddAttributeString(L"PresetFile", WrapSourcePath(PresetFile, savingBuild));
+
+		sect->AddAttributeEnum(L"Method", Method, ProjectUtils::MeshBuildMethodConv);
 
 		if (UseVertexFormatConversion && ConversionVertexElements.getCount() > 0)
 		{
@@ -821,11 +826,11 @@ namespace Apoc3D
 			sect->AddSection(subs);
 		}
 		
+		if (CompactBuild)
+			sect->AddAttributeBool(L"CompactBuild", CompactBuild);
 
 		if (CollapseMeshs)
-		{
 			sect->AddAttributeBool(L"CollapseMeshs", CollapseMeshs);
-		}
 	}
 
 	//bool ProjectResModel::IsOutdated()
@@ -1733,7 +1738,7 @@ namespace Apoc3D
 		{ L"Font", ProjectItemType::Font },
 		{ L"FontGlyphDist", ProjectItemType::FontGlyphDist },
 		{ L"UILayout", ProjectItemType::UILayout },
-		{ L"Copy", ProjectItemType::Copy },
+		{ L"Copy", ProjectItemType::Copy }
 	};
 
 	const TypeDualConverter<TextureFilterType> ProjectUtils::TextureFilterTypeConv =

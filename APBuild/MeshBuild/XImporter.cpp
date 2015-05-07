@@ -36,7 +36,7 @@ namespace APBuild
 		return Color4(v.r, v.g, v.b, v.a);
 	}
 	
-	ModelData* XImporter::Import(const MeshBuildConfig& config)
+	ModelData* XImporter::Import(const ProjectResModel& config)
 	{
 		ID3DXMesh* d3dmesh;
 		ID3DXBuffer* d3dmaterials;

@@ -39,6 +39,7 @@ namespace Apoc3D
 	public:
 		FunctorReference() { }
 
+		FunctorReference(std::nullptr_t) { }
 
 		template <typename F>
 		FunctorReference(const F& lambda)
@@ -81,6 +82,8 @@ namespace Apoc3D
 
 			return m_invoker(m_instance, std::forward<Args>(args)...);
 		}
+
+		bool isNull() const { return m_instance == nullptr && m_rawFunction == nullptr; }
 	private:
 		RawFunctionType m_rawFunction = nullptr;
 		void* m_instance = nullptr;

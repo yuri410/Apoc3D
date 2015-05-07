@@ -147,23 +147,6 @@ namespace APBuild
 		void Parse(const ConfigurationSection* sect);
 	};
 
-	struct MeshBuildConfig
-	{
-		String SrcFile;
-		String DstFile;
-		String DstAnimationFile;
-
-		MeshBuildMethod Method;
-
-		bool UseVertexFormatConversion;
-		List<VertexElement> VertexElements;
-
-		bool CollapseMeshs;
-
-		bool CompactBuild;
-
-		void Parse(const ConfigurationSection* sect);
-	};
 	struct MaterialBuildConfig
 	{
 		String DstFile;

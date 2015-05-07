@@ -243,6 +243,7 @@
     <ClInclude Include="Platform\API.h" />
     <ClInclude Include="Platform\Thread.h" />
     <ClInclude Include="Input\FrameInputData.h" />
+    <ClInclude Include="Project\ModelPreset.h" />
     <ClInclude Include="Project\Project.h" />
     <ClInclude Include="Project\Properties.h" />
     <ClInclude Include="Scene\OctreeSceneManager.h" />
@@ -403,6 +404,7 @@
     <ClCompile Include="Platform\API.cpp" />
     <ClCompile Include="Platform\Thread.cpp" />
     <ClCompile Include="Input\FrameInputData.cpp" />
+    <ClCompile Include="Project\ModelPreset.cpp" />
     <ClCompile Include="Project\Project.cpp" />
     <ClCompile Include="Project\Properties.cpp" />
     <ClCompile Include="Scene\OctreeSceneManager.cpp" />

@@ -168,8 +168,8 @@ namespace APBuild
 				{
 				case ProjectItemType::Custom:
 					break;
-				case ProjectItemType::Folder:
-					break;
+				case ProjectItemType::Folder: break;
+				
 				case ProjectItemType::Material:
 					MaterialStub::Build(hierarchyPath, sect);
 					break;
@@ -182,6 +182,7 @@ namespace APBuild
 				case ProjectItemType::Model:
 					MeshBuild::Build(hierarchyPath, sect);
 					break;
+
 				case ProjectItemType::TransformAnimation:
 					TAnimBuild::Build(hierarchyPath, sect);
 					break;

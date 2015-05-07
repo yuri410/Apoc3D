@@ -53,10 +53,10 @@ namespace APBuild
 		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(dstFile));
 
 
-		MeshBuildConfig config;
+		ProjectResModel config(nullptr, nullptr);
 		config.CollapseMeshs = false;
 		config.UseVertexFormatConversion = true;
-		config.VertexElements.Add(VertexElement(0,VEF_Count,VEU_Position,0));
+		config.ConversionVertexElements.Add(VertexElement(0,VEF_Count,VEU_Position,0));
 		config.Method = MeshBuildMethod::D3D;
 		config.SrcFile = srcFile;
 		config.DstFile = dstFile;

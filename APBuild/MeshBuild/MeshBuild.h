@@ -33,9 +33,10 @@ namespace APBuild
 	{
 		void Build(const String& hierarchyPath, const ConfigurationSection* sect);
 
-		void ConvertVertexData(ModelData* data, const MeshBuildConfig& config);
-		void CollapseMeshs(ModelData* data, const MeshBuildConfig& config);
-
+		void PostProcess(ModelData* data, ProjectResModel& config);
+		void ConvertVertexData(ModelData* data, const ProjectResModel& config);
+		void CollapseMeshs(ModelData* data, const ProjectResModel& config);
+		void ExecuteMaterialConversion(ModelData* data, const ModelPreset& preset, const ProjectResModel& config);
 	};
 
 }

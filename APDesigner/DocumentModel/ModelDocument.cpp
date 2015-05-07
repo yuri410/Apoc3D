@@ -1449,11 +1449,9 @@ namespace APDesigner
 	}
 	void ModelDocument::AutoTex_Pressed(Button* ctrl)
 	{
-		const List<Mesh*> ents = m_modelSData->getEntities();
-
-		for (int i=0;i<ents.getCount();i++)
+		for (Mesh* m : m_modelSData->getEntities())
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[i]->getMaterials();
+			MeshMaterialSet<Material*>* mtrls = m->getMaterials();
 
 			for (int32 j=0;j<mtrls->getMaterialCount();j++)
 			{
@@ -1462,7 +1460,7 @@ namespace APDesigner
 					Material* mtrl = mtrls->getMaterial(j,k);
 
 					bool processed = false;
-					for (int p=0;p<MaxTextures;p++)
+					for (int p = 0; p < MaxTextures; p++)
 					{
 						const String& tn = mtrl->getTextureName(p);
 						if (tn.size() && tn.find('.', 0) != String::npos)
