@@ -85,7 +85,7 @@ namespace APDesigner
 		{
 			ProjectResEffect* data = static_cast<ProjectResEffect*>(item->getData());
 
-			String srcBase = data->GetAbsoluteSourcePathBase();
+			String srcBase = data->GetAbsoluteSourcePathBase(false);
 			String filePath = PathUtils::Combine(srcBase, data->PListFile);
 			String vsPath = PathUtils::Combine(srcBase, data->VS);
 			String psPath = PathUtils::Combine(srcBase, data->PS);

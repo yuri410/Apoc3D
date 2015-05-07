@@ -488,7 +488,7 @@ namespace APDesigner
 			if (itm->getType() == ProjectItemType::MaterialSet)
 			{
 				ProjectResMaterialSet* eff = static_cast<ProjectResMaterialSet*>(itm->getData());
-				String cpath = PathUtils::Combine(eff->GetAbsoluteSourcePathBase(), eff->SourceFile);
+				String cpath = PathUtils::Combine(eff->GetAbsoluteSourcePathBase(false), eff->SourceFile);
 
 				LogManager::getSingleton().Write(LOG_Graphics, L"Updating material table " + itm->getName());
 

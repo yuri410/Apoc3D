@@ -127,8 +127,8 @@ namespace Apoc3D
 
 		virtual ~ProjectItemData() { }
 
-		String GetAbsoluteSourcePathBase() const;
-		String GetAbsoluteDestinationPathBase() const;
+		String GetAbsoluteSourcePathBase(bool ingoreRelativeBase) const;
+		String GetAbsoluteDestinationPathBase(bool ingoreRelativeBase) const;
 
 		String GetAbsoluteSourcePath(const String& path) const;
 		String GetAbsoluteDestinationPath(const String& path) const;

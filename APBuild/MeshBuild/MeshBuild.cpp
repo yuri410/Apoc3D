@@ -91,7 +91,7 @@ namespace APBuild
 		
 		if (config.PresetFile.size())
 		{
-			if (!File::FileExists(config.PresetFile))
+			if (File::FileExists(config.PresetFile))
 			{
 				Configuration pc;
 				XMLConfigurationFormat::Instance.Load(FileLocation(config.PresetFile), &pc);
@@ -107,6 +107,10 @@ namespace APBuild
 				}
 
 				ExecuteMaterialConversion(data, mp, config);
+			}
+			else
+			{
+				BuildSystem::LogError(config.PresetFile, L"Could not find model preset file.");
 			}
 		}
 

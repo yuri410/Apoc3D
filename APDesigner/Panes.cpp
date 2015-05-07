@@ -785,7 +785,7 @@ namespace APDesigner
 						ProjectItemData* itmData = m_selectedItem->getData();
 						
 						String result;
-						if (!PathUtils::GetRelativePath(itmData->GetAbsoluteSourcePathBase(), selectedFilePath, result))
+						if (!PathUtils::GetRelativePath(itmData->GetAbsoluteSourcePathBase(false), selectedFilePath, result))
 						{
 							result = selectedFilePath;
 						}

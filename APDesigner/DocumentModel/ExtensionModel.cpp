@@ -34,7 +34,7 @@ namespace APDesigner
 			const Project* prj = item->getProject();
 			ProjectResModel* mdl = static_cast<ProjectResModel*>(item->getData());
 
-			String destPathBase = mdl->GetAbsoluteDestinationPathBase();
+			String destPathBase = mdl->GetAbsoluteDestinationPathBase(false);
 
 			String path = PathUtils::Combine(destPathBase, mdl->DstFile);
 			String pathAnim = PathUtils::Combine(destPathBase, mdl->DstAnimationFile);

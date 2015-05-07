@@ -985,47 +985,63 @@ namespace Apoc3D
 	/*  ProjectItemData                                                     */
 	/************************************************************************/
 
-	String ProjectItemData::GetAbsoluteSourcePathBase() const
+	String ProjectItemData::GetAbsoluteSourcePathBase(bool ingoreRelativeBase) const
 	{
-		ProjectFolder* pf = m_parentItem->getParentFolder();
-
-		if (pf && pf->SubItemsSourceRelativeBase != L":")
+		if (!ingoreRelativeBase)
 		{
-			String basePath;
-			while (pf && pf->SubItemsSourceRelativeBase != L":")
+			ProjectFolder* pf = m_parentItem->getParentFolder();
+
+			if (pf && pf->SubItemsSourceRelativeBase != L":")
 			{
-				if (pf->SubItemsSourceRelativeBase.size())
-					basePath = PathUtils::Combine(pf->SubItemsSourceRelativeBase, basePath);
-				
-				pf = pf->getParentItem()->getParentFolder();
+				String basePath;
+				while (pf && pf->SubItemsSourceRelativeBase != L":")
+				{
+					if (pf->SubItemsSourceRelativeBase.size())
+						basePath = PathUtils::Combine(pf->SubItemsSourceRelativeBase, basePath);
+
+					pf = pf->getParentItem()->getParentFolder();
+				}
+				return PathUtils::Combine(m_project->getBasePath(), basePath);
 			}
-			return PathUtils::Combine(m_project->getBasePath(), basePath);
 		}
 		
 		return m_project->getBasePath();
 	}
-	String ProjectItemData::GetAbsoluteDestinationPathBase() const
+	String ProjectItemData::GetAbsoluteDestinationPathBase(bool ingoreRelativeBase) const
 	{
-		ProjectFolder* pf = m_parentItem->getParentFolder();
-
-		while (pf && pf->SubItemsDestinationRelativeBase != L":")
+		if (!ingoreRelativeBase)
 		{
-			String basePath;
+			ProjectFolder* pf = m_parentItem->getParentFolder();
+
 			while (pf && pf->SubItemsDestinationRelativeBase != L":")
 			{
-				if (pf->SubItemsDestinationRelativeBase.size())
-					basePath = PathUtils::Combine(pf->SubItemsDestinationRelativeBase, basePath);
+				String basePath;
+				while (pf && pf->SubItemsDestinationRelativeBase != L":")
+				{
+					if (pf->SubItemsDestinationRelativeBase.size())
+						basePath = PathUtils::Combine(pf->SubItemsDestinationRelativeBase, basePath);
 
-				pf = pf->getParentItem()->getParentFolder();
+					pf = pf->getParentItem()->getParentFolder();
+				}
+				return PathUtils::Combine(m_project->getOutputPath(), basePath);
 			}
-			return PathUtils::Combine(m_project->getOutputPath(), basePath);
 		}
 
 		return m_project->getOutputPath();
 	}
 
-	String ProjectItemData::GetAbsoluteSourcePath(const String& path) const { return PathUtils::Combine(GetAbsoluteSourcePathBase(), path); }
-	String ProjectItemData::GetAbsoluteDestinationPath(const String& path) const { return PathUtils::Combine(GetAbsoluteDestinationPathBase(), path); }
+	String ProjectItemData::GetAbsoluteSourcePath(const String& path) const 
+	{
+		if (StringUtils::StartsWith(path, L":"))
+			return PathUtils::Combine(GetAbsoluteSourcePathBase(true), path.substr(1));
+		return PathUtils::Combine(GetAbsoluteSourcePathBase(false), path);
+	}
+	String ProjectItemData::GetAbsoluteDestinationPath(const String& path) const 
+	{
+		if (StringUtils::StartsWith(path, L":"))
+			return PathUtils::Combine(GetAbsoluteDestinationPathBase(true), path.substr(1));
+		return PathUtils::Combine(GetAbsoluteDestinationPathBase(false), path);
+	}
 
 	//bool ProjectItemData::IsSourceFileNewer(const String& srcFile, time_t t) const
 	//{

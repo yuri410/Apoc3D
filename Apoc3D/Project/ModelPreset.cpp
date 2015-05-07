@@ -60,14 +60,18 @@ namespace Apoc3D
 			sect = conf[L"MateiralBase"];
 			if (sect)
 			{
-				ModelPresetMaterial mpm;
-				if (!sect->tryGetAttribute(L"NamePattern", mpm.NamePattern))
-					mpm.NamePattern = L"*";
+				for (ConfigurationSection* ss : sect->getSubSections())
+				{
+					ModelPresetMaterial mpm;
+					if (!ss->tryGetAttribute(L"NamePattern", mpm.NamePattern))
+						mpm.NamePattern = L"*";
 
-				mpm.Data = new MaterialData();
-				mpm.Data->Parse(sect);
+					mpm.Data = new MaterialData();
+					mpm.Data->SetDefaults();
+					mpm.Data->Parse(ss);
 
-				BaseData.Add(std::move(mpm));
+					BaseData.Add(std::move(mpm));
+				}
 			}
 		}
 
