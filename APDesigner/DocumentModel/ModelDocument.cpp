@@ -1387,25 +1387,16 @@ namespace APDesigner
 			}
 		}
 
-
-		for (int i=0;i<ents.getCount();i++)
+		for (Mesh* m : m_modelSData->getEntities())
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[i]->getMaterials();
-
-			for (int32 j=0;j<mtrls->getMaterialCount();j++)
+			for (Material* mtrl : *m->getMaterials())
 			{
-				for (int32 k=0;k<mtrls->getFrameCount(j);k++)
-				{
-					Material* mtrl = mtrls->getMaterial(j,k);
-
-					mtrl->Ambient = currentMtrl->Ambient;
-					mtrl->Diffuse = currentMtrl->Diffuse;
-					mtrl->Specular = currentMtrl->Specular;
-					mtrl->Emissive = currentMtrl->Emissive;
-					mtrl->Power = currentMtrl->Power;
-				}
+				mtrl->Ambient = currentMtrl->Ambient;
+				mtrl->Diffuse = currentMtrl->Diffuse;
+				mtrl->Specular = currentMtrl->Specular;
+				mtrl->Emissive = currentMtrl->Emissive;
+				mtrl->Power = currentMtrl->Power;
 			}
-
 		}
 	}
 	void ModelDocument::ApplyFXToAll_Pressed(Button* ctrl)
@@ -1416,7 +1407,7 @@ namespace APDesigner
 		if (selMeshIdx != -1)
 		{
 			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			
+
 			int partIdx = m_cbMeshPart->getSelectedIndex();
 			int frameIndex = m_cbSubMtrl->getSelectedIndex();
 			if (partIdx != -1 && frameIndex != -1)
@@ -1425,25 +1416,17 @@ namespace APDesigner
 			}
 		}
 
-		for (int i=0;i<ents.getCount();i++)
+		for (Mesh* m : m_modelSData->getEntities())
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[i]->getMaterials();
-
-			for (int32 j=0;j<mtrls->getMaterialCount();j++)
+			for (Material* mtrl : *m->getMaterials())
 			{
-				for (int32 k=0;k<mtrls->getFrameCount(j);k++)
+				for (int p = 0; p < MaxScenePass; p++)
 				{
-					Material* mtrl = mtrls->getMaterial(j,k);
-
-					//uint64 passFlags = 0;
-					for (int p=0;p<MaxScenePass;p++)
-					{
-						mtrl->setPassEffectName(p, currentMtrl->getPassEffectName(p));
-						mtrl->setPassEffect(p, currentMtrl->getPassEffect(p));
-					}
-					
-					mtrl->setPassFlags(currentMtrl->getPassFlags());
+					mtrl->setPassEffectName(p, currentMtrl->getPassEffectName(p));
+					mtrl->setPassEffect(p, currentMtrl->getPassEffect(p));
 				}
+
+				mtrl->setPassFlags(currentMtrl->getPassFlags());
 			}
 		}
 	}
@@ -1451,31 +1434,24 @@ namespace APDesigner
 	{
 		for (Mesh* m : m_modelSData->getEntities())
 		{
-			MeshMaterialSet<Material*>* mtrls = m->getMaterials();
-
-			for (int32 j=0;j<mtrls->getMaterialCount();j++)
+			for (Material* mtrl : *m->getMaterials())
 			{
-				for (int32 k=0;k<mtrls->getFrameCount(j);k++)
+				bool processed = false;
+				for (int p = 0; p < MaxTextures; p++)
 				{
-					Material* mtrl = mtrls->getMaterial(j,k);
-
-					bool processed = false;
-					for (int p = 0; p < MaxTextures; p++)
+					const String& tn = mtrl->getTextureName(p);
+					if (tn.size() && tn.find('.', 0) != String::npos)
 					{
-						const String& tn = mtrl->getTextureName(p);
-						if (tn.size() && tn.find('.', 0) != String::npos)
-						{
-							String newName = PathUtils::GetFileNameNoExt(tn);
-							newName.append(L".tex");
+						String newName = PathUtils::GetFileNameNoExt(tn);
+						newName.append(L".tex");
 
-							mtrl->setTextureName(p, newName);
-							processed = true;
-						}
+						mtrl->setTextureName(p, newName);
+						processed = true;
 					}
-
-					if (processed)
-						mtrl->Reload();
 				}
+
+				if (processed)
+					mtrl->Reload();
 			}
 		}
 	}

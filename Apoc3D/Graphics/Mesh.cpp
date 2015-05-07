@@ -188,21 +188,16 @@ namespace Apoc3D
 		Mesh::~Mesh()
 		{
 			delete m_vertexBuffer;
-			for (int i=0;i<m_indexBuffers.getCount();i++)
-			{
-				delete m_indexBuffers[i];
-			}
+			
+			m_indexBuffers.DeleteAndClear();
 			delete m_vtxDecl;
 
-			for (int32 i=0;i<m_materials.getMaterialCount();i++)
+			for (Material* m : m_materials)
 			{
-				for (int32 j=0;j<m_materials.getFrameCount(i);j++)
-				{
-					delete m_materials.getMaterial(i,j);
-				}
+				delete m;
 			}
 
-			for (int i=0;i<m_bufferedOp.getCount();i++)
+			for (int i = 0; i < m_bufferedOp.getCount(); i++)
 			{
 				delete m_bufferedOp[i].GeometryData;
 			}

@@ -66,13 +66,9 @@ namespace Apoc3D
 		}
 		ModelSharedData::~ModelSharedData()
 		{
-			if (m_resourceLocation)
-				delete m_resourceLocation;
-			for (int i=0; i< m_entities.getCount();i++)
-			{
-				delete m_entities[i];
-			}
-			m_entities.Clear();
+			DELETE_AND_NULL(m_resourceLocation);
+			
+			m_entities.DeleteAndClear();
 		}
 
 		void ModelSharedData::load()
@@ -135,12 +131,9 @@ namespace Apoc3D
 
 		Model::~Model()
 		{
-			for (int i=0;i<m_animInstance.getCount();i++)
-			{
-				delete m_animInstance[i];
-			}
-			if (m_mtrlPlayer)
-				delete m_mtrlPlayer;
+			m_animInstance.DeleteAndClear();
+			DELETE_AND_NULL(m_mtrlPlayer);
+
 			//if (m_skinPlayer)
 			//	delete m_skinPlayer;
 			//if (m_rootPlayer)

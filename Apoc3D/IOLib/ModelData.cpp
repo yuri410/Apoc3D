@@ -322,16 +322,12 @@ namespace Apoc3D
 		}
 		MeshData::~MeshData()
 		{
-			if (VertexData)
-				delete[] VertexData;
+			delete[] VertexData;
+			VertexData = nullptr;
 
-			for (int32 i = 0; i < Materials.getMaterialCount(); i++)
+			for (MaterialData* md : Materials)
 			{
-				for (int32 j = 0; j < Materials.getFrameCount(i); j++)
-				{
-					MaterialData* md = Materials.getMaterial(i, j);
-					delete md;
-				}
+				delete md;
 			}
 		}
 
@@ -352,10 +348,7 @@ namespace Apoc3D
 
 		ModelData::~ModelData()
 		{
-			if (Entities.getCount())
-			{
-				Entities.DeleteAndClear();
-			}
+			Entities.DeleteAndClear();
 		}
 
 		void ModelData::ReadData(TaggedDataReader* data, int32 id)
