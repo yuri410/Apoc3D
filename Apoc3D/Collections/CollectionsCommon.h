@@ -36,7 +36,7 @@ namespace Apoc3D
 {
 	namespace Collections
 	{
-		template<typename T>
+		template<typename T, typename = void>
 		struct EqualityComparer
 		{
 			/** 
@@ -65,7 +65,13 @@ namespace Apoc3D
 			}
 		};
 
+		template <typename T>
+		struct EqualityComparer <T, typename std::enable_if<std::is_enum<T>::value>::type>
+		{
+			static bool Equals(T const& x, T const& y) { return x == y; }
 
+			static int32 GetHashCode(T const& obj) { return static_cast<int32>(obj); }
+		};
 
 		template <>
 		struct EqualityComparer<uint64>
