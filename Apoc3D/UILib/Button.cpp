@@ -106,7 +106,7 @@ namespace Apoc3D
 			}
 			CopySkinGraphic(skin);
 
-			UpdateSize();
+			RunAutosize();
 
 		}
 		void Button::CopySkinGraphic(const StyleSkin* skin)
@@ -162,7 +162,7 @@ namespace Apoc3D
 			if (settings.DisabledOverlayIcon.isSet())
 				DisabledOverlayIcon = settings.DisabledOverlayIcon;
 
-			UpdateSize();
+			RunAutosize();
 		}
 
 		void Button::Resetup(const ButtonVisualSettings& settings)
@@ -272,7 +272,7 @@ namespace Apoc3D
 				&Button::OnMouseHover, &Button::OnMouseOut, &Button::OnPress, &Button::OnRelease);
 		}
 
-		void Button::UpdateSize()
+		void Button::RunAutosize()
 		{
 			if (m_fontRef)
 			{
@@ -347,7 +347,7 @@ namespace Apoc3D
 			if (fontRef != m_fontRef)
 			{
 				m_fontRef = fontRef;
-				UpdateSize();
+				RunAutosize();
 			}
 		}
 		void Button::SetText(const String& text)
@@ -355,7 +355,7 @@ namespace Apoc3D
 			if (m_text != text)
 			{
 				m_text = text;
-				UpdateSize();
+				RunAutosize();
 			}
 		}
 

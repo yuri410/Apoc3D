@@ -57,7 +57,8 @@ namespace Apoc3D
 			virtual void Draw(Sprite* sprite) override;
 
 			void Resetup(const ButtonVisualSettings& settings);
-		
+			void RunAutosize();
+
 			void SetFont(Font* fontRef);
 			void SetText(const String& text);
 
@@ -115,7 +116,6 @@ namespace Apoc3D
 			void DrawButtonCore(Sprite* spriteBatch, const Apoc3D::Math::Rectangle& dstRect);
 
 			void UpdateEvents();
-			void UpdateSize();
 			void CopySkinGraphic(const StyleSkin* skin);
 			
 			void Initialize(const StyleSkin* skin);
