@@ -178,7 +178,7 @@ namespace Apoc3D
 		bool ComboBox::isMouseHover() const 
 		{
 			return m_button->isMouseHover() || m_textbox->isMouseHover() || 
-				(m_listBox->Visible && (m_listBox->getHoverIndex() != -1 || m_listBox->isMouseHoverScrollBar()));
+				(m_listBox->Visible && (m_listBox->isMouseHoveringSubItems()));
 		}
 
 		Apoc3D::Math::Rectangle ComboBox::getMouseHoverArea() const
@@ -188,9 +188,7 @@ namespace Apoc3D
 			if (m_textbox->isMouseHover())
 				return m_textbox->getAbsoluteArea();
 
-			if (m_listBox->getHoverIndex() != -1)
-				return m_listBox->GetItemArea(m_listBox->getHoverIndex());
-			return m_listBox->getScrollbarMouseHoverArea();
+			return m_listBox->getMouseHoverSubArea();
 		}
 
 		bool ComboBox::getLocked() const { return m_textbox->ReadOnly; }

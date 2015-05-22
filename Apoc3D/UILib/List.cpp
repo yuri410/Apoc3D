@@ -309,6 +309,19 @@ namespace Apoc3D
 		void ListBox::OnPress() { eventPress.Invoke(this); } 
 		void ListBox::OnRelease() { eventRelease.Invoke(this); }
 
+		bool ListBox::isMouseHoveringSubItems() const
+		{
+			return m_hoverIndex != -1 || isMouseHoverScrollBar();
+		}
+
+		Apoc3D::Math::Rectangle ListBox::getMouseHoverSubArea() const
+		{
+			if (m_hoverIndex != -1)
+				return GetItemArea(m_hoverIndex);
+			return getScrollbarMouseHoverArea();
+		}
+
+
 		/************************************************************************/
 		/* Tree view                                                            */
 		/************************************************************************/

@@ -55,7 +55,9 @@ namespace Apoc3D
 			int32 getHoverIndex() const { return m_hoverIndex; }
 
 			bool isMouseHover() const { return m_mouseHover; }
-			
+			bool isMouseHoveringSubItems() const;
+			Apoc3D::Math::Rectangle getMouseHoverSubArea() const;
+
 			Apoc3D::Math::Rectangle GetItemArea(int32 i) const;
 			Apoc3D::Math::Rectangle GetItemArea(const Apoc3D::Math::Rectangle& cntArea, int32 i) const;
 
