@@ -62,6 +62,7 @@ namespace Apoc3D
 			bool Enumeration::m_hasEnumerated = false;
 
 
+
 			void Enumeration::Enumerate(IDirect3D9* d3d9)
 			{
 				if (m_hasEnumerated)
@@ -85,7 +86,7 @@ namespace Apoc3D
 					}
 				}
 
-				// add subscripts to adapter description with the same name
+				// add a subscripts text (eg. GTX XXX [num] ) to GraphicsCardName to differentiate the same names
 				bool unique = true;
 				if (m_adapters.getCount() > 0)
 				{
@@ -93,7 +94,7 @@ namespace Apoc3D
 					{
 						for (int32 j = i + 1; j < m_adapters.getCount(); j++)
 						{
-							if (m_adapters[i]->Description == m_adapters[j]->Description)
+							if (m_adapters[i]->GraphicsCardName == m_adapters[j]->GraphicsCardName)
 							{
 								unique = false;
 								break;
@@ -111,18 +112,18 @@ namespace Apoc3D
 						{
 							int32 count = 0;
 
-							if (!descCounter.TryGetValue(ai->Description, count))
+							if (!descCounter.TryGetValue(ai->GraphicsCardName, count))
 							{
-								descCounter.Add(ai->Description, count);
+								descCounter.Add(ai->GraphicsCardName, count);
 							}
 							else
 							{
 								count++;
-								descCounter[ai->Description] = count;
+								descCounter[ai->GraphicsCardName] = count;
 							}
 
 							String temp = L" [" + StringUtils::IntToString(count + 1) + L"]";
-							ai->Description.append(temp);
+							ai->GraphicsCardName.append(temp);
 						}
 					}
 				}
@@ -144,7 +145,11 @@ namespace Apoc3D
 				HRESULT hr = d3d9->GetAdapterIdentifier(index, 0, &rawAdapter);
 				assert(SUCCEEDED(hr));
 
-				Description = StringUtils::toPlatformWideString(rawAdapter.Description);
+				GraphicsCardName = StringUtils::toPlatformWideString(rawAdapter.Description);
+				DisplayName = StringUtils::toPlatformWideString(rawAdapter.DeviceName);
+
+				GetMonitorNames();
+				//EnumDisplayDevices(szDeviceName, 0, &DispDev, 0);
 
 
 				D3DFormatHashSet adapterFormats;
@@ -208,6 +213,20 @@ namespace Apoc3D
 			AdapterInfo::~AdapterInfo()
 			{
 				Devices.DeleteAndClear();
+			}
+
+			void AdapterInfo::GetMonitorNames()
+			{
+				MonitorNames.Clear();
+				DISPLAY_DEVICE dd;
+				dd.cb = sizeof(dd);
+
+				int32 monitorIndex = 0;
+				while (EnumDisplayDevices(DisplayName.c_str(), monitorIndex, &dd, 0))
+				{
+					MonitorNames.Add(dd.DeviceString);
+					++monitorIndex;
+				}
 			}
 
 			//////////////////////////////////////////////////////////////////////////

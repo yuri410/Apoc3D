@@ -66,10 +66,22 @@ namespace APBuild
 			
 			if (ep.Usage == EPUSAGE_Unknown)
 			{
-				if (!ep.SupportsParamUsage(usageText))
-					break;
+				if (StringUtils::StartsWith(usageText, prefix_BlobIndex))
+				{
+					ep.Usage = EPUSAGE_InstanceBlob;
 
-				ep.Usage = EffectParameter::ParseParamUsage(usageText);
+					String bidx = usageText.substr(prefix_BlobIndex.size());
+					ep.InstanceBlobIndex = StringUtils::ParseInt32(bidx);
+					continue;
+				}
+				else
+				{
+					if (!ep.SupportsParamUsage(usageText))
+						break;
+
+					ep.Usage = EffectParameter::ParseParamUsage(usageText);
+				}
+				
 				validSemanticCount++;
 
 				if (ep.Usage == EPUSAGE_CustomMaterialParam)

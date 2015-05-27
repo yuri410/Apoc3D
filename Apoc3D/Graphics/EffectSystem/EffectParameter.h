@@ -266,6 +266,8 @@ namespace Apoc3D
 				InstanceInfoBlobValue(bool val) : Type(CEPT_Boolean) { AsBoolean() = val; }
 				InstanceInfoBlobValue(int val) : Type(CEPT_Integer) { AsInteger() = val; }
 
+				//InstanceInfoBlobValue(CustomEffectParameterType type) : Type(type) { }
+
 
 				float& AsSingle() { return reinterpret_cast<float&>(Value); }
 				Vector2& AsVector2() { return reinterpret_cast<Vector2&>(Value); }

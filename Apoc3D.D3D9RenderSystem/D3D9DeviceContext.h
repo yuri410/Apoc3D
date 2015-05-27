@@ -44,7 +44,7 @@ namespace Apoc3D
 
 				virtual List<RenderDisplayMode> GetSupportedDisplayModes();
 				virtual String GetHardwareName();
-
+				
 				virtual RenderDevice* getRenderDevice();
 				IDirect3D9* getD3D() const { return m_d3d9; }
 

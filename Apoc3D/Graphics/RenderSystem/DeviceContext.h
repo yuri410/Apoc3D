@@ -82,7 +82,6 @@ namespace Apoc3D
 
 			struct RenderDisplayMode
 			{
-				String AdapterName;
 				int AdapterIndex;
 
 				int Width;
@@ -91,6 +90,10 @@ namespace Apoc3D
 				uint32 RefreshRate;
 				uint32 FSAASampleCount;
 				bool FullScreen;
+
+				String GraphicsCardName;
+				String DisplayName;
+				List<String> MonitorNames;
 			};
 
 

@@ -70,7 +70,9 @@ namespace Apoc3D
 			{
 			public:
 				int32 AdapterIndex;
-				String Description;
+				String GraphicsCardName;
+				String DisplayName;
+				List<String> MonitorNames; // a list of monitors as output
 
 				List<D3DDISPLAYMODE> DisplayModes;
 				List<DeviceInfo*> Devices;
@@ -79,6 +81,9 @@ namespace Apoc3D
 				~AdapterInfo();
 
 				AdapterInfo(const AdapterInfo& another) = delete;
+
+			private:
+				void GetMonitorNames();
 			};
 
 			class DeviceInfo

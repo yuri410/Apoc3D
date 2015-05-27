@@ -141,8 +141,11 @@ namespace Apoc3D
 				for (const AdapterInfo* ai : adpInfos)
 				{
 					RenderDisplayMode mode;
-					mode.AdapterName = ai->Description;
 					mode.AdapterIndex = ai->AdapterIndex;
+
+					mode.GraphicsCardName = ai->GraphicsCardName;
+					mode.DisplayName = ai->DisplayName;
+					mode.MonitorNames = ai->MonitorNames;
 
 					for (D3DDISPLAYMODE d3dmode : ai->DisplayModes)
 					{

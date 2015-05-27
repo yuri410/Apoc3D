@@ -270,7 +270,7 @@ namespace Apoc3D
 						if (adp->AdapterIndex == (int32)m_currentSetting->AdapterOrdinal)
 						{
 							descTxt.append(L": ");
-							descTxt += adp->Description;
+							descTxt += adp->GraphicsCardName;
 							break;
 						}
 					}
