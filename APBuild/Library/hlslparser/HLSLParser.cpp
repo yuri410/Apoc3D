@@ -387,7 +387,7 @@ struct BaseTypeDescription
     int             binaryOpRank;        
 };
 
-
+// all params floating point with the same dimension, with 1 argument and return value
 #define INTRINSIC_FLOAT1_FUNCTION(name) \
         Intrinsic( name, HLSLBaseType_Float,   HLSLBaseType_Float  ),   \
         Intrinsic( name, HLSLBaseType_Float2,  HLSLBaseType_Float2 ),   \
@@ -398,6 +398,7 @@ struct BaseTypeDescription
         Intrinsic( name, HLSLBaseType_Half3,   HLSLBaseType_Half3  ),   \
         Intrinsic( name, HLSLBaseType_Half4,   HLSLBaseType_Half4  )
 
+// all params floating point with the same dimension, with 2 arguments and return value
 #define INTRINSIC_FLOAT2_FUNCTION(name) \
         Intrinsic( name, HLSLBaseType_Float,   HLSLBaseType_Float,   HLSLBaseType_Float  ),   \
         Intrinsic( name, HLSLBaseType_Float2,  HLSLBaseType_Float2,  HLSLBaseType_Float2 ),   \
@@ -408,6 +409,7 @@ struct BaseTypeDescription
         Intrinsic( name, HLSLBaseType_Half3,   HLSLBaseType_Half3,   HLSLBaseType_Half3  ),   \
         Intrinsic( name, HLSLBaseType_Half4,   HLSLBaseType_Half4,   HLSLBaseType_Half4  )
 
+// all params floating point with the same dimension, with 3 arguments and return value
 #define INTRINSIC_FLOAT3_FUNCTION(name) \
         Intrinsic( name, HLSLBaseType_Float,   HLSLBaseType_Float,   HLSLBaseType_Float,  HLSLBaseType_Float ),   \
         Intrinsic( name, HLSLBaseType_Float2,  HLSLBaseType_Float2,  HLSLBaseType_Float,  HLSLBaseType_Float2 ),  \
@@ -467,6 +469,7 @@ const Intrinsic _intrinsic[] =
 
         INTRINSIC_FLOAT2_FUNCTION( "fmod" ),
 
+
         Intrinsic( "clip", HLSLBaseType_Void,  HLSLBaseType_Float    ),
         Intrinsic( "clip", HLSLBaseType_Void,  HLSLBaseType_Float2   ),
         Intrinsic( "clip", HLSLBaseType_Void,  HLSLBaseType_Float3   ),
@@ -495,6 +498,12 @@ const Intrinsic _intrinsic[] =
         Intrinsic( "length", HLSLBaseType_Half,   HLSLBaseType_Half2  ),
         Intrinsic( "length", HLSLBaseType_Half,   HLSLBaseType_Half3  ),
         Intrinsic( "length", HLSLBaseType_Half,   HLSLBaseType_Half4  ),
+
+		Intrinsic("distance", HLSLBaseType_Float, HLSLBaseType_Float, HLSLBaseType_Float),
+		Intrinsic("distance", HLSLBaseType_Float, HLSLBaseType_Float2, HLSLBaseType_Float2),
+		Intrinsic("distance", HLSLBaseType_Float, HLSLBaseType_Float3, HLSLBaseType_Float3),
+		Intrinsic("distance", HLSLBaseType_Float, HLSLBaseType_Float4, HLSLBaseType_Float4),
+
 
         INTRINSIC_FLOAT2_FUNCTION( "max" ),
         INTRINSIC_FLOAT2_FUNCTION( "min" ),
