@@ -2,6 +2,8 @@
 
 namespace SampleAtmosphere
 {
+	void ConvertDataTexture(const String& file, bool useHalfOutput);
+
 	struct QuadVertex
 	{
 		float Position[3];
@@ -98,13 +100,13 @@ namespace SampleAtmosphere
 		m_quadTempMtrl->SourceBlend = Blend::SourceAlpha;
 		m_quadTempMtrl->DestinationBlend = Blend::InverseSourceAlpha;
 
-		//ConvertDataTexture(L"inscatterTexture.dat", true);
-		//ConvertDataTexture(L"irradianceTexture.dat", false);
-		//ConvertDataTexture(L"transmittanceTexture.dat", false);
+		ConvertDataTexture(L"inscatterTexture.dat", true);
+		ConvertDataTexture(L"irradianceTexture.dat", true);
+		ConvertDataTexture(L"transmittanceTexture.dat", true);
 
 	}
 
-	void ConvertDataTexture(const String& file, bool useHalf)
+	void ConvertDataTexture(const String& file, bool useHalfOutput)
 	{
 		FileStream fs(file);
 		BinaryReader br(&fs, false);
@@ -118,7 +120,7 @@ namespace SampleAtmosphere
 		String dstFile = PathUtils::Combine(PathUtils::GetDirectory(file), PathUtils::GetFileNameNoExt(file) + L".tex");
 
 		TextureData data;
-		data.Format = useHalf ? FMT_A16B16G16R16F : FMT_A32B32G32R32F;
+		data.Format = useHalfOutput ? FMT_A16B16G16R16F : FMT_A32B32G32R32F;
 		data.ContentSize = PixelFormatUtils::GetMemorySize(width, height, depth, data.Format);
 		data.Flags = 0;// TextureData::TDF_LZ4Compressed;
 		data.LevelCount = 1;
@@ -137,7 +139,7 @@ namespace SampleAtmosphere
 		br.ReadBytes((char*)buf, pixCount*chCount*sizeof(float));
 
 
-		if (useHalf)
+		if (useHalfOutput)
 		{
 			uint16* tempFloatBuffer = new uint16[pixCount*chCount];
 
