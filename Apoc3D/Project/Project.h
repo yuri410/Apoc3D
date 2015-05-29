@@ -380,6 +380,8 @@ namespace Apoc3D
 		static SettingList Split(const String& text);
 		static String Pack(const SettingList& lst);
 
+	private:
+		bool SpecifySource(const String& srcName, const String& source);
 	};
 	class APAPI ProjectResCustomEffect : public ProjectAssetItemData
 	{

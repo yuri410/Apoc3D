@@ -149,7 +149,7 @@ namespace APBuild
 
 	void AFXBuild::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
-		AFXBuildConfig config;
+		ProjectResEffect config(nullptr, nullptr);
 		config.Parse(sect);
 		
 		if (!File::FileExists(config.VS))
@@ -187,8 +187,16 @@ namespace APBuild
 			}
 		}
 
+		List<std::pair<std::string, std::string>> defines(config.Defines.getCount());
+		for (const auto& e : config.Defines)
+		{
+			defines.Add(
+				{ StringUtils::toPlatformNarrowString(e.first), StringUtils::toPlatformNarrowString(e.second) } 
+			);
+		}
+
 		EffectData data;
-		data.Name = config.Name;
+		data.Name = sect->getName();
 		data.Profiles.ReserveDiscard(config.Targets.getCount());
 		
 		for (int i = 0; i < config.Targets.getCount(); i++)
@@ -205,20 +213,20 @@ namespace APBuild
 			{
 				prof.SetImplType(impType);
 
-				if (!CompileShader(config.VS, config.EntryPointVS, prof, ShaderType::Vertex, config.IsDebug, config.NoOptimization, !hasPlist, &config.Defines))
+				if (!CompileShader(config.VS, config.EntryPointVS, prof, ShaderType::Vertex, config.IsDebug, config.NoOptimization, !hasPlist, &defines))
 					return;
-				if (!CompileShader(config.PS, config.EntryPointPS, prof, ShaderType::Pixel, config.IsDebug, config.NoOptimization, !hasPlist, &config.Defines))
+				if (!CompileShader(config.PS, config.EntryPointPS, prof, ShaderType::Pixel, config.IsDebug, config.NoOptimization, !hasPlist, &defines))
 					return;
 
 				if (config.GS.size())
 				{
-					if (!CompileShader(config.GS, config.EntryPointGS, prof, ShaderType::Geometry, config.IsDebug, config.NoOptimization, !hasPlist, &config.Defines))
+					if (!CompileShader(config.GS, config.EntryPointGS, prof, ShaderType::Geometry, config.IsDebug, config.NoOptimization, !hasPlist, &defines))
 						return;
 				}
 			}
 			else
 			{
-				BuildSystem::LogError(L"Target profile is not supported " + config.Targets[i], config.Name);
+				BuildSystem::LogError(L"Target profile is not supported " + config.Targets[i], data.Name);
 				return;
 			}
 		}

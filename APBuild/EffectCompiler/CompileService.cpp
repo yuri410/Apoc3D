@@ -239,6 +239,23 @@ namespace APBuild
 	bool CompileShader(const String& src, const String& entryPoint, EffectProfileData& profData, ShaderType type, 
 		bool debugEnabled, bool noOptimization, bool parseParamsFromSource, const List<std::pair<std::string, std::string>>* defines)
 	{
+		List<std::pair<std::string, std::string>> definesCopy;
+		if (defines)
+			definesCopy = *defines;
+		
+		//switch (type)
+		//{
+		//	case ShaderType::Vertex:
+		//		definesCopy.Add({ "VS", "1" });
+		//		break;
+		//	case ShaderType::Pixel:
+		//		definesCopy.Add({ "PS", "1" });
+		//		break;
+		//	case ShaderType::Geometry:
+		//		definesCopy.Add({ "GS", "1" });
+		//		break;
+		//}
+
 		if (profData.MatchImplType(EffectProfileData::Imp_HLSL))
 		{
 			const char* pfName = getHLSLCompilerProfileName(profData, type);
@@ -263,15 +280,15 @@ namespace APBuild
 				}
 
 				D3D10_SHADER_MACRO* macros = nullptr;
-				if (defines)
+				if (definesCopy.getCount() > 0)
 				{
-					macros = new D3D10_SHADER_MACRO[defines->getCount() + 1];
-					memset(macros, 0, (defines->getCount() + 1) * sizeof(D3D10_SHADER_MACRO));
+					macros = new D3D10_SHADER_MACRO[definesCopy.getCount() + 1];
+					memset(macros, 0, (definesCopy.getCount() + 1) * sizeof(D3D10_SHADER_MACRO));
 
-					for (int32 i = 0; i < defines->getCount(); i++)
+					for (int32 i = 0; i < definesCopy.getCount(); i++)
 					{
-						macros[i].Name = defines->operator[](i).first.c_str();
-						macros[i].Definition = defines->operator[](i).second.c_str();
+						macros[i].Name = definesCopy[i].first.c_str();
+						macros[i].Definition = definesCopy[i].second.c_str();
 					}
 				}
 
@@ -308,13 +325,13 @@ namespace APBuild
 				char* newShaderCode;
 				int newShaderCodeSize;
 
-				if (!CompileAsHLSLDX9(src, entryPoint, pfName, debugEnabled, noOptimization, defines, constantHelper, newShaderCode, newShaderCodeSize))
+				if (!CompileAsHLSLDX9(src, entryPoint, pfName, debugEnabled, noOptimization, definesCopy, constantHelper, newShaderCode, newShaderCodeSize))
 					return false;
 
 				if (parseParamsFromSource)
 				{
 					std::string ncode;
-					PreprocessShaderCode(src, defines, ncode);
+					PreprocessShaderCode(src, definesCopy, ncode);
 
 					std::string codeFileName = StringUtils::toPlatformNarrowString(PathUtils::GetFileName(src));
 
@@ -352,7 +369,7 @@ namespace APBuild
 				}
 
 				std::string ncode;
-				PreprocessShaderCode(src, defines, ncode);
+				PreprocessShaderCode(src, definesCopy, ncode);
 
 				std::string codeFileName = StringUtils::toPlatformNarrowString(PathUtils::GetFileName(src));
 
@@ -375,7 +392,7 @@ namespace APBuild
 
 					const char* pfName = getHLSLCompilerProfileNameFromGLSLVersion(profData, type);
 
-					if (!CompileAsHLSLDX9(src, entryPoint, pfName, debugEnabled, noOptimization, defines, constantHelper, newShaderCode, newShaderCodeSize))
+					if (!CompileAsHLSLDX9(src, entryPoint, pfName, debugEnabled, noOptimization, definesCopy, constantHelper, newShaderCode, newShaderCodeSize))
 						return false;
 
 					List<String> usedParams;

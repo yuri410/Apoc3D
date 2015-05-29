@@ -518,16 +518,15 @@ namespace Apoc3D
 		{
 			sourceCount++;
 
-			if (e.first == L"VS")
-				VS = e.second;
-			else if (e.first == L"PS")
-				PS = e.second;
-			else if (e.first == L"GS")
-				GS = e.second;
-			else if (e.first == L"ALL")
+			if (!SpecifySource(e.first, e.second))
 			{
-				VS = PS = GS = e.second;
-				break;
+				if (e.first.find(',') != String::npos)
+				{
+					for (const auto& f : StringUtils::Split(e.first, L", "))
+					{
+						SpecifySource(f, e.second);
+					}
+				}
 			}
 		}
 
@@ -668,6 +667,32 @@ namespace Apoc3D
 
 	List<String> ProjectResEffect::GetAllInputFiles() { return MakeInputFileList({ VS, PS, GS, PListFile }); }
 	List<String> ProjectResEffect::GetAllOutputFiles() { return MakeOutputFileList(DestFile); }
+
+
+	bool ProjectResEffect::SpecifySource(const String& srcName, const String& source)
+	{
+		if (srcName == L"VS")
+		{
+			VS = source;
+			return true;
+		}
+		else if (srcName == L"PS")
+		{
+			PS = source;
+			return true;
+		}
+		else if (srcName == L"GS")
+		{
+			GS = source;
+			return true;
+		}
+		else if (srcName == L"ALL")
+		{
+			VS = PS = GS = source;
+			return true;
+		}
+		return false;
+	}
 
 	/************************************************************************/
 	/*   ProjectResCustomEffect                                             */

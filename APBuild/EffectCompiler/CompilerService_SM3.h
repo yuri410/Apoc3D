@@ -31,7 +31,7 @@ using namespace Apoc3D::Graphics::D3D9RenderSystem;
 namespace APBuild
 {
 	bool CompileAsHLSLDX9(const String& src, const String& entryPoint, const char* pfName, bool debugEnabled, bool noOptimization,
-		const List<std::pair<std::string, std::string>>* defines, ConstantTable*& constantTable, char*& codePtr, int32& codeSize);
+		const List<std::pair<std::string, std::string>>& defines, ConstantTable*& constantTable, char*& codePtr, int32& codeSize);
 
-	bool PreprocessShaderCode(const String& srcFile, const List<std::pair<std::string, std::string>>* defines, std::string& result);
+	bool PreprocessShaderCode(const String& srcFile, const List<std::pair<std::string, std::string>>& defines, std::string& result);
 }

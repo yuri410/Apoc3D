@@ -103,29 +103,6 @@ namespace APBuild
 		void Parse(const ConfigurationSection* sect);
 	};
 
-	struct AFXBuildConfig
-	{
-		String Name;
-
-		String VS;
-		String PS;
-		String GS;
-		String PListFile;
-		String EntryPointVS;
-		String EntryPointPS;
-		String EntryPointGS;
-
-		String DestFile;
-
-		List<String> Targets;
-
-		bool IsDebug = false;
-		bool NoOptimization = false;
-
-		List<std::pair<std::string, std::string>> Defines;
-
-		void Parse(const ConfigurationSection* sect);
-	};
 	struct CFXBuildConfig
 	{
 		String Name;
