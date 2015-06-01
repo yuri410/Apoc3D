@@ -100,9 +100,9 @@ namespace SampleAtmosphere
 		m_quadTempMtrl->SourceBlend = Blend::SourceAlpha;
 		m_quadTempMtrl->DestinationBlend = Blend::InverseSourceAlpha;
 
-		ConvertDataTexture(L"inscatterTexture.dat", true);
-		ConvertDataTexture(L"irradianceTexture.dat", true);
-		ConvertDataTexture(L"transmittanceTexture.dat", true);
+		//ConvertDataTexture(L"inscatterTexture.dat", true);
+		//ConvertDataTexture(L"irradianceTexture.dat", true);
+		//ConvertDataTexture(L"transmittanceTexture.dat", true);
 
 	}
 

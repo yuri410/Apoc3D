@@ -1316,26 +1316,12 @@ namespace Apoc3D
 			m_typeData->Save(sect, savingBuild);
 		}
 
-		if (!savingBuild)
-		{
-			//sect->AddAttributeString(L"LastModTime", StringUtils::IntToString(m_timeStamp));
-		}
 		return sect;
 	}
 
 	void ProjectItem::Parse(const ConfigurationSection* sect)
 	{
 		m_name = sect->getName();
-
-		//if (sect->hasAttribute(L"LastModTime"))
-		//{
-		//	m_timeStamp = StringUtils::ParseInt64(sect->getAttribute(L"LastModTime"));
-		//}
-		//else
-		//{
-		//	m_timeStamp = time(0);
-		//}
-		
 
 		ProjectItemType itemType = ProjectUtils::ProjectItemTypeConv.Parse(sect->getAttribute(L"Type"));
 		
