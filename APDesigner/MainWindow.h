@@ -56,6 +56,7 @@ namespace APDesigner
 		const StyleSkin* getUISkin() const { return m_UIskin; }
 		const Point& getUIAreaSize() const { return m_lastSize; }
 		RenderDevice* getDevice() const { return m_device; }
+		RenderWindow* getWindow() const { return m_window; }
 		Form* getToolsPane() const;
 
 		Document* getCurrentDocument() const { return m_currentDocument; }
@@ -81,6 +82,7 @@ namespace APDesigner
 		void Menu_CloseProject(MenuItem* itm);
 		void Menu_Insert(MenuItem* itm);
 		void Menu_Exit(MenuItem* itm);
+		void Menu_DetectOrphaned(MenuItem* itm);
 		void Menu_BuildAll(MenuItem* itm);
 		void Menu_OpenRecentProject(MenuItem* itm);
 		void Menu_QuickBuildRecentProject(MenuItem* item);
@@ -118,6 +120,7 @@ namespace APDesigner
 		SubMenu* m_quickbuildSubMenu = nullptr;
 
 		AtomManagerDialog* m_atomManager = nullptr;
+		OrphanDetector* m_orphanDetector = nullptr;
 		ResourcePane* m_resourcePane = nullptr;
 		ToolsPane* m_toolsPane = nullptr;
 		Project* m_project = nullptr;

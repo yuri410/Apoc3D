@@ -1524,13 +1524,15 @@ namespace Apoc3D
 			}
 		}
 	}
+
+	// obsolete
 	void ProjectItem::MarkOutdatedOutputs()
 	{
 		ProjectItemOutdateType ot = GetOutDatedType();
 		if (ot == ProjectItemOutdateType::DifferentSource || ot == ProjectItemOutdateType::DifferentSetting)
 		{
 			// change all output file's last write time to a second earlier than the source's
-			// This is to prevent the item being treated as up to date if build fails and the stamps are updated to current
+			// This is to prevent the item being treated as up to date if build fails but the stamps were written to current
 
 			time_t minSourceTime = ULONG_MAX;
 

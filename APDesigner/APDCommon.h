@@ -45,6 +45,7 @@ namespace APDesigner
 	class PropertyPane;
 	class ToolsPane;
 	class AtomManagerDialog;
+	class OrphanDetector;
 
 	class ObjectTools;
 	class ObjectPropertyEditor;

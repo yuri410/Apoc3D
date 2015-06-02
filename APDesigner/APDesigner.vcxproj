@@ -202,7 +202,7 @@
     <ClInclude Include="IDEConfig.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="DocumentModel\ModelDocument.h" />
-    <ClInclude Include="ObjectEditor.h" />
+    <ClInclude Include="OrphanDetector.h" />
     <ClInclude Include="Panes.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ServWindow.h" />
@@ -236,13 +236,13 @@
     <ClCompile Include="DocumentUI\UIDocument.cpp" />
     <ClCompile Include="EditorExtensionManager.cpp" />
     <ClCompile Include="IDEConfig.cpp" />
+    <ClCompile Include="OrphanDetector.cpp" />
     <ClCompile Include="ServWindow.cpp" />
     <ClCompile Include="UIResources.cpp" />
     <ClCompile Include="Document.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="DocumentModel\ModelDocument.cpp" />
-    <ClCompile Include="ObjectEditor.cpp" />
     <ClCompile Include="Panes.cpp" />
     <ClCompile Include="TextureViewer.cpp" />
   </ItemGroup>

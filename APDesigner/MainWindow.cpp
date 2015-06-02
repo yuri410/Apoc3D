@@ -38,6 +38,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "DocumentUI/ExtensionUI.h"
 #include "DocumentFont/ExtensionFont.h"
 
+#include "OrphanDetector.h"
+
 #include "Document.h"
 #include "TextureViewer.h"
 #include "UIResources.h"
@@ -138,12 +140,14 @@ namespace APDesigner
 		m_resourcePane = new ResourcePane(this);
 		m_toolsPane = new ToolsPane(this);
 		m_atomManager = new AtomManagerDialog(this);
+		m_orphanDetector = new OrphanDetector(this);
 
 		SystemUI::Initialize(m_device);
 		//UIRoot::Add(m_form);
 		m_resourcePane->Initialize(m_device);
 		m_toolsPane->Initialize(m_device);
 		m_atomManager->Initialize(m_device);
+		m_orphanDetector->Initialize(m_device);
 
 		m_console = new Console(m_device, m_UIskin, Point(600,100), Point(400,400));
 	}
@@ -151,48 +155,30 @@ namespace APDesigner
 	{
 		m_mainMenu = new MenuBar(m_UIskin);
 
+		m_mainMenu->Add(
 		{
-			MenuItemSetupInfo buildMenuInfo =
+			L"Project",
 			{
-				L"Project",
-				{
-					{ L"New Project...", { this, &MainWindow::Menu_NewProject } },
-					{ L"Open Project...", { this, &MainWindow::Menu_OpenProject } },
-					{ L"Save Project", { this, &MainWindow::Menu_SaveProject }, &m_savePrjMemuItem },
-					{ L"Recent Projects", nullptr, &m_recentPrjSubMenu, true },
+				{ L"New Project...", { this, &MainWindow::Menu_NewProject } },
+				{ L"Open Project...", { this, &MainWindow::Menu_OpenProject } },
+				{ L"Save Project", { this, &MainWindow::Menu_SaveProject }, &m_savePrjMemuItem },
+				{ L"Recent Projects", nullptr, &m_recentPrjSubMenu, true },
 
-					{ L"-" },
-					{ L"Exit", { this, &MainWindow::Menu_Exit } },
-				}
-			};
+				{ L"-" },
+				{ L"Exit", { this, &MainWindow::Menu_Exit } },
+			}
+		}, m_UIskin, nullptr);
 
-			m_mainMenu->Add(buildMenuInfo, m_UIskin, nullptr);
-		}
-		//{
-		//	MenuItem* fileMenu = new MenuItem(L"File");
-		//	
-		//	SubMenu* fileSubMenu = new SubMenu(0);
-		//	fileSubMenu->SetSkin(m_UIskin);
-		//	
-		//	MenuItem* mi=new MenuItem(L"Save");
-		//	//mi->event().bind(this, &MainWindow::Menu_NewProject);
-		//	fileSubMenu->Add(mi,0);
-
-		//	m_mainMenu->Add(fileMenu,fileSubMenu);
-		//}
-		{
-			MenuItemSetupInfo buildMenuInfo =
+		m_mainMenu->Add({
+			L"Build",
 			{
-				L"Build",
-				{
-					{ L"QuickBuild", nullptr, &m_quickbuildSubMenu, true },
-					{ L"-" },
-					{ L"Build All", { this, &MainWindow::Menu_BuildAll }, &m_buildMemuItem },
-				}
-			};
+				{ L"Quick Build", nullptr, &m_quickbuildSubMenu, true },
+				{ L"Detect Orphaned Files", { this, &MainWindow::Menu_DetectOrphaned } },
+				{ L"-" },
+				{ L"Build All", { this, &MainWindow::Menu_BuildAll }, &m_buildMemuItem },
+			}
+		}, m_UIskin, nullptr);
 
-			m_mainMenu->Add(buildMenuInfo, m_UIskin, nullptr);
-		}
 		{
 			MenuItem* toolsMenu = new MenuItem(L"Tools");
 
@@ -616,7 +602,15 @@ namespace APDesigner
 			BuildInterface::getSingleton().Execute();
 		}
 	}
-	
+	void MainWindow::Menu_DetectOrphaned(MenuItem* itm)
+	{
+		if (m_project)
+		{
+			m_orphanDetector->UpdateToNewProject(m_project);
+			m_orphanDetector->Show();
+		}
+	}
+
 	void MainWindow::Menu_OpenRecentProject(MenuItem* itm)
 	{
 		int32 idx = static_cast<int32>(reinterpret_cast<uintptr>(itm->UserPointer));
