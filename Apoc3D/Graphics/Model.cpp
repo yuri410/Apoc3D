@@ -207,11 +207,9 @@ namespace Apoc3D
 						int partId = m_renderOpEntPartID[i];
 						int entId = m_renderOpEntID[i];
 						int frame = m_mtrlPlayer->getCurrentMaterialFrame();
-						if (frame >= (int32)entities[entId]->getMaterials()->getFrameCount(partId)) 
-						{
-							frame = entities[entId]->getMaterials()->getFrameCount(partId)-1;//.Materials[partId].Length - 1;
-						}
-						rop.Material = entities[entId]->getMaterials()->getMaterial(partId, frame);
+						frame = entities[entId]->getMaterialFrames(partId).ClampIndexInRange(frame);
+
+						rop.Material = entities[entId]->getMaterial(partId, frame);
 					}
 
 					if (m_animInstance.getCount())

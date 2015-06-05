@@ -54,8 +54,7 @@ namespace Apoc3D
 			protected:
 				HardwareBuffer(BufferUsageFlags usage, int sizeInBytes)
 					: m_usage(usage), m_size(sizeInBytes)
-				{
-				}
+				{ }
 				virtual ~HardwareBuffer() { }
 
 				virtual void* lock(int offset, int size, LockMode mode) = 0;
@@ -74,13 +73,19 @@ namespace Apoc3D
 
 			class APAPI VertexBuffer : public HardwareBuffer
 			{
+			public:
+				int32 getVertexCount() const { return m_vertexCount; }
+				int32 getVertexSize() const { return m_vertexSize; }
+
 			protected:
-				VertexBuffer(int size, BufferUsageFlags usage)
-					: HardwareBuffer(usage, size)
+				VertexBuffer(int32 vertexCount, int32 vertexSize, BufferUsageFlags usage)
+					: HardwareBuffer(usage, vertexSize*vertexCount), m_vertexCount(vertexCount), m_vertexSize(vertexSize)
 				{ }
 
-			public:
 				
+			private:
+				int32 m_vertexCount;
+				int32 m_vertexSize;
 			};
 
 			class APAPI IndexBuffer : public HardwareBuffer
@@ -88,6 +93,7 @@ namespace Apoc3D
 			public:
 				IndexBufferType getIndexType() const { return m_type; }
 				int getIndexElementSize() const { return m_type == IBT_Bit16 ? sizeof(ushort) : sizeof(uint); }
+				int getIndexCount() const { return m_indexCount; }
 
 			protected:
 				IndexBuffer(IndexBufferType type, int size, BufferUsageFlags usage)

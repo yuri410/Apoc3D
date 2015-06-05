@@ -51,6 +51,8 @@ namespace APDesigner
 		void PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 
 		void DisplayMaterialEditor(Material* mtrl);
+		
+		void AssignDisplayMaterial(Material* mtrl);
 
 		class ModelWrapper : public Entity 
 		{

@@ -1,4 +1,4 @@
-sampler3D tex : register(s0);
+sampler2D tex : register(s0);
 
 struct PSInput
 {
@@ -12,5 +12,5 @@ struct PSOutput
 
 float4 main(PSInput ip) : COLOR
 {
-    return tex3D(tex, float3(ip.TexCoord, 0.2));
+	return tex2D(tex, ip.TexCoord);// float3(ip.TexCoord, 0.2));
 }

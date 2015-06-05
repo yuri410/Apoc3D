@@ -83,7 +83,7 @@ namespace Apoc3D
 			}
 			VertexBuffer* D3D9ObjectFactory::CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage)
 			{
-				return new D3D9VertexBuffer(m_device, vertexCount * vtxDecl->GetVertexSize(), usage);
+				return new D3D9VertexBuffer(m_device, vertexCount, vtxDecl->GetVertexSize(), usage);
 			}
 
 			VertexDeclaration* D3D9ObjectFactory::CreateVertexDeclaration(const List<VertexElement>& elements)

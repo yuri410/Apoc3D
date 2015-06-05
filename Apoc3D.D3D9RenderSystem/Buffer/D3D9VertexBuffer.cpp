@@ -105,8 +105,8 @@ namespace Apoc3D
 			//{
 
 			//}
-			D3D9VertexBuffer::D3D9VertexBuffer(D3D9RenderDevice* device, int32 size, BufferUsageFlags usage)
-				: VertexBuffer(size, usage), VolatileResource(device), m_device(device), m_tempData(0)
+			D3D9VertexBuffer::D3D9VertexBuffer(D3D9RenderDevice* device, int32 vertexCount, int32 vertexSize, BufferUsageFlags usage)
+				: VertexBuffer(vertexCount, vertexSize, usage), VolatileResource(device), m_device(device), m_tempData(0)
 			{
 				D3DDevice* dev = device->getDevice();
 
@@ -121,7 +121,7 @@ namespace Apoc3D
 					pool = D3DPOOL_MANAGED;
 				}
 
-				HRESULT hr = dev->CreateVertexBuffer(size, 
+				HRESULT hr = dev->CreateVertexBuffer(getSize(), 
 					D3D9Utils::ConvertBufferUsage(usage), 0, pool, &m_vertexBuffer, NULL);
 				assert(SUCCEEDED(hr));
 			}

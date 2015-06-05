@@ -33,9 +33,9 @@ using namespace APDesigner::CommonDialog;
 namespace APDesigner
 {
 	ModelDocument::ModelDocument(MainWindow* window, EditorExtension* ext, const String& name, const String& file, const String& animationFile)
-		: Document(window, ext), m_filePath(file), m_animPath(animationFile), 
+		: Document(window, ext), m_filePath(file), m_animPath(animationFile),
 		m_name(name), m_model(0), m_modelSData(0), m_animData(0),
-		m_distance(7),m_xang(ToRadian(45)),m_yang(ToRadian(45))
+		m_distance(7), m_xang(ToRadian(45)), m_yang(ToRadian(45))
 	{
 		m_sceneRenderer = new SceneRenderer(window->getDevice());
 
@@ -44,7 +44,7 @@ namespace APDesigner
 		Configuration config;
 		XMLConfigurationFormat::Instance.Load(fl, &config);
 		m_sceneRenderer->Load(&config);
-		
+
 
 		m_camera = new ChaseCamera();
 		m_camera->setChaseDirection(Vector3(0, 0, 1));
@@ -58,7 +58,7 @@ namespace APDesigner
 		m_scene.AddObject(&m_object);
 
 		int32 lineHeight = window->getUISkin()->ContentTextFont->getLineHeightInt();
-		
+
 		const StyleSkin* skin = window->getUISkin();
 
 		{
@@ -66,9 +66,9 @@ namespace APDesigner
 			m_modelViewer->setSize(512, 512);
 			m_modelViewer->eventPictureDraw.Bind(this, &ModelDocument::ModelView_Draw);
 
-			List<String> items(MaxScenePass+1);
+			List<String> items(MaxScenePass + 1);
 			items.Add(L"First Pass");
-			for (int32 i=0;i<MaxScenePass;i++)
+			for (int32 i = 0; i < MaxScenePass; i++)
 			{
 				items.Add(L"Pass " + StringUtils::IntToString(i));
 			}
@@ -119,39 +119,39 @@ namespace APDesigner
 			m_labels.Add(lbl);
 
 			List<String> items;
-			m_cbMesh = new ComboBox(skin, Point(21+522+100, 107), 200, items);
+			m_cbMesh = new ComboBox(skin, Point(21 + 522 + 100, 107), 200, items);
 			m_cbMesh->eventSelectionChanged.Bind(this, &ModelDocument::CBMesh_SelectionChanged);
 
-			m_cbMeshPart = new ComboBox(skin, Point(21+522+100, 133), 200, items);
+			m_cbMeshPart = new ComboBox(skin, Point(21 + 522 + 100, 133), 200, items);
 			m_cbMeshPart->eventSelectionChanged.Bind(this, &ModelDocument::CBMeshPart_SelectionChanged);
 
 			lbl = new Label(skin, Point(21 + 522, 183), L"Mesh Name", 100);
 			m_labels.Add(lbl);
 
-			m_tbMeshName = new TextBox(skin, Point(21+522+100, 183), 200);
+			m_tbMeshName = new TextBox(skin, Point(21 + 522 + 100, 183), 200);
 
 
 
-			m_applyMtrl = new Button(skin, Point(21 + 522+100+220, 159),175, L"Apply Changes");
+			m_applyMtrl = new Button(skin, Point(21 + 522 + 100 + 220, 159), 175, L"Apply Changes");
 			m_applyMtrl->eventRelease.Bind(this, &ModelDocument::BtnApplyMtrl_Pressed);
 			m_applyMtrl->SetSizeY(lineHeight);
 
-			m_applyAllMtrl = new Button(skin, Point(21 + 522+100+220, 185),175, L"Apply To All");
+			m_applyAllMtrl = new Button(skin, Point(21 + 522 + 100 + 220, 185), 175, L"Apply To All");
 			m_applyAllMtrl->eventRelease.Bind(this, &ModelDocument::BtnApplyAllMtrl_Pressed);
 			m_applyAllMtrl->SetSizeY(lineHeight);
 
 
 			lbl = new Label(skin, Point(21 + 522, 159), L"SubMaterial", 100);
 			m_labels.Add(lbl);
-			m_cbSubMtrl = new ComboBox(skin, Point(21+522+100, 159), 200, items);
+			m_cbSubMtrl = new ComboBox(skin, Point(21 + 522 + 100, 159), 200, items);
 			m_cbSubMtrl->eventSelectionChanged.Bind(this, &ModelDocument::CBSubMtrl_SelectionChanged);
-			
 
-			m_addMtrlFrame = new Button(skin, Point(21 + 522+100+220, 107),175, L"Add Sub Material");
+
+			m_addMtrlFrame = new Button(skin, Point(21 + 522 + 100 + 220, 107), 175, L"Add Sub Material");
 			m_addMtrlFrame->eventRelease.Bind(this, &ModelDocument::BtnAddMtrl_Pressed);
 			m_addMtrlFrame->SetSizeY(lineHeight);
 
-			m_removeMtrlFrame = new Button(skin, Point(21 + 522+100+220, 133),175, L"Remove Sub Material");
+			m_removeMtrlFrame = new Button(skin, Point(21 + 522 + 100 + 220, 133), 175, L"Remove Sub Material");
 			m_removeMtrlFrame->eventRelease.Bind(this, &ModelDocument::BtnRemoveMtrl_Pressed);
 			m_removeMtrlFrame->SetSizeY(lineHeight);
 
@@ -215,7 +215,7 @@ namespace APDesigner
 			m_mtrlPanelLabels.Add(lbl);
 			m_tbPriority = new TextBox(skin, Point(sx2, sy), 200, L"");
 
-			m_cbDepthTest = new CheckBox(skin, Point(sx+ 250 + 100, sy), L"DepthTest", false);
+			m_cbDepthTest = new CheckBox(skin, Point(sx + 250 + 100, sy), L"DepthTest", false);
 
 
 			sy += 25;
@@ -227,13 +227,13 @@ namespace APDesigner
 			m_mtrlPanelLabels.Add(lbl);
 			m_cbCull = new ComboBox(skin, Point(sx2, sy), 200, items);
 
-			m_cbDepthWrite = new CheckBox(skin, Point(sx+ 250 + 100, sy), L"DepthWrite", false);
+			m_cbDepthWrite = new CheckBox(skin, Point(sx + 250 + 100, sy), L"DepthWrite", false);
 
 			sy += 25;
 			lbl = new Label(skin, Point(sx, sy), L"AlphaTest[0,1]", 120);
 			m_mtrlPanelLabels.Add(lbl);
 			m_tbAlphaTest = new TextBox(skin, Point(sx2, sy), 200, L"");
-			
+
 
 			sy += 25;
 
@@ -263,7 +263,7 @@ namespace APDesigner
 
 			items.Add(BlendConverter.ToString(Blend::SourceAlphaSaturation));
 			items.Add(BlendConverter.ToString(Blend::BlendFactor));
-			
+
 			sy += 25;
 			lbl = new Label(skin, Point(sx, sy), L"Src Blend", 120);
 			m_mtrlPanelLabels.Add(lbl);
@@ -282,7 +282,7 @@ namespace APDesigner
 			m_pbPassFlag->setSize(256, getDocumentForm()->getFont()->getLineHeightInt());
 			m_pbPassFlag->eventPictureDraw.Bind(this, &ModelDocument::PassFlags_Draw);
 
-			m_btnPassFlag = new Button(skin, Point(sx+100+300, sy), L"Edit");
+			m_btnPassFlag = new Button(skin, Point(sx + 100 + 300, sy), L"Edit");
 			m_btnPassFlag->eventPress.Bind(this, &ModelDocument::PassButton_Pressed);
 		}
 
@@ -293,65 +293,65 @@ namespace APDesigner
 
 			Label* lbl = new Label(skin, Point(sx, sy), L"Utilities: ", 100);
 			m_labels.Add(lbl);
-			sy+=20;
+			sy += 20;
 
 			int btnWidth = 80;
-			m_revertZ = new Button(skin, Point(sx , sy),btnWidth, L"Revert Z");
+			m_revertZ = new Button(skin, Point(sx, sy), btnWidth, L"Revert Z");
 			m_revertZ->eventPress.Bind(this, &ModelDocument::RevertZ_Pressed);
-			sx += btnWidth+10;
+			sx += btnWidth + 10;
 
 			btnWidth = 100;
-			m_recenterModel = new Button(skin, Point(sx, sy),btnWidth, L"Center model");
+			m_recenterModel = new Button(skin, Point(sx, sy), btnWidth, L"Center model");
 			m_recenterModel->eventPress.Bind(this, &ModelDocument::RecenterModel_Pressed);
-			sx += btnWidth+10;
+			sx += btnWidth + 10;
 
 			btnWidth = 80;
 			m_swapYZ = new Button(skin, Point(sx, sy), btnWidth, L"Swap YZ");
 			m_swapYZ->eventPress.Bind(this, &ModelDocument::RevertYZ_Pressed);
-			sx += btnWidth+10;
+			sx += btnWidth + 10;
 
 			btnWidth = 100;
-			m_rotateY = new Button(skin, Point(sx, sy),btnWidth, L"Rotation Y 90");
+			m_rotateY = new Button(skin, Point(sx, sy), btnWidth, L"Rotation Y 90");
 			m_rotateY->eventPress.Bind(this, &ModelDocument::RotY_Pressed);
-			sx += btnWidth+10;
+			sx += btnWidth + 10;
 
-			m_rotateZ = new Button(skin, Point(sx, sy),btnWidth, L"Rotation Z 90");
+			m_rotateZ = new Button(skin, Point(sx, sy), btnWidth, L"Rotation Z 90");
 			m_rotateZ->eventPress.Bind(this, &ModelDocument::RotZ_Pressed);
-			sx += btnWidth+10;
+			sx += btnWidth + 10;
 
 			btnWidth = 30;
-			m_zoomIn = new Button(skin, Point(sx, sy),btnWidth, L"+");
+			m_zoomIn = new Button(skin, Point(sx, sy), btnWidth, L"+");
 			m_zoomIn->eventPress.Bind(this, &ModelDocument::ZoomIn_Pressed);
-			sx += btnWidth+10;
+			sx += btnWidth + 10;
 
-			m_zoomOut = new Button(skin, Point(sx, sy),btnWidth, L"-");
+			m_zoomOut = new Button(skin, Point(sx, sy), btnWidth, L"-");
 			m_zoomOut->eventPress.Bind(this, &ModelDocument::ZoomOut_Pressed);
-			sx += btnWidth+10;
+			sx += btnWidth + 10;
 
 			btnWidth = 170;
-			m_setSequenceImages = new Button(skin, Point(sx, sy),btnWidth, L"Set Sequence Material");
+			m_setSequenceImages = new Button(skin, Point(sx, sy), btnWidth, L"Set Sequence Material");
 			m_setSequenceImages->eventPress.Bind(this, &ModelDocument::SetSequenceImages_Pressed);
-			sx += btnWidth+10;
+			sx += btnWidth + 10;
 
 			btnWidth = 80;
-			m_applyColorToAll = new Button(skin, Point(sx, sy),btnWidth, L"Color All");
+			m_applyColorToAll = new Button(skin, Point(sx, sy), btnWidth, L"Color All");
 			m_applyColorToAll->eventPress.Bind(this, &ModelDocument::ApplyColorToAll_Pressed);
 			sx += btnWidth + 10;
 
 			btnWidth = 50;
-			m_applyFXToAll = new Button(skin, Point(sx, sy),btnWidth, L"FX All");
+			m_applyFXToAll = new Button(skin, Point(sx, sy), btnWidth, L"FX All");
 			m_applyFXToAll->eventPress.Bind(this, &ModelDocument::ApplyFXToAll_Pressed);
 			sx += btnWidth + 10;
 
 			btnWidth = 80;
-			m_autoTex = new Button(skin, Point(sx, sy),btnWidth, L"Auto Tex");
+			m_autoTex = new Button(skin, Point(sx, sy), btnWidth, L"Auto Tex");
 			m_autoTex->eventPress.Bind(this, &ModelDocument::AutoTex_Pressed);
 			sx += btnWidth + 10;
 
 		}
 
-		getDocumentForm()->setMinimumSize(Point(1070,512+137+50));
-		
+		getDocumentForm()->setMinimumSize(Point(1070, 512 + 137 + 50));
+
 		//getDocumentForm()->setMaximumSize(Point(1071,512+138));
 		getDocumentForm()->setTitle(file);
 
@@ -390,7 +390,7 @@ namespace APDesigner
 		delete m_cbMesh;
 		delete m_cbMeshPart;
 		delete m_cbSubMtrl;
-		
+
 		delete m_applyAllMtrl;
 		delete m_applyMtrl;
 		delete m_addMtrlFrame;
@@ -441,7 +441,7 @@ namespace APDesigner
 		delete m_autoTex;
 		delete m_passViewSelect;
 	}
-	
+
 
 	void ModelDocument::LoadRes()
 	{
@@ -452,7 +452,7 @@ namespace APDesigner
 			//delete m_modelSData;
 		}
 		FileLocation fl(m_filePath);
-		
+
 		m_modelSData = ModelManager::getSingleton().CreateInstanceUnmanaged(getMainWindow()->getDevice(), fl);
 
 		if (m_animPath.empty())
@@ -477,9 +477,9 @@ namespace APDesigner
 		m_model = new Model(new ResourceHandle<ModelSharedData>(m_modelSData, ResourceHandle<ModelSharedData>::FLGMIX_ContainerHandle), m_animData);
 		m_object.setmdl(m_model);
 		m_model->PlayAnimation();
-		
+
 		float maxR = 7;
-		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
+		for (int i = 0; i<m_modelSData->getEntities().getCount(); i++)
 		{
 			if (m_modelSData->getEntities()[i]->getBoundingSphere().Radius > maxR)
 				maxR = m_modelSData->getEntities()[i]->getBoundingSphere().Radius;
@@ -492,7 +492,7 @@ namespace APDesigner
 		//	m_selectedMeshPartIndex = m_modelSData->getEntities()[m_selectedMeshIndex]->getMaterials()->getMaterialCount() > 0 ? 0 : -1;
 		//}
 		//m_texture = TextureManager::getSingleton().CreateUnmanagedInstance(getMainWindow()->getDevice(), fl, false);
-		DisplayMaterialEditor(0,false);
+		DisplayMaterialEditor(0, false);
 	}
 	void ModelDocument::SaveRes()
 	{
@@ -530,7 +530,7 @@ namespace APDesigner
 			getDocumentForm()->getControls().Add(m_applyAllMtrl);
 			getDocumentForm()->getControls().Add(m_addMtrlFrame);
 			getDocumentForm()->getControls().Add(m_removeMtrlFrame);
-			
+
 		}
 		getDocumentForm()->getControls().Add(m_recenterModel);
 		getDocumentForm()->getControls().Add(m_revertZ);
@@ -580,11 +580,11 @@ namespace APDesigner
 			getDocumentForm()->getControls().Add(m_btnPassFlag);
 			getDocumentForm()->getControls().Add(m_cbCull);
 		}
-		for (int i=0;i<m_mtrlPanelLabels.getCount();i++)
+		for (int i = 0; i < m_mtrlPanelLabels.getCount(); i++)
 		{
 			getDocumentForm()->getControls().Add(m_mtrlPanelLabels[i]);
 		}
-		for (int i=0;i<m_labels.getCount();i++)
+		for (int i = 0; i < m_labels.getCount(); i++)
 		{
 			getDocumentForm()->getControls().Add(m_labels[i]);
 		}
@@ -598,7 +598,7 @@ namespace APDesigner
 
 		{
 			const List<Mesh*> ents = m_modelSData->getEntities();
-			for (int i=0;i<ents.getCount();i++)
+			for (int i = 0; i < ents.getCount(); i++)
 			{
 				m_cbMesh->getItems().Add(L"[Mesh]" + ents[i]->getName());
 			}
@@ -613,7 +613,7 @@ namespace APDesigner
 		Apoc3D::Math::Rectangle rect = m_modelViewer->getAbsoluteArea();
 
 		Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-		
+
 		if (rect.Contains(mouse->GetPosition()))
 		{
 			if (mouse->IsRightPressedState())
@@ -636,7 +636,7 @@ namespace APDesigner
 			m_distance -= 0.5f * mouse->getDZ();
 		}
 		m_camera->setChaseDirection(Vector3(cosf(m_xang), -sinf(m_yang), sinf(m_xang)));
-		m_camera->setDesiredOffset(Vector3(0,0,m_distance));
+		m_camera->setDesiredOffset(Vector3(0, 0, m_distance));
 
 		if (getDocumentForm()->getFont())
 		{
@@ -653,47 +653,72 @@ namespace APDesigner
 	{
 		CBMeshPart_SelectionChanged(m_cbMeshPart);
 	}
-	void ModelDocument::UpdateSelectedMaterial()
+
+	Mesh* ModelDocument::GetSelectedMesh()
 	{
 		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx != -1)
+			return ents[selMeshIdx];
+
+		return nullptr;
+	}
+	Material* ModelDocument::GetSelectedMaterial()
+	{
+		Mesh* mesh = GetSelectedMesh();
+		if (mesh)
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
 			int partIdx = m_cbMeshPart->getSelectedIndex();
 			int frameIndex = m_cbSubMtrl->getSelectedIndex();
 			if (partIdx != -1 && frameIndex != -1)
 			{
-				Material* m = mtrls->getMaterial(partIdx, frameIndex);
-				bool isRef = false;
-				String refName;
-				if (m->ExternalReferenceName.size())
-				{
-					refName = m->ExternalReferenceName;
-					isRef = true;
-
-					m->LoadReferencedMaterial(m->ExternalReferenceName);
-				}
-
-				m->ExternalReferenceName = refName;
-				DisplayMaterialEditor(m, isRef);
+				return mesh->getMaterial(partIdx, frameIndex);
 			}
+		}
+		return nullptr;
+	}
+	List<Material*>* ModelDocument::GetSelectedMeshSubpartMaterials()
+	{
+		Mesh* mesh = GetSelectedMesh();
+		if (mesh)
+		{
+			int partIdx = m_cbMeshPart->getSelectedIndex();
+			if (partIdx !=-1)
+			{
+				return &mesh->getMaterialFrames(partIdx);
+			}
+		}
+		return nullptr;
+	}
+
+	void ModelDocument::UpdateSelectedMaterial()
+	{
+		Material* mtrl = GetSelectedMaterial();
+
+		if (mtrl)
+		{
+			bool isRef = false;
+			String refName;
+			if (mtrl->ExternalReferenceName.size())
+			{
+				refName = mtrl->ExternalReferenceName;
+				isRef = true;
+
+				mtrl->LoadReferencedMaterial(mtrl->ExternalReferenceName);
+			}
+
+			mtrl->ExternalReferenceName = refName;
+			DisplayMaterialEditor(mtrl, isRef);
 		}
 	}
 
 	void ModelDocument::PassButton_Pressed(Button* ctrl)
 	{
-		const List<Mesh*> ents = m_modelSData->getEntities();
-		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx !=-1)
+		Material* mtrl = GetSelectedMaterial();
+
+		if (mtrl)
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			int partIdx = m_cbMeshPart->getSelectedIndex();
-			int frameIndex = m_cbSubMtrl->getSelectedIndex();
-			if (partIdx != -1 && frameIndex != -1)
-			{
-				m_passEditor->ShowModal(mtrls->getMaterial(partIdx, frameIndex));
-			}
+			m_passEditor->ShowModal(mtrl);
 		}
 	}
 	void ModelDocument::ModelView_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
@@ -712,14 +737,14 @@ namespace APDesigner
 		int totalVertexCount = 0;
 		int totalFaceCount = 0;
 		bool hasSkin = false;
-		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
+		for (Mesh* mesh : m_modelSData->getEntities())
 		{
-			totalFaceCount+=m_modelSData->getEntities()[i]->getPrimitiveConut();
-			totalVertexCount+=m_modelSData->getEntities()[i]->getVertexCount();
+			totalFaceCount += mesh->getPrimitiveConut();
+			totalVertexCount += mesh->getVertexCount();
 
 			if (!hasSkin)
 			{
-				hasSkin |= !!VertexElement::FindElementBySemantic(m_modelSData->getEntities()[i]->getVertexElement(), VEU_BlendWeight);
+				hasSkin |= mesh->getVertexDecl()->FindElementBySemantic(VEU_BlendWeight) != nullptr;
 			}
 		}
 		String message = L"Vertex Count: " + StringUtils::IntToString(totalVertexCount);
@@ -738,38 +763,30 @@ namespace APDesigner
 	}
 	void ModelDocument::PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
-		const List<Mesh*> ents = m_modelSData->getEntities();
-		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx != -1)
+		Material* mtrl = GetSelectedMaterial();
+
+		if (mtrl)
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			int partIdx = m_cbMeshPart->getSelectedIndex();
-			int frameIndex = m_cbSubMtrl->getSelectedIndex();
-			if (partIdx != -1 && frameIndex != -1)
+			uint64 flag = mtrl->getPassFlags();
+
+			const int CX = 4;
+			for (int i = 0; i < 64; i++)
 			{
-				Material* mtrl = mtrls->getMaterial(partIdx, frameIndex);
-
-				uint64 flag = mtrl->getPassFlags();
-
-				const int CX = 4;
-				for (int i=0;i<64;i++)
-				{
-					Apoc3D::Math::Rectangle dr(*dstRect);
-					dr.X += i * CX;
-					dr.Width = CX;
-					sprite->Draw(SystemUI::GetWhitePixel(), dr, 0, (flag & 1) ? CV_Red : CV_White);
-					flag = flag>>1;
-				}
+				Apoc3D::Math::Rectangle dr(*dstRect);
+				dr.X += i * CX;
+				dr.Width = CX;
+				sprite->Draw(SystemUI::GetWhitePixel(), dr, 0, (flag & 1) ? CV_Red : CV_White);
+				flag = flag >> 1;
 			}
 		}
 	}
 	void ModelDocument::Timeline_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
-		const List<Mesh*> ents = m_modelSData->getEntities();
-		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx!=-1)
+		Mesh* mesh = GetSelectedMesh();
+
+		if (mesh)
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			//MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
 			if (m_cbMeshPart->getSelectedIndex() !=-1)
 			{
 				
@@ -783,16 +800,14 @@ namespace APDesigner
 		m_cbSubMtrl->getItems().Clear();
 		m_cbSubMtrl->setSelectedIndex(-1);
 
-
-		const List<Mesh*> ents = m_modelSData->getEntities();
-		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx != -1)
+		Mesh* mesh = GetSelectedMesh();
+		if (mesh)
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			//MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
 
-			m_tbMeshName->SetText(ents[selMeshIdx]->getName());
+			m_tbMeshName->SetText(mesh->getName());
 
-			for (int32 i = 0; i < mtrls->getMaterialCount(); i++)
+			for (int32 i = 0; i < mesh->getPartCount(); i++)
 			{
 				m_cbMeshPart->getItems().Add(L"Part(Material Set)" + StringUtils::IntToString(i, StrFmt::a<4, '0'>::val));
 			}
@@ -810,41 +825,27 @@ namespace APDesigner
 		m_cbSubMtrl->getItems().Clear();
 		m_cbSubMtrl->setSelectedIndex(-1);
 
-		const List<Mesh*> ents = m_modelSData->getEntities();
-		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx != -1)
+		auto mtrls = GetSelectedMeshSubpartMaterials();
+		if (mtrls)
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			int partIdx = m_cbMeshPart->getSelectedIndex();
-			if (partIdx != -1)
+			for (int32 i = 0; i < mtrls->getCount();i++)
 			{
-				for (int32 i = 0; i < mtrls->getFrameCount(partIdx); i++)
-				{
-					m_cbSubMtrl->getItems().Add(L"Frame(Material)" + StringUtils::IntToString(i, StrFmt::a<4, '0'>::val));
-				}
+				m_cbSubMtrl->getItems().Add(L"Frame(Material)" + StringUtils::IntToString(i, StrFmt::a<4, '0'>::val));
+			}
 
-				if (m_cbSubMtrl->getItems().getCount() > 0)
-				{
-					m_cbSubMtrl->setSelectedIndex(0);
-					CBSubMtrl_SelectionChanged(m_cbSubMtrl);
-				}
+			if (m_cbSubMtrl->getItems().getCount() > 0)
+			{
+				m_cbSubMtrl->setSelectedIndex(0);
+				CBSubMtrl_SelectionChanged(m_cbSubMtrl);
 			}
 		}
 	}
 	void ModelDocument::CBSubMtrl_SelectionChanged(ComboBox* ctrl)
 	{
-		const List<Mesh*> ents = m_modelSData->getEntities();
-		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx != -1)
+		Material* mtrl = GetSelectedMaterial();
+		if (mtrl)
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			int partIdx = m_cbMeshPart->getSelectedIndex();
-			int frameIndex = m_cbSubMtrl->getSelectedIndex();
-			if (partIdx != -1 && frameIndex != -1)
-			{
-				Material* m = mtrls->getMaterial(partIdx, frameIndex);
-				DisplayMaterialEditor(m, !m->ExternalReferenceName.empty());
-			}
+			DisplayMaterialEditor(mtrl, !mtrl->ExternalReferenceName.empty());
 		}
 	}
 	void ModelDocument::PBTime_Pressed(Control* ctrl)
@@ -857,34 +858,18 @@ namespace APDesigner
 
 	void ModelDocument::CBUseRef_Checked(CheckBox* ctrl)
 	{
-		const List<Mesh*> ents = m_modelSData->getEntities();
-		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx!=-1)
+		Material* mtrl = GetSelectedMaterial();
+		if (mtrl)
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			int partIdx = m_cbMeshPart->getSelectedIndex();
-			int frameIndex = m_cbSubMtrl->getSelectedIndex();
-			if (partIdx != -1 && frameIndex != -1)
-			{
-				Material* m = mtrls->getMaterial(partIdx, frameIndex);
-				DisplayMaterialEditor(m, m_cbUseRef->Checked);
-			}
+			DisplayMaterialEditor(mtrl, m_cbUseRef->Checked);
 		}
 	}
 	void ModelDocument::BtnRefMtrl_Pressed(Button* ctrl)
 	{
-		const List<Mesh*> ents = m_modelSData->getEntities();
-		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx!=-1)
+		Material* mtrl = GetSelectedMaterial();
+		if (mtrl)
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			int partIdx = m_cbMeshPart->getSelectedIndex();
-			int frameIndex = m_cbSubMtrl->getSelectedIndex();
-			if (partIdx != -1 && frameIndex != -1)
-			{
-				Material* m = mtrls->getMaterial(partIdx, frameIndex);
-				m_selectMtrl->ShowModal(m);
-			}
+			m_selectMtrl->ShowModal(mtrl);
 		}
 	}
 
@@ -1009,33 +994,14 @@ namespace APDesigner
 
 	void ModelDocument::BtnApplyAllMtrl_Pressed(Button* ctrl)
 	{
-		Material* currentMtrl = 0;
-		const List<Mesh*> ents = m_modelSData->getEntities();
-		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx != -1)
+		Material* currentMtrl = GetSelectedMaterial();
+
+		if (currentMtrl)
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			ents[selMeshIdx]->setName(m_tbMeshName->getText());
-
-			int partIdx = m_cbMeshPart->getSelectedIndex();
-			int frameIndex = m_cbSubMtrl->getSelectedIndex();
-			if (partIdx != -1 && frameIndex != -1)
+			for (Mesh* mesh : m_modelSData->getEntities())
 			{
-				currentMtrl = mtrls->getMaterial(partIdx, frameIndex);
-			}
-		}
-
-
-		for (int i=0;i<ents.getCount();i++)
-		{
-			MeshMaterialSet<Material*>* mtrls = ents[i]->getMaterials();
-			
-			for (int32 j=0;j<mtrls->getMaterialCount();j++)
-			{
-				for (int32 k=0;k<mtrls->getFrameCount(j);k++)
+				for (Material* mtrl : mesh->getMaterials())
 				{
-					Material* mtrl = mtrls->getMaterial(j,k);
-
 					mtrl->Ambient = Color4(m_cfAmbient->GetValue());
 					mtrl->Diffuse = Color4(m_cfDiffuse->GetValue());
 					mtrl->Specular = Color4(m_cfSpecular->GetValue());
@@ -1056,30 +1022,30 @@ namespace APDesigner
 
 					mtrl->IsBlendTransparent = m_cbTransparent->Checked;
 
-					if (m_cbSrcBlend->getSelectedIndex()!=-1)
+					if (m_cbSrcBlend->getSelectedIndex() != -1)
 					{
 						mtrl->SourceBlend = BlendConverter.Parse(
 							m_cbSrcBlend->getItems()[m_cbSrcBlend->getSelectedIndex()]);
 					}
-					if (m_cbDstBlend->getSelectedIndex()!=-1)
+					if (m_cbDstBlend->getSelectedIndex() != -1)
 					{
 						mtrl->DestinationBlend = BlendConverter.Parse(
 							m_cbDstBlend->getItems()[m_cbDstBlend->getSelectedIndex()]);
 					}
-					if (m_cbBlendFunction->getSelectedIndex() !=-1)
+					if (m_cbBlendFunction->getSelectedIndex() != -1)
 					{
 						mtrl->BlendFunction = BlendFunctionConverter.Parse(
 							m_cbBlendFunction->getItems()[m_cbBlendFunction->getSelectedIndex()]);
 					}
 
-					if (m_cbCull->getSelectedIndex() !=-1)
+					if (m_cbCull->getSelectedIndex() != -1)
 					{
 						mtrl->Cull = CullModeConverter.Parse(
 							m_cbCull->getItems()[m_cbCull->getSelectedIndex()]);
 					}
 
 					mtrl->setPassFlags(currentMtrl->getPassFlags());
-					for (int i=0;i<MaxScenePass;i++)
+					for (int i = 0; i < MaxScenePass; i++)
 					{
 						mtrl->setPassEffectName(i, currentMtrl->getPassEffectName(i));
 						//mtrl->getPassEffectName(i) = currentMtrl->getPassEffectName(i);
@@ -1098,111 +1064,91 @@ namespace APDesigner
 					mtrl->Reload();
 				}
 			}
-			
 		}
 	}
 	void ModelDocument::BtnAddMtrl_Pressed(Button* ctrl)
 	{
-		const List<Mesh*> ents = m_modelSData->getEntities();
-		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx != -1)
-		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			int partIdx = m_cbMeshPart->getSelectedIndex();
+		auto mtrls = GetSelectedMeshSubpartMaterials();
 
-			Material* newMtrl = new Material(*mtrls->getMaterial(partIdx, mtrls->getFrameCount(partIdx)-1));
-			mtrls->AddFrame(newMtrl, partIdx);
+		if (mtrls)
+		{
+			Material* newMtrl = new Material(*mtrls->LastItem());
+			mtrls->Add(newMtrl);
 
 			CBMeshPart_SelectionChanged(nullptr);
 		}
 	}
 	void ModelDocument::BtnApplyMtrl_Pressed(Button* ctrl)
 	{
-		const List<Mesh*> ents = m_modelSData->getEntities();
-		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx != -1)
+		Material* mtrl = GetSelectedMaterial();
+
+		if (mtrl)
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			ents[selMeshIdx]->setName(m_tbMeshName->getText());
-
-			int partIdx = m_cbMeshPart->getSelectedIndex();
-			int frameIndex = m_cbSubMtrl->getSelectedIndex();
-			if (partIdx != -1 && frameIndex != -1)
+			if (m_cbUseRef->Checked)
 			{
-				Material* mtrl = mtrls->getMaterial(partIdx, frameIndex);
-
-				if (m_cbUseRef->Checked)
-				{
-					mtrl->ExternalReferenceName = m_tbRefMaterialName->getText();
-				}
-				else
-				{
-					mtrl->ExternalReferenceName = L"";
-				
-					mtrl->Ambient = Color4(m_cfAmbient->GetValue());
-					mtrl->Diffuse = Color4(m_cfDiffuse->GetValue());
-					mtrl->Specular = Color4(m_cfSpecular->GetValue());
-					mtrl->Emissive = Color4(m_cfEmissive->GetValue());
-					mtrl->Power = StringUtils::ParseSingle(m_tbShinness->getText());
-
-					mtrl->setTextureName(0, m_tbTex1->getText());
-					mtrl->setTextureName(1, m_tbTex2->getText());
-					mtrl->setTextureName(2, m_tbTex3->getText());
-					mtrl->setTextureName(3, m_tbTex4->getText());
-					mtrl->setTextureName(4, m_tbTex5->getText());
-
-					mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->getText()));
-					mtrl->AlphaReference = StringUtils::ParseUInt32(m_tbAlphaTest->getText());
-				
-					mtrl->DepthTestEnabled = m_cbDepthTest->Checked;
-					mtrl->DepthWriteEnabled = m_cbDepthWrite->Checked;
-				
-					mtrl->IsBlendTransparent = m_cbTransparent->Checked;
-				
-					if (m_cbSrcBlend->getSelectedIndex()!=-1)
-					{
-						mtrl->SourceBlend = BlendConverter.Parse(
-							m_cbSrcBlend->getItems()[m_cbSrcBlend->getSelectedIndex()]);
-					}
-					if (m_cbDstBlend->getSelectedIndex()!=-1)
-					{
-						mtrl->DestinationBlend = BlendConverter.Parse(
-							m_cbDstBlend->getItems()[m_cbDstBlend->getSelectedIndex()]);
-					}
-					if (m_cbBlendFunction->getSelectedIndex() !=-1)
-					{
-						mtrl->BlendFunction = BlendFunctionConverter.Parse(
-							m_cbBlendFunction->getItems()[m_cbBlendFunction->getSelectedIndex()]);
-					}
-
-					if (m_cbCull->getSelectedIndex() !=-1)
-					{
-						mtrl->Cull = CullModeConverter.Parse(
-							m_cbCull->getItems()[m_cbCull->getSelectedIndex()]);
-					}
-				
-				}
-				mtrl->Reload();
+				mtrl->ExternalReferenceName = m_tbRefMaterialName->getText();
 			}
+			else
+			{
+				mtrl->ExternalReferenceName = L"";
+
+				mtrl->Ambient = Color4(m_cfAmbient->GetValue());
+				mtrl->Diffuse = Color4(m_cfDiffuse->GetValue());
+				mtrl->Specular = Color4(m_cfSpecular->GetValue());
+				mtrl->Emissive = Color4(m_cfEmissive->GetValue());
+				mtrl->Power = StringUtils::ParseSingle(m_tbShinness->getText());
+
+				mtrl->setTextureName(0, m_tbTex1->getText());
+				mtrl->setTextureName(1, m_tbTex2->getText());
+				mtrl->setTextureName(2, m_tbTex3->getText());
+				mtrl->setTextureName(3, m_tbTex4->getText());
+				mtrl->setTextureName(4, m_tbTex5->getText());
+
+				mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->getText()));
+				mtrl->AlphaReference = StringUtils::ParseUInt32(m_tbAlphaTest->getText());
+
+				mtrl->DepthTestEnabled = m_cbDepthTest->Checked;
+				mtrl->DepthWriteEnabled = m_cbDepthWrite->Checked;
+
+				mtrl->IsBlendTransparent = m_cbTransparent->Checked;
+
+				if (m_cbSrcBlend->getSelectedIndex() != -1)
+				{
+					mtrl->SourceBlend = BlendConverter.Parse(
+						m_cbSrcBlend->getItems()[m_cbSrcBlend->getSelectedIndex()]);
+				}
+				if (m_cbDstBlend->getSelectedIndex() != -1)
+				{
+					mtrl->DestinationBlend = BlendConverter.Parse(
+						m_cbDstBlend->getItems()[m_cbDstBlend->getSelectedIndex()]);
+				}
+				if (m_cbBlendFunction->getSelectedIndex() != -1)
+				{
+					mtrl->BlendFunction = BlendFunctionConverter.Parse(
+						m_cbBlendFunction->getItems()[m_cbBlendFunction->getSelectedIndex()]);
+				}
+
+				if (m_cbCull->getSelectedIndex() != -1)
+				{
+					mtrl->Cull = CullModeConverter.Parse(
+						m_cbCull->getItems()[m_cbCull->getSelectedIndex()]);
+				}
+
+			}
+			mtrl->Reload();
 		}
 	}
 	void ModelDocument::BtnRemoveMtrl_Pressed(Button* ctrl)
 	{
-		const List<Mesh*> ents = m_modelSData->getEntities();
-		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx != -1)
-		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			int partIdx = m_cbMeshPart->getSelectedIndex();
+		Material* mtrl = GetSelectedMaterial();
+		auto mtrls = GetSelectedMeshSubpartMaterials();
 
-			int frameIndex = m_cbSubMtrl->getSelectedIndex();
-			if (partIdx != -1 && frameIndex != -1)
-			{
-				Material* m = mtrls->getMaterial(partIdx, frameIndex);
-				mtrls->RemoveFrame(partIdx, frameIndex);
-				delete m;
-				CBMeshPart_SelectionChanged(nullptr);
-			}
+		if (mtrl && mtrls)
+		{
+			mtrls->Remove(mtrl);
+			delete mtrl;
+
+			CBMeshPart_SelectionChanged(nullptr);
 		}
 	}
 
@@ -1210,28 +1156,26 @@ namespace APDesigner
 	{
 		Vector3 center = Vector3::Zero;
 		int totalVertexCount = 0;
-		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
+		for (Mesh* mesh : m_modelSData->getEntities())
 		{
-			Mesh* mesh = m_modelSData->getEntities()[i];
 			center = Vector3::Add(center, Vector3::Multiply(mesh->getBoundingSphere().Center, (float)mesh->getVertexCount()));
 			totalVertexCount+=mesh->getVertexCount();
 		}
 
 		center = Vector3::Divide(center, (float)totalVertexCount);
 
-		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
+		for (Mesh* mesh : m_modelSData->getEntities())
 		{
-			Mesh* mesh = m_modelSData->getEntities()[i];
-		
-			const VertexElement* posElem = VertexElement::FindElementBySemantic(mesh->getVertexElement(), VEU_Position);
-			//const VertexElement* nrmElem = VertexElement::FindElementBySemantic(mesh->getVertexElement(), VEU_Normal);
-
+			const VertexElement* posElem = mesh->getVertexDecl()->FindElementBySemantic(VEU_Position);
+			
 			if (posElem && posElem->getType() == VEF_Vector3)
 			{
 				char* vtxData = reinterpret_cast<char*>(mesh->getVertexBuffer()->Lock(LOCK_None));
-				for (int j=0;j<mesh->getVertexCount();j++)
+				vtxData += posElem->getOffset();
+
+				for (int j = 0; j < mesh->getVertexCount(); j++)
 				{
-					float* vtxPosOfs = reinterpret_cast<float*>(vtxData+posElem->getOffset()+j*mesh->getVertexSize());
+					float* vtxPosOfs = reinterpret_cast<float*>(vtxData + j*mesh->getVertexSize());
 					vtxPosOfs[0] -= center.X;
 					vtxPosOfs[1] -= center.Y;
 					vtxPosOfs[2] -= center.Z;
@@ -1246,40 +1190,41 @@ namespace APDesigner
 	}
 	void ModelDocument::Transform(const Matrix& transform)
 	{
-		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
+		for (Mesh* mesh : m_modelSData->getEntities())
 		{
-			Mesh* mesh = m_modelSData->getEntities()[i];
-
-			const VertexElement* posElem = VertexElement::FindElementBySemantic(mesh->getVertexElement(), VEU_Position);
-			const VertexElement* nrmElem = VertexElement::FindElementBySemantic(mesh->getVertexElement(), VEU_Normal);
+			const VertexElement* posElem = mesh->getVertexDecl()->FindElementBySemantic(VEU_Position);
+			const VertexElement* nrmElem = mesh->getVertexDecl()->FindElementBySemantic(VEU_Normal);
 
 			if (posElem || nrmElem)
 			{
 				char* vtxData = reinterpret_cast<char*>(mesh->getVertexBuffer()->Lock(LOCK_None));
-				for (int j=0;j<mesh->getVertexCount();j++)
+
+				char* posData = vtxData;
+				char* nrmData = vtxData;
+				if (posElem) posData += posElem->getOffset();
+				if (nrmElem) nrmData += nrmElem->getOffset();
+
+				for (int j = 0; j < mesh->getVertexCount(); j++)
 				{
 					if (posElem &&  posElem->getType() == VEF_Vector3)
 					{
-						float* dataOfs = reinterpret_cast<float*>(vtxData+posElem->getOffset()+j*mesh->getVertexSize());
+						float* dataOfs = reinterpret_cast<float*>(posData + j*mesh->getVertexSize());
 
 						Vector3 pos = Vector3::Set(dataOfs);
 						pos = Vector3::TransformCoordinate(pos, transform);
 
 						pos.Store(dataOfs);
-
 					}
 
 					if (nrmElem &&  nrmElem->getType() == VEF_Vector3)
 					{
-						float* dataOfs = reinterpret_cast<float*>(vtxData+nrmElem->getOffset()+j*mesh->getVertexSize());
+						float* dataOfs = reinterpret_cast<float*>(nrmData + j*mesh->getVertexSize());
 
 						Vector3 pos = Vector3::Set(dataOfs);
 						pos = Vector3::TransformNormal(pos, transform);
 
 						pos.Store(dataOfs);
-
 					}
-
 				}
 				mesh->getVertexBuffer()->Unlock();
 			}
@@ -1300,34 +1245,37 @@ namespace APDesigner
 	}
 	void ModelDocument::RevertZ_Pressed(Button* ctrl)
 	{
-		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
+		for (Mesh* mesh : m_modelSData->getEntities())
 		{
-			Mesh* mesh = m_modelSData->getEntities()[i];
-
-			const VertexElement* posElem = VertexElement::FindElementBySemantic(mesh->getVertexElement(), VEU_Position);
-			const VertexElement* nrmElem = VertexElement::FindElementBySemantic(mesh->getVertexElement(), VEU_Normal);
+			const VertexElement* posElem = mesh->getVertexDecl()->FindElementBySemantic(VEU_Position);
+			const VertexElement* nrmElem = mesh->getVertexDecl()->FindElementBySemantic(VEU_Normal);
 
 			if (posElem || nrmElem)
 			{
 				char* vtxData = reinterpret_cast<char*>(mesh->getVertexBuffer()->Lock(LOCK_None));
-				for (int j=0;j<mesh->getVertexCount();j++)
+
+				char* posData = vtxData;
+				char* nrmData = vtxData;
+				if (posElem) posData += posElem->getOffset();
+				if (nrmElem) nrmData += nrmElem->getOffset();
+
+				for (int j = 0; j < mesh->getVertexCount(); j++)
 				{
 					if (posElem &&  posElem->getType() == VEF_Vector3)
 					{
-						float* vtxPosOfs = reinterpret_cast<float*>(vtxData+posElem->getOffset()+j*mesh->getVertexSize());
+						float* vtxPosOfs = reinterpret_cast<float*>(posData + j*mesh->getVertexSize());
 
 						vtxPosOfs[2] = -vtxPosOfs[2];
 					}
 
 					if (nrmElem &&  nrmElem->getType() == VEF_Vector3)
 					{
-						float* vtxPosOfs = reinterpret_cast<float*>(vtxData+nrmElem->getOffset()+j*mesh->getVertexSize());
+						float* vtxPosOfs = reinterpret_cast<float*>(nrmData + j*mesh->getVertexSize());
 
 						//vtxPosOfs[2] = -vtxPosOfs[2];
 						vtxPosOfs[1] = -vtxPosOfs[1];
 						vtxPosOfs[0] = -vtxPosOfs[0];
 					}
-
 				}
 				mesh->getVertexBuffer()->Unlock();
 			}
@@ -1360,73 +1308,57 @@ namespace APDesigner
 
 	void ModelDocument::SetSequenceImages_Pressed(Button* ctrl)
 	{
-		const List<Mesh*> ents = m_modelSData->getEntities();
-		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx !=-1)
+		auto mtrls = GetSelectedMeshSubpartMaterials();
+		//Material* mtrl = GetSelectedMaterial();
+		if (mtrls)
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			int partIdx = m_cbMeshPart->getSelectedIndex();
+			//MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			//int partIdx = m_cbMeshPart->getSelectedIndex();
 		
-			m_batchCopyMtrl->ShowModal(mtrls, partIdx);
+			m_batchCopyMtrl->ShowModal(mtrls);
 		}
 	}
 	void ModelDocument::ApplyColorToAll_Pressed(Button* ctrl)
 	{
-		Material* currentMtrl = 0;
-		const List<Mesh*> ents = m_modelSData->getEntities();
-		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx != -1)
+		Material* currentMtrl = GetSelectedMaterial();
+
+		if (currentMtrl)
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			
-			int partIdx = m_cbMeshPart->getSelectedIndex();
-			int frameIndex = m_cbSubMtrl->getSelectedIndex();
-			if (partIdx != -1 && frameIndex != -1)
+			for (Mesh* m : m_modelSData->getEntities())
 			{
-				currentMtrl = mtrls->getMaterial(partIdx, frameIndex);
+				for (Material* mtrl : m->getMaterials())
+				{
+					if (mtrl == currentMtrl)
+						continue;
+
+					mtrl->Ambient = currentMtrl->Ambient;
+					mtrl->Diffuse = currentMtrl->Diffuse;
+					mtrl->Specular = currentMtrl->Specular;
+					mtrl->Emissive = currentMtrl->Emissive;
+					mtrl->Power = currentMtrl->Power;
+				}
 			}
 		}
 
-		for (Mesh* m : m_modelSData->getEntities())
-		{
-			for (Material* mtrl : *m->getMaterials())
-			{
-				mtrl->Ambient = currentMtrl->Ambient;
-				mtrl->Diffuse = currentMtrl->Diffuse;
-				mtrl->Specular = currentMtrl->Specular;
-				mtrl->Emissive = currentMtrl->Emissive;
-				mtrl->Power = currentMtrl->Power;
-			}
-		}
 	}
 	void ModelDocument::ApplyFXToAll_Pressed(Button* ctrl)
 	{
-		Material* currentMtrl = 0;
-		const List<Mesh*> ents = m_modelSData->getEntities();
-		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx != -1)
+		Material* currentMtrl = GetSelectedMaterial();
+		
+		if (currentMtrl)
 		{
-			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-
-			int partIdx = m_cbMeshPart->getSelectedIndex();
-			int frameIndex = m_cbSubMtrl->getSelectedIndex();
-			if (partIdx != -1 && frameIndex != -1)
+			for (Mesh* m : m_modelSData->getEntities())
 			{
-				currentMtrl = mtrls->getMaterial(partIdx, frameIndex);
-			}
-		}
-
-		for (Mesh* m : m_modelSData->getEntities())
-		{
-			for (Material* mtrl : *m->getMaterials())
-			{
-				for (int p = 0; p < MaxScenePass; p++)
+				for (Material* mtrl : m->getMaterials())
 				{
-					mtrl->setPassEffectName(p, currentMtrl->getPassEffectName(p));
-					mtrl->setPassEffect(p, currentMtrl->getPassEffect(p));
-				}
+					for (int p = 0; p < MaxScenePass; p++)
+					{
+						mtrl->setPassEffectName(p, currentMtrl->getPassEffectName(p));
+						mtrl->setPassEffect(p, currentMtrl->getPassEffect(p));
+					}
 
-				mtrl->setPassFlags(currentMtrl->getPassFlags());
+					mtrl->setPassFlags(currentMtrl->getPassFlags());
+				}
 			}
 		}
 	}
@@ -1434,7 +1366,7 @@ namespace APDesigner
 	{
 		for (Mesh* m : m_modelSData->getEntities())
 		{
-			for (Material* mtrl : *m->getMaterials())
+			for (Material* mtrl : m->getMaterials())
 			{
 				bool processed = false;
 				for (int p = 0; p < MaxTextures; p++)
@@ -1463,7 +1395,7 @@ namespace APDesigner
 		{
 			int selId = m_passViewSelect->getSelectedIndex() - 1;
 
-			for (int32 i=0;i<sp->getPassCount();i++)
+			for (int32 i = 0; i < sp->getPassCount(); i++)
 			{
 				sp->getPass(i)->setSelectorID(selId);
 			}
@@ -1539,10 +1471,9 @@ namespace APDesigner
 		delete m_tbEndNumber;
 	}
 
-	void CopyMaterialDialog::ShowModal(MeshMaterialSet<Material*>* mtrl, int selectedSet)
+	void CopyMaterialDialog::ShowModal(List<Material*>* mtrls)
 	{
-		m_mtrl = mtrl;
-		m_selectedSet = selectedSet;
+		m_mtrls = mtrls;
 		m_dialogResult = false;
 		m_form->ShowModal();
 	}
@@ -1590,7 +1521,7 @@ namespace APDesigner
 
 		std::string formatString = StringUtils::toPlatformNarrowString(m_tbTextureName->getText());
 
-		Material* baseMtrl = m_mtrl->getMaterial(m_selectedSet, m_mtrl->getFrameCount(m_selectedSet)-1);
+		Material* baseMtrl = m_mtrls->LastItem(); // m_mtrl->getMaterial(m_selectedSet, m_mtrl->getFrameCount(m_selectedSet) - 1);
 
 		char buffer[256];
 		for (int i=startNo;i<=endNo;i++)
@@ -1604,10 +1535,10 @@ namespace APDesigner
 			newMtrl->setTextureName(0, texName);
 			newMtrl->Reload();
 
-			m_mtrl->AddFrame(newMtrl, m_selectedSet);
+			m_mtrls->Add(newMtrl);
 		}
 
-		m_mtrl = 0;
+		m_mtrls = nullptr;
 
 		m_parent->UpdateSelectedPart();
 	}

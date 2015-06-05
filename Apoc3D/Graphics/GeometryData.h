@@ -33,7 +33,6 @@
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Scene;
-using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
 {
@@ -43,25 +42,35 @@ namespace Apoc3D
 		class APAPI GeometryData
 		{
 		public:
-			VertexBuffer* VertexBuffer = nullptr;			/** the vertex buffer used to draw the geometry */
-			IndexBuffer* IndexBuffer = nullptr;				/** the index buffer used to draw the geometry */
-			VertexDeclaration* VertexDecl = nullptr;		/** the vertex declaration for vertex in the geometry */
-			int32 PrimitiveCount = 0;
-			
+			RenderSystem::VertexBuffer* VertexBuffer = nullptr;			/** the vertex buffer used to draw the geometry */
+			RenderSystem::IndexBuffer* IndexBuffer = nullptr;				/** the index buffer used to draw the geometry */
+			RenderSystem::VertexDeclaration* VertexDecl = nullptr;		/** the vertex declaration for vertex in the geometry */
+
 			int32 BaseVertex = 0;							/** The starting vertex offset in the vertex buffer */
+			int32 StartIndex = 0;
+
+			int32 PrimitiveCount = 0;
+			RenderSystem::PrimitiveType PrimitiveType = RenderSystem::PT_PointList;
+
 			int32 VertexCount = 0;
 			int32 VertexSize = 0;
 
-			PrimitiveType PrimitiveType = PT_PointList;
+			int32 UsedVertexRangeStart = 0;
+			int32 UsedVertexRangeCount = 0;
+
 			void* UserData = nullptr;
 
 			bool Discard = false;
 
-			bool usesIndex() const { return !!IndexBuffer; }
+			bool usesIndex() const { return IndexBuffer != nullptr; }
 
 			GeometryData()
 			{ }
 			~GeometryData() { }
+
+			void Setup(RenderSystem::VertexBuffer* vb, RenderSystem::IndexBuffer* ib, RenderSystem::VertexDeclaration* decl,
+				RenderSystem::PrimitiveType pt);
+			
 		};
 	};
 };

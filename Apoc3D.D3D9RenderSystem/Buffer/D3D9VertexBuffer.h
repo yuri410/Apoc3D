@@ -42,7 +42,7 @@ namespace Apoc3D
 			class D3D9VertexBuffer : public VertexBuffer, public VolatileResource
 			{
 			public:
-				D3D9VertexBuffer(D3D9RenderDevice* device, int32 size, BufferUsageFlags usage);
+				D3D9VertexBuffer(D3D9RenderDevice* device, int32 vertexCount, int32 vertexSize, BufferUsageFlags usage);
 				~D3D9VertexBuffer();
 
 				void ReleaseVolatileResource() override;

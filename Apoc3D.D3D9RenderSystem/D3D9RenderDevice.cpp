@@ -320,6 +320,19 @@ namespace Apoc3D
 				}
 			}
 
+			void GetLegitVertexRangeUsed(const GeometryData* gm, D3D9VertexBuffer* dvb,
+				int32& vertexRangeStart, int32& vertexRangeCount)
+			{
+				vertexRangeStart = gm->UsedVertexRangeStart;
+				vertexRangeCount = gm->UsedVertexRangeCount;
+
+				if (vertexRangeCount == 0)
+				{
+					vertexRangeStart = 0;
+					vertexRangeCount = dvb->getVertexCount();
+				}
+			}
+
 			void D3D9RenderDevice::Render(Material* mtrl, const RenderOperation* op, int count, int passSelID)
 			{
 				if (!op || count == 0)
@@ -403,14 +416,16 @@ namespace Apoc3D
 							d3dd->SetVertexDeclaration(m_instancingData->ExpandVertexDecl(vtxDecl));
 
 							D3D9IndexBuffer* dib = static_cast<D3D9IndexBuffer*>(gm->IndexBuffer);
-							d3dd->SetIndices(dib->getD3DBuffer());
-
 							D3D9VertexBuffer* dvb = static_cast<D3D9VertexBuffer*>(gm->VertexBuffer);
-							
+
+							d3dd->SetIndices(dib->getD3DBuffer());
 							d3dd->SetStreamSource(0, dvb->getD3DBuffer(), 0, gm->VertexSize);
 
 							d3dd->SetStreamSourceFreq(1, (D3DSTREAMSOURCE_INSTANCEDATA | 1U));
 							d3dd->SetStreamSource(1, m_instancingData->GetInstanceBuffer(), 0, m_instancingData->getInstanceDataSize());
+
+							int32 vertexRangeStart, vertexRangeCount;
+							GetLegitVertexRangeUsed(gm, dvb, vertexRangeStart, vertexRangeCount);
 
 							uint32 lastActuallConut = 0;
 							int currentIndex = 0;
@@ -424,10 +439,10 @@ namespace Apoc3D
 									d3dd->SetStreamSourceFreq(0, (D3DSTREAMSOURCE_INDEXEDDATA | actual));
 
 								d3dd->DrawIndexedPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType), 
-									gm->BaseVertex, 0,
-									gm->VertexCount, 0, 
+									gm->BaseVertex, 
+									vertexRangeStart, vertexRangeCount, 
+									gm->StartIndex,
 									gm->PrimitiveCount);
-								
 
 								m_batchCount++;
 
@@ -446,7 +461,7 @@ namespace Apoc3D
 							const RenderOperation& rop = op[j];
 							const GeometryData* gm = rop.GeometryData;
 							
-							if (!gm->VertexCount || !gm->PrimitiveCount)
+							if (gm->VertexCount == 0 || gm->PrimitiveCount == 0)
 							{
 								fx->EndPass();
 								break;
@@ -466,12 +481,16 @@ namespace Apoc3D
 
 							if (gm->usesIndex())
 							{
+								int32 vertexRangeStart, vertexRangeCount;
+								GetLegitVertexRangeUsed(gm, dvb, vertexRangeStart, vertexRangeCount);
+
 								D3D9IndexBuffer* dib = static_cast<D3D9IndexBuffer*>(gm->IndexBuffer);
 								d3dd->SetIndices(dib->getD3DBuffer());
 
 								d3dd->DrawIndexedPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType), 
-									gm->BaseVertex, 0,
-									gm->VertexCount, 0, 
+									gm->BaseVertex, 
+									vertexRangeStart, vertexRangeCount,
+									gm->StartIndex,
 									gm->PrimitiveCount);
 							}
 							else

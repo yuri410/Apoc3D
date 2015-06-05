@@ -354,6 +354,7 @@
     <ClCompile Include="Graphics\Animation\AnimationTypes.cpp" />
     <ClCompile Include="Graphics\BatchModelBuilder.cpp" />
     <ClCompile Include="Graphics\Camera.cpp" />
+    <ClCompile Include="Graphics\GeometryData.cpp" />
     <ClCompile Include="Graphics\GraphicsCommon.cpp" />
     <ClCompile Include="Graphics\LockData.cpp" />
     <ClCompile Include="Graphics\MeshSimplifier.cpp" />

@@ -217,16 +217,7 @@ namespace APDesigner
 	MaterialDocument::~MaterialDocument()
 	{
 		delete m_modelViewer;
-		
-		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
-		{
-			MeshMaterialSet<Material*>* mtrls = m_modelSData->getEntities()[i]->getMaterials();
-			for (int j=0;j<mtrls->getMaterialCount();j++)
-				for (int k=0;k<mtrls->getFrameCount(j);k++)
-				{
-					mtrls->getMaterial(j,k) = 0;
-				}
-		}
+		AssignDisplayMaterial(nullptr);
 
 		delete m_model;
 		
@@ -292,15 +283,7 @@ namespace APDesigner
 		md.Load(fl);
 		m_material->Load(md);
 		
-		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
-		{
-			MeshMaterialSet<Material*>* mtrls = m_modelSData->getEntities()[i]->getMaterials();
-			for (int j=0;j<mtrls->getMaterialCount();j++)
-				for (int k=0;k<mtrls->getFrameCount(j);k++)
-				{
-					mtrls->getMaterial(j,k) = m_material;
-				}
-		}
+		AssignDisplayMaterial(m_material);
 		m_model->RebuildROPCache();
 
 		m_distance = 12;
@@ -405,6 +388,17 @@ namespace APDesigner
 	void MaterialDocument::Render()
 	{
 		m_sceneRenderer->RenderScene(&m_scene);
+	}
+
+	void MaterialDocument::AssignDisplayMaterial(Material* mtrl)
+	{
+		for (Mesh* mesh : m_modelSData->getEntities())
+		{
+			for (Material*& m : mesh->getMaterials())
+			{
+				m = mtrl;
+			}
+		}
 	}
 
 	void MaterialDocument::PassButton_Pressed(Button* ctrl)

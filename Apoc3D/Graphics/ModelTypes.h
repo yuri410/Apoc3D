@@ -27,6 +27,7 @@
  */
 
 #include "apoc3d/Collections/List.h"
+#include "apoc3d/Collections/CollectionsCommon.h"
 #include "apoc3d/Math/Vector.h"
 
 using namespace Apoc3D::Math;
@@ -68,98 +69,17 @@ namespace Apoc3D
 		template<class M>
 		class MeshMaterialSet
 		{
-		public:
-			class Iterator
+			static M& GetItem(const List< List<M>* >* s, int32 i, int32 j)
 			{
-				friend class MeshMaterialSet;
-			public:
-				M& operator*() const 
-				{
-					assert(m_set);
-					const List< List<M>* >& set = *m_set;
-					return set[m_index]->operator[](m_frame);
-				}
+				const List< List<M>* >& set = *s;
+				return set[i]->operator[](j);
+			}
+			static int32 GetCountI(const List< List<M>* >* s) { return s->getCount(); }
+			static int32 GetCountJ(const List< List<M>* >* s, int32 i) { return s->operator[](i)->getCount(); }
 
-				M* operator->() const { return &operator*(); }
-
-				bool operator==(const Iterator &other) const
-				{
-					return other.m_set == m_set && other.m_index == m_index && other.m_frame == m_frame;
-				}
-				bool operator!=(const Iterator &other) const { return !(*this == other); }
-
-				Iterator& operator++()
-				{
-					MoveToNext();
-					
-					return *this;
-				}
-				Iterator operator++(int)
-				{
-					Iterator result = *this;
-					++(*this);
-					return result;
-				}
-
-			private:
-				Iterator(const List< List<M>* >* set) : m_set(set)
-				{
-					MoveToNext();
-				}
-				Iterator(const List< List<M>* >* set, int32 idx, int32 frm) : m_set(set), m_index(idx), m_frame(frm) { }
-
-				void MoveToNext()
-				{
-					assert(m_set);
-
-					const List< List<M>* >& set = *m_set;
-
-					if (m_index != -1)
-					{
-						if (m_frame != -1)
-						{
-							m_frame++;
-							if (m_frame >= set[m_index]->getCount())
-							{
-								m_index++;
-								m_frame = 0;
-
-								if (m_index >= set.getCount())
-								{
-									m_index = -1;
-									m_frame = -1;
-								}
-							}
-						}
-						else
-						{
-							// initial. Locate to the first one
-
-							while (set[m_index]->getCount() == 0)
-							{
-								m_index++;
-
-								if (m_index >= set.getCount())
-								{
-									m_index = -1;
-									m_frame = -1;
-									break;
-								}
-							}
-
-							if (m_index != -1)
-								m_frame = 0;
-						}
-					}
-				}
-
-
-				const List< List<M>* >* m_set;
-
-				int32 m_index = 0;
-				int32 m_frame = -1;
-			};
-
+		public:
+			using Iterator = Apoc3D::Collections::Iterator2D < M, List< List<M>* >, GetItem, GetCountI, GetCountJ>;
+			
 
 			~MeshMaterialSet()
 			{

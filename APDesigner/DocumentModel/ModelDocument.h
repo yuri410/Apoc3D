@@ -200,6 +200,10 @@ namespace APDesigner
 
 		void DisplayMaterialEditor(Material* mtrl, bool usingRef);
 
+		Mesh* GetSelectedMesh();
+		Material* GetSelectedMaterial();
+		List<Material*>* GetSelectedMeshSubpartMaterials();
+
 	};
 
 	class CopyMaterialDialog
@@ -208,7 +212,7 @@ namespace APDesigner
 		CopyMaterialDialog(ModelDocument* parent, MainWindow* window, RenderDevice* device);
 		~CopyMaterialDialog();
 
-		void ShowModal(MeshMaterialSet<Material*>* mtrl, int selectedSet);
+		void ShowModal(List<Material*>* mtrls);
 
 	private:
 		ModelDocument* m_parent;
@@ -228,8 +232,9 @@ namespace APDesigner
 
 		bool m_dialogResult;
 
-		MeshMaterialSet<Material*>* m_mtrl;
-		int m_selectedSet;
+		//MeshMaterialSet<Material*>* m_mtrl;
+		//int m_selectedSet;
+		List<Material*>* m_mtrls;
 
 		void ButtonOK_Pressed(Button* ctrl);
 		void Form_Closed(Control* ctrl);

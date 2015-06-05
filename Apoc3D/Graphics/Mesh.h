@@ -31,7 +31,7 @@
 #include "RenderOperationBuffer.h"
 #include "Renderable.h"
 #include "RenderSystem/VertexElement.h"
-
+#include "apoc3d/Collections/CollectionsCommon.h"
 #include "apoc3d/Math/BoundingSphere.h"
 
 using namespace Apoc3D::Collections;
@@ -51,7 +51,26 @@ namespace Apoc3D
 		 */
 		class APAPI Mesh : public Renderable
 		{
+			static Material*& GetItem(const Mesh* m, int32 i, int32 j) { return m->m_subParts[i].MaterialFrames[j]; }
+			static int32 GetCountI(const Mesh* m) { return m->getPartCount(); }
+			static int32 GetCountJ(const Mesh* m, int32 i) { return m->getMaterialFrames(i).getCount(); }
+
 		public:
+
+			struct MaterialIterator
+			{
+			public:
+				using Iterator = Apoc3D::Collections::Iterator2D < Material*, Mesh, GetItem, GetCountI, GetCountJ > ;
+
+				MaterialIterator(const Mesh* m) : m_mesh(m) { }
+
+				Iterator begin() const { return Iterator(m_mesh); }
+				Iterator end() const { return Iterator(m_mesh, -1, -1); }
+
+			private: 
+				const Mesh* m_mesh;
+			};
+
 			Mesh(RenderDevice* device, const MeshData* data);
 			~Mesh();
 
@@ -69,13 +88,23 @@ namespace Apoc3D
 
 
 			VertexBuffer* getVertexBuffer() const { return m_vertexBuffer; }
-			const List<IndexBuffer*>& getIndexBuffers() const { return m_indexBuffers; }
-			int32 getIndexCount() const { return m_primitiveCount * 3; }
+			VertexDeclaration* getVertexDecl() const { return m_vtxDecl; }
+			//const List<IndexBuffer*>& getIndexBuffers() const { return m_indexBuffers; }
 
-			const List<VertexElement>& getVertexElement() const { return m_vertexElements; }
-			const int32* getPartPrimitiveCount() const { return m_partPrimitiveCount; }
-			const int32* getPartVertexCount() const { return m_partVertexCount; } 
-			const int32 getPartCount() const { return m_indexBuffers.getCount(); }
+			//const List<VertexElement>& getVertexElement() const { return m_vertexElements; }
+			//const int32* getPartPrimitiveCount() const { return m_partPrimitiveCount; }
+			//const int32* getPartVertexCount() const { return m_partVertexCount; } 
+			int32 getPartCount() const { return m_subParts.getCount(); }
+
+			int32 getPartPrimitiveCount(int32 partIdx) const { return m_subParts[partIdx].PrimitiveCount; }
+			int32 getPartVertexCount(int32 partIdx) const { return m_subParts[partIdx].VertexCount; }
+
+			IndexBuffer* getIndexBuffer(int32 partIdx) const { return m_subParts[partIdx].Indices; }
+			List<Material*>& getMaterialFrames(int32 partIdx) const { return m_subParts[partIdx].MaterialFrames; }
+			//int32 getMaterialFramesCount(int32 partIdx) const { return m_subParts[partIdx].MaterialFrames.getCount(); }
+			Material* getMaterial(int32 partIdx, int32 frameIdx) const { return m_subParts[partIdx].MaterialFrames[frameIdx]; }
+
+			MaterialIterator getMaterials() const { return MaterialIterator(this); }
 
 			/** 
 			 *  A set of arrays of materials.
@@ -85,10 +114,12 @@ namespace Apoc3D
 			 *  When not using any material animation, this should be a set of arrays with a length of 1.
 			 *  That is in equivalent to a set of Material.
 			 */
-			MeshMaterialSet<Material*>* getMaterials() { return &m_materials; }
+			//MeshMaterialSet<Material*>* getMaterials() { return &m_materials; }
+
 			int32 getVertexSize() const { return m_vertexSize; }
 			int32 getVertexCount() const { return m_vertexCount; }
 			int32 getPrimitiveConut() const { return m_primitiveCount; }
+			int32 getIndexCount() const { return m_primitiveCount * 3; }
 
 			const String& getName() const { return m_name; }
 			RenderDevice* getRenderDevice() const { return m_renderDevice; }
@@ -100,20 +131,48 @@ namespace Apoc3D
 			void setBoundingSphere(const BoundingSphere& sphere) { m_boundingSphere = sphere; }
 
 		private:
+			// a sub part(sub mesh) divided by materials
+			struct SubPart
+			{
+				List<Material*> MaterialFrames;
+				IndexBuffer* Indices = nullptr;
+
+				int32 PrimitiveCount = 0;
+				int32 VertexCount = 0;
+
+				int32 VertexRangeUsedStart = 0;
+				int32 VertexRangeUsedCount = 0;
+
+				SubPart(const SubPart& o) = delete;
+				SubPart& operator=(const SubPart& o) = delete;
+
+				SubPart(SubPart&& o);
+				SubPart& operator=(SubPart&& o);
+				SubPart(){}
+				~SubPart();
+
+				template <typename T, IndexBufferType IBT>
+				void SetIndexData(ObjectFactory* fac, const List<uint>& pi, int32 vertexCount, bool* used);
+			};
+
 			VertexDeclaration* m_vtxDecl;
 			int32 m_vertexSize;
-			bool m_opBufferBuilt;
+			bool m_opBufferBuilt = false;
 			RenderOperationBuffer m_bufferedOp;
-			MeshMaterialSet<Material*> m_materials;
+			//MeshMaterialSet<Material*> m_materials;
 			VertexBuffer* m_vertexBuffer;
-			List<IndexBuffer*> m_indexBuffers;
+
+			List<SubPart> m_subParts;
+			//List<IndexBuffer*> m_indexBuffers;
 
 			/** An array indicating the primitive 
 			 *  count for each sub mesh (or sub part, cut by materials; see the Mesh class)
 			 *  at specific index.
 			 */
-			int32* m_partPrimitiveCount;
-			int32* m_partVertexCount;			/** Similar to m_partPrimitiveCount but the vertex count. */
+			//int32* m_partPrimitiveCount;
+			//int32* m_partVertexCount;			/** Similar to m_partPrimitiveCount but the vertex count. */
+			//int32* m_partVertexRangedUsedStart;
+			//int32* m_partVertexRangedUsedCount;
 
 			RenderDevice* m_renderDevice;
 			ObjectFactory* m_factory;
@@ -126,7 +185,6 @@ namespace Apoc3D
 
 			BoundingSphere m_boundingSphere;
 
-			List<VertexElement> m_vertexElements;
 
 		};
 	}

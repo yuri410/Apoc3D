@@ -220,6 +220,99 @@ namespace Apoc3D
 			}
 		};
 
+
+
+		template <typename T, typename P, T& GetItem(const P*, int32, int32), int32 GetCountI(const P*), int32 GetCountJ(const P*, int32)>
+		class Iterator2D
+		{
+		public:
+			T& operator*() const
+			{
+				assert(m_parent);
+
+				return GetItem(m_parent, m_index, m_frame);
+			}
+
+			T* operator->() const { return &operator*(); }
+
+			bool operator==(const Iterator2D &other) const
+			{
+				return other.m_parent == m_parent && other.m_index == m_index && other.m_frame == m_frame;
+			}
+			bool operator!=(const Iterator2D &other) const { return !(*this == other); }
+
+			Iterator2D& operator++()
+			{
+				MoveToNext();
+
+				return *this;
+			}
+			Iterator2D operator++(int)
+			{
+				Iterator2D result = *this;
+				++(*this);
+				return result;
+			}
+
+			Iterator2D(const P* parent) : m_parent(parent)
+			{
+				MoveToNext();
+			}
+
+			Iterator2D(const P* parent, int32 idx, int32 frm)
+				: m_parent(parent), m_index(idx), m_frame(frm) { }
+
+		private:
+			void MoveToNext()
+			{
+				assert(m_parent);
+
+				if (m_index != -1)
+				{
+					if (m_frame != -1)
+					{
+						m_frame++;
+						if (m_frame >= GetCountJ(m_parent, m_index))
+						{
+							m_index++;
+							m_frame = 0;
+
+							if (m_index >= GetCountI(m_parent))
+							{
+								m_index = -1;
+								m_frame = -1;
+							}
+						}
+					}
+					else
+					{
+						// initial. Locate to the first one
+						while (GetCountJ(m_parent, m_index) == 0)
+						{
+							m_index++;
+
+							if (m_index >= GetCountI(m_parent))
+							{
+								m_index = -1;
+								m_frame = -1;
+								break;
+							}
+						}
+
+						if (m_index != -1)
+							m_frame = 0;
+					}
+				}
+			}
+
+
+			const P* m_parent;
+
+			int32 m_index = 0;
+			int32 m_frame = -1;
+		};
+
+
 		namespace Utils
 		{
 			int APAPI GetHashTableSize(int min);

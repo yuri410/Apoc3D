@@ -66,7 +66,7 @@ namespace Apoc3D
 					m_vtxDeclShadable = new D3D9VertexDeclaration(device, elements);
 				}
 
-				m_quadBuffer = new D3D9VertexBuffer(device, (MaxDeferredDraws * 4) * m_vtxDecl->GetVertexSize(), (BufferUsageFlags)(BU_Dynamic|BU_WriteOnly));
+				m_quadBuffer = new D3D9VertexBuffer(device, (MaxDeferredDraws * 4), m_vtxDecl->GetVertexSize(), (BufferUsageFlags)(BU_Dynamic|BU_WriteOnly));
 				m_quadIndices = new D3D9IndexBuffer(device, IBT_Bit16, sizeof(uint16) * MaxDeferredDraws * 6, BU_WriteOnly);
 
 				{
