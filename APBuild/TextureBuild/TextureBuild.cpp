@@ -376,7 +376,7 @@ namespace APBuild
 		TextureBuildConfig config;
 		config.Parse(sect);
 
-		if (!File::FileExists(config.SourceFile))
+		if (!config.AssembleCubemap && !config.AssembleVolumeMap && !File::FileExists(config.SourceFile))
 		{
 			BuildSystem::LogError(config.SourceFile, L"Could not find source file.");
 			return;
