@@ -235,7 +235,61 @@ namespace Apoc3D
 			
 		}
 
+		float Matrix::ExtractProjectionNearPlane() const
+		{
+			if (M34 != 0)
+			{
+				// perspective
 
+				return -M34 * M43 / M33;
+			}
+
+			// ortho
+			if (M33 > 0)
+				return -M43 / M33; // RH
+			return M43 / M33; // LH
+		}
+
+		float Matrix::ExtractProjectionFarPlane() const
+		{
+			if (M34 != 0)
+			{
+				// perspective
+
+				if (M34 < 0)
+					return -M43 * M34 / (M33 + 1);	// RH
+				return -M43 * M34 / (M33 - 1);	// LH
+			}
+
+			// ortho
+			if (M33 > 0)
+				return (1 - M43) / M33; // LH
+			return (M43 - 1) / M33;  // RH
+		}
+
+		void Matrix::ReAdjustProjectionNearFarPlane(float near, float far)
+		{
+			Matrix temp;
+			if (M34 != 0)
+			{
+				// perspective
+
+				if (M34 < 0)
+					Matrix::CreatePerspectiveFovRH(temp, 1, 1, near, far);		// RH
+				else
+					Matrix::CreatePerspectiveFovLH(temp, 1, 1, near, far);		// RH
+			}
+			else
+			{
+				if (M33 > 0)
+					Matrix::CreateOrthoLH(temp, 1, 1, near, far);
+				else
+					Matrix::CreateOrthoRH(temp, 1, 1, near, far);
+			}
+
+			M33 = temp.M33;
+			M43 = temp.M43;
+		}
 
 		void Matrix::CreateBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &cameraUpVector, const Vector3 &cameraForwardVector, Matrix& res)
 		{

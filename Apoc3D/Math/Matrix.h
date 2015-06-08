@@ -294,6 +294,11 @@ namespace Apoc3D
 			#endif
 			}
 
+			float ExtractProjectionNearPlane() const;
+			float ExtractProjectionFarPlane() const;
+
+			void ReAdjustProjectionNearFarPlane(float near, float far);
+
 			/**
 			 *  Determines the product of two matrices.
 			 *  The result matrix cannot reference to the memory that ma or mb is referring to, or the result is not correct.

@@ -94,6 +94,7 @@
   <ItemGroup>
     <ClCompile Include="ContainerTests.cpp" />
     <ClCompile Include="HalfFloatTests.cpp" />
+    <ClCompile Include="MatrixTest.cpp" />
     <ClCompile Include="PathTests.cpp" />
     <ClCompile Include="PCH.h">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -266,19 +266,41 @@ namespace Apoc3D
 				InstanceInfoBlobValue(bool val) : Type(CEPT_Boolean) { AsBoolean() = val; }
 				InstanceInfoBlobValue(int val) : Type(CEPT_Integer) { AsInteger() = val; }
 
+				InstanceInfoBlobValue(const Vector2* val) : Type(CEPT_Ref_Vector2) { AsVector2Ref() = val; }
+				InstanceInfoBlobValue(const Vector3* val) : Type(CEPT_Ref_Vector3) { AsVector3Ref() = val; }
+				InstanceInfoBlobValue(const Vector4* val) : Type(CEPT_Ref_Vector4) { AsVector4Ref() = val; }
+
+				InstanceInfoBlobValue(Texture* val) : Type(CEPT_Ref_Texture) { RefValue = val; }
+				InstanceInfoBlobValue(ResourceHandle<Texture>* val) : Type(CEPT_Ref_TextureHandle) { RefValue = val; }
+
 				//InstanceInfoBlobValue(CustomEffectParameterType type) : Type(type) { }
 
 
-				float& AsSingle() { return reinterpret_cast<float&>(Value); }
-				Vector2& AsVector2() { return reinterpret_cast<Vector2&>(Value); }
-				Vector4& AsVector4() { return reinterpret_cast<Vector4&>(Value); }
-				Matrix& AsMatrix() { return reinterpret_cast<Matrix&>(Value); }
-				bool& AsBoolean() { return reinterpret_cast<bool&>(Value); }
-				int& AsInteger() { return reinterpret_cast<int&>(Value); }
+				float& AsSingle() { assert(Type == CEPT_Float); return reinterpret_cast<float&>(Value); }
+				Vector2& AsVector2() { assert(Type == CEPT_Vector2); return reinterpret_cast<Vector2&>(Value); }
+				Vector4& AsVector4() { assert(Type == CEPT_Vector4); return reinterpret_cast<Vector4&>(Value); }
+				Matrix& AsMatrix() { assert(Type == CEPT_Matrix); return reinterpret_cast<Matrix&>(Value); }
+				bool& AsBoolean() { assert(Type == CEPT_Boolean); return reinterpret_cast<bool&>(Value); }
+				int& AsInteger() { assert(Type == CEPT_Integer); return reinterpret_cast<int&>(Value); }
 
-				Vector2& AsVector2Ref() { return *reinterpret_cast<Vector2*>(RefValue); }
-				Vector3& AsVector3Ref() { return *reinterpret_cast<Vector3*>(RefValue); }
-				Vector4& AsVector4Ref() { return *reinterpret_cast<Vector4*>(RefValue); }
+				const Vector2 *& AsVector2Ref() { assert(Type == CEPT_Ref_Vector2); return const_cast<const Vector2*&>( reinterpret_cast<Vector2 *&>(RefValue) ); }
+				const Vector3 *& AsVector3Ref() { assert(Type == CEPT_Ref_Vector3); return const_cast<const Vector3*&>(reinterpret_cast<Vector3 *&>(RefValue)); }
+				const Vector4 *& AsVector4Ref() { assert(Type == CEPT_Ref_Vector4); return const_cast<const Vector4*&>(reinterpret_cast<Vector4 *&>(RefValue)); }
+
+
+				//InstanceInfoBlobValue& operator=(float v) { AsSingle() = v; return *this; }
+				//InstanceInfoBlobValue& operator=(const Vector2& v) { AsVector2() = v; return *this; }
+				//InstanceInfoBlobValue& operator=(const Vector4& v) { AsVector4() = v; return *this; }
+				//InstanceInfoBlobValue& operator=(const Matrix& v) { AsMatrix() = v; return *this; }
+				//InstanceInfoBlobValue& operator=(bool v) { AsBoolean() = v; return *this; }
+				//InstanceInfoBlobValue& operator=(int v) { AsInteger() = v; return *this; }
+
+				//InstanceInfoBlobValue& operator=(const Vector2* v) { AsVector2Ref() = v; return *this; }
+				//InstanceInfoBlobValue& operator=(const Vector3* v) { AsVector3Ref() = v; return *this; }
+				//InstanceInfoBlobValue& operator=(const Vector4* v) { AsVector4Ref() = v; return *this; }
+
+				//InstanceInfoBlobValue& operator=(Texture* v) { assert(Type == CEPT_Ref_Texture); RefValue = v; return *this; }
+				//InstanceInfoBlobValue& operator=(ResourceHandle<Texture>* v) { assert(Type == CEPT_Ref_TextureHandle);  RefValue = v; return *this; }
 
 
 				void Configure(float defVal) { RefValue = nullptr; Type = CEPT_Float; AsSingle() = defVal; }

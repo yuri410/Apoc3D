@@ -435,7 +435,7 @@ namespace Apoc3D
 											if (paramType == CEPT_Ref_Vector2)
 											{
 												for (int i = 0; i < legalCont; i++)
-													dst[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector2Ref();
+													dst[i] = *(*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector2Ref();
 											}
 											else
 											{
@@ -454,7 +454,7 @@ namespace Apoc3D
 											break;
 										case CEPT_Ref_Vector4:
 											for (int i = 0; i < legalCont; i++)
-												s_instancingVector4Buffer[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector4Ref();
+												s_instancingVector4Buffer[i] = *(*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector4Ref();
 											ep.SetVector4(s_instancingVector4Buffer, count);
 											break;
 
@@ -466,7 +466,7 @@ namespace Apoc3D
 
 										case CEPT_Ref_Vector3:
 											for (int i = 0; i < legalCont; i++)
-												s_instancingVector4Buffer[i] = Vector4((*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector3Ref(), 0);
+												s_instancingVector4Buffer[i] = Vector4(*(*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector3Ref(), 0);
 											ep.SetVector4(s_instancingVector4Buffer, count);
 											break;
 
@@ -650,24 +650,15 @@ namespace Apoc3D
 						}
 						case EPUSAGE_S_FarPlane:
 						{
-							//SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->);
-							const Matrix& view = RendererEffectParams::CurrentCamera->getProjMatrix();
-							float n = -view.M34 * view.M43 / view.M33;
-							if (view.M34 < 0)
-							{
-								// RH
-								ep.SetFloat((float)(view.M33 * n / (view.M33*n + 1)));
-							}
-							else
-							{
-								ep.SetFloat((float)(view.M33 * n / (view.M33*n - 1)));
-							}
+							const Matrix& proj = RendererEffectParams::CurrentCamera->getProjMatrix();
+							float n = proj.ExtractProjectionFarPlane();
+							ep.SetFloat(n);
 							break;
 						}
 						case EPUSAGE_S_NearPlane:
 						{
-							const Matrix& view = RendererEffectParams::CurrentCamera->getProjMatrix();
-							float n = -view.M34 * view.M43 / view.M33;
+							const Matrix& proj = RendererEffectParams::CurrentCamera->getProjMatrix();
+							float n = proj.ExtractProjectionNearPlane();
 							ep.SetFloat(n);
 							break;
 						}
