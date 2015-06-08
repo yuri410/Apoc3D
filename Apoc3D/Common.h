@@ -421,6 +421,7 @@ namespace Apoc3D
 			class DepthBuffer;
 
 			class RenderTarget;
+			class CubemapRenderTarget;
 
 			class Texture;
 			class VertexElement;

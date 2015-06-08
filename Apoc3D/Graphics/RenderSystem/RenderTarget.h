@@ -108,6 +108,32 @@ namespace Apoc3D
 				String m_multisampleMode;
 
 			};
+
+			class APAPI CubemapRenderTarget
+			{
+				RTTI_BASE;
+			protected:
+				CubemapRenderTarget(int32 length, PixelFormat fmt);
+
+			public:
+				virtual ~CubemapRenderTarget();
+
+				int32 getLength() const { return m_length; }
+				PixelFormat getColorFormat() const { return m_pixelFormat; }
+
+				RenderTarget* getSubRenderTarget(int32 i) const { return m_faces[i]; }
+
+				EventDelegate<CubemapRenderTarget*> eventReset;
+
+
+			protected:
+				FixedList<RenderTarget*, CUBE_Count> m_faces;
+
+				int32 m_length;
+			private:
+				PixelFormat m_pixelFormat;
+
+			};
 		}
 
 	}

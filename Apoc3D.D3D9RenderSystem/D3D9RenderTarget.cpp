@@ -75,27 +75,31 @@ namespace Apoc3D
 				return D3D9Utils::ConvertBackMultiSample(desc.MultiSampleType);
 			}
 
-			void logRTFailure(PixelFormat colorFormat, DepthFormat depFormat, const String& multisampleType)
+			void logRTFailure(PixelFormat colorFormat, DepthFormat depFormat, const String& multisampleType, bool cubemap = false)
 			{
 				String formatString;
 				if (colorFormat != FMT_Count)
 				{
 					formatString.append(L"C-");
-					formatString.append(PixelFormatUtils::ToString(colorFormat));
+					formatString += PixelFormatUtils::ToString(colorFormat);
 				}
 				if (depFormat != DEPFMT_Count)
 				{
 					if (formatString.size())
 						formatString.append(L", ");
 					formatString.append(L"D-");
-					formatString.append(PixelFormatUtils::ToString(depFormat));
+					formatString += PixelFormatUtils::ToString(depFormat);
 				}
 				if (!RenderTarget::IsMultisampleModeStringNone(multisampleType))
 				{
 					if (formatString.size())
 						formatString.append(L", ");
 					formatString.append(L"MSAA=");
-					formatString.append(multisampleType);
+					formatString += multisampleType;
+				}
+				if (cubemap)
+				{
+					formatString += L" [Cubemap]";
 				}
 
 				ApocLog(LOG_Graphics, L"[D3D9] RenderTarget format not supported: " + formatString, LOGLVL_Error);
@@ -232,31 +236,6 @@ namespace Apoc3D
 				}
 
 				eventReseted.Invoke(this);
-			}
-
-
-			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt)
-				: RenderTarget(device, 
-				D3D9Utils::GetD3DTextureWidth(rt),
-				D3D9Utils::GetD3DTextureHeight(rt), 
-				D3D9Utils::GetD3DTextureFormat(rt), L""), VolatileResource(device),
-				m_device(device), m_color(rt), m_hasColor(true)
-			{
-				m_color->GetSurfaceLevel(0, &m_colorSurface);
-				m_colorWrapperTex = new D3D9Texture(m_device, m_color);
-			}
-
-			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt, IDirect3DSurface9* depth)
-				: RenderTarget(device, 
-				D3D9Utils::GetD3DTextureWidth(rt),
-				D3D9Utils::GetD3DTextureHeight(rt), 
-				D3D9Utils::GetD3DTextureFormat(rt), 
-				GetDepthSurfaceFormat(depth), L""), VolatileResource(device),
-				m_device(device), m_color(rt),  m_depthSurface(depth), m_hasDepth(true), m_hasColor(true)
-			{
-				m_color->GetSurfaceLevel(0, &m_colorSurface);
-				m_depthBufferWrapper = new D3D9DepthBuffer(device, depth);
-				m_colorWrapperTex = new D3D9Texture(m_device, m_color);
 			}
 
 			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format)
@@ -446,8 +425,8 @@ namespace Apoc3D
 			{
 				if (m_isResolvedRTDirty)
 				{
-					Resolve();
 					m_isResolvedRTDirty = false;
+					Resolve();
 				}
 
 				return m_colorWrapperTex;
@@ -533,6 +512,56 @@ namespace Apoc3D
 				HRESULT hr = m_offscreenPlainSurface->UnlockRect();
 				assert(SUCCEEDED(hr));
 			}
+
+			//////////////////////////////////////////////////////////////////////////
+			D3D9CubemapRenderTarget::RefRenderTarget::RefRenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat fmt, IDirect3DSurface9* s)
+				: RenderTarget(device, width, height, fmt, L""), m_colorSurface(s)
+			{ }
+
+			//////////////////////////////////////////////////////////////////////////
+
+			D3D9CubemapRenderTarget::D3D9CubemapRenderTarget(D3D9RenderDevice* device, int32 length, PixelFormat format)
+				: CubemapRenderTarget(length, format), VolatileResource(device), m_device(device)
+			{
+				ReloadVolatileResource();
+			}
+
+			D3D9CubemapRenderTarget::~D3D9CubemapRenderTarget()
+			{
+				ReleaseVolatileResource();
+			}
+
+			void D3D9CubemapRenderTarget::ReleaseVolatileResource() 
+			{
+				m_faces.DeleteAndClear();
+
+				if (m_cubemap)
+				{
+					m_cubemap->Release();
+					m_cubemap = NULL;
+				}
+			}
+			void D3D9CubemapRenderTarget::ReloadVolatileResource() 
+			{
+				D3DDevice* dev = m_device->getDevice();
+
+				PixelFormat fmt = getColorFormat();
+
+				HRESULT hr = dev->CreateCubeTexture(m_length, 1, D3DUSAGE_RENDERTARGET, D3D9Utils::ConvertPixelFormat(fmt), D3DPOOL_DEFAULT, &m_cubemap, NULL);
+				assert(SUCCEEDED(hr));
+				if (FAILED(hr))
+					logRTFailure(fmt, DEPFMT_Count, L"");
+
+				for (int32 i = 0; i < CUBE_Count; i++)
+				{
+					IDirect3DSurface9* pFace;
+					m_cubemap->GetCubeMapSurface((D3DCUBEMAP_FACES)i, 0, &pFace);
+
+					m_faces.Add(new RefRenderTarget(m_device, m_length, m_length, getColorFormat(), pFace));
+				}
+				
+			}
+
 		}
 	}
 }

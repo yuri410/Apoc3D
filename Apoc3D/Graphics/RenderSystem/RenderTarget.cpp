@@ -123,6 +123,16 @@ namespace Apoc3D
 				}
 			}
 
+
+			//////////////////////////////////////////////////////////////////////////
+			CubemapRenderTarget::CubemapRenderTarget(int32 length, PixelFormat fmt)
+				: m_length(length), m_pixelFormat(fmt) { }
+
+			CubemapRenderTarget::~CubemapRenderTarget()
+			{
+			}
+
+
 		}
 	}
 }

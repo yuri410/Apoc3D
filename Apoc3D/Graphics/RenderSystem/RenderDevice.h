@@ -243,6 +243,7 @@ namespace Apoc3D
 				RenderTarget* CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, DepthFormat depthFmt, const String& multisampleMode);
 				RenderTarget* CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, const String& multisampleMode);
 
+				virtual CubemapRenderTarget* CreateCubemapRenderTarget(int32 length, PixelFormat clrFmt) = 0;
 
 				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage) = 0;
 				virtual VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage) = 0;

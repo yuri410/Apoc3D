@@ -76,6 +76,10 @@ namespace Apoc3D
 			{
 				return new D3D9RenderTarget(m_device, width, height, clrFmt);
 			}
+			CubemapRenderTarget* D3D9ObjectFactory::CreateCubemapRenderTarget(int32 length, PixelFormat clrFmt)
+			{
+				return new D3D9CubemapRenderTarget(m_device, length, clrFmt);
+			}
 
 			IndexBuffer* D3D9ObjectFactory::CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage)
 			{

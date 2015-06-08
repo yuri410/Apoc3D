@@ -48,9 +48,6 @@ namespace Apoc3D
 				RTTI_DERIVED(D3D9RenderTarget, RenderTarget);
 
 			public:
-				D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt);
-				D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt, IDirect3DSurface9* depth);
-
 				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format);
 				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format, DepthFormat depthFormat);
 				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, const String& multisampleMode, PixelFormat format);
@@ -76,17 +73,13 @@ namespace Apoc3D
 				IDirect3DSurface9* getDepthSurface() const { return m_depthSurface; }
 
 			private:
-
-				/** Resolve multisample RT
-				 */
+				/** Resolve multisample RT */
 				void Resolve();
 
 				virtual DataRectangle lock(LockMode mode, const Apoc3D::Math::Rectangle& rect) override;
 				virtual void unlock() override;
 
-
 				void CreateLockingSurface();
-
 
 				D3D9RenderDevice* m_device;
 
@@ -104,6 +97,42 @@ namespace Apoc3D
 
 				bool m_isResolvedRTDirty = false;
 				bool m_isLockSurfaceDirty = true;
+			};
+
+			class D3D9CubemapRenderTarget final : public CubemapRenderTarget, public VolatileResource
+			{
+				RTTI_DERIVED(D3D9CubemapRenderTarget, CubemapRenderTarget);
+			public:
+				D3D9CubemapRenderTarget(D3D9RenderDevice* device, int32 length, PixelFormat format);
+				~D3D9CubemapRenderTarget();
+
+				virtual void ReleaseVolatileResource() override;
+				virtual void ReloadVolatileResource() override;
+
+			private:
+				class RefRenderTarget : public RenderTarget
+				{
+					RTTI_DERIVED(RefRenderTarget, RenderTarget);
+				public:
+					RefRenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat fmt, IDirect3DSurface9* s);
+
+					virtual Texture* GetColorTexture() override { assert(0); return nullptr; }
+					virtual DepthBuffer* GetDepthBuffer() override { assert(0); return nullptr; }
+
+					virtual void PrecacheLockedData() override { assert(0); }
+
+				private:
+
+					virtual DataRectangle lock(LockMode mode, const Apoc3D::Math::Rectangle& rect) override { assert(0); return DataRectangle(0, 0, 0, 0, FMT_Unknown); }
+					virtual void unlock() override { assert(0); }
+
+					IDirect3DSurface9* m_colorSurface = nullptr;
+
+				};
+
+				D3D9RenderDevice* m_device;
+
+				D3DTextureCube* m_cubemap;
 			};
 		}
 	}

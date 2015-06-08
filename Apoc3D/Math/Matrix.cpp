@@ -25,8 +25,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Quaternion.h"
 #include "apoc3d/Collections/Stack.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
+#include "MathCommon.h"
 
 using namespace Apoc3D::Collections;
+using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
 {
@@ -402,5 +405,31 @@ namespace Apoc3D
 			Quaternion::CreateRotationYawPitchRoll(quaternion, yaw, pitch, roll);
 			CreateRotationQuaternion(result, quaternion);
 		}
+
+		void Matrix::CreateCubemapRenderingView(Matrix(&result)[6], float near, float far)
+		{
+			Matrix proj;
+			Matrix::CreatePerspectiveFovLH(proj, Math::Half_PI, 1.0, near, far);
+
+			Matrix view;
+			Matrix::CreateLookAtLH(view, Vector3::Zero, { 1, 0, 0 }, { 0, 1, 0 });
+			Matrix::Multiply(result[CUBE_PositiveX], view, proj);
+
+			Matrix::CreateLookAtLH(view, Vector3::Zero, { -1, 0, 0 }, { 0, 1, 0 });
+			Matrix::Multiply(result[CUBE_NegativeX], view, proj);
+
+			Matrix::CreateLookAtLH(view, Vector3::Zero, { 0, 1, 0 }, { 0, 0, -1 });
+			Matrix::Multiply(result[CUBE_PositiveY], view, proj);
+
+			Matrix::CreateLookAtLH(view, Vector3::Zero, { 0, -1, 0 }, { 0, 0, 1 });
+			Matrix::Multiply(result[CUBE_NegativeY], view, proj);
+
+			Matrix::CreateLookAtLH(view, Vector3::Zero, { 0, 0, 1 }, { 0, 1, 0 });
+			Matrix::Multiply(result[CUBE_PositiveZ], view, proj);
+
+			Matrix::CreateLookAtLH(view, Vector3::Zero, { 0, 0, -1 }, { 0, 1, 0 });
+			Matrix::Multiply(result[CUBE_NegativeZ], view, proj);
+		}
+
 	}
 }
