@@ -85,15 +85,12 @@ namespace Apoc3D
 				/** Clears all the currently binded render targets. */
 				virtual void Clear(ClearFlags flags, uint color, float depth, int stencil) = 0;
 
-				/**
-				 *  Sets the current render target at given index. A value of 0 will reset the rendertarget to default.
-				 */
+				/** Sets the current render target at given index. A value of 0 will reset the rendertarget to default. */
 				virtual void SetRenderTarget(int index, RenderTarget* rt) = 0;
-
 				virtual RenderTarget* GetRenderTarget(int index) = 0;
 
-				//virtual void SetTexture(int index, Texture* texture) = 0;
-				//virtual Texture* GetTexture(int index) = 0;
+				virtual void SetDepthStencilBuffer(DepthStencilBuffer* buf) = 0;
+				virtual DepthStencilBuffer* GetDepthStencilBuffer() = 0;
 
 				virtual void BindVertexShader(Shader* shader) = 0;
 				virtual void BindPixelShader(Shader* shader) = 0;
@@ -123,21 +120,19 @@ namespace Apoc3D
 				{
 					String DebugName;
 
-					int32 DP;
-					int32 Vertex;
-					int32 Primitive;
+					int32 DP = 0;
+					int32 Vertex = 0;
+					int32 Primitive = 0;
 
-					int32 VertexInstanced;
-					int32 PrimitiveInstanced;
-					int32 DPInstanced;
-					int32 InstancingBatch;
+					int32 VertexInstanced = 0;
+					int32 PrimitiveInstanced = 0;
+					int32 DPInstanced = 0;
+					int32 InstancingBatch = 0;
 
-					int32 EmptyROP;
-					int32 EmptyInstancedROP;
+					int32 EmptyROP = 0;
+					int32 EmptyInstancedROP = 0;
 
-					int32 Sorter;
-
-					BatchReportEntry();
+					int32 Sorter = 0;
 
 					void CalculateSorter();
 				};
@@ -220,30 +215,31 @@ namespace Apoc3D
 				/** Creates a blank Cube map. */
 				virtual Texture* CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format) = 0;
 
-				/** Creates a RenderTarget with a depth buffer and a color buffer. */
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt) = 0;
-				RenderTarget* CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, DepthFormat depthFmt);
-
-				/** Creates a RenderTarget with a color buffer only. */
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt) = 0;
-				RenderTarget* CreateRenderTarget(const Point& size2d, PixelFormat clrFmt);
-
 				/**
-				 *  Creates a RenderTarget with a depth buffer and a color buffer. 
+				 *  Creates a RenderTarget. 
 				 *  For a list of supported multisampleModes, use Capabilities::EnumerateRenderTargetMultisampleModes
-				 *
+				 *  Use "" or "none" to disable multisampling.
+				 * 
 				 * Notice:
 				 *  When creating manually in client code, do check the device capabilities.
 				 *
 				 *  When using render targets in scene-render scripts, do not worry about checking the capabilities,
 				 *  as the script will auto fall back if not supported.
 				 */
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt, const String& multisampleMode) = 0;
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, const String& multisampleMode) = 0;
-				RenderTarget* CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, DepthFormat depthFmt, const String& multisampleMode);
+				virtual DepthStencilBuffer* CreateDepthStencilBuffer(int32 width, int32 height, DepthFormat depFmt, const String& multisampleMode) = 0;
+				
 				RenderTarget* CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, const String& multisampleMode);
+				RenderTarget* CreateRenderTarget(const Point& size2d, PixelFormat clrFmt);
+				RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt);
+
+				DepthStencilBuffer* CreateDepthStencilBuffer(const Point& size2d, DepthFormat depFmt, const String& multisampleMode);
+				DepthStencilBuffer* CreateDepthStencilBuffer(const Point& size2d, DepthFormat depFmt);
+				DepthStencilBuffer* CreateDepthStencilBuffer(int32 width, int32 height, DepthFormat depFmt);
 
 				virtual CubemapRenderTarget* CreateCubemapRenderTarget(int32 length, PixelFormat clrFmt) = 0;
+
+			
 
 				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage) = 0;
 				virtual VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage) = 0;

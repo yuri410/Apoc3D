@@ -27,13 +27,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Texture.h"
 #include "D3D9RenderDevice.h"
 #include "D3D9Utils.h"
-#include "Buffer/D3D9DepthBuffer.h"
 #include "GraphicsDeviceManager.h"
 
 #include "apoc3d/Exception.h"
 
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Math/Rectangle.h"
+#include "apoc3d/Math/MathCommon.h"
 #include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
@@ -44,78 +44,13 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			DepthFormat GetDepthSurfaceFormat(IDirect3DSurface9* depth)
-			{
-				D3DSURFACE_DESC desc;
-				depth->GetDesc(&desc);
-				return D3D9Utils::ConvertBackDepthFormat(desc.Format);
-			}
-			int32 getSurfaceWidth(IDirect3DSurface9* color)
-			{
-				D3DSURFACE_DESC desc;
-				color->GetDesc(&desc);
-				return desc.Height;
-			}
-			int32 getSurfaceHeight(IDirect3DSurface9* color)
-			{
-				D3DSURFACE_DESC desc;
-				color->GetDesc(&desc);
-				return desc.Width;
-			}
-			PixelFormat GetColorSurfaceFormat(IDirect3DSurface9* color)
-			{
-				D3DSURFACE_DESC desc;
-				color->GetDesc(&desc);
-				return D3D9Utils::ConvertBackPixelFormat(desc.Format);
-			}
-			uint32 GetMultiSampleCount(IDirect3DSurface9* color)
-			{
-				D3DSURFACE_DESC desc;
-				color->GetDesc(&desc);
-				return D3D9Utils::ConvertBackMultiSample(desc.MultiSampleType);
-			}
-
-			void logRTFailure(PixelFormat colorFormat, DepthFormat depFormat, const String& multisampleType, bool cubemap = false)
-			{
-				String formatString;
-				if (colorFormat != FMT_Count)
-				{
-					formatString.append(L"C-");
-					formatString += PixelFormatUtils::ToString(colorFormat);
-				}
-				if (depFormat != DEPFMT_Count)
-				{
-					if (formatString.size())
-						formatString.append(L", ");
-					formatString.append(L"D-");
-					formatString += PixelFormatUtils::ToString(depFormat);
-				}
-				if (!RenderTarget::IsMultisampleModeStringNone(multisampleType))
-				{
-					if (formatString.size())
-						formatString.append(L", ");
-					formatString.append(L"MSAA=");
-					formatString += multisampleType;
-				}
-				if (cubemap)
-				{
-					formatString += L" [Cubemap]";
-				}
-
-				ApocLog(LOG_Graphics, L"[D3D9] RenderTarget format not supported: " + formatString, LOGLVL_Error);
-			}
-
-
 			void D3D9RenderTarget::ReleaseVolatileResource()
 			{
 				if (m_color)
 				{
 					m_colorSurface->Release();
 					m_color->Release();
-				}
-				if (m_depthSurface)
-				{
-					m_depthSurface->Release();
+					m_colorWrapperTex->ClearInternalTextureRef();
 				}
 			}
 
@@ -124,44 +59,20 @@ namespace Apoc3D
 				// recreating from a device lost needs some work
 				D3DDevice* dev = m_device->getDevice();
 
-				bool hasSizeChanged = false;
-				if (m_hasPercentangeLock)
-				{
-					Point estSize = EvaluatePerferredSize();
-
-					int estWidth = estSize.X;
-					int estHeight = estSize.Y;
-
-					if (estWidth != m_width || estHeight != m_height)
-					{
-						m_width = estWidth;
-						m_height = estHeight;
-
-						hasSizeChanged = true;
-					}
-				}
+				bool hasSizeChanged = CheckAndUpdateDimensionBasedOnLock();
 
 				if (!isMultiSampled())
 				{
-					if (m_hasColor)
-					{
-						HRESULT hr = dev->CreateTexture(getWidth(), getHeight(), 1, D3DUSAGE_RENDERTARGET, 
-							D3D9Utils::ConvertPixelFormat(getColorFormat()), D3DPOOL_DEFAULT, &m_color, NULL);
-						assert(SUCCEEDED(hr));
-						
-						m_color->GetSurfaceLevel(0, &m_colorSurface);
+					HRESULT hr = dev->CreateTexture(getWidth(), getHeight(), 1, D3DUSAGE_RENDERTARGET,
+						D3D9Utils::ConvertPixelFormat(getColorFormat()), D3DPOOL_DEFAULT, &m_color, NULL);
+					assert(SUCCEEDED(hr));
 
+					m_color->GetSurfaceLevel(0, &m_colorSurface);
+
+					if (m_colorWrapperTex)
 						m_colorWrapperTex->SetInternal2D(m_color, getWidth(), getHeight(), 1, getColorFormat());
-					}
-					
-					if (m_hasDepth)
-					{
-						HRESULT hr = dev->CreateDepthStencilSurface(getWidth(), getHeight(), 
-							D3D9Utils::ConvertDepthFormat(getDepthFormat()), D3DMULTISAMPLE_NONE, 0, TRUE, &m_depthSurface, NULL);
-						assert(SUCCEEDED(hr));
-
-						m_depthBufferWrapper->SetD3DBuffer(m_depthSurface, getWidth(), getHeight(), getDepthFormat());
-					}
+					else
+						m_colorWrapperTex = new D3D9Texture(m_device, m_color);
 				}
 				else
 				{
@@ -169,61 +80,33 @@ namespace Apoc3D
 					const RawSettings* sets = dmgr->getCurrentSetting();
 
 					D3D9Capabilities* caps = m_device->getD3D9Capabilities();
-					const D3D9Capabilities::AAProfile* aamode = caps->LookupAAProfile(getMultisampleMode(), getColorFormat(), getDepthFormat());
+					const D3D9Capabilities::AAProfile* aamode = m_explicitAAMode ? m_explicitAAMode : caps->LookupAAProfile(getMultisampleMode(), getColorFormat(), DEPFMT_Count);
 					if (aamode == nullptr)
 					{
-						logRTFailure(getColorFormat(), getDepthFormat(), getMultisampleMode());
+						D3D9Utils::logRTFailure(getColorFormat(), DEPFMT_Count, getMultisampleMode());
 						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
 					}
 
-					DWORD quality;
-					DWORD quality2;
+					DWORD qualityCount;
+					HRESULT hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
+						sets->AdapterOrdinal, sets->DeviceType, D3D9Utils::ConvertPixelFormat(getColorFormat()), sets->PresentParameters.Windowed, aamode->SampleType, &qualityCount);
+					if (hr != S_OK || qualityCount == 0)
+						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
 
-					if (m_hasColor)
-					{
-						HRESULT hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
-							sets->AdapterOrdinal, sets->DeviceType, D3D9Utils::ConvertPixelFormat(getColorFormat()), sets->PresentParameters.Windowed, aamode->SampleType, &quality);
-						if (hr != S_OK || quality == 0)
-							throw AP_EXCEPTION(ExceptID::NotSupported, L"");
-					}
-					if (m_hasDepth)
-					{
-						HRESULT hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
-							sets->AdapterOrdinal, sets->DeviceType, D3D9Utils::ConvertDepthFormat(getDepthFormat()), sets->PresentParameters.Windowed, aamode->SampleType, &quality2);
-						if (hr != S_OK || quality2 == 0)
-							throw AP_EXCEPTION(ExceptID::NotSupported, L"");
-					}
+					DWORD selectedQuality = Math::Min((uint32)aamode->SampleQuality, qualityCount - 1);
 
-					if (m_hasColor && m_hasDepth)
-					{
-						DWORD overallQ = min(quality, quality2)-1;
-						overallQ = min(overallQ, aamode->SampleQuality);
+					hr = dev->CreateRenderTarget(getWidth(), getHeight(),
+						D3D9Utils::ConvertPixelFormat(getColorFormat()), aamode->SampleType, selectedQuality, FALSE, &m_colorSurface, NULL);
+					assert(SUCCEEDED(hr));
 
-						quality2 = quality = overallQ;
-					}
+					hr = dev->CreateTexture(getWidth(), getHeight(), 1, D3DUSAGE_RENDERTARGET,
+						D3D9Utils::ConvertPixelFormat(getColorFormat()), D3DPOOL_DEFAULT, &m_color, NULL);
+					assert(SUCCEEDED(hr));
 
-					if (m_hasColor)
-					{
-						HRESULT hr = dev->CreateRenderTarget(getWidth(), getHeight(), 
-							D3D9Utils::ConvertPixelFormat(getColorFormat()), aamode->SampleType, quality, FALSE, &m_colorSurface, NULL);
-						assert(SUCCEEDED(hr));
-
-						hr = dev->CreateTexture(getWidth(), getHeight(), 1, D3DUSAGE_RENDERTARGET, 
-							D3D9Utils::ConvertPixelFormat(getColorFormat()), D3DPOOL_DEFAULT, &m_color, NULL);
-						assert(SUCCEEDED(hr));
-
+					if (m_colorWrapperTex)
 						m_colorWrapperTex->SetInternal2D(m_color, getWidth(), getHeight(), 1, getColorFormat());
-					}
-
-					if (m_hasDepth)
-					{
-						HRESULT hr = dev->CreateDepthStencilSurface(getWidth(), getHeight(), 
-							D3D9Utils::ConvertDepthFormat(getDepthFormat()), aamode->SampleType, quality2, TRUE, &m_depthSurface, NULL);
-						assert(SUCCEEDED(hr));
-
-						m_depthBufferWrapper->SetD3DBuffer(m_depthSurface, getWidth(), getHeight(), getDepthFormat());
-					}
-					
+					else
+						m_colorWrapperTex = new D3D9Texture(m_device, m_color);
 				}
 
 				if (hasSizeChanged && m_offscreenPlainSurface)
@@ -235,181 +118,25 @@ namespace Apoc3D
 					CreateLockingSurface();
 				}
 
+				// no event is bound if this function is called in the ctor
 				eventReseted.Invoke(this);
 			}
 
-			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format)
-				: RenderTarget(device, width, height, format, L""), VolatileResource(device),
-				m_device(device), m_hasColor(true)
+			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format, const String& multisampleMode)
+				: RenderTarget(device, width, height, format, multisampleMode), VolatileResource(device), m_device(device)
 			{
-				D3DDevice* dev = device->getDevice();
-				HRESULT hr = dev->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, 
-					D3D9Utils::ConvertPixelFormat(format), D3DPOOL_DEFAULT, &m_color, NULL);
-				assert(SUCCEEDED(hr));
-				if (FAILED(hr))
-					logRTFailure(format, DEPFMT_Count, 0);
-
-				m_color->GetSurfaceLevel(0, &m_colorSurface);
-				m_colorWrapperTex = new D3D9Texture(m_device, m_color);
-			}
-
-			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format, DepthFormat depthFormat)
-				: RenderTarget(device, width, height, format, depthFormat, L""), VolatileResource(device),
-				m_device(device), m_hasDepth(true), m_hasColor(true)
-			{
-				D3DDevice* dev = device->getDevice();
-				HRESULT hr = dev->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, 
-					D3D9Utils::ConvertPixelFormat(format), D3DPOOL_DEFAULT, &m_color, NULL);
-				assert(SUCCEEDED(hr));
-				if (FAILED(hr))
-					logRTFailure(format, DEPFMT_Count, 0);
-				m_color->GetSurfaceLevel(0, &m_colorSurface);
-
-				hr = dev->CreateDepthStencilSurface(width, height, 
-					D3D9Utils::ConvertDepthFormat(depthFormat), D3DMULTISAMPLE_NONE, 0, TRUE, &m_depthSurface, NULL);
-				assert(SUCCEEDED(hr));
-				if (FAILED(hr))
-					logRTFailure(FMT_Count, depthFormat, 0);
-
-				m_depthBufferWrapper = new D3D9DepthBuffer(device, m_depthSurface);
-				m_colorWrapperTex = new D3D9Texture(m_device, m_color);
-			}
-
-			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, 
-				const String& multisampleMode, PixelFormat format, DepthFormat depthFormat)
-				: RenderTarget(device, width, height, format, depthFormat, multisampleMode), VolatileResource(device),
-				m_device(device), m_hasDepth(true), m_hasColor(true)
-			{
-				D3DDevice* dev = device->getDevice();
-
-				if (!isMultiSampled())
-				{
-					HRESULT hr = dev->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, 
-						D3D9Utils::ConvertPixelFormat(format), D3DPOOL_DEFAULT, &m_color, NULL);
-					assert(SUCCEEDED(hr));
-					if (FAILED(hr))
-						logRTFailure(format, DEPFMT_Count, 0);
-					m_color->GetSurfaceLevel(0, &m_colorSurface);
-
-					hr = dev->CreateDepthStencilSurface(width, height, 
-						D3D9Utils::ConvertDepthFormat(depthFormat), D3DMULTISAMPLE_NONE, 0, TRUE, &m_depthSurface, NULL);
-					assert(SUCCEEDED(hr));
-					if (FAILED(hr))
-						logRTFailure(FMT_Count, depthFormat, 0);
-
-					m_depthBufferWrapper = new D3D9DepthBuffer(device, m_depthSurface);
-				}
-				else
-				{
-					D3D9Capabilities* caps = m_device->getD3D9Capabilities();
-					const D3D9Capabilities::AAProfile* aamode = caps->LookupAAProfile(multisampleMode, format, depthFormat);
-					if (aamode == nullptr)
-					{
-						logRTFailure(format, depthFormat, multisampleMode);
-						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
-					}
-
-					GraphicsDeviceManager* dmgr = m_device->getGraphicsDeviceManager();
-					const RawSettings* sets = dmgr->getCurrentSetting();
-					DWORD quality;
-					DWORD quality2;
-					HRESULT hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
-						sets->AdapterOrdinal, sets->DeviceType, D3D9Utils::ConvertPixelFormat(format), sets->PresentParameters.Windowed, aamode->SampleType, &quality);
-					if (hr != S_OK || quality == 0)
-					{
-						logRTFailure(format, depthFormat, multisampleMode);
-						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
-					}
-					hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
-						sets->AdapterOrdinal, sets->DeviceType, D3D9Utils::ConvertDepthFormat(depthFormat), sets->PresentParameters.Windowed, aamode->SampleType, &quality2);
-
-					if (hr != S_OK || quality2 == 0)
-					{
-						logRTFailure(format, depthFormat, multisampleMode);
-						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
-					}
-
-					DWORD overallQ = min(quality, quality2)-1;
-					overallQ = min(overallQ, aamode->SampleQuality);
-					
-
-					hr = dev->CreateRenderTarget(width, height, 
-						D3D9Utils::ConvertPixelFormat(format), aamode->SampleType, overallQ, FALSE, &m_colorSurface, NULL);
-					assert(SUCCEEDED(hr));
-
-					hr = dev->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, 
-						D3D9Utils::ConvertPixelFormat(format), D3DPOOL_DEFAULT, &m_color, NULL);
-					assert(SUCCEEDED(hr));
-
-
-					hr = dev->CreateDepthStencilSurface(width, height, 
-						D3D9Utils::ConvertDepthFormat(depthFormat), aamode->SampleType, overallQ, TRUE, &m_depthSurface, NULL);
-					assert(SUCCEEDED(hr));
-
-					m_depthBufferWrapper = new D3D9DepthBuffer(device, m_depthSurface);
-				}
-				m_colorWrapperTex = new D3D9Texture(m_device, m_color);
-			}
-
-			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, const String& multisampleMode, PixelFormat format)
-				: RenderTarget(device, width, height, format, multisampleMode), VolatileResource(device),
-				m_device(device), m_hasColor(true)
-			{
-				D3DDevice* dev = device->getDevice();
-
-				if (!isMultiSampled())
-				{
-					HRESULT hr = dev->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, 
-						D3D9Utils::ConvertPixelFormat(format), D3DPOOL_DEFAULT, &m_color, NULL);
-					assert(SUCCEEDED(hr));
-					if (FAILED(hr))
-						logRTFailure(format, DEPFMT_Count, multisampleMode);
-
-					m_color->GetSurfaceLevel(0, &m_colorSurface);
-				}
-				else
-				{
-					D3D9Capabilities* caps = m_device->getD3D9Capabilities();
-					const D3D9Capabilities::AAProfile* aamode = caps->LookupAAProfile(multisampleMode, format, DEPFMT_Count);
-					if (aamode == nullptr)
-					{
-						logRTFailure(format, DEPFMT_Count, multisampleMode);
-						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
-					}
-
-					DWORD quality;
-					GraphicsDeviceManager* dmgr = m_device->getGraphicsDeviceManager();
-					const RawSettings* sets = dmgr->getCurrentSetting();
-					HRESULT hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
-						sets->AdapterOrdinal, sets->DeviceType, D3D9Utils::ConvertPixelFormat(format), sets->PresentParameters.Windowed, aamode->SampleType, &quality);
-					if (hr != S_OK || quality == 0)
-					{
-						logRTFailure(format, DEPFMT_Count, multisampleMode);
-						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
-					}
-
-					quality--;
-					quality = min(quality, aamode->SampleQuality);
-
-
-					hr = dev->CreateRenderTarget(width, height,
-						D3D9Utils::ConvertPixelFormat(format), aamode->SampleType, quality, FALSE, &m_colorSurface, NULL);
-					assert(SUCCEEDED(hr));
-
-					hr = dev->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET,
-						D3D9Utils::ConvertPixelFormat(format), D3DPOOL_DEFAULT, &m_color, NULL);
-					assert(SUCCEEDED(hr));
-				}
-				m_colorWrapperTex = new D3D9Texture(m_device, m_color);
+				ReloadVolatileResource();
 			}
 			
+			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format, const D3D9Capabilities::AAProfile* explicitAAMode)
+				: RenderTarget(device, width, height, format, explicitAAMode->Name), VolatileResource(device), m_explicitAAMode(explicitAAMode)
+			{
+				ReloadVolatileResource();
+			}
+
 			D3D9RenderTarget::~D3D9RenderTarget()
 			{
-				if (m_colorSurface)
-				{
-					m_colorSurface->Release();
-					m_colorSurface = nullptr;
-				}
+				ReleaseVolatileResource();
 
 				if (m_offscreenPlainSurface)
 				{
@@ -418,29 +145,26 @@ namespace Apoc3D
 				}
 
 				DELETE_AND_NULL(m_colorWrapperTex);
-				DELETE_AND_NULL(m_depthBufferWrapper);
 			}
 
 			Texture* D3D9RenderTarget::GetColorTexture()
+			{
+				EnsureResolvedTexture();
+				return m_colorWrapperTex;
+			}
+
+			void D3D9RenderTarget::EnsureResolvedTexture()
 			{
 				if (m_isResolvedRTDirty)
 				{
 					m_isResolvedRTDirty = false;
 					Resolve();
 				}
-
-				return m_colorWrapperTex;
-			}
-			DepthBuffer* D3D9RenderTarget::GetDepthBuffer()
-			{
-				return m_depthBufferWrapper;
 			}
 
 			void D3D9RenderTarget::Resolve()
 			{
-				/** Because D3D9 RT texture is used and this RS is for Windows PC, 
-				 *  only multisample ones need to resolve.
-				 */
+				// resolve multisample surface to a texture
 				if (isMultiSampled())
 				{
 					D3DDevice* dev = m_device->getDevice();
@@ -449,7 +173,6 @@ namespace Apoc3D
 					HRESULT hr = dev->StretchRect(m_colorSurface, NULL, colorSuf, NULL, D3DTEXF_NONE);
 					assert(SUCCEEDED(hr));
 					colorSuf->Release();
-
 				}
 			}
 
@@ -466,6 +189,8 @@ namespace Apoc3D
 
 					if (isMultiSampled())
 					{
+						EnsureResolvedTexture();
+
 						IDirect3DSurface9* colorSuf;
 						m_color->GetSurfaceLevel(0, &colorSuf);
 						HRESULT hr = dev->GetRenderTargetData(colorSuf, m_offscreenPlainSurface);
@@ -514,8 +239,8 @@ namespace Apoc3D
 			}
 
 			//////////////////////////////////////////////////////////////////////////
-			D3D9CubemapRenderTarget::RefRenderTarget::RefRenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat fmt, IDirect3DSurface9* s)
-				: RenderTarget(device, width, height, fmt, L""), m_colorSurface(s)
+			D3D9CubemapRenderTarget::RefRenderTarget::RefRenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat fmt, IDirect3DSurface9* s, D3D9CubemapRenderTarget* parent)
+				: RenderTarget(device, width, height, fmt, L""), m_colorSurface(s), m_parent(parent)
 			{ }
 
 			//////////////////////////////////////////////////////////////////////////
@@ -529,17 +254,16 @@ namespace Apoc3D
 			D3D9CubemapRenderTarget::~D3D9CubemapRenderTarget()
 			{
 				ReleaseVolatileResource();
+
+				DELETE_AND_NULL(m_cubeMapWrapper);
 			}
 
 			void D3D9CubemapRenderTarget::ReleaseVolatileResource() 
 			{
 				m_faces.DeleteAndClear();
 
-				if (m_cubemap)
-				{
-					m_cubemap->Release();
-					m_cubemap = NULL;
-				}
+				m_cubemap->Release();
+				m_cubeMapWrapper->ClearInternalTextureRef();
 			}
 			void D3D9CubemapRenderTarget::ReloadVolatileResource() 
 			{
@@ -550,16 +274,27 @@ namespace Apoc3D
 				HRESULT hr = dev->CreateCubeTexture(m_length, 1, D3DUSAGE_RENDERTARGET, D3D9Utils::ConvertPixelFormat(fmt), D3DPOOL_DEFAULT, &m_cubemap, NULL);
 				assert(SUCCEEDED(hr));
 				if (FAILED(hr))
-					logRTFailure(fmt, DEPFMT_Count, L"");
+					D3D9Utils::logRTFailure(fmt, DEPFMT_Count, L"");
 
 				for (int32 i = 0; i < CUBE_Count; i++)
 				{
 					IDirect3DSurface9* pFace;
 					m_cubemap->GetCubeMapSurface((D3DCUBEMAP_FACES)i, 0, &pFace);
 
-					m_faces.Add(new RefRenderTarget(m_device, m_length, m_length, getColorFormat(), pFace));
+					m_faces.Add(new RefRenderTarget(m_device, m_length, m_length, getColorFormat(), pFace, this));
 				}
-				
+
+				if (m_cubeMapWrapper == nullptr)
+					m_cubeMapWrapper = new D3D9Texture(m_device, m_cubemap);
+				else
+					m_cubeMapWrapper->SetInternalCube(m_cubemap, m_length, 1, getColorFormat());
+
+				// no event is bound if this function is called in the ctor
+				eventReset.Invoke(this);
+			}
+			Texture* D3D9CubemapRenderTarget::GetColorTexture() 
+			{
+				return m_cubeMapWrapper;
 			}
 
 		}

@@ -304,7 +304,7 @@
     <ClInclude Include="Graphics\Mesh.h" />
     <ClInclude Include="Graphics\Model.h" />
     <ClInclude Include="Graphics\TextureManager.h" />
-    <ClInclude Include="Graphics\RenderSystem\Buffer\HardwareBuffer.h" />
+    <ClInclude Include="Graphics\RenderSystem\HardwareBuffer.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\SceneObject.h" />
     <ClInclude Include="Graphics\EffectSystem\Effect.h" />
@@ -410,6 +410,7 @@
     <ClCompile Include="Project\Properties.cpp" />
     <ClCompile Include="Scene\OctreeSceneManager.cpp" />
     <ClCompile Include="Scene\SceneRenderScriptParser.cpp" />
+    <ClCompile Include="Scene\ScenePassTypes.cpp" />
     <ClCompile Include="UILib\Button.cpp" />
     <ClCompile Include="UILib\CheckBox.cpp" />
     <ClCompile Include="UILib\ComboBox.cpp" />
@@ -434,7 +435,7 @@
     <ClCompile Include="Graphics\PixelFormat.cpp" />
     <ClCompile Include="Graphics\Mesh.cpp" />
     <ClCompile Include="Graphics\Model.cpp" />
-    <ClCompile Include="Graphics\RenderSystem\Buffer\HardwareBuffer.cpp" />
+    <ClCompile Include="Graphics\RenderSystem\HardwareBuffer.cpp" />
     <ClCompile Include="Graphics\RenderSystem\GraphicsAPI.cpp" />
     <ClCompile Include="Graphics\RenderSystem\RenderWindow.cpp" />
     <ClCompile Include="Graphics\TextureManager.cpp" />

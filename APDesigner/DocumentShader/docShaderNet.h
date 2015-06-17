@@ -55,6 +55,8 @@ namespace APDesigner
 		String m_filePath;
 
 		RenderTarget* m_renderTarget;
+		DepthStencilBuffer* m_depthStencil;
+
 		Texture* m_graphRender;
 	};
 }

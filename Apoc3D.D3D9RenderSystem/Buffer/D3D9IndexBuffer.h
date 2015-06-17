@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "../D3D9Common.h"
 
-#include "apoc3d/Graphics/RenderSystem/Buffer/HardwareBuffer.h"
+#include "apoc3d/Graphics/RenderSystem/HardwareBuffer.h"
 
 #include "../VolatileResource.h"
 

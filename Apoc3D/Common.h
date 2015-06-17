@@ -418,7 +418,7 @@ namespace Apoc3D
 			class HardwareBuffer;
 			class VertexBuffer;
 			class IndexBuffer;
-			class DepthBuffer;
+			class DepthStencilBuffer;
 
 			class RenderTarget;
 			class CubemapRenderTarget;

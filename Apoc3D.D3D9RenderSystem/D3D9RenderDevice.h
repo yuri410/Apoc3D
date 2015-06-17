@@ -59,14 +59,15 @@ namespace Apoc3D
 				virtual void Clear(ClearFlags flags, uint color, float depth, int stencil) override;
 
 				virtual void SetRenderTarget(int index, RenderTarget* rt) override;
-
 				virtual RenderTarget* GetRenderTarget(int index) override;
+
+				virtual void SetDepthStencilBuffer(DepthStencilBuffer* buf) override;
+				virtual DepthStencilBuffer* GetDepthStencilBuffer() override;
+
 
 				virtual PixelFormat GetDefaultRTFormat() override;
 				virtual DepthFormat GetDefaultDepthStencilFormat() override;
-				//virtual void SetTexture(int index, Texture* texture);
-				//virtual Texture* GetTexture(int index);
-
+				
 				virtual void BindVertexShader(Shader* shader) override;
 				virtual void BindPixelShader(Shader* shader) override;
 
@@ -88,25 +89,25 @@ namespace Apoc3D
 			private:
 				friend class VolatileResource;
 
-				Effect* m_defaultEffect;
-				GraphicsDeviceManager* m_devManager;
-				D3D9RenderStateManager* m_stateManager;
-				NativeD3DStateManager* m_nativeState;
+				Effect* m_defaultEffect = nullptr;
+				GraphicsDeviceManager* m_devManager = nullptr;
+				D3D9RenderStateManager* m_stateManager = nullptr;
+				NativeD3DStateManager* m_nativeState = nullptr;
 
-				D3D9RenderTarget** m_cachedRenderTarget;
+				RenderTarget** m_cachedRenderTarget = nullptr;
+				D3D9DepthBuffer* m_currentDepthStencil = nullptr;
 
-				IDirect3DSurface9* m_defaultRT;
-				IDirect3DSurface9* m_defaultDS;
+				IDirect3DSurface9* m_defaultRT = nullptr;
+				IDirect3DSurface9* m_defaultDS = nullptr;
 
-				D3D9Capabilities* m_caps;
+				D3D9Capabilities* m_caps = nullptr;
 
 				List<VolatileResource*> m_volatileResources;
 
-				D3D9InstancingData* m_instancingData;
+				D3D9InstancingData* m_instancingData = nullptr;
 
-				D3D9VertexShader* m_currentVS;
-				D3D9PixelShader* m_currentPS;
-
+				D3D9VertexShader* m_currentVS = nullptr;
+				D3D9PixelShader* m_currentPS = nullptr;
 
 				// This is called by the VolatileResource itself
 				void TrackVolatileResource(VolatileResource* res)

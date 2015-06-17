@@ -109,21 +109,6 @@ namespace Apoc3D
 
 			};
 
-			class APAPI DepthBuffer : public HardwareBuffer
-			{
-			public:
-				int getWidth() const { return m_width; }
-				int getHeight() const { return m_height; }
-				DepthFormat getFormat() const { return m_depthFormat; }
-
-			protected:
-				DepthBuffer(int width, int height, BufferUsageFlags usage, DepthFormat format);
-
-				int m_width;
-				int m_height;
-				DepthFormat m_depthFormat;
-
-			};
 		}		
 	}
 }

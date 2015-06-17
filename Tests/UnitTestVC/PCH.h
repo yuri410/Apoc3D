@@ -74,7 +74,7 @@
 #include "apoc3d/Graphics/EffectSystem/EffectManager.h"
 #include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
 
-#include "apoc3d/Graphics/RenderSystem/Buffer/HardwareBuffer.h"
+#include "apoc3d/Graphics/RenderSystem/HardwareBuffer.h"
 #include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
 #include "apoc3d/Graphics/RenderSystem/GraphicsAPI.h"
 #include "apoc3d/Graphics/RenderSystem/InstancingData.h"

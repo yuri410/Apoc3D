@@ -35,36 +35,14 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat, const String& multiSampleMode)
-				: m_device(renderDevice), m_width(width), m_height(height), 
-				m_pixelFormat(colorFormat), m_depthFormat(depthFormat), m_multisampleMode(multiSampleMode)
+			RenderTarget2DBase::RenderTarget2DBase(RenderDevice* device, int32 width, int32 height, const String& multiSampleMode)
+				: m_device(device), m_width(width), m_height(height),
+				m_multisampleMode(multiSampleMode)
 			{
 				m_isMultisampled = !IsMultisampleModeStringNone(m_multisampleMode);
 			}
 
-			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, const String& multiSampleMode)
-				: m_device(renderDevice), m_width(width), m_height(height), 
-				m_pixelFormat(colorFormat), m_depthFormat(DEPFMT_Count), m_multisampleMode(multiSampleMode)
-			{ 
-				m_isMultisampled = !IsMultisampleModeStringNone(m_multisampleMode);
-			}
-
-			RenderTarget::~RenderTarget()
-			{
-
-			}
-
-			bool RenderTarget::IsMultisampleModeStringNone(const String& aamode)
-			{
-				if (aamode.empty())
-					return true;
-
-				String c = aamode;
-				StringUtils::ToLowerCase(c);
-				return c == L"none";
-			}
-
-			void RenderTarget::SetPercentageLock(float wp, float hp)
+			void RenderTarget2DBase::SetPercentageLock(float wp, float hp)
 			{
 				m_hasPercentangeLock = true;
 				m_widthPercentage = wp;
@@ -78,21 +56,56 @@ namespace Apoc3D
 				}
 			}
 
-			Point RenderTarget::EvaluatePerferredSize() const
+			Point RenderTarget2DBase::EvaluatePerferredSize() const
 			{
 				assert(m_hasPercentangeLock);
 
 				Viewport vp = m_device->getViewport();
 
-				//if (m_isMultOfTwoPercentageLock)
-				//{
-				//	if (vp.Width % 1) vp.Width++;
-				//	if (vp.Height % 1) vp.Height++;
-				//}
-
-				int estWidth = static_cast<int>(vp.Width * m_widthPercentage + 0.5f);
-				int estHeight = static_cast<int>(vp.Height * m_heightPercentage + 0.5f);
+				int32 estWidth = static_cast<int32>(vp.Width * m_widthPercentage + 0.5f);
+				int32 estHeight = static_cast<int32>(vp.Height * m_heightPercentage + 0.5f);
 				return Point(estWidth, estHeight);
+			}
+			bool RenderTarget2DBase::CheckAndUpdateDimensionBasedOnLock()
+			{
+				if (!m_hasPercentangeLock)
+					return false;
+
+				Point estSize = EvaluatePerferredSize();
+
+				int32 estWidth = estSize.X;
+				int32 estHeight = estSize.Y;
+
+				if (estWidth != m_width || estHeight != m_height)
+				{
+					m_width = estWidth;
+					m_height = estHeight;
+
+					return true;
+				}
+				return false;
+			}
+			bool RenderTarget2DBase::IsMultisampleModeStringNone(const String& aamode)
+			{
+				if (aamode.empty())
+					return true;
+
+				String c = aamode;
+				StringUtils::ToLowerCase(c);
+				return c == L"none";
+			}
+
+			//////////////////////////////////////////////////////////////////////////
+
+			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, const String& multiSampleMode)
+				: RenderTarget2DBase(renderDevice, width, height, multiSampleMode), m_pixelFormat(colorFormat)
+			{ 
+				m_isMultisampled = !IsMultisampleModeStringNone(m_multisampleMode);
+			}
+
+			RenderTarget::~RenderTarget()
+			{
+
 			}
 
 			DataRectangle RenderTarget::Lock(LockMode mode, const Apoc3D::Math::Rectangle& rect)
@@ -123,15 +136,26 @@ namespace Apoc3D
 				}
 			}
 
+			//////////////////////////////////////////////////////////////////////////
+
+			DepthStencilBuffer::DepthStencilBuffer(RenderDevice* renderDevice, int32 width, int32 height, DepthFormat format)
+				: RenderTarget2DBase(renderDevice, width, height, L""), m_depthFormat(format)
+			{ }
+
+			DepthStencilBuffer::DepthStencilBuffer(RenderDevice* renderDevice, int32 width, int32 height, DepthFormat format, const String& multiSampleMode)
+				: RenderTarget2DBase(renderDevice, width, height, multiSampleMode), m_depthFormat(format)
+			{
+				m_isMultisampled = !RenderTarget::IsMultisampleModeStringNone(m_multisampleMode);
+			}
 
 			//////////////////////////////////////////////////////////////////////////
+
 			CubemapRenderTarget::CubemapRenderTarget(int32 length, PixelFormat fmt)
 				: m_length(length), m_pixelFormat(fmt) { }
 
 			CubemapRenderTarget::~CubemapRenderTarget()
 			{
 			}
-
 
 		}
 	}

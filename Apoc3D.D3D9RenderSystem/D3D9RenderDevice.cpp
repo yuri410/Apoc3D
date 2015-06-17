@@ -32,7 +32,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9RenderStateManager.h"
 #include "D3D9ObjectFactory.h"
 #include "D3D9InstancingData.h"
-#include "Buffer/D3D9DepthBuffer.h"
+#include "D3D9DepthBuffer.h"
 #include "Buffer/D3D9IndexBuffer.h"
 #include "Buffer/D3D9VertexBuffer.h"
 #include "D3D9VertexDeclaration.h"
@@ -64,10 +64,8 @@ namespace Apoc3D
 			{
 			public:
 				BasicEffect(D3D9RenderDevice* device)
-					: m_device(device)
-				{
+					: m_device(device) { }
 
-				}
 				virtual void Setup(Material* mtrl, const RenderOperation* rop, int count)
 				{
 					IDirect3DDevice9* dev = m_device->getDevice();
@@ -91,13 +89,9 @@ namespace Apoc3D
 				}
 
 				virtual void BeginPass(int passId)
-				{
-
-				}
+				{ }
 				virtual void EndPass()
-				{
-
-				}
+				{ }
 
 			protected:
 				virtual int begin()
@@ -116,14 +110,9 @@ namespace Apoc3D
 			};
 
 			D3D9RenderDevice::D3D9RenderDevice(GraphicsDeviceManager* devManager)
-				: RenderDevice(L"Direct3D9 RenderSystem"), m_devManager(devManager), 
-				m_stateManager(0), m_nativeState(0), m_caps(0), m_cachedRenderTarget(0), m_defaultEffect(0),
-				m_defaultRT(NULL), m_defaultDS(NULL),
-				m_instancingData(NULL),
-				m_currentVS(nullptr), m_currentPS(nullptr)
-			{
+				: RenderDevice(L"Direct3D9 RenderSystem"), m_devManager(devManager)
+			{ }
 
-			}
 			D3D9RenderDevice::~D3D9RenderDevice()
 			{
 				m_defaultRT->Release();
@@ -154,7 +143,7 @@ namespace Apoc3D
 			
 			void D3D9RenderDevice::OnDeviceLost()
 			{
-				for (int32 i=0;i<m_volatileResources.getCount();i++)
+				for (int32 i = 0; i < m_volatileResources.getCount(); i++)
 				{
 					m_volatileResources[i]->ReleaseVolatileResource();
 				}
@@ -168,7 +157,7 @@ namespace Apoc3D
 				D3DDevice* dev = m_devManager->getDevice();
 				dev->GetRenderTarget(0, &m_defaultRT);
 				dev->GetDepthStencilSurface(&m_defaultDS);
-				for (int32 i=0;i<m_volatileResources.getCount();i++)
+				for (int32 i = 0; i < m_volatileResources.getCount(); i++)
 				{
 					m_volatileResources[i]->ReloadVolatileResource();
 				}
@@ -192,9 +181,7 @@ namespace Apoc3D
 
 
 				//caps.MaxSimultaneousTextures
-				m_cachedRenderTarget = new D3D9RenderTarget*[caps.NumSimultaneousRTs];
-				memset(m_cachedRenderTarget, 0, sizeof(D3D9RenderTarget*) * caps.NumSimultaneousRTs);
-
+				m_cachedRenderTarget = new RenderTarget*[caps.NumSimultaneousRTs]();
 				m_caps = new D3D9Capabilities(this);
 				
 				dev->GetRenderTarget(0, &m_defaultRT);
@@ -222,35 +209,64 @@ namespace Apoc3D
 				getDevice()->Clear(0, NULL, D3D9Utils::ConvertClearFlags(flags), color, depth, stencil);
 			}
 
+			static void RetriveRTSurface(RenderTarget* rt, IDirect3DSurface9*& rtSurface, Texture*& rtTex)
+			{
+				rtSurface = nullptr;
+				rtTex = nullptr;
+
+				D3D9RenderTarget* drt = up_cast<D3D9RenderTarget*>(rt);
+				if (drt)
+				{
+					rtSurface = drt->getColorSurface();
+					rtTex = drt->getTextureRef();
+				}
+				else
+				{
+					D3D9CubemapRenderTarget::RefRenderTarget* crt = up_cast<D3D9CubemapRenderTarget::RefRenderTarget*>(rt);
+					if (crt)
+					{
+						rtSurface = crt->getColorSurface();
+						rtTex = crt->getParent()->GetColorTexture();
+					}
+				}
+			}
+
+			static void NotifyRTDirty(RenderTarget* rt)
+			{
+				D3D9RenderTarget* drt = up_cast<D3D9RenderTarget*>(rt);
+				if (drt)
+				{
+					drt->NotifyDirty();
+				}
+			}
+
 			void D3D9RenderDevice::SetRenderTarget(int index, RenderTarget* rt)
 			{
 				D3DDevice* dev = getDevice();
-				D3D9RenderTarget* oldRt = m_cachedRenderTarget[index];
+				RenderTarget* oldRt = m_cachedRenderTarget[index];
+
+				if (rt == oldRt)
+					return;
 
 				if (rt)
 				{
-					D3D9RenderTarget* drt = static_cast<D3D9RenderTarget*>(rt);
+					IDirect3DSurface9* drt;
+					Texture* rtTex;
+					RetriveRTSurface(rt, drt, rtTex);
 					
-					HRESULT hr = dev->SetRenderTarget(index, drt->getColorSurface());
+					HRESULT hr = dev->SetRenderTarget(index, drt);
 					assert(SUCCEEDED(hr));
 
-					if (drt->getDepthSurface())
-					{
-						if (index)
-						{
-							throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Render targets with a depth buffer can only be set at index 0.");
-						}
-						hr = dev->SetDepthStencilSurface(drt->getDepthSurface());
-						assert(SUCCEEDED(hr));
-					}
-
-					m_cachedRenderTarget[index] = drt;
+					m_cachedRenderTarget[index] = rt;
 					
-					for (int i=0;i<m_nativeState->getTextureSlotCount();i++)
+					if (rtTex)
 					{
-						if (m_nativeState->getTexture(i) == drt->GetColorTexture())
+						for (int i = 0; i < m_nativeState->getTextureSlotCount(); i++)
 						{
-							m_nativeState->SetTexture(i, NULL);
+							if (m_nativeState->getTexture(i) == rtTex)
+							{
+								m_nativeState->SetTexture(i, NULL);
+							}
 						}
 					}
 				}
@@ -259,30 +275,54 @@ namespace Apoc3D
 					if (index == 0)
 					{
 						HRESULT hr = dev->SetRenderTarget(0, m_defaultRT);
-						assert(SUCCEEDED(hr));
-						hr = dev->SetDepthStencilSurface(m_defaultDS);
-						assert(SUCCEEDED(hr));
-
-						m_cachedRenderTarget[0] = nullptr;
+						assert(SUCCEEDED(hr));	
 					}
 					else
 					{
 						HRESULT hr = dev->SetRenderTarget(index, 0);
 						assert(SUCCEEDED(hr));
-
-						m_cachedRenderTarget[index] = 0;
 					}
+					m_cachedRenderTarget[index] = nullptr;
 				}
 
-				if (oldRt && oldRt != rt)
+				if (oldRt)
 				{
-					oldRt->NotifyDirty();
+					NotifyRTDirty(oldRt);
 				}
 			}
 
 			RenderTarget* D3D9RenderDevice::GetRenderTarget(int index)
 			{
 				return m_cachedRenderTarget[index];
+			}
+
+			void D3D9RenderDevice::SetDepthStencilBuffer(DepthStencilBuffer* buf)
+			{
+				D3DDevice* dev = getDevice();
+
+				if (m_currentDepthStencil != buf)
+				{
+					if (buf)
+					{
+						D3D9DepthBuffer* dbuf = static_cast<D3D9DepthBuffer*>(buf);
+
+						HRESULT hr = dev->SetDepthStencilSurface(dbuf->getD3DBuffer());
+						assert(SUCCEEDED(hr));
+
+						m_currentDepthStencil = dbuf;
+					}
+					else
+					{
+						HRESULT hr = dev->SetDepthStencilSurface(m_defaultDS);
+						assert(SUCCEEDED(hr));
+
+						m_currentDepthStencil = nullptr;
+					}
+				}
+			}
+			DepthStencilBuffer* D3D9RenderDevice::GetDepthStencilBuffer()
+			{
+				return m_currentDepthStencil;
 			}
 
 			void D3D9RenderDevice::BindVertexShader(Shader* shader)
@@ -341,9 +381,6 @@ namespace Apoc3D
 				if (HasBatchReportRequest)
 					RenderDevice::Render(mtrl, op, count, passSelID);
 
-				//getDevice()->SetVertexShader(0);
-				//getDevice()->SetPixelShader(0);
-
 				Effect* fx = mtrl->getPassEffect(passSelID);
 				if (!fx)
 				{
@@ -401,16 +438,15 @@ namespace Apoc3D
 					{
 						// here the input render operation list is guaranteed to have the same geometry data,
 						// instancing drawing is done here once the effect supports it
-						const RenderOperation& rop = op[0];
-						const GeometryData* gm = rop.GeometryData;
+						const RenderOperation& fristROP = op[0];
+						const GeometryData* firstGM = fristROP.GeometryData;
 
-						m_primitiveCount += gm->PrimitiveCount*count;
-						m_vertexCount += gm->VertexCount*count;
+						m_primitiveCount += firstGM->PrimitiveCount*count;
+						m_vertexCount += firstGM->VertexCount*count;
 
-						if (gm->usesIndex())
+						if (firstGM->usesIndex())
 						{
-							const RenderOperation& rop = op[0];
-							const GeometryData* gm = rop.GeometryData;
+							const GeometryData* gm = firstGM;
 
 							VertexDeclaration* vtxDecl = static_cast<D3D9VertexDeclaration*>(gm->VertexDecl);
 							d3dd->SetVertexDeclaration(m_instancingData->ExpandVertexDecl(vtxDecl));
@@ -764,10 +800,10 @@ namespace Apoc3D
 				};
 
 				ProfileTable* profiles = new ProfileTable();
-				for (size_t i=0;i<ARRAYSIZE(possibleMultisampleTypes);i++)
+				for (const auto& e : possibleMultisampleTypes)
 				{
-					const D3DMULTISAMPLE_TYPE& type = possibleMultisampleTypes[i].type;
-					const wchar_t* name = possibleMultisampleTypes[i].name;
+					const D3DMULTISAMPLE_TYPE& type = e.type;
+					const wchar_t* name = e.name;
 
 					bool supported = false;
 					DWORD qualityCount;
@@ -775,6 +811,12 @@ namespace Apoc3D
 					{
 						HRESULT hr = d3d9->CheckDeviceMultiSampleType(setting->AdapterOrdinal, setting->DeviceType, 
 							D3D9Utils::ConvertPixelFormat(pixFormat), setting->PresentParameters.Windowed, type, &qualityCount);
+						supported = SUCCEEDED(hr);
+					}
+					else if (pixFormat == FMT_Count)
+					{
+						HRESULT hr = d3d9->CheckDeviceMultiSampleType(setting->AdapterOrdinal, setting->DeviceType,
+							D3D9Utils::ConvertDepthFormat(depthFormat), setting->PresentParameters.Windowed, type, &qualityCount);
 						supported = SUCCEEDED(hr);
 					}
 					else

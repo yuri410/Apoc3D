@@ -40,147 +40,84 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class PLUGINAPI D3D9Utils
+			namespace D3D9Utils
 			{
-			private:
-				static D3D9Utils s_initlaizer;
-				static D3DPRIMITIVETYPE ptTable[];
-				static D3DDECLTYPE vefTable[];
-				static D3DDECLUSAGE veuTable[];
-				static D3DFILLMODE fillTable[];
-				static D3DCULL cullTable[];
-				static D3DBLEND blendTable[];
-				static D3DCMPFUNC comfunTable[];
-				static D3DBLENDOP blendopTable[];
-				static D3DSTENCILOP stencilTable[];
-				static D3DFORMAT pixFmtTable[];
-				static D3DFORMAT depFmtTable[];
-				static D3DTEXTUREFILTERTYPE tfltTable[];
-				static D3DCUBEMAP_FACES cubeTable[];
-				static D3DTEXTUREADDRESS taTable[];
-
-			private:
-				static void InitPrimitiveTable();
-				static void InitVertexElementFormat();
-				static void InitVertexElementUsage();
-				static void InitFillTable();
-				static void InitCullTable();
-				static void InitBlendTable();
-				static void InitCompareFunctionTable();
-				static void InitBlendOperationTable();
-				static void InitStencilTable();
-				static void InitPixelFormatTable();
-				static void InitDepthFormatTable();
-				static void InitTFLTTable();
-				static void InitCubeTable();
-				static void InitTATable();
-
-				D3D9Utils();
-			public:
-				~D3D9Utils() { }
-
-				static BufferUsageFlags GetBufferUsage(DWORD usage);
-				static PixelFormat ConvertBackPixelFormat(DWORD format);
-				static DepthFormat ConvertBackDepthFormat(DWORD format);
 				
-				static int32 GetD3DTextureWidth(D3DTexture2D* tex)
-				{
-					D3DSURFACE_DESC desc;
-					tex->GetLevelDesc(0, &desc);
+				BufferUsageFlags GetBufferUsage(DWORD usage);
+				PixelFormat ConvertBackPixelFormat(DWORD format);
+				DepthFormat ConvertBackDepthFormat(DWORD format);
+				
 
-					return static_cast<int32>(desc.Width);
-				}
-				static int32 GetD3DTextureHeight(D3DTexture2D* tex)
-				{
-					D3DSURFACE_DESC desc;
-					tex->GetLevelDesc(0, &desc);
-
-					return static_cast<int32>(desc.Height);
-				}
-				static PixelFormat GetD3DTextureFormat(D3DTexture2D* tex);
-				static TextureUsage GetD3DTextureUsage(D3DTexture2D* tex);
+				VertexElementFormat ConvertBackVertexElementFormat(D3DDECLTYPE type);
+				VertexElementUsage ConvertBackVertexElementUsage(D3DDECLUSAGE usage);
 
 
-				static int32 GetD3DTextureWidth(D3DTexture3D* tex)
-				{
-					D3DVOLUME_DESC desc;
-					tex->GetLevelDesc(0, &desc);
-
-					return static_cast<int32>(desc.Width);
-				}
-				static int32 GetD3DTextureHeight(D3DTexture3D* tex)
-				{
-					D3DVOLUME_DESC desc;
-					tex->GetLevelDesc(0, &desc);
-
-					return static_cast<int32>(desc.Height);
-				}
-				static int32 GetD3DTextureDepth(D3DTexture3D* tex)
-				{
-					D3DVOLUME_DESC desc;
-					tex->GetLevelDesc(0, &desc);
-
-					return static_cast<int32>(desc.Depth);
-				}
-				static PixelFormat GetD3DTextureFormat(D3DTexture3D* tex);
-				static TextureUsage GetD3DTextureUsage(D3DTexture3D* tex);
+				D3DMULTISAMPLE_TYPE ConvertMultisample(uint32 sampleCount);
+				uint32 ConvertBackMultiSample(D3DMULTISAMPLE_TYPE type);
 
 
-				static int32 GetD3DTextureLength(D3DTextureCube* tex)
-				{
-					D3DSURFACE_DESC desc;
-					tex->GetLevelDesc(0, &desc);
+				DWORD ConvertLockMode(LockMode mode);
+				DWORD ConvertClearFlags(ClearFlags flags);
 
-					return static_cast<int32>(desc.Width);
-				}
+				DWORD ConvertBufferUsage(BufferUsageFlags usage);
 
-				static PixelFormat GetD3DTextureFormat(D3DTextureCube* tex);
-				static TextureUsage GetD3DTextureUsage(D3DTextureCube* tex);
+				D3DPRIMITIVETYPE ConvertPrimitiveType(PrimitiveType type);
 
+				D3DDECLUSAGE ConvertVertexElementUsage(VertexElementUsage usage);
 
-				static VertexElementFormat ConvertBackVertexElementFormat(D3DDECLTYPE type);
-				static VertexElementUsage ConvertBackVertexElementUsage(D3DDECLUSAGE usage);
+				D3DDECLTYPE ConvertVertexElementFormat(VertexElementFormat type);
 
+				D3DFILLMODE ConvertFillMode(FillMode mode);
 
-				static D3DMULTISAMPLE_TYPE ConvertMultisample(uint32 sampleCount);
-				static uint32 ConvertBackMultiSample(D3DMULTISAMPLE_TYPE type);
-
-
-				static DWORD ConvertLockMode(LockMode mode);
-				static DWORD ConvertClearFlags(ClearFlags flags);
-
-				static DWORD ConvertBufferUsage(BufferUsageFlags usage);
-
-				static D3DPRIMITIVETYPE ConvertPrimitiveType(PrimitiveType type);
-
-				static D3DDECLUSAGE ConvertVertexElementUsage(VertexElementUsage usage);
-
-				static D3DDECLTYPE ConvertVertexElementFormat(VertexElementFormat type);
-
-				static D3DFILLMODE ConvertFillMode(FillMode mode);
-
-				static D3DCULL ConvertCullMode(CullMode mode);
+				D3DCULL ConvertCullMode(CullMode mode);
 
 
 
-				static D3DBLEND ConvertBlend(Blend dv);
+				D3DBLEND ConvertBlend(Blend dv);
 
-				static D3DCMPFUNC ConvertCompare(CompareFunction fun);
+				D3DCMPFUNC ConvertCompare(CompareFunction fun);
 
-				static D3DBLENDOP ConvertBlendFunction(BlendFunction fun);
+				D3DBLENDOP ConvertBlendFunction(BlendFunction fun);
 
-				static D3DSTENCILOP ConvertStencilOperation(StencilOperation op);
+				D3DSTENCILOP ConvertStencilOperation(StencilOperation op);
 
-				static D3DFORMAT ConvertPixelFormat(PixelFormat format);
-				static D3DFORMAT ConvertDepthFormat(DepthFormat format);
+				D3DFORMAT ConvertPixelFormat(PixelFormat format);
+				D3DFORMAT ConvertDepthFormat(DepthFormat format);
 
-				static D3DTEXTUREFILTERTYPE ConvertTextureFilter(TextureFilter filter);
+				D3DTEXTUREFILTERTYPE ConvertTextureFilter(TextureFilter filter);
 
-				static DWORD ConvertTextureUsage(TextureUsage usage);
-				static D3DCUBEMAP_FACES ConvertCubeMapFace(CubeMapFace face);
+				DWORD ConvertTextureUsage(TextureUsage usage);
+				D3DCUBEMAP_FACES ConvertCubeMapFace(CubeMapFace face);
 
-				static D3DTEXTUREADDRESS ConvertTextureAddress(TextureAddressMode ta);
+				D3DTEXTUREADDRESS ConvertTextureAddress(TextureAddressMode ta);
 			
+
+
+				int32 GetD3DTextureWidth(D3DTexture2D* tex);
+				int32 GetD3DTextureHeight(D3DTexture2D* tex);
+				PixelFormat GetD3DTextureFormat(D3DTexture2D* tex);
+				TextureUsage GetD3DTextureUsage(D3DTexture2D* tex);
+
+
+				int32 GetD3DTextureWidth(D3DTexture3D* tex);
+				int32 GetD3DTextureHeight(D3DTexture3D* tex);
+				int32 GetD3DTextureDepth(D3DTexture3D* tex);
+				PixelFormat GetD3DTextureFormat(D3DTexture3D* tex);
+				TextureUsage GetD3DTextureUsage(D3DTexture3D* tex);
+
+
+				int32 GetD3DTextureLength(D3DTextureCube* tex);
+				PixelFormat GetD3DTextureFormat(D3DTextureCube* tex);
+				TextureUsage GetD3DTextureUsage(D3DTextureCube* tex);
+
+
+				int32 GetSurfaceWidth(IDirect3DSurface9* surface);
+				int32 GetSurfaceHeight(IDirect3DSurface9* surface);
+				DepthFormat GetSurfaceDepthFormat(IDirect3DSurface9* surface);
+				PixelFormat GetSurfaceColorFormat(IDirect3DSurface9* color);
+				uint32 GetSurfaceMultiSampleCount(IDirect3DSurface9* color);
+
+				void logRTFailure(PixelFormat colorFormat, DepthFormat depFormat, const String& multisampleType, bool cubemap = false);
 			};
 		}
 	}

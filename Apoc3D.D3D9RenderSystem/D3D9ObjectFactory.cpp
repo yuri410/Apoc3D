@@ -31,6 +31,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9VertexDeclaration.h"
 #include "D3D9RenderTarget.h"
 #include "D3D9Sprite.h"
+#include "D3D9DepthBuffer.h"
+#include "GraphicsDeviceManager.h"
+#include "D3D9Utils.h"
 
 namespace Apoc3D
 {
@@ -60,26 +63,20 @@ namespace Apoc3D
 				return new D3D9Texture(m_device, length, levelCount, format, usage);
 			}
 
-			RenderTarget* D3D9ObjectFactory::CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt, const String& multisampleMode)
-			{
-				return new D3D9RenderTarget(m_device, width, height, multisampleMode, clrFmt, depthFmt);
-			}
-			RenderTarget* D3D9ObjectFactory::CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt)
-			{
-				return new D3D9RenderTarget(m_device, width, height, clrFmt, depthFmt);
-			}
+
 			RenderTarget* D3D9ObjectFactory::CreateRenderTarget(int width, int height, PixelFormat clrFmt, const String& multisampleMode)
 			{
-				return new D3D9RenderTarget(m_device, width, height, multisampleMode, clrFmt);
+				return new D3D9RenderTarget(m_device, width, height, clrFmt, multisampleMode);
 			}
-			RenderTarget* D3D9ObjectFactory::CreateRenderTarget(int width, int height, PixelFormat clrFmt)
+			DepthStencilBuffer* D3D9ObjectFactory::CreateDepthStencilBuffer(int32 width, int32 height, DepthFormat depFmt, const String& multisampleMode)
 			{
-				return new D3D9RenderTarget(m_device, width, height, clrFmt);
+				return new D3D9DepthBuffer(m_device, width, height, depFmt, multisampleMode);
 			}
 			CubemapRenderTarget* D3D9ObjectFactory::CreateCubemapRenderTarget(int32 length, PixelFormat clrFmt)
 			{
 				return new D3D9CubemapRenderTarget(m_device, length, clrFmt);
 			}
+
 
 			IndexBuffer* D3D9ObjectFactory::CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage)
 			{

@@ -1,6 +1,6 @@
 #include "GeometryData.h"
 #include "RenderSystem/VertexDeclaration.h"
-#include "RenderSystem/Buffer/HardwareBuffer.h"
+#include "RenderSystem/HardwareBuffer.h"
 
 namespace Apoc3D
 {

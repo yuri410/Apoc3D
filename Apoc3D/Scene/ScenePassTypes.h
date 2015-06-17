@@ -49,10 +49,8 @@ namespace Apoc3D
 		 * object handling may be easier to use/test. And the code will be more readable and less redundant.
 		 */
 
-		/**
-		 *  Defines the type
-		 */
-		enum SceneVariableType
+		/** Defines the type of variable used in scene script */
+		enum struct SceneVariableType
 		{
 			/**
 			 ** Represents a render target.
@@ -62,7 +60,6 @@ namespace Apoc3D
 			 *   Width, Height
 			 *   WidthP, HeightP
 			 *   Format
-			 *   Depth
 			 *   SampleCount
 			 *
 			 *  Accessible Properties:
@@ -70,71 +67,67 @@ namespace Apoc3D
 			 *   Width
 			 *   Height
 			 */
-			VARTYPE_RenderTarget,
+			RenderTarget,
+			/**
+			 ** Represents a depth stencil buffer.
+			 *
+			 *  Properties:
+			 *  These are parameters required to declare the variable.
+			 *   Width, Height
+			 *   WidthP, HeightP
+			 *   Format
+			 *   SampleCount
+			 *
+			 *  Accessible Properties:
+			 *  These properties can be accessed in code
+			 *   Width
+			 *   Height
+			 */
+			DepthStencil,
+
 			/**
 			 *  A 4x4 float matrix 
 			 *  Properties:
 			 *  
 			 */
-			VARTYPE_Matrix,
-			VARTYPE_Vector4,
-			VARTYPE_Vector3,
-			VARTYPE_Vector2,
-			VARTYPE_Texture,
-			VARTYPE_Single,
-			//VARTYPE_Camera,
-			VARTYPE_Integer,
-			VARTYPE_Boolean,
-			VARTYPE_Effect,
-			VARTYPE_GaussBlurFilter
+			Matrix,
+			Vector4,
+			Vector3,
+			Vector2,
+			Single,
+
+			Texture,
+			
+			Integer,
+			Boolean,
+			Effect,
+			GaussBlurFilter
 		};
 
-		/** 
-		 *  The information for the global variables used in a scene script
-		 */
+		extern const Apoc3D::Utility::TypeDualConverter<SceneVariableType> SceneVariableTypeConverter;
+
+		/** The information for the global variables used in a scene script */
 		struct APAPI SceneVariable
 		{
 			String Name;
-			SceneVariableType Type;
+			SceneVariableType Type = SceneVariableType::Integer;
 			uint Value[16];
 			String DefaultStringValue;
 
-			RenderTarget* RTValue;
-			ResourceHandle<Texture>* TextureValue;
-			Effect* EffectValue;
+			RenderTarget* RTValue = nullptr;
+			DepthStencilBuffer* DSValue = nullptr;
+			ResourceHandle<Texture>* TextureValue = nullptr;
+			Effect* EffectValue = nullptr;
 
-			void* ObjectValue;
+			void* ObjectValue = nullptr;
 
 			SceneVariable()
-				: TextureValue(0), RTValue(0), EffectValue(0), Type(VARTYPE_Integer), ObjectValue(0)
 			{
 				memset(Value, 0, sizeof(Value));
 			}
-
-			SceneVariable(const SceneVariable& other)
-				: Name(other.Name), DefaultStringValue(other.DefaultStringValue),
-				Type(other.Type), RTValue(other.RTValue), TextureValue(other.TextureValue), EffectValue(other.EffectValue), ObjectValue(other.ObjectValue)
-			{
-				memcpy(Value, other.Value, sizeof(Value));
-			}
-			SceneVariable& operator =(const SceneVariable& other)
-			{
-				Name = other.Name;
-				DefaultStringValue = other.DefaultStringValue;
-
-				Type = other.Type;
-				RTValue = other.RTValue;
-				TextureValue = other.TextureValue;
-				EffectValue = other.EffectValue;
-				ObjectValue = other.ObjectValue;
-				memcpy(Value, other.Value, sizeof(Value));
-				return *this;
-			}
 		};
 
-		/**
-		 *  Defines sorts of opcodes
-		 */
+		/** Defines some opcodes */
 		enum SceneOpCode
 		{
 			SOP_Add,
@@ -150,6 +143,7 @@ namespace Apoc3D
 			SOP_JZ,
 			SOP_JNZ,
 			SOP_Clear,
+			SOP_UseDS,
 			SOP_UseRT,
 			SOP_VisibleTo,
 			SOP_Render,
@@ -169,9 +163,7 @@ namespace Apoc3D
 			SPFX_TYPE_VECTOR
 		};
 
-		/**
-		 *  The information for operands in op code in scene rendering
-		 */
+		/** The information for operands in op code in scene rendering */
 		struct APAPI SceneOpArg
 		{
 			/**
@@ -190,38 +182,17 @@ namespace Apoc3D
 			SceneVariable* Var;
 		};
 
-		/**
-		 *  The information for the minimum operation in the scene rendering procedure
-		 */
+		/** The information for the minimum operation in the scene rendering procedure */
 		struct APAPI SceneInstruction
 		{
 			SceneOpCode Operation;
 			int Next;
 			List<SceneOpArg> Args;
 
-			SceneInstruction() 
-			{
-			}
+			SceneInstruction() { }
+
 			SceneInstruction(SceneOpCode code)
-				: Operation(code)
-			{
-				
-			}
-
-			SceneInstruction(const SceneInstruction& other)
-				: Operation(other.Operation), Next(other.Next),
-				Args(other.Args)
-			{
-
-			}
-			SceneInstruction& operator =(const SceneInstruction& other)
-			{
-				Operation = other.Operation;
-				Next = other.Next;
-
-				Args = other.Args;
-				return *this;
-			}
+				: Operation(code) { }
 		};
 
 		/**
@@ -234,26 +205,6 @@ namespace Apoc3D
 			String Name;
 			int32 CameraID;
 			List<SceneInstruction> Instructions;
-
-			ScenePassData()
-			{
-
-			}
-			ScenePassData(const ScenePassData& other)
-				: SelectorID(other.SelectorID), Name(other.Name),
-				CameraID(other.CameraID), Instructions(other.Instructions)
-			{
-
-			}
-			ScenePassData& operator =(const ScenePassData& other)
-			{
-				SelectorID = other.SelectorID;
-				Name = other.Name;
-
-				CameraID = other.CameraID;
-				Instructions = other.Instructions;
-				return *this;
-			}
 		};
 	}
 }

@@ -24,6 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9Utils.h"
 #include "apoc3d/Exception.h"
+#include "apoc3d/Graphics/RenderSystem/RenderTarget.h"
+#include "apoc3d/Core/Logging.h"
 
 namespace Apoc3D
 {
@@ -32,22 +34,41 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 			// pre-calculated fast type cast tables
-			D3DPRIMITIVETYPE D3D9Utils::ptTable[PT_Count];
-			D3DDECLTYPE D3D9Utils::vefTable[VEF_Count];
-			D3DDECLUSAGE D3D9Utils::veuTable[VEU_Count];
-			D3DFILLMODE D3D9Utils::fillTable[FILL_Count];
-			D3DCULL D3D9Utils::cullTable[CULL_Count];
-			D3DBLEND D3D9Utils::blendTable[(int)Blend::Count];
-			D3DCMPFUNC D3D9Utils::comfunTable[(int)CompareFunction::Count];
-			D3DBLENDOP D3D9Utils::blendopTable[(int)BlendFunction::Count];
-			D3DSTENCILOP D3D9Utils::stencilTable[(int)StencilOperation::Count];
-			D3DFORMAT D3D9Utils::pixFmtTable[FMT_Count];
-			D3DFORMAT D3D9Utils::depFmtTable[DEPFMT_Count];
-			D3DTEXTUREFILTERTYPE D3D9Utils::tfltTable[TFLT_Count];
-			D3DCUBEMAP_FACES D3D9Utils::cubeTable[CUBE_Count];
-			D3DTEXTUREADDRESS D3D9Utils::taTable[(int)TextureAddressMode::Count];
+			static D3DPRIMITIVETYPE ptTable[PT_Count];
+			static D3DDECLTYPE vefTable[VEF_Count];
+			static D3DDECLUSAGE veuTable[VEU_Count];
+			static D3DFILLMODE fillTable[FILL_Count];
+			static D3DCULL cullTable[CULL_Count];
+			static D3DBLEND blendTable[(int)Blend::Count];
+			static D3DCMPFUNC comfunTable[(int)CompareFunction::Count];
+			static D3DBLENDOP blendopTable[(int)BlendFunction::Count];
+			static D3DSTENCILOP stencilTable[(int)StencilOperation::Count];
+			static D3DFORMAT pixFmtTable[FMT_Count];
+			static D3DFORMAT depFmtTable[DEPFMT_Count];
+			static D3DTEXTUREFILTERTYPE tfltTable[TFLT_Count];
+			static D3DCUBEMAP_FACES cubeTable[CUBE_Count];
+			static D3DTEXTUREADDRESS taTable[(int)TextureAddressMode::Count];
+			
+			struct FieldInitilizer
+			{
+				FieldInitilizer();
+			private:
+				void InitPrimitiveTable();
+				void InitVertexElementFormat();
+				void InitVertexElementUsage();
+				void InitFillTable();
+				void InitCullTable();
+				void InitBlendTable();
+				void InitCompareFunctionTable();
+				void InitBlendOperationTable();
+				void InitStencilTable();
+				void InitPixelFormatTable();
+				void InitDepthFormatTable();
+				void InitTFLTTable();
+				void InitCubeTable();
+				void InitTATable();
 
-			D3D9Utils D3D9Utils::s_initlaizer;
+			} static s_initializer;
 
 			BufferUsageFlags D3D9Utils::GetBufferUsage(DWORD usage)
 			{
@@ -66,91 +87,50 @@ namespace Apoc3D
 			{
 				switch (fmt)
 				{
-				case D3DFMT_A2R10G10B10:
-					return FMT_A2R10G10B10;
-				case D3DFMT_A8R8G8B8:
-					return FMT_A8R8G8B8;
-				case D3DFMT_X8R8G8B8:
-					return FMT_X8R8G8B8;
-				case D3DFMT_A1R5G5B5:
-					return FMT_A1R5G5B5;
-				case D3DFMT_X1R5G5B5:
-					return FMT_X1R5G5B5;
-				case D3DFMT_R5G6B5:
-					return FMT_R5G6B5;
+					case D3DFMT_A2R10G10B10: return FMT_A2R10G10B10;
+					case D3DFMT_A8R8G8B8: return FMT_A8R8G8B8;
+					case D3DFMT_X8R8G8B8: return FMT_X8R8G8B8;
+					case D3DFMT_A1R5G5B5: return FMT_A1R5G5B5;
+					case D3DFMT_X1R5G5B5: return FMT_X1R5G5B5;
+					case D3DFMT_R5G6B5: return FMT_R5G6B5;
 
-				case D3DFMT_DXT1:
-					return FMT_DXT1;
-				case D3DFMT_DXT2:
-					return FMT_DXT2;
-				case D3DFMT_DXT3:
-					return FMT_DXT3;
-				case D3DFMT_DXT4:
-					return FMT_DXT4;
-				case D3DFMT_DXT5:
-					return FMT_DXT5;
+					case D3DFMT_DXT1: return FMT_DXT1;
+					case D3DFMT_DXT2: return FMT_DXT2;
+					case D3DFMT_DXT3: return FMT_DXT3;
+					case D3DFMT_DXT4: return FMT_DXT4;
+					case D3DFMT_DXT5: return FMT_DXT5;
 
-				case D3DFMT_R16F:
-					return FMT_R16F;
-				case D3DFMT_G16R16F:
-					return FMT_G16R16F;
-				case D3DFMT_A16B16G16R16F:
-					return FMT_A16B16G16R16F;
+					case D3DFMT_R16F: return FMT_R16F;
+					case D3DFMT_G16R16F: return FMT_G16R16F;
+					case D3DFMT_A16B16G16R16F: return FMT_A16B16G16R16F;
 
-				case D3DFMT_R32F:
-					return FMT_R32F;
-				case D3DFMT_G32R32F:
-					return FMT_G32R32F;
-				case D3DFMT_A32B32G32R32F:
-					return FMT_A32B32G32R32F;
+					case D3DFMT_R32F: return FMT_R32F;
+					case D3DFMT_G32R32F: return FMT_G32R32F;
+					case D3DFMT_A32B32G32R32F: return FMT_A32B32G32R32F;
 
-				case D3DFMT_R8G8B8:
-					return FMT_R8G8B8;
-				case D3DFMT_A4R4G4B4:
-					return FMT_A4R4G4B4;
-				case D3DFMT_R3G3B2:
-					return FMT_R3G3B2;
-				case D3DFMT_A8:
-					return FMT_Alpha8;
-				case D3DFMT_A2B10G10R10:
-					return FMT_A2B10G10R10;
-				case D3DFMT_G16R16:
-					return FMT_G16R16;
-				case D3DFMT_A16B16G16R16:
-					return FMT_A16B16G16R16;
-				case D3DFMT_A8P8:
-					return FMT_Palette8Alpha8;
-				case D3DFMT_P8:
-					return FMT_Palette8;
-				case D3DFMT_L8:
-					return FMT_Luminance8;
-				case D3DFMT_L16:
-					return FMT_Luminance16;
-				case D3DFMT_A8L8:
-					return FMT_A8L8;
-				case D3DFMT_A4L4:
-					return FMT_A4L4;
-				case D3DFMT_A1:
-					return FMT_Alpha1;
+					case D3DFMT_R8G8B8: return FMT_R8G8B8;
+					case D3DFMT_A4R4G4B4: return FMT_A4R4G4B4;
+					case D3DFMT_R3G3B2: return FMT_R3G3B2;
+					case D3DFMT_A8: return FMT_Alpha8;
+					case D3DFMT_A2B10G10R10: return FMT_A2B10G10R10;
+					case D3DFMT_G16R16: return FMT_G16R16;
+					case D3DFMT_A16B16G16R16: return FMT_A16B16G16R16;
+					case D3DFMT_A8P8: return FMT_Palette8Alpha8;
+					case D3DFMT_P8: return FMT_Palette8;
+					case D3DFMT_L8: return FMT_Luminance8;
+					case D3DFMT_L16: return FMT_Luminance16;
+					case D3DFMT_A8L8: return FMT_A8L8;
+					case D3DFMT_A4L4: return FMT_A4L4;
+					case D3DFMT_A1: return FMT_Alpha1;
 
-				case D3DFMT_X4R4G4B4:
-				case D3DFMT_A8R3G3B2:
-					return FMT_Unknown;
+					case D3DFMT_X4R4G4B4:
+					case D3DFMT_A8R3G3B2:
+						return FMT_Unknown;
 				}
 				throw AP_EXCEPTION(ExceptID::NotSupported, L"ConvertBackPixelFormat");
 			}
 			DepthFormat D3D9Utils::ConvertBackDepthFormat(DWORD format)
 			{
-				//depFmtTable[DEPFMT_Depth15Stencil1] = D3DFMT_D15S1;
-				//depFmtTable[DEPFMT_Depth16] = D3DFMT_D16;
-				//depFmtTable[DEPFMT_Depth16Lockable] = D3DFMT_D16_LOCKABLE;
-				//depFmtTable[DEPFMT_Depth24X8] = D3DFMT_D24X8;
-				//depFmtTable[DEPFMT_Depth24Stencil4] = D3DFMT_D24X4S4;
-				//depFmtTable[DEPFMT_Depth24Stencil8] = D3DFMT_D24X8;
-				//depFmtTable[DEPFMT_Depth24Stencil8Single] = D3DFMT_D24FS8;
-				//depFmtTable[DEPFMT_Depth32] = D3DFMT_D32;
-				//depFmtTable[DEPFMT_Depth32Lockable] = D3DFMT_D32_LOCKABLE;
-				//depFmtTable[DEPFMT_Depth32Single] = D3DFMT_D32F_LOCKABLE;
 				switch (format)
 				{
 					case D3DFMT_D15S1:			return DEPFMT_Depth15Stencil1;
@@ -179,51 +159,6 @@ namespace Apoc3D
 				}
 
 				return static_cast<TextureUsage>(result);
-			}
-			PixelFormat D3D9Utils::GetD3DTextureFormat(D3DTexture2D* tex)
-			{
-				D3DSURFACE_DESC desc;
-				tex->GetLevelDesc(0, &desc);
-				
-				return ConvertBackPixelFormat(desc.Format);
-			}
-			TextureUsage D3D9Utils::GetD3DTextureUsage(D3DTexture2D* tex)
-			{
-				D3DSURFACE_DESC desc;
-				tex->GetLevelDesc(0, &desc);
-
-				return ConvertBackTextureUsage(desc.Usage);
-			}
-
-			PixelFormat D3D9Utils::GetD3DTextureFormat(D3DTexture3D* tex)
-			{
-				D3DVOLUME_DESC desc;
-				tex->GetLevelDesc(0, &desc);
-				
-				return ConvertBackPixelFormat(desc.Format);
-			}
-			TextureUsage D3D9Utils::GetD3DTextureUsage(D3DTexture3D* tex)
-			{
-				D3DVOLUME_DESC desc;
-				tex->GetLevelDesc(0, &desc);
-				
-				return ConvertBackTextureUsage(desc.Usage);
-			}
-
-
-			PixelFormat D3D9Utils::GetD3DTextureFormat(D3DTextureCube* tex)
-			{
-				D3DSURFACE_DESC desc;
-				tex->GetLevelDesc(0, &desc);
-
-				return ConvertBackPixelFormat(desc.Format);
-			}
-			TextureUsage D3D9Utils::GetD3DTextureUsage(D3DTextureCube* tex)
-			{
-				D3DSURFACE_DESC desc;
-				tex->GetLevelDesc(0, &desc);
-
-				return ConvertBackTextureUsage(desc.Usage);
 			}
 
 			uint32 D3D9Utils::ConvertBackMultiSample(D3DMULTISAMPLE_TYPE type)
@@ -280,207 +215,6 @@ namespace Apoc3D
 			}
 
 
-			void D3D9Utils::InitPrimitiveTable()
-			{
-				ptTable[PT_PointList] = D3DPT_POINTLIST;
-				ptTable[PT_LineList] = D3DPT_LINELIST;
-				ptTable[PT_LineStrip] = D3DPT_LINESTRIP;
-				ptTable[PT_TriangleList] = D3DPT_TRIANGLELIST;
-				ptTable[PT_TriangleStrip] = D3DPT_TRIANGLESTRIP;
-				ptTable[PT_TriangleFan] = D3DPT_TRIANGLEFAN;
-			}
-			void D3D9Utils::InitVertexElementFormat()
-			{
-				vefTable[VEF_Single] = D3DDECLTYPE_FLOAT1;
-				vefTable[VEF_Vector2] = D3DDECLTYPE_FLOAT2;
-				vefTable[VEF_Vector3] = D3DDECLTYPE_FLOAT3;
-				vefTable[VEF_Vector4] = D3DDECLTYPE_FLOAT4;
-				vefTable[VEF_Color] = D3DDECLTYPE_D3DCOLOR;
-				vefTable[VEF_Byte4] = D3DDECLTYPE_UBYTE4;
-				vefTable[VEF_Short2] = D3DDECLTYPE_SHORT2;
-				vefTable[VEF_Short4] = D3DDECLTYPE_SHORT4;
-				vefTable[VEF_NormalizedByte4] = D3DDECLTYPE_UBYTE4N;
-				vefTable[VEF_NormalizedShort2] = D3DDECLTYPE_SHORT2N;
-				vefTable[VEF_NormalizedShort4] = D3DDECLTYPE_SHORT4N;
-				vefTable[VEF_UInt101010] = D3DDECLTYPE_UDEC3;
-				vefTable[VEF_Normalized101010] = D3DDECLTYPE_DEC3N;
-				vefTable[VEF_HalfVector2] = D3DDECLTYPE_FLOAT16_2;
-				vefTable[VEF_HalfVector4] = D3DDECLTYPE_FLOAT16_4;
-			}
-			void D3D9Utils::InitVertexElementUsage()
-			{
-				veuTable[VEU_Position] = D3DDECLUSAGE_POSITION;
-				veuTable[VEU_BlendWeight] = D3DDECLUSAGE_BLENDWEIGHT;
-				veuTable[VEU_BlendIndices] = D3DDECLUSAGE_BLENDINDICES;
-				veuTable[VEU_Normal] = D3DDECLUSAGE_NORMAL;
-				veuTable[VEU_PointSize] = D3DDECLUSAGE_PSIZE;
-				veuTable[VEU_TextureCoordinate] = D3DDECLUSAGE_TEXCOORD;
-				veuTable[VEU_Tangent] = D3DDECLUSAGE_TANGENT;
-				veuTable[VEU_Binormal] = D3DDECLUSAGE_BINORMAL;
-				veuTable[VEU_TessellateFactor] = D3DDECLUSAGE_TESSFACTOR;
-				veuTable[VEU_PositionTransformed] = D3DDECLUSAGE_POSITIONT;
-				veuTable[VEU_Color] = D3DDECLUSAGE_COLOR;
-				veuTable[VEU_Fog] = D3DDECLUSAGE_FOG;
-				veuTable[VEU_Depth] = D3DDECLUSAGE_DEPTH;
-				veuTable[VEU_Sample] = D3DDECLUSAGE_SAMPLE;
-
-			}
-			void D3D9Utils::InitFillTable()
-			{
-				fillTable[FILL_Point] = D3DFILL_POINT;
-				fillTable[FILL_WireFrame] = D3DFILL_WIREFRAME;
-				fillTable[FILL_Solid] = D3DFILL_SOLID;
-			}
-			void D3D9Utils::InitCullTable()
-			{
-				cullTable[CULL_None] = D3DCULL_NONE;
-				cullTable[CULL_Clockwise] = D3DCULL_CW;
-				cullTable[CULL_CounterClockwise] = D3DCULL_CCW;
-			}
-			void D3D9Utils::InitBlendTable()
-			{
-				blendTable[(int)Blend::Zero] = D3DBLEND_ZERO;
-				blendTable[(int)Blend::One] = D3DBLEND_ONE;
-				blendTable[(int)Blend::SourceColor] = D3DBLEND_SRCCOLOR;
-				blendTable[(int)Blend::InverseSourceColor] = D3DBLEND_INVSRCCOLOR;
-				blendTable[(int)Blend::SourceAlpha] = D3DBLEND_SRCALPHA;
-				blendTable[(int)Blend::InverseSourceAlpha] = D3DBLEND_INVSRCALPHA;
-				blendTable[(int)Blend::DestinationAlpha] = D3DBLEND_DESTALPHA;
-				blendTable[(int)Blend::InverseDestinationAlpha] = D3DBLEND_INVDESTALPHA;
-				blendTable[(int)Blend::DestinationColor] = D3DBLEND_DESTCOLOR;
-				blendTable[(int)Blend::InverseDestinationColor] = D3DBLEND_INVDESTCOLOR;
-				blendTable[(int)Blend::SourceAlphaSaturation] = D3DBLEND_SRCALPHASAT;
-				blendTable[(int)Blend::BlendFactor] = D3DBLEND_BLENDFACTOR;
-			}
-			void D3D9Utils::InitCompareFunctionTable()
-			{
-				comfunTable[(int)CompareFunction::Never] = D3DCMP_NEVER;
-				comfunTable[(int)CompareFunction::Less] = D3DCMP_LESS;
-				comfunTable[(int)CompareFunction::Equal] = D3DCMP_EQUAL;
-				comfunTable[(int)CompareFunction::LessEqual] = D3DCMP_LESSEQUAL;
-				comfunTable[(int)CompareFunction::Greater] = D3DCMP_GREATER;
-				comfunTable[(int)CompareFunction::NotEqual] = D3DCMP_NOTEQUAL;
-				comfunTable[(int)CompareFunction::GreaterEqual] = D3DCMP_GREATEREQUAL;
-				comfunTable[(int)CompareFunction::Always] = D3DCMP_ALWAYS;
-			}
-			void D3D9Utils::InitBlendOperationTable()
-			{
-				blendopTable[(int)BlendFunction::Add] = D3DBLENDOP_ADD;
-				blendopTable[(int)BlendFunction::Subtract] = D3DBLENDOP_SUBTRACT;
-				blendopTable[(int)BlendFunction::ReverseSubtract] = D3DBLENDOP_REVSUBTRACT;
-				blendopTable[(int)BlendFunction::Min] = D3DBLENDOP_MIN;
-				blendopTable[(int)BlendFunction::Max] = D3DBLENDOP_MAX;
-			}
-			void D3D9Utils::InitStencilTable()
-			{
-				stencilTable[(int)StencilOperation::Keep] = D3DSTENCILOP_KEEP;
-				stencilTable[(int)StencilOperation::Zero] = D3DSTENCILOP_ZERO;
-				stencilTable[(int)StencilOperation::Replace] = D3DSTENCILOP_REPLACE;
-				stencilTable[(int)StencilOperation::IncrementSaturation] = D3DSTENCILOP_INCRSAT;
-				stencilTable[(int)StencilOperation::DecrementSaturation] = D3DSTENCILOP_DECRSAT;
-				stencilTable[(int)StencilOperation::Invert] = D3DSTENCILOP_INVERT;
-				stencilTable[(int)StencilOperation::Increment] = D3DSTENCILOP_INCR;
-				stencilTable[(int)StencilOperation::Decrement] = D3DSTENCILOP_DECR;
-			}
-			void D3D9Utils::InitPixelFormatTable()
-			{
-				pixFmtTable[FMT_Unknown] = D3DFMT_UNKNOWN;
-				pixFmtTable[FMT_Luminance8] = D3DFMT_L8;
-				pixFmtTable[FMT_Luminance16] = D3DFMT_L16;
-				pixFmtTable[FMT_Alpha8] = D3DFMT_A8;
-				pixFmtTable[FMT_A4L4] = D3DFMT_A4L4;
-				pixFmtTable[FMT_A8L8] = D3DFMT_A8L8;
-				pixFmtTable[FMT_R5G6B5] = D3DFMT_R5G6B5;
-				pixFmtTable[FMT_B5G6R5] = D3DFMT_UNKNOWN;
-				pixFmtTable[FMT_A4R4G4B4] = D3DFMT_A4R4G4B4;
-				pixFmtTable[FMT_A1R5G5B5] = D3DFMT_A1R5G5B5;
-				pixFmtTable[FMT_R8G8B8] = D3DFMT_R8G8B8;
-				pixFmtTable[FMT_B8G8R8] = D3DFMT_UNKNOWN;
-				pixFmtTable[FMT_A8R8G8B8] = D3DFMT_A8R8G8B8;
-				pixFmtTable[FMT_A8B8G8R8] = D3DFMT_A8B8G8R8;
-				pixFmtTable[FMT_B8G8R8A8] = D3DFMT_UNKNOWN;
-				pixFmtTable[FMT_A2R10G10B10] = D3DFMT_A2R10G10B10;
-				pixFmtTable[FMT_A2B10G10R10] = D3DFMT_A2B10G10R10;
-				pixFmtTable[FMT_DXT1] = D3DFMT_DXT1;
-				pixFmtTable[FMT_DXT2] = D3DFMT_DXT2;
-				pixFmtTable[FMT_DXT3] = D3DFMT_DXT3;
-				pixFmtTable[FMT_DXT4] = D3DFMT_DXT4;
-				pixFmtTable[FMT_DXT5] = D3DFMT_DXT5;
-				pixFmtTable[FMT_A16B16G16R16F] = D3DFMT_A16B16G16R16F;
-				pixFmtTable[FMT_A32B32G32R32F] = D3DFMT_A32B32G32R32F;
-				pixFmtTable[FMT_X8R8G8B8] = D3DFMT_X8R8G8B8;
-				pixFmtTable[FMT_X8B8G8R8] = D3DFMT_X8B8G8R8;
-				pixFmtTable[FMT_X1R5G5B5] = D3DFMT_X1R5G5B5;
-				pixFmtTable[FMT_R8G8B8A8] = D3DFMT_UNKNOWN;
-				pixFmtTable[FMT_Depth] = D3DFMT_UNKNOWN;
-				pixFmtTable[FMT_A16B16G16R16] = D3DFMT_A16B16G16R16;
-				pixFmtTable[FMT_R3G3B2] = D3DFMT_R3G3B2;
-				pixFmtTable[FMT_R16F] = D3DFMT_R16F;
-				pixFmtTable[FMT_R32F] = D3DFMT_R32F;
-				pixFmtTable[FMT_G16R16] = D3DFMT_G16R16;
-				pixFmtTable[FMT_G16R16F] = D3DFMT_G16R16F;
-				pixFmtTable[FMT_G32R32F] = D3DFMT_G32R32F;
-				pixFmtTable[FMT_R16G16B16] = D3DFMT_UNKNOWN;
-				pixFmtTable[FMT_B4G4R4A4] = D3DFMT_UNKNOWN;
-				pixFmtTable[FMT_Palette8] = D3DFMT_P8;
-				pixFmtTable[FMT_Palette8Alpha8] = D3DFMT_A8P8;
-			}
-			void D3D9Utils::InitDepthFormatTable()
-			{
-				depFmtTable[DEPFMT_Depth15Stencil1] = D3DFMT_D15S1;
-				depFmtTable[DEPFMT_Depth16] = D3DFMT_D16;
-				depFmtTable[DEPFMT_Depth16Lockable] = D3DFMT_D16_LOCKABLE;
-				depFmtTable[DEPFMT_Depth24X8] = D3DFMT_D24X8;
-				depFmtTable[DEPFMT_Depth24Stencil4] = D3DFMT_D24X4S4;
-				depFmtTable[DEPFMT_Depth24Stencil8] = D3DFMT_D24X8;
-				depFmtTable[DEPFMT_Depth24Stencil8Single] = D3DFMT_D24FS8;
-				depFmtTable[DEPFMT_Depth32] = D3DFMT_D32;
-				depFmtTable[DEPFMT_Depth32Lockable] = D3DFMT_D32_LOCKABLE;
-				depFmtTable[DEPFMT_Depth32Single] = D3DFMT_D32F_LOCKABLE;
-			}
-			void D3D9Utils::InitTFLTTable()
-			{
-				tfltTable[TFLT_None] = D3DTEXF_NONE;
-				tfltTable[TFLT_Point] = D3DTEXF_POINT;
-				tfltTable[TFLT_Linear] = D3DTEXF_LINEAR;
-				tfltTable[TFLT_Anisotropic] = D3DTEXF_ANISOTROPIC;
-			}
-			void D3D9Utils::InitCubeTable()
-			{
-				cubeTable[CUBE_PositiveX] = D3DCUBEMAP_FACE_POSITIVE_X;
-				cubeTable[CUBE_NegativeX] = D3DCUBEMAP_FACE_NEGATIVE_X;
-				cubeTable[CUBE_PositiveY] = D3DCUBEMAP_FACE_POSITIVE_Y;
-				cubeTable[CUBE_NegativeY] = D3DCUBEMAP_FACE_NEGATIVE_Y;
-				cubeTable[CUBE_PositiveZ] = D3DCUBEMAP_FACE_POSITIVE_Z;
-				cubeTable[CUBE_NegativeZ] = D3DCUBEMAP_FACE_NEGATIVE_Z;
-			}
-			void D3D9Utils::InitTATable()
-			{
-				taTable[(int)TextureAddressMode::Border] = D3DTADDRESS_BORDER;
-				taTable[(int)TextureAddressMode::Clamp] = D3DTADDRESS_CLAMP;
-				taTable[(int)TextureAddressMode::Mirror] = D3DTADDRESS_MIRROR;
-				taTable[(int)TextureAddressMode::MirrorOnce] = D3DTADDRESS_MIRRORONCE;
-				taTable[(int)TextureAddressMode::Wrap] = D3DTADDRESS_WRAP;
-
-			}
-
-			D3D9Utils::D3D9Utils()
-			{
-				InitPrimitiveTable();
-				InitVertexElementFormat();
-				InitVertexElementUsage();
-				InitFillTable();
-				InitCullTable();
-				InitBlendTable();
-				InitCompareFunctionTable();
-				InitBlendOperationTable();
-				InitStencilTable();
-				InitPixelFormatTable();
-				InitDepthFormatTable();
-				InitTFLTTable();
-				InitCubeTable();
-				InitTATable();
-			}
 
 			DWORD D3D9Utils::ConvertLockMode(LockMode mode)
 			{
@@ -537,44 +271,26 @@ namespace Apoc3D
 				return result;
 			}
 
-			D3DPRIMITIVETYPE D3D9Utils::ConvertPrimitiveType(PrimitiveType type)
-			{
-				return ptTable[static_cast<int>(type)];
-			}
+			D3DPRIMITIVETYPE D3D9Utils::ConvertPrimitiveType(PrimitiveType type) { return ptTable[static_cast<int>(type)]; }
 			VertexElementFormat D3D9Utils::ConvertBackVertexElementFormat(D3DDECLTYPE type)
 			{
 				switch (type)
 				{
-				case D3DDECLTYPE_FLOAT1:
-					return VEF_Single;
-				case D3DDECLTYPE_FLOAT2:
-					return VEF_Vector2;
-				case D3DDECLTYPE_FLOAT3:
-					return VEF_Vector3;
-				case D3DDECLTYPE_FLOAT4:
-					return VEF_Vector4;
-				case D3DDECLTYPE_D3DCOLOR:
-					return VEF_Color;
-				case D3DDECLTYPE_UBYTE4:
-					return VEF_Byte4;
-				case D3DDECLTYPE_SHORT2:
-					return VEF_Short2;
-				case D3DDECLTYPE_SHORT4:
-					return VEF_Short4;
-				case D3DDECLTYPE_UBYTE4N:
-					return VEF_NormalizedByte4;
-				case D3DDECLTYPE_SHORT2N:
-					return VEF_NormalizedShort2;
-				case D3DDECLTYPE_SHORT4N:
-					return VEF_NormalizedShort4;
-				case D3DDECLTYPE_UDEC3:
-					return VEF_UInt101010;
-				case D3DDECLTYPE_DEC3N:
-					return VEF_Normalized101010;
-				case D3DDECLTYPE_FLOAT16_2:
-					return VEF_HalfVector2;
-				case D3DDECLTYPE_FLOAT16_4:
-					return VEF_HalfVector4;
+					case D3DDECLTYPE_FLOAT1: return VEF_Single;
+					case D3DDECLTYPE_FLOAT2: return VEF_Vector2;
+					case D3DDECLTYPE_FLOAT3: return VEF_Vector3;
+					case D3DDECLTYPE_FLOAT4: return VEF_Vector4;
+					case D3DDECLTYPE_D3DCOLOR:	return VEF_Color;
+					case D3DDECLTYPE_UBYTE4:	return VEF_Byte4;
+					case D3DDECLTYPE_SHORT2:	return VEF_Short2;
+					case D3DDECLTYPE_SHORT4:	return VEF_Short4;
+					case D3DDECLTYPE_UBYTE4N:	return VEF_NormalizedByte4;
+					case D3DDECLTYPE_SHORT2N:	return VEF_NormalizedShort2;
+					case D3DDECLTYPE_SHORT4N:	return VEF_NormalizedShort4;
+					case D3DDECLTYPE_UDEC3:		return VEF_UInt101010;
+					case D3DDECLTYPE_DEC3N:		return VEF_Normalized101010;
+					case D3DDECLTYPE_FLOAT16_2:	return VEF_HalfVector2;
+					case D3DDECLTYPE_FLOAT16_4:	return VEF_HalfVector4;
 				}
 				throw AP_EXCEPTION(ExceptID::NotSupported, L"ConvertBackVertexElementFormat");
 			}
@@ -582,93 +298,36 @@ namespace Apoc3D
 			{
 				switch (usage)
 				{
-				case D3DDECLUSAGE_POSITION:
-					return VEU_Position;
-				case D3DDECLUSAGE_BLENDWEIGHT:
-					return VEU_BlendWeight;
-				case D3DDECLUSAGE_BLENDINDICES:
-					return VEU_BlendIndices;
-				case D3DDECLUSAGE_NORMAL:
-					return VEU_Normal;
-				case D3DDECLUSAGE_PSIZE:
-					return VEU_PointSize;
-				case D3DDECLUSAGE_TEXCOORD:
-					return VEU_TextureCoordinate;
-				case D3DDECLUSAGE_TANGENT:
-					return VEU_Tangent;
-				case D3DDECLUSAGE_BINORMAL:
-					return VEU_Binormal;
-				case D3DDECLUSAGE_TESSFACTOR:
-					return VEU_TessellateFactor;
-				case D3DDECLUSAGE_POSITIONT:
-					return VEU_PositionTransformed;
-				case D3DDECLUSAGE_COLOR:
-					return VEU_Color;
-				case D3DDECLUSAGE_FOG:
-					return VEU_Fog;
-				case D3DDECLUSAGE_DEPTH:
-					return VEU_Depth;
-				case D3DDECLUSAGE_SAMPLE:
-					return VEU_Sample;
+					case D3DDECLUSAGE_POSITION:		return VEU_Position;
+					case D3DDECLUSAGE_BLENDWEIGHT:	return VEU_BlendWeight;
+					case D3DDECLUSAGE_BLENDINDICES:	return VEU_BlendIndices;
+					case D3DDECLUSAGE_NORMAL:		return VEU_Normal;
+					case D3DDECLUSAGE_PSIZE:		return VEU_PointSize;
+					case D3DDECLUSAGE_TEXCOORD:		return VEU_TextureCoordinate;
+					case D3DDECLUSAGE_TANGENT:		return VEU_Tangent;
+					case D3DDECLUSAGE_BINORMAL:		return VEU_Binormal;
+					case D3DDECLUSAGE_TESSFACTOR:	return VEU_TessellateFactor;
+					case D3DDECLUSAGE_POSITIONT:	return VEU_PositionTransformed;
+					case D3DDECLUSAGE_COLOR:		return VEU_Color;
+					case D3DDECLUSAGE_FOG:			return VEU_Fog;
+					case D3DDECLUSAGE_DEPTH:		return VEU_Depth;
+					case D3DDECLUSAGE_SAMPLE:		return VEU_Sample;
 				}
 				throw AP_EXCEPTION(ExceptID::NotSupported, L"ConvertBackVertexElementUsage");
 			}
 
-			D3DDECLUSAGE D3D9Utils::ConvertVertexElementUsage(VertexElementUsage usage)
-			{
-				return veuTable[static_cast<int>(usage)];
-			}
+			D3DDECLUSAGE D3D9Utils::ConvertVertexElementUsage(VertexElementUsage usage) { return veuTable[static_cast<int>(usage)]; }
+			D3DDECLTYPE D3D9Utils::ConvertVertexElementFormat(VertexElementFormat type) { return vefTable[static_cast<int>(type)]; }
+			D3DFILLMODE D3D9Utils::ConvertFillMode(FillMode mode) { return fillTable[static_cast<int>(mode)]; }
+			D3DCULL D3D9Utils::ConvertCullMode(CullMode mode) { return cullTable[static_cast<int>(mode)]; }
 
-			D3DDECLTYPE D3D9Utils::ConvertVertexElementFormat(VertexElementFormat type)
-			{
-				return vefTable[static_cast<int>(type)];
-			}
-
-			D3DFILLMODE D3D9Utils::ConvertFillMode(FillMode mode)
-			{
-				return fillTable[static_cast<int>(mode)];
-			}
-
-			D3DCULL D3D9Utils::ConvertCullMode(CullMode mode)
-			{
-				return cullTable[static_cast<int>(mode)];
-			}
-
-
-
-			D3DBLEND D3D9Utils::ConvertBlend(Blend dv)
-			{
-				return blendTable[static_cast<int>(dv)];
-			}
-
-			D3DCMPFUNC D3D9Utils::ConvertCompare(CompareFunction fun)
-			{
-				return comfunTable[static_cast<int>(fun)];
-			}
-
-			D3DBLENDOP D3D9Utils::ConvertBlendFunction(BlendFunction fun)
-			{
-				return blendopTable[static_cast<int>(fun)];
-			}
-
-			D3DSTENCILOP D3D9Utils::ConvertStencilOperation(StencilOperation op)
-			{
-				return stencilTable[static_cast<int>(op)];
-			}
-
-			D3DFORMAT D3D9Utils::ConvertPixelFormat(PixelFormat format)
-			{
-				return pixFmtTable[static_cast<int>(format)];
-			}
-			D3DFORMAT D3D9Utils::ConvertDepthFormat(DepthFormat format)
-			{
-				return depFmtTable[static_cast<int>(format)];
-			}
-
-			D3DTEXTUREFILTERTYPE D3D9Utils::ConvertTextureFilter(TextureFilter filter)
-			{
-				return tfltTable[static_cast<int>(filter)];
-			}
+			D3DBLEND D3D9Utils::ConvertBlend(Blend dv) { return blendTable[static_cast<int>(dv)]; }
+			D3DCMPFUNC D3D9Utils::ConvertCompare(CompareFunction fun) { return comfunTable[static_cast<int>(fun)]; }
+			D3DBLENDOP D3D9Utils::ConvertBlendFunction(BlendFunction fun) { return blendopTable[static_cast<int>(fun)]; }
+			D3DSTENCILOP D3D9Utils::ConvertStencilOperation(StencilOperation op) { return stencilTable[static_cast<int>(op)]; }
+			D3DFORMAT D3D9Utils::ConvertPixelFormat(PixelFormat format) { return pixFmtTable[static_cast<int>(format)]; }
+			D3DFORMAT D3D9Utils::ConvertDepthFormat(DepthFormat format) { return depFmtTable[static_cast<int>(format)]; }
+			D3DTEXTUREFILTERTYPE D3D9Utils::ConvertTextureFilter(TextureFilter filter) { return tfltTable[static_cast<int>(filter)]; }
 
 			DWORD D3D9Utils::ConvertTextureUsage(TextureUsage usage)
 			{
@@ -685,15 +344,367 @@ namespace Apoc3D
 				}
 				return result;
 			}
-			D3DCUBEMAP_FACES D3D9Utils::ConvertCubeMapFace(CubeMapFace face)
+			D3DCUBEMAP_FACES D3D9Utils::ConvertCubeMapFace(CubeMapFace face) { return cubeTable[static_cast<int>(face)]; }
+			D3DTEXTUREADDRESS D3D9Utils::ConvertTextureAddress(TextureAddressMode ta) { return taTable[static_cast<int>(ta)]; }
+
+			//////////////////////////////////////////////////////////////////////////
+
+
+			int32 D3D9Utils::GetD3DTextureWidth(D3DTexture2D* tex)
 			{
-				return cubeTable[static_cast<int>(face)];
+				D3DSURFACE_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				return (int32)desc.Width;
+			}
+			int32 D3D9Utils::GetD3DTextureHeight(D3DTexture2D* tex)
+			{
+				D3DSURFACE_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				return (int32)desc.Height;
+			}
+			PixelFormat D3D9Utils::GetD3DTextureFormat(D3DTexture2D* tex)
+			{
+				D3DSURFACE_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				return ConvertBackPixelFormat(desc.Format);
+			}
+			TextureUsage D3D9Utils::GetD3DTextureUsage(D3DTexture2D* tex)
+			{
+				D3DSURFACE_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				return ConvertBackTextureUsage(desc.Usage);
+			}
+
+			int32 D3D9Utils::GetD3DTextureWidth(D3DTexture3D* tex)
+			{
+				D3DVOLUME_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				return (int32)desc.Width;
+			}
+			int32 D3D9Utils::GetD3DTextureHeight(D3DTexture3D* tex)
+			{
+				D3DVOLUME_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				return (int32)desc.Height;
+			}
+			int32 D3D9Utils::GetD3DTextureDepth(D3DTexture3D* tex)
+			{
+				D3DVOLUME_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				return (int32)desc.Depth;
+			}
+			PixelFormat D3D9Utils::GetD3DTextureFormat(D3DTexture3D* tex)
+			{
+				D3DVOLUME_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				return ConvertBackPixelFormat(desc.Format);
+			}
+			TextureUsage D3D9Utils::GetD3DTextureUsage(D3DTexture3D* tex)
+			{
+				D3DVOLUME_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				return ConvertBackTextureUsage(desc.Usage);
+			}
+
+			int32 D3D9Utils::GetD3DTextureLength(D3DTextureCube* tex)
+			{
+				D3DSURFACE_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				return (int32)desc.Width;
+			}
+			PixelFormat D3D9Utils::GetD3DTextureFormat(D3DTextureCube* tex)
+			{
+				D3DSURFACE_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				return ConvertBackPixelFormat(desc.Format);
+			}
+			TextureUsage D3D9Utils::GetD3DTextureUsage(D3DTextureCube* tex)
+			{
+				D3DSURFACE_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				return ConvertBackTextureUsage(desc.Usage);
+			}
+
+			int32 D3D9Utils::GetSurfaceWidth(IDirect3DSurface9* surface)
+			{
+				D3DSURFACE_DESC desc;
+				surface->GetDesc(&desc);
+
+				return (int32)desc.Width;
+			}
+			int32 D3D9Utils::GetSurfaceHeight(IDirect3DSurface9* surface)
+			{
+				D3DSURFACE_DESC desc;
+				surface->GetDesc(&desc);
+
+				return (int32)desc.Height;
+			}
+			DepthFormat D3D9Utils::GetSurfaceDepthFormat(IDirect3DSurface9* surface)
+			{
+				D3DSURFACE_DESC desc;
+				surface->GetDesc(&desc);
+				return D3D9Utils::ConvertBackDepthFormat(desc.Format);
+			}
+
+			PixelFormat D3D9Utils::GetSurfaceColorFormat(IDirect3DSurface9* color)
+			{
+				D3DSURFACE_DESC desc;
+				color->GetDesc(&desc);
+				return D3D9Utils::ConvertBackPixelFormat(desc.Format);
+			}
+			uint32 D3D9Utils::GetSurfaceMultiSampleCount(IDirect3DSurface9* color)
+			{
+				D3DSURFACE_DESC desc;
+				color->GetDesc(&desc);
+				return D3D9Utils::ConvertBackMultiSample(desc.MultiSampleType);
+			}
+
+			void D3D9Utils::logRTFailure(PixelFormat colorFormat, DepthFormat depFormat, const String& multisampleType, bool cubemap)
+			{
+				String formatString;
+				if (colorFormat != FMT_Count)
+				{
+					formatString.append(L"C-");
+					formatString += PixelFormatUtils::ToString(colorFormat);
+				}
+				if (depFormat != DEPFMT_Count)
+				{
+					if (formatString.size())
+						formatString.append(L", ");
+					formatString.append(L"D-");
+					formatString += PixelFormatUtils::ToString(depFormat);
+				}
+				if (!RenderTarget::IsMultisampleModeStringNone(multisampleType))
+				{
+					if (formatString.size())
+						formatString.append(L", ");
+					formatString.append(L"MSAA=");
+					formatString += multisampleType;
+				}
+				if (cubemap)
+				{
+					formatString += L" [Cubemap]";
+				}
+
+				ApocLog(LOG_Graphics, L"[D3D9] RenderTarget format not supported: " + formatString, LOGLVL_Error);
 			}
 
 
-			D3DTEXTUREADDRESS D3D9Utils::ConvertTextureAddress(TextureAddressMode ta)
+
+			//////////////////////////////////////////////////////////////////////////
+
+			void FieldInitilizer::InitPrimitiveTable()
 			{
-				return taTable[static_cast<int>(ta)];
+				ptTable[PT_PointList] = D3DPT_POINTLIST;
+				ptTable[PT_LineList] = D3DPT_LINELIST;
+				ptTable[PT_LineStrip] = D3DPT_LINESTRIP;
+				ptTable[PT_TriangleList] = D3DPT_TRIANGLELIST;
+				ptTable[PT_TriangleStrip] = D3DPT_TRIANGLESTRIP;
+				ptTable[PT_TriangleFan] = D3DPT_TRIANGLEFAN;
+			}
+			void FieldInitilizer::InitVertexElementFormat()
+			{
+				vefTable[VEF_Single] = D3DDECLTYPE_FLOAT1;
+				vefTable[VEF_Vector2] = D3DDECLTYPE_FLOAT2;
+				vefTable[VEF_Vector3] = D3DDECLTYPE_FLOAT3;
+				vefTable[VEF_Vector4] = D3DDECLTYPE_FLOAT4;
+				vefTable[VEF_Color] = D3DDECLTYPE_D3DCOLOR;
+				vefTable[VEF_Byte4] = D3DDECLTYPE_UBYTE4;
+				vefTable[VEF_Short2] = D3DDECLTYPE_SHORT2;
+				vefTable[VEF_Short4] = D3DDECLTYPE_SHORT4;
+				vefTable[VEF_NormalizedByte4] = D3DDECLTYPE_UBYTE4N;
+				vefTable[VEF_NormalizedShort2] = D3DDECLTYPE_SHORT2N;
+				vefTable[VEF_NormalizedShort4] = D3DDECLTYPE_SHORT4N;
+				vefTable[VEF_UInt101010] = D3DDECLTYPE_UDEC3;
+				vefTable[VEF_Normalized101010] = D3DDECLTYPE_DEC3N;
+				vefTable[VEF_HalfVector2] = D3DDECLTYPE_FLOAT16_2;
+				vefTable[VEF_HalfVector4] = D3DDECLTYPE_FLOAT16_4;
+			}
+			void FieldInitilizer::InitVertexElementUsage()
+			{
+				veuTable[VEU_Position] = D3DDECLUSAGE_POSITION;
+				veuTable[VEU_BlendWeight] = D3DDECLUSAGE_BLENDWEIGHT;
+				veuTable[VEU_BlendIndices] = D3DDECLUSAGE_BLENDINDICES;
+				veuTable[VEU_Normal] = D3DDECLUSAGE_NORMAL;
+				veuTable[VEU_PointSize] = D3DDECLUSAGE_PSIZE;
+				veuTable[VEU_TextureCoordinate] = D3DDECLUSAGE_TEXCOORD;
+				veuTable[VEU_Tangent] = D3DDECLUSAGE_TANGENT;
+				veuTable[VEU_Binormal] = D3DDECLUSAGE_BINORMAL;
+				veuTable[VEU_TessellateFactor] = D3DDECLUSAGE_TESSFACTOR;
+				veuTable[VEU_PositionTransformed] = D3DDECLUSAGE_POSITIONT;
+				veuTable[VEU_Color] = D3DDECLUSAGE_COLOR;
+				veuTable[VEU_Fog] = D3DDECLUSAGE_FOG;
+				veuTable[VEU_Depth] = D3DDECLUSAGE_DEPTH;
+				veuTable[VEU_Sample] = D3DDECLUSAGE_SAMPLE;
+
+			}
+			void FieldInitilizer::InitFillTable()
+			{
+				fillTable[FILL_Point] = D3DFILL_POINT;
+				fillTable[FILL_WireFrame] = D3DFILL_WIREFRAME;
+				fillTable[FILL_Solid] = D3DFILL_SOLID;
+			}
+			void FieldInitilizer::InitCullTable()
+			{
+				cullTable[CULL_None] = D3DCULL_NONE;
+				cullTable[CULL_Clockwise] = D3DCULL_CW;
+				cullTable[CULL_CounterClockwise] = D3DCULL_CCW;
+			}
+			void FieldInitilizer::InitBlendTable()
+			{
+				blendTable[(int)Blend::Zero] = D3DBLEND_ZERO;
+				blendTable[(int)Blend::One] = D3DBLEND_ONE;
+				blendTable[(int)Blend::SourceColor] = D3DBLEND_SRCCOLOR;
+				blendTable[(int)Blend::InverseSourceColor] = D3DBLEND_INVSRCCOLOR;
+				blendTable[(int)Blend::SourceAlpha] = D3DBLEND_SRCALPHA;
+				blendTable[(int)Blend::InverseSourceAlpha] = D3DBLEND_INVSRCALPHA;
+				blendTable[(int)Blend::DestinationAlpha] = D3DBLEND_DESTALPHA;
+				blendTable[(int)Blend::InverseDestinationAlpha] = D3DBLEND_INVDESTALPHA;
+				blendTable[(int)Blend::DestinationColor] = D3DBLEND_DESTCOLOR;
+				blendTable[(int)Blend::InverseDestinationColor] = D3DBLEND_INVDESTCOLOR;
+				blendTable[(int)Blend::SourceAlphaSaturation] = D3DBLEND_SRCALPHASAT;
+				blendTable[(int)Blend::BlendFactor] = D3DBLEND_BLENDFACTOR;
+			}
+			void FieldInitilizer::InitCompareFunctionTable()
+			{
+				comfunTable[(int)CompareFunction::Never] = D3DCMP_NEVER;
+				comfunTable[(int)CompareFunction::Less] = D3DCMP_LESS;
+				comfunTable[(int)CompareFunction::Equal] = D3DCMP_EQUAL;
+				comfunTable[(int)CompareFunction::LessEqual] = D3DCMP_LESSEQUAL;
+				comfunTable[(int)CompareFunction::Greater] = D3DCMP_GREATER;
+				comfunTable[(int)CompareFunction::NotEqual] = D3DCMP_NOTEQUAL;
+				comfunTable[(int)CompareFunction::GreaterEqual] = D3DCMP_GREATEREQUAL;
+				comfunTable[(int)CompareFunction::Always] = D3DCMP_ALWAYS;
+			}
+			void FieldInitilizer::InitBlendOperationTable()
+			{
+				blendopTable[(int)BlendFunction::Add] = D3DBLENDOP_ADD;
+				blendopTable[(int)BlendFunction::Subtract] = D3DBLENDOP_SUBTRACT;
+				blendopTable[(int)BlendFunction::ReverseSubtract] = D3DBLENDOP_REVSUBTRACT;
+				blendopTable[(int)BlendFunction::Min] = D3DBLENDOP_MIN;
+				blendopTable[(int)BlendFunction::Max] = D3DBLENDOP_MAX;
+			}
+			void FieldInitilizer::InitStencilTable()
+			{
+				stencilTable[(int)StencilOperation::Keep] = D3DSTENCILOP_KEEP;
+				stencilTable[(int)StencilOperation::Zero] = D3DSTENCILOP_ZERO;
+				stencilTable[(int)StencilOperation::Replace] = D3DSTENCILOP_REPLACE;
+				stencilTable[(int)StencilOperation::IncrementSaturation] = D3DSTENCILOP_INCRSAT;
+				stencilTable[(int)StencilOperation::DecrementSaturation] = D3DSTENCILOP_DECRSAT;
+				stencilTable[(int)StencilOperation::Invert] = D3DSTENCILOP_INVERT;
+				stencilTable[(int)StencilOperation::Increment] = D3DSTENCILOP_INCR;
+				stencilTable[(int)StencilOperation::Decrement] = D3DSTENCILOP_DECR;
+			}
+			void FieldInitilizer::InitPixelFormatTable()
+			{
+				pixFmtTable[FMT_Unknown] = D3DFMT_UNKNOWN;
+				pixFmtTable[FMT_Luminance8] = D3DFMT_L8;
+				pixFmtTable[FMT_Luminance16] = D3DFMT_L16;
+				pixFmtTable[FMT_Alpha8] = D3DFMT_A8;
+				pixFmtTable[FMT_A4L4] = D3DFMT_A4L4;
+				pixFmtTable[FMT_A8L8] = D3DFMT_A8L8;
+				pixFmtTable[FMT_R5G6B5] = D3DFMT_R5G6B5;
+				pixFmtTable[FMT_B5G6R5] = D3DFMT_UNKNOWN;
+				pixFmtTable[FMT_A4R4G4B4] = D3DFMT_A4R4G4B4;
+				pixFmtTable[FMT_A1R5G5B5] = D3DFMT_A1R5G5B5;
+				pixFmtTable[FMT_R8G8B8] = D3DFMT_R8G8B8;
+				pixFmtTable[FMT_B8G8R8] = D3DFMT_UNKNOWN;
+				pixFmtTable[FMT_A8R8G8B8] = D3DFMT_A8R8G8B8;
+				pixFmtTable[FMT_A8B8G8R8] = D3DFMT_A8B8G8R8;
+				pixFmtTable[FMT_B8G8R8A8] = D3DFMT_UNKNOWN;
+				pixFmtTable[FMT_A2R10G10B10] = D3DFMT_A2R10G10B10;
+				pixFmtTable[FMT_A2B10G10R10] = D3DFMT_A2B10G10R10;
+				pixFmtTable[FMT_DXT1] = D3DFMT_DXT1;
+				pixFmtTable[FMT_DXT2] = D3DFMT_DXT2;
+				pixFmtTable[FMT_DXT3] = D3DFMT_DXT3;
+				pixFmtTable[FMT_DXT4] = D3DFMT_DXT4;
+				pixFmtTable[FMT_DXT5] = D3DFMT_DXT5;
+				pixFmtTable[FMT_A16B16G16R16F] = D3DFMT_A16B16G16R16F;
+				pixFmtTable[FMT_A32B32G32R32F] = D3DFMT_A32B32G32R32F;
+				pixFmtTable[FMT_X8R8G8B8] = D3DFMT_X8R8G8B8;
+				pixFmtTable[FMT_X8B8G8R8] = D3DFMT_X8B8G8R8;
+				pixFmtTable[FMT_X1R5G5B5] = D3DFMT_X1R5G5B5;
+				pixFmtTable[FMT_R8G8B8A8] = D3DFMT_UNKNOWN;
+				pixFmtTable[FMT_Depth] = D3DFMT_UNKNOWN;
+				pixFmtTable[FMT_A16B16G16R16] = D3DFMT_A16B16G16R16;
+				pixFmtTable[FMT_R3G3B2] = D3DFMT_R3G3B2;
+				pixFmtTable[FMT_R16F] = D3DFMT_R16F;
+				pixFmtTable[FMT_R32F] = D3DFMT_R32F;
+				pixFmtTable[FMT_G16R16] = D3DFMT_G16R16;
+				pixFmtTable[FMT_G16R16F] = D3DFMT_G16R16F;
+				pixFmtTable[FMT_G32R32F] = D3DFMT_G32R32F;
+				pixFmtTable[FMT_R16G16B16] = D3DFMT_UNKNOWN;
+				pixFmtTable[FMT_B4G4R4A4] = D3DFMT_UNKNOWN;
+				pixFmtTable[FMT_Palette8] = D3DFMT_P8;
+				pixFmtTable[FMT_Palette8Alpha8] = D3DFMT_A8P8;
+			}
+			void FieldInitilizer::InitDepthFormatTable()
+			{
+				depFmtTable[DEPFMT_Depth15Stencil1] = D3DFMT_D15S1;
+				depFmtTable[DEPFMT_Depth16] = D3DFMT_D16;
+				depFmtTable[DEPFMT_Depth16Lockable] = D3DFMT_D16_LOCKABLE;
+				depFmtTable[DEPFMT_Depth24X8] = D3DFMT_D24X8;
+				depFmtTable[DEPFMT_Depth24Stencil4] = D3DFMT_D24X4S4;
+				depFmtTable[DEPFMT_Depth24Stencil8] = D3DFMT_D24X8;
+				depFmtTable[DEPFMT_Depth24Stencil8Single] = D3DFMT_D24FS8;
+				depFmtTable[DEPFMT_Depth32] = D3DFMT_D32;
+				depFmtTable[DEPFMT_Depth32Lockable] = D3DFMT_D32_LOCKABLE;
+				depFmtTable[DEPFMT_Depth32Single] = D3DFMT_D32F_LOCKABLE;
+			}
+			void FieldInitilizer::InitTFLTTable()
+			{
+				tfltTable[TFLT_None] = D3DTEXF_NONE;
+				tfltTable[TFLT_Point] = D3DTEXF_POINT;
+				tfltTable[TFLT_Linear] = D3DTEXF_LINEAR;
+				tfltTable[TFLT_Anisotropic] = D3DTEXF_ANISOTROPIC;
+			}
+			void FieldInitilizer::InitCubeTable()
+			{
+				cubeTable[CUBE_PositiveX] = D3DCUBEMAP_FACE_POSITIVE_X;
+				cubeTable[CUBE_NegativeX] = D3DCUBEMAP_FACE_NEGATIVE_X;
+				cubeTable[CUBE_PositiveY] = D3DCUBEMAP_FACE_POSITIVE_Y;
+				cubeTable[CUBE_NegativeY] = D3DCUBEMAP_FACE_NEGATIVE_Y;
+				cubeTable[CUBE_PositiveZ] = D3DCUBEMAP_FACE_POSITIVE_Z;
+				cubeTable[CUBE_NegativeZ] = D3DCUBEMAP_FACE_NEGATIVE_Z;
+			}
+			void FieldInitilizer::InitTATable()
+			{
+				taTable[(int)TextureAddressMode::Border] = D3DTADDRESS_BORDER;
+				taTable[(int)TextureAddressMode::Clamp] = D3DTADDRESS_CLAMP;
+				taTable[(int)TextureAddressMode::Mirror] = D3DTADDRESS_MIRROR;
+				taTable[(int)TextureAddressMode::MirrorOnce] = D3DTADDRESS_MIRRORONCE;
+				taTable[(int)TextureAddressMode::Wrap] = D3DTADDRESS_WRAP;
+
+			}
+
+			FieldInitilizer::FieldInitilizer()
+			{
+				InitPrimitiveTable();
+				InitVertexElementFormat();
+				InitVertexElementUsage();
+				InitFillTable();
+				InitCullTable();
+				InitBlendTable();
+				InitCompareFunctionTable();
+				InitBlendOperationTable();
+				InitStencilTable();
+				InitPixelFormatTable();
+				InitDepthFormatTable();
+				InitTFLTTable();
+				InitCubeTable();
+				InitTATable();
 			}
 		}
 	}

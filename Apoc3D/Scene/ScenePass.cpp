@@ -31,7 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
 #include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
 #include "apoc3d/Graphics/RenderSystem/RenderTarget.h"
-#include "apoc3d/Graphics/RenderSystem/Buffer/HardwareBuffer.h"
+#include "apoc3d/Graphics/RenderSystem/HardwareBuffer.h"
 #include "apoc3d/Graphics/RenderSystem/VertexDeclaration.h"
 #include "apoc3d/Graphics/RenderSystem/VertexElement.h"
 #include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
@@ -47,40 +47,31 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		/** Vertex structure for screen quad
-		 *  The vertices are in screen space; the tex coords will be calculated in vertex shader
-		 */
-		struct QuadVertex
-		{
-			float Position[3];
-		};
-
 		ScenePass::ScenePass(RenderDevice* device, SceneRenderer* renderer, SceneProcedure* parnetProc, const ScenePassData* passData)
 			: m_parentProc(parnetProc), m_cameraID(passData->CameraID), m_name(passData->Name), m_selectorID(passData->SelectorID),
-			m_renderDevice(device), m_renderer(renderer)
+			m_renderDevice(device), m_renderer(renderer), m_instuctions(passData->Instructions)
 		{
-			for (int32 i=0;i<passData->Instructions.getCount();i++)
-			{
-				m_instuctions.Add(passData->Instructions[i]);
-			}
-
 			// generate the quad vertices
 			ObjectFactory* fac = device->getObjectFactory();
 
+			m_quadVtxDecl = fac->CreateVertexDeclaration(
+			{
+				{ 0, VEF_Vector3, VEU_Position }
+			});
 
-			List<VertexElement> elements;
-			elements.Add(VertexElement(0, VEF_Vector3, VEU_Position));
-			m_quadVtxDecl = fac->CreateVertexDeclaration(elements);
+			const Vector3 pos[6] =
+			{
+				{ 0, 0, 0 },
+				{ 1, 0, 0 },
+				{ 1, 1, 0 },
+				{ 0, 0, 0 },
+				{ 1, 1, 0 },
+				{ 0, 1, 0 },
+			};
 
 			m_quadBuffer = fac->CreateVertexBuffer(6, m_quadVtxDecl, BU_Static);
-			QuadVertex* vtxData = reinterpret_cast<QuadVertex*>(m_quadBuffer->Lock(LOCK_None));
-			vtxData[0].Position[0] = 0; vtxData[0].Position[1] = 0; vtxData[0].Position[2] = 0;
-			vtxData[1].Position[0] = 1; vtxData[1].Position[1] = 0; vtxData[1].Position[2] = 0;
-			vtxData[2].Position[0] = 1; vtxData[2].Position[1] = 1; vtxData[2].Position[2] = 0;
-			
-			vtxData[3].Position[0] = 0; vtxData[3].Position[1] = 0; vtxData[3].Position[2] = 0;
-			vtxData[4].Position[0] = 1; vtxData[4].Position[1] = 1; vtxData[4].Position[2] = 0;
-			vtxData[5].Position[0] = 0; vtxData[5].Position[1] = 1; vtxData[5].Position[2] = 0;
+			void* vtxData = m_quadBuffer->Lock(LOCK_None);
+			memcpy(vtxData, pos, sizeof(pos));
 
 			m_quadBuffer->Unlock();
 		}
@@ -119,19 +110,19 @@ namespace Apoc3D
 				const SceneInstruction& inst = m_instuctions[i];
 				switch (inst.Operation)
 				{
-				case SOP_And:
+					case SOP_And:
 					{
 						ExecutionValue val1 = m_execStack.Pop();
 						ExecutionValue val2 = m_execStack.Pop();
 						ExecutionValue result;
-						
+
 						result.Value[0] = val1.Value[0] & val2.Value[0];
 						result.Value[1] = val1.Value[1] & val2.Value[1];
 
 						m_execStack.Push(result);
+						break;
 					}
-					break;
-				case SOP_Or:
+					case SOP_Or:
 					{
 						ExecutionValue val1 = m_execStack.Pop();
 						ExecutionValue val2 = m_execStack.Pop();
@@ -141,18 +132,18 @@ namespace Apoc3D
 						result.Value[1] = val1.Value[1] | val2.Value[1];
 
 						m_execStack.Push(result);
+						break;
 					}
-					break;
-				case SOP_Not:
+					case SOP_Not:
 					{
 						ExecutionValue val = m_execStack.Pop();
 						ExecutionValue result;
 						result.Value[0] = !val.Value[0];
 						result.Value[1] = !val.Value[1];
 						m_execStack.Push(result);
+						break;
 					}
-					break;
-				case SOP_Load:
+					case SOP_Load:
 					{
 						ExecutionValue val;
 						if (inst.Args[0].IsImmediate)
@@ -165,44 +156,41 @@ namespace Apoc3D
 							val.Value[0] = inst.Args[0].Var->Value[0];
 							val.Value[1] = inst.Args[0].Var->Value[1];
 						}
-						
+
 						m_execStack.Push(val);
+						break;
 					}
-					break;
-				case SOP_JNZ:
+					case SOP_JNZ:
 					{
 						assert(m_execStack.getCount());
 						ExecutionValue val = m_execStack.Pop();
 						if (val.Value[0] || val.Value[1])
 						{
-							i = inst.Next-1;
+							i = inst.Next - 1;
 						}
+						break;
 					}
-					break;
-				case SOP_JZ:
+					case SOP_JZ:
 					{
 						assert(m_execStack.getCount());
 						ExecutionValue val = m_execStack.Pop();
 						if (!val.Value[0] && !val.Value[1])
 						{
-							i = inst.Next-1;
+							i = inst.Next - 1;
 						}
+						break;
 					}
-					break;
-				case SOP_Clear:
-					Clear(inst);
-					break;
-				case SOP_Render:
-					{
+					case SOP_Clear:
+						Clear(inst);
+						break;
+					case SOP_Render:
 						m_renderer->RenderBatch(m_selectorID);
-					}
-					break;
-				case SOP_RenderQuad:
-					RenderQuad(inst);
-					break;
-				case SOP_VisibleTo:
+						break;
+					case SOP_RenderQuad:
+						RenderQuad(inst);
+						break;
+					case SOP_VisibleTo:
 					{
-						bool result;
 						int selectorID;
 						if (inst.Args[0].IsImmediate)
 						{
@@ -213,13 +201,18 @@ namespace Apoc3D
 							selectorID = reinterpret_cast<const int&>(inst.Args[0].Var->Value[0]);
 						}
 						uint64 selectMask = 1 << selectorID;
-						result = batchData->HasObject(selectMask);
+						bool result = batchData->HasObject(selectMask);
 						inst.Args[1].Var->Value[0] = result ? 1 : 0;
+						break;
 					}
-					break;
-				case SOP_UseRT:
-					UseRT(inst);
-					break;
+
+					case SOP_UseDS:
+						UseDS(inst);
+						break;
+
+					case SOP_UseRT:
+						UseRT(inst);
+						break;
 				}
 			}
 		}
@@ -365,103 +358,104 @@ namespace Apoc3D
 					int idx = static_cast<int>(arg.DefaultValue[15]);
 					switch (var->Type)
 					{
-					case VARTYPE_Boolean:
-						autoFx->SetParameterValue(idx, reinterpret_cast<const bool*>(var->Value), 1);
-						break;
-					case VARTYPE_RenderTarget:
-						if (arg.StrData.size())
+						case SceneVariableType::Boolean:
+							autoFx->SetParameterValue(idx, reinterpret_cast<const bool*>(var->Value), 1);
+							break;
+						case SceneVariableType::RenderTarget:
 						{
-							if (arg.StrData == L"Width")
+							if (arg.StrData.size())
 							{
-								int width = var->RTValue->getWidth();
-								autoFx->SetParameterValue(idx, &width, 1);
+								if (arg.StrData == L"Width")
+								{
+									int width = var->RTValue->getWidth();
+									autoFx->SetParameterValue(idx, &width, 1);
+								}
+								else if (arg.StrData == L"Height")
+								{
+									int height = var->RTValue->getHeight();
+									autoFx->SetParameterValue(idx, &height, 1);
+								}
+								else
+								{
+									LogManager::getSingleton().Write(LOG_Scene, L"Property " + arg.StrData + L" is not found on " + var->Name, LOGLVL_Error);
+								}
 							}
-							else if (arg.StrData == L"Height")
+							else
 							{
-								int height = var->RTValue->getHeight();
-								autoFx->SetParameterValue(idx, &height, 1);
+								autoFx->SetParameterTexture(idx, var->RTValue->GetColorTexture());
 							}
-							else 
-							{
-								//arg.StrData = L"";
-								LogManager::getSingleton().Write(LOG_Scene, L"Property " + arg.StrData + L" is not found on " + var->Name, LOGLVL_Error);
-							}
+							break;
 						}
-						else
-						{
-							autoFx->SetParameterTexture(idx, var->RTValue->GetColorTexture());
-						}
-						break;
-					case VARTYPE_Matrix:
-						//if (arg.StrData.size())
-						//{
-						//}
-						//else
+						case SceneVariableType::Matrix:
+							//if (arg.StrData.size())
+							//{
+							//}
+							//else
 						{
 							autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 16);
 						}
 						break;
-					case VARTYPE_Vector4:
-						autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 4);
-						break;
-					case VARTYPE_Vector3:
-						autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 3);
-						break;
-					case VARTYPE_Vector2:
-						autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 2);
-						break;
-					case VARTYPE_Single:
-						autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 1);
-						break;
-					case VARTYPE_Texture:
-						autoFx->SetParameterTexture(idx, var->TextureValue);
-						break;
-							
-					case VARTYPE_Integer:
-						autoFx->SetParameterValue(idx, reinterpret_cast<const int*>(var->Value), 1);
-						break;
-					case VARTYPE_GaussBlurFilter:
-						if (arg.StrData.size())
-						{
-							GaussBlurFilter* filter = static_cast<GaussBlurFilter*>(var->ObjectValue);
-							if (arg.StrData == L"SampleOffsetsX")
-							{
-								const Vector4* weights = filter->getSampleOffsetX();
-								autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(weights), 4 * filter->getSampleCount());
-							}
-							else if (arg.StrData == L"SampleOffsetsY")
-							{
-								const Vector4* weights = filter->getSampleOffsetY();
-								autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(weights), 4 * filter->getSampleCount());
-							}
-							else if (arg.StrData == L"SampleWeights")
-							{
-								const float* weights = filter->getSampleWeights();
-								memset(m_floatBuffer,0, sizeof(m_floatBuffer));
-								for (int j=0;j<filter->getSampleCount();j++)
-								{
-									assert((j*4+3) < (sizeof(m_floatBuffer) / sizeof(m_floatBuffer[0])) );
-									m_floatBuffer[j*4   ] = weights[j];
-									m_floatBuffer[j*4+1 ] = weights[j];
-									m_floatBuffer[j*4+2 ] = weights[j];
-									m_floatBuffer[j*4+3 ] = weights[j];
-									
-								}
-								autoFx->SetParameterValue(idx, m_floatBuffer, filter->getSampleCount() * 4);
-							}
-							else if (arg.StrData == L"SampleCount")
-							{
-								int val = filter->getSampleCount();
-								autoFx->SetParameterValue(idx, &val, 1);
-							}
-							else 
-							{
-								//arg.StrData = L"";
-								LogManager::getSingleton().Write(LOG_Scene, L"Property " + arg.StrData + L" is not found on " + var->Name, LOGLVL_Error);
-							}
-						}
+						case SceneVariableType::Vector4:
+							autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 4);
+							break;
+						case SceneVariableType::Vector3:
+							autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 3);
+							break;
+						case SceneVariableType::Vector2:
+							autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 2);
+							break;
+						case SceneVariableType::Single:
+							autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 1);
+							break;
+						case SceneVariableType::Texture:
+							autoFx->SetParameterTexture(idx, var->TextureValue);
+							break;
 
-						break;
+						case SceneVariableType::Integer:
+							autoFx->SetParameterValue(idx, reinterpret_cast<const int*>(var->Value), 1);
+							break;
+						case SceneVariableType::GaussBlurFilter:
+							if (arg.StrData.size())
+							{
+								GaussBlurFilter* filter = static_cast<GaussBlurFilter*>(var->ObjectValue);
+								if (arg.StrData == L"SampleOffsetsX")
+								{
+									const Vector4* weights = filter->getSampleOffsetX();
+									autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(weights), 4 * filter->getSampleCount());
+								}
+								else if (arg.StrData == L"SampleOffsetsY")
+								{
+									const Vector4* weights = filter->getSampleOffsetY();
+									autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(weights), 4 * filter->getSampleCount());
+								}
+								else if (arg.StrData == L"SampleWeights")
+								{
+									const float* weights = filter->getSampleWeights();
+									memset(m_floatBuffer, 0, sizeof(m_floatBuffer));
+									for (int j = 0; j < filter->getSampleCount(); j++)
+									{
+										assert((j * 4 + 3) < (sizeof(m_floatBuffer) / sizeof(m_floatBuffer[0])));
+										m_floatBuffer[j * 4] = weights[j];
+										m_floatBuffer[j * 4 + 1] = weights[j];
+										m_floatBuffer[j * 4 + 2] = weights[j];
+										m_floatBuffer[j * 4 + 3] = weights[j];
+
+									}
+									autoFx->SetParameterValue(idx, m_floatBuffer, filter->getSampleCount() * 4);
+								}
+								else if (arg.StrData == L"SampleCount")
+								{
+									int val = filter->getSampleCount();
+									autoFx->SetParameterValue(idx, &val, 1);
+								}
+								else
+								{
+									//arg.StrData = L"";
+									LogManager::getSingleton().Write(LOG_Scene, L"Property " + arg.StrData + L" is not found on " + var->Name, LOGLVL_Error);
+								}
+							}
+
+							break;
 
 					}
 				}
@@ -507,24 +501,33 @@ namespace Apoc3D
 				index = reinterpret_cast<const int&>(inst.Args[0].Var->Value[0]);
 			}
 
-			
-			
 			if (!inst.Args[1].IsImmediate)
 			{
-				m_renderDevice->SetRenderTarget(
-					index,
-					inst.Args[1].Var->RTValue);
+				m_renderDevice->SetRenderTarget(index, inst.Args[1].Var->RTValue);
 			}
 			else
 			{
 				// if Immediate then it can only be null
-				m_renderDevice->SetRenderTarget(
-					index,
-					0);
+				m_renderDevice->SetRenderTarget(index, nullptr);
 			}
 
 			uint colorFlags = inst.Args[2].DefaultValue[0];
-			m_renderDevice->getRenderState()->setColorWriteEnabled(index, !!(colorFlags&0x0100), !!(colorFlags&0x0010), !!(colorFlags&0x0001), !!(colorFlags&0x1000));
+			m_renderDevice->getRenderState()->setColorWriteEnabled(index, !!(colorFlags & 0x0100), !!(colorFlags & 0x0010), !!(colorFlags & 0x0001), !!(colorFlags & 0x1000));
+		}
+
+		void ScenePass::UseDS(const SceneInstruction& inst)
+		{
+			assert(inst.Args.getCount() == 1);
+
+			if (!inst.Args[0].IsImmediate)
+			{
+				m_renderDevice->SetDepthStencilBuffer(inst.Args[0].Var->DSValue);
+			}
+			else
+			{
+				// if Immediate then it can only be null
+				m_renderDevice->SetDepthStencilBuffer(nullptr);
+			}
 		}
 	};
 };

@@ -44,35 +44,21 @@ namespace Apoc3D
 	namespace Scene
 	{
 		SceneProcedure::SceneProcedure(RenderDevice* dev)
-			: m_renderDevice(dev), m_isAvailable(false)
-		{
-		}
-
+			: m_renderDevice(dev) { }
 
 		SceneProcedure::~SceneProcedure()
 		{
-			for (int i=0;i<m_passes.getCount();i++)
-			{
-				delete m_passes[i];
-			}
-			for (int i=0;i<m_varCount;i++)
-			{
-				delete m_vars[i];
-			}
+			m_passes.DeleteAndClear();
+			m_variables.DeleteAndClear();
 
-			for (int i=0;i<m_createdTextures.getCount();i++)
+			m_createdTextures.DeleteAndClear();
+			m_createdRenderTarget.DeleteAndClear();
+			m_createDepthStencil.DeleteAndClear();
+			
+			for (ProcGaussBlurFilter& f : m_createdGaussFilters)
 			{
-				delete m_createdTextures[i];
+				delete f.Object;
 			}
-			for (int i=0;i<m_createdRenderTarget.getCount();i++)
-			{
-				delete m_createdRenderTarget[i];
-			}
-			for (int i=0;i<m_createdGaussFilters.getCount();i++)
-			{
-				delete m_createdGaussFilters[i].Object;
-			}
-			delete[] m_vars;
 		}
 
 		bool SceneProcedure::IsAvailable()
@@ -86,64 +72,65 @@ namespace Apoc3D
 			parser.Parse(rl);
 			m_name = parser.getSceneName();
 
-			m_varCount = parser.GlobalVars.getCount();
-			m_vars = new SceneVariable*[m_varCount];
-			for (int i=0;i<m_varCount;i++)
-			{
-				m_vars[i] = parser.GlobalVars[i];
-			}
+			m_variables = parser.GlobalVars;
 
 			m_passes.ResizeDiscard(parser.PassData.getCount());
 
-			for (int i=0;i<parser.PassData.getCount();i++)
+			for (const auto& p : parser.PassData)
 			{
-				ScenePass* pass = new ScenePass(m_renderDevice, renderer, this, &parser.PassData[i]);
+				ScenePass* pass = new ScenePass(m_renderDevice, renderer, this, &p);
 				m_passes.Add(pass);
 			}
 
 
 			// check device caps and set m_isAvailable
 			m_isAvailable = true;
-			for (int i=0;i<m_varCount;i++)
+			for (SceneVariable* var : m_variables)
 			{
-				switch (m_vars[i]->Type)
+				switch (var->Type)
 				{
-					case VARTYPE_RenderTarget:
+					case SceneVariableType::RenderTarget:
+					case SceneVariableType::DepthStencil:
+					{
+						PixelFormat colorFmt = static_cast<PixelFormat>(var->Value[4]);
+						DepthFormat depFmt = static_cast<DepthFormat>(var->Value[4]);
+						
+						if (var->Type == SceneVariableType::RenderTarget)
+							depFmt = DEPFMT_Count;
+						else
+							colorFmt = FMT_Count;
+
+						uint sampleCount = var->Value[5];
+
+						if (sampleCount != 0)
 						{
-							PixelFormat fmt = static_cast<PixelFormat>(m_vars[i]->Value[4]);
-							DepthFormat depFmt = static_cast<DepthFormat>(m_vars[i]->Value[5]);
+							const String* profile = m_renderDevice->getCapabilities()->FindClosesetMultisampleMode(sampleCount, colorFmt, depFmt);
 
-							uint sampleCount = m_vars[i]->Value[6];
-
-							if (sampleCount != 0)
-							{
-								const String* profile = m_renderDevice->getCapabilities()->FindClosesetMultisampleMode(sampleCount, fmt, depFmt);
-
-								if (profile == nullptr || !m_renderDevice->getCapabilities()->SupportsRenderTarget(*profile, fmt, depFmt))
-								{
-									m_isAvailable = false;
-								}
-							}
-						}
-						break;
-					case VARTYPE_Effect:
-						{
-							if (EffectManager::getSingleton().HasEffect(m_vars[i]->DefaultStringValue))
-							{
-								Effect* fx = EffectManager::getSingleton().getEffect(m_vars[i]->DefaultStringValue);
-								if (!fx->IsUnsupported())
-									m_isAvailable = false;
-							}
-							else
+							if (profile == nullptr || !m_renderDevice->getCapabilities()->SupportsRenderTarget(*profile, colorFmt, depFmt))
 							{
 								m_isAvailable = false;
 							}
 						}
 						break;
-					
+					}
+
+					case SceneVariableType::Effect:
+					{
+						if (EffectManager::getSingleton().HasEffect(var->DefaultStringValue))
+						{
+							Effect* fx = EffectManager::getSingleton().getEffect(var->DefaultStringValue);
+							if (!fx->IsUnsupported())
+								m_isAvailable = false;
+						}
+						else
+						{
+							m_isAvailable = false;
+						}
+						break;
+					}
+
 				}
 			}
-			
 
 
 			// initialize resources
@@ -151,22 +138,23 @@ namespace Apoc3D
 			{
 				ObjectFactory* factory = m_renderDevice->getObjectFactory();
 
-				for (int i=0;i<m_varCount;i++)
+				for (SceneVariable* var : m_variables)
 				{
-					switch (m_vars[i]->Type)
+					switch (var->Type)
 					{
-					case VARTYPE_RenderTarget:
+						case SceneVariableType::DepthStencil:
+						case SceneVariableType::RenderTarget:
 						{
-							uint width = m_vars[i]->Value[0];
-							uint height = m_vars[i]->Value[1];
+							uint width = var->Value[0];
+							uint height = var->Value[1];
 							float wscale;
 							float hscale;
 							bool usePercentageLock = false;
 
 							if (!width || !height)
 							{
-								wscale = reinterpret_cast<const float&>(m_vars[i]->Value[2]);
-								hscale = reinterpret_cast<const float&>(m_vars[i]->Value[3]);
+								wscale = reinterpret_cast<const float&>(var->Value[2]);
+								hscale = reinterpret_cast<const float&>(var->Value[3]);
 
 								Viewport vp = m_renderDevice->getViewport();
 								width = static_cast<uint>(vp.Width * wscale + 0.5f);
@@ -174,90 +162,104 @@ namespace Apoc3D
 								usePercentageLock = true;
 							}
 
-							PixelFormat fmt = static_cast<PixelFormat>(m_vars[i]->Value[4]);
-							DepthFormat depFmt = static_cast<DepthFormat>(m_vars[i]->Value[5]);
+							uint32 sampleCount = var->Value[5];
 
-							uint32 sampleCount = m_vars[i]->Value[6];
-
-							RenderTarget* rt;
-							if (sampleCount != 0)
+							if (var->Type == SceneVariableType::RenderTarget)
 							{
-								const String* profile = m_renderDevice->getCapabilities()->FindClosesetMultisampleMode(sampleCount, fmt, depFmt);
-								assert(profile);
+								PixelFormat fmt = static_cast<PixelFormat>(var->Value[4]);
 
-								if (depFmt == DEPFMT_Count)
+								RenderTarget* rt;
+								if (sampleCount != 0)
 								{
+									const String* profile = m_renderDevice->getCapabilities()->FindClosesetMultisampleMode(sampleCount, fmt, DEPFMT_Count);
+									assert(profile);
+
 									rt = factory->CreateRenderTarget(width, height, fmt, *profile);
 								}
 								else
 								{
-									rt = factory->CreateRenderTarget(width, height, fmt, depFmt, *profile);
-								}
-							}
-							else
-							{
-								if (depFmt == DEPFMT_Count)
-								{
 									rt = factory->CreateRenderTarget(width, height, fmt, L"");
+								}
+
+								if (usePercentageLock)
+								{
+									rt->SetPercentageLock(wscale, hscale);
+								}
+
+								var->RTValue = rt;
+								m_createdRenderTarget.Add(rt);
+							}
+							else if (var->Type == SceneVariableType::DepthStencil)
+							{
+								DepthFormat fmt = static_cast<DepthFormat>(var->Value[4]);
+
+								DepthStencilBuffer* dsb;
+								if (sampleCount != 0)
+								{
+									const String* profile = m_renderDevice->getCapabilities()->FindClosesetMultisampleMode(sampleCount, FMT_Count, fmt);
+									assert(profile);
+
+									dsb = factory->CreateDepthStencilBuffer(width, height, fmt, *profile);
 								}
 								else
 								{
-									rt = factory->CreateRenderTarget(width, height, fmt, depFmt, L"");
+									dsb = factory->CreateDepthStencilBuffer(width, height, fmt, L"");
 								}
-							}
 
-							if (usePercentageLock)
-							{
-								rt->SetPercentageLock(wscale, hscale);
+								if (usePercentageLock)
+								{
+									dsb->SetPercentageLock(wscale, hscale);
+								}
+
+								var->DSValue = dsb;
+								m_createDepthStencil.Add(dsb);
 							}
-							
-							m_vars[i]->RTValue = rt;
-							m_createdRenderTarget.Add(rt);
+							break;
 						}
-						break;
+
 							////VARTYPE_Matrix,
 							////VARTYPE_Vector4,
 							//VARTYPE_Vector3,
 							//VARTYPE_Vector2,
-					case VARTYPE_Texture:
+						case SceneVariableType::Texture:
 						{
-							if (m_vars[i]->DefaultStringValue.size())
+							if (var->DefaultStringValue.size())
 							{
 								FileLocation fl;// = FileSystem::getSingleton().TryLocate(m_vars[i]->DefaultStringValue, FileLocateRule::Textures);
-								if (FileSystem::getSingleton().TryLocate(m_vars[i]->DefaultStringValue, FileLocateRule::Textures, fl))
+								if (FileSystem::getSingleton().TryLocate(var->DefaultStringValue, FileLocateRule::Textures, fl))
 								{
 									ResourceHandle<Texture>* tex = TextureManager::getSingleton().CreateInstance(m_renderDevice, fl);
-									m_vars[i]->TextureValue = tex;
+									var->TextureValue = tex;
 									m_createdTextures.Add(tex);
 								}
 								else
 								{
 									LogManager::getSingleton().Write(LOG_Scene, 
-										L"Texture resource " + m_vars[i]->DefaultStringValue + L" for Scene Procedure " + m_name + L" is not found", LOGLVL_Warning);
+										L"Texture resource " + var->DefaultStringValue + L" for Scene Procedure " + m_name + L" is not found", LOGLVL_Warning);
 								}
 							}
 							else
 							{
-								m_vars[i]->TextureValue = nullptr;
+								var->TextureValue = nullptr;
 							}
-							
+							break;
 						}
-						break;
-					case VARTYPE_Effect:
+						case SceneVariableType::Effect:
 						{
-							m_vars[i]->EffectValue = EffectManager::getSingleton().getEffect(m_vars[i]->DefaultStringValue);
+							var->EffectValue = EffectManager::getSingleton().getEffect(var->DefaultStringValue);
+							break;
 						}
-						break;
-					case VARTYPE_GaussBlurFilter:
+						
+						case SceneVariableType::GaussBlurFilter:
 						{
-							uint width = m_vars[i]->Value[0];
-							uint height = m_vars[i]->Value[1];
+							uint width = var->Value[0];
+							uint height = var->Value[1];
 
 							ProcGaussBlurFilter pgbf;
 							if (!width || !height)
 							{
-								float wscale = reinterpret_cast<const float&>(m_vars[i]->Value[2]);
-								float hscale = reinterpret_cast<const float&>(m_vars[i]->Value[3]);
+								float wscale = reinterpret_cast<const float&>(var->Value[2]);
+								float hscale = reinterpret_cast<const float&>(var->Value[3]);
 
 								Viewport vp = m_renderDevice->getViewport();
 								width = static_cast<uint>(vp.Width * wscale + 0.5f);
@@ -271,16 +273,16 @@ namespace Apoc3D
 								pgbf.HasPercentageLock = false;
 							}
 
-							int sampleCount = m_vars[i]->Value[5];
-							float blurAmount = reinterpret_cast<const float&>(m_vars[i]->Value[4]);
+							int sampleCount = var->Value[5];
+							float blurAmount = reinterpret_cast<const float&>(var->Value[4]);
 							GaussBlurFilter* filter = new GaussBlurFilter(sampleCount,blurAmount, (int32)width,(int32)height);
-							m_vars[i]->ObjectValue = filter;
+							var->ObjectValue = filter;
 							
 							pgbf.Object = filter;
 							
 							m_createdGaussFilters.Add(pgbf);
+							break;
 						}
-						break;
 							//VARTYPE_Integer,
 							//VARTYPE_Boolean,
 							//VARTYPE_Effect
@@ -295,20 +297,18 @@ namespace Apoc3D
 
 			m_lastCamera = 0;
 			// pass each scene pass
-			for (int i=0;i<m_passes.getCount();i++)
+			for (ScenePass* pass : m_passes)
 			{
-				m_passes[i]->Invoke(cameras, sceMgr, batchData);
-				m_lastCamera = m_passes[i]->getCurrentCamera();
+				pass->Invoke(cameras, sceMgr, batchData);
+				m_lastCamera = pass->getCurrentCamera();
 			}
-
 		}
 
 		void SceneProcedure::CheckDimensions()
 		{
 			Viewport vp = m_renderDevice->getViewport();
-			for (int i=0;i<m_createdGaussFilters.getCount();i++)
+			for (ProcGaussBlurFilter& pgbf : m_createdGaussFilters)
 			{
-				ProcGaussBlurFilter& pgbf = m_createdGaussFilters[i];
 				if (pgbf.HasPercentageLock)
 				{
 					int expectedWidth = (int)(pgbf.WidthPercentage * vp.Width + 0.5f);
@@ -325,73 +325,80 @@ namespace Apoc3D
 		RenderTarget* SceneProcedure::FindRenderTargetVar(const String& name) const
 		{
 			if (!m_isAvailable)
-				return 0;
-			for (int i=0;i<m_varCount;i++)
-			{
-				if (m_vars[i]->Name==name)
-				{
-					return m_vars[i]->RTValue;
-				}
-			}
+				return nullptr;
+
+			for (SceneVariable* var : m_variables)
+				if (var->Name == name)
+					return var->RTValue;
+			return nullptr;
+		}
+		DepthStencilBuffer* SceneProcedure::FindDepthStencilVar(const String& name) const
+		{
+			if (!m_isAvailable)
+				return nullptr;
+
+			for (SceneVariable* var : m_variables)
+				if (var->Name == name)
+					return var->DSValue;
 			return nullptr;
 		}
 
 		void SceneProcedure::SetTextureVar(const String& name, ResourceHandle<Texture>* tex)
 		{
-			for (int i=0;i<m_varCount;i++)
+			for (SceneVariable* var : m_variables)
 			{
-				if (m_vars[i]->Name == name)
+				if (var->Name == name)
 				{
-					assert(m_vars[i]->Type == VARTYPE_Texture);
-					m_vars[i]->TextureValue = tex;
+					assert(var->Type == SceneVariableType::Texture);
+					var->TextureValue = tex;
 					break;
 				}
 			}
 		}
 		void SceneProcedure::SetBooleanVar(const String& name, bool val)
 		{
-			for (int i=0;i<m_varCount;i++)
+			for (SceneVariable* var : m_variables)
 			{
-				if (m_vars[i]->Name == name)
+				if (var->Name == name)
 				{
-					assert(m_vars[i]->Type == VARTYPE_Boolean);
-					m_vars[i]->Value[0] = val ? 1:0;
+					assert(var->Type == SceneVariableType::Boolean);
+					var->Value[0] = val ? 1 : 0;
 					break;
 				}
 			}
 		}
 		void SceneProcedure::SetVector4Var(const String& name, const Vector4& val)
 		{
-			for (int i=0;i<m_varCount;i++)
+			for (SceneVariable* var : m_variables)
 			{
-				if (m_vars[i]->Name == name)
+				if (var->Name == name)
 				{
-					assert(m_vars[i]->Type == VARTYPE_Vector4);
-					memcpy(m_vars[i]->Value, &val, sizeof(float)*4);
+					assert(var->Type == SceneVariableType::Vector4);
+					memcpy(var->Value, &val, sizeof(float) * 4);
 					break;
 				}
 			}
 		}
 		void SceneProcedure::SetVector2Var(const String& name, const Vector2& val)
 		{
-			for (int i=0;i<m_varCount;i++)
+			for (SceneVariable* var : m_variables)
 			{
-				if (m_vars[i]->Name == name)
+				if (var->Name == name)
 				{
-					assert(m_vars[i]->Type == VARTYPE_Vector2);
-					memcpy(m_vars[i]->Value, &val, sizeof(float)*2);
+					assert(var->Type == SceneVariableType::Vector2);
+					memcpy(var->Value, &val, sizeof(float) * 2);
 					break;
 				}
 			}
 		}
 		void SceneProcedure::SetFloatVar(const String& name, const float val)
 		{
-			for (int i=0;i<m_varCount;i++)
+			for (SceneVariable* var : m_variables)
 			{
-				if (m_vars[i]->Name == name)
+				if (var->Name == name)
 				{
-					assert(m_vars[i]->Type == VARTYPE_Single);
-					*reinterpret_cast<float*>(m_vars[i]->Value) = val;
+					assert(var->Type == SceneVariableType::Single);
+					*reinterpret_cast<float*>(var->Value) = val;
 					break;
 				}
 			}

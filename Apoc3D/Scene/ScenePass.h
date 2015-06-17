@@ -56,14 +56,10 @@ namespace Apoc3D
 			ScenePass(RenderDevice* dev, SceneRenderer* renderer, SceneProcedure* parent, const ScenePassData* passData);
 			~ScenePass();
 
-			/**
-			 *  Begins executing the pass' procedure for once.
-			 */
+			/** Begins executing the pass' procedure for once. */
 			void Invoke(const List<Camera*>& cameras, SceneManager* sceMgr, BatchData* batchData);
 			
-			/** 
-			 *  Gets the camera used in this scene pass.
-			 */
+			/** Gets the camera used in this scene pass. */
 			const Camera* getCurrentCamera() const { return m_currentCamera; }
 
 			/** 
@@ -79,9 +75,7 @@ namespace Apoc3D
 			int32 getPreferredCameraID() const { return m_cameraID; }
 			void setPreferredCameraID(int32 id) { m_cameraID = id; }
 
-			/**
-			 *  Gets the name of this pass.
-			 */
+			/** Gets the name of this pass. */
 			const String& getName() const { return m_name; }
 
 		private:
@@ -111,6 +105,7 @@ namespace Apoc3D
 			void Clear(const SceneInstruction& inst);
 			void RenderQuad(const SceneInstruction& inst);
 			void UseRT(const SceneInstruction& inst);
+			void UseDS(const SceneInstruction& inst);
 
 		};
 	};

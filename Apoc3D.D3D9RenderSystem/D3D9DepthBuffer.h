@@ -21,14 +21,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef D3D9VERTEXBUFFER_H
-#define D3D9VERTEXBUFFER_H
+#ifndef D3D9DEPTHBUFFER_H
+#define D3D9DEPTHBUFFER_H
 
-#include "../D3D9Common.h"
-#include "../VolatileResource.h"
-
-#include "apoc3d/Graphics/RenderSystem/HardwareBuffer.h"
-#include "apoc3d/Graphics/GraphicsCommon.h"
+#include "D3D9Common.h"
+#include "VolatileResource.h"
+#include "apoc3d/Graphics/RenderSystem/RenderTarget.h"
+#include "D3D9RenderDevice.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -39,25 +38,26 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9VertexBuffer : public VertexBuffer, public VolatileResource
+			class D3D9DepthBuffer final : public DepthStencilBuffer, public VolatileResource
 			{
+				RTTI_DERIVED(D3D9DepthBuffer, DepthStencilBuffer);
+
 			public:
-				D3D9VertexBuffer(D3D9RenderDevice* device, int32 vertexCount, int32 vertexSize, BufferUsageFlags usage);
-				~D3D9VertexBuffer();
+				D3D9DepthBuffer(D3D9RenderDevice* device, int32 width, int32 height, DepthFormat depthFormat, const String& multisampleMode);
+				D3D9DepthBuffer(D3D9RenderDevice* device, int32 width, int32 height, DepthFormat depthFormat, const D3D9Capabilities::AAProfile* aamode);
 
-				void ReleaseVolatileResource() override;
-				void ReloadVolatileResource() override;
+				~D3D9DepthBuffer();
 
-				D3DVertexBuffer* getD3DBuffer() const { return m_vertexBuffer; }
+				IDirect3DSurface9* getD3DBuffer() const { return m_depthSurface; }
 
-			protected:
-				virtual void* lock(int offset, int size, LockMode mode) override;
-				virtual void unlock() override;
+				virtual void ReleaseVolatileResource() override;
+				virtual void ReloadVolatileResource() override;
+
 			private:
 				D3D9RenderDevice* m_device;
-				D3DVertexBuffer* m_vertexBuffer;
+				IDirect3DSurface9* m_depthSurface = nullptr;
 
-				char* m_tempData;
+				const D3D9Capabilities::AAProfile* m_explicitAAMode = nullptr;
 			};
 		}
 	}

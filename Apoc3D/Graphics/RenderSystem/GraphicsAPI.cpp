@@ -49,14 +49,11 @@ namespace Apoc3D
 					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"The Graphics API " + fac->getName() + L" is already registered");
 				}
 
-
-				const List<PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
-
-				for (int32 i = 0; i<plats.getCount();i++)
+				for (const PlatformAPISupport& p : fac->getDescription().SupportedPlatforms)
 				{
 					APIList* facList;
 
-					String pName = plats[i].PlatformName;
+					String pName = p.PlatformName;
 					StringUtils::ToLowerCase(pName);
 
 					if (!m_factories.TryGetValue(pName, facList))
@@ -65,7 +62,7 @@ namespace Apoc3D
 						m_factories.Add(pName, facList);
 					}
 
-					const Entry ent ={ fac, plats[i].Score };
+					const Entry ent = { fac, p.Score };
 					facList->Add(ent);
 				}
 			}
@@ -93,11 +90,9 @@ namespace Apoc3D
 			{
 				bool passed = false;
 
-				const List<PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
-				for (int32 i = 0; i < plats.getCount(); i++)
+				for (const PlatformAPISupport& p : fac->getDescription().SupportedPlatforms)
 				{
-
-					String pName = plats[i].PlatformName;
+					String pName = p.PlatformName;
 					StringUtils::ToLowerCase(pName);
 
 					APIList* facList;

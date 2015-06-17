@@ -34,7 +34,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "LockData.h"
 #include "RenderSystem/RenderDevice.h"
 #include "RenderSystem/VertexDeclaration.h"
-#include "RenderSystem/Buffer/HardwareBuffer.h"
+#include "RenderSystem/HardwareBuffer.h"
 
 namespace Apoc3D
 {

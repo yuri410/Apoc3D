@@ -584,7 +584,12 @@ namespace Apoc3D
 					}
 				}
 			}
-
+			void D3D9Texture::ClearInternalTextureRef()
+			{
+				m_tex2D = nullptr;
+				m_tex3D = nullptr;
+				m_cube = nullptr;
+			}
 			void D3D9Texture::SetInternal2D(D3DTexture2D* tex, int32 newWidth, int32 newHeight, int32 newLevelCount, PixelFormat newFormat)
 			{
 				m_tex2D = tex;
@@ -592,7 +597,12 @@ namespace Apoc3D
 				UpdateProperties(TT_Texture2D, newWidth, newHeight, 1, 
 					newLevelCount, newFormat, D3D9Utils::GetD3DTextureUsage(tex));
 			}
+			void D3D9Texture::SetInternalCube(D3DTextureCube* tex, int32 newLength, int32 newLevelCount, PixelFormat newFormat)
+			{
+				m_cube = tex;
 
+				UpdateProperties(TT_CubeTexture, newLength, newLength, 1, newLevelCount, newFormat, D3D9Utils::GetD3DTextureUsage(tex));
+			}
 
 			String D3D9Texture::getResourceLocationName(const ResourceLocation* rl)
 			{

@@ -46,7 +46,6 @@ namespace Apoc3D
 			class D3D9Texture final : public Apoc3D::Graphics::RenderSystem::Texture, public VolatileResource
 			{
 			public:
-
 				D3D9Texture(D3D9RenderDevice* device, D3DTexture2D* tex2D);
 				D3D9Texture(D3D9RenderDevice* device, D3DTexture3D* tex3D);
 				D3D9Texture(D3D9RenderDevice* device, D3DTextureCube* texCube);
@@ -93,7 +92,9 @@ namespace Apoc3D
 					return 0;
 				}
 
+				void ClearInternalTextureRef();
 				void SetInternal2D(D3DTexture2D* tex, int32 newWidth, int32 newHeight, int32 newLevelCount, PixelFormat newFormat);
+				void SetInternalCube(D3DTextureCube* tex, int32 newLength, int32 newLevelCount, PixelFormat newFormat);
 
 			private:
 				void ReleaseVolatileResource() override;

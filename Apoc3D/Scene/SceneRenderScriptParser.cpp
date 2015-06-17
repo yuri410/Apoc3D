@@ -660,10 +660,7 @@ namespace Apoc3D
 
 					passed |= ParseCallArgBool(node, "CL_Stencil", arg, GlobalVars, false);
 					inst.Args.Add(arg);
-
-
 				}
-
 
 				if (passed)
 				{
@@ -719,6 +716,19 @@ namespace Apoc3D
 
 				instructions.Add(inst);
 			}
+			else if (stat == L"useds")
+			{
+				SceneInstruction inst;
+				inst.Operation = SOP_UseDS;
+
+				SceneOpArg arg;
+				if (node->Attribute("DS") && ParseCallArgRef(node, "DS", arg, GlobalVars))
+					inst.Args.Add(arg);
+				else
+					inst.Args.Add(zeroArg);
+
+				instructions.Add(inst);
+			}
 			else if (stat == L"visibleto")
 			{
 				SceneInstruction inst;
@@ -751,356 +761,242 @@ namespace Apoc3D
 
 		void SceneRenderScriptParser::FillInstructions(const std::string& cmd, List<SceneInstruction>& instructions)
 		{
-			ExpressionCompiler compiler;
-
-			compiler.FillInstrunctions(cmd, instructions, GlobalVars);
+			ExpressionCompiler().FillInstrunctions(cmd, instructions, GlobalVars);
 		}
-
 
 		void SceneRenderScriptParser::ParseGlocalVarNode(const TiXmlElement* node, const TiXmlDocument& doc)
 		{
-			std::string tstr = node->Attribute("Type");
-			std::transform(tstr.begin(), tstr.end(), tstr.begin(), tolower);
-			//std::string name = node->Attribute("Name");
 			String name = doc.GetUTF16AttribValue(node, "Name");
+			String stype = doc.GetUTF16AttribValue(node, "Type");
 
-			if (tstr == "rendertarget")
+			SceneVariableType type;
+			if (SceneVariableTypeConverter.TryParse(stype, type))
 			{
 				SceneVariable* var = new SceneVariable();
-				var->Type = VARTYPE_RenderTarget;
 				var->Name = name;
+				var->Type = type;
 
-				const TiXmlElement* e1 = node->FirstChildElement("Width");
-				const TiXmlElement* e2 = node->FirstChildElement("Height");
+				bool failed = false;
 
-				var->Value[0] = var->Value[1] = 0;
-				if (e1 && e2)
+				switch (type)
 				{
-					var->Value[0] = StringUtils::ParseInt32(e1->GetText());
-					var->Value[1] = StringUtils::ParseInt32(e2->GetText());
-				}
-				else
-				{
-					e1 = node->FirstChildElement("WidthP");
-					e2 = node->FirstChildElement("HeightP");
-
-					if (e1 && e2)
+					case SceneVariableType::RenderTarget:
+					case SceneVariableType::DepthStencil:
 					{
-						float r = StringUtils::ParseSingle(e1->GetText());
-						var->Value[2] = reinterpret_cast<const uint&>(r);
+						const TiXmlElement* e1 = node->FirstChildElement("Width");
+						const TiXmlElement* e2 = node->FirstChildElement("Height");
 
-						r = StringUtils::ParseSingle(e2->GetText());
-						var->Value[3] = reinterpret_cast<const uint&>(r);
-					}
-					else
-					{
-						float r = 1;
-						var->Value[2] = reinterpret_cast<const uint&>(r);
-						var->Value[3] = reinterpret_cast<const uint&>(r);
-					}
-				}
-
-				e1 = node->FirstChildElement("Format");
-				if (e1)
-				{
-					const char* txt = e1->GetText();
-					PixelFormat fmt = ConvertFormat(txt ? txt : "");
-					var->Value[4] = reinterpret_cast<const uint&>(fmt);
-				}
-				else
-				{
-					PixelFormat fmt = m_renderDevice->GetDefaultRTFormat();
-					var->Value[4] = reinterpret_cast<const uint&>(fmt);
-				}
-
-				e1 = node->FirstChildElement("Depth");
-				if (e1)
-				{
-					const char* txt = e1->GetText();
-					DepthFormat fmt = ConvertDepthFormat(txt ? txt : "");
-					if (fmt == DEPFMT_Count)
-						fmt = m_renderDevice->GetDefaultDepthStencilFormat();
-					var->Value[5] = reinterpret_cast<const uint&>(fmt);
-				}
-				else
-				{
-					DepthFormat fmt = DEPFMT_Count;// m_renderDevice->GetRenderTarget(0)->getDepthFormat();
-					var->Value[5] = reinterpret_cast<const uint&>(fmt);
-				}
-
-				e1 = node->FirstChildElement("SampleCount");
-				if (e1)
-				{
-					var->Value[6] = StringUtils::ParseInt32(e1->GetText());
-				}
-				else
-				{
-					var->Value[6] = 0;
-				}
-
-				GlobalVars.Add(var);
-			}
-			else if (tstr == "matrix")
-			{
-				SceneVariable* var = new SceneVariable();
-				var->Type = VARTYPE_Matrix;
-				var->Name = name;
-
-				const TiXmlElement* e1 = node->FirstChildElement("Value");
-				if (e1)
-				{
-					List<std::string> elems(16);
-					StringUtils::Split(e1->GetText(), elems, " ,");
-					if (elems.getCount() != 16)
-					{
-						LogManager::getSingleton().Write(LOG_Scene, L"Invalid value for matrix.", LOGLVL_Warning);
-					}
-					else
-					{
-						for (size_t i=0;i<16;i++)
+						if (e1 && e2)
 						{
-							float v = StringUtils::ParseSingle(elems[i]);
-							var->Value[i] = reinterpret_cast<const uint&>(v);
+							var->Value[0] = StringUtils::ParseInt32(e1->GetText());
+							var->Value[1] = StringUtils::ParseInt32(e2->GetText());
 						}
-					}
-				}
-
-				e1 = node->FirstChildElement("Bind");
-				if (e1)
-				{
-
-				}
-
-				GlobalVars.Add(var);
-			}
-			else if (tstr == "vector4")
-			{
-				SceneVariable* var = new SceneVariable();
-				var->Type = VARTYPE_Vector4;
-				var->Name = name;
-
-				const TiXmlElement* e1 = node->FirstChildElement("Value");
-				if (e1)
-				{
-					List<std::string> elems(4);
-					StringUtils::Split(e1->GetText(), elems, " ,");
-					if (elems.getCount() != 4)
-					{
-						LogManager::getSingleton().Write(LOG_Scene, L"Invalid value for vector4." + var->Name, LOGLVL_Warning);
-					}
-					else
-					{
-						for (size_t i=0;i<4;i++)
+						else
 						{
-							float v = StringUtils::ParseSingle(elems[i]);
-							var->Value[i] = reinterpret_cast<const uint&>(v);
+							e1 = node->FirstChildElement("WidthP");
+							e2 = node->FirstChildElement("HeightP");
+
+							if (e1 && e2)
+							{
+								float r = StringUtils::ParseSingle(e1->GetText());
+								var->Value[2] = reinterpret_cast<const uint&>(r);
+
+								r = StringUtils::ParseSingle(e2->GetText());
+								var->Value[3] = reinterpret_cast<const uint&>(r);
+							}
+							else
+							{
+								float r = 1;
+								var->Value[2] = reinterpret_cast<const uint&>(r);
+								var->Value[3] = reinterpret_cast<const uint&>(r);
+							}
 						}
-					}
-				}
 
-				GlobalVars.Add(var);
-			}
-			else if (tstr == "vector3")
-			{
-				SceneVariable* var = new SceneVariable();
-				var->Type = VARTYPE_Vector3;
-				var->Name = name;
-
-				const TiXmlElement* e1 = node->FirstChildElement("Value");
-				if (e1)
-				{
-					List<std::string> elems(4);
-					StringUtils::Split(e1->GetText(), elems, " ,");
-					if (elems.getCount() != 3)
-					{
-						LogManager::getSingleton().Write(LOG_Scene, L"Invalid value for vector3." + var->Name, LOGLVL_Warning);
-					}
-					else
-					{
-						for (size_t i=0;i<3;i++)
+						e1 = node->FirstChildElement("Format");
+						if (type == SceneVariableType::RenderTarget)
 						{
-							float v = StringUtils::ParseSingle(elems[i]);
-							var->Value[i] = reinterpret_cast<const uint&>(v);
+							if (e1)
+							{
+								const char* txt = e1->GetText();
+								PixelFormat fmt = ConvertFormat(txt ? txt : "");
+								var->Value[4] = reinterpret_cast<const uint&>(fmt);
+							}
+							else
+							{
+								PixelFormat fmt = m_renderDevice->GetDefaultRTFormat();
+								var->Value[4] = reinterpret_cast<const uint&>(fmt);
+							}
 						}
-					}
-				}
-
-				GlobalVars.Add(var);
-			}
-			else if (tstr == "vector2")
-			{
-				SceneVariable* var = new SceneVariable();
-				var->Type = VARTYPE_Vector2;
-				var->Name = name;
-
-				const TiXmlElement* e1 = node->FirstChildElement("Value");
-				if (e1)
-				{
-					List<std::string> elems;
-					StringUtils::Split(e1->GetText(), elems, " ,");
-					if (elems.getCount() != 2)
-					{
-						LogManager::getSingleton().Write(LOG_Scene, L"Invalid value for vector2." + var->Name, LOGLVL_Warning);
-					}
-					else
-					{
-						for (size_t i=0;i<2;i++)
+						else
 						{
-							float v = StringUtils::ParseSingle(elems[i]);
-							var->Value[i] = reinterpret_cast<const uint&>(v);
+							if (e1)
+							{
+								const char* txt = e1->GetText();
+								DepthFormat fmt = ConvertDepthFormat(txt ? txt : "");
+								var->Value[4] = reinterpret_cast<const uint&>(fmt);
+							}
+							else
+							{
+								DepthFormat fmt = m_renderDevice->GetDefaultDepthStencilFormat();
+								var->Value[4] = reinterpret_cast<const uint&>(fmt);
+							}
 						}
+
+						e1 = node->FirstChildElement("SampleCount");
+						if (e1)
+						{
+							var->Value[5] = StringUtils::ParseInt32(e1->GetText());
+						}
+
+						break;
 					}
+					case SceneVariableType::Matrix:
+					case SceneVariableType::Vector4:
+					case SceneVariableType::Vector3:
+					case SceneVariableType::Vector2:
+					case SceneVariableType::Single:
+					{
+						const TiXmlElement* e1 = node->FirstChildElement("Value");
+						if (e1)
+						{
+							List<float> elems = StringUtils::SplitParseSingles(e1->GetText(), " ,");
+
+							int32 expectedElemCount = 1;
+							if (type == SceneVariableType::Matrix)
+								expectedElemCount = 16;
+							else if (type == SceneVariableType::Vector4)
+								expectedElemCount = 4;
+							else if (type == SceneVariableType::Vector3)
+								expectedElemCount = 3;
+							else if (type == SceneVariableType::Vector2)
+								expectedElemCount = 2;
+
+							if (elems.getCount() != expectedElemCount)
+							{
+								LogManager::getSingleton().Write(LOG_Scene, L"Invalid value for " + stype + L":(" + var->Name + L")", LOGLVL_Warning);
+							}
+							else
+							{
+								for (int32 i = 0; i < expectedElemCount; i++)
+								{
+									var->Value[i] = reinterpret_cast<const uint&>(elems[i]);
+								}
+							}
+						}
+
+						break;
+					}
+					case SceneVariableType::Texture:
+					{
+						const TiXmlElement* e1 = node->FirstChildElement("Source");
+						if (e1)
+						{
+							var->DefaultStringValue = doc.GetUTF16ElementText(e1);
+						}
+						else
+						{
+							failed = true;
+							LogManager::getSingleton().Write(LOG_Scene, L"Texture source not defined for " + var->Name, LOGLVL_Warning);
+						}
+						break;
+					}
+					case SceneVariableType::Integer:
+					{
+						const TiXmlElement* e1 = node->FirstChildElement("Value");
+						if (e1)
+						{
+							int iv = StringUtils::ParseInt32(e1->GetText());
+							var->Value[0] = reinterpret_cast<const uint&>(iv);
+						}
+						break;
+					}
+					case SceneVariableType::Boolean:
+					{
+						const TiXmlElement* e1 = node->FirstChildElement("Value");
+						if (e1)
+						{
+							var->Value[0] = StringUtils::ParseBool(e1->GetText());
+						}
+						break;
+					}
+					case SceneVariableType::Effect:
+					{
+						const TiXmlElement* e1 = node->FirstChildElement("Source");
+						if (e1)
+						{
+							var->DefaultStringValue = doc.GetUTF16ElementText(e1);
+						}
+						else
+						{
+							failed = true;
+							LogManager::getSingleton().Write(LOG_Scene, L"Can not find effect name.", LOGLVL_Warning);
+						}
+						break;
+					}
+					case SceneVariableType::GaussBlurFilter:
+					{
+						const TiXmlElement* e1 = node->FirstChildElement("MapWidth");
+						const TiXmlElement* e2 = node->FirstChildElement("MapHeight");
+
+						if (e1 && e2)
+						{
+							var->Value[0] = StringUtils::ParseInt32(e1->GetText());
+							var->Value[1] = StringUtils::ParseInt32(e2->GetText());
+						}
+						else
+						{
+							e1 = node->FirstChildElement("MapWidthP");
+							e2 = node->FirstChildElement("MapHeightP");
+
+							if (e1 && e2)
+							{
+								float r = StringUtils::ParseSingle(e1->GetText());
+								var->Value[2] = reinterpret_cast<const uint&>(r);
+
+								r = StringUtils::ParseSingle(e2->GetText());
+								var->Value[3] = reinterpret_cast<const uint&>(r);
+							}
+							else
+							{
+								float r = 1;
+								var->Value[2] = reinterpret_cast<const uint&>(r);
+								var->Value[3] = reinterpret_cast<const uint&>(r);
+							}
+						}
+
+						e1 = node->FirstChildElement("BlurAmount");
+						if (e1)
+						{
+							float r = StringUtils::ParseSingle(e1->GetText());
+							var->Value[4] = reinterpret_cast<const uint&>(r);
+						}
+						else
+						{
+							float r = 1;
+							var->Value[4] = reinterpret_cast<const uint&>(r);
+						}
+
+						e1 = node->FirstChildElement("SampleCount");
+						if (e1)
+						{
+							var->Value[5] = StringUtils::ParseInt32(e1->GetText());
+						}
+						else
+						{
+							var->Value[5] = 3;
+						}
+						break;
+					}
+					default:
+						assert(0);
 				}
 
-				GlobalVars.Add(var);
-			}
-			else if (tstr == "float")
-			{
-				SceneVariable* var = new SceneVariable();
-				var->Type = VARTYPE_Single;
-				var->Name = name;
-
-				const TiXmlElement* e1 = node->FirstChildElement("Value");
-				if (e1)
-				{
-					float v = StringUtils::ParseSingle(e1->GetText());
-					var->Value[0] = reinterpret_cast<const uint&>(v);
-				}
-
-				GlobalVars.Add(var);
-			}
-			else if (tstr == "integer")
-			{
-				SceneVariable* var = new SceneVariable();
-				var->Type = VARTYPE_Integer;
-				var->Name = name;
-
-				const TiXmlElement* e1 = node->FirstChildElement("Value");
-				if (e1)
-				{
-					int iv = StringUtils::ParseInt32(e1->GetText());
-					var->Value[0] = reinterpret_cast<const uint&>(iv);
-				}
-
-				GlobalVars.Add(var);
-			}
-			else if (tstr == "boolean")
-			{
-				SceneVariable* var = new SceneVariable();
-				var->Type = VARTYPE_Boolean;
-				var->Name = name;
-
-				const TiXmlElement* e1 = node->FirstChildElement("Value");
-				if (e1)
-				{
-					var->Value[0] = StringUtils::ParseBool(e1->GetText());
-				}
-
-				GlobalVars.Add(var);
-			}
-			else if (tstr == "texture")
-			{
-				SceneVariable* var = new SceneVariable();
-				var->Type = VARTYPE_Texture;
-				var->Name = name;
-
-				const TiXmlElement* e1 = node->FirstChildElement("Source");
-				if (e1)
-				{
-					var->DefaultStringValue = doc.GetUTF16ElementText(e1);
+				if (!failed)
 					GlobalVars.Add(var);
-				}
-				else
-				{
-					LogManager::getSingleton().Write(LOG_Scene, L"Texture source not defined for " + var->Name, LOGLVL_Warning);
-				}
-			}
-			//else if (tstr == string("camera"))
-			//{
-			//	SceneVariable var;
-			//	var.Type = VARTYPE_Camera;
-
-			//	GlobalVars.Add(var);
-			//}
-			else if (tstr == "effect")
-			{
-				SceneVariable* var = new SceneVariable();
-				var->Type = VARTYPE_Effect;
-				var->Name = name;
-
-				const TiXmlElement* e1 = node->FirstChildElement("Source");
-				if (e1)
-				{
-					var->DefaultStringValue = doc.GetUTF16ElementText(e1);
-					GlobalVars.Add(var);
-				}
-				else
-				{
-					LogManager::getSingleton().Write(LOG_Scene, L"Can not find effect name.", LOGLVL_Warning);
-				}
-			}
-			else if (tstr == "gaussblurfilter")
-			{
-				SceneVariable* var = new SceneVariable();
-				var->Type = VARTYPE_GaussBlurFilter;
-				var->Name = name;
-
-				const TiXmlElement* e1 = node->FirstChildElement("MapWidth");
-				const TiXmlElement* e2 = node->FirstChildElement("MapHeight");
-
-				var->Value[0] = var->Value[1] = 0;
-				if (e1 && e2)
-				{
-					var->Value[0] = StringUtils::ParseInt32(e1->GetText());
-					var->Value[1] = StringUtils::ParseInt32(e2->GetText());
-				}
-				else
-				{
-					e1 = node->FirstChildElement("MapWidthP");
-					e2 = node->FirstChildElement("MapHeightP");
-
-					if (e1 && e2)
-					{
-						float r = StringUtils::ParseSingle(e1->GetText());
-						var->Value[2] = reinterpret_cast<const uint&>(r);
-
-						r = StringUtils::ParseSingle(e2->GetText());
-						var->Value[3] = reinterpret_cast<const uint&>(r);
-					}
-					else
-					{
-						float r = 1;
-						var->Value[2] = reinterpret_cast<const uint&>(r);
-						var->Value[3] = reinterpret_cast<const uint&>(r);
-					}
-				}
-
-				e1 = node->FirstChildElement("BlurAmount");
-				if (e1)
-				{
-					float r = StringUtils::ParseSingle(e1->GetText());
-					var->Value[4] = reinterpret_cast<const uint&>(r);
-				}
-				else
-				{
-					float r = 1;
-					var->Value[4] = reinterpret_cast<const uint&>(r);
-				}
-
-				e1 = node->FirstChildElement("SampleCount");
-				if (e1)
-				{
-					var->Value[5] = StringUtils::ParseInt32(e1->GetText());
-				}
-				else
-				{
-					var->Value[5] = 3;
-				}
-				GlobalVars.Add(var);
 			}
 			else
 			{
-				LogManager::getSingleton().Write(LOG_Scene, L"Unsupported variable type " + StringUtils::UTF8toUTF16(tstr), LOGLVL_Warning);
+				LogManager::getSingleton().Write(LOG_Scene, L"Unsupported variable type " + stype, LOGLVL_Warning);
 			}
 		}
 
@@ -1239,7 +1135,6 @@ namespace Apoc3D
 								else
 								{
 									SceneOpArg arg;
-
 									arg.IsImmediate = false;
 
 									if (ParseCallArgAsVar(value,arg,GlobalVars))
@@ -1278,7 +1173,6 @@ namespace Apoc3D
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
-
 
 		bool ParseCallArgBool(const TiXmlElement* node,  const std::string& name, SceneOpArg& arg, 
 			const List<SceneVariable*>& vars, bool def)
@@ -1392,8 +1286,7 @@ namespace Apoc3D
 
 			if (result)
 			{
-				List<std::string> comps;
-				StringUtils::Split(*result, comps, " ,");
+				List<std::string> comps = StringUtils::Split(*result, " ,");
 				if (comps.getCount() == 2)
 				{
 					arg.IsImmediate = true;
@@ -1408,12 +1301,12 @@ namespace Apoc3D
 
 				return ParseCallArgAsVar(*result,arg,vars);
 			}
+
 			{
 				float single = def.X;
 				arg.DefaultValue[0] = reinterpret_cast<const uint&>(single);
 				single = def.Y;
 				arg.DefaultValue[1] = reinterpret_cast<const uint&>(single);
-
 			}
 			
 			return false;
@@ -1500,13 +1393,13 @@ namespace Apoc3D
 			List<String> vals;
 			StringUtils::Split(val, vals, L",; ");
 
-			for (int32 i=0;i<vals.getCount();i++)
+			for (int32 i = 0; i < vals.getCount(); i++)
 			{
 				String::size_type pos = vals[i].find_first_of('=');
 				if (pos != String::npos)
 				{
 					String k = vals[i].substr(0, pos);
-					String v = vals[i].substr(pos+1);
+					String v = vals[i].substr(pos + 1);
 
 					StringUtils::Trim(k);
 					StringUtils::Trim(v);
@@ -1531,7 +1424,7 @@ namespace Apoc3D
 		PixelFormat ConvertFormat(const std::string& fmt)
 		{
 			String fmt2(fmt.size(), ' ');
-			for (size_t i=0;i<fmt.size();i++)
+			for (size_t i = 0; i < fmt.size(); i++)
 				fmt2[i] = fmt[i];
 
 			return PixelFormatUtils::ConvertFormat(fmt2);
@@ -1543,7 +1436,7 @@ namespace Apoc3D
 				return DEPFMT_Count;
 
 			String fmt2(fmt.size(), ' ');
-			for (size_t i=0;i<fmt.size();i++)
+			for (size_t i = 0; i < fmt.size(); i++)
 				fmt2[i] = fmt[i];
 
 			return PixelFormatUtils::ConvertDepthFormat(fmt2);

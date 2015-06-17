@@ -48,29 +48,29 @@ namespace Apoc3D
 			public:
 				D3D9ObjectFactory(D3D9RenderDevice* device);
 
-				virtual Texture* CreateTexture(const ResourceLocation& rl, TextureUsage usage, bool managed);
-				virtual Texture* CreateTexture(int width, int height, int levelCount, TextureUsage usage, PixelFormat format);
-				virtual Texture* CreateTexture(int width, int height, int depth, int levelCount, TextureUsage usage, PixelFormat format);
-				virtual Texture* CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format);
+				virtual Texture* CreateTexture(const ResourceLocation& rl, TextureUsage usage, bool managed) override;
+				virtual Texture* CreateTexture(int width, int height, int levelCount, TextureUsage usage, PixelFormat format) override;
+				virtual Texture* CreateTexture(int width, int height, int depth, int levelCount, TextureUsage usage, PixelFormat format) override;
+				virtual Texture* CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format) override;
 
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt, const String& multisampleMode);
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt);
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, const String& multisampleMode);
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt);
-				virtual CubemapRenderTarget* CreateCubemapRenderTarget(int32 length, PixelFormat clrFmt);
+				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, const String& multisampleMode) override;
+				virtual DepthStencilBuffer* CreateDepthStencilBuffer(int32 width, int32 height, DepthFormat depFmt, const String& multisampleMode) override;
 
-				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage);
-				virtual VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage);
+				virtual CubemapRenderTarget* CreateCubemapRenderTarget(int32 length, PixelFormat clrFmt) override;
 
-				virtual VertexDeclaration* CreateVertexDeclaration(const List<VertexElement> &elements);
 
-				virtual Shader* CreateVertexShader(const ResourceLocation& resLoc);
-				virtual Shader* CreatePixelShader(const ResourceLocation& resLoc);
+				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage) override;
+				virtual VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage) override;
 
-				virtual Shader* CreateVertexShader(const byte* byteCode);
-				virtual Shader* CreatePixelShader(const byte* byteCode);
+				virtual VertexDeclaration* CreateVertexDeclaration(const List<VertexElement> &elements) override;
 
-				virtual Sprite* CreateSprite();
+				virtual Shader* CreateVertexShader(const ResourceLocation& resLoc) override;
+				virtual Shader* CreatePixelShader(const ResourceLocation& resLoc) override;
+
+				virtual Shader* CreateVertexShader(const byte* byteCode) override;
+				virtual Shader* CreatePixelShader(const byte* byteCode) override;
+
+				virtual Sprite* CreateSprite() override;
 			};
 		}
 	}

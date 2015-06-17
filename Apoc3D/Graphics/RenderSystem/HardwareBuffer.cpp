@@ -21,39 +21,47 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef D3D9DEPTHBUFFER_H
-#define D3D9DEPTHBUFFER_H
 
-#include "../D3D9Common.h"
-#include "apoc3d/Graphics/RenderSystem/Buffer/HardwareBuffer.h"
+#include "HardwareBuffer.h"
 
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D;
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace D3D9RenderSystem
+		namespace RenderSystem
 		{
-			class D3D9DepthBuffer : public DepthBuffer
+
+			
+			void* HardwareBuffer::Lock(LockMode mode)
 			{
-			public:
-				D3D9DepthBuffer(D3D9RenderDevice* device, IDirect3DSurface9* buffer);
-				~D3D9DepthBuffer();
+				return Lock(0, m_size, mode);
+			}
+			void* HardwareBuffer::Lock(int offset, int size, LockMode mode)
+			{
+				if (!m_isLocked)
+				{
+					void* ptr = lock(offset, size, mode);
+					m_isLocked = true;
+					return ptr;
+				}
+				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Buffer already Locked.");
+			}
 
-				IDirect3DSurface9* getD3DBuffer() const { return m_buffer; }
-				void SetD3DBuffer(IDirect3DSurface9* surface, int32 width, int32 height, DepthFormat fmt);
+			void HardwareBuffer::Unlock()
+			{
+				if (m_isLocked)
+				{
+					unlock();
+					m_isLocked = false;
+				}
+				else
+				{
+					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Buffer is not locked");
+				}
+			}
 
-			protected:
-				virtual void* lock(int offset, int size, LockMode mode) override;
-				virtual void unlock() override;
-
-			private:
-				IDirect3DSurface9* m_buffer;
-			};
 		}
 	}
 }
-
-#endif

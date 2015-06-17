@@ -27,7 +27,7 @@
  */
 
 #include "Renderable.h"
-#include "RenderSystem/Buffer/HardwareBuffer.h"
+#include "RenderSystem/HardwareBuffer.h"
 #include "RenderSystem/VertexElement.h"
 #include "RenderOperationBuffer.h"
 

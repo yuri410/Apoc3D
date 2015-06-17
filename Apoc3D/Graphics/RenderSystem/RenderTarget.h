@@ -40,24 +40,11 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			/**
-			 *  A render target.
-			 *
-			 *  Render target must have a color buffer. An additional depth buffer can be created as well.
-			 *  Additional depth buffer is useful when multisample is preferred.
-			 *
-			 *  RTs with depth buffer should always be the primary one( at index 0).
-			 */
-			class APAPI RenderTarget
+			class APAPI RenderTarget2DBase
 			{
-				RTTI_BASE;
-			protected:
-				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat, const String& multiSampleMode);
-				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, const String& multiSampleMode);
-
 			public:
-				virtual ~RenderTarget();
-				
+				RenderTarget2DBase(RenderDevice* device, int32 width, int32 height, const String& multiSampleMode);
+
 				void SetPercentageLock(float wp, float hp);
 
 				bool isMultiSampled() const { return m_isMultisampled; }
@@ -66,29 +53,15 @@ namespace Apoc3D
 				int32 getWidth() const { return m_width; }
 				int32 getHeight() const { return m_height; }
 
-				DepthFormat getDepthFormat() const { return m_depthFormat; }
-				PixelFormat getColorFormat() const { return m_pixelFormat; }
-
-				virtual Texture* GetColorTexture() = 0;
-				virtual DepthBuffer* GetDepthBuffer() = 0;
-
-				virtual void PrecacheLockedData() = 0;
-
-				DataRectangle Lock(LockMode mode);
-				DataRectangle Lock(LockMode mode, const Apoc3D::Math::Rectangle& rect);
-				void Unlock();
-
 				static bool IsMultisampleModeStringNone(const String& aamode);
-
-				EventDelegate<RenderTarget*> eventReseted;
 
 				void* UserPointer = nullptr;
 				int32 UserInt32 = 0;
 			protected:
-				virtual DataRectangle lock(LockMode mode, const Apoc3D::Math::Rectangle& rect) = 0;
-				virtual void unlock() = 0;
+				~RenderTarget2DBase(){}
 
 				Point EvaluatePerferredSize() const;
+				bool CheckAndUpdateDimensionBasedOnLock();
 
 				RenderDevice* m_device;
 
@@ -99,13 +72,65 @@ namespace Apoc3D
 				int32 m_width;
 				int32 m_height;
 
+
+				bool m_isMultisampled;
+				String m_multisampleMode;
+			};
+
+			/**
+			 *  A render target.
+			 *
+			 *  Render target must have a color buffer. An additional depth buffer can be created as well.
+			 *  Additional depth buffer is useful when multisample is preferred.
+			 *
+			 *  RTs with depth buffer should always be the primary one( at index 0).
+			 */
+			class APAPI RenderTarget : public RenderTarget2DBase
+			{
+				RTTI_BASE;
+			protected:
+				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, const String& multiSampleMode);
+
+			public:
+				virtual ~RenderTarget();
+
+				PixelFormat getColorFormat() const { return m_pixelFormat; }
+
+				virtual Texture* GetColorTexture() = 0;
+
+				virtual void PrecacheLockedData() = 0;
+
+				DataRectangle Lock(LockMode mode);
+				DataRectangle Lock(LockMode mode, const Apoc3D::Math::Rectangle& rect);
+				void Unlock();
+
+				EventDelegate<RenderTarget*> eventReseted;
+
+			protected:
+				virtual DataRectangle lock(LockMode mode, const Apoc3D::Math::Rectangle& rect) = 0;
+				virtual void unlock() = 0;
+
 			private:
-				DepthFormat m_depthFormat;
 				PixelFormat m_pixelFormat;
 				
 				bool m_isLocked = false;
-				bool m_isMultisampled;
-				String m_multisampleMode;
+			};
+
+			class APAPI DepthStencilBuffer : public RenderTarget2DBase
+			{
+				RTTI_BASE;
+			public:
+				virtual ~DepthStencilBuffer() { }
+
+				DepthFormat getFormat() const { return m_depthFormat; }
+				
+				EventDelegate<DepthStencilBuffer*> eventReset;
+
+			protected:
+				DepthStencilBuffer(RenderDevice* renderDevice, int32 width, int32 height, DepthFormat format);
+				DepthStencilBuffer(RenderDevice* renderDevice, int32 width, int32 height, DepthFormat format, const String& multiSampleMode);
+
+				DepthFormat m_depthFormat;
 
 			};
 
@@ -118,6 +143,8 @@ namespace Apoc3D
 			public:
 				virtual ~CubemapRenderTarget();
 
+				virtual Texture* GetColorTexture() = 0;
+
 				int32 getLength() const { return m_length; }
 				PixelFormat getColorFormat() const { return m_pixelFormat; }
 
@@ -125,14 +152,12 @@ namespace Apoc3D
 
 				EventDelegate<CubemapRenderTarget*> eventReset;
 
-
 			protected:
 				FixedList<RenderTarget*, CUBE_Count> m_faces;
 
 				int32 m_length;
 			private:
 				PixelFormat m_pixelFormat;
-
 			};
 		}
 

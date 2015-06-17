@@ -683,7 +683,7 @@ namespace APDesigner
 		if (mesh)
 		{
 			int partIdx = m_cbMeshPart->getSelectedIndex();
-			if (partIdx !=-1)
+			if (partIdx != -1)
 			{
 				return &mesh->getMaterialFrames(partIdx);
 			}

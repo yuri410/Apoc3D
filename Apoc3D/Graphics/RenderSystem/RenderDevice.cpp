@@ -162,23 +162,6 @@ namespace Apoc3D
 			/*   BatchReportEntry                                                   */
 			/************************************************************************/
 
-			RenderDevice::BatchReportEntry::BatchReportEntry()
-			{
-				DP = 0;
-				Vertex = 0;
-				Primitive = 0;
-
-				VertexInstanced = 0;
-				PrimitiveInstanced = 0;
-				DPInstanced = 0;
-				InstancingBatch = 0;
-
-				EmptyROP = 0;
-				EmptyInstancedROP = 0;
-
-				Sorter = 0;
-			}
-
 			void RenderDevice::BatchReportEntry::CalculateSorter()
 			{
 				Sorter = DP + InstancingBatch;
@@ -192,21 +175,33 @@ namespace Apoc3D
 			{
 				return CreateTexture(size2d.X, size2d.Y, levelCount, usage, format);
 			}
-			RenderTarget* ObjectFactory::CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, DepthFormat depthFmt)
-			{
-				return CreateRenderTarget(size2d.X, size2d.Y, clrFmt, depthFmt);
-			}
-			RenderTarget* ObjectFactory::CreateRenderTarget(const Point& size2d, PixelFormat clrFmt)
-			{
-				return CreateRenderTarget(size2d.X, size2d.Y, clrFmt);
-			}
-			RenderTarget* ObjectFactory::CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, DepthFormat depthFmt, const String& multisampleMode)
-			{
-				return CreateRenderTarget(size2d.X, size2d.Y, clrFmt, depthFmt, multisampleMode);
-			}
+
+
 			RenderTarget* ObjectFactory::CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, const String& multisampleMode)
 			{
 				return CreateRenderTarget(size2d.X, size2d.Y, clrFmt, multisampleMode);
+			}
+			RenderTarget* ObjectFactory::CreateRenderTarget(const Point& size2d, PixelFormat clrFmt)
+			{
+				return CreateRenderTarget(size2d.X, size2d.Y, clrFmt, L"");
+			}
+			RenderTarget* ObjectFactory::CreateRenderTarget(int32 width, int32 height, PixelFormat clrFmt)
+			{
+				return CreateRenderTarget(width, height, clrFmt, L"");
+			}
+
+
+			DepthStencilBuffer* ObjectFactory::CreateDepthStencilBuffer(const Point& size2d, DepthFormat depFmt, const String& multisampleMode)
+			{
+				return CreateDepthStencilBuffer(size2d.X, size2d.Y, depFmt, multisampleMode);
+			}
+			DepthStencilBuffer* ObjectFactory::CreateDepthStencilBuffer(const Point& size2d, DepthFormat depFmt)
+			{
+				return CreateDepthStencilBuffer(size2d.X, size2d.Y, depFmt, L"");
+			}
+			DepthStencilBuffer* ObjectFactory::CreateDepthStencilBuffer(int32 width, int32 height, DepthFormat depFmt)
+			{
+				return CreateDepthStencilBuffer(width, height, depFmt, L"");
 			}
 
 		}

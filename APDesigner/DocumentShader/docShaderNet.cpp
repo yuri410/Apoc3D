@@ -37,9 +37,7 @@ namespace APDesigner
 
 		getDocumentForm()->eventResized.Bind(this, &ShaderNetDocument::Form_Resized);
 
-		ObjectFactory* fac = window->getDevice()->getObjectFactory();
-		m_renderTarget = fac->CreateRenderTarget(getDocumentForm()->getSize(), FMT_X8R8G8B8, DEPFMT_Depth24X8);
-
+		Form_Resized(nullptr);
 	}
 
 	ShaderNetDocument::~ShaderNetDocument()
@@ -104,9 +102,11 @@ namespace APDesigner
 	}
 	void ShaderNetDocument::Form_Resized(Control* ctrl)
 	{
-		delete m_renderTarget;
+		DELETE_AND_NULL(m_renderTarget);
+		DELETE_AND_NULL(m_depthStencil);
 
 		ObjectFactory* fac = getMainWindow()->getDevice()->getObjectFactory();
-		m_renderTarget = fac->CreateRenderTarget(getDocumentForm()->getSize(), FMT_X8R8G8B8, DEPFMT_Depth24X8);
+		m_renderTarget = fac->CreateRenderTarget(getDocumentForm()->getSize(), FMT_X8R8G8B8);
+		m_depthStencil = fac->CreateDepthStencilBuffer(getDocumentForm()->getSize(), DEPFMT_Depth24X8);
 	}
 }

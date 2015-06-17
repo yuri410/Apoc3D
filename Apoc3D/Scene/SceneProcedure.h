@@ -99,9 +99,7 @@ namespace Apoc3D
 
 			void Load(SceneRenderer* renderer, const ResourceLocation& rl);
 
-			/** 
-			 *  Execute the procedure, respectively invoking a series of Scene Passes.
-			 */
+			/** Execute the procedure, respectively invoking a series of Scene Passes. */
 			void Invoke(const List<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData);
 			
 			/**
@@ -118,6 +116,7 @@ namespace Apoc3D
 			 *  then returns as a RenderTarget.
 			 */
 			RenderTarget* FindRenderTargetVar(const String& name) const;
+			DepthStencilBuffer* FindDepthStencilVar(const String& name) const;
 
 			void SetTextureVar(const String& name, ResourceHandle<Texture>* tex);
 			void SetBooleanVar(const String& name, bool val);
@@ -138,14 +137,14 @@ namespace Apoc3D
 			RenderDevice* m_renderDevice;
 
 			List<ScenePass*> m_passes;
-			SceneVariable** m_vars;
-			int m_varCount;
+			List<SceneVariable*> m_variables;
 
 			List<RenderTarget*> m_createdRenderTarget;
+			List<DepthStencilBuffer*> m_createDepthStencil;
 			List<ResourceHandle<Texture>*> m_createdTextures;
 			List<ProcGaussBlurFilter> m_createdGaussFilters;
 
-			bool m_isAvailable;
+			bool m_isAvailable = false;
 			String m_name;
 
 			const Camera* m_lastCamera;

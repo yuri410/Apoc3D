@@ -5,12 +5,20 @@
     <Width>512</Width>
     <Height>512</Height>
     <Format>A8R8G8B8</Format>
-    <Depth></Depth>
   </Declare>
+  <Declare Type="DepthStencil" Name="ViewZ">
+    <Width>512</Width>
+    <Height>512</Height>
+  </Declare>
+  
   <Pass SelectorID="-1" Name="Default Pass">
     <C S="UseRT" Index="0" RT="View" />
+    <C S="UseDS" DS="ViewZ" />
+
     <C S="Clear" CL_Target="True" CL_Depth="True" Depth="1" ClearColorHex="0xffffffff"/>
     <C S="Render"/>
     <C S="UseRT"/>
+    <C S="UseDS"/>
+
   </Pass>
 </Scene>
