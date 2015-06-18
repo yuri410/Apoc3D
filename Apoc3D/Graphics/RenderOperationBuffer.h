@@ -136,6 +136,11 @@ namespace Apoc3D
 
 			int getCount() const { return m_oplist.getCount(); }
 
+			const RenderOperation* begin() const { return m_oplist.begin(); }
+			const RenderOperation* end() const { return m_oplist.end(); }
+
+			RenderOperation* begin() { return m_oplist.begin(); }
+			RenderOperation* end() { return m_oplist.end(); }
 		private:
 			List<RenderOperation> m_oplist;
 		};

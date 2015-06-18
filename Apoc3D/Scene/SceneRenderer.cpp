@@ -342,21 +342,21 @@ namespace Apoc3D
 						MaterialTable* mtrlTable;
 						if (!m_priTable.TryGetValue(priority, mtrlTable))
 						{
-							mtrlTable = m_bufferCache.ObtainNewMaterialTable();// new MaterialTable();
+							mtrlTable = m_bufferCache.ObtainNewMaterialTable();
 							m_priTable.Add(priority, mtrlTable);
 						}
 
 						GeometryTable* geoTable;
 						if (!mtrlTable->TryGetValue(mtrl, geoTable))
 						{
-							geoTable = m_bufferCache.ObtainNewGeometryTable();// new GeometryTable();
+							geoTable = m_bufferCache.ObtainNewGeometryTable();
 							mtrlTable->Add(mtrl, geoTable);
 						}
 
 						OperationList* opList;
 						if (!geoTable->TryGetValue(geoData, opList))
 						{
-							opList = m_bufferCache.ObtainNewOperationList();// new OperationList();
+							opList = m_bufferCache.ObtainNewOperationList();
 							geoTable->Add(geoData, opList);
 						}
 
@@ -365,6 +365,45 @@ namespace Apoc3D
 				}
 			}
 		}
+		
+		void BatchData::AddRenderOperation(const RenderOperationBuffer& ops)
+		{
+			for (RenderOperation op : ops)
+			{
+				Material* mtrl = op.Material;
+				GeometryData* geoData = op.GeometryData;
+
+				if (mtrl && geoData)
+				{
+					uint priority = Math::Min(mtrl->getPriority(), MaxPriority - 1);
+
+					// add the rop from outer table to inner table(top down)
+					MaterialTable* mtrlTable;
+					if (!m_priTable.TryGetValue(priority, mtrlTable))
+					{
+						mtrlTable = m_bufferCache.ObtainNewMaterialTable();
+						m_priTable.Add(priority, mtrlTable);
+					}
+
+					GeometryTable* geoTable;
+					if (!mtrlTable->TryGetValue(mtrl, geoTable))
+					{
+						geoTable = m_bufferCache.ObtainNewGeometryTable();
+						mtrlTable->Add(mtrl, geoTable);
+					}
+
+					OperationList* opList;
+					if (!geoTable->TryGetValue(geoData, opList))
+					{
+						opList = m_bufferCache.ObtainNewOperationList();
+						geoTable->Add(geoData, opList);
+					}
+
+					opList->Add(op);
+				}
+			}
+		}
+
 		void BatchData::Clear()
 		{
 			m_objectCount = 0;

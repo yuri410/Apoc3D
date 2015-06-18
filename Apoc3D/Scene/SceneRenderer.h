@@ -119,6 +119,7 @@ namespace Apoc3D
 			 *  Adds an object's render operations into the internal table.
 			 */
 			void AddVisisbleObject(SceneObject* obj, int level);
+			void AddRenderOperation(const RenderOperationBuffer& ops);
 
 			/**
 			 *  Check if any materials with passFlag corresponding to selectMask are already added
