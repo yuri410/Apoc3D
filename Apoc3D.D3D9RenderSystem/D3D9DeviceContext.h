@@ -46,6 +46,7 @@ namespace Apoc3D
 				virtual String GetHardwareName();
 				
 				virtual RenderDevice* getRenderDevice();
+				
 				IDirect3D9* getD3D() const { return m_d3d9; }
 
 				void NotifyWindowClosed(D3D9RenderWindow* wnd);

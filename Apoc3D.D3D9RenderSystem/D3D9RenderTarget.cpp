@@ -242,6 +242,14 @@ namespace Apoc3D
 			D3D9CubemapRenderTarget::RefRenderTarget::RefRenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat fmt, IDirect3DSurface9* s, D3D9CubemapRenderTarget* parent)
 				: RenderTarget(device, width, height, fmt, L""), m_colorSurface(s), m_parent(parent)
 			{ }
+			D3D9CubemapRenderTarget::RefRenderTarget::~RefRenderTarget()
+			{
+				if (m_colorSurface)
+				{
+					m_colorSurface->Release();
+					m_colorSurface = NULL;
+				}
+			}
 
 			//////////////////////////////////////////////////////////////////////////
 

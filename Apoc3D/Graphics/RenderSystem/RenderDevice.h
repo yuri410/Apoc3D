@@ -62,6 +62,8 @@ namespace Apoc3D
 				/** Gets the depth pixel format of default render target. */
 				virtual DepthFormat GetDefaultDepthStencilFormat() = 0;
 
+				virtual int32 GetAvailableVideoRamInMB() = 0;
+
 				/**
 				 *  Initialize. 
 				 *  This is called when the graphics device, window,  have been created and called just before 

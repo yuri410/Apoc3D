@@ -78,6 +78,8 @@ namespace Apoc3D
 
 				virtual Capabilities* const getCapabilities() const override;
 
+				virtual int32 GetAvailableVideoRamInMB() override;
+
 				D3D9Capabilities* getD3D9Capabilities() const { return m_caps; }
 				NativeD3DStateManager* getNativeStateManager() const { return m_nativeState; }
 
@@ -108,6 +110,10 @@ namespace Apoc3D
 
 				D3D9VertexShader* m_currentVS = nullptr;
 				D3D9PixelShader* m_currentPS = nullptr;
+
+#if _DEBUG
+				bool m_hasRtOrDSChangedSinceLastCheck = false;
+#endif
 
 				// This is called by the VolatileResource itself
 				void TrackVolatileResource(VolatileResource* res)

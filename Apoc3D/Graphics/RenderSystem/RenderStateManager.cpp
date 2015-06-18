@@ -37,14 +37,13 @@ namespace Apoc3D
 			}
 
 			//////////////////////////////////////////////////////////////////////////
-
 			ScopeRenderTargetChange::ScopeRenderTargetChange(RenderDevice* device, int32 idx, RenderTarget* rt)
 				: m_device(device)
 			{
 				ZeroArray(m_oldRenderTargets);
 				ZeroArray(m_oldRenderTargetChanged);
 
-				SetRenderTarget(idx, rt);
+				ChangeRenderTarget(idx, rt);
 			}
 			ScopeRenderTargetChange::ScopeRenderTargetChange(RenderDevice* device, std::initializer_list<std::pair<int32, RenderTarget* >> list)
 				: m_device(device)
@@ -54,9 +53,21 @@ namespace Apoc3D
 
 				for (const auto& e : list)
 				{
-					SetRenderTarget(e.first, e.second);
+					ChangeRenderTarget(e.first, e.second);
 				}
 			}
+
+			ScopeRenderTargetChange::ScopeRenderTargetChange(RenderDevice* device, int32 idx, RenderTarget* rt, DepthStencilBuffer* dsb)
+				: ScopeRenderTargetChange(device, idx, rt)
+			{
+				ChangeDepthStencilBuffer(dsb);
+			}
+			ScopeRenderTargetChange::ScopeRenderTargetChange(RenderDevice* device, std::initializer_list<std::pair<int32, RenderTarget* >> list, DepthStencilBuffer* dsb)
+				: ScopeRenderTargetChange(device, list)
+			{	
+				ChangeDepthStencilBuffer(dsb);
+			}
+
 			ScopeRenderTargetChange::~ScopeRenderTargetChange()
 			{
 				for (int32 i = 0; i < countof(m_oldRenderTargets);i++)
@@ -70,23 +81,43 @@ namespace Apoc3D
 				{
 					m_device->SetRenderTarget(e.Key, e.Value);
 				}
+
+				if (m_oldDSBChanged)
+				{
+					m_device->SetDepthStencilBuffer(m_oldDSB);
+				}
 			}
 
-			void ScopeRenderTargetChange::SetRenderTarget(int32 idx, RenderTarget* rt)
+			void ScopeRenderTargetChange::ChangeRenderTarget(int32 idx, RenderTarget* rt)
 			{
 				RenderTarget* oldRt = m_device->GetRenderTarget(idx);
 
-				if (idx < countof(m_oldRenderTargets))
+				if (oldRt != rt)
 				{
-					m_oldRenderTargets[idx] = oldRt;
-					m_oldRenderTargetChanged[idx] = true;
-				}
-				else
-				{
-					m_additionalOldRenderTarget.Add(idx, oldRt);
-				}
+					if (idx < countof(m_oldRenderTargets))
+					{
+						m_oldRenderTargets[idx] = oldRt;
+						m_oldRenderTargetChanged[idx] = true;
+					}
+					else
+					{
+						m_additionalOldRenderTarget.Add(idx, oldRt);
+					}
 
-				m_device->SetRenderTarget(idx, rt);
+					m_device->SetRenderTarget(idx, rt);
+				}
+			}
+			void ScopeRenderTargetChange::ChangeDepthStencilBuffer(DepthStencilBuffer* dsb)
+			{
+				DepthStencilBuffer* oldDSB = m_device->GetDepthStencilBuffer();
+
+				if (oldDSB != m_oldDSB)
+				{
+					m_oldDSB = oldDSB;
+					m_oldDSBChanged = true;
+
+					m_device->SetDepthStencilBuffer(oldDSB);
+				}
 			}
 
 		}

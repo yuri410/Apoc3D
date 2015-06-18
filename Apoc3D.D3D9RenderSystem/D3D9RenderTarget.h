@@ -103,6 +103,7 @@ namespace Apoc3D
 					RTTI_DERIVED(RefRenderTarget, RenderTarget);
 				public:
 					RefRenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat fmt, IDirect3DSurface9* s, D3D9CubemapRenderTarget* parent);
+					~RefRenderTarget();
 
 					virtual Texture* GetColorTexture() override { assert(0); return nullptr; }
 

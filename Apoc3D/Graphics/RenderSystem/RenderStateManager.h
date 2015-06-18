@@ -153,16 +153,23 @@ namespace Apoc3D
 			public:
 				ScopeRenderTargetChange(RenderDevice* device, int32 idx, RenderTarget* rt);
 				ScopeRenderTargetChange(RenderDevice* device, std::initializer_list<std::pair<int32, RenderTarget* >> list);
+
+				ScopeRenderTargetChange(RenderDevice* device, int32 idx, RenderTarget* rt, DepthStencilBuffer* dsb);
+				ScopeRenderTargetChange(RenderDevice* device, std::initializer_list<std::pair<int32, RenderTarget* >> list, DepthStencilBuffer* dsb);
 				~ScopeRenderTargetChange();
 
 			private:
-				void SetRenderTarget(int32 idx, RenderTarget* rt);
-				
+				void ChangeRenderTarget(int32 idx, RenderTarget* rt);
+				void ChangeDepthStencilBuffer(DepthStencilBuffer* dsb);
+
 				RenderDevice* m_device;
 
 				RenderTarget* m_oldRenderTargets[4];
 				bool m_oldRenderTargetChanged[4];
 				
+				DepthStencilBuffer* m_oldDSB = nullptr;
+				bool m_oldDSBChanged = false;
+
 				// no allocation unless involved
 				HashMap<int32, RenderTarget*> m_additionalOldRenderTarget;
 			};

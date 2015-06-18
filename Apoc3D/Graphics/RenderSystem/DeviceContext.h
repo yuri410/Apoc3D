@@ -103,9 +103,7 @@ namespace Apoc3D
 			class APAPI DeviceContext
 			{
 			public:
-				/** 
-				 *  Indicates whether if the API can draw in pre-existing windows or areas.
-				 */
+				/** Indicates whether if the API can draw in pre-existing windows or areas. */
 				virtual bool SupportsRenderControl() { return m_supportsRenderControl; }
 
 				/**
@@ -119,6 +117,7 @@ namespace Apoc3D
 				virtual String GetHardwareName() = 0;
 
 				virtual RenderDevice* getRenderDevice() = 0;
+
 			protected:
 				virtual RenderView* create(const RenderParameters &pm) = 0;
 

@@ -289,6 +289,10 @@ namespace Apoc3D
 				{
 					NotifyRTDirty(oldRt);
 				}
+
+#if _DEBUG
+				m_hasRtOrDSChangedSinceLastCheck = true;
+#endif
 			}
 
 			RenderTarget* D3D9RenderDevice::GetRenderTarget(int index)
@@ -318,6 +322,10 @@ namespace Apoc3D
 
 						m_currentDepthStencil = nullptr;
 					}
+
+#if _DEBUG
+					m_hasRtOrDSChangedSinceLastCheck = true;
+#endif
 				}
 			}
 			DepthStencilBuffer* D3D9RenderDevice::GetDepthStencilBuffer()
@@ -542,6 +550,43 @@ namespace Apoc3D
 					fx->EndPass();
 				}
 				fx->End();
+
+#if _DEBUG
+				if (m_hasRtOrDSChangedSinceLastCheck)
+				{
+					m_hasRtOrDSChangedSinceLastCheck = false;
+
+					bool isAnyRtMultisampled = false;
+					bool isAnyRtNotMultisampled = false;
+					for (int32 i = 0; i < m_caps->GetMRTCount(); i++)
+					{
+						if (i>0 && m_cachedRenderTarget[i] == nullptr)
+							break;
+
+						bool rtIsMultisampeld = (m_cachedRenderTarget[i] && m_cachedRenderTarget[i]->isMultiSampled()) ||
+							(i == 0 && m_devManager->getCurrentSetting()->PresentParameters.MultiSampleType != D3DMULTISAMPLE_NONE);
+
+						isAnyRtMultisampled |= rtIsMultisampeld;
+						isAnyRtNotMultisampled |= !rtIsMultisampeld;
+					}
+
+					if (isAnyRtMultisampled == isAnyRtNotMultisampled)
+					{
+						ApocLog(LOG_Graphics, L"Bound render targets has multisample setting mismatch.", LOGLVL_Error);
+						DebugBreak();
+					}
+
+					bool currentDSIsMultisampeld = (m_currentDepthStencil && m_currentDepthStencil->isMultiSampled()) ||
+						m_devManager->getCurrentSetting()->PresentParameters.MultiSampleType != D3DMULTISAMPLE_NONE;
+
+					if (isAnyRtMultisampled != currentDSIsMultisampeld)
+					{
+						ApocLog(LOG_Graphics, L"Bound depth stencil has multisample setting mismatching render target's.", LOGLVL_Error);
+						DebugBreak();
+					}
+				}
+				
+#endif
 			}
 
 			Viewport D3D9RenderDevice::getViewport()
@@ -581,6 +626,11 @@ namespace Apoc3D
 				m_defaultDS->GetDesc(&desc);
 
 				return D3D9Utils::ConvertBackDepthFormat(desc.Format);
+			}
+			int32 D3D9RenderDevice::GetAvailableVideoRamInMB()
+			{
+				D3DDevice* dev = m_devManager->getDevice();
+				return dev->GetAvailableTextureMem();
 			}
 
 			/************************************************************************/
