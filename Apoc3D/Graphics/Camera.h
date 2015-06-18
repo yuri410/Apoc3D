@@ -48,6 +48,7 @@ namespace Apoc3D
 				m_proj.LoadIdentity();
 				m_viewProj.LoadIdentity();
 			}
+			Camera(const Matrix& view, const Matrix& proj);
 			~Camera() { }
 
 			void CalculateMatrices();

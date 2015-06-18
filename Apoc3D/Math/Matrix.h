@@ -1400,7 +1400,9 @@ namespace Apoc3D
 			 */
 			static void CreateBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &cameraUpVector, const Vector3 &cameraForwardVector, Matrix& res);
 
-			static void CreateCubemapRenderingView(Matrix (&result)[6], float near, float far);
+			static void CreateCubemapRenderingView(Matrix& view, Graphics::RenderSystem::CubeMapFace face);
+			static void CreateCubemapRenderingView(Matrix(&views)[Graphics::RenderSystem::CUBE_Count]);
+			static void CreateCubemapRenderingProj(Matrix& proj, float near, float far);
 
 			static void Inverse(Matrix& res, const Matrix& matrix)
 			{

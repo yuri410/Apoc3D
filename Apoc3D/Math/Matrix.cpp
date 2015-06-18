@@ -406,29 +406,53 @@ namespace Apoc3D
 			CreateRotationQuaternion(result, quaternion);
 		}
 
-		void Matrix::CreateCubemapRenderingView(Matrix(&result)[6], float near, float far)
+		void Matrix::CreateCubemapRenderingView(Matrix& view, CubeMapFace face)
 		{
-			Matrix proj;
+			switch (face)
+			{
+				case CUBE_PositiveX:
+					Matrix::CreateLookAtLH(view, Vector3::Zero, { 1, 0, 0 }, { 0, 1, 0 });
+					break;
+
+				case CUBE_NegativeX:
+					Matrix::CreateLookAtLH(view, Vector3::Zero, { -1, 0, 0 }, { 0, 1, 0 });
+					break;
+
+				case CUBE_PositiveY:
+					Matrix::CreateLookAtLH(view, Vector3::Zero, { 0, 1, 0 }, { 0, 0, -1 });
+					break;
+
+				case CUBE_NegativeY:
+					Matrix::CreateLookAtLH(view, Vector3::Zero, { 0, -1, 0 }, { 0, 0, 1 });
+					break;
+
+				case CUBE_PositiveZ:
+					Matrix::CreateLookAtLH(view, Vector3::Zero, { 0, 0, 1 }, { 0, 1, 0 });
+					break;
+
+				case CUBE_NegativeZ:
+					Matrix::CreateLookAtLH(view, Vector3::Zero, { 0, 0, -1 }, { 0, 1, 0 });
+					break;
+
+				default:
+					assert(0);
+			}
+		}
+
+		void Matrix::CreateCubemapRenderingView(Matrix(&result)[CUBE_Count])
+		{
+			Matrix::CreateLookAtLH(result[CUBE_PositiveX], Vector3::Zero, { 1, 0, 0 }, { 0, 1, 0 });
+			Matrix::CreateLookAtLH(result[CUBE_NegativeX], Vector3::Zero, { -1, 0, 0 }, { 0, 1, 0 });
+
+			Matrix::CreateLookAtLH(result[CUBE_PositiveY], Vector3::Zero, { 0, 1, 0 }, { 0, 0, -1 });
+			Matrix::CreateLookAtLH(result[CUBE_NegativeY], Vector3::Zero, { 0, -1, 0 }, { 0, 0, 1 });
+
+			Matrix::CreateLookAtLH(result[CUBE_PositiveZ], Vector3::Zero, { 0, 0, 1 }, { 0, 1, 0 });
+			Matrix::CreateLookAtLH(result[CUBE_NegativeZ], Vector3::Zero, { 0, 0, -1 }, { 0, 1, 0 });
+		}
+		void Matrix::CreateCubemapRenderingProj(Matrix& proj, float near, float far)
+		{
 			Matrix::CreatePerspectiveFovLH(proj, Math::Half_PI, 1.0, near, far);
-
-			Matrix view;
-			Matrix::CreateLookAtLH(view, Vector3::Zero, { 1, 0, 0 }, { 0, 1, 0 });
-			Matrix::Multiply(result[CUBE_PositiveX], view, proj);
-
-			Matrix::CreateLookAtLH(view, Vector3::Zero, { -1, 0, 0 }, { 0, 1, 0 });
-			Matrix::Multiply(result[CUBE_NegativeX], view, proj);
-
-			Matrix::CreateLookAtLH(view, Vector3::Zero, { 0, 1, 0 }, { 0, 0, -1 });
-			Matrix::Multiply(result[CUBE_PositiveY], view, proj);
-
-			Matrix::CreateLookAtLH(view, Vector3::Zero, { 0, -1, 0 }, { 0, 0, 1 });
-			Matrix::Multiply(result[CUBE_NegativeY], view, proj);
-
-			Matrix::CreateLookAtLH(view, Vector3::Zero, { 0, 0, 1 }, { 0, 1, 0 });
-			Matrix::Multiply(result[CUBE_PositiveZ], view, proj);
-
-			Matrix::CreateLookAtLH(view, Vector3::Zero, { 0, 0, -1 }, { 0, 1, 0 });
-			Matrix::Multiply(result[CUBE_NegativeZ], view, proj);
 		}
 
 	}

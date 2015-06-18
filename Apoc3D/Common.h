@@ -439,6 +439,18 @@ namespace Apoc3D
 
 			class DataBox;
 			class DataRectangle;
+
+
+			enum CubeMapFace
+			{
+				CUBE_PositiveX = 0,		/** Positive x-face of the cube map. */
+				CUBE_NegativeX = 1,		/** Negative x-face of the cube map. */
+				CUBE_PositiveY = 2,		/** Positive y-face of the cube map. */
+				CUBE_NegativeY = 3,		/** Negative y-face of the cube map. */
+				CUBE_PositiveZ = 4,		/** Positive z-face of the cube map. */
+				CUBE_NegativeZ = 5,		/** Negative z-face of the cube map. */
+				CUBE_Count = 6
+			};
 		}
 	};
 	namespace Platform

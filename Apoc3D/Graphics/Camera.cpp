@@ -30,6 +30,11 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
+		Camera::Camera(const Matrix& view, const Matrix& proj)
+			: m_view(view), m_proj(proj)
+		{
+			CalculateMatrices();
+		}
 		void Camera::CalculateMatrices()
 		{
 			Matrix::Inverse(m_invView, m_view);
