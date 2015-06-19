@@ -634,6 +634,7 @@ namespace Apoc3D
 							{
 								Vector3 pos = RendererEffectParams::CurrentCamera->getInvViewMatrix().GetTranslation();
 								ep.SetVector3(pos);
+								ApocLog(LOG_Graphics, L"[" + m_name + L"]: EPUSAGE_PV3_ViewPos/pv3_viewpos is obsolete.", LOGLVL_Warning);
 							}
 							break;
 						case EPUSAGE_SV2_ViewportSize:
