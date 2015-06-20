@@ -414,7 +414,7 @@ namespace Apoc3D
 
 		String DestFile;
 
-		virtual bool AlwaysBuild() const override { return true; }
+		//virtual bool AlwaysBuild() const override { return true; }
 
 		virtual ProjectItemType getType() const override { return ProjectItemType::EffectList; }
 		virtual void Parse(const ConfigurationSection* sect) override;

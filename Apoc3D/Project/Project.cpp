@@ -34,6 +34,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/IOLib/BinaryWriter.h"
+#include "apoc3d/IOLib/TextData.h"
 #include "apoc3d/Math/RandomUtils.h"
 #include "apoc3d/Utility/TypeConverter.h"
 #include "apoc3d/Utility/StringUtils.h"
@@ -665,7 +666,61 @@ namespace Apoc3D
 		return result;
 	}
 
-	List<String> ProjectResEffect::GetAllInputFiles() { return MakeInputFileList({ VS, PS, GS, PListFile }); }
+	static void FindIncludeFiles(HashSet<String>& fileList, const String& curFilePath)
+	{
+		if (curFilePath.size() == 0)
+			return;
+
+		if (File::FileExists(curFilePath))
+		{
+			if (!fileList.Contains(curFilePath))
+			{
+				fileList.Add(curFilePath);
+
+				String basePath = PathUtils::GetDirectory(curFilePath);
+
+				List<String> lines = StringUtils::Split(IO::Encoding::ReadAllText(FileLocation(curFilePath), Encoding::TEC_Unknown), L"\n\r");
+
+				for (String l : lines)
+				{
+					StringUtils::Trim(l);
+
+					if (StringUtils::StartsWith(l, L"#include", true))
+					{
+						String fn = l.substr(8);
+						StringUtils::Trim(fn);
+
+						if (StringUtils::StartsWith(fn, L"\""))
+						{
+							fn = fn.substr(1);
+						}
+						if (StringUtils::EndsWith(fn, L"\""))
+						{
+							fn = fn.substr(0, fn.size() - 1);
+						}
+
+						String subfn = PathUtils::Combine(basePath, fn);
+
+						FindIncludeFiles(fileList, subfn);
+					}
+				}
+			}
+		}
+	}
+
+	List<String> ProjectResEffect::GetAllInputFiles() 
+	{
+		List<String> initialFiles = MakeInputFileList({ VS, PS, GS, PListFile });
+		HashSet<String> fileList;
+		for (const String& ifn : initialFiles)
+		{
+			FindIncludeFiles(fileList, ifn);
+		}
+
+		List<String> result;
+		fileList.FillItems(result);
+		return result;
+	}
 	List<String> ProjectResEffect::GetAllOutputFiles() { return MakeOutputFileList(DestFile); }
 
 
@@ -1193,6 +1248,9 @@ namespace Apoc3D
 
 	void ProjectBuildStamp::Load(Stream& strm)
 	{
+		if (strm.getLength() < 16)
+			return;
+
 		BinaryReader br(&strm, false);
 
 		if (br.ReadInt32() == ProjectBuildStampID)
@@ -1298,25 +1356,22 @@ namespace Apoc3D
 
 	ConfigurationSection* ProjectItem::Save(bool savingBuild)
 	{
-		if (savingBuild && 
-			(m_typeData->getType() == ProjectItemType::Model || 
-			 m_typeData->getType() == ProjectItemType::Texture || 
-			 m_typeData->getType() == ProjectItemType::MaterialSet || 
-			 m_typeData->getType() == ProjectItemType::TransformAnimation) &&
-			!IsOutDated())
+		if (savingBuild && !IsOutDated())
 		{
 			return 0;
 		}
-		ConfigurationSection* sect = new ConfigurationSection(m_name);
 
 		if (m_typeData)
 		{
+			ConfigurationSection* sect = new ConfigurationSection(m_name);
+
 			sect->AddAttributeString(L"Type", ProjectUtils::ProjectItemTypeConv.ToString(m_typeData->getType()));
 			
 			m_typeData->Save(sect, savingBuild);
-		}
 
-		return sect;
+			return sect;
+		}
+		return nullptr;
 	}
 
 	void ProjectItem::Parse(const ConfigurationSection* sect)
