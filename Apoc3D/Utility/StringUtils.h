@@ -184,11 +184,25 @@ namespace Apoc3D
 			APAPI Apoc3D::Collections::List<String> Split(const String& str, char16_t delims);
 			APAPI Apoc3D::Collections::List<std::string> Split(const std::string& str, char delims);
 
+			template <typename StrType, typename ListType, typename ElementT, typename DelimType = StrType>
+			void SplitParse(const StrType& str, ListType& result, const DelimType& delims, FunctorReference<ElementT(const StrType&)> TConverter);
+
+			template <typename StrType, typename ListType, typename ElementT, typename DelimType = StrType>
+			ListType SplitParse(const StrType& str, const DelimType& delims, FunctorReference<ElementT(const StrType&)> TConverter);
+
+
 			template <typename StrType, typename ListType, typename ElementT, ElementT(*TConverter)(const StrType&), typename DelimType = StrType>
 			void SplitParse(const StrType& str, ListType& result, const DelimType& delims);
 
 			template <typename StrType, typename ListType, typename ElementT, ElementT(*TConverter)(const StrType&), typename DelimType = StrType>
 			ListType SplitParse(const StrType& str, const DelimType& delims);
+
+
+			template <typename ElementT>
+			void SplitParseEnum(const String& str, Apoc3D::Collections::List<ElementT>& result, const String& delims, const TypeDualConverter<ElementT>& parser);
+
+			template <typename ElementT>
+			Apoc3D::Collections::List<ElementT> SplitParseEnum(const String& str, const String& delims, const TypeDualConverter<ElementT>& parser);
 
 			//////////////////////////////////////////////////////////////////////////
 
@@ -407,10 +421,9 @@ namespace Apoc3D
 			typename StrType, 
 			typename ListType, 
 			typename ElementT,
-			ElementT(*TConverter)(const StrType&), 
 			typename DelimType
 		>
-		void StringUtils::SplitParse(const StrType& str, ListType& result, const DelimType& delims)
+		void StringUtils::SplitParse(const StrType& str, ListType& result, const DelimType& delims, FunctorReference<ElementT(const StrType&)> TConverter)
 		{
 			assert(result.getCount() == 0);
 
@@ -444,13 +457,58 @@ namespace Apoc3D
 			} while (pos != StrType::npos);
 		}
 
-		template <typename StrType, typename ListType, typename ElementT, ElementT(*TConverter)(const StrType&), typename DelimType>
+		template <typename StrType, typename ListType, typename ElementT, typename DelimType>
+		ListType StringUtils::SplitParse(const StrType& str, const DelimType& delims, FunctorReference<ElementT(const StrType&)> TConverter)
+		{
+			ListType lst;
+			SplitParse<StrType, ListType, ElementT, DelimType>(str, lst, delims, TConverter);
+			return lst;
+		}
+
+
+		template <
+			typename StrType, 
+			typename ListType, 
+			typename ElementT, 
+			ElementT(*TConverter)(const StrType&), 
+			typename DelimType
+		>
+		void StringUtils::SplitParse(const StrType& str, ListType& result, const DelimType& delims)
+		{
+			SplitParse<StrType, ListType, ElementT, DelimType>(str, result, delims, TConverter);
+		}
+
+		template <
+			typename StrType, 
+			typename ListType, 
+			typename ElementT, 
+			ElementT(*TConverter)(const StrType&), 
+			typename DelimType
+		>
 		ListType StringUtils::SplitParse(const StrType& str, const DelimType& delims)
 		{
 			ListType lst;
-			SplitParse<StrType, ListType, ElementT, TConverter, DelimType>(str, lst, delims);
+			SplitParse<StrType, ListType, ElementT, DelimType>(str, lst, delims, TConverter);
 			return lst;
 		}
+
+
+
+		template <typename ElementT>
+		void StringUtils::SplitParseEnum(const String& str, Apoc3D::Collections::List<ElementT>& result, const String& delims, const TypeDualConverter<ElementT>& parser)
+		{
+			auto parserFunc = [&parser](const String& s) { return parser.Parse(s); };
+			SplitParse<String, Apoc3D::Collections::List<ElementT>, ElementT, String>(str, result, delims, parserFunc);
+		}
+
+		template <typename ElementT>
+		Apoc3D::Collections::List<ElementT> StringUtils::SplitParseEnum(const String& str, const String& delims, const TypeDualConverter<ElementT>& parser)
+		{
+			Apoc3D::Collections::List<ElementT> lst;
+			SplitParseEnum<ElementT>(str, lst, delims, parser);
+			return lst;
+		}
+
 	}
 }
 
