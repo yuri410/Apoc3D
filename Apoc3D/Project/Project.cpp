@@ -1319,6 +1319,8 @@ namespace Apoc3D
 
 	void ProjectBuildStamp::SetSourceTimestamp(const String& path, time_t t) 
 	{
+		m_hasData = true;
+
 		if (!m_sourceTimeStamps.Contains(path))
 			m_sourceTimeStamps.Add(path, t);
 		else
@@ -1333,6 +1335,7 @@ namespace Apoc3D
 	}
 	void ProjectBuildStamp::SetItemSettingStamp(const String& path, uint32 hash)
 	{
+		m_hasData = true;
 		if (!m_itemSettingStamps.Contains(path))
 			m_itemSettingStamps.Add(path, hash);
 		else
@@ -1494,7 +1497,7 @@ namespace Apoc3D
 			if (m_project->getBuildStamp().hasData() && !m_typeData->RequiresPostEdit())
 			{
 				// check if the setting stamp matches current
-				if (GetCurrentBuildSettingStamp() != m_prevBuildSettingStamp)
+				if (m_prevBuildSettingStamp != 0 && GetCurrentBuildSettingStamp() != m_prevBuildSettingStamp)
 					return ProjectItemOutdateType::DifferentSetting;
 
 				// check if any sources have different mod time than the one in the build stamp
@@ -1580,7 +1583,7 @@ namespace Apoc3D
 		}
 	}
 
-	// obsolete
+	// obsolete?
 	void ProjectItem::MarkOutdatedOutputs()
 	{
 		ProjectItemOutdateType ot = GetOutDatedType();
@@ -1685,7 +1688,6 @@ namespace Apoc3D
 		{
 			pi->SaveCurrentBuildStamp(L"", m_buildStamp);
 		}
-
 		m_buildStamp.Save(strm);
 	}
 	void Project::MarkOutdatedOutputs()
