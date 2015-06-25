@@ -152,6 +152,8 @@ namespace APBuild
 			}
 		}
 
+		if (ep.DefaultTextureName.size())
+			ep.DefaultTextureName += L".tex";
 
 		struct { String& src; TextureAddressMode& target; } const addrFields[] =
 		{
