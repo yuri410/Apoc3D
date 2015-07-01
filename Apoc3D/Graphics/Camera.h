@@ -45,6 +45,7 @@ namespace Apoc3D
 			Camera()
 			{
 				m_view.LoadIdentity();
+				m_invView.LoadIdentity();
 				m_proj.LoadIdentity();
 				m_viewProj.LoadIdentity();
 			}
