@@ -331,7 +331,8 @@ namespace Apoc3D
 
 		bool CompactBuild = false;
 		bool CollapseMeshs = false;
-		
+		bool CollapseAll = false;
+
 		bool UseVertexFormatConversion = false;
 		List<VertexElement> ConversionVertexElements;
 

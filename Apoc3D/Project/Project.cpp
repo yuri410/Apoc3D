@@ -870,6 +870,10 @@ namespace Apoc3D
 
 		CollapseMeshs = false;
 		sect->TryGetAttributeBool(L"CollapseMeshs", CollapseMeshs);
+
+		CollapseAll = false;
+		sect->TryGetAttributeBool(L"CollapseAll", CollapseAll);
+
 	}
 	void ProjectResModel::Save(ConfigurationSection* sect, bool savingBuild)
 	{
@@ -911,6 +915,10 @@ namespace Apoc3D
 
 		if (CollapseMeshs)
 			sect->AddAttributeBool(L"CollapseMeshs", CollapseMeshs);
+
+		if (CollapseAll)
+			sect->AddAttributeBool(L"CollapseAll", CollapseAll);
+
 	}
 
 	//bool ProjectResModel::IsOutdated()

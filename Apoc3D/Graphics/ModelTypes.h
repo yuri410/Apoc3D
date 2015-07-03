@@ -109,11 +109,11 @@ namespace Apoc3D
 			const M& getMaterial(int index, int frame = 0) const { return m_set[index]->operator[](frame); }
 
 
-			void Reserve(int32 mtrlCount)
+			void Resize(int32 mtrlCount)
 			{
 				m_set.Resize(mtrlCount);
 			}
-			void Reserve(int32 index, int32 frameCount)
+			void Resize(int32 index, int32 frameCount)
 			{
 				m_set[index]->Resize(frameCount);
 			}

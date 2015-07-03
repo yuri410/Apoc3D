@@ -74,7 +74,7 @@ namespace Apoc3D
 		void MeshData::LoadData(TaggedDataReader* data)
 		{
 			uint32 materialCount = data->GetUInt32(TAG_3_MaterialCountTag);
-			Materials.Reserve(materialCount);
+			Materials.Resize(materialCount);
 
 			// load material set
 			

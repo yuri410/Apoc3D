@@ -186,9 +186,10 @@ namespace APBuild
 	}
 	void MeshBuild::CollapseMeshs(ModelData* data, const ProjectResModel& config)
 	{
-		if (config.CollapseMeshs && data->Entities.getCount()>1)
+		if ((config.CollapseMeshs || config.CollapseAll) && data->Entities.getCount() > 1)
 		{
-			MeshData* firstMd=data->Entities[0];
+			MeshData* firstMd = data->Entities[0];
+			MaterialData* firstMtrl = firstMd->Materials.getMaterial(0, 0);
 
 			uint totalVertexCount = 0;
 			uint totalMaterialCount = 0;
@@ -198,21 +199,21 @@ namespace APBuild
 			int* indexShifters = new int[data->Entities.getCount()];
 			int* materialShifters = new int[data->Entities.getCount()];
 
-			for (int i=0;i<data->Entities.getCount();i++)
+			for (int i = 0; i < data->Entities.getCount(); i++)
 			{
-				MeshData* md=data->Entities[i];
+				MeshData* md = data->Entities[i];
 
 
 				indexShifters[i] = totalVertexCount;
 				materialShifters[i] = totalMaterialCount;
 
 				totalVertexCount += md->VertexCount;
-				totalMaterialCount +=  md->Materials.getMaterialCount();
+				totalMaterialCount += md->Materials.getMaterialCount();
 				totalFaceCount += md->Faces.getCount();
 
-				if (refVertexSize!=md->VertexSize)
+				if (refVertexSize != md->VertexSize)
 				{
-					BuildSystem::LogError(config.SrcFile, 
+					BuildSystem::LogError(config.SrcFile,
 						L"The mesh collapse only works with meshes that have the same vertex format.");
 					delete[] indexShifters;
 					delete[] materialShifters;
@@ -226,41 +227,51 @@ namespace APBuild
 			newMD->VertexElements = firstMd->VertexElements;
 			newMD->VertexSize = refVertexSize;
 			newMD->Faces.ResizeDiscard(totalFaceCount);
-			newMD->Materials.Reserve((int32)totalMaterialCount);
+			newMD->Materials.Resize(config.CollapseAll ? 1 : (int32)totalMaterialCount);
 			newMD->BoundingSphere.Center = Vector3::Zero;
 			newMD->BoundingSphere.Radius = 0;
 
 
 			int vertexBufferOffset = 0;
-			for (int i=0;i<data->Entities.getCount();i++)
+			for (int i = 0; i < data->Entities.getCount(); i++)
 			{
-				MeshData* md=data->Entities[i];
+				MeshData* md = data->Entities[i];
 
-				memcpy(newMD->VertexData+vertexBufferOffset, md->VertexData, refVertexSize*md->VertexCount);
+				memcpy(newMD->VertexData + vertexBufferOffset, md->VertexData, refVertexSize*md->VertexCount);
 				vertexBufferOffset += refVertexSize*md->VertexCount;
 
-				for (int j=0;j<md->Faces.getCount();j++)
+				for (int j = 0; j < md->Faces.getCount(); j++)
 				{
-					MeshFace f=md->Faces[j];
+					MeshFace f = md->Faces[j];
 
 					f.IndexA += indexShifters[i];
 					f.IndexB += indexShifters[i];
 					f.IndexC += indexShifters[i];
 
-					f.MaterialID += materialShifters[i];
+					if (config.CollapseAll)
+						f.MaterialID = 0;
+					else
+						f.MaterialID += materialShifters[i];
 
 					newMD->Faces.Add(f);
 				}
 
-				for (int32 j=0;j<md->Materials.getMaterialCount();j++)
+				if (config.CollapseAll)
 				{
-					Apoc3D::IO::MaterialData* mtrlData = md->Materials.getMaterial(j);
-					newMD->Materials.Add(mtrlData);
-
-					for (int32 k=1;k<md->Materials.getFrameCount(j);k++)
+					newMD->Materials.Add(new MaterialData(*firstMtrl));
+				}
+				else
+				{
+					for (int32 j = 0; j < md->Materials.getMaterialCount(); j++)
 					{
-						Apoc3D::IO::MaterialData* mtrlData = md->Materials.getMaterial(j,k);
-						newMD->Materials.AddFrame(mtrlData,j);
+						Apoc3D::IO::MaterialData* mtrlData = md->Materials.getMaterial(j);
+						newMD->Materials.Add(new MaterialData(*mtrlData));
+
+						for (int32 k = 1; k < md->Materials.getFrameCount(j); k++)
+						{
+							Apoc3D::IO::MaterialData* mtrlData = md->Materials.getMaterial(j, k);
+							newMD->Materials.AddFrame(new MaterialData(*mtrlData), j);
+						}
 					}
 				}
 
@@ -272,11 +283,9 @@ namespace APBuild
 			delete[] indexShifters;
 			delete[] materialShifters;
 
-			for (int i=0;i<data->Entities.getCount();i++)
-			{
-				delete data->Entities[i];
-			}
-			data->Entities.Clear();
+
+			data->Entities.DeleteAndClear();
+
 			data->Entities.Add(newMD);
 		}
 	}
