@@ -28,6 +28,7 @@
 
 #include "Vector.h"
 #include "DoubleMath.h"
+#include "Rectangle.h"
 
 namespace Apoc3D
 {
@@ -50,15 +51,19 @@ namespace Apoc3D
 			float MaxZ;		/** the viewport's maximum Z depth. */
 
 			Viewport(int x, int y, int width, int height)
-				: X(x), Y(y), Width(width), Height(height),
-				MinZ(0), MaxZ(1)
-			{ }
+				: X(x), Y(y), Width(width), Height(height), MinZ(0), MaxZ(1) { }
+
+			explicit Viewport(const Apoc3D::Math::Rectangle& area)
+				: X(area.X), Y(area.Y), Width(area.Width), Height(area.Height), MinZ(0), MaxZ(1) { }
+
 			Viewport(int x, int y, int width, int height, float minZ, float maxZ)
 				: X(x), Y(y), Width(width), Height(height),
 				MinZ(minZ), MaxZ(maxZ)
 			{ }
 
 			float getAspectRatio() const { return Width / static_cast<float>(Height); }
+
+			Apoc3D::Math::Rectangle getArea() const { return{ X, Y, Width, Height }; }
 
 			/**
 			 *  Converts a screen space point into a corresponding point in world space.
