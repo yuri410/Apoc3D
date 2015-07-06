@@ -340,7 +340,7 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllInputFiles() override { return MakeInputFileList(SrcFile); }
+		virtual List<String> GetAllInputFiles() override { return MakeInputFileList(SrcFile, PresetFile); }
 		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DstAnimationFile, DstFile); }
 	};
 	
