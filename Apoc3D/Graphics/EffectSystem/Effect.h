@@ -182,7 +182,7 @@ namespace Apoc3D
 					void Free();
 
 					bool RS_SetupAtBegining = false;
-					bool RS_SetupAtBeginingOnly = false;		/** for parameter with RS_SetupAtBegining==true, this means if setup can be fully done at beginning */
+					bool RS_SetupAtBeginingOnly = false;		/** if a parameter has RS_SetupAtBegining==true, this means if setup can be fully done at beginning. If yes nothing else is done in instance setup. */
 					Shader* RS_TargetShader = nullptr;
 
 					ResourceHandle<Texture>* DefaultTexture = nullptr;

@@ -216,25 +216,8 @@ namespace Apoc3D
 						case EPUSAGE_S_UnifiedTime:
 						case EPUSAGE_DefaultTexture:
 							rep.RS_SetupAtBeginingOnly = true;
-
-						case EPUSAGE_Tex0:
-						case EPUSAGE_Tex1:
-						case EPUSAGE_Tex2:
-						case EPUSAGE_Tex3:
-						case EPUSAGE_Tex4:
-						case EPUSAGE_Tex5:
-						case EPUSAGE_Tex6:
-						case EPUSAGE_Tex7:
-						case EPUSAGE_Tex8:
-						case EPUSAGE_Tex9:
-						case EPUSAGE_Tex10:
-						case EPUSAGE_Tex11:
-						case EPUSAGE_Tex12:
-						case EPUSAGE_Tex13:
-						case EPUSAGE_Tex14:
-						case EPUSAGE_Tex15:
-
 							rep.RS_SetupAtBegining = true;
+
 							break;
 					}
 
@@ -254,6 +237,11 @@ namespace Apoc3D
 					{
 						ApocLog(LOG_Graphics, L"[AutomaticEffect][" + m_name + L"] Effect parameter " + rep.Name + L" does not have valid info.", LOGLVL_Warning);
 						hasShaderIssues = true;
+					}
+
+					if (rep.SamplerIndex != -1)
+					{
+						rep.RS_SetupAtBegining = true;
 					}
 
 					m_parameters.Add(rep);
@@ -296,6 +284,9 @@ namespace Apoc3D
 				// the material for all the render operations in the list is the same.
 				// it is better to be set only once. by checking m_previousMaterialPointer
 
+				bool isMaterialChanged = m_previousMaterialPointer != mtrl;
+				m_previousMaterialPointer = mtrl;
+
 				for (int k = 0; k < m_parameters.getCount(); k++)
 				{
 					ResolvedEffectParameter& ep = m_parameters[k];
@@ -306,23 +297,23 @@ namespace Apoc3D
 					switch (ep.Usage)
 					{
 						case EPUSAGE_MtrlC4_Ambient:
-							if (m_previousMaterialPointer != mtrl)
+							if (isMaterialChanged)
 								ep.SetColor4(mtrl->Ambient);
 							break;
 						case EPUSAGE_MtrlC4_Diffuse:
-							if (m_previousMaterialPointer != mtrl)
+							if (isMaterialChanged)
 								ep.SetColor4(mtrl->Diffuse);
 							break;
 						case EPUSAGE_MtrlC4_Emissive:
-							if (m_previousMaterialPointer != mtrl)
+							if (isMaterialChanged)
 								ep.SetColor4(mtrl->Emissive);
 							break;
 						case EPUSAGE_MtrlC4_Specular:
-							if (m_previousMaterialPointer != mtrl)
+							if (isMaterialChanged)
 								ep.SetColor4(mtrl->Specular);
 							break;
 						case EPUSAGE_MtrlC_Power:
-							if (m_previousMaterialPointer != mtrl)
+							if (isMaterialChanged)
 								ep.SetFloat(mtrl->Power);
 							break;
 						case EPUSAGE_Tex0:
@@ -341,7 +332,7 @@ namespace Apoc3D
 						case EPUSAGE_Tex13:
 						case EPUSAGE_Tex14:
 						case EPUSAGE_Tex15:
-							if (m_previousMaterialPointer != mtrl)
+							if (isMaterialChanged)
 							{
 								SetTexture(ep, mtrl->getTexture(ep.Usage - EPUSAGE_Tex0));
 							}
@@ -495,7 +486,7 @@ namespace Apoc3D
 							break;
 
 						case EPUSAGE_CustomMaterialParam:
-							if (m_previousMaterialPointer != mtrl)
+							if (isMaterialChanged)
 							{
 								if (mtrl && ep.CustomMaterialParamName.size())
 								{
@@ -505,8 +496,6 @@ namespace Apoc3D
 							break;
 					}
 				}
-
-				m_previousMaterialPointer = mtrl;
 			}
 			void AutomaticEffect::BeginPass(int passId)
 			{
@@ -557,7 +546,7 @@ namespace Apoc3D
 				if (tex == nullptr)
 					tex = m_whiteTexture;
 
-				param.RS_TargetShader->SetSamplerState(param.SamplerIndex, param.SamplerState);
+				//param.RS_TargetShader->SetSamplerState(param.SamplerIndex, param.SamplerState);
 				param.RS_TargetShader->SetTexture(param.SamplerIndex, tex);
 			}
 
@@ -565,7 +554,7 @@ namespace Apoc3D
 			{
 				ResolvedEffectParameter& param = m_parameters[index];
 				
-				param.RS_TargetShader->SetSamplerState(param.SamplerIndex, param.SamplerState);
+				//param.RS_TargetShader->SetSamplerState(param.SamplerIndex, param.SamplerState);
 				param.RS_TargetShader->SetTexture(param.SamplerIndex, tex);
 			}
 
@@ -612,23 +601,16 @@ namespace Apoc3D
 					if (!ep.RS_SetupAtBegining)
 						continue;
 
+					if (ep.SamplerIndex != -1)
+						ep.SetSamplerState();
+
 					switch (ep.Usage)
 					{
-						case EPUSAGE_LC4_Ambient:
-							ep.SetColor4(RendererEffectParams::LightAmbient);
-							break;
-						case EPUSAGE_LC4_Diffuse:
-							ep.SetColor4(RendererEffectParams::LightDiffuse);
-							break;
-						case EPUSAGE_LC4_Specular:
-							ep.SetColor4(RendererEffectParams::LightSpecular);
-							break;
-						case EPUSAGE_LV3_LightDir:
-							ep.SetVector3(RendererEffectParams::LightDirection);
-							break;
-						case EPUSAGE_LV3_LightPos:
-							ep.SetVector3(RendererEffectParams::LightDirection);
-							break;
+						case EPUSAGE_LC4_Ambient:  ep.SetColor4(RendererEffectParams::LightAmbient); break;
+						case EPUSAGE_LC4_Diffuse:  ep.SetColor4(RendererEffectParams::LightDiffuse); break;
+						case EPUSAGE_LC4_Specular: ep.SetColor4(RendererEffectParams::LightSpecular); break;
+						case EPUSAGE_LV3_LightDir: ep.SetVector3(RendererEffectParams::LightDirection); break;
+						case EPUSAGE_LV3_LightPos: ep.SetVector3(RendererEffectParams::LightDirection); break;
 						case EPUSAGE_PV3_ViewPos:
 							if (RendererEffectParams::CurrentCamera)
 							{
@@ -688,29 +670,8 @@ namespace Apoc3D
 						case EPUSAGE_V3_CameraZ:	ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetZ()); break;
 						case EPUSAGE_V3_CameraPos:	ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetTranslation()); break;
 
-						case EPUSAGE_Tex0:
-						case EPUSAGE_Tex1:
-						case EPUSAGE_Tex2:
-						case EPUSAGE_Tex3:
-						case EPUSAGE_Tex4:
-						case EPUSAGE_Tex5:
-						case EPUSAGE_Tex6:
-						case EPUSAGE_Tex7:
-						case EPUSAGE_Tex8:
-						case EPUSAGE_Tex9:
-						case EPUSAGE_Tex10:
-						case EPUSAGE_Tex11:
-						case EPUSAGE_Tex12:
-						case EPUSAGE_Tex13:
-						case EPUSAGE_Tex14:
-						case EPUSAGE_Tex15:
-							ep.SetSamplerState();
-							break;
-
 						case EPUSAGE_DefaultTexture:
-							ep.SetSamplerState();
 							SetTexture(ep, ep.DefaultTexture);
-
 							break;
 
 						case EPUSAGE_S_UnifiedTime:

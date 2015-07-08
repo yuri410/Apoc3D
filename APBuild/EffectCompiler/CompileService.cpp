@@ -56,74 +56,21 @@ namespace APBuild
 
 	void ParseEffectParameter(const String& srcFile, const List<String>& semantics, EffectParameter& ep)
 	{
-		const String prefix_BlobIndex = L"bid_";
-
 		int32 validSemanticCount = 0;
-		
-		for (int32 i = 0; i < semantics.getCount();i++)
-		{
-			const String& usageText = semantics[i];
-			
-			if (ep.Usage == EPUSAGE_Unknown)
-			{
-				if (StringUtils::StartsWith(usageText, prefix_BlobIndex))
-				{
-					ep.Usage = EPUSAGE_InstanceBlob;
-
-					String bidx = usageText.substr(prefix_BlobIndex.size());
-					ep.InstanceBlobIndex = StringUtils::ParseInt32(bidx);
-					continue;
-				}
-				else
-				{
-					if (!ep.SupportsParamUsage(usageText))
-						break;
-
-					ep.Usage = EffectParameter::ParseParamUsage(usageText);
-				}
-				
-				validSemanticCount++;
-
-				if (ep.Usage == EPUSAGE_CustomMaterialParam)
-				{
-					if (i < semantics.getCount() - 1)
-					{
-						ep.CustomMaterialParamName = semantics[++i];
-						validSemanticCount++;
-
-						continue;
-					}
-					else BuildSystem::LogError(srcFile, L"Expecting CustomUsage semantics for param " + ep.Name);
-				}
-				else if (ep.Usage == EPUSAGE_InstanceBlob)
-				{
-					if (i < semantics.getCount() - 1)
-					{
-						String bidx = semantics[++i];
-
-						if (StringUtils::StartsWith(bidx, prefix_BlobIndex))
-							bidx = bidx.substr(prefix_BlobIndex.size());
-
-						ep.InstanceBlobIndex = StringUtils::ParseInt32(bidx);
-						validSemanticCount++;
-
-						continue;
-					}
-					else BuildSystem::LogError(srcFile, L"Expecting BlobIndex semantics for param " + ep.Name);
-				}
-			}
-			
-		}
-
+	
 		String addrU, addrV, addrW;
 		String borderColor;
 		String magflt, minflt, mipflt;
 		String lodbias, maxMip, maxAnis;
-
+		String bidText;
+		
 		struct { const wchar_t* source; String& target; } const fieldInfo[] =
 		{
 			{ L"def_tex_", ep.DefaultTextureName },
 			{ L"ss_grp_", ep.SamplerStateOverridenGroupName },
+			{ L"mtrl_param_", ep.CustomMaterialParamName },
+
+			{ L"bid_", bidText },
 
 			{ L"ss_addu_", addrU },
 			{ L"ss_addv_", addrV },
@@ -137,7 +84,7 @@ namespace APBuild
 
 			{ L"ss_lodbias_", lodbias },
 			{ L"ss_maxmip_", maxMip },
-			{ L"ss_maxanis_", maxAnis },
+			{ L"ss_maxanis_", maxAnis }
 		};
 
 		for (const String& usageText : semantics)
@@ -152,8 +99,36 @@ namespace APBuild
 			}
 		}
 
-		if (ep.DefaultTextureName.size())
+		if (bidText.size())
+		{
+			ep.Usage = EPUSAGE_InstanceBlob;
+			ep.InstanceBlobIndex = StringUtils::ParseInt32(bidText);
+		}
+		else if (ep.DefaultTextureName.size())
+		{
 			ep.DefaultTextureName += L".tex";
+			ep.Usage = EPUSAGE_DefaultTexture;
+		}
+		else if (ep.CustomMaterialParamName.size())
+		{
+			ep.Usage = EPUSAGE_CustomMaterialParam;
+		}
+
+		for (int32 i = 0; i < semantics.getCount(); i++)
+		{
+			const String& usageText = semantics[i];
+
+			if (ep.Usage == EPUSAGE_Unknown)
+			{
+				if (!ep.SupportsParamUsage(usageText))
+					break;
+
+				ep.Usage = EffectParameter::ParseParamUsage(usageText);
+
+				validSemanticCount++;
+			}
+		}
+
 
 		struct { String& src; TextureAddressMode& target; } const addrFields[] =
 		{

@@ -37,10 +37,10 @@ namespace UnitTestVC
 			far = 1750.0f;
 
 			Matrix temp2[4];
-			Matrix::CreatePerspectiveFovLH(temp[0], ToRadian(60), aspect, near, far);
-			Matrix::CreatePerspectiveFovRH(temp[1], ToRadian(60), aspect, near, far);
-			Matrix::CreateOrthoLH(temp[2], w, h, near, far);
-			Matrix::CreateOrthoRH(temp[3], w, h, near, far);
+			Matrix::CreatePerspectiveFovLH(temp2[0], ToRadian(60), aspect, near, far);
+			Matrix::CreatePerspectiveFovRH(temp2[1], ToRadian(60), aspect, near, far);
+			Matrix::CreateOrthoLH(temp2[2], w, h, near, far);
+			Matrix::CreateOrthoRH(temp2[3], w, h, near, far);
 
 			for (Matrix& m : temp)
 			{

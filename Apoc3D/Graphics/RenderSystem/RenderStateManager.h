@@ -158,6 +158,8 @@ namespace Apoc3D
 				ScopeRenderTargetChange(RenderDevice* device, std::initializer_list<std::pair<int32, RenderTarget* >> list, DepthStencilBuffer* dsb);
 				~ScopeRenderTargetChange();
 
+				template <typename Func>
+				void Run(Func f) { f(); }
 			private:
 				void ChangeRenderTarget(int32 idx, RenderTarget* rt);
 				void ChangeDepthStencilBuffer(DepthStencilBuffer* dsb);

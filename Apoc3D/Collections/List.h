@@ -759,7 +759,8 @@ namespace Apoc3D
 				}
 				else
 				{
-					m_length = count;
+					if (m_length == 0)
+						m_length = finalCount;
 					EnsureElements();
 				}
 			}

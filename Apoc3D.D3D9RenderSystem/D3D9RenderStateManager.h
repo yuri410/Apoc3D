@@ -210,8 +210,8 @@ namespace Apoc3D
 
 				CompareFunction m_cachedCounterClockwiseStencilFunction;
 
-				ShaderSamplerState* m_pixelSamplers;
-				ShaderSamplerState* m_vertexSamplers;
+				ShaderSamplerState* m_pixelSamplers = nullptr;
+				ShaderSamplerState* m_vertexSamplers = nullptr;
 
 				bool m_colorWrite0[4];
 				bool m_colorWrite1[4];
@@ -219,7 +219,7 @@ namespace Apoc3D
 				bool m_colorWrite3[4];
 
 				int m_textureSlotCount;
-				D3D9Texture** m_textureSlots;
+				D3D9Texture** m_textureSlots = nullptr;
 			};
 
 			class D3D9RenderStateManager final : public RenderStateManager

@@ -399,7 +399,6 @@ namespace Apoc3D
 				if (m_nativeState->getAlphaBlendEnable() != mtrl->IsBlendTransparent)
 				{
 					m_nativeState->setAlphaBlendEnable(mtrl->IsBlendTransparent);
-					
 				}
 				if (m_nativeState->getAlphaSourceBlend() != mtrl->SourceBlend)
 				{
