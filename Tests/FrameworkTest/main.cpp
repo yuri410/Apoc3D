@@ -41,7 +41,6 @@ using namespace Apoc3D::IO;
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Utility;
 
-void TestTaggedData();
 void TestRLE();
 void TestMath();
 void TestBufferStream();
@@ -64,6 +63,9 @@ void main()
 	//std::wcout << s.c_str() << L"\n";
 	//std::wcout << std::numeric_limits<float>::digits10+1 << L"\n";
 
+
+
+
 	FileSystem::Initialize();
 	wchar_t workingDir[260];
 	GetCurrentDirectory(260, workingDir);
@@ -73,7 +75,6 @@ void main()
 	FileSystem::getSingleton().ListDirectoryFiles(L"", items);
 
 	TestMath();
-	TestTaggedData();
 	TestBufferStream();
 	//TestRLE();
 	//TestLZ4();
@@ -96,122 +97,6 @@ void CheckEqual(const T* a, const T* b, int count)
 			throw std::exception();
 		}
 	}
-}
-
-void TestTaggedData()
-{
-	char sourceBuffer[1024];
-	for (int i=0;i<1024;i++) sourceBuffer[i] = (char)(i % 3);
-
-	TaggedDataWriter* outData = new TaggedDataWriter(true);
-	//outData->AddEntryBool(L"Bool", (bool*)sourceBuffer, sizeof(sourceBuffer)/sizeof(bool));
-	outData->AddBoundingBox("BoundingBox", (BoundingBox*)sourceBuffer, sizeof(sourceBuffer)/sizeof(BoundingBox));
-	outData->AddBoundingSphere("BoundingSphere", (BoundingSphere*)sourceBuffer, sizeof(sourceBuffer)/sizeof(BoundingSphere));
-	outData->AddColor4("Color4", (Color4*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Color4));
-	outData->AddDouble("Double", (double*)sourceBuffer, sizeof(sourceBuffer)/sizeof(double));
-	outData->AddInt16("Int16", (int16*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int16));
-	outData->AddInt32("Int32", (int32*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int32));
-	outData->AddInt64("Int64", (int64*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int64));
-	outData->AddMathSize("MathSize", (Size*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Size));
-	outData->AddMatrix("Matrix", (Matrix*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Matrix));
-	outData->AddPlane("Plane", (Plane*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Plane));
-	outData->AddPoint("Point", (Point*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Point));
-	outData->AddPointF("PointF", (PointF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(PointF));
-	outData->AddQuaternion("Quaternion", (Quaternion*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Quaternion));
-	outData->AddRay("Ray", (Ray*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Ray));
-	outData->AddRectangle("Rectangle", (Apoc3D::Math::Rectangle*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Apoc3D::Math::Rectangle));
-	outData->AddRectangleF("RectangleF", (RectangleF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(RectangleF));
-	outData->AddSingle("Single", (float*)sourceBuffer, sizeof(sourceBuffer)/sizeof(float));
-	outData->AddUInt16("UInt16", (uint16*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint16));
-	outData->AddUInt32("UInt32", (uint32*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint32));
-	outData->AddUInt64("UInt64", (uint64*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint64));
-	outData->AddVector2("Vector2", (Vector2*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector2));
-	outData->AddVector3("Vector3", (Vector3*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector3));
-	outData->AddVector4("Vector4", (Vector4*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector4));
-	outData->AddViewport("Viewport", (Viewport*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Viewport));
-
-	MemoryOutStream* buffer = new MemoryOutStream(0xffff);
-	outData->Save(*buffer);
-	buffer->setPosition(0);
-	char tempBuffer[1024];
-	TaggedDataReader* inData = new TaggedDataReader(buffer);
-	//inData->GetDataBool(L"Bool", (bool*)tempBuffer, sizeof(tempBuffer)/sizeof(bool));
-	//CheckEqual((bool*)tempBuffer, (bool*)sourceBuffer, sizeof(sourceBuffer)/sizeof(bool));
-	
-	inData->GetBoundingBox("BoundingBox", (BoundingBox*)tempBuffer, sizeof(tempBuffer)/sizeof(BoundingBox));
-	CheckEqual((BoundingBox*)tempBuffer, (BoundingBox*)sourceBuffer, sizeof(sourceBuffer)/sizeof(BoundingBox));
-
-	inData->GetBoundingSphere("BoundingSphere", (BoundingSphere*)tempBuffer, sizeof(tempBuffer)/sizeof(BoundingSphere));
-	CheckEqual((BoundingSphere*)tempBuffer, (BoundingSphere*)sourceBuffer, sizeof(sourceBuffer)/sizeof(BoundingSphere));
-
-	inData->GetColor4("Color4", (Color4*)tempBuffer, sizeof(tempBuffer)/sizeof(Color4));
-	CheckEqual((Color4*)tempBuffer, (Color4*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Color4));
-
-	inData->GetDouble("Double", (double*)tempBuffer, sizeof(tempBuffer)/sizeof(double));
-	CheckEqual((double*)tempBuffer, (double*)sourceBuffer, sizeof(sourceBuffer)/sizeof(double));
-
-	inData->GetInt16("Int16", (int16*)tempBuffer, sizeof(tempBuffer)/sizeof(int16));
-	CheckEqual((int16*)tempBuffer, (int16*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int16));
-
-	inData->GetInt32("Int32", (int32*)tempBuffer, sizeof(tempBuffer)/sizeof(int32));
-	CheckEqual((int32*)tempBuffer, (int32*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int32));
-
-	inData->GetInt64("Int64", (int64*)tempBuffer, sizeof(tempBuffer)/sizeof(int64));
-	CheckEqual((int64*)tempBuffer, (int64*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int64));
-
-	inData->GetMathSize("MathSize", (Size*)tempBuffer, sizeof(tempBuffer)/sizeof(Size));
-	CheckEqual((Size*)tempBuffer, (Size*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Size));
-
-	inData->GetMatrix("Matrix", (Matrix*)tempBuffer, sizeof(tempBuffer)/sizeof(Matrix));
-	CheckEqual((Matrix*)tempBuffer, (Matrix*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Matrix));
-
-	inData->GetPlane("Plane", (Plane*)tempBuffer, sizeof(tempBuffer)/sizeof(Plane));
-	CheckEqual((Plane*)tempBuffer, (Plane*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Plane));
-
-	inData->GetPoint("Point", (Point*)tempBuffer, sizeof(tempBuffer)/sizeof(Point));
-	CheckEqual((Point*)tempBuffer, (Point*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Point));
-
-	inData->GetPointF("PointF", (PointF*)tempBuffer, sizeof(tempBuffer)/sizeof(PointF));
-	CheckEqual((PointF*)tempBuffer, (PointF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(PointF));
-
-	inData->GetQuaternion("Quaternion", (Quaternion*)tempBuffer, sizeof(tempBuffer)/sizeof(Quaternion));
-	CheckEqual((Quaternion*)tempBuffer, (Quaternion*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Quaternion));
-
-	inData->GetRay("Ray", (Ray*)tempBuffer, sizeof(tempBuffer)/sizeof(Ray));
-	CheckEqual((Ray*)tempBuffer, (Ray*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Ray));
-
-	inData->GetRectangle("Rectangle", (Apoc3D::Math::Rectangle*)tempBuffer, sizeof(tempBuffer)/sizeof(Apoc3D::Math::Rectangle));
-	CheckEqual((Apoc3D::Math::Rectangle*)tempBuffer, (Apoc3D::Math::Rectangle*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Apoc3D::Math::Rectangle));
-
-	inData->GetRectangleF("RectangleF", (RectangleF*)tempBuffer, sizeof(tempBuffer)/sizeof(RectangleF));
-	CheckEqual((RectangleF*)tempBuffer, (RectangleF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(RectangleF));
-
-	inData->GetSingle("Single", (float*)tempBuffer, sizeof(tempBuffer)/sizeof(float));
-	CheckEqual((float*)tempBuffer, (float*)sourceBuffer, sizeof(sourceBuffer)/sizeof(float));
-
-	inData->GetUInt16("UInt16", (uint16*)tempBuffer, sizeof(tempBuffer)/sizeof(uint16));
-	CheckEqual((uint16*)tempBuffer, (uint16*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint16));
-
-	inData->GetUInt32("UInt32", (uint32*)tempBuffer, sizeof(tempBuffer)/sizeof(uint32));
-	CheckEqual((uint32*)tempBuffer, (uint32*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint32));
-
-	inData->GetUInt64("UInt64", (uint64*)tempBuffer, sizeof(tempBuffer)/sizeof(uint64));
-	CheckEqual((uint64*)tempBuffer, (uint64*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint64));
-
-	inData->GetVector2("Vector2", (Vector2*)tempBuffer, sizeof(tempBuffer)/sizeof(Vector2));
-	CheckEqual((Vector2*)tempBuffer, (Vector2*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector2));
-
-	inData->GetVector3("Vector3", (Vector3*)tempBuffer, sizeof(tempBuffer)/sizeof(Vector3));
-	CheckEqual((Vector3*)tempBuffer, (Vector3*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector3));
-
-	inData->GetVector4("Vector4", (Vector4*)tempBuffer, sizeof(tempBuffer)/sizeof(Vector4));
-	CheckEqual((Vector4*)tempBuffer, (Vector4*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector4));
-
-	inData->GetViewport("Viewport", (Viewport*)tempBuffer, sizeof(tempBuffer)/sizeof(Viewport));
-	CheckEqual((Viewport*)tempBuffer, (Viewport*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Viewport));
-
-	delete inData;
-	delete outData;
 }
 
 void TestRLE()

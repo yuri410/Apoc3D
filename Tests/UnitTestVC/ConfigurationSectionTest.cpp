@@ -197,5 +197,69 @@ namespace UnitTestVC
 				Assert::AreEqual(vals[i], vals[i]);
 
 		}
+
+		TEST_METHOD(ConfigSect_Merge_DeMerge)
+		{
+			const ConfigurationSection sa = 
+			{
+				L"sa",
+				{
+					{ L"a1", L"a1v" },
+					{ L"a2", L"a2v" }
+				},
+				{
+					{ L"v1", L"v1v" },
+					{ L"v2", L"v2v" }
+				}
+			};
+
+			const ConfigurationSection sb =
+			{
+				L"sb",
+				{
+					{ L"a2", L"a2v2" },
+					{ L"a3", L"a3v" }
+				},
+				{
+					{ L"v2", L"v2v2" },
+					{ L"v3", L"v3v" }
+				}
+			};
+
+			ConfigurationSection test(L"");
+			test.Merge(&sa, true);
+			test.Merge(&sb, true);
+
+			Assert::AreEqual(String(L"a1v"), test.getAttribute(L"a1"));
+			Assert::AreEqual(String(L"a2v"), test.getAttribute(L"a2"));
+			Assert::AreEqual(String(L"a3v"), test.getAttribute(L"a3"));
+
+			Assert::AreEqual(String(L"v1v"), test.getValue(L"v1"));
+			Assert::AreEqual(String(L"v2v"), test.getValue(L"v2"));
+			Assert::AreEqual(String(L"v3v"), test.getValue(L"v3"));
+
+			test.RemoveIntersection(&sa);
+
+			Assert::AreEqual(1, test.getAttributeCount());
+			Assert::AreEqual(String(L"a3v"), test.getAttribute(L"a3"));
+
+			Assert::AreEqual(1, test.getSubSectionCount());
+			Assert::AreEqual(String(L"v3v"), test.getValue(L"v3"));
+
+			test.Merge(&sa, true);
+			Assert::AreEqual(3, test.getAttributeCount());
+			Assert::AreEqual(3, test.getSubSectionCount());
+
+			test.RemoveIntersection(&sb);
+
+			Assert::AreEqual(2, test.getAttributeCount());
+			Assert::AreEqual(String(L"a1v"), test.getAttribute(L"a1"));
+			Assert::AreEqual(String(L"a2v"), test.getAttribute(L"a2"));
+
+			Assert::AreEqual(2, test.getSubSectionCount());
+			Assert::AreEqual(String(L"v1v"), test.getValue(L"v1"));
+			Assert::AreEqual(String(L"v2v"), test.getValue(L"v2"));
+
+		}
 	};
 }

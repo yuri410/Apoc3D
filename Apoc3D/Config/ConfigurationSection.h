@@ -84,10 +84,16 @@ namespace Apoc3D
 				const AttributeTable& m_attTable;
 			};
 
-			ConfigurationSection(const String& name, int capacity);
 			ConfigurationSection(const String& name);
-			ConfigurationSection(const ConfigurationSection& another);
+			ConfigurationSection(const String& name, int capacity);
+			ConfigurationSection(const String& name, const String& value);
+			ConfigurationSection(const String& name, std::initializer_list<std::pair<String, String>> attribs, std::initializer_list<ConfigurationSection> values);
+			ConfigurationSection(const ConfigurationSection&);
+			ConfigurationSection(ConfigurationSection&&);
 			~ConfigurationSection();
+
+			ConfigurationSection& operator=(const ConfigurationSection&);
+			ConfigurationSection& operator=(ConfigurationSection&&);
 
 			ConfigurationSection* CreateSubSection(const String& name);
 			void AddSection(ConfigurationSection* section);
@@ -341,6 +347,9 @@ namespace Apoc3D
 			template <typename T>
 			void SetGeneric(const String& name, T& result) { SetStringValue(name, result.ToString()); }
 
+			void Merge(const ConfigurationSection* thatSect, bool noMessages);
+			void RemoveIntersection(const ConfigurationSection* thatSect);
+
 			int32 GetHashCode() const;
 
 		protected:
@@ -351,6 +360,8 @@ namespace Apoc3D
 			AttributeTable m_attributes;
 			SubSectionTable m_subSection;
 
+		private:
+			void DeepCopySubsections();
 		};
 
 

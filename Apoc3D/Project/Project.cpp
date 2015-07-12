@@ -23,9 +23,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Project.h"
 #include "apoc3d/Config/ConfigurationManager.h"
-#include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Config/ABCConfigurationFormat.h"
 #include "apoc3d/Config/XmlConfigurationFormat.h"
+#include "apoc3d/Core/Logging.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
 #include "apoc3d/Graphics/VertexFormats.h"
 #include "apoc3d/Vfs/File.h"
@@ -47,9 +47,11 @@ using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
-	void ProjectParseSubItems(Project* prj, List<ProjectItem*>& parentContainer, const ConfigurationSection* sect);
+	void ProjectParseSubItems(Project* prj, List<ProjectItem*>& parentContainer, ProjectFolder* parentFolder, const ConfigurationSection* sect);
 	void ProjectSaveSubItems(ConfigurationSection* parentSect, List<ProjectItem*>& items, bool savingBuild);
 	void GenerateFolderPackaging(int& startNo, List<ConfigurationSection*>& result, List<ProjectItem*>& items);
+
+	static ProjectItem* GetItemGeneric(const String& path, const List<ProjectItem*>& subItems, ProjectFolder* parentFolder);
 
 	/************************************************************************/
 	/*  ProjectFolder                                                       */
@@ -69,10 +71,7 @@ namespace Apoc3D
 
 		sect->TryGetAttributeBool(L"IncludeUnpackedSubFolderItems", IncludeUnpackedSubFolderItems);
 
-		ProjectParseSubItems(m_project, SubItems, sect);
-
-		for (ProjectItem* pi : SubItems)
-			pi->SetParent(this);
+		ProjectParseSubItems(m_project, SubItems, this, sect);
 	}
 	void ProjectFolder::Save(ConfigurationSection* sect, bool savingBuild)
 	{
@@ -132,6 +131,8 @@ namespace Apoc3D
 
 	List<String> ProjectFolder::GetAllInputFiles() { return{}; }
 	List<String> ProjectFolder::GetAllOutputFiles()  { return MakeOutputFileList(DestinationPack); }
+
+	ProjectItem* ProjectFolder::GetItem(const String& path) { return GetItemGeneric(path, SubItems, m_parentItem->getParentFolder()); }
 
 	/************************************************************************/
 	/*  ProjectResTexture                                                   */
@@ -921,40 +922,6 @@ namespace Apoc3D
 
 	}
 
-	//bool ProjectResModel::IsOutdated()
-	//{
-	//	time_t destFileTime;
-	//	if (IsSettingsNewerThan(DstFile, destFileTime))
-	//		return true;
-	//
-	//	// check if the source file is newer than the built ones.
-	//	String path = WrapSourcePath(SrcFile, true);
-	//	if (File::FileExists(path))
-	//	{
-	//		time_t srcTime = File::GetFileModifiyTime(path);
-	//		if (srcTime > destFileTime)
-	//			return true;
-	//
-	//		if (DstAnimationFile.size())
-	//		{
-	//			destFileTime = File::GetFileModifiyTime(WrapDestinationPath(DstAnimationFile, true));
-	//
-	//			if (srcTime > destFileTime)
-	//				return true;
-	//		}
-	//	}
-	//
-	//	return false;
-	//}
-	//bool ProjectResModel::IsNotBuilt()
-	//{
-	//	if (DstAnimationFile.size())
-	//		if (!File::FileExists(WrapDestinationPath(DstAnimationFile, true)))
-	//			return true;
-	//
-	//	return !File::FileExists(WrapDestinationPath(DstFile, true));
-	//}
-
 	/************************************************************************/
 	/*   ProjectResMAnim                                                    */
 	/************************************************************************/
@@ -1070,6 +1037,27 @@ namespace Apoc3D
 	}
 
 	/************************************************************************/
+	/*  ProjectItemPreset                                                   */
+	/************************************************************************/
+	ProjectItemPreset::~ProjectItemPreset()
+	{
+		DELETE_AND_NULL(SectionCopy);
+	}
+
+	void ProjectItemPreset::Parse(const ConfigurationSection* sect)
+	{
+		DELETE_AND_NULL(SectionCopy);
+
+		SectionCopy = new ConfigurationSection(*sect);
+	}
+	void ProjectItemPreset::Save(ConfigurationSection* sect, bool savingBuild)
+	{
+		if (SectionCopy)
+			sect->Merge(SectionCopy, true);
+	}
+
+
+	/************************************************************************/
 	/*  ProjectItemData                                                     */
 	/************************************************************************/
 
@@ -1130,47 +1118,7 @@ namespace Apoc3D
 			return PathUtils::Combine(GetAbsoluteDestinationPathBase(true), path.substr(1));
 		return PathUtils::Combine(GetAbsoluteDestinationPathBase(false), path);
 	}
-
-	//bool ProjectItemData::IsSourceFileNewer(const String& srcFile, time_t t) const
-	//{
-	//	String p = WrapSourcePath(srcFile, true);
-	//	return File::FileExists(p) && File::GetFileModifiyTime(p) > t;
-	//}
-
-	//bool ProjectItemData::IsSettingsNewerThan(const String& destinationFile) const
-	//{
-	//	time_t t;
-	//	return IsSettingsNewerThan(destinationFile, t);
-	//}
-	//bool ProjectItemData::IsSettingsNewerThan(const String& destinationFile, time_t& dstFileTime) const
-	//{
-	//	String p = WrapDestinationPath(destinationFile, true);
-
-	//	if (!File::FileExists(p))
-	//		return true;
-
-	//	//dstFileTime = File::GetFileModifiyTime(p);
-	//	return m_parentItem->HasModifiedSinceLastBuild();// dstFileTime);
-	//}
-
-	//bool ProjectItemData::IsOutdatedSimple(const String& srcFile, const String& destinationFile) const
-	//{
-	//	time_t destFileTime;
-	//	todo;
-	//	//if (IsSettingsNewerThan(destinationFile, destFileTime))
-	//	//	return true;
-
-	//	if (IsSourceFileNewer(srcFile, destFileTime))
-	//		return true;
-
-	//	return false;
-	//}
-
-	//bool ProjectItemData::IsDestFileNotBuilt(const String& destinationFile)
-	//{
-	//	return !File::FileExists(WrapDestinationPath(destinationFile, true));
-	//}
-
+	
 	String ProjectItemData::WrapSourcePath(const String& path, bool isAbsolute) const
 	{
 		if (isAbsolute)
@@ -1376,9 +1324,26 @@ namespace Apoc3D
 		{
 			ConfigurationSection* sect = new ConfigurationSection(m_name);
 
+			if (m_inheritSouceItem.size())
+				sect->AddAttributeString(L"Inherits", m_inheritSouceItem);
+
 			sect->AddAttributeString(L"Type", ProjectUtils::ProjectItemTypeConv.ToString(m_typeData->getType()));
 			
 			m_typeData->Save(sect, savingBuild);
+			
+			if (!savingBuild && m_inheritSouceItem.size())
+			{
+				ProjectItem* inheritSrc = SearchItem(m_inheritSouceItem);
+				if (inheritSrc && inheritSrc->getType() == ProjectItemType::ItemPreset)
+				{
+					ProjectItemPreset* preset = static_cast<ProjectItemPreset*>(inheritSrc->getData());
+					sect->RemoveIntersection(preset->SectionCopy);
+				}
+				else
+				{
+					ApocLog(LOG_System, L"Can't find inherited preset: " + m_inheritSouceItem, LOGLVL_Warning);
+				}
+			}
 
 			return sect;
 		}
@@ -1388,8 +1353,29 @@ namespace Apoc3D
 	void ProjectItem::Parse(const ConfigurationSection* sect)
 	{
 		m_name = sect->getName();
+		sect->tryGetAttribute(L"Inherits", m_inheritSouceItem);
 
-		ProjectItemType itemType = ProjectUtils::ProjectItemTypeConv.Parse(sect->getAttribute(L"Type"));
+		const ConfigurationSection* adjustedSect = sect;
+		ConfigurationSection* newSect = nullptr;
+
+		if (m_inheritSouceItem.size())
+		{
+			ProjectItem* inhSrc = SearchItem(m_inheritSouceItem);
+			if (inhSrc && inhSrc->getType() == ProjectItemType::ItemPreset)
+			{
+				ProjectItemPreset* preset = static_cast<ProjectItemPreset*>(inhSrc->getData());
+
+				newSect = new ConfigurationSection(*sect);
+				newSect->Merge(preset->SectionCopy, true);
+				adjustedSect = newSect;
+			}
+			else
+			{
+				ApocLog(LOG_System, L"Can't find inherited preset: " + m_inheritSouceItem, LOGLVL_Warning);
+			}
+		}
+
+		ProjectItemType itemType = ProjectUtils::ProjectItemTypeConv.Parse(adjustedSect->getAttribute(L"Type"));
 		
 		switch (itemType)
 		{
@@ -1441,11 +1427,39 @@ namespace Apoc3D
 		case ProjectItemType::Copy:
 			m_typeData = new ProjectResCopy(m_project, this);
 			break;
+		case ProjectItemType::ItemPreset:
+			m_typeData = new ProjectItemPreset(m_project, this);
+			break;
 		default:
 			assert(0);
 		}
 
-		m_typeData->Parse(sect);
+		m_typeData->Parse(adjustedSect);
+
+		DELETE_AND_NULL(newSect);
+	}
+
+	ProjectItem* ProjectItem::SearchItem(const String& path) const
+	{
+		String npath = PathUtils::NormalizePath(path);
+
+		if (m_parentFolder &&
+			npath.find(PathUtils::AltDirectorySeparator) == String::npos &&
+			npath.find(PathUtils::DirectorySeparator) == String::npos)
+		{
+			for (ProjectItem* pi : m_parentFolder->SubItems)
+			{
+				if (pi->getName() == npath)
+					return pi;
+			}
+		}
+
+		if (m_parentFolder && StringUtils::StartsWith(npath, L".."))
+		{
+			return m_parentFolder->GetItem(npath);
+		}
+
+		return m_project->GetItem(npath);
 	}
 
 	bool ProjectItem::IsNotBuilt() const
@@ -1539,6 +1553,15 @@ namespace Apoc3D
 		int32 r = s->GetHashCode();
 
 		delete s;
+
+		if (m_inheritSouceItem.size())
+		{
+			ProjectItem* inheritSrc = SearchItem(m_inheritSouceItem);
+			if (inheritSrc)
+			{
+				r ^= inheritSrc->GetCurrentBuildSettingStamp();
+			}
+		}
 
 		return r;
 	}
@@ -1647,19 +1670,17 @@ namespace Apoc3D
 		sect->tryGetAttribute(L"ExplicitBuildPath", m_originalOutputPath);
 		m_outputPath = m_originalOutputPath;
 
-		ProjectParseSubItems(this, m_items, sect);
+		ProjectParseSubItems(this, m_items, nullptr, sect);
 	}
 	void Project::Save(const String& file)
 	{
 		ConfigurationSection* s = Save();
 
-		Configuration* xc = new Configuration(m_name);
-		xc->Add(s);
+		Configuration xc(m_name);
+		xc.Add(s);
 		//xc->Save(file);
 
-		XMLConfigurationFormat::Instance.Save(xc, FileOutStream(file));
-		
-		delete xc;
+		XMLConfigurationFormat::Instance.Save(&xc, FileOutStream(file));
 	}
 
 	ConfigurationSection* Project::Save()
@@ -1761,11 +1782,12 @@ namespace Apoc3D
 
 
 	// this function is for parsing all sub items in a section
-	void ProjectParseSubItems(Project* prj, List<ProjectItem*>& parentContainer, const ConfigurationSection* sect)
+	void ProjectParseSubItems(Project* prj, List<ProjectItem*>& parentContainer, ProjectFolder* parentFolder, const ConfigurationSection* sect)
 	{
 		for (ConfigurationSection* ss : sect->getSubSections())
 		{
 			ProjectItem* item = new ProjectItem(prj);
+			item->SetParent(parentFolder);
 
 			item->Parse(ss);
 
@@ -1783,6 +1805,43 @@ namespace Apoc3D
 				parentSect->AddSection(sect);
 		}
 	}
+
+
+	ProjectItem* GetItemGeneric(const String& path, const List<ProjectItem*>& subItems, ProjectFolder* parentFolder)
+	{
+		String itemName, subPath;
+		size_t pos = path.find(PathUtils::DirectorySeparator);
+		if (pos != String::npos)
+		{
+			itemName = path.substr(0, pos);
+			subPath = path.substr(itemName.size() + 1);
+		}
+		else
+		{
+			itemName = path;
+		}
+
+		if (parentFolder && itemName == L".." && subPath.size())
+			return parentFolder->GetItem(subPath);
+
+		for (ProjectItem* pi : subItems)
+		{
+			if (pi->getName() == itemName)
+			{
+				if (subPath.empty())
+					return pi;
+
+				if (pi->getType() == ProjectItemType::Folder)
+				{
+					ProjectFolder* fld = static_cast<ProjectFolder*>(pi->getData());
+					return fld->GetItem(subPath);
+				}
+				return nullptr;
+			}
+		}
+		return nullptr;
+	}
+
 
 	void Project::SetPath(const String& basePath, const String* outputPath)
 	{
@@ -1811,7 +1870,8 @@ namespace Apoc3D
 		}
 	}
 
-	//void ProjectItem::NotifyModified() { m_timeStamp = time(0); }
+	ProjectItem* Project::GetItem(const String& path) { return GetItemGeneric(path, m_items, nullptr); }
+	
 
 	//////////////////////////////////////////////////////////////////////////
 
@@ -1832,7 +1892,8 @@ namespace Apoc3D
 		{ L"Font", ProjectItemType::Font },
 		{ L"FontGlyphDist", ProjectItemType::FontGlyphDist },
 		{ L"UILayout", ProjectItemType::UILayout },
-		{ L"Copy", ProjectItemType::Copy }
+		{ L"Copy", ProjectItemType::Copy },
+		{ L"preset", ProjectItemType::ItemPreset },
 	};
 
 	const TypeDualConverter<TextureFilterType> ProjectUtils::TextureFilterTypeConv =

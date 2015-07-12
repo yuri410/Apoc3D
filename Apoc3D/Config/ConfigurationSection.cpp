@@ -55,10 +55,10 @@ namespace Apoc3D
 		/** Actual parsing/printing functions */
 		float ParsePercentage(const String& val);
 		String PercentageToString(const float& v);
-		
+
 		ColorValue ParseColorValue(const String& str);
 		String ColorValueToString(ColorValue v);
-		
+
 		Vector3 ParseVector3(const String& str);
 		String Vector3ToString(const Vector3& vec);
 
@@ -96,23 +96,41 @@ namespace Apoc3D
 		/*   ConfigurationSection                                               */
 		/************************************************************************/
 
-		ConfigurationSection::ConfigurationSection(const String& name, int capacity)
-			: m_name(name), m_subSection(capacity) { }
-
 		ConfigurationSection::ConfigurationSection(const String& name)
 			: m_name(name) { }
 
-		ConfigurationSection::ConfigurationSection(const ConfigurationSection& another)
-			: m_attributes(another.m_attributes), m_subSection(another.m_subSection), m_name(another.m_name), m_value(another.m_value)
-		{
-			// deep copy sub sections
-			for (ConfigurationSection*& s : m_subSection.getValueAccessor())
-			{
-				ConfigurationSection* newSect = new ConfigurationSection(*s);
+		ConfigurationSection::ConfigurationSection(const String& name, int capacity)
+			: m_name(name), m_subSection(capacity) { }
 
-				s = newSect;
+		ConfigurationSection::ConfigurationSection(const String& name, const String& value)
+			: m_name(name), m_value(value) { }
+
+		ConfigurationSection::ConfigurationSection(const String& name,
+			std::initializer_list<std::pair<String, String>> attribs,
+			std::initializer_list<ConfigurationSection> values)
+			: m_name(name), m_attributes(attribs.size()), m_subSection(values.size())
+		{
+			for (const auto& e : attribs)
+			{
+				m_attributes.Add(e.first, e.second);
+			}
+
+			for (const auto& e : values)
+			{
+				m_subSection.Add(e.getName(), new ConfigurationSection(e));
 			}
 		}
+
+		ConfigurationSection::ConfigurationSection(const ConfigurationSection& o)
+			: m_name(o.m_name), m_value(o.m_value), m_attributes(o.m_attributes), m_subSection(o.m_subSection)
+		{
+			DeepCopySubsections();
+		}
+
+		ConfigurationSection::ConfigurationSection(ConfigurationSection&& o)
+			: m_name(std::move(o.m_name)), m_value(std::move(o.m_value)), m_attributes(std::move(o.m_attributes)), m_subSection(std::move(o.m_subSection))
+		{ }
+
 		ConfigurationSection::~ConfigurationSection()
 		{
 			for (ConfigurationSection* s : m_subSection.getValueAccessor())
@@ -120,6 +138,43 @@ namespace Apoc3D
 				delete s;
 			}
 			m_subSection.Clear();
+		}
+
+		ConfigurationSection& ConfigurationSection::operator=(const ConfigurationSection& o)
+		{
+			if (this != &o)
+			{
+				m_name = o.m_name;
+				m_value = o.m_value;
+
+				m_attributes = o.m_attributes;
+				m_subSection = o.m_subSection;
+
+				DeepCopySubsections();
+			}
+			return *this;
+		}
+		ConfigurationSection& ConfigurationSection::operator=(ConfigurationSection&& o)
+		{
+			if (this != &o)
+			{
+				m_name = std::move(o.m_name);
+				m_value = std::move(o.m_value);
+
+				m_attributes = std::move(o.m_attributes);
+				m_subSection = std::move(o.m_subSection);
+			}
+			return *this;
+		}
+
+		void ConfigurationSection::DeepCopySubsections()
+		{
+			for (ConfigurationSection*& s : m_subSection.getValueAccessor())
+			{
+				ConfigurationSection* newSect = new ConfigurationSection(*s);
+
+				s = newSect;
+			}
 		}
 
 		ConfigurationSection* ConfigurationSection::CreateSubSection(const String& name)
@@ -435,6 +490,74 @@ namespace Apoc3D
 		void ConfigurationSection::SetInts(const int32* v, int32 count)					{ IntsToString(v, count, m_value); }
 		void ConfigurationSection::SetUInts(const uint32* v, int32 count)				{ UIntsToString(v, count, m_value); }
 		void ConfigurationSection::SetVector3s(const Vector3* v, int count)				{ Vector3sToString(v, count, m_value); }
+
+		void ConfigurationSection::Merge(const ConfigurationSection* thatSect, bool noMessages)
+		{
+			// merge attributes
+			for (auto e : thatSect->getAttributes())
+			{
+				if (!hasAttribute(e.Key))
+					AddAttributeString(e.Key, e.Value);
+				else if (!noMessages)
+				{
+					ApocLog(LOG_System, L"[Configuration] " + getName() +
+						L": Ignoring duplicated attribute " + e.Key + L" in " + getName() + L".", LOGLVL_Warning);
+				}
+			}
+
+			if (thatSect->getValue().size())
+			{
+				if (getValue().empty())
+				{
+					SetValue(thatSect->getValue());
+				}
+				else if (!noMessages && getValue() != thatSect->getValue())
+				{
+					ApocLog(LOG_System, L"[Configuration] " + getName() +
+						L": Merging section " + getName() + L" has conflicting values.", LOGLVL_Warning);
+				}
+			}
+
+
+			// merge sub sections
+			for (const ConfigurationSection* thatSubSect : thatSect->getSubSections())
+			{
+				ConfigurationSection* thisSubSect = getSection(thatSubSect->getName());
+
+				if (thisSubSect)
+					thisSubSect->Merge(thatSubSect, noMessages);
+				else
+					AddSection(new ConfigurationSection(*thatSubSect));
+			}
+		}
+		void ConfigurationSection::RemoveIntersection(const ConfigurationSection* thatSect)
+		{
+			for (const ConfigurationSection* thatSubSect : thatSect->getSubSections())
+			{
+				ConfigurationSection* thisSubSect = getSection(thatSubSect->getName());
+
+				if (thisSubSect)
+				{
+					thisSubSect->RemoveIntersection(thatSubSect);
+
+					if (thisSubSect->getSubSectionCount() == 0 && thatSubSect->getSubSectionCount() == 0 &&
+						thisSubSect->getAttributeCount() == 0 && thatSubSect->getAttributeCount() == 0 &&
+						thisSubSect->getValue() == thatSubSect->getValue())
+					{
+						m_subSection.Remove(thisSubSect->getName());
+						continue;
+					}
+				}
+			}
+
+			for (auto e : thatSect->getAttributes())
+			{
+				if (hasAttribute(e.Key) && e.Value == getAttribute(e.Key))
+				{
+					m_attributes.Remove(e.Key);
+				}
+			}
+		}
 
 		int32 ConfigurationSection::GetHashCode() const
 		{

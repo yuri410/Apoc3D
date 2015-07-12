@@ -28,6 +28,7 @@
 
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Collections/HashMap.h"
+#include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Graphics/PixelFormat.h"
 #include "apoc3d/Graphics/RenderSystem/VertexElement.h"
 #include "apoc3d/Project/Properties.h"
@@ -65,7 +66,8 @@ namespace Apoc3D
 		Font,
 		FontGlyphDist,
 		UILayout,
-		Copy
+		Copy,
+		ItemPreset
 	};
 	enum struct TextureFilterType
 	{
@@ -162,6 +164,27 @@ namespace Apoc3D
 		//bool IsDestFileNotBuilt(const String& destinationFile);
 	};
 
+	/** An item preset is a parameter dictionary that other items can inherit from **/
+	class APAPI ProjectItemPreset : public ProjectItemData
+	{
+		RTTI_DERIVED(ProjectItemPreset, ProjectItemData);
+	public:
+		ProjectItemPreset(Project* prj, ProjectItem* item)
+			: ProjectItemData(prj, item) { }
+		~ProjectItemPreset();
+
+		ConfigurationSection* SectionCopy = nullptr;
+
+		virtual List<String> GetAllInputFiles() override { return {}; }
+		virtual List<String> GetAllOutputFiles() override { return {}; }
+
+		virtual ProjectItemType getType() const override { return ProjectItemType::ItemPreset; }
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
+	private:
+
+	};
+
 	class APAPI ProjectCustomItem : public ProjectItemData
 	{
 		RTTI_DERIVED(ProjectCustomItem, ProjectItemData);
@@ -173,7 +196,7 @@ namespace Apoc3D
 		String DestFile;
 		String SourceFile;
 
-		HashMap<String, String> Properties;
+		ParameterDictionary Properties;
 
 		virtual List<String> GetAllInputFiles() override { return MakeInputFileList(SourceFile); }
 		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DestFile); }
@@ -191,7 +214,7 @@ namespace Apoc3D
 		ProjectAssetItemData(Project* prj, ProjectItem* item)
 			: ProjectItemData(prj, item) { }
 	};
-
+	
 	/** 
 	 *  Represents a project folder 
 	 *
@@ -224,6 +247,8 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 		void SavePackBuildConfig(ConfigurationSection* sect);
+
+		ProjectItem* GetItem(const String& path);
 
 	private:
 		void AddPackBuildSubItems(ConfigurationSection* sect, int32& idx);
@@ -623,6 +648,8 @@ namespace Apoc3D
 		void Parse(const ConfigurationSection* sect);
 		ConfigurationSection* Save(bool savingBuild);
 
+		ProjectItem* SearchItem(const String& path) const;
+
 		bool IsNotBuilt() const;
 
 		bool IsOutDated();		/** Check if the item's built version is outdated */
@@ -650,6 +677,9 @@ namespace Apoc3D
 		String m_name;
 
 		uint32 m_prevBuildSettingStamp = 0;
+
+		String m_inheritSouceItem;
+
 	};
 
 	struct ProjectBuildScript
@@ -689,6 +719,9 @@ namespace Apoc3D
 
 		/**  Sets the absolute paths for the project. */
 		void SetPath(const String& basePath, const String* outputPath);
+
+
+		ProjectItem* GetItem(const String& path);
 
 
 		const String& getName() const { return m_name; }

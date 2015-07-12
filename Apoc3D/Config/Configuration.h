@@ -87,7 +87,6 @@ namespace Apoc3D
 			ChildTable::ValueAccessor getSubSections() const { return m_sections.getValueAccessor(); }
 
 		private:
-			void MergeSubsection(ConfigurationSection* thisSectParent, ConfigurationSection* thisSect, ConfigurationSection* thatSect, bool noMessages);
 
 			String m_name;
 			ChildTable m_sections;
