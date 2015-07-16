@@ -60,6 +60,7 @@ namespace Apoc3D
 			*/
 			class APAPI Sprite
 			{
+				friend class SpriteBeginEndScope;
 			public:
 				typedef Point Point_A4[4];
 				typedef PointF PointF_A4[4];
@@ -209,6 +210,18 @@ namespace Apoc3D
 			private:
 				Sprite* m_sprite;
 				Matrix m_oldTransform;
+			};
+
+			class APAPI SpriteBeginEndScope
+			{
+			public:
+				SpriteBeginEndScope(Sprite* spr, Sprite::SpriteSettings settings);
+				~SpriteBeginEndScope();
+
+			private:
+				Sprite* m_sprite;
+				bool m_oldBegan;
+				Sprite::SpriteSettings m_oldSettings;
 			};
 		}
 	}

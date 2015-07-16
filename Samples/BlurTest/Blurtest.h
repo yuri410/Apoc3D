@@ -33,7 +33,7 @@ namespace Sample_GUI
 
 		Texture* m_original;
 
-		//Texture* m_uploadTest;
+		Texture* m_uploadTest;
 
 		RenderTarget* m_blur1;
 		RenderTarget* m_blur2;

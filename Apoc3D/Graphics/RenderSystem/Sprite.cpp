@@ -284,7 +284,26 @@ namespace Apoc3D
 				}
 			}
 
+			//////////////////////////////////////////////////////////////////////////
 
+			SpriteBeginEndScope::SpriteBeginEndScope(Sprite* spr, Sprite::SpriteSettings settings)
+				: m_sprite(spr), m_oldBegan(spr->m_began), m_oldSettings((Sprite::SpriteSettings)(Sprite::SPR_AlphaBlended | Sprite::SPR_RestoreState))
+			{
+				if (spr->m_began)
+				{
+					m_oldSettings = m_sprite->getSettings();
+					m_sprite->End();
+				}
+				m_sprite->Begin(settings);
+			}
+			SpriteBeginEndScope::~SpriteBeginEndScope()
+			{
+				m_sprite->End();
+				if (m_oldBegan)
+				{
+					m_sprite->Begin(m_oldSettings);
+				}
+			}
 		}
 	}
 }
