@@ -174,7 +174,7 @@ namespace SampleFont
 		{
 			Apoc3D::Math::Rectangle testArea = { { (int32)(m_test*areaSize.Width), 0 }, { 5, areaSize.Height } };
 			m_sprite->Draw(SystemUI::GetWhitePixel(), testArea, nullptr, CV_Red);
-			english->DrawString(m_sprite, L"No stuttering should occur.", testArea.getBottomRight() - Point(-3, 35), CV_Red);
+			english->DrawString(m_sprite, L"No stuttering should occur", testArea.getBottomRight() - Point(-3, 35), CV_Red);
 			english->DrawString(m_sprite, L"on the movement of this line.", testArea.getBottomRight() - Point(-3, 20), CV_Red);
 		}
 

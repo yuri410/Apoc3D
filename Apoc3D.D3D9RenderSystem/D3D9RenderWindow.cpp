@@ -149,10 +149,10 @@ namespace Apoc3D
 
 				m_visisble = v;
 			}
-			void D3D9RenderWindow::SetupFixedFrameTime(bool enabled, float targetTime)
+			void D3D9RenderWindow::SetupTimeStepMode(TimeStepMode type, float refFrameTime)
 			{
-				m_targetElapsedTime = targetTime;
-				m_useFixedTimeStep = enabled;
+				m_referenceElapsedTime = refFrameTime;
+				m_timeStepMode = type;
 			}
 
 			void D3D9RenderWindow::Minimize()
@@ -276,55 +276,53 @@ namespace Apoc3D
 
 				float fps = getFPS();
 
-				if (m_useFixedTimeStep)
-				{
-					m_accumulatedDt_fixedStep += dt;
-					m_accumulatedDt_fixedStepVar += dt;
-
-					int32 maxFrameSkip = m_maxSkipFrameCount_fixedStep;
+				int32 maxFrameSkip = m_maxSkipFrameCount;
 #if _DEBUG
-					if (maxFrameSkip > 5)
-						maxFrameSkip = 5;
+				if (maxFrameSkip > 5)
+					maxFrameSkip = 5;
 #endif
 
-					bool renderingSlow = m_accumulatedDt_fixedStep > m_targetElapsedTime * 1.2f;
+				bool renderingSlow = m_accumulatedDt_fixedStep > m_referenceElapsedTime * 1.2f;
 
-					if (renderingSlow)
-						m_slowRenderFrameHits_fixedStep++;
-					else
-						m_slowRenderFrameHits_fixedStep--;
+				if (renderingSlow)
+					m_slowRenderFrameHits++;
+				else
+					m_slowRenderFrameHits--;
 
-					renderingSlow = m_slowRenderFrameHits_fixedStep > 5;
+				renderingSlow = m_slowRenderFrameHits > 5;
 
+				if (m_timeStepMode == TimeStepMode::FixedStep)
+				{
+					m_accumulatedDt_fixedStep += dt;
 
 					// keep up update calls:
 					// update until it's time to draw the next frame
 
-					int32 numUpdatesNeeded = (int32)(m_accumulatedDt_fixedStep / m_targetElapsedTime);
+					int32 numUpdatesNeeded = (int32)(m_accumulatedDt_fixedStep / m_referenceElapsedTime);
 					if (numUpdatesNeeded > maxFrameSkip)
 						numUpdatesNeeded = maxFrameSkip;
 
 					float iterationFullDt = m_accumulatedDt_fixedStep;
-					m_accumulatedDt_fixedStep = fmod(fabs(m_accumulatedDt_fixedStep), m_targetElapsedTime);
+					m_accumulatedDt_fixedStep = fmod(fabs(m_accumulatedDt_fixedStep), m_referenceElapsedTime);
 					iterationFullDt -= m_accumulatedDt_fixedStep;
 
 					for (int32 i = 0; i < numUpdatesNeeded; i++)
 					{
-						GameTime gt(m_targetElapsedTime, iterationFullDt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
+						GameTime gt(m_referenceElapsedTime, iterationFullDt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
 						D3D9_Update(&gt);
 					}
 
 					if (dt > 0)
 					{
-						numUpdatesNeeded = (int32)(dt / m_targetElapsedTime);
+						numUpdatesNeeded = (int32)(dt / m_referenceElapsedTime);
 						if (numUpdatesNeeded > maxFrameSkip)
 							numUpdatesNeeded = maxFrameSkip;
 						if (numUpdatesNeeded < 1)
 							numUpdatesNeeded = 1;
 
 						float dtPerIteration = dt / numUpdatesNeeded;
-						if (dtPerIteration > m_targetElapsedTime)
-							dtPerIteration = m_targetElapsedTime;
+						if (dtPerIteration > m_referenceElapsedTime)
+							dtPerIteration = m_referenceElapsedTime;
 
 						for (int32 i = 0; i < numUpdatesNeeded; i++)
 						{
@@ -335,28 +333,30 @@ namespace Apoc3D
 
 					GameTime gt(iterationFullDt, dt, m_accumulatedDt_fixedStep, 1, fps, renderingSlow);
 					D3D9_DrawFrame(&gt);
+				}
+				else if (m_timeStepMode == TimeStepMode::Constrainted)
+				{
+					if (dt > 0)
+					{
+						int32 numUpdatesNeeded = (int32)(dt / m_referenceElapsedTime);
+						if (numUpdatesNeeded > maxFrameSkip)
+							numUpdatesNeeded = maxFrameSkip;
+						if (numUpdatesNeeded < 1)
+							numUpdatesNeeded = 1;
 
-					//if (dt > 0)
-					//{
-					//	int32 numUpdatesNeeded = (int32)(dt / m_targetElapsedTime);
-					//	if (numUpdatesNeeded > maxFrameSkip)
-					//		numUpdatesNeeded = maxFrameSkip;
-					//	if (numUpdatesNeeded < 1)
-					//		numUpdatesNeeded = 1;
+						float dtPerIteration = dt / numUpdatesNeeded;
+						if (dtPerIteration > m_referenceElapsedTime)
+							dtPerIteration = m_referenceElapsedTime;
 
-					//	float dtPerIteration = dt / numUpdatesNeeded;
-					//	if (dtPerIteration > m_targetElapsedTime)
-					//		dtPerIteration = m_targetElapsedTime;
+						for (int32 i = 0; i < numUpdatesNeeded; i++)
+						{
+							GameTime gt(dtPerIteration, dt / numUpdatesNeeded, 0, numUpdatesNeeded, fps, renderingSlow);
+							D3D9_Update(&gt);
+						}
+					}
 
-					//	for (int32 i = 0; i < numUpdatesNeeded; i++)
-					//	{
-					//		GameTime gt(dtPerIteration, dt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
-					//		D3D9_Update(&gt);
-					//	}
-					//}
-					//
-					//GameTime gt(dt, dt, m_accumulatedDt_fixedStep, 1, fps, renderingSlow);
-					//D3D9_DrawFrame(&gt);
+					GameTime gt(dt, dt, 0, 1, fps, renderingSlow);
+					D3D9_DrawFrame(&gt);
 				}
 				else
 				{

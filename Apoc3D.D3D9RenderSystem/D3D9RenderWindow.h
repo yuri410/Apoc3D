@@ -81,7 +81,7 @@ namespace Apoc3D
 				virtual bool getIsActive() const { return m_active; }
 
 				virtual void SetVisible(bool v) override;
-				virtual void SetupFixedFrameTime(bool enabled, float targetTime) override;
+				virtual void SetupTimeStepMode(TimeStepMode type, float refFrameTime) override;
 
 				void D3D9_Initialize(bool isDeviceReset);
 				void D3D9_Finalize(bool isDeviceReset);
@@ -149,18 +149,20 @@ namespace Apoc3D
 				GameWindow* m_gameWindow;
 				GameClock* m_gameClock;
 
-				// fixed time step states
-				int32 m_maxSkipFrameCount_fixedStep = 10;
-				float m_accumulatedDt_fixedStep = 0;
-				int32 m_slowRenderFrameHits_fixedStep = 0;
+				TimeStepMode m_timeStepMode = TimeStepMode::FixedStep;
 
-				float m_accumulatedDt_fixedStepVar = 0;
+				int32 m_maxSkipFrameCount = 10;
+				int32 m_slowRenderFrameHits = 0;
+
+				// fixed time step states
+				float m_accumulatedDt_fixedStep = 0;
+
 
 				int32 m_inactiveSleepTime = 20;
 
-				float m_targetElapsedTime = 1.0f / 60.0f;
+				float m_referenceElapsedTime = 1.0f / 60.0f;
 
-				bool m_useFixedTimeStep = true;
+				
 				bool m_active = false;
 
 			};

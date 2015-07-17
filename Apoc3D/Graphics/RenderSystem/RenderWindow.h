@@ -100,6 +100,13 @@ namespace Apoc3D
 
 			};
 
+			enum struct TimeStepMode
+			{
+				Raw,
+				Constrainted,
+				FixedStep
+			};
+
 			/** Represents a window with rendered graphics displayed in its client area. */
 			class APAPI RenderWindow : public RenderView
 			{
@@ -123,7 +130,7 @@ namespace Apoc3D
 				virtual String getTitle() = 0;
 				virtual void setTitle(const String& name) = 0;
 
-				virtual void SetupFixedFrameTime(bool enabled, float targetTime = 1.0f / 60.0f) = 0;
+				virtual void SetupTimeStepMode(TimeStepMode type, float refFrameTime = 1.0f / 60.0f) = 0;
 
 				virtual void SetVisible(bool v) = 0;
 
