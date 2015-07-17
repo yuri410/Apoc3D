@@ -5,6 +5,7 @@
 #include "../Common.h"
 #include "apoc3d/Collections/Queue.h"
 #include "apoc3d/Meta/EventDelegate.h"
+#include "apoc3d/Core/GameTime.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::IO;
@@ -21,11 +22,7 @@ namespace Apoc3D
 			{
 				uint32 Index;
 
-				float ElapsedTime;
-				float ElapsedRealTime;
-				float TotalTime;
-				float TotalRealTime;
-				float FPS;
+				Core::GameTime Time;
 
 				byte MouseStateSize;
 				char MouseState[128];

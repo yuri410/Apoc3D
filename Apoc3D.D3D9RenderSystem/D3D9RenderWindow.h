@@ -128,6 +128,7 @@ namespace Apoc3D
 				*  checking for collisions, gathering input, playing audio and etc.
 				*/
 				void D3D9_Update(const GameTime* time);
+				void D3D9_UpdateConstrainedVarTimeStep(const GameTime* time);
 
 				
 				bool D3D9_OnFrameStart();
@@ -150,9 +151,10 @@ namespace Apoc3D
 
 				// fixed time step states
 				int32 m_maxSkipFrameCount_fixedStep = 10;
-				float m_totalGameTime_fixedStep = 0;
 				float m_accumulatedDt_fixedStep = 0;
 				int32 m_slowRenderFrameHits_fixedStep = 0;
+
+				float m_accumulatedDt_fixedStepVar = 0;
 
 				int32 m_inactiveSleepTime = 20;
 

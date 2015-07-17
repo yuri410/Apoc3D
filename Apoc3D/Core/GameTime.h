@@ -32,30 +32,24 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		/**
-		 *  Contains the current timing state of the game.
-		 */
+		/** Contains the current timing state of the game. */
 		struct GameTime
 		{
-			GameTime(float elapsedTime, float totalTime, float elapsedRTime, float totalRTime, 
-				float fps, bool isRenderingSlow)
-				: ElapsedTime(elapsedTime), TotalTime(totalTime), 
-				ElapsedRealTime(elapsedRTime),TotalRealTime(TotalRealTime), 
+			GameTime() { }
+
+			GameTime(float elapsedRTime, float fps)
+				: ElapsedTime(elapsedRTime), ElapsedRealTime(elapsedRTime), FPS(fps) { }
+
+			GameTime(float elapsedTime, float elapsedRTime, float elapsedTimeSubstep, int32 iteractionCount, float fps, bool isRenderingSlow)
+				: ElapsedTime(elapsedTime), ElapsedTimeSubstep(elapsedTimeSubstep),
+				ElapsedRealTime(elapsedRTime), IterationCount(iteractionCount),
 				FPS(fps), IsRenderingSlow(isRenderingSlow) { }
+
 
 			~GameTime() { }
 
-			/**
-			*  Gets the amount of game time since the start of the game, in seconds.
-			*/
-			float getTotalTime() const { return TotalTime; }
-			/**
-			*  Gets 
-			*/
 			float getElapsedTime() const { return ElapsedTime; }
 
-			float getTotalRealTime() const { return TotalRealTime; }
-			
 			float getElapsedRealTime() const { return ElapsedRealTime; }
 
 			float getFPS() const { return FPS; }
@@ -64,30 +58,38 @@ namespace Apoc3D
 			 * The elapsed game time since last update, in seconds.
 			 *
 			 * In fixed time step system, ElapsedTime is always the intended TargetElapsedTime,
-			 * and Update is called 1 or more times to catch up with rendering.
+			 * and Update is called 1 or more times to catch up with rendering overhead.
 			 *
 			 * Otherwise this is same as ElapsedRealTime.
 			 */
-			float ElapsedTime;
-			float TotalTime;
+			float ElapsedTime = 0;
 
 			/**
 			 * The elapsed real game time since last update, in seconds.
 			 *
-			 * This "real" version of ElapsedTime is intended for use in fixed time system configurations 
-			 * to get the real ElapsedTime instead of the TargetElapsedTime.
+			 * This "real" version of ElapsedTime is intended for to get the real ElapsedTime instead of the TargetElapsedTime
+			 * when fixed time step is used.
 			 *
 			 * In fixed time step system, Update() may be called more than one while Render() is only invoked once in a frame.
 			 * ElapsedTime is always the intended TargetElapsedTime, and Update is called 1 or more times to catch up with rendering.
 			 *
 			 */
-			float ElapsedRealTime;
-			float TotalRealTime;
+			float ElapsedRealTime = 0;
 
-			float FPS;
+			float ElapsedTimeSubstep = 0;
+
+			/**
+			 * The number of iterations in a fixed time step system.
+			 */
+			int32 IterationCount = 1;
+
+			float FPS = 0;
 
 			bool IsRenderingSlow = false;
 
+
+			void Write(IO::BinaryWriter* bw);
+			void Read(IO::BinaryReader* br);
 		};
 	};
 };

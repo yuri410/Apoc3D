@@ -152,6 +152,7 @@ namespace Apoc3D
 				void OnLoad();
 				void OnUnload();
 				void OnUpdate(const GameTime* time);
+				void OnUpdateConstrainedVarTimeStep(const GameTime* time);
 				void OnDraw(const GameTime* time);
 
 				RenderWindowHandler* m_evtHandler = nullptr;

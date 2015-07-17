@@ -32,7 +32,7 @@ using namespace Apoc3D::VFS;
 namespace Apoc3DEx
 {
 	Game::Game(RenderWindow* wnd)
-		: m_window(wnd), m_correctedFrameTime(0,0,0,0,0,false)
+		: m_window(wnd)
 	{
 		m_inputCreationParam.UseKeyboard = true;
 		m_inputCreationParam.UseMouse = true;

@@ -242,11 +242,7 @@ namespace Apoc3D
 		{
 			Index = br->ReadUInt32();
 
-			ElapsedTime = br->ReadSingle();
-			ElapsedRealTime = br->ReadSingle();
-			TotalTime = br->ReadSingle();
-			TotalRealTime = br->ReadSingle();
-			FPS = br->ReadSingle();
+			Time.Read(br);
 
 			MouseStateSize = (byte)br->ReadByte();
 			br->ReadBytes(MouseState, MouseStateSize);
@@ -258,11 +254,7 @@ namespace Apoc3D
 		{
 			bw->WriteUInt32(Index);
 
-			bw->WriteSingle(ElapsedTime);
-			bw->WriteSingle(ElapsedRealTime);
-			bw->WriteSingle(TotalTime);
-			bw->WriteSingle(TotalRealTime);
-			bw->WriteSingle(FPS);
+			Time.Write(bw);
 
 			bw->WriteByte((char)MouseStateSize);
 			bw->Write(MouseState, MouseStateSize);
@@ -336,12 +328,7 @@ namespace Apoc3D
 
 			FrameInputData::FrameInfo frame;
 
-			frame.Index = m_currentFrame;
-			frame.ElapsedTime = time->getElapsedTime();
-			frame.ElapsedRealTime = time->getElapsedRealTime();
-			frame.FPS = time->getFPS();
-			frame.TotalRealTime = time->getTotalRealTime();
-			frame.TotalTime = time->getTotalTime();
+			frame.Time = *time;
 
 			frame.MouseStateSize = 0;
 			frame.KeyboardStateSize = 0;
@@ -419,7 +406,7 @@ namespace Apoc3D
 			FrameInputData::FrameInfo fi;
 			m_content.ReadFrame(fi);
 
-			newTime = GameTime(fi.ElapsedTime, fi.TotalTime, fi.ElapsedRealTime, fi.TotalRealTime, fi.FPS, false);
+			newTime = fi.Time;
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			Keyboard* kb = InputAPIManager::getSingleton().getKeyboard();

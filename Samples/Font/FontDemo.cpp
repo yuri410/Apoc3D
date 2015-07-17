@@ -12,6 +12,7 @@ namespace SampleFont
 	FontDemo::FontDemo(RenderWindow* wnd)
 		: Game(wnd), m_currentPressure(5)
 	{
+		//wnd->SetupFixedFrameTime(false);
 	}
 
 	FontDemo::~FontDemo()
@@ -63,13 +64,13 @@ namespace SampleFont
 		if (kb->IsKeyDown(KEY_EQUALS))
 		{
 			m_currentPressure++;
-			if (m_currentPressure>MaxPressure)
+			if (m_currentPressure > MaxPressure)
 				m_currentPressure = MaxPressure;
 		}
 		if (kb->IsKeyDown(KEY_MINUS))
 		{
 			m_currentPressure--;
-			if (m_currentPressure<1)
+			if (m_currentPressure < 1)
 				m_currentPressure = 1;
 		}
 
@@ -84,6 +85,19 @@ namespace SampleFont
 		m_wordDissolveProgress += time->getElapsedTime() * 5;
 		if (m_wordDissolveProgress > 5)
 			m_wordDissolveProgress = 0;
+
+		
+		//float amt = time->ElapsedTimeSubstep / time->ElapsedTime;
+		//m_testI = Math::Lerp(oldTest, m_test, amt);
+	}
+	void FontDemo::UpdateConstrainedVarTimeStep(const GameTime* time)
+	{
+		float d = m_testDirection*0.1f;
+		m_test += time->ElapsedTime * d;
+		if (m_test > 1)
+			m_testDirection = -1;
+		else if (m_test < 0)
+			m_testDirection = 1;
 
 	}
 	void FontDemo::Draw(const GameTime* time)
@@ -155,6 +169,14 @@ namespace SampleFont
 
 		english->DrawString(m_sprite, L"Move Control Code: " + ControlCodes::MakeMoveControl({ 15, 0 }, false, true) + L"[P]",
 			Point(200, areaSize.Height - 50), CV_White);
+
+
+		{
+			Apoc3D::Math::Rectangle testArea = { { (int32)(m_test*areaSize.Width), 0 }, { 5, areaSize.Height } };
+			m_sprite->Draw(SystemUI::GetWhitePixel(), testArea, nullptr, CV_Red);
+			english->DrawString(m_sprite, L"No stuttering should occur.", testArea.getBottomRight() - Point(-3, 35), CV_Red);
+			english->DrawString(m_sprite, L"on the movement of this line.", testArea.getBottomRight() - Point(-3, 20), CV_Red);
+		}
 
 		m_sprite->End();
 

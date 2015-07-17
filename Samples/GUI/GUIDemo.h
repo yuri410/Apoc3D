@@ -50,6 +50,8 @@ namespace Sample_GUI
 		float m_signal2 = 0;
 		int32 m_testVal = 0;
 
+		float m_timer = 0;
+
 		Sprite* m_sprite;
     };
 }

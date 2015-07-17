@@ -125,6 +125,11 @@ namespace Apoc3D
 				if (m_evtHandler)
 					m_evtHandler->Update(time);
 			}
+			void RenderWindow::OnUpdateConstrainedVarTimeStep(const GameTime* time)
+			{
+				if (m_evtHandler)
+					m_evtHandler->UpdateConstrainedVarTimeStep(time);
+			}
 			void RenderWindow::OnFrameStart()
 			{
 				if (m_evtHandler)

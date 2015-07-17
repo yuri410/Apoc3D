@@ -329,6 +329,7 @@
     <ClInclude Include="Vfs\VFSCommon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\GameTime.cpp" />
     <ClCompile Include="Core\Pool.cpp" />
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="Collections\CollectionsCommon.cpp" />

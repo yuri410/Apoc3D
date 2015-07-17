@@ -35,6 +35,8 @@ namespace SampleFont
 		 */
 		virtual void Update(const GameTime* time);
 
+		virtual void UpdateConstrainedVarTimeStep(const GameTime* time);
+
 		/** This is called when the game should draw a frame.
 		*/
 		virtual void Draw(const GameTime* time);
@@ -55,6 +57,10 @@ namespace SampleFont
 		float m_lengthDissolveProgress = 0;
 		float m_wordDissolveProgress = 0;
 		float m_allDissolveProgress = 0;
+
+		float m_test = 0;
+		//float m_testI = 0;
+		float m_testDirection = 1;
 	};
 }
 #endif
