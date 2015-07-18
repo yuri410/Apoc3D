@@ -38,6 +38,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Math/MathCommon.h"
 
 using namespace Apoc3D::Utility;
 
@@ -154,6 +155,7 @@ namespace Apoc3D
 				m_referenceElapsedTime = refFrameTime;
 				m_timeStepMode = type;
 			}
+			TimeStepMode D3D9RenderWindow::GetCurrentTimeStepMode() { return m_timeStepMode; }
 
 			void D3D9RenderWindow::Minimize()
 			{
@@ -263,7 +265,7 @@ namespace Apoc3D
 				if (m_isExiting)
 					return;
 
-				if (!m_active)
+				if (!m_active && m_inactiveSleepTime > 0)
 					Sleep(m_inactiveSleepTime);
 
 				m_gameClock->Step();
@@ -314,7 +316,7 @@ namespace Apoc3D
 
 					if (dt > 0)
 					{
-						numUpdatesNeeded = (int32)(dt / m_referenceElapsedTime);
+						numUpdatesNeeded = (int32)(ceil(dt / m_referenceElapsedTime));
 						if (numUpdatesNeeded > maxFrameSkip)
 							numUpdatesNeeded = maxFrameSkip;
 						if (numUpdatesNeeded < 1)
@@ -334,11 +336,11 @@ namespace Apoc3D
 					GameTime gt(iterationFullDt, dt, m_accumulatedDt_fixedStep, 1, fps, renderingSlow);
 					D3D9_DrawFrame(&gt);
 				}
-				else if (m_timeStepMode == TimeStepMode::Constrainted)
+				else if (m_timeStepMode == TimeStepMode::Constrained)
 				{
 					if (dt > 0)
 					{
-						int32 numUpdatesNeeded = (int32)(dt / m_referenceElapsedTime);
+						int32 numUpdatesNeeded = (int32)(ceil(dt / m_referenceElapsedTime));
 						if (numUpdatesNeeded > maxFrameSkip)
 							numUpdatesNeeded = maxFrameSkip;
 						if (numUpdatesNeeded < 1)

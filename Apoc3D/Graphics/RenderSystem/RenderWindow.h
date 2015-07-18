@@ -103,7 +103,7 @@ namespace Apoc3D
 			enum struct TimeStepMode
 			{
 				Raw,
-				Constrainted,
+				Constrained,
 				FixedStep
 			};
 
@@ -131,8 +131,13 @@ namespace Apoc3D
 				virtual void setTitle(const String& name) = 0;
 
 				virtual void SetupTimeStepMode(TimeStepMode type, float refFrameTime = 1.0f / 60.0f) = 0;
+				virtual TimeStepMode GetCurrentTimeStepMode() = 0;
 
 				virtual void SetVisible(bool v) = 0;
+
+
+				void setInactiveSleepTime(int32 ms) { m_inactiveSleepTime = ms; }
+				int32 getInactiveSleepTime() const { return m_inactiveSleepTime; }
 
 				/** Represents if the window is activated. */
 				virtual bool getIsActive() const = 0;
@@ -166,6 +171,9 @@ namespace Apoc3D
 				bool m_isExiting = false;
 
 				bool m_visisble = true;
+
+				int32 m_inactiveSleepTime = 20;
+
 			};
 
 		}

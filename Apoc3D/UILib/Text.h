@@ -48,6 +48,8 @@ namespace Apoc3D
 			bool AutosizeX = false;
 			bool AutosizeY = false;
 
+			int32 AdditionalLineSpacing = 0;
+
 			LabelEvent eventMouseHover;
 			LabelEvent eventMouseOut;
 			LabelEvent eventPress;
@@ -73,7 +75,7 @@ namespace Apoc3D
 
 				List<String> LinkTextLines;
 
-				void GetLineMetrics(int32 idx, const String& line, Font* fnt, TextRenderSettings& ts, Point& size, Point& off) const;
+				void GetLineMetrics(int32 idx, const String& line, Font* fnt, int32 lineHeight, TextRenderSettings& ts, Point& size, Point& off) const;
 			};
 
 			void Initialize(const StyleSkin* skin);
@@ -88,6 +90,8 @@ namespace Apoc3D
 			void OnMouseOut();
 			void OnPress();
 			void OnRelease();
+
+			int32 getLineHeight();
 
 			String m_text;
 			List<String> m_lines;

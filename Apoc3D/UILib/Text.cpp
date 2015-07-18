@@ -153,7 +153,7 @@ namespace Apoc3D
 			}
 			if (AutosizeY)
 			{
-				m_size.Y = static_cast<int>(m_fontRef->getTextBackgroundHeight(m_lines.getCount()));
+				m_size.Y = static_cast<int>(m_fontRef->getTextBackgroundHeight(m_lines.getCount())) + Math::Max(0, (m_lines.getCount() - 1)*AdditionalLineSpacing);
 			}
 
 
@@ -290,7 +290,7 @@ namespace Apoc3D
 					{
 						Point lineSize;
 						Point lineOff;
-						e.GetLineMetrics(i, m_lines[i], m_fontRef, TextSettings, lineSize, lineOff);
+						e.GetLineMetrics(i, m_lines[i], m_fontRef, getLineHeight(), TextSettings, lineSize, lineOff);
 
 						Apoc3D::Math::Rectangle area(drawPos + lineOff, lineSize);
 
@@ -361,7 +361,7 @@ namespace Apoc3D
 				{
 					TextSettings.Draw(sprite, m_fontRef, line, drawPos, m_size, Enabled);
 
-					drawPos.Y += m_fontRef->getLineHeightInt();
+					drawPos.Y += getLineHeight();
 				}
 			}
 
@@ -376,8 +376,7 @@ namespace Apoc3D
 
 					Point lineSize;
 					Point lineOff;
-					e.GetLineMetrics(lineIdx, m_lines[lineIdx], m_fontRef, TextSettings, lineSize, lineOff);
-
+					e.GetLineMetrics(lineIdx, m_lines[lineIdx], m_fontRef, getLineHeight(), TextSettings, lineSize, lineOff);
 
 					TextSettings.DrawHyperLinkText(sprite, m_fontRef, e.LinkTextLines[i], lineOff + drawPos, Enabled, e.MouseHover, 1);
 				}
@@ -413,7 +412,12 @@ namespace Apoc3D
 			}
 		}
 
-		void Label::HyperLinkRange::GetLineMetrics(int32 i, const String& line, Font* fnt, TextRenderSettings& ts, Point& size, Point& off) const
+		int32 Label::getLineHeight()
+		{
+			return AdditionalLineSpacing + m_fontRef->getLineHeightInt();
+		}
+
+		void Label::HyperLinkRange::GetLineMetrics(int32 i, const String& line, Font* fnt, int32 lineHeight, TextRenderSettings& ts, Point& size, Point& off) const
 		{
 			Point lineSize = fnt->MeasureString(line);
 			Point tofs = ts.GetTextOffset(lineSize, lineSize);
@@ -426,7 +430,7 @@ namespace Apoc3D
 			{
 				off.X = 0;
 			}
-			off.Y = fnt->getLineHeightInt() * i;
+			off.Y = lineHeight * i;
 
 			if (i == StartLine && i == EndLine)
 			{

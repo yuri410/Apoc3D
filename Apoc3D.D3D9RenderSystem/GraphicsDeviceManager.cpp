@@ -131,7 +131,7 @@ namespace Apoc3D
 				if (!m_device)
 					return;
 
-				if (m_deviceLost || !m_game->getIsActive())
+				if (m_deviceLost)
 					Sleep(50);
 
 				if (m_deviceLost)

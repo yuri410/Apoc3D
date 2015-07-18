@@ -82,6 +82,7 @@ namespace Apoc3D
 
 				virtual void SetVisible(bool v) override;
 				virtual void SetupTimeStepMode(TimeStepMode type, float refFrameTime) override;
+				virtual TimeStepMode GetCurrentTimeStepMode() override;
 
 				void D3D9_Initialize(bool isDeviceReset);
 				void D3D9_Finalize(bool isDeviceReset);
@@ -158,7 +159,6 @@ namespace Apoc3D
 				float m_accumulatedDt_fixedStep = 0;
 
 
-				int32 m_inactiveSleepTime = 20;
 
 				float m_referenceElapsedTime = 1.0f / 60.0f;
 
