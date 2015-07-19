@@ -64,6 +64,8 @@ namespace Apoc3D
 			virtual void setPosition(int64 offset) = 0;
 			virtual int64 getPosition() = 0;
 
+			bool isEndofStream() { return getPosition() >= getLength(); }
+
 			virtual int64 Read(char* dest, int64 count) = 0;
 			
 			virtual void Write(const char* src, int64 count) = 0;
