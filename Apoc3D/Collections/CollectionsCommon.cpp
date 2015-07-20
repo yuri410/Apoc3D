@@ -132,6 +132,8 @@ namespace Apoc3D
 
 
 			template<> String _ToString<std::string>::Invoke(const std::string& str) { return StringUtils::toPlatformWideString(str); }
+			template<> String _ToString<const char*>::Invoke(const char* const& str) { return StringUtils::toPlatformWideString(str); }
+			template<> String _ToString<const wchar_t*>::Invoke(const wchar_t* const& str) { return str; }
 
 			template<> String _ToString<int16>::Invoke(const int16& v) { return StringUtils::IntToString(v); }
 			template<> String _ToString<int32>::Invoke(const int32& v) { return StringUtils::IntToString(v); }

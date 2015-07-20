@@ -39,14 +39,10 @@ namespace Apoc3D
 		template<typename T, typename = void>
 		struct EqualityComparer
 		{
-			/** 
-			 *  Determines whether the specified objects are equal.
-			 */
+			/** Determines whether the specified objects are equal. */
 			static bool Equals(const T& x, const T& y) { return x == y; }
 			
-			/** 
-			 *  Returns a hash code for the specified object.
-			 */
+			/** Returns a hash code for the specified object. */
 			static int32 GetHashCode(const T& obj);
 		};
 
