@@ -1,5 +1,6 @@
 #include "FbxConverter.h"
 
+#ifndef DISABLE_FBX
 #include "BuildConfig.h"
 #include "BuildSystem.h"
 
@@ -1612,3 +1613,19 @@ namespace APBuild
 		}
 	}
 }
+
+#else
+
+namespace APBuild
+{
+	void FbxConverter::Import(const ProjectResModel& config)
+	{
+		if (!File::FileExists(config.SrcFile))
+		{
+			BuildSystem::LogError(config.SrcFile, L"FXB not supported as configured. (DISABLE_FBX) ");
+			return;
+		}
+	}
+}
+
+#endif

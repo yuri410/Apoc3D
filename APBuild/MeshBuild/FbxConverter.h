@@ -2,6 +2,8 @@
 
 #include "../APBCommon.h"
 
+#ifndef DISABLE_FBX
+
 #include <fbxsdk.h>
 
 #define MAXBONES_PER_VERTEX 4
@@ -168,8 +170,7 @@ namespace APBuild
 
 		};
 
-		/** 
-		*/
+		/**  */
 		class FIMesh
 		{
 		private:
@@ -552,8 +553,8 @@ namespace APBuild
 		void ProcessScene(FbxScene* pScene);
 		void ProcessMaterials(FbxScene* pScene);
 		void ProcessAnimations(FbxScene* pScene);
-		/** Recursively process all the animation of a specified node and all its children. 
-		*/
+
+		/** Recursively process all the animation of a specified node and all its children. */
 		void ProcessAnimation(FbxNode* pNode, const char* strTakeName, float fFrameRate, float fStart, float fStop);
 		void ProcessNode(FbxNode* pNode, FbxNodeAttribute::EType attributeType);
 		void ProcessSkeleton(FbxNode* pNode);
@@ -587,3 +588,16 @@ namespace APBuild
 		static void Import(const ProjectResModel& config);
 	};
 }
+
+#else
+
+namespace APBuild
+{
+	class FbxConverter
+	{
+	public:
+		static void Import(const ProjectResModel& config);
+	};
+}
+
+#endif
