@@ -406,7 +406,10 @@ namespace Apoc3D
 							colIndex++;
 						}
 
-						map.AddOrReplace(categoryName + "_" + entryName, { entryContent, entryExtra });
+						if (colIndex > 1)
+						{
+							map.AddOrReplace(categoryName + "_" + entryName, { entryContent, entryExtra });
+						}
 					}
 				}
 			}
