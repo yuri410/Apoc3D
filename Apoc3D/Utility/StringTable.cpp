@@ -7,7 +7,7 @@
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/VFS/ResourceLocation.h"
 #include "apoc3d/Utility/StringUtils.h"
-
+#include "apoc3d/Library/tinyxml.h"
 
 namespace Apoc3D
 {
@@ -352,6 +352,69 @@ namespace Apoc3D
 
 		//////////////////////////////////////////////////////////////////////////
 
+
+		void ExcelXmlStringTableFormat::Read(Stream& strm, StringTableMap& map)
+		{
+			TiXmlDocument doc;
+			doc.Load(strm, TIXML_ENCODING_UNKNOWN);
+
+			TiXmlElement* workbookElem = doc.FirstChildElement("Workbook");
+
+			for (TiXmlElement* worksheetElem = workbookElem->FirstChildElement(); worksheetElem; worksheetElem = worksheetElem->NextSiblingElement())
+			{
+				const char* nodeName = worksheetElem->Value();
+				if (nodeName == std::string("Worksheet") || nodeName == std::string("ss:Worksheet"))
+				{
+					std::string categoryName = worksheetElem->FirstAttribute()->Value();
+					
+					TiXmlElement* tableElem = worksheetElem->FirstChildElement("Table");
+
+					for (TiXmlElement* rowElem = tableElem->FirstChildElement("Row"); rowElem; rowElem = rowElem->NextSiblingElement("Row"))
+					{
+						std::string entryName;
+						String entryContent;
+						std::string entryExtra;
+
+						int32 colIndex = 0;
+						for (TiXmlElement* cellElem = rowElem->FirstChildElement("Cell"); cellElem; cellElem = cellElem->NextSiblingElement("Cell"))
+						{
+							TiXmlElement* de = cellElem->FirstChildElement("Data");
+
+							if (de)
+							{
+								auto ie = de->FirstChild();
+
+								if (ie && ie->Type() == TiXmlNode::TINYXML_TEXT)
+								{
+									switch (colIndex)
+									{
+										case 0:
+											entryName = ie->Value();
+											break;
+										case 1:
+											entryContent = doc.GetUTF16NodeText(ie->ToText());
+											break;
+										case 2:
+											entryExtra = ie->Value();
+											break;
+										default:
+											break;
+									}
+								}
+							}
+
+							colIndex++;
+						}
+
+						map.Add(entryName, { entryContent, entryExtra });
+					}
+				}
+			}
+		}
+		void ExcelXmlStringTableFormat::Write(StringTableMap& map, Stream& strm)
+		{
+			assert(0);
+		}
 
 	}
 }

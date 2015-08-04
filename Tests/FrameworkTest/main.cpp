@@ -7,6 +7,7 @@
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/IOLib/BinaryWriter.h"
+#include "apoc3d/IOLib/TextData.h"
 #include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Math/Color.h"
 #include "apoc3d/Math/Plane.h"
@@ -23,6 +24,7 @@
 #include "apoc3d/Utility/StringTable.h"
 #include "apoc3d/Library/lz4.h"
 #include "apoc3d/Library/lz4hc.h"
+#include "apoc3d/Library/tinyxml.h"
 #include "apoc3d/Vfs/File.h"
 #include "apoc3d/Vfs/FileSystem.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
@@ -62,9 +64,7 @@ void main()
 	//String s = StringUtils::ToString(0.14159265f,8);
 	//std::wcout << s.c_str() << L"\n";
 	//std::wcout << std::numeric_limits<float>::digits10+1 << L"\n";
-
-
-
+	
 
 	FileSystem::Initialize();
 	wchar_t workingDir[260];

@@ -87,8 +87,7 @@ namespace SampleFont
 			m_wordDissolveProgress = 0;
 
 		
-		//float amt = time->ElapsedTimeSubstep / time->ElapsedTime;
-		//m_testI = Math::Lerp(oldTest, m_test, amt);
+
 	}
 	void FontDemo::UpdateConstrainedVarTimeStep(const GameTime* time)
 	{

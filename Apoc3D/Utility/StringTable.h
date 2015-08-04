@@ -195,6 +195,18 @@ namespace Apoc3D
 				return{ L"csf" }; 
 			}
 		};
+
+		class APAPI ExcelXmlStringTableFormat : public StringTableFormat
+		{
+		public:
+			virtual void Read(Stream& stm, StringTableMap& map) override;
+			virtual void Write(StringTableMap& map, Stream& stm) override;
+
+			List<String> getFilters() override
+			{
+				return{ L"xm" };
+			}
+		};
 	}
 }
 #endif
