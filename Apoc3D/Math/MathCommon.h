@@ -111,7 +111,10 @@ namespace Apoc3D
 		{
 			return a + (b - a)*amount;
 		}
-
+		inline float InvLerp(float _min, float _max, float x)
+		{
+			return (x - _min) / (_max - _min);
+		}
 
 		inline float Clamp(float v, float _min, float _max)
 		{

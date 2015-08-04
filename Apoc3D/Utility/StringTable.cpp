@@ -305,11 +305,11 @@ namespace Apoc3D
 							if (id == CSFWStringID)
 								extra = br.ReadMBString();
 
-							map.Add(lblName, { content, extra });
+							map.AddOrReplace(lblName, { content, extra });
 						}
 						else
 						{
-							map.Add(lblName, {});
+							map.AddOrReplace(lblName, {});
 						}
 					}
 				}
@@ -406,7 +406,7 @@ namespace Apoc3D
 							colIndex++;
 						}
 
-						map.Add(entryName, { entryContent, entryExtra });
+						map.AddOrReplace(categoryName + "_" + entryName, { entryContent, entryExtra });
 					}
 				}
 			}

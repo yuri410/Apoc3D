@@ -264,7 +264,7 @@ namespace Apoc3D
 				return -1;
 			}
 
-			E& InsertEntry(const T& item)
+			E& InsertEntry(const T& item, bool noDuplicationCheck = false)
 			{
 				if (m_buckets == nullptr)
 				{
@@ -274,7 +274,7 @@ namespace Apoc3D
 				int hash = ComparerType::GetHashCode(item) & PositiveMask;
 				int index = hash % m_bucketsLength;
 
-				if (FindEntry(item, hash, index) != -1)
+				if (!noDuplicationCheck && FindEntry(item, hash, index) != -1)
 					throw AP_EXCEPTION(ExceptID::Duplicate, Utils::ToString(item));
 
 				
@@ -456,15 +456,40 @@ namespace Apoc3D
 
 			void Add(const T& item, const S& value) 
 			{
-				Entry& ent = InsertEntry(item);
-				ent.value = value;
+				InsertEntry(item).value = value;
 			}
 
 			void Add(const T& item, S&& value)
 			{
-				Entry& ent = InsertEntry(item);
-				ent.value = std::move(value);
+				InsertEntry(item).value = std::move(value);
 			}
+
+			void AddOrReplace(const T& item, S&& value)
+			{
+				int index = FindEntry(item);
+				if (index >= 0)
+				{
+					m_entries[index].value = std::move(value);
+				}
+				else
+				{
+					InsertEntry(item, true).value = std::move(value);
+				}
+			}
+			void AddOrReplace(const T& item, const S& value)
+			{
+				int index = FindEntry(item);
+				if (index >= 0)
+				{
+					m_entries[index].value = value;
+				}
+				else
+				{
+					InsertEntry(item, true).value = value;
+				}
+			}
+
+
 
 			S& operator [](const T& key) const
 			{
