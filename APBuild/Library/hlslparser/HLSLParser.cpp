@@ -487,6 +487,10 @@ const Intrinsic _intrinsic[] =
         Intrinsic( "dot", HLSLBaseType_Half,   HLSLBaseType_Half2,   HLSLBaseType_Half2  ),
         Intrinsic( "dot", HLSLBaseType_Half,   HLSLBaseType_Half3,   HLSLBaseType_Half3  ),
         Intrinsic( "dot", HLSLBaseType_Half,   HLSLBaseType_Half4,   HLSLBaseType_Half4  ),
+		Intrinsic( "dot", HLSLBaseType_Int,	HLSLBaseType_Int, HLSLBaseType_Int),
+		Intrinsic( "dot", HLSLBaseType_Int, HLSLBaseType_Int2, HLSLBaseType_Int2),
+		Intrinsic( "dot", HLSLBaseType_Int, HLSLBaseType_Int3, HLSLBaseType_Int3),
+		Intrinsic( "dot", HLSLBaseType_Int, HLSLBaseType_Int4, HLSLBaseType_Int4),
 
         Intrinsic( "cross", HLSLBaseType_Float3,  HLSLBaseType_Float3,  HLSLBaseType_Float3 ),
 
