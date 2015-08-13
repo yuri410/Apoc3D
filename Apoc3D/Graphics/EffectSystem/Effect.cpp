@@ -287,10 +287,8 @@ namespace Apoc3D
 				bool isMaterialChanged = m_previousMaterialPointer != mtrl;
 				m_previousMaterialPointer = mtrl;
 
-				for (int k = 0; k < m_parameters.getCount(); k++)
+				for (ResolvedEffectParameter& ep : m_parameters)
 				{
-					ResolvedEffectParameter& ep = m_parameters[k];
-
 					if (ep.RS_SetupAtBegining && ep.RS_SetupAtBeginingOnly)
 						continue;
 
