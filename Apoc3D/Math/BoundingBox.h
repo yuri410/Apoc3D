@@ -46,6 +46,11 @@ namespace Apoc3D
 				: Minimum(minimum), Maximum(maximum) { }
 
 
+			float Diagonal() const { return Vector3::Distance(Minimum, Maximum); }
+			float DiagonalSquared() const { return Vector3::DistanceSquared(Minimum, Maximum); }
+
+			Vector3 GetCenter() const { return (Minimum + Maximum) *0.5f; }
+
 			Vector3 GetCorner(int index) const
 			{
 				const Vector3& minp = Minimum;
@@ -157,6 +162,37 @@ namespace Apoc3D
 
 				return (box1.Maximum.Z >= box2.Minimum.Z && box1.Minimum.Z <= box2.Maximum.Z);
 			}
+		};
+
+		class BoundingBoxConstructor
+		{
+		public:
+			void Construct(const Vector3& pt, float radius)
+			{
+				Vector3 r = Vector3::Set(radius);
+				Construct(pt - r);
+				Construct(pt + r);
+			}
+			void Construct(const Vector3& pt)
+			{
+				if (!m_gotFirstPoint)
+				{
+					m_gotFirstPoint = true;
+
+					m_result = BoundingBox(pt, pt);
+					return;
+				}
+
+				m_result.Minimum = Vector3::Minimize(m_result.Minimum, pt);
+				m_result.Maximum = Vector3::Maximize(m_result.Maximum, pt);
+			}
+
+			const BoundingBox& getResult() const { assert(isValid()); return m_result; }
+
+			bool isValid() const { return m_gotFirstPoint; }
+		private:
+			BoundingBox m_result;
+			bool m_gotFirstPoint = false;
 		};
 	}
 }

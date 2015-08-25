@@ -53,8 +53,9 @@ namespace Apoc3D
 
 		inline Apoc3D::Math::Rectangle Round(RectangleF r)
 		{
-			return Apoc3D::Math::Rectangle(Round(r.X), Round(r.Y), Round(r.Width), Round(r.Height));
+			return { Round(r.X), Round(r.Y), Round(r.Width), Round(r.Height) };
 		}
+
 	}
 }
 

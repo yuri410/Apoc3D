@@ -1452,6 +1452,27 @@ namespace Apoc3D
 #pragma warning (pop)
 #endif
 
+		struct AxisSystem
+		{
+			Vector3 X, Y, Z;
+			Vector3 Origin;
+
+			AxisSystem() { }
+			explicit AxisSystem(const Matrix& m)
+			{
+				X = m.GetX();
+				Y = m.GetY();
+				Z = m.GetZ();
+				Origin = m.GetTranslation();
+			}
+
+			void MakeMatrix(Matrix& m) const
+			{
+				m.LoadIdentity();
+				m.SetTranslation(Origin);
+				m.SetXYZ(X, Y, Z);
+			}
+		};
 
 	}
 }

@@ -78,20 +78,16 @@ namespace Apoc3D
 				ModelData data;
 				data.Load(*m_resourceLocation);
 
-				for (int i=0; i< data.Entities.getCount();i++)
+				for (const MeshData* md : data.Entities)
 				{
-					Mesh* mesh = new Mesh(m_renderDevice, data.Entities[i]);
+					Mesh* mesh = new Mesh(m_renderDevice, md);
 					m_entities.Add(mesh);
 				}
 			}
 		}
 		void ModelSharedData::unload()
 		{
-			for (int i=0; i< m_entities.getCount();i++)
-			{
-				delete m_entities[i];
-			}
-			m_entities.Clear();
+			m_entities.DeleteAndClear();
 		}
 
 		uint ModelSharedData::getSize()
@@ -105,10 +101,10 @@ namespace Apoc3D
 
 		void ModelSharedData::Save(ModelData* data)
 		{
-			for (int i=0;i<m_entities.getCount();i++)
+			for (Mesh* m : m_entities)
 			{
 				MeshData* meshData = new MeshData();
-				m_entities[i]->Save(meshData);
+				m->Save(meshData);
 				data->Entities.Add(meshData);
 			}
 		}
@@ -395,7 +391,7 @@ namespace Apoc3D
 
 		void Model::Update(const GameTime* time)
 		{
-			for (int i=0; i<m_animInstance.getCount(); i++)
+			for (int i = 0; i < m_animInstance.getCount(); i++)
 			{
 				m_animInstance[i]->Update(time);
 			}
