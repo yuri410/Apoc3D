@@ -46,6 +46,13 @@ namespace Apoc3D
 				: Minimum(minimum), Maximum(maximum) { }
 
 
+			void Inflate(const Vector3& ext)
+			{
+				Minimum -= ext;
+				Maximum += ext;
+			}
+			void Inflate(float ext) { Inflate(Vector3::Set(ext)); }
+
 			float Diagonal() const { return Vector3::Distance(Minimum, Maximum); }
 			float DiagonalSquared() const { return Vector3::DistanceSquared(Minimum, Maximum); }
 
@@ -167,6 +174,10 @@ namespace Apoc3D
 		class BoundingBoxConstructor
 		{
 		public:
+			BoundingBoxConstructor() { }
+			explicit BoundingBoxConstructor(const Vector3& initialPt)
+				: m_result(initialPt, initialPt) { }
+
 			void Construct(const Vector3& pt, float radius)
 			{
 				Vector3 r = Vector3::Set(radius);

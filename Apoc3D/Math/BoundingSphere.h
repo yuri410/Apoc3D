@@ -126,27 +126,22 @@ namespace Apoc3D
 			static void CreateFromBox(BoundingSphere& res, const BoundingBox& box);
 
 			/** Constructs a BoundingSphere that fully contains the given points. */
-			static void CreateFromPoints(BoundingSphere& res, const Vector3* points, int count)
+			static void CreateFromPoints(BoundingSphere& res, const Vector3* points, int count);
+			
+			static BoundingSphere CreateFromBox(BoundingBox& box)
 			{
-				Vector3 center = Vector3::Zero;
-				for (int i = 0; i < count; i++)
-				{
-					center += points[i];
-				}
-				center /= (float)count;
-
-				float radius = 0;
-				for (int i = 0; i < count; i++)
-				{
-					float dist = Vector3::DistanceSquared(center, points[i]);
-					if (dist > radius)
-						radius = dist;
-				}
-
-				res.Center = center;
-				res.Radius = sqrtf(radius);
-
+				BoundingSphere result;
+				CreateFromBox(result, box);
+				return result;
 			}
+			static BoundingSphere CreateFromPoints(const Vector3* points, int count) 
+			{
+				BoundingSphere result;
+				CreateFromPoints(result, points, count);
+				return result;
+			}
+
+
 
 			/** Constructs a BoundingSphere that is the as large as the total combined area of the two specified spheres. */
 			static void Merge(BoundingSphere& res, const BoundingSphere& sphere1, const BoundingSphere& sphere2);

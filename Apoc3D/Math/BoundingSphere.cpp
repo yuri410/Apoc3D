@@ -317,13 +317,33 @@ namespace Apoc3D
 
 		void BoundingSphere::CreateFromBox(BoundingSphere& res, const BoundingBox& box)
 		{
-			res.Center = Vector3::Lerp(box.Minimum, box.Maximum, 0.5f);
+			res.Center = (box.Minimum + box.Maximum) * 0.5f;
 
 			float distance = Vector3::Distance(box.Minimum, box.Maximum);
 
 			res.Radius = distance * 0.5f;
 		}
+		void BoundingSphere::CreateFromPoints(BoundingSphere& res, const Vector3* points, int count)
+		{
+			Vector3 center = Vector3::Zero;
+			for (int i = 0; i < count; i++)
+			{
+				center += points[i];
+			}
+			if (count > 0)
+				center /= (float)count;
 
+			float radius = 0;
+			for (int i = 0; i < count; i++)
+			{
+				float dist = Vector3::DistanceSquared(center, points[i]);
+				if (dist > radius)
+					radius = dist;
+			}
+
+			res.Center = center;
+			res.Radius = sqrtf(radius);
+		}
 
 		void BoundingSphere::Merge(BoundingSphere& res, const BoundingSphere& sphere1, const BoundingSphere& sphere2)
 		{
