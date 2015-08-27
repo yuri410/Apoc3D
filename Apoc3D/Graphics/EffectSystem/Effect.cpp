@@ -706,7 +706,7 @@ namespace Apoc3D
 
 			void AutomaticEffect::SetInstanceBlobParameter(ResolvedEffectParameter& ep, const InstanceInfoBlobValue& v)
 			{
-				if (EffectParameter::IsReference(v.Type))
+				if (CustomEffectParameterType_IsReference(v.Type))
 					SetSingleCustomParameter(ep, v.Type, v.RefValue);
 				else
 					SetSingleCustomParameter(ep, v.Type, v.Value);
@@ -716,7 +716,7 @@ namespace Apoc3D
 				const MaterialCustomParameter* mcp = mtrl->getCustomParameter(ep.CustomMaterialParamName);
 				if (mcp)
 				{
-					if (EffectParameter::IsReference(mcp->Type))
+					if (CustomEffectParameterType_IsReference(mcp->Type))
 						SetSingleCustomParameter(ep, mcp->Type, mcp->RefValue);
 					else
 						SetSingleCustomParameter(ep, mcp->Type, mcp->Value);

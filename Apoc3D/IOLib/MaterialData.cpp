@@ -229,7 +229,7 @@ namespace Apoc3D
 			int32 index = 0;
 			for (const MaterialCustomParameter& mcp : CustomParametrs.getValueAccessor())
 			{	
-				if (!EffectParameter::IsReference(mcp.Type))
+				if (!CustomEffectParameterType_IsReference(mcp.Type))
 				{
 					std::string tag = TAG_3_CustomParam + StringUtils::IntToNarrowString(index++);
 

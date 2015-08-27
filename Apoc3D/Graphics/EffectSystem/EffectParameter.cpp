@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/IOLib/BinaryWriter.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Utility/TypeConverter.h"
+#include "apoc3d/Math/MathCommon.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Utility;
@@ -213,6 +214,170 @@ namespace Apoc3D
 			Color4 RendererEffectParams::LightAmbient(0.5f,0.5f,0.5f);
 			Color4 RendererEffectParams::LightDiffuse(1.0f,1.0f,1.0f);
 			Color4 RendererEffectParams::LightSpecular(1.0f,1.0f,1.0f);
+
+			/************************************************************************/
+			/*                                                                      */
+			/************************************************************************/
+
+
+			static int32 CustomEffectParameterType_GetSize(CustomEffectParameterType t)
+			{
+				if (CustomEffectParameterType_IsReference(t))
+					return 0;
+
+				if (t == CEPT_Float)
+					return sizeof(float);
+				if (t == CEPT_Vector2)
+					return sizeof(float) * 2;
+				if (t == CEPT_Vector4)
+					return sizeof(float) * 4;
+				if (t == CEPT_Matrix)
+					return sizeof(float) * 16;
+				if (t == CEPT_Boolean)
+					return sizeof(bool);
+				if (t == CEPT_Integer)
+					return sizeof(int32);
+
+				assert(0);
+				return 0;
+			}
+
+			InstanceInfoBlob2::InstanceInfoBlob2(std::initializer_list<InstanceInfoBlobValue> layout)
+				: m_count(layout.size())
+			{
+				int32 totalSize = 0;
+				int32 localStorageCount = 0;
+				int32 localStorageSize = 0;
+
+				for (const InstanceInfoBlobValue& v : layout)
+				{
+					int32 itmSize = CustomEffectParameterType_GetSize(v.Type);
+					totalSize += itmSize;
+
+					if (totalSize < LocalSizeLimit && localStorageCount < LocalCountLimit)
+					{
+						localStorageCount++;
+						localStorageSize += itmSize;
+					}
+				}
+				
+				m_locallyStoredCount = localStorageCount;
+
+				int32 allocatedStorageCount = m_count - localStorageCount;
+				int32 allocatedStorageSize = totalSize - localStorageSize;
+
+				m_allocatedStorage = new char[allocatedStorageSize];
+				m_allocatedItemInfo = new ValueProxy[allocatedStorageCount];
+
+				int32 idx = 0;
+				char* localDst = m_localStorage;
+				char* allocDst = m_allocatedStorage;
+
+				for (const InstanceInfoBlobValue& v : layout)
+				{
+					int32 itmSize = CustomEffectParameterType_GetSize(v.Type);
+
+					if (idx < localStorageCount)
+					{
+						m_localItemInfo[idx] = ValueProxy(localDst, v.Type);
+						m_localItemInfo[idx] = v;
+
+						localDst += itmSize;
+					}
+					else
+					{
+						m_allocatedItemInfo[idx - localStorageCount] = ValueProxy(allocDst, v.Type);
+						m_allocatedItemInfo[idx - localStorageCount] = v;
+
+						allocDst += itmSize;
+					}
+
+					idx++;
+				}
+			}
+
+
+			InstanceInfoBlob2::~InstanceInfoBlob2()
+			{
+				delete[] m_allocatedStorage;
+				delete[] m_allocatedItemInfo;
+			}
+
+			InstanceInfoBlob2::ValueProxy& InstanceInfoBlob2::ValueProxy::operator = (const InstanceInfoBlobValue& o)
+			{
+				if (CustomEffectParameterType_IsReference(o.Type))
+				{
+					m_address = o.RefValue;
+				}
+
+				switch (o.Type)
+				{
+					case CEPT_Float: AsSingle() = o.AsSingle(); break;
+					case CEPT_Vector2: AsVector2() = o.AsVector2(); break;
+					case CEPT_Vector4: AsVector4() = o.AsVector4(); break;
+					case CEPT_Matrix: AsMatrix() = o.AsMatrix(); break;
+					case CEPT_Boolean: AsBoolean() = o.AsBoolean(); break;
+					case CEPT_Integer: AsInteger() = o.AsInteger(); break;
+					default:
+						assert(0);
+				}
+
+				return *this;
+			}
+
+			InstanceInfoBlob2::InstanceInfoBlob2(const InstanceInfoBlob2& o)
+				: m_count(o.m_count), m_locallyStoredCount(o.m_locallyStoredCount)
+			{
+				CopyArray(m_localStorage, o.m_localStorage);
+				CopyArray(m_localItemInfo, o.m_localItemInfo);
+
+				int32 allocatedStorageCount = m_count - m_locallyStoredCount;
+				if (o.m_allocatedItemInfo)
+				{
+					m_allocatedItemInfo = new ValueProxy[allocatedStorageCount];
+
+					int32 allocatedSize = 0;
+					for (int32 i = 0; i < allocatedStorageCount; i++)
+					{
+						m_allocatedItemInfo[i] = o.m_allocatedItemInfo[i];
+						allocatedSize += CustomEffectParameterType_GetSize(m_allocatedItemInfo[i].getType());
+					}
+
+					m_allocatedStorage = new char[allocatedSize];
+					memcpy(m_allocatedStorage, o.m_allocatedStorage, allocatedSize);
+				}
+
+			}
+			InstanceInfoBlob2::InstanceInfoBlob2(InstanceInfoBlob2&& o)
+				: m_count(o.m_count), m_locallyStoredCount(o.m_locallyStoredCount), 
+				m_allocatedStorage(o.m_allocatedStorage), m_allocatedItemInfo(o.m_allocatedItemInfo)
+			{
+				CopyArray(m_localStorage, o.m_localStorage);
+				CopyArray(m_localItemInfo, o.m_localItemInfo);
+
+				o.m_allocatedStorage = nullptr;
+				o.m_allocatedItemInfo = nullptr;
+			}
+
+			InstanceInfoBlob2& InstanceInfoBlob2::operator=(const InstanceInfoBlob2& o)
+			{
+				if (this != &o)
+				{
+					this->~InstanceInfoBlob2();
+					new (this)InstanceInfoBlob2(o); // no derived class allowed. This is OK.
+				}
+				return *this;
+			}
+			InstanceInfoBlob2& InstanceInfoBlob2::operator=(InstanceInfoBlob2&& o)
+			{
+				if (this != &o)
+				{
+					this->~InstanceInfoBlob2();
+					new (this)InstanceInfoBlob2(std::move(o));
+				}
+				return *this;
+			}
+
 		}
 	}
 }
