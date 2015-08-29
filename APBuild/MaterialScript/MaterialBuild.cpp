@@ -41,11 +41,43 @@ namespace APBuild
 		const Color4* FindColor(const String& name) const;
 	};
 
-	bool hasLetters(const String& str);
+	struct NumberRange
+	{
+		int32 Start;
+		int32 End;
 
-	Color4 ResolveColor4(const String& text, const HashMap<String, Pallet*>& pallets);
-	void ParseMaterialTree(HashMap<String, MaterialData*>& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const HashMap<String, Pallet*>& pallets);
-	void ParseMaterialCustomParams(MaterialData& data, const String& value, const HashMap<String, Pallet*>& pallets);
+		void Parse(const String& txt)
+		{
+			int32 bounds[2];
+			int32 count = StringUtils::SplitParseInts(txt, bounds, 2, L"-");
+			if (count == 1)
+				Start = End = bounds[0];
+			else
+			{
+				Start = bounds[0];
+				End = bounds[1];
+			}
+		}
+
+		bool isInRange(int32 i) const { return i >= Start && i <= End; }
+	};
+
+	typedef HashMap<String, Pallet*> PalletTable;
+	typedef HashMap<String, ConfigurationSection*> IncludeTable;
+	typedef HashMap<String, MaterialData*> MaterialTable;
+
+
+	void ParseMaterialTree(MaterialTable& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect,
+		const PalletTable& pallets, const IncludeTable& includeSources);
+	void ParseMaterialTreeWithPreprocessing(MaterialTable& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect,
+		const PalletTable& pallets, const IncludeTable& includeSources);
+	
+	bool ResolveGenerateExpressions(String& val, int32 curIdx);
+	bool ResolveGenerateExpressionsInSubtree(const ConfigurationSection* src, ConfigurationSection& dst, int32 curIdx, const String& errName);
+
+	ConfigurationSection* MakeIncludedSection(const String& includeText, const IncludeTable& includeSources);
+
+	Color4 ResolveColor4(const String& text, const HashMap<String, Pallet*>& pallets, const String& errName);
 
 	void MaterialBuild::Build(const String& hierarchyPath, ConfigurationSection* sect)
 	{
@@ -59,10 +91,14 @@ namespace APBuild
 		Configuration config;
 		XMLConfigurationFormat::Instance.Load(FileLocation(srcFile), &config);
 
-		ConfigurationSection* palSect = config[L"Pallet"];
+		PalletTable palColors;
+		IncludeTable includeSources;
+		MaterialTable mtrlTable;
 
-		HashMap<String, Pallet*> palColors;
-		
+		ConfigurationSection* palSect = config[L"Pallet"];
+		ConfigurationSection* incSec = config[L"Parts"];
+		ConfigurationSection* mSect = config[L"Materials"];
+
 		for (ConfigurationSection* subSect : palSect->getSubSections())
 		{
 			const String& palName = subSect->getName();
@@ -76,22 +112,28 @@ namespace APBuild
 			{
 				PalletColor pc;
 
-				pc.Color = ResolveColor4(ss->getValue(), palColors);
+				pc.Color = ResolveColor4(ss->getValue(), palColors, L"Pallet: " + palName);
 				pc.Name = ss->getName();
 				p->Colors.Add(pc);
 			}
-
 		}
 
+		if (incSec)
+		{
+			for (ConfigurationSection* subSect : incSec->getSubSections())
+			{
+				includeSources.Add(subSect->getName(), subSect);
+			}
+		}
 		
+
+
 		// inherit structure
 		// every node is expected to be a material definition where mtrl attribs are as XML attribs
-		ConfigurationSection* mSect = config[L"Materials"];
-		HashMap<String, MaterialData*> mtrlTable;
 
 		for (ConfigurationSection* ss : mSect->getSubSections())
 		{
-			ParseMaterialTree(mtrlTable, 0, L"", ss, palColors);
+			ParseMaterialTreeWithPreprocessing(mtrlTable, 0, L"", ss, palColors, includeSources);
 		}
 
 
@@ -100,7 +142,7 @@ namespace APBuild
 		{
 			tokenFile.Add(new ConfigurationSection(key));
 		}
-		//tokenFile->Save(desinationToken);
+
 		XMLConfigurationFormat::Instance.Save(&tokenFile, FileOutStream(desinationToken));
 		
 
@@ -123,10 +165,65 @@ namespace APBuild
 		BuildSystem::LogEntryProcessed(desinationToken, hierarchyPath);
 	}
 
-	void ParseMaterialTree(HashMap<String, MaterialData*>& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const HashMap<String, Pallet*>& pallets)
+	void ParseMaterialTreeWithPreprocessing(MaterialTable& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect,
+		const PalletTable& pallets, const IncludeTable& includeSources)
+	{
+		bool hasInclude = sect->hasAttribute(L"Include");
+		bool hasGenerate = sect->hasAttribute(L"Generate");
+
+		if (hasInclude)
+		{
+			String includeTxt = sect->getAttribute(L"Include");
+
+			ConfigurationSection* includeSect = MakeIncludedSection(includeTxt, includeSources);
+
+			if (includeSect == nullptr)
+			{
+				BuildSystem::LogError(L"Cannot resolve include " + includeTxt + L" when processing " + baseMtrlName + L"_" + sect->getName(), L"");
+				return;
+			}
+
+			includeSect->Merge(sect, true, sect->getName());
+
+			String temp;
+			if (includeSect->tryGetAttribute(L"Include", temp) && temp == includeTxt)
+			{
+				includeSect->RemoveAttribute(L"Include");
+			}
+
+			ParseMaterialTreeWithPreprocessing(table, baseMtrl, baseMtrlName, includeSect, pallets, includeSources);
+
+			delete includeSect;
+			return;
+		}
+
+		if (hasGenerate)
+		{
+			// for generation rules, make temporary sections as the generated result
+
+			NumberRange numRange;
+			sect->GetAttributeGeneric(L"Generate", numRange);
+
+			for (int32 i = numRange.Start; i <= numRange.End; i++)
+			{
+				ConfigurationSection genSect(sect->getName() + StringUtils::IntToString(i));
+
+				if (!ResolveGenerateExpressionsInSubtree(sect, genSect, i, baseMtrlName))
+					return;
+
+				ParseMaterialTree(table, baseMtrl, baseMtrlName, &genSect, pallets, includeSources);
+			}
+		}
+		else
+		{
+			ParseMaterialTree(table, baseMtrl, baseMtrlName, sect, pallets, includeSources);
+		}
+	}
+	void ParseMaterialTree(MaterialTable& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect,
+		const PalletTable& pallets, const IncludeTable& includeSources)
 	{
 		MaterialData* newNode;
-		
+
 		if (baseMtrl)
 			newNode = new MaterialData(*baseMtrl);
 		else
@@ -142,22 +239,180 @@ namespace APBuild
 			name.append(L"_");
 		}
 		name.append(sect->getName());
-		
-		newNode->Parse(sect, baseMtrlName, [&pallets](const String& colorDesc)->Color4
+
+		newNode->Parse(sect, baseMtrlName, [&pallets, &name](const String& colorDesc)->Color4
 		{
-			return ResolveColor4(colorDesc, pallets);
+			return ResolveColor4(colorDesc, pallets, L"Material: " + name);
 		});
+
 
 		// go into sub sections
 		for (ConfigurationSection* ss : sect->getSubSections())
 		{
-			ParseMaterialTree(table, newNode, name, ss, pallets);
+			ParseMaterialTreeWithPreprocessing(table, newNode, name, ss, pallets, includeSources);
 		}
 
 		table.Add(name, newNode);
 	}
-	
-	Color4 ResolveColor4(const String& text, const HashMap<String, Pallet*>& pallets)
+
+	bool ResolveGenerateExpressionsInSubtree(const ConfigurationSection* src, ConfigurationSection& dst, int32 curIdx, const String& errName)
+	{
+		for (auto e : src->getAttributes())
+		{
+			if (e.Key == L"Generate")
+				continue;
+
+			String val = e.Value;
+
+			if (!ResolveGenerateExpressions(val, curIdx))
+			{
+				BuildSystem::LogError(L"Material generation rule not valid in " + errName + L"_" + src->getName(), L"");
+				return false;
+			}
+
+			if (val.size())
+				dst.AddAttributeString(e.Key, val);
+		}
+
+		for (ConfigurationSection* ss : src->getSubSections())
+		{
+			ConfigurationSection* genSubSect = new ConfigurationSection(ss->getName());
+
+			if (!ResolveGenerateExpressionsInSubtree(ss, *genSubSect, curIdx, errName + L"_" + ss->getName()))
+			{
+				delete genSubSect;
+				return false;
+			}
+
+			dst.AddSection(genSubSect);
+		}
+		return true;
+	}
+
+	bool ResolveGenerateExpressions(String& val, int32 curIdx)
+	{
+		// conditional
+		if (val.find('@') != String::npos)
+		{
+			bool noMaches = true;
+
+			List<String> conds = StringUtils::Split(val, L"@");
+
+			for (const String& c : conds)
+			{
+				size_t pos = c.find('{');
+				if (pos != String::npos)
+				{
+					String matchIdxStr = c.substr(0, pos);
+					NumberRange nr;
+					nr.Parse(matchIdxStr);
+
+					if (nr.isInRange(curIdx))
+					{
+						noMaches = false;
+
+						size_t pos2 = c.find_last_of('}');
+
+						if (pos2 != String::npos)
+						{
+							pos++;
+							val = c.substr(pos, pos2 - pos);
+						}
+						else return false;
+
+						break;
+					}
+				}
+				else
+				{
+					return false;
+				}
+			}
+
+			if (noMaches)
+			{
+				val = L"";
+				return true;
+			}
+		}
+
+		// escape seq
+		if (val.find(L"%d") != String::npos)
+		{
+			StringUtils::ReplaceAll(val, L"%d", StringUtils::IntToString(curIdx));
+		}
+
+		return true;
+	}
+
+	void ProcessIncludeParamInSubtree(ConfigurationSection* sect, const String& paramName, const String& paramValue)
+	{
+		for (auto e : sect->getAttributes())
+		{
+			StringUtils::ReplaceAll(e.Value, paramName, paramValue);
+		}
+
+		for (ConfigurationSection* ss : sect->getSubSections())
+		{
+			ProcessIncludeParamInSubtree(ss, paramName, paramValue);
+		}
+	}
+	ConfigurationSection* MakeIncludedSection(const String& includeText, const HashMap<String, ConfigurationSection*>& includeSources)
+	{
+		String::size_type posL = includeText.find_first_of('[');
+		String::size_type posR = includeText.find_first_of(']');
+
+		if (posL != String::npos && posR != String::npos)
+		{
+			String sectName = includeText.substr(0, posL);
+			StringUtils::Trim(sectName);
+
+			String paramListTxt = includeText.substr(posL + 1, posR - posL - 1);
+			List<String> params = StringUtils::Split(paramListTxt, L",");
+
+			ConfigurationSection* src;
+			if (includeSources.TryGetValue(sectName, src))
+			{
+				src = new ConfigurationSection(*src);
+
+				if (params.getCount() > 0)
+				{
+					for (int32 i = 0; i < params.getCount(); i++)
+					{
+						StringUtils::Trim(params[i]);
+						ProcessIncludeParamInSubtree(src, L"$" + StringUtils::IntToString(i+1), params[i]);
+					}
+				}
+				return src;
+			}
+		}
+		else
+		{
+			String sectName = includeText;
+			StringUtils::Trim(sectName);
+
+			ConfigurationSection* src;
+			if (includeSources.TryGetValue(includeText, src))
+			{
+				return new ConfigurationSection(*src);
+			}
+		}
+		return nullptr;
+	}
+
+
+	bool hasLetters(const String& str)
+	{
+		for (size_t i = 0; i < str.size(); i++)
+		{
+			int c = toupper(str[i]);
+			if (c >= 'A' && c <= 'Z')
+				return true;
+		}
+		return false;
+	}
+
+	Color4 ResolveColor4(const String& text, const HashMap<String, Pallet*>& pallets, const String& errName)
 	{
 		bool hasOperation = text.find('*') != String::npos;
 
@@ -190,22 +445,22 @@ namespace APBuild
 
 						StringUtils::Trim(chns);
 						StringUtils::ToLowerCase(chns);
-						for (size_t i=0;i<chns.size();i++)
+						for (size_t i = 0; i < chns.size(); i++)
 						{
 							switch (chns[i])
 							{
-							case 'r':
-								channelMask |= 8;
-								break;
-							case 'g':
-								channelMask |= 4;
-								break;
-							case 'b':
-								channelMask |= 2;
-								break;
-							case 'a':
-								channelMask |= 1;
-								break;
+								case 'r':
+									channelMask |= 8;
+									break;
+								case 'g':
+									channelMask |= 4;
+									break;
+								case 'b':
+									channelMask |= 2;
+									break;
+								case 'a':
+									channelMask |= 1;
+									break;
 							}
 						}
 					}
@@ -222,16 +477,17 @@ namespace APBuild
 					if (StringUtils::StartsWith(rightPart, L"(") && StringUtils::EndsWith(rightPart, L")"))
 					{
 						String facts = rightPart.substr(1, rightPart.size()-2);
-						List<String> vals;
-						StringUtils::Split(facts, vals, L",");
-						assert(vals.getCount()<=4);
-						for (int32 i=0;i<vals.getCount();i++)
-							factor[i] = StringUtils::ParseSingle(vals[i]);
+
+						float vals[4];
+						int32 count = StringUtils::SplitParseSingles(facts, vals, 4, L",");
+						
+						for (int32 i = 0; i < count; i++)
+							factor[i] = vals[i];
 					}
 					else
 					{
 						float fact = StringUtils::ParseSingle(rightPart);
-						for (int i=0;i<4;i++) factor[i] = fact;
+						for (float& v : factor) v = fact;
 					}
 
 					Color4 source;
@@ -244,7 +500,7 @@ namespace APBuild
 							source = *found;
 						else
 						{
-							BuildSystem::LogError(L"Color " + sIndx + L" not found in " + palName, L"");
+							BuildSystem::LogError(L"Color " + sIndx + L" not found in " + palName + L" when processing " + errName, L"");
 							return Color4();
 						}
 					}
@@ -265,10 +521,10 @@ namespace APBuild
 					return source;
 				}
 				else
-					BuildSystem::LogError(String(L"Pallet not found ") + palName, L"");
+					BuildSystem::LogError(L"Pallet not found " + palName + L" when processing " + errName, L"");
 			}
 			
-			BuildSystem::LogError(String(L"Cannot parse ") + text, L"");
+			BuildSystem::LogError(L"Cannot parse " + text + L" when processing " + errName, L"");
 			return Color4();
 		}
 		
@@ -299,7 +555,7 @@ namespace APBuild
 								return *found;
 							else
 							{
-								BuildSystem::LogError(L"Color " + sIndx + L" not found in " + palName, L"");
+								BuildSystem::LogError(L"Color " + sIndx + L" not found in " + palName + L" when processing " + errName, L"");
 								return Color4();
 							}
 						}
@@ -310,10 +566,10 @@ namespace APBuild
 						}	
 					}
 					else
-						BuildSystem::LogError(String(L"Pallet not found ") + palName, L"");
+						BuildSystem::LogError(L"Pallet not found " + palName + L" when processing " + errName, L"");
 				}
 				else
-					BuildSystem::LogError(String(L"Cannot parse ") + text, L"");
+					BuildSystem::LogError(L"Cannot parse " + text + L" when processing " + errName, L"");
 			}
 			return Color4();
 		case 3:
@@ -333,8 +589,6 @@ namespace APBuild
 		}
 	}
 
-
-
 	const Color4* Pallet::FindColor(const String& name) const
 	{
 		for (const auto& e : Colors)
@@ -345,14 +599,4 @@ namespace APBuild
 		return nullptr;
 	}
 
-	bool hasLetters(const String& str)
-	{
-		for (size_t i = 0; i < str.size(); i++)
-		{
-			int c = toupper(str[i]);
-			if (c >= 'A' && c <= 'Z')
-				return true;
-		}
-		return false;
-	}
 }

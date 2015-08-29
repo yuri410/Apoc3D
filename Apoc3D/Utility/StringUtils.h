@@ -302,6 +302,10 @@ namespace Apoc3D
 
 			APAPI String PackStrings(const Apoc3D::Collections::List<String>& v, bool useQuotes, wchar_t sep = ',');
 
+			//////////////////////////////////////////////////////////////////////////
+
+			APAPI bool Replace(String& str, const String& from, const String& to);
+			APAPI void ReplaceAll(String& str, const String& from, const String& to);
 
 			//////////////////////////////////////////////////////////////////////////
 

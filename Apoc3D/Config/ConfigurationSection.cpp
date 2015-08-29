@@ -530,6 +530,11 @@ namespace Apoc3D
 					AddSection(new ConfigurationSection(*thatSubSect));
 			}
 		}
+		void ConfigurationSection::Merge(const ConfigurationSection* thatSect, bool noMessages, const String& newSectionName)
+		{
+			Merge(thatSect, noMessages);
+			m_name = newSectionName;
+		}
 		void ConfigurationSection::RemoveIntersection(const ConfigurationSection* thatSect)
 		{
 			for (const ConfigurationSection* thatSubSect : thatSect->getSubSections())
@@ -557,6 +562,11 @@ namespace Apoc3D
 					m_attributes.Remove(e.Key);
 				}
 			}
+		}
+
+		void ConfigurationSection::RemoveAttribute(const String& name)
+		{
+			m_attributes.Remove(name);
 		}
 
 		int32 ConfigurationSection::GetHashCode() const

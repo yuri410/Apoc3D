@@ -348,7 +348,12 @@ namespace Apoc3D
 			void SetGeneric(const String& name, T& result) { SetStringValue(name, result.ToString()); }
 
 			void Merge(const ConfigurationSection* thatSect, bool noMessages);
+			void Merge(const ConfigurationSection* thatSect, bool noMessages, const String& newSectionName);
+
 			void RemoveIntersection(const ConfigurationSection* thatSect);
+
+			void RemoveAttribute(const String& name);
+
 
 			int32 GetHashCode() const;
 

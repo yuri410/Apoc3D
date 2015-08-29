@@ -1319,6 +1319,29 @@ namespace Apoc3D
 			return r;
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+
+		bool StringUtils::Replace(String& str, const String& from, const String& to)
+		{
+			size_t start_pos = str.find(from);
+			if (start_pos == String::npos)
+				return false;
+			str.replace(start_pos, from.length(), to);
+			return true;
+		}
+		void StringUtils::ReplaceAll(String& str, const String& from, const String& to)
+		{
+			if (from.empty())
+				return;
+			size_t start_pos = 0;
+			while ((start_pos = str.find(from, start_pos)) != String::npos)
+			{
+				str.replace(start_pos, from.length(), to);
+				start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+			}
+		}
+
+		//////////////////////////////////////////////////////////////////////////
 
 		bool StringUtils::StartsWith(const String& str, const String& v, bool caseInsensitive) { return Impl::StartsWith(str, v, caseInsensitive); }
 		bool StringUtils::EndsWith(const String& str, const String& v, bool caseInsensitive) { return Impl::EndsWith(str, v, caseInsensitive); }
