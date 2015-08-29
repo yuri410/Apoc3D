@@ -67,13 +67,17 @@ namespace APBuild
 	typedef HashMap<String, MaterialData*> MaterialTable;
 
 
-	void ParseMaterialTree(MaterialTable& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect,
-		const PalletTable& pallets, const IncludeTable& includeSources);
-	void ParseMaterialTreeWithPreprocessing(MaterialTable& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect,
+	void ParseMaterialTree(MaterialTable& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, 
 		const PalletTable& pallets, const IncludeTable& includeSources);
 	
+	void ParseMaterialTreeWithPreprocessing(MaterialTable& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, 
+		const PalletTable& pallets, const IncludeTable& includeSources);
+	
+
 	bool ResolveGenerateExpressions(String& val, int32 curIdx);
 	bool ResolveGenerateExpressionsInSubtree(const ConfigurationSection* src, ConfigurationSection& dst, int32 curIdx, const String& errName);
+
+	void ProcessIncludeParamInSubtree(ConfigurationSection* sect, const String& paramName, const String& paramValue);
 
 	ConfigurationSection* MakeIncludedSection(const String& includeText, const IncludeTable& includeSources);
 
@@ -317,10 +321,9 @@ namespace APBuild
 						{
 							pos++;
 							val = c.substr(pos, pos2 - pos);
+							break;
 						}
 						else return false;
-
-						break;
 					}
 				}
 				else
@@ -344,20 +347,8 @@ namespace APBuild
 
 		return true;
 	}
-
-	void ProcessIncludeParamInSubtree(ConfigurationSection* sect, const String& paramName, const String& paramValue)
-	{
-		for (auto e : sect->getAttributes())
-		{
-			StringUtils::ReplaceAll(e.Value, paramName, paramValue);
-		}
-
-		for (ConfigurationSection* ss : sect->getSubSections())
-		{
-			ProcessIncludeParamInSubtree(ss, paramName, paramValue);
-		}
-	}
-	ConfigurationSection* MakeIncludedSection(const String& includeText, const HashMap<String, ConfigurationSection*>& includeSources)
+	
+	ConfigurationSection* MakeIncludedSection(const String& includeText, const IncludeTable& includeSources)
 	{
 		String::size_type posL = includeText.find_first_of('[');
 		String::size_type posR = includeText.find_first_of(']');
@@ -400,6 +391,18 @@ namespace APBuild
 		return nullptr;
 	}
 
+	void ProcessIncludeParamInSubtree(ConfigurationSection* sect, const String& paramName, const String& paramValue)
+	{
+		for (auto e : sect->getAttributes())
+		{
+			StringUtils::ReplaceAll(e.Value, paramName, paramValue);
+		}
+
+		for (ConfigurationSection* ss : sect->getSubSections())
+		{
+			ProcessIncludeParamInSubtree(ss, paramName, paramValue);
+		}
+	}
 
 	bool hasLetters(const String& str)
 	{
@@ -412,7 +415,7 @@ namespace APBuild
 		return false;
 	}
 
-	Color4 ResolveColor4(const String& text, const HashMap<String, Pallet*>& pallets, const String& errName)
+	Color4 ResolveColor4(const String& text, const PalletTable& pallets, const String& errName)
 	{
 		bool hasOperation = text.find('*') != String::npos;
 
