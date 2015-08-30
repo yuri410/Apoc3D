@@ -318,6 +318,19 @@ namespace Apoc3D
 	{
 		RTTI_DERIVED(ProjectResMaterialSet, ProjectAssetItemData);
 	public:
+		typedef HashMap<String, ConfigurationSection*> IncludeTable;
+
+		struct NumberRange
+		{
+			int32 Start;
+			int32 End;
+
+			void Parse(const String& txt);
+			bool isInRange(int32 i) const { return i >= Start && i <= End; }
+		};
+
+
+
 		ProjectResMaterialSet(Project* prj, ProjectItem* item)
 			: ProjectAssetItemData(prj, item) { }
 
@@ -331,6 +344,21 @@ namespace Apoc3D
 
 		virtual List<String> GetAllInputFiles() override;
 		virtual List<String> GetAllOutputFiles() override;
+
+
+		static bool ResolveGenerateExpressionsInSubtree(const ConfigurationSection* src, ConfigurationSection& dst, int32 curIdx, const String& errName);
+		static ConfigurationSection* MakeIncludedSection(const ConfigurationSection* src, const String& includeText, const IncludeTable& includeSources);
+
+	private:
+
+		static void ParseMaterialTreeWithPreprocessing(List<String>& result, const String& baseMtrlName, const ConfigurationSection* sect, const IncludeTable& includeSources);
+		static void ParseMaterialTree(List<String>& result, const String& baseMtrlName, const ConfigurationSection* sect, const IncludeTable& includeSources);
+
+		static bool ResolveGenerateExpressions(String& val, int32 curIdx);
+
+		static void ProcessIncludeParamInSubtree(ConfigurationSection* sect, const String& paramName, const String& paramValue);
+		static ConfigurationSection* MakeIncludedSection(const String& includeText, const IncludeTable& includeSources);
+
 	};
 
 	/**

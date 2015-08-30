@@ -432,11 +432,22 @@ namespace Apoc3D
 			XMLConfigurationFormat::Instance.Load(floc, &config);
 
 			ConfigurationSection* mSect = config[L"Materials"];
+			ConfigurationSection* incSec = config[L"Parts"];
+
+			IncludeTable includeSources;
+
+			if (incSec)
+			{
+				for (ConfigurationSection* subSect : incSec->getSubSections())
+				{
+					includeSources.Add(subSect->getName(), subSect);
+				}
+			}
 
 			List<String> names;
 			for (ConfigurationSection* sub : mSect->getSubSections())
 			{
-				ParseMaterialTree(names, L"", sub);
+				ParseMaterialTreeWithPreprocessing(names, L"", sub, includeSources);
 			} 
 			
 			String basePath = WrapDestinationPath(DestinationLocation, true);
@@ -450,6 +461,238 @@ namespace Apoc3D
 		if (DestinationToken.size())
 			res.Add(WrapDestinationPath(DestinationToken, true));
 		return res;
+	}
+
+	void ProjectResMaterialSet::ParseMaterialTreeWithPreprocessing(List<String>& result, const String& baseMtrlName, const ConfigurationSection* sect, const IncludeTable& includeSources)
+	{
+		bool hasInclude = sect->hasAttribute(L"Include");
+		bool hasGenerate = sect->hasAttribute(L"Generate");
+
+		if (hasInclude)
+		{
+			String includeTxt = sect->getAttribute(L"Include");
+
+			ConfigurationSection* includeSect = MakeIncludedSection(sect, includeTxt, includeSources);
+
+			if (includeSect == nullptr)
+				return;
+
+			ParseMaterialTreeWithPreprocessing(result, baseMtrlName, includeSect, includeSources);
+
+			delete includeSect;
+			return;
+		}
+
+		if (hasGenerate)
+		{
+			// for generation rules, make temporary sections as the generated result
+
+			NumberRange numRange;
+			sect->GetAttributeGeneric(L"Generate", numRange);
+
+			for (int32 i = numRange.Start; i <= numRange.End; i++)
+			{
+				ConfigurationSection genSect(sect->getName() + StringUtils::IntToString(i));
+
+				if (!ResolveGenerateExpressionsInSubtree(sect, genSect, i, baseMtrlName))
+					return;
+
+				ParseMaterialTree(result, baseMtrlName, &genSect, includeSources);
+			}
+		}
+		else
+		{
+			ParseMaterialTree(result, baseMtrlName, sect, includeSources);
+		}
+	}
+	void ProjectResMaterialSet::ParseMaterialTree(List<String>& result, const String& baseMtrlName, const ConfigurationSection* sect, const IncludeTable& includeSources)
+	{
+		// build a name
+		String name = baseMtrlName;
+		if (name.size())
+		{
+			name.append(L"_");
+		}
+		name.append(sect->getName());
+
+		// go into sub sections
+		for (ConfigurationSection* ss : sect->getSubSections())
+		{
+			ParseMaterialTreeWithPreprocessing(result, name, ss, includeSources);
+		}
+
+		result.Add(name);
+	}
+
+
+	bool ProjectResMaterialSet::ResolveGenerateExpressions(String& val, int32 curIdx)
+	{
+		// conditional
+		if (val.find('@') != String::npos)
+		{
+			bool noMaches = true;
+
+			List<String> conds = StringUtils::Split(val, L"@");
+
+			for (const String& c : conds)
+			{
+				size_t pos = c.find('{');
+				if (pos != String::npos)
+				{
+					String matchIdxStr = c.substr(0, pos);
+					NumberRange nr;
+					nr.Parse(matchIdxStr);
+
+					if (nr.isInRange(curIdx))
+					{
+						noMaches = false;
+
+						size_t pos2 = c.find_last_of('}');
+
+						if (pos2 != String::npos)
+						{
+							pos++;
+							val = c.substr(pos, pos2 - pos);
+							break;
+						}
+						else return false;
+					}
+				}
+				else
+				{
+					return false;
+				}
+			}
+
+			if (noMaches)
+			{
+				val = L"";
+				return true;
+			}
+		}
+
+		// escape seq
+		if (val.find(L"%d") != String::npos)
+		{
+			StringUtils::ReplaceAll(val, L"%d", StringUtils::IntToString(curIdx));
+		}
+
+		return true;
+	}
+	bool ProjectResMaterialSet::ResolveGenerateExpressionsInSubtree(const ConfigurationSection* src, ConfigurationSection& dst, int32 curIdx, const String& errName)
+	{
+		for (auto e : src->getAttributes())
+		{
+			if (e.Key == L"Generate")
+				continue;
+
+			String val = e.Value;
+
+			if (!ResolveGenerateExpressions(val, curIdx))
+				return false;
+
+			if (val.size())
+				dst.AddAttributeString(e.Key, val);
+		}
+
+		for (ConfigurationSection* ss : src->getSubSections())
+		{
+			ConfigurationSection* genSubSect = new ConfigurationSection(ss->getName());
+
+			if (!ResolveGenerateExpressionsInSubtree(ss, *genSubSect, curIdx, errName + L"_" + ss->getName()))
+			{
+				delete genSubSect;
+				return false;
+			}
+
+			dst.AddSection(genSubSect);
+		}
+		return true;
+	}
+
+	ConfigurationSection* ProjectResMaterialSet::MakeIncludedSection(const String& includeText, const IncludeTable& includeSources)
+	{
+		String::size_type posL = includeText.find_first_of('[');
+		String::size_type posR = includeText.find_first_of(']');
+
+		if (posL != String::npos && posR != String::npos)
+		{
+			String sectName = includeText.substr(0, posL);
+			StringUtils::Trim(sectName);
+
+			String paramListTxt = includeText.substr(posL + 1, posR - posL - 1);
+			List<String> params = StringUtils::Split(paramListTxt, L",");
+
+			ConfigurationSection* src;
+			if (includeSources.TryGetValue(sectName, src))
+			{
+				src = new ConfigurationSection(*src);
+
+				if (params.getCount() > 0)
+				{
+					for (int32 i = 0; i < params.getCount(); i++)
+					{
+						StringUtils::Trim(params[i]);
+						ProcessIncludeParamInSubtree(src, L"$" + StringUtils::IntToString(i + 1), params[i]);
+					}
+				}
+				return src;
+			}
+		}
+		else
+		{
+			String sectName = includeText;
+			StringUtils::Trim(sectName);
+
+			ConfigurationSection* src;
+			if (includeSources.TryGetValue(includeText, src))
+			{
+				return new ConfigurationSection(*src);
+			}
+		}
+		return nullptr;
+	}
+	ConfigurationSection* ProjectResMaterialSet::MakeIncludedSection(const ConfigurationSection* sect, const String& includeText, const IncludeTable& includeSources)
+	{
+		ConfigurationSection* includeSect = MakeIncludedSection(includeText, includeSources);
+
+		if (includeSect == nullptr)
+			return nullptr;
+
+		includeSect->Merge(sect, true, sect->getName());
+
+		String temp;
+		if (includeSect->tryGetAttribute(L"Include", temp) && temp == includeText)
+		{
+			includeSect->RemoveAttribute(L"Include");
+		}
+		return includeSect;
+	}
+
+	void ProjectResMaterialSet::ProcessIncludeParamInSubtree(ConfigurationSection* sect, const String& paramName, const String& paramValue)
+	{
+		for (auto e : sect->getAttributes())
+		{
+			StringUtils::ReplaceAll(e.Value, paramName, paramValue);
+		}
+
+		for (ConfigurationSection* ss : sect->getSubSections())
+		{
+			ProcessIncludeParamInSubtree(ss, paramName, paramValue);
+		}
+	}
+
+	void ProjectResMaterialSet::NumberRange::Parse(const String& txt)
+	{
+		int32 bounds[2];
+		int32 count = StringUtils::SplitParseInts(txt, bounds, 2, L"-");
+		if (count == 1)
+			Start = End = bounds[0];
+		else
+		{
+			Start = bounds[0];
+			End = bounds[1];
+		}
 	}
 
 	/************************************************************************/

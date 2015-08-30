@@ -41,29 +41,9 @@ namespace APBuild
 		const Color4* FindColor(const String& name) const;
 	};
 
-	struct NumberRange
-	{
-		int32 Start;
-		int32 End;
-
-		void Parse(const String& txt)
-		{
-			int32 bounds[2];
-			int32 count = StringUtils::SplitParseInts(txt, bounds, 2, L"-");
-			if (count == 1)
-				Start = End = bounds[0];
-			else
-			{
-				Start = bounds[0];
-				End = bounds[1];
-			}
-		}
-
-		bool isInRange(int32 i) const { return i >= Start && i <= End; }
-	};
-
+	typedef ProjectResMaterialSet::NumberRange NumberRange;
 	typedef HashMap<String, Pallet*> PalletTable;
-	typedef HashMap<String, ConfigurationSection*> IncludeTable;
+	typedef ProjectResMaterialSet::IncludeTable IncludeTable;
 	typedef HashMap<String, MaterialData*> MaterialTable;
 
 
@@ -74,13 +54,7 @@ namespace APBuild
 		const PalletTable& pallets, const IncludeTable& includeSources);
 	
 
-	bool ResolveGenerateExpressions(String& val, int32 curIdx);
-	bool ResolveGenerateExpressionsInSubtree(const ConfigurationSection* src, ConfigurationSection& dst, int32 curIdx, const String& errName);
-
-	void ProcessIncludeParamInSubtree(ConfigurationSection* sect, const String& paramName, const String& paramValue);
-
-	ConfigurationSection* MakeIncludedSection(const String& includeText, const IncludeTable& includeSources);
-
+	
 	Color4 ResolveColor4(const String& text, const HashMap<String, Pallet*>& pallets, const String& errName);
 
 	void MaterialBuild::Build(const String& hierarchyPath, ConfigurationSection* sect)
@@ -179,20 +153,12 @@ namespace APBuild
 		{
 			String includeTxt = sect->getAttribute(L"Include");
 
-			ConfigurationSection* includeSect = MakeIncludedSection(includeTxt, includeSources);
+			ConfigurationSection* includeSect = ProjectResMaterialSet::MakeIncludedSection(sect, includeTxt, includeSources);
 
 			if (includeSect == nullptr)
 			{
 				BuildSystem::LogError(L"Cannot resolve include " + includeTxt + L" when processing " + baseMtrlName + L"_" + sect->getName(), L"");
 				return;
-			}
-
-			includeSect->Merge(sect, true, sect->getName());
-
-			String temp;
-			if (includeSect->tryGetAttribute(L"Include", temp) && temp == includeTxt)
-			{
-				includeSect->RemoveAttribute(L"Include");
 			}
 
 			ParseMaterialTreeWithPreprocessing(table, baseMtrl, baseMtrlName, includeSect, pallets, includeSources);
@@ -212,8 +178,11 @@ namespace APBuild
 			{
 				ConfigurationSection genSect(sect->getName() + StringUtils::IntToString(i));
 
-				if (!ResolveGenerateExpressionsInSubtree(sect, genSect, i, baseMtrlName))
+				if (!ProjectResMaterialSet::ResolveGenerateExpressionsInSubtree(sect, genSect, i, baseMtrlName))
+				{
+					BuildSystem::LogError(L"Cannot resolve generation expression when processing " + baseMtrlName + L"_" + sect->getName(), L"");
 					return;
+				}
 
 				ParseMaterialTree(table, baseMtrl, baseMtrlName, &genSect, pallets, includeSources);
 			}
@@ -259,150 +228,6 @@ namespace APBuild
 		table.Add(name, newNode);
 	}
 
-	bool ResolveGenerateExpressionsInSubtree(const ConfigurationSection* src, ConfigurationSection& dst, int32 curIdx, const String& errName)
-	{
-		for (auto e : src->getAttributes())
-		{
-			if (e.Key == L"Generate")
-				continue;
-
-			String val = e.Value;
-
-			if (!ResolveGenerateExpressions(val, curIdx))
-			{
-				BuildSystem::LogError(L"Material generation rule not valid in " + errName + L"_" + src->getName(), L"");
-				return false;
-			}
-
-			if (val.size())
-				dst.AddAttributeString(e.Key, val);
-		}
-
-		for (ConfigurationSection* ss : src->getSubSections())
-		{
-			ConfigurationSection* genSubSect = new ConfigurationSection(ss->getName());
-
-			if (!ResolveGenerateExpressionsInSubtree(ss, *genSubSect, curIdx, errName + L"_" + ss->getName()))
-			{
-				delete genSubSect;
-				return false;
-			}
-
-			dst.AddSection(genSubSect);
-		}
-		return true;
-	}
-
-	bool ResolveGenerateExpressions(String& val, int32 curIdx)
-	{
-		// conditional
-		if (val.find('@') != String::npos)
-		{
-			bool noMaches = true;
-
-			List<String> conds = StringUtils::Split(val, L"@");
-
-			for (const String& c : conds)
-			{
-				size_t pos = c.find('{');
-				if (pos != String::npos)
-				{
-					String matchIdxStr = c.substr(0, pos);
-					NumberRange nr;
-					nr.Parse(matchIdxStr);
-
-					if (nr.isInRange(curIdx))
-					{
-						noMaches = false;
-
-						size_t pos2 = c.find_last_of('}');
-
-						if (pos2 != String::npos)
-						{
-							pos++;
-							val = c.substr(pos, pos2 - pos);
-							break;
-						}
-						else return false;
-					}
-				}
-				else
-				{
-					return false;
-				}
-			}
-
-			if (noMaches)
-			{
-				val = L"";
-				return true;
-			}
-		}
-
-		// escape seq
-		if (val.find(L"%d") != String::npos)
-		{
-			StringUtils::ReplaceAll(val, L"%d", StringUtils::IntToString(curIdx));
-		}
-
-		return true;
-	}
-	
-	ConfigurationSection* MakeIncludedSection(const String& includeText, const IncludeTable& includeSources)
-	{
-		String::size_type posL = includeText.find_first_of('[');
-		String::size_type posR = includeText.find_first_of(']');
-
-		if (posL != String::npos && posR != String::npos)
-		{
-			String sectName = includeText.substr(0, posL);
-			StringUtils::Trim(sectName);
-
-			String paramListTxt = includeText.substr(posL + 1, posR - posL - 1);
-			List<String> params = StringUtils::Split(paramListTxt, L",");
-
-			ConfigurationSection* src;
-			if (includeSources.TryGetValue(sectName, src))
-			{
-				src = new ConfigurationSection(*src);
-
-				if (params.getCount() > 0)
-				{
-					for (int32 i = 0; i < params.getCount(); i++)
-					{
-						StringUtils::Trim(params[i]);
-						ProcessIncludeParamInSubtree(src, L"$" + StringUtils::IntToString(i+1), params[i]);
-					}
-				}
-				return src;
-			}
-		}
-		else
-		{
-			String sectName = includeText;
-			StringUtils::Trim(sectName);
-
-			ConfigurationSection* src;
-			if (includeSources.TryGetValue(includeText, src))
-			{
-				return new ConfigurationSection(*src);
-			}
-		}
-		return nullptr;
-	}
-
-	void ProcessIncludeParamInSubtree(ConfigurationSection* sect, const String& paramName, const String& paramValue)
-	{
-		for (auto e : sect->getAttributes())
-		{
-			StringUtils::ReplaceAll(e.Value, paramName, paramValue);
-		}
-
-		for (ConfigurationSection* ss : sect->getSubSections())
-		{
-			ProcessIncludeParamInSubtree(ss, paramName, paramValue);
-		}
-	}
 
 	bool hasLetters(const String& str)
 	{
