@@ -642,6 +642,7 @@ namespace Apoc3D
 
 			void ResizeDiscard(int32 newSize)
 			{
+				m_count = 0;
 				delete[] m_elements;
 				m_elements = new T[newSize];
 				m_length = newSize;

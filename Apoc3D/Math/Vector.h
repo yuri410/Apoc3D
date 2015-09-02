@@ -743,7 +743,6 @@ namespace Apoc3D
 			/** Reverses the direction of a given vector. */
 			static Vector3 Negate(const Vector3& value)								{ return Vector3(-value.X, -value.Y, -value.Z); }
 
-
 			/**
 			 * Returns a Vector3 containing the 3D Cartesian coordinates of 
 			 * a point specified in Barycentric coordinates relative to a 3D triangle.

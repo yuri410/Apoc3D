@@ -172,21 +172,30 @@ namespace Apoc3D
 			protected:
 				virtual int begin();
 				virtual void end();
-			private:
-				struct ResolvedEffectParameter : public EffectParameter
-				{
-					ResolvedEffectParameter() : EffectParameter() { }
-					explicit ResolvedEffectParameter(const EffectParameter& base)
-						: EffectParameter(base) { }
 
+			private:
+				struct ResolvedEffectParameter 
+				{
+					ResolvedEffectParameter() { }
+					explicit ResolvedEffectParameter(RenderDevice* device, const String& effectName,
+						const EffectParameter* src, Shader* targetShader, bool& hasShaderIssues);
+					
 					void Free();
 
 					bool RS_SetupAtBegining = false;
 					bool RS_SetupAtBeginingOnly = false;		/** if a parameter has RS_SetupAtBegining==true, this means if setup can be fully done at beginning. If yes nothing else is done in instance setup. */
 					Shader* RS_TargetShader = nullptr;
+					EffectParamUsage Usage = EPUSAGE_Unknown;
+
+					int32 InstanceBlobIndex = -1;
+					int32 RegisterIndex = -1;
+
+					int32 SamplerIndex = -1;
 
 					ResourceHandle<Texture>* DefaultTexture = nullptr;
 
+					// for rare data, access through this reference
+					const EffectParameter* ReferenceSource = nullptr;
 
 					void SetSamplerState() const;
 
@@ -213,16 +222,17 @@ namespace Apoc3D
 
 				};
 
-				void SetTexture(ResolvedEffectParameter& param, ResourceHandle<Texture>* value);
-				void SetTexture(ResolvedEffectParameter& param, Texture* value);
+				void SetTexture(const ResolvedEffectParameter& param, ResourceHandle<Texture>* value);
+				void SetTexture(const ResolvedEffectParameter& param, Texture* value);
 				
-				void SetInstanceBlobParameter(ResolvedEffectParameter& param, const InstanceInfoBlobValue& v);
-				void SetMaterialCustomParameter(ResolvedEffectParameter& param, Material* mtrl);
-				void SetSingleCustomParameter(ResolvedEffectParameter& param, CustomEffectParameterType type, const void* data);
+				void SetInstanceBlobParameter(const ResolvedEffectParameter& param, const InstanceInfoBlobValue& v);
+				void SetMaterialCustomParameter(const ResolvedEffectParameter& param, Material* mtrl);
+				void SetSingleCustomParameter(const ResolvedEffectParameter& param, CustomEffectParameterType type, const void* data);
 
 				Shader* m_vertexShader = nullptr;
 				Shader* m_pixelShader = nullptr;
 
+				List<EffectParameter> m_parametersSrc;
 				List<ResolvedEffectParameter> m_parameters;
 
 				RenderDevice* m_device;

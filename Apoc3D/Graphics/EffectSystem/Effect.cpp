@@ -173,84 +173,30 @@ namespace Apoc3D
 				
 				bool hasShaderIssues = false;
 
+				m_parametersSrc = profileSelected->Parameters;
 				m_parameters.ResizeDiscard(profileSelected->Parameters.getCount());
-				for (int32 i = 0; i < profileSelected->Parameters.getCount(); i++)
+				for (const EffectParameter& srcEp : m_parametersSrc)
 				{
-					ResolvedEffectParameter rep(profileSelected->Parameters[i]);
-
 					Shader* shader = nullptr;
-					if (rep.ProgramType == ShaderType::Vertex)
+					if (srcEp.ProgramType == ShaderType::Vertex)
 					{
 						shader = m_vertexShader;
 					}
-					else if (rep.ProgramType == ShaderType::Pixel)
+					else if (srcEp.ProgramType == ShaderType::Pixel)
 					{
 						shader = m_pixelShader;
 					}
 
 					assert(shader);
-					rep.RS_TargetShader = shader;
 
-					switch (rep.Usage)
-					{
-						case EPUSAGE_LC4_Ambient:
-						case EPUSAGE_LC4_Diffuse:
-						case EPUSAGE_LC4_Specular:
-						case EPUSAGE_LV3_LightDir:
-						case EPUSAGE_LV3_LightPos:
-						case EPUSAGE_PV3_ViewPos:
-						case EPUSAGE_SV2_ViewportSize:
-						case EPUSAGE_SV2_InvViewportSize:
-						case EPUSAGE_S_FarPlane:
-						case EPUSAGE_S_NearPlane:
-						case EPUSAGE_Trans_View:
-						case EPUSAGE_Trans_ViewProj:
-						case EPUSAGE_Trans_Projection:
-						case EPUSAGE_Trans_InvView:
-						case EPUSAGE_Trans_InvProj:
-						case EPUSAGE_Trans_InvViewProj:
-						case EPUSAGE_V3_CameraX:
-						case EPUSAGE_V3_CameraY:
-						case EPUSAGE_V3_CameraZ:
-						case EPUSAGE_V3_CameraPos:
-						case EPUSAGE_S_UnifiedTime:
-						case EPUSAGE_DefaultTexture:
-							rep.RS_SetupAtBeginingOnly = true;
-							rep.RS_SetupAtBegining = true;
-
-							break;
-					}
-
-					if (rep.DefaultTextureName.size())
-					{
-						FileLocation fl;
-						if (FileSystem::getSingleton().TryLocate(rep.DefaultTextureName, FileLocateRule::Textures, fl))
-							rep.DefaultTexture = TextureManager::getSingleton().CreateInstance(m_device, fl);
-						else
-							ApocLog(LOG_Graphics, L"[AutomaticEffect][" + m_name + L"] Default texture " + rep.DefaultTextureName + L" for parameter " + rep.Name + L" not found.", LOGLVL_Warning);
-					}
-					
-					shader->TryGetSamplerIndex(rep.Name, rep.SamplerIndex);
-					shader->TryGetParamIndex(rep.Name, rep.RegisterIndex);
-
-					if (rep.RegisterIndex == -1 && rep.SamplerIndex == -1)
-					{
-						ApocLog(LOG_Graphics, L"[AutomaticEffect][" + m_name + L"] Effect parameter " + rep.Name + L" does not have valid info.", LOGLVL_Warning);
-						hasShaderIssues = true;
-					}
-
-					if (rep.SamplerIndex != -1)
-					{
-						rep.RS_SetupAtBegining = true;
-					}
-
+					ResolvedEffectParameter rep(m_device, m_name, &srcEp, shader, hasShaderIssues);
 					m_parameters.Add(rep);
 				}
 				
 				// instancing check
-				for (ResolvedEffectParameter& rep : m_parameters)
+				for (const EffectParameter& srcEp : m_parametersSrc)
 				{
-					if (rep.Usage == EPUSAGE_Trans_InstanceWorlds)
+					if (srcEp.Usage == EPUSAGE_Trans_InstanceWorlds)
 					{
 						m_supportsInstancing = true;
 						break;
@@ -287,8 +233,10 @@ namespace Apoc3D
 				bool isMaterialChanged = m_previousMaterialPointer != mtrl;
 				m_previousMaterialPointer = mtrl;
 
-				for (ResolvedEffectParameter& ep : m_parameters)
+				for (int32 i = 0; i < m_parameters.getCount();i++)
 				{
+					const ResolvedEffectParameter& ep = m_parameters[i];
+
 					if (ep.RS_SetupAtBegining && ep.RS_SetupAtBeginingOnly)
 						continue;
 
@@ -469,7 +417,7 @@ namespace Apoc3D
 									if (inValidType)
 									{
 										LogManager::getSingleton().Write(LOG_Graphics,
-											L"[" + m_name + L"] Instanced InfoBlob parameter " + ep.Name + L" type not valid. ", LOGLVL_Warning);
+											L"[" + m_name + L"] Instanced InfoBlob parameter " + ep.ReferenceSource->Name + L" type not valid. ", LOGLVL_Warning);
 									}
 								}
 								else
@@ -486,7 +434,7 @@ namespace Apoc3D
 						case EPUSAGE_CustomMaterialParam:
 							if (isMaterialChanged)
 							{
-								if (mtrl && ep.CustomMaterialParamName.size())
+								if (mtrl && ep.ReferenceSource->CustomMaterialParamName.size())
 								{
 									SetMaterialCustomParameter(ep, mtrl);
 								}
@@ -544,7 +492,6 @@ namespace Apoc3D
 				if (tex == nullptr)
 					tex = m_whiteTexture;
 
-				//param.RS_TargetShader->SetSamplerState(param.SamplerIndex, param.SamplerState);
 				param.RS_TargetShader->SetTexture(param.SamplerIndex, tex);
 			}
 
@@ -552,16 +499,15 @@ namespace Apoc3D
 			{
 				ResolvedEffectParameter& param = m_parameters[index];
 				
-				//param.RS_TargetShader->SetSamplerState(param.SamplerIndex, param.SamplerState);
 				param.RS_TargetShader->SetTexture(param.SamplerIndex, tex);
 			}
 
 
 			int AutomaticEffect::FindParameterIndex(const String& name)
 			{
-				for (int i = 0; i < m_parameters.getCount(); i++)
+				for (int i = 0; i < m_parametersSrc.getCount(); i++)
 				{
-					if (m_parameters[i].Name == name)
+					if (m_parametersSrc[i].Name == name)
 						return i;
 				}
 				return -1;
@@ -668,13 +614,8 @@ namespace Apoc3D
 						case EPUSAGE_V3_CameraZ:	ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetZ()); break;
 						case EPUSAGE_V3_CameraPos:	ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetTranslation()); break;
 
-						case EPUSAGE_DefaultTexture:
-							SetTexture(ep, ep.DefaultTexture);
-							break;
-
-						case EPUSAGE_S_UnifiedTime:
-							ep.SetFloat(m_unifiedTime);
-							break;
+						case EPUSAGE_DefaultTexture:	SetTexture(ep, ep.DefaultTexture); break;
+						case EPUSAGE_S_UnifiedTime:		ep.SetFloat(m_unifiedTime); break;
 					}
 				}
 
@@ -686,7 +627,7 @@ namespace Apoc3D
 			}
 
 
-			void AutomaticEffect::SetTexture(ResolvedEffectParameter& param, ResourceHandle<Texture>* value)
+			void AutomaticEffect::SetTexture(const ResolvedEffectParameter& param, ResourceHandle<Texture>* value)
 			{
 				Texture* tex = nullptr;
 				
@@ -698,22 +639,22 @@ namespace Apoc3D
 
 				param.RS_TargetShader->SetTexture(param.SamplerIndex, tex);
 			}
-			void AutomaticEffect::SetTexture(ResolvedEffectParameter& param, Texture* value)
+			void AutomaticEffect::SetTexture(const ResolvedEffectParameter& param, Texture* value)
 			{
 				param.RS_TargetShader->SetTexture(param.SamplerIndex, value == nullptr ? m_whiteTexture : value);
 			}
 			
 
-			void AutomaticEffect::SetInstanceBlobParameter(ResolvedEffectParameter& ep, const InstanceInfoBlobValue& v)
+			void AutomaticEffect::SetInstanceBlobParameter(const ResolvedEffectParameter& ep, const InstanceInfoBlobValue& v)
 			{
 				if (CustomEffectParameterType_IsReference(v.Type))
 					SetSingleCustomParameter(ep, v.Type, v.RefValue);
 				else
 					SetSingleCustomParameter(ep, v.Type, v.Value);
 			}
-			void AutomaticEffect::SetMaterialCustomParameter(ResolvedEffectParameter& ep, Material* mtrl)
+			void AutomaticEffect::SetMaterialCustomParameter(const ResolvedEffectParameter& ep, Material* mtrl)
 			{
-				const MaterialCustomParameter* mcp = mtrl->getCustomParameter(ep.CustomMaterialParamName);
+				const MaterialCustomParameter* mcp = mtrl->getCustomParameter(ep.ReferenceSource->CustomMaterialParamName);
 				if (mcp)
 				{
 					if (CustomEffectParameterType_IsReference(mcp->Type))
@@ -723,52 +664,52 @@ namespace Apoc3D
 				}
 			}
 
-			void AutomaticEffect::SetSingleCustomParameter(ResolvedEffectParameter& ep, CustomEffectParameterType type, const void* data)
+			void AutomaticEffect::SetSingleCustomParameter(const ResolvedEffectParameter& ep, CustomEffectParameterType type, const void* data)
 			{
 				switch (type)
 				{
-				case CEPT_Float:
-					ep.SetFloat(*reinterpret_cast<const float*>(data));
-					break;
+					case CEPT_Float:
+						ep.SetFloat(*reinterpret_cast<const float*>(data));
+						break;
 
-				case CEPT_Vector2:
-				case CEPT_Ref_Vector2:
-					ep.SetVector2(*reinterpret_cast<const Vector2*>(data));
-					break;
+					case CEPT_Vector2:
+					case CEPT_Ref_Vector2:
+						ep.SetVector2(*reinterpret_cast<const Vector2*>(data));
+						break;
 
-				case CEPT_Ref_Vector3:
-					ep.SetVector3(*reinterpret_cast<const Vector3*>(data));
-					break;
+					case CEPT_Ref_Vector3:
+						ep.SetVector3(*reinterpret_cast<const Vector3*>(data));
+						break;
 
-				case CEPT_Vector4:
-				case CEPT_Ref_Vector4:
-					ep.SetVector4(*reinterpret_cast<const Vector4*>(data));
-					break;
+					case CEPT_Vector4:
+					case CEPT_Ref_Vector4:
+						ep.SetVector4(*reinterpret_cast<const Vector4*>(data));
+						break;
 
-				case CEPT_Matrix:
-				case CEPT_Ref_Matrix:
-					ep.SetMatrix(*reinterpret_cast<const Matrix*>(data));
-					break;
+					case CEPT_Matrix:
+					case CEPT_Ref_Matrix:
+						ep.SetMatrix(*reinterpret_cast<const Matrix*>(data));
+						break;
 
-				case CEPT_Boolean:
-					ep.SetBool(*reinterpret_cast<const bool*>(data));
-					break;
-				case CEPT_Integer:
-					ep.SetInt(*reinterpret_cast<const int*>(data));
-					break;
-				case CEPT_Ref_TextureHandle:
-					SetTexture(ep, (ResourceHandle<Texture>*)data);
-					break;
-				case CEPT_Ref_Texture:
-					SetTexture(ep, (Texture*)data);
-					break;
+					case CEPT_Boolean:
+						ep.SetBool(*reinterpret_cast<const bool*>(data));
+						break;
+					case CEPT_Integer:
+						ep.SetInt(*reinterpret_cast<const int*>(data));
+						break;
+					case CEPT_Ref_TextureHandle:
+						SetTexture(ep, (ResourceHandle<Texture>*)data);
+						break;
+					case CEPT_Ref_Texture:
+						SetTexture(ep, (Texture*)data);
+						break;
 				}
 			}
 
 
 			void AutomaticEffect::ResolvedEffectParameter::Free() { DELETE_AND_NULL(DefaultTexture); }
 
-			void AutomaticEffect::ResolvedEffectParameter::SetSamplerState() const { RS_TargetShader->SetSamplerState(SamplerIndex, SamplerState); }
+			void AutomaticEffect::ResolvedEffectParameter::SetSamplerState() const { RS_TargetShader->SetSamplerState(SamplerIndex, ReferenceSource->SamplerState); }
 
 			void AutomaticEffect::ResolvedEffectParameter::SetVector2(const Vector2& value) const { RS_TargetShader->SetVector2(RegisterIndex, value); }
 			void AutomaticEffect::ResolvedEffectParameter::SetVector3(const Vector3& value) const { RS_TargetShader->SetVector3(RegisterIndex, value); }
@@ -790,6 +731,70 @@ namespace Apoc3D
 			void AutomaticEffect::ResolvedEffectParameter::Set4X3Matrix(const Matrix* transfroms, int count) const { RS_TargetShader->SetMatrix4x3(RegisterIndex, transfroms, count); }
 			void AutomaticEffect::ResolvedEffectParameter::SetMatrix(const Matrix* transfroms, int count) const { RS_TargetShader->SetValue(RegisterIndex, transfroms, count); }
 			void AutomaticEffect::ResolvedEffectParameter::SetMatrix(const Matrix& m) const { RS_TargetShader->SetValue(RegisterIndex, m); }
+
+
+			AutomaticEffect::ResolvedEffectParameter::ResolvedEffectParameter(RenderDevice* device, const String& effectName,
+				const EffectParameter* srcPtr, Shader* targetShader, bool& hasShaderIssues)
+				: RS_TargetShader(targetShader), Usage(srcPtr->Usage),
+				InstanceBlobIndex(srcPtr->InstanceBlobIndex), RegisterIndex(srcPtr->RegisterIndex),
+				SamplerIndex(srcPtr->SamplerIndex), ReferenceSource(srcPtr)
+			{
+				const EffectParameter& src = *srcPtr;
+
+				switch (src.Usage)
+				{
+					case EPUSAGE_LC4_Ambient:
+					case EPUSAGE_LC4_Diffuse:
+					case EPUSAGE_LC4_Specular:
+					case EPUSAGE_LV3_LightDir:
+					case EPUSAGE_LV3_LightPos:
+					case EPUSAGE_PV3_ViewPos:
+					case EPUSAGE_SV2_ViewportSize:
+					case EPUSAGE_SV2_InvViewportSize:
+					case EPUSAGE_S_FarPlane:
+					case EPUSAGE_S_NearPlane:
+					case EPUSAGE_Trans_View:
+					case EPUSAGE_Trans_ViewProj:
+					case EPUSAGE_Trans_Projection:
+					case EPUSAGE_Trans_InvView:
+					case EPUSAGE_Trans_InvProj:
+					case EPUSAGE_Trans_InvViewProj:
+					case EPUSAGE_V3_CameraX:
+					case EPUSAGE_V3_CameraY:
+					case EPUSAGE_V3_CameraZ:
+					case EPUSAGE_V3_CameraPos:
+					case EPUSAGE_S_UnifiedTime:
+					case EPUSAGE_DefaultTexture:
+						RS_SetupAtBeginingOnly = true;
+						RS_SetupAtBegining = true;
+
+						break;
+				}
+
+				if (src.DefaultTextureName.size())
+				{
+					FileLocation fl;
+					if (FileSystem::getSingleton().TryLocate(src.DefaultTextureName, FileLocateRule::Textures, fl))
+						DefaultTexture = TextureManager::getSingleton().CreateInstance(device, fl);
+					else
+						ApocLog(LOG_Graphics, L"[AutomaticEffect][" + effectName + L"] Default texture " + src.DefaultTextureName + L" for parameter " + src.Name + L" not found.", LOGLVL_Warning);
+				}
+
+				RS_TargetShader->TryGetSamplerIndex(src.Name, SamplerIndex);
+				RS_TargetShader->TryGetParamIndex(src.Name, RegisterIndex);
+
+				if (RegisterIndex == -1 && SamplerIndex == -1)
+				{
+					ApocLog(LOG_Graphics, L"[AutomaticEffect][" + effectName + L"] Effect parameter " + src.Name + L" does not have valid info.", LOGLVL_Warning);
+					hasShaderIssues = true;
+				}
+
+				if (SamplerIndex != -1)
+				{
+					RS_SetupAtBegining = true;
+				}
+			}
+
 
 			/************************************************************************/
 			/*  CustomShaderEffect                                                  */

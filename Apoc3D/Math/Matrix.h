@@ -102,6 +102,14 @@ namespace Apoc3D
 				CopyArray(Elements, elements);
 			}
 
+			explicit Matrix(const Vector4(&rows)[4])
+				: M11(rows[0].X), M12(rows[0].Y), M13(rows[0].Z), M14(rows[0].W),
+				 M21(rows[1].X), M22(rows[1].Y), M23(rows[1].Z), M24(rows[1].W),
+				 M31(rows[2].X), M32(rows[2].Y), M33(rows[2].Z), M34(rows[2].W),
+				 M41(rows[3].X), M42(rows[3].Y), M43(rows[3].Z), M44(rows[3].W)
+			{ }
+
+			
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 			Matrix(const Matrix &m) : Row1(m.Row1), Row2(m.Row2), Row3(m.Row3), Row4(m.Row4) {}
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
@@ -182,6 +190,14 @@ namespace Apoc3D
 				SetX(x); SetY(y); SetZ(z);
 			}
 
+			void SetRows(const Vector4& r1, const Vector4& r2, const Vector4& r3, const Vector4& r4)
+			{
+				M11 = r1.X; M12 = r1.Y; M13 = r1.Z; M14 = r1.W;
+				M21 = r2.X; M22 = r2.Y; M23 = r2.Z; M24 = r2.W;
+				M31 = r3.X; M32 = r3.Y; M33 = r3.Z; M34 = r3.W;
+				M41 = r4.X; M42 = r4.Y; M43 = r4.Z; M44 = r4.W;
+			}
+
 			void LoadIdentity()
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -194,12 +210,6 @@ namespace Apoc3D
 				M21 = 0; M22 = 1; M23 = 0; M24 = 0;
 				M31 = 0; M32 = 0; M33 = 1; M34 = 0;
 				M41 = 0; M42 = 0; M43 = 0; M44 = 1;
-
-				//M11 = M22 = M33 = M44 = 1;
-				//M12 = M13 = M14 = 0;
-				//M21 = M23 = M24 = 0;
-				//M31 = M32 = M34 = 0;
-				//M41 = M42 = M43 = 0;
 			#endif
 			}
 
