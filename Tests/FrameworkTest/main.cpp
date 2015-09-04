@@ -64,6 +64,8 @@ void main()
 	//String s = StringUtils::ToString(0.14159265f,8);
 	//std::wcout << s.c_str() << L"\n";
 	//std::wcout << std::numeric_limits<float>::digits10+1 << L"\n";
+
+	
 	
 
 	FileSystem::Initialize();

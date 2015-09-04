@@ -339,6 +339,50 @@ namespace UnitTestVC
 			Assert::AreEqual(4, lst[6]);
 			Assert::AreEqual(5, lst[7]);
 		}
+
+
+		TEST_METHOD(List_RemoveAt)
+		{
+			for (int32 k = 0; k < 10000; k++)
+			{
+				List<int32> data = { 0, 1, 2, 3, 4, 5, 6 };
+				List<int32> indices(data.getCount());
+				List<int32> emulatedResult = data;
+
+				if (k == 0)
+				{
+					indices = data;
+					emulatedResult.Clear();
+				}
+				else
+				{
+					for (int32 i = data.getCount() - 1; i >= 0; i--)
+					{
+						if (Randomizer::NextBool())
+						{
+							indices.Add(data[i]);
+
+							emulatedResult.RemoveAt(i);
+						}
+					}
+					indices.Sort();
+				}
+
+				data.RemoveAt(indices);
+
+				bool same = data.getCount() == emulatedResult.getCount();
+				for (int32 i = 0; i < data.getCount(); i++)
+				{
+					if (data[i] != emulatedResult[i])
+					{
+						same = false;
+						break;
+					}
+				}
+				Assert::IsTrue(same);
+			}
+		}
+
 	private:
 
 		template<typename S>
@@ -929,5 +973,89 @@ namespace UnitTestVC
 			}
 		}
 
+	};
+
+	TEST_CLASS(QueueTest)
+	{
+	public:
+		TEST_METHOD(Queue_General)
+		{
+			for (int32 i = 0; i < 100000; i++)
+			{
+				List<int32> source;
+				Queue<int32> queue;
+				int32 count = Randomizer::NextExclusive(32);
+				for (int32 j = 0; j < count; j++)
+				{
+					int32 v = Randomizer::Next();
+					queue.Enqueue(v);
+					source.Add(v);
+				}
+
+				int32 k = 0;
+				for (int32 v : queue)
+				{
+					assert(source[k++] == v);
+				}
+
+				Queue<int32> moveTgt = std::move(queue);
+				assert(queue.getCount() == 0);
+
+				k = 0;
+				for (int32 v : moveTgt)
+				{
+					assert(source[k++] == v);
+				}
+			}
+
+		}
+
+		TEST_METHOD(Queue_Remove)
+		{
+			Queue<int32> testQueue;
+			List<int32> refList;
+
+			for (int32 k = 0; k < 1000; k++)
+			{
+				int32 cnt = Randomizer::NextExclusive(64);
+				for (int32 i = 0; i < cnt; i++)
+				{
+					if (refList.getCount()>0 &&
+						Randomizer::NextBool())
+					{
+						testQueue.Dequeue();
+						refList.RemoveAt(0);
+					}
+					else
+					{
+						int32 v = Randomizer::Next();
+						testQueue.Enqueue(v);
+						refList.Add(v);
+					}
+				}
+
+				cnt = Randomizer::NextExclusive(4) + 4;
+				for (int32 i = 0; i < cnt; i++)
+				{
+					int32 v = Randomizer::Next();
+					testQueue.Enqueue(v);
+					refList.Add(v);
+				}
+
+				Assert::IsTrue(testQueue.getCount() == refList.getCount());
+
+				int32 ridx = Randomizer::NextExclusive(refList.getCount());
+
+				testQueue.RemoveAt(ridx);
+				refList.RemoveAt(ridx);
+
+				Assert::IsTrue(testQueue.getCount() == refList.getCount());
+
+				for (int32 i = 0; i < refList.getCount(); i++)
+				{
+					Assert::IsTrue(testQueue.GetElement(i) == refList[i]);
+				}
+			}
+		}
 	};
 }

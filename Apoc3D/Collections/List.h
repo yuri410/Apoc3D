@@ -272,6 +272,42 @@ namespace Apoc3D
 
 				m_count--;
 			}
+			template <typename T>
+			void RemoveAt(T& deadList)
+			{
+				int32 removeCount = deadList.getCount();
+				if (removeCount > 0)
+				{
+					int32 sourceCount = m_count;
+					int32 dstCount = m_count;
+					
+					int32 curDeadIdx = 0;
+
+					int32 writePos = deadList[curDeadIdx];
+					assert(writePos >= 0);
+					for (int32 i = deadList[curDeadIdx]; i < sourceCount; i++, writePos++)
+					{
+						// skip deleted
+						while (curDeadIdx < removeCount && deadList[curDeadIdx] == i)
+						{
+							assert(curDeadIdx + 1 >= removeCount || deadList[curDeadIdx] < deadList[curDeadIdx + 1]);
+
+							curDeadIdx++;
+							i++;
+							dstCount--;
+						}
+
+						if (i >= sourceCount)
+							break;
+
+						assert(i >= 0 && i < sourceCount);
+						assert(writePos >= 0 && writePos < dstCount);
+						m_elements[writePos] = std::move(m_elements[i]);
+					}
+
+					m_count = dstCount;
+				}
+			}
 			void RemoveAtSwapping(int32 index)
 			{
 				assert(index >= 0 && index < m_count);
@@ -296,6 +332,7 @@ namespace Apoc3D
 					}
 				}
 			}
+
 
 			void Reverse()
 			{

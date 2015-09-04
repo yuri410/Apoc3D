@@ -77,6 +77,24 @@ namespace Apoc3D
 				return *this;
 			}
 
+			Queue(Queue&& o)
+				: m_array(o.m_array), m_arrLength(o.m_arrLength), m_count(o.m_count), m_head(o.m_head), m_tail(o.m_tail)
+			{
+				o.m_array = nullptr;
+				o.m_count = 0;
+				o.m_arrLength = 0;
+				o.m_head = 0;
+				o.m_tail = 0;
+			}
+			Queue& operator=(Queue&& o)
+			{
+				if (this != &o)
+				{
+					delete[] m_array;
+					new (this)Queue(std::move(o));
+				}
+				return *this;
+			}
 
 			void Clear()
 			{
@@ -181,6 +199,55 @@ namespace Apoc3D
 				m_count++;
 			}
 
+			void RemoveAt(int32 idx)
+			{
+				assert(m_count > 0);
+				assert(idx >= 0 && idx < m_count);
+
+				int32 head = m_head;
+				int32 tail = m_tail;
+				if (head < tail)
+				{
+					for (int32 i = head + idx + 1; i < tail; i++)
+					{
+						m_array[i - 1] = std::move(m_array[i]);
+					}
+				}
+				else
+				{
+					if (head + idx < m_arrLength)
+					{
+						for (int32 i = head + idx + 1; i < m_arrLength; i++)
+						{
+							m_array[i - 1] = std::move(m_array[i]);
+						}
+
+						m_array[m_arrLength - 1] = std::move(m_array[0]);
+
+						for (int32 i = 1; i < m_tail; i++)
+						{
+							m_array[i - 1] = std::move(m_array[i]);
+						}
+					}
+					else
+					{
+						for (int32 i = head + idx - m_arrLength + 1; i < m_tail; i++)
+						{
+							m_array[i - 1] = std::move(m_array[i]);
+						}
+					}
+				}
+				//for (int32 i = idx + 1; i < m_count; i++)
+				//{
+				//	m_array[(m_head + i - 1) % m_arrLength] = std::move(m_array[(m_head + i) % m_arrLength]);
+				//}
+				m_tail--;
+				if (m_tail < 0)
+					m_tail = m_arrLength - 1;
+				
+				m_count--;
+			}
+
 			int getCount() const { return m_count; }
 
 			T& operator[](int i) { assert(i >= 0 && i < m_count); return m_array[(m_head + i) % m_arrLength]; }
@@ -192,6 +259,45 @@ namespace Apoc3D
 
 			const T& Head() const { return m_array[m_head]; }
 			const T& Tail() const { return operator[](m_count - 1); }
+
+
+
+
+			class Iterator
+			{
+			public:
+				Iterator() { }
+				Iterator(const Queue& ctn) : m_owner(&ctn) { }
+				Iterator(const Queue& ctn, int32 idx) : m_owner(&ctn), m_idx(idx) { }
+
+				T& operator*() const { return  m_owner->m_array[(m_owner->m_head + m_idx) % m_owner->m_arrLength]; }
+
+				bool operator==(const Iterator& o) const { return m_owner == o.m_owner && m_idx != o.m_idx; }
+				bool operator!=(const Iterator& o) const { return !(*this == o); }
+
+				Iterator& operator++() { m_idx++; if (m_idx > m_owner->getCount()) m_idx = -1; return *this; }
+				Iterator operator++(int)
+				{
+					Iterator result = *this;
+					++(*this);
+					return result;
+				}
+
+				Iterator& operator=(const Iterator& o)
+				{
+					m_owner = o.m_owner;
+					m_idx = o.m_idx;
+					return *this;
+				}
+
+			private:
+				const Queue* m_owner = nullptr;
+				int32 m_idx = -1;
+			};
+
+			Iterator begin() const { return Iterator(*this, 0); }
+			Iterator end() const { return Iterator(*this); }
+
 		private:
 			void SetCapacity(int capacity)
 			{
