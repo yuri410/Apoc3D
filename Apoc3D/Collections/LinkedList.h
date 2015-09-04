@@ -142,10 +142,10 @@ namespace Apoc3D
 				m_size++;
 			}
 
-			/**
-			 * Append the given item after the end of the list.
-			 */
+			/** Append the given item after the end of the list. */
 			void PushBack(const T& item) { PushBack_Iter(item); }
+
+			void PushBack(T&& item) { PushBack_Iter(std::move(item)); }
 
 			/**
 			 *  Append the given item after the end of the list and
@@ -153,22 +153,11 @@ namespace Apoc3D
 			 */
 			Iterator PushBack_Iter(const T& item)
 			{
-				Node* newNode = new Node(item);
-
-				if (m_lastNode)
-				{
-					m_lastNode->Next = newNode;
-				}
-				else
-				{
-					assert(!m_firstNode);
-					m_firstNode = newNode;
-				}
-				m_lastNode = newNode;
-
-				m_size++;
-
-				return Iterator(this, newNode);
+				return PushBack_Node(new Node(item));
+			}
+			Iterator PushBack_Iter(T&& item)
+			{
+				return PushBack_Node(new Node(std::move(item)));
 			}
 
 			/**
@@ -368,19 +357,14 @@ namespace Apoc3D
 			 */
 			struct Node
 			{
-				/**
-				 * The item data.
-				 */
-				T Data;
-				/**
-				 * The pointer to the next node. nullptr means no next node.
-				 */
-				Node* Next;
+				T Data;	/** The item data. */
+				Node* Next;	/**The pointer to the next node. nullptr means no next node. */
 
-				/**
-				 * Initializes a new node with the given data and a empty next node.
-				 */
+				/** Initializes a new node with the given data and a empty next node. */
 				Node(const T& data, Node* next = nullptr) : Data(data), Next(next) { }
+				Node(T&& data, Node* next = nullptr) : Data(std::move(data)), Next(next) { }
+
+
 			};
 
 			/** 
@@ -410,6 +394,24 @@ namespace Apoc3D
 				}
 
 				m_lastNode = prevNode;
+			}
+
+			Iterator PushBack_Node(Node* newNode)
+			{
+				if (m_lastNode)
+				{
+					m_lastNode->Next = newNode;
+				}
+				else
+				{
+					assert(!m_firstNode);
+					m_firstNode = newNode;
+				}
+				m_lastNode = newNode;
+
+				m_size++;
+
+				return Iterator(this, newNode);
 			}
 
 			/**
