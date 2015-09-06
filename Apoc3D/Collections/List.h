@@ -216,26 +216,34 @@ namespace Apoc3D
 			T* m_end = nullptr;
 		};
 
-
-		template <typename T, typename CT>
+		template <typename T, typename ST, bool NoRAII = false>
 		class ListBase
 		{
 		public:
 
+			template <typename = typename std::enable_if<std::is_pointer<T>::value && std::is_destructible<typename std::remove_pointer<T>::type>::value>::type>
 			void DeleteAndClear()
 			{
+				T* elm = (T*)m_elements;
+
 				for (int32 i = 0; i < m_count; i++)
-					delete m_elements[i];
+					delete elm[i];
 				Clear();
 			}
 
-			void Clear() { m_count = 0; }
+			void Clear()
+			{
+				DoDestory(0, m_count);
+				m_count = 0;
+			}
 
 			int32 IndexOf(const T& item) const
 			{
+				T* elm = (T*)m_elements;
+
 				for (int32 i = 0; i < m_count; i++)
 				{
-					if (m_elements[i] == item)
+					if (elm[i] == item)
 						return i;
 				}
 				return -1;
@@ -261,26 +269,26 @@ namespace Apoc3D
 			void RemoveAt(int32 index)
 			{
 				assert(index >= 0 && index < m_count);
+				T* elm = (T*)m_elements;
 
-				if (index < m_count - 1)
+				for (int32 i = index + 1; i < m_count; i++)
 				{
-					for (int32 i = index + 1; i < m_count; i++)
-					{
-						m_elements[i - 1] = std::move(m_elements[i]);
-					}
+					elm[i - 1] = std::move(elm[i]);
 				}
-
+				DoDestory(m_count - 1, 1);
 				m_count--;
 			}
-			template <typename T>
-			void RemoveAt(T& deadList)
+			template <typename DLT>
+			void RemoveAt(DLT& deadList)
 			{
 				int32 removeCount = deadList.getCount();
 				if (removeCount > 0)
 				{
+					T* elm = (T*)m_elements;
+
 					int32 sourceCount = m_count;
 					int32 dstCount = m_count;
-					
+
 					int32 curDeadIdx = 0;
 
 					int32 writePos = deadList[curDeadIdx];
@@ -302,9 +310,10 @@ namespace Apoc3D
 
 						assert(i >= 0 && i < sourceCount);
 						assert(writePos >= 0 && writePos < dstCount);
-						m_elements[writePos] = std::move(m_elements[i]);
+						elm[writePos] = std::move(elm[i]);
 					}
 
+					DoDestory(dstCount, sourceCount - dstCount);
 					m_count = dstCount;
 				}
 			}
@@ -312,8 +321,11 @@ namespace Apoc3D
 			{
 				assert(index >= 0 && index < m_count);
 
+				T* elm = (T*)m_elements;
+
 				m_count--;
-				std::swap(m_elements[index], m_elements[m_count]);
+				std::swap(elm[index], elm[m_count]);
+				DoDestory(m_count, 1);
 			}
 			void RemoveRange(int32 start, int32 count)
 			{
@@ -321,15 +333,15 @@ namespace Apoc3D
 				{
 					assert(start >= 0 && start + count <= m_count);
 
+					T* elm = (T*)m_elements;
+
 					m_count -= count;
 
-					if (start < m_count)
+					for (int32 i = start; i < m_count; i++)
 					{
-						for (int32 i = start; i < m_count; i++)
-						{
-							m_elements[i] = std::move(m_elements[i + count]);
-						}
+						elm[i] = std::move(elm[i + count]);
 					}
+					DoDestory(m_count, count);
 				}
 			}
 
@@ -339,51 +351,53 @@ namespace Apoc3D
 				if (m_elements == nullptr)
 					return;
 
+				T* elm = (T*)m_elements;
+
 				for (int i = 0; i < m_count / 2; i++)
 				{
 					int32 another = m_count - i - 1;
-					std::swap(m_elements[i], m_elements[another]);
+					std::swap(elm[i], elm[another]);
 				}
 			}
 
 			void Swap(int32 i, int32 j)
 			{
-				std::swap(m_elements[i], m_elements[j]);
+				T* elm = (T*)m_elements;
+				std::swap(elm[i], elm[j]);
 			}
 
 			T* AllocateArrayCopy() const
 			{
 				T* result = new T[m_count];
-				CopyTo(result, m_elements, m_count);
+				CopyTo(result, (T*)m_elements, m_count);
 				return result;
 			}
 
-			void Sort() { if (m_count > 0) QuickSort(m_elements, 0, m_count - 1); }
+			void Sort() { if (m_count > 0) QuickSort((T*)m_elements, 0, m_count - 1); }
 
 			template <int(*comparer)(const T&, const T&)>
-			void Sort() { if (m_count > 0) QuickSort<T, comparer>(m_elements, 0, m_count - 1); }
-			
+			void Sort() { if (m_count > 0) QuickSort<T, comparer>((T*)m_elements, 0, m_count - 1); }
+
 			template <typename Func>
-			void Sort(Func& comparer) { if (m_count > 0) QuickSort(m_elements, 0, m_count - 1, comparer); }
+			void Sort(Func& comparer) { if (m_count > 0) QuickSort((T*)m_elements, 0, m_count - 1, comparer); }
 
 			template <typename SorterType, typename SorterCalc>
-			void SortWithSorter(SorterCalc& sorter) { if (m_count > 0) QuickSortWithSorter<T, SorterType>(m_elements, 0, m_count - 1, sorter); }
+			void SortWithSorter(SorterCalc& sorter) { if (m_count > 0) QuickSortWithSorter<T, SorterType>((T*)m_elements, 0, m_count - 1, sorter); }
 
 			template <typename SorterType, SorterType(*sorterCalc)(const T& a, const T& b)>
-			void SortWithSorter() { if (m_count > 0) QuickSortWithSorter<T, SorterType, sorterCalc>(m_elements, 0, m_count - 1); }
+			void SortWithSorter() { if (m_count > 0) QuickSortWithSorter<T, SorterType, sorterCalc>((T*)m_elements, 0, m_count - 1); }
 
 
 			int32 ClampIndexInRange(int32 idx) const
 			{
-				if (idx >= m_count)
-					idx = m_count - 1;
-				if (idx < 0)
-					idx = 0;
+				if (idx >= m_count) return m_count - 1;
+				if (idx < 0) return 0;
 				return idx;
 			}
 
-			T& LastItem() { assert(m_count > 0); return m_elements[m_count - 1]; }
-			const T& LastItem() const { assert(m_count > 0); return m_elements[m_count - 1]; }
+
+			T& LastItem() { assert(m_count > 0); return ((T*)m_elements)[m_count - 1]; }
+			const T& LastItem() const { assert(m_count > 0); return ((T*)m_elements)[m_count - 1]; }
 
 			bool isIndexInRange(int32 idx) const { return idx >= 0 && idx < m_count; }
 			int32 getCount() const { return m_count; }
@@ -392,11 +406,55 @@ namespace Apoc3D
 
 		protected:
 			ListBase() { }
-			ListBase(CT elem) : m_elements(elem) { }
-			ListBase(CT elem, int32 count)
+			ListBase(ST elem) : m_elements(elem) { }
+			ListBase(ST elem, int32 count)
 				: m_elements(elem), m_count(count) { }
-			
+
 			~ListBase() { }
+
+			void DoPut(const T& val, int32 idx)
+			{
+				assert(idx >= 0);
+
+				T* elm = (T*)m_elements;
+
+				if (std::is_trivially_copyable<T>::value || NoRAII)
+				{
+					elm[idx] = val;
+				}
+				else
+				{
+					new (&elm[idx])T(val);
+				}
+			}
+			void DoPut(T&& val, int32 idx)
+			{
+				assert(idx >= 0);
+
+				T* elm = (T*)m_elements;
+				if (std::is_trivially_copyable<T>::value || NoRAII)
+				{
+					elm[idx] = std::move(val);
+				}
+				else
+				{
+					new (&elm[idx])T(std::forward<T>(val));
+				}
+			}
+
+			void DoDestory(int32 start, int32 count)
+			{
+				assert(start >= 0);
+				if (!std::is_trivially_copyable<T>::value && !NoRAII)
+				{
+					T* elm = (T*)m_elements;
+
+					for (int32 i = start; i < start + count; i++)
+					{
+						elm[i].~T();
+					}
+				}
+			}
 
 			static void CopyTo(T* dest, const T* src, int32 count)
 			{
@@ -410,12 +468,41 @@ namespace Apoc3D
 						dest[i] = src[i];
 				}
 			}
-			static void MoveTo(T* dest, T* src, int32 count)
+
+			static void CopyToNew(T* dest, const T* src, int32 count)
+			{
+				if (std::is_trivially_copyable<T>::value)
+				{
+					memcpy(dest, src, count*sizeof(T));
+				}
+				else
+				{
+					if (NoRAII)
+					{
+						for (int32 i = 0; i < count; i++)
+							dest[i] = src[i];
+					}
+					else
+					{
+						for (int32 i = 0; i < count; i++)
+							new (&dest[i])T(src[i]);
+					}
+				}
+			}
+			static void MoveToNew(T* dest, T* src, int32 count)
 			{
 				if (!std::is_trivially_copyable<T>::value && std::is_move_assignable<T>::value)
 				{
-					for (int32 i = 0; i < count; i++)
-						dest[i] = std::move(src[i]);
+					if (NoRAII)
+					{
+						for (int32 i = 0; i < count; i++)
+							dest[i] = std::move(src[i]);
+					}
+					else
+					{
+						for (int32 i = 0; i < count; i++)
+							new (&dest[i])T(std::forward<T>(src[i]));
+					}
 				}
 				else
 				{
@@ -423,13 +510,14 @@ namespace Apoc3D
 				}
 			}
 
-			CT m_elements;
+			ST m_elements;
 			int m_count = 0;
 
 		};
 
+
 		template <typename T, int32 MaxSize>
-		class FixedList : public ListBase<T, T[MaxSize]>
+		class FixedList : public ListBase<T, char[MaxSize*sizeof(T)]>
 		{
 		public:
 			static const int32 Capacity = MaxSize;
@@ -441,19 +529,38 @@ namespace Apoc3D
 
 				AddList(l);
 			}
+			FixedList(const FixedList& o)
+			{
+				m_count = o.m_count;
+				CopyToNew((T*)m_elements, (T*)o.m_elements, m_count);
+			}
+			FixedList& operator=(const FixedList<T, MaxSize>& o)
+			{
+				if (this != &o)
+				{
+					Clear();
+					m_count = o.m_count;
+					CopyToNew((T*)m_elements, (T*)o.m_elements, m_count);
+				}
+				return *this;
+			}
+			~FixedList()
+			{
+				Clear();
+			}
 
 			void Add(const T& val)
 			{
 				assert(m_count < MaxSize);
 				if (m_count < MaxSize)
-					m_elements[m_count++] = val;
+					DoPut(val, m_count++);
 			}
 
 			void Add(T&& val)
 			{
 				assert(m_count < MaxSize);
 				if (m_count < MaxSize)
-					m_elements[m_count++] = std::move(val);
+					DoPut(std::move(val), m_count++);
 			}
 
 			template <int32 N>
@@ -462,7 +569,7 @@ namespace Apoc3D
 			{
 				assert(m_count + count <= MaxSize);
 				for (int32 i = 0; i < count && m_count < MaxSize; i++)
-					m_elements[m_count++] = val[i];
+					DoPut(val[i], m_count++);
 			}
 
 			template <int32 N>
@@ -471,7 +578,7 @@ namespace Apoc3D
 			{
 				assert(m_count + l.size() <= MaxSize);
 				for (auto iter = l.begin(); iter != l.end() && m_count < MaxSize; ++iter)
-					m_elements[m_count++] = *iter;
+					DoPut(*iter, m_count++);
 			}
 
 			void Reserve(int32 newCount) { assert(newCount <= MaxSize); m_count = newCount; }
@@ -479,31 +586,30 @@ namespace Apoc3D
 			int32 getCapacity() const { return MaxSize; }
 			bool isFull() const { return m_count >= MaxSize; }
 
-			const T* getElements() const { return m_elements; }
-			T* getElements() { return m_elements; }
+			const T* getElements() const { return (T*)m_elements; }
+			T* getElements() { return (T*)m_elements; }
 
 			T& operator [](int32 i)
 			{
 				assert(i >= 0 && i < m_count);
-				return m_elements[i];
+				return ((T*)m_elements)[i];
 			}
 			const T& operator [](int32 i) const
 			{
 				assert(i >= 0 && i < m_count);
-				return m_elements[i];
+				return ((T*)m_elements)[i];
 			}
 
-			const T* begin() const { return m_elements; }
-			const T* end() const { return m_elements + m_count; }
+			const T* begin() const { return (T*)m_elements; }
+			const T* end() const { return ((T*)m_elements) + m_count; }
 
-			T* begin() { return m_elements; }
-			T* end() { return m_elements + m_count; }
-
+			T* begin() { return (T*)m_elements; }
+			T* end() { return (T*)(m_elements)+m_count; }
 
 		};
 
 		template <typename T>
-		class WrappedList : public ListBase<T, T*>
+		class WrappedList : public ListBase<T, T*, true>
 		{
 		public:
 			WrappedList(T* externalBuffer, int32 maxCapacity)
@@ -515,7 +621,7 @@ namespace Apoc3D
 				if (m_count < m_length)
 					m_elements[m_count++] = val;
 			}
-
+			
 			void Add(T&& val)
 			{
 				assert(m_count < m_length);
@@ -565,27 +671,25 @@ namespace Apoc3D
 		public:
 			List() : ListBase(nullptr), m_length(4) { }
 
-			explicit List(int capacity)  
+			explicit List(int capacity)
 				: ListBase(nullptr), m_length(capacity)  { }
 
-			List(std::initializer_list<T> l) 
-				: ListBase(nullptr, l.size()),  m_length(l.size())
+			List(std::initializer_list<T> l)
+				: ListBase(nullptr, 0), m_length(l.size())
 			{
 				EnsureElements();
-				T* dst = m_elements;
+				
 				for (const T& e : l)
-					*dst++ = e;
+					DoPut(e, m_count++);
 			}
 
 			List(const List& another)
 				: ListBase(nullptr, another.m_count), m_length(another.m_length)
 			{
 				if (another.m_elements)
-				{
-					m_elements = new T[m_length];
-				}
+					m_elements = Allocate(m_length);
 
-				CopyTo(m_elements, another.m_elements, m_count);
+				CopyToNew(m_elements, another.m_elements, m_count);
 			}
 			List(List&& other)
 				: ListBase(other.m_elements, other.m_count), m_length(other.m_length)
@@ -596,40 +700,43 @@ namespace Apoc3D
 			}
 			~List()
 			{
-				delete[] m_elements;
+				Clear();
+				Free(m_elements);
 			}
 
 			List& operator=(const List& rhs)
 			{
 				if (this != &rhs)
 				{
+					Clear();
+
 					if (m_length != rhs.m_length)
 					{
-						delete[] m_elements;
-						m_elements = nullptr;
+						Free(m_elements);
 
 						m_length = rhs.m_length;
 
 						if (rhs.m_elements)
-							m_elements = new T[m_length];
+							m_elements = Allocate(m_length);
 					}
 					else
 					{
 						if (m_elements == nullptr && rhs.m_elements)
-							m_elements = new T[m_length];
+							m_elements = Allocate(m_length);
 					}
 
 					m_count = rhs.m_count;
-
-					CopyTo(m_elements, rhs.m_elements, m_count);
+					CopyToNew(m_elements, rhs.m_elements, m_count);
 				}
-				return *this; 
+				return *this;
 			}
 			List& operator=(List&& rhs)
 			{
 				if (this != &rhs)
 				{
-					delete[] m_elements;
+					Clear();
+					Free(m_elements);
+					
 					m_elements = rhs.m_elements;
 					m_count = rhs.m_count;
 					m_length = rhs.m_length;
@@ -645,23 +752,22 @@ namespace Apoc3D
 			void Add(const T& val)
 			{
 				EnsureElementIncrSize();
-				m_elements[m_count++] = val;
+				DoPut(val, m_count++);
 			}
-
 			void Add(T&& val)
 			{
 				EnsureElementIncrSize();
-				m_elements[m_count++] = std::move(val);
+				DoPut(std::move(val), m_count++);
 			}
 
 			template <int32 N>
-			void AddArray(const T (&val)[N]) { AddArray(val, N); }
+			void AddArray(const T(&val)[N]) { AddArray(val, N); }
 			void AddArray(const T* val, int32 count)
 			{
 				EnsureElementIncrSize(count);
 
 				for (int32 i = 0; i < count; i++)
-					m_elements[m_count++] = val[i];
+					DoPut(val[i], m_count++);
 			}
 
 			template <typename = void>
@@ -674,41 +780,51 @@ namespace Apoc3D
 				EnsureElementIncrSize((int32)l.size());
 
 				for (const T& e : l)
-					m_elements[m_count++] = e;
+					DoPut(e, m_count++);
 			}
 
-			void ResizeDiscard(int32 newSize)
-			{
-				m_count = 0;
-				delete[] m_elements;
-				m_elements = new T[newSize];
-				m_length = newSize;
-			}
+			
 			void Resize(int32 newSize)
 			{
 				assert(newSize >= m_count);
-				T* newArr = new T[newSize];
+				T* newArr = Allocate(newSize);
 
-				MoveTo(newArr, m_elements, m_count);
+				MoveToNew(newArr, m_elements, m_count);
 
-				delete[] m_elements;
+				DoDestory(0, m_count);
+				Free(m_elements);
+
 				m_elements = newArr;
+				m_length = newSize;
+			}
+			void ResizeDiscard(int32 newSize)
+			{
+				Clear();
+				Free(m_elements);
+
+				m_elements = Allocate(newSize);
 				m_length = newSize;
 			}
 			void Reserve(int32 newCount)
 			{
 				if (m_length < newCount)
 					Resize(newCount);
-				else 
+				else
 					EnsureElements();
+				
+				for (int32 i = m_count; i < newCount; i++)
+					new (&m_elements[i])T();
 				m_count = newCount;
 			}
 			void ReserveDiscard(int32 newCount)
 			{
 				if (m_length < newCount)
 					ResizeDiscard(newCount);
-				else 
+				else
 					EnsureElements();
+
+				for (int32 i = 0; i < newCount;i++)
+					new (&m_elements[i])T();
 				m_count = newCount;
 			}
 			void Trim()
@@ -733,7 +849,7 @@ namespace Apoc3D
 						m_elements[i] = std::move(m_elements[i - 1]);
 					}
 				}
-				m_elements[index] = item;
+				DoPut(item, index);
 				m_count++;
 			}
 
@@ -749,15 +865,14 @@ namespace Apoc3D
 					}
 				}
 
-				for (int32 i = 0; i < count;i++)
+				for (int32 i = 0; i < count; i++)
 				{
-					m_elements[index + i] = item[i];
+					DoPut(item[i], index + i);
 				}
 
 				m_count += count;
 			}
 
-			
 			//////////////////////////////////////////////////////////////////////////
 
 			int32 getCapacity() const { return m_length; }
@@ -773,6 +888,9 @@ namespace Apoc3D
 			T* end() const { return m_elements + m_count; }
 
 		private:
+			static T* Allocate(int32 size) { return (T*)malloc(sizeof(T)*size); }
+			static void Free(T* ptr) { free(ptr); }
+			
 			void EnsureElementIncrSize()
 			{
 				if (m_length <= m_count)
@@ -807,13 +925,13 @@ namespace Apoc3D
 			{
 				if (m_elements == nullptr)
 				{
-					m_elements = new T[m_length];
+					m_elements = Allocate(m_length);
 				}
 			}
 
-			int m_length = 0;
-		};
+			int32 m_length = 0;
 
+		};
 	}
 }
 #endif

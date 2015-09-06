@@ -272,9 +272,10 @@ namespace Apoc3D
 			{
 				if (m_texDirty[i])
 				{
+					m_texDirty[i] = false;
+
 					delete m_tex[i];
 					LoadTexture(i);
-					m_texDirty[i] = false;
 				}
 			}
 		}

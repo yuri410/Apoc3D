@@ -326,48 +326,175 @@ namespace Apoc3D
 			
 
 			template <typename A>
-			struct HashMapEntry
+			struct HashMapEntry final
 			{
-				int32 hashCode;
+				int32 hashCode = -1;
 				int32 next;
-				A data;
+
+				char dataStor[sizeof(A)];
 
 				HashMapEntry() { }
 
-				HashMapEntry(HashMapEntry&& o)
-					: hashCode(o.hashCode), next(o.next), data(std::move(o.data)) { }
-
-				HashMapEntry& operator=(HashMapEntry&& rhs)
+				HashMapEntry(const HashMapEntry& o)
+					: hashCode(o.hashCode), next(o.next)
 				{
-					if (this != &rhs)
+					if (hashCode != -1)
+						new (dataStor)A(o.getData());
+				}
+				HashMapEntry(HashMapEntry&& o)
+					: hashCode(o.hashCode), next(o.next)
+				{
+					if (hashCode != -1)
+						new (dataStor)A(std::move(o.getData()));
+					o.hashCode = -1;
+				}
+
+				~HashMapEntry() { Clear(); } 
+
+				HashMapEntry& operator=(HashMapEntry&& o)
+				{
+					if (this != &o)
 					{
-						hashCode = rhs.hashCode;
-						next = rhs.next;
-						data = std::move(rhs.data);
+						this->~HashMapEntry();
+						new (this)HashMapEntry(std::move(o));
 					}
 					return *this;
 				}
+
+				HashMapEntry& operator=(const HashMapEntry& o)
+				{
+					if (this != &o)
+					{
+						this->~HashMapEntry();
+						new (this)HashMapEntry(o);
+					}
+					return *this;
+				}
+
+
+				void Clear()
+				{
+					if (hashCode != -1)
+					{
+						getData().~A();
+
+						hashCode = -1;
+					}
+				}
+
+				template <typename AA, typename Acceptable = typename std::enable_if<IsSimilar<A, AA>::value>::type>
+				void Set(int32 hash, AA d)
+				{
+					assert(hash != -1);
+
+					if (hashCode != -1)
+						getData() = std::forward<AA>(d);
+					else
+						new (dataStor)A(std::forward<AA>(d));
+					hashCode = hash;
+				}
+
+				A& getData() const { assert(hashCode != -1); return *(A*)dataStor; }
 			};
 
 			template <typename A, typename B>
-			struct HashMapEntryPair : public HashMapEntry < A >
+			struct HashMapEntryPair final
 			{
-				B value;
+				int32 hashCode = -1;
+				int32 next;
+
+				char keyStor[sizeof(A)];
+				char valueStor[sizeof(B)];
 
 				HashMapEntryPair() { }
-				HashMapEntryPair(HashMapEntryPair&& o)
-					: HashMapEntry(std::forward<HashMapEntry<A>>(o)), value(std::move(o.value)) { }
-
-				HashMapEntryPair& operator=(HashMapEntryPair&& rhs)
+				HashMapEntryPair(const HashMapEntryPair& o)
+					: hashCode(o.hashCode), next(o.next)
 				{
-					if (this != &rhs)
+					if (hashCode != -1)
 					{
-						HashMapEntry::operator =(std::forward<HashMapEntry<A>>(rhs));
+						new (keyStor)A(o.getData());
+						new (valueStor)B(o.getValue());
+					}
+				}
+				HashMapEntryPair(HashMapEntryPair&& o)
+					: hashCode(o.hashCode), next(o.next)
+				{
+					if (hashCode != -1)
+					{
+						new (keyStor)A(std::move(o.getData()));
+						new (valueStor)B(std::move(o.getValue()));
+					}
 
-						value = std::move(rhs.value);
+					o.hashCode = -1;
+				}
+
+				~HashMapEntryPair() { Clear(); }
+
+				HashMapEntryPair& operator=(HashMapEntryPair&& o)
+				{
+					if (this != &o)
+					{
+						this->~HashMapEntryPair();
+						new (this)HashMapEntryPair(std::move(o));
 					}
 					return *this;
 				}
+
+				HashMapEntryPair& operator=(const HashMapEntryPair& o)
+				{
+					if (this != &o)
+					{
+						this->~HashMapEntryPair();
+						new (this)HashMapEntryPair(o);
+					}
+					return *this;
+				}
+
+
+				void Clear()
+				{
+					if (hashCode != -1)
+					{
+						getData().~A();
+						getValue().~B();
+
+						hashCode = -1;
+					}
+				}
+
+				template <typename AA, typename BB,
+					typename AcceptableKey = typename std::enable_if<IsSimilar<A, AA>::value>::type,
+					typename AcceptableValue = typename std::enable_if<IsSimilar<B, BB>::value>::type>
+				void Set(int32 hash, AA key, BB val)
+				{
+					assert(hash != -1);
+					if (hashCode != -1)
+					{
+						getData() = std::forward<AA>(key);
+						getValue() = std::forward<BB>(val);
+					}
+					else
+					{
+						new (keyStor)A(std::forward<AA>(key));
+						new (valueStor)B(std::forward<BB>(val));
+					}
+					hashCode = hash;
+				}
+
+
+				template <typename BB, typename AcceptableValue = typename std::enable_if<IsSimilar<B, BB>::value>::type>
+				void SetValue(BB d)
+				{
+					if (hashCode != -1)
+						getValue() = std::forward<BB>(d);
+					else
+						new (valueStor)B(std::forward<BB>(d));
+				}
+
+
+				A& getData() const { assert(hashCode != -1); return *(A*)keyStor; }
+				B& getValue() const { assert(hashCode != -1); return *(B*)valueStor; }
+
 			};
 
 		};

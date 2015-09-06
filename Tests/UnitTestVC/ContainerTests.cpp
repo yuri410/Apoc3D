@@ -1,54 +1,12 @@
 #include "MemoryLeakChecker.h"
-#include <ctime>
-
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTestVC
 {		
 	TEST_CLASS(ListTest)
 	{
-		int* m_intData;
-		int32 m_intDataCount;
-		void** m_ptrData;
-		int32 m_ptrDataCount;
-		String* m_stringData;
-		int32 m_strDataCount;
-		MEM_Variables;
-
+		MemoryService mem;
 	public:
 		
-		ListTest()
-		{
-			MEM_BeginCheckPoint;
-
-			srand((unsigned int)time(0));
-
-			m_intDataCount = 8 + rand() % 16;
-			m_intData = new int[m_intDataCount];
-			for (int i = 0; i < m_intDataCount; i++)
-				m_intData[i] = rand();
-
-			m_ptrDataCount = 8 + rand() % 16;
-			m_ptrData = new void*[m_ptrDataCount];
-			for (int i = 0; i < m_ptrDataCount; i++)
-				m_ptrData[i] = (void*)rand();
-
-			m_strDataCount = 8 + rand() % 16;
-			m_stringData = new String[m_strDataCount];
-			for (int i = 0; i < m_strDataCount; i++)
-			{
-				wchar_t letter = rand() % ('Z' - 'A') + 'A';
-				m_stringData[i].append(1, letter);
-			}
-		}
-		~ListTest()
-		{
-			delete[] m_intData;
-			delete[] m_ptrData;
-			delete[] m_stringData;
-
-			MEM_EndCheckPoint;
-		}
 
 		TEST_METHOD(List_Reverse)
 		{
@@ -188,17 +146,17 @@ namespace UnitTestVC
 					s1.Add(preData[j]);
 				}
 
-				s1.AddArray(m_intData, m_intDataCount);
+				s1.AddArray(mem.intData, mem.intDataCount);
 
 				for (int32 j = 0; j < s1.getCount(); j++)
 				{
 					if (j <= i)
 						Assert::AreEqual(preData[j], s1[j]);
 					else
-						Assert::AreEqual(m_intData[j - i - 1], s1[j]);
+						Assert::AreEqual(mem.intData[j - i - 1], s1[j]);
 				}
 
-				Assert::AreEqual(i + m_intDataCount + 1, s1.getCount());
+				Assert::AreEqual(i + mem.intDataCount + 1, s1.getCount());
 			}
 
 			List<int> s2;
@@ -215,17 +173,17 @@ namespace UnitTestVC
 
 		TEST_METHOD(List_OrderInt)
 		{
-			_TestOrder<int>(m_intData, m_intDataCount);
+			_TestOrder<int>(mem.intData, mem.intDataCount);
 		}
 
 		TEST_METHOD(List_OrderVoid)
 		{
-			_TestOrder<void*>(m_ptrData, m_ptrDataCount);
+			_TestOrder<void*>(mem.ptrData, mem.ptrDataCount);
 		}
 
 		TEST_METHOD(List_OrderString)
 		{
-			_TestOrder<String>(m_stringData, m_strDataCount);
+			_TestOrder<String>(mem.stringData, mem.strDataCount);
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -272,17 +230,17 @@ namespace UnitTestVC
 
 		TEST_METHOD(List_IteratorInt)
 		{
-			_TestIterator<int>(m_intData, m_intDataCount);
+			_TestIterator<int>(mem.intData, mem.intDataCount);
 		}
 
 		TEST_METHOD(List_IteratorVoid)
 		{
-			_TestIterator<void*>(m_ptrData, m_ptrDataCount);
+			_TestIterator<void*>(mem.ptrData, mem.ptrDataCount);
 		}
 
 		TEST_METHOD(List_IteratorString)
 		{
-			_TestIterator<String>(m_stringData, m_strDataCount);
+			_TestIterator<String>(mem.stringData, mem.strDataCount);
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -342,7 +300,9 @@ namespace UnitTestVC
 
 
 		TEST_METHOD(List_RemoveAt)
-		{
+		{		
+			//int32 k = 0;
+
 			for (int32 k = 0; k < 10000; k++)
 			{
 				List<int32> data = { 0, 1, 2, 3, 4, 5, 6 };
@@ -374,6 +334,39 @@ namespace UnitTestVC
 				for (int32 i = 0; i < data.getCount(); i++)
 				{
 					if (data[i] != emulatedResult[i])
+					{
+						same = false;
+						break;
+					}
+				}
+				Assert::IsTrue(same);
+			}
+		}
+
+
+		TEST_METHOD(List_Random)
+		{
+			List<String> c;
+			for (int32 k = 0; k < 1000; k++)
+			{
+				int32 cnt = Randomizer::NextExclusive(mem.strDataCount);
+				for (int32 i = 0; i < cnt;i++)
+				{
+					if (Randomizer::NextBool() && c.getCount()>0)
+					{
+						c.RemoveAt(Randomizer::NextExclusive(c.getCount()));
+					}
+					else
+					{
+						c.Add(mem.stringData[i]);
+					}
+				}
+
+				List<String> lst = c;
+				bool same = lst.getCount() == c.getCount();
+				for (int32 i = 0; i < lst.getCount(); i++)
+				{
+					if (lst[i] != c[i])
 					{
 						same = false;
 						break;
@@ -532,27 +525,8 @@ namespace UnitTestVC
 
 	TEST_CLASS(FixedListTest)
 	{
-		int* m_intData;
-		int32 m_intDataCount;
-		MEM_Variables;
-
+		MemoryService mem;
 	public:
-		FixedListTest()
-		{
-			MEM_BeginCheckPoint;
-
-			srand((unsigned int)time(0));
-
-			m_intDataCount = 8 + rand() % 16;
-			m_intData = new int[m_intDataCount];
-			for (int i = 0; i < m_intDataCount; i++)
-				m_intData[i] = rand();
-		}
-		~FixedListTest()
-		{
-			delete[] m_intData;
-			MEM_EndCheckPoint;
-		}
 
 		TEST_METHOD(FixedList_Iterator)
 		{
@@ -597,17 +571,17 @@ namespace UnitTestVC
 					s1.Add(preData[j]);
 				}
 
-				s1.AddArray(m_intData, m_intDataCount);
+				s1.AddArray(mem.intData, mem.intDataCount);
 
 				for (int32 j = 0; j < s1.getCount(); j++)
 				{
 					if (j <= i)
 						Assert::AreEqual(preData[j], s1[j]);
 					else
-						Assert::AreEqual(m_intData[j - i - 1], s1[j]);
+						Assert::AreEqual(mem.intData[j - i - 1], s1[j]);
 				}
 
-				Assert::AreEqual(i + m_intDataCount + 1, s1.getCount());
+				Assert::AreEqual(i + mem.intDataCount + 1, s1.getCount());
 			}
 
 			FixedList<int, 5> s2;
@@ -620,21 +594,44 @@ namespace UnitTestVC
 			}
 		}
 
+
+		TEST_METHOD(FixedList_Random)
+		{
+			FixedList<String, 1000> c;
+			for (int32 k = 0; k < 1000; k++)
+			{
+				int32 cnt = Randomizer::NextExclusive(mem.strDataCount);
+				for (int32 i = 0; i < cnt; i++)
+				{
+					if ((Randomizer::NextBool() && c.getCount() > 0) || c.isFull())
+					{
+						c.RemoveAt(Randomizer::NextExclusive(c.getCount()));
+					}
+					else
+					{
+						c.Add(mem.stringData[i]);
+					}
+				}
+
+				FixedList<String, 1000> lst = c;
+				bool same = lst.getCount() == c.getCount();
+				for (int32 i = 0; i < lst.getCount(); i++)
+				{
+					if (lst[i] != c[i])
+					{
+						same = false;
+						break;
+					}
+				}
+				Assert::IsTrue(same);
+			}
+		}
 	};
 
 	TEST_CLASS(HashMapTest)
 	{
-		MEM_Variables;
+		MemoryService mem;
 	public:
-		HashMapTest()
-		{
-			MEM_BeginCheckPoint;
-
-		}
-		~HashMapTest()
-		{
-			MEM_EndCheckPoint;
-		}
 
 		TEST_METHOD(HashMap_Iterator)
 		{
@@ -769,7 +766,7 @@ namespace UnitTestVC
 			bool added[amount] = { 0 };
 			for (int32 i = 0; i < amount;i++)
 			{
-				srcs[i] = StringUtils::IntToString(i);
+				srcs[i] = StringUtils::IntToString(i) + L" " + mem.stringData[i % mem.strDataCount];
 			}
 
 			HashMap<String, int> m2;
@@ -807,18 +804,8 @@ namespace UnitTestVC
 
 	TEST_CLASS(HashSetTest)
 	{
-		MEM_Variables;
+		MemoryService mem;
 	public:
-		HashSetTest()
-		{
-			MEM_BeginCheckPoint;
-
-		}
-		~HashSetTest()
-		{
-			MEM_EndCheckPoint;
-		}
-
 
 		TEST_METHOD(HashSet_AddRemove)
 		{
@@ -827,7 +814,7 @@ namespace UnitTestVC
 			bool added[amount] = { 0 };
 			for (int32 i = 0; i < amount; i++)
 			{
-				srcs[i] = StringUtils::IntToString(i);
+				srcs[i] = StringUtils::IntToString(i) + L" " + mem.stringData[i % mem.strDataCount];
 			}
 
 			HashSet<String> m2;
@@ -855,9 +842,46 @@ namespace UnitTestVC
 
 			for (const auto& e : m2)
 			{
-				int32 idx = StringUtils::ParseInt32(e);
+				int32 idx = StringUtils::ParseInt32(e.substr(0, e.find(' ')));
 				Assert::IsTrue(added[idx]);
 			}
+		}
+
+
+		TEST_METHOD(HashSet_Count)
+		{
+			HashSet<String> m2;
+			m2.Add(L"1");
+			m2.Add(L"sssssssssssssssssssssssssssssssss");
+			m2.Add(L"s");
+
+			Assert::AreEqual(3, m2.getCount());
+
+			m2.Remove(L"1");
+			Assert::AreEqual(2, m2.getCount());
+
+			m2.Remove(L"s");
+			Assert::AreEqual(1, m2.getCount());
+
+			m2.Add(L"asdsa");
+			Assert::AreEqual(2, m2.getCount());
+
+			m2.Add(L"sdasd");
+			Assert::AreEqual(3, m2.getCount());
+
+			m2.Add(L"sdsdsaf");
+			Assert::AreEqual(4, m2.getCount());
+
+			m2.Remove(L"sssssssssssssssssssssssssssssssss");
+			Assert::AreEqual(3, m2.getCount());
+
+
+			HashSet<String> m3 = m2;
+			Assert::AreEqual(3, m3.getCount());
+
+			m3.Clear();
+			Assert::AreEqual(0, m3.getCount());
+
 		}
 
 	};

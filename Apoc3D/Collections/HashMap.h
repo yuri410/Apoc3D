@@ -42,7 +42,10 @@ namespace Apoc3D
 			{
 				if (m_touchedSlots > 0)
 				{
-					memset(m_buckets, 0xff, sizeof(int32)*m_bucketsLength);
+					for (int32 i = 0; i < m_bucketsLength;i++)
+						m_buckets[i] = -1;
+					for (int32 i = 0; i < m_touchedSlots; i++)
+						m_entries[i].Clear();
 
 					m_emptySlot = -1;
 					m_touchedSlots = 0;
@@ -60,7 +63,7 @@ namespace Apoc3D
 					for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
 					{
 						if (m_entries[i].hashCode == hash && 
-							ComparerType::Equals(m_entries[i].data, item))
+							ComparerType::Equals(m_entries[i].getData(), item))
 						{
 							if (prev < 0)
 							{
@@ -70,7 +73,8 @@ namespace Apoc3D
 							{
 								m_entries[prev].next = m_entries[i].next;
 							}
-							m_entries[i].hashCode = -1;
+							m_entries[i].Clear();
+							//m_entries[i].hashCode = -1;
 							m_entries[i].next = m_emptySlot;
 							m_emptySlot = i;
 							m_count--;
@@ -170,6 +174,9 @@ namespace Apoc3D
 					}
 					else
 					{
+						for (int32 i = 0; i < m_touchedSlots; i++)
+							m_entries[i].Clear();
+
 						if (m_buckets == nullptr && other.m_buckets)
 							m_buckets = new int[m_bucketsLength];
 						if (m_entries == nullptr && other.m_entries)
@@ -256,7 +263,7 @@ namespace Apoc3D
 				for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
 				{
 					if (m_entries[i].hashCode == hash &&
-						ComparerType::Equals(m_entries[i].data, item))
+						ComparerType::Equals(m_entries[i].getData(), item))
 					{
 						return i;
 					}
@@ -264,17 +271,18 @@ namespace Apoc3D
 				return -1;
 			}
 
-			E& InsertEntry(const T& item, bool noDuplicationCheck = false)
+			template <typename TT, typename ... ADDT>
+			void InsertEntry(bool noDuplicationCheck, TT&& item, ADDT&& ... additionals)
 			{
 				if (m_buckets == nullptr)
 				{
 					Initialize(7);
 				}
 
-				int hash = ComparerType::GetHashCode(item) & PositiveMask;
+				int hash = ComparerType::GetHashCode(std::forward<TT>(item)) & PositiveMask;
 				int index = hash % m_bucketsLength;
 
-				if (!noDuplicationCheck && FindEntry(item, hash, index) != -1)
+				if (!noDuplicationCheck && FindEntry(std::forward<TT>(item), hash, index) != -1)
 					throw AP_EXCEPTION(ExceptID::Duplicate, Utils::ToString(item));
 
 				
@@ -294,12 +302,10 @@ namespace Apoc3D
 				}
 				m_count++;
 
-				m_entries[pos].hashCode = hash;
-				m_entries[pos].data = item;
+				m_entries[pos].Set(hash, std::forward<TT>(item), std::forward<ADDT>(additionals)...);
 				m_entries[pos].next = m_buckets[index];
 
 				m_buckets[index] = pos;
-				return m_entries[pos];
 			}
 		};
 
@@ -376,7 +382,7 @@ namespace Apoc3D
 					static const T& Get(const HashMapType* dict, int idx)
 					{
 						assert(idx > 0 && idx <= dict->m_touchedSlots);
-						return dict->m_entries[idx - 1].data;
+						return dict->m_entries[idx - 1].getData();
 					}
 				};
 				struct ValueGetter
@@ -384,7 +390,7 @@ namespace Apoc3D
 					static S& Get(const HashMapType* dict, int idx)
 					{
 						assert(idx > 0 && idx <= dict->m_touchedSlots);
-						return dict->m_entries[idx - 1].value;
+						return dict->m_entries[idx - 1].getValue();
 					}
 				};
 			};
@@ -398,7 +404,7 @@ namespace Apoc3D
 				{
 					assert(m_next > 0 && m_next <= m_dict->m_touchedSlots);
 					Entry& e = m_dict->m_entries[m_next - 1];
-					return { e.data, e.value };
+					return { e.getData(), e.getValue() };
 				}
 			private:
 				explicit Iterator(const HashMapType* dict)
@@ -454,14 +460,22 @@ namespace Apoc3D
 				return *this;
 			}
 
-			void Add(const T& item, const S& value) 
-			{
-				InsertEntry(item).value = value;
-			}
+			void Add(const T& item, const S& value) { InsertEntry(false, item, value); }
+			void Add(const T& item, S&& value) { InsertEntry(false, item, std::move(value)); }
+			void Add(T&& item, const S& value) { InsertEntry(false, std::move(item), value); }
+			void Add(T&& item, S&& value) { InsertEntry(false, std::move(item), std::move(value)); }
 
-			void Add(const T& item, S&& value)
+			void AddOrReplace(const T& item, const S& value)
 			{
-				InsertEntry(item).value = std::move(value);
+				int index = FindEntry(item);
+				if (index >= 0)
+				{
+					m_entries[index].SetValue(value);
+				}
+				else
+				{
+					InsertEntry(true, item, value);
+				}
 			}
 
 			void AddOrReplace(const T& item, S&& value)
@@ -469,26 +483,13 @@ namespace Apoc3D
 				int index = FindEntry(item);
 				if (index >= 0)
 				{
-					m_entries[index].value = std::move(value);
+					m_entries[index].SetValue(std::move(value));
 				}
 				else
 				{
-					InsertEntry(item, true).value = std::move(value);
+					InsertEntry(true, item, std::move(value));
 				}
 			}
-			void AddOrReplace(const T& item, const S& value)
-			{
-				int index = FindEntry(item);
-				if (index >= 0)
-				{
-					m_entries[index].value = value;
-				}
-				else
-				{
-					InsertEntry(item, true).value = value;
-				}
-			}
-
 
 
 			S& operator [](const T& key) const
@@ -496,7 +497,7 @@ namespace Apoc3D
 				int index = FindEntry(key);
 				if (index >= 0)
 				{
-					return m_entries[index].value;
+					return m_entries[index].getValue();
 				}
 				throw AP_EXCEPTION(ExceptID::KeyNotFound, Utils::ToString(key));
 			}
@@ -506,7 +507,7 @@ namespace Apoc3D
 				int index = FindEntry(key);
 				if (index >= 0)
 				{
-					value = m_entries[index].value;
+					value = m_entries[index].getValue();
 					return true;
 				}
 				return false;
@@ -516,11 +517,12 @@ namespace Apoc3D
 				int index = FindEntry(key);
 				if (index >= 0)
 				{
-					return &m_entries[index].value;
+					return &m_entries[index].getValue();
 				}
 				return nullptr;
 			}
 
+			template <typename = typename std::enable_if<std::is_pointer<S>::value && std::is_destructible<typename std::remove_pointer<S>::type>::value>::type>
 			void DeleteValuesAndClear()
 			{
 				auto& c = *this;
@@ -576,7 +578,7 @@ namespace Apoc3D
 				{
 					assert(m_next > 0 && m_next <= m_dict->m_touchedSlots);
 					Entry& e = m_dict->m_entries[m_next - 1];
-					return e.data;
+					return e.getData();
 				}
 
 				Iterator& operator++()
@@ -643,7 +645,8 @@ namespace Apoc3D
 				return *this;
 			}
 
-			void Add(const T& item) { InsertEntry(item); }
+			void Add(const T& item) { InsertEntry(false, item); }
+			void Add(T&& item) { InsertEntry(false, std::move(item)); }
 
 			void FillItems(List<T>& list) const
 			{

@@ -182,6 +182,25 @@ namespace Apoc3D
 
 	void DebugBreak();
 
+	template <typename A, typename B>
+	struct IsSimilar : std::false_type { };
+
+	template <typename A>
+	struct IsSimilar<A, A> : std::true_type{};
+
+	template <typename A>
+	struct IsSimilar<A, A&> : std::true_type{};
+	
+	template <typename A>
+	struct IsSimilar<A, const A&> : std::true_type{};
+
+	template <typename A>
+	struct IsSimilar<A&, A> : std::true_type{};
+
+	template <typename A>
+	struct IsSimilar<const A&, A> : std::true_type{};
+
+
 	class Project;
 	class ProjectItemData;
 	class ProjectCustomItem;
