@@ -59,8 +59,7 @@ namespace UnitTestVC
 				}
 			}
 
-			int counter2[1000];
-			memset(counter2, 0, sizeof(counter2));
+			int counter2[1000] = { 0 };
 			for (int i = 0; i < subject.getCount(); i++)
 			{
 				counter2[subject[i]]++;
@@ -93,8 +92,7 @@ namespace UnitTestVC
 				}
 			}
 
-			int counter2[1000];
-			memset(counter2, 0, sizeof(counter2));
+			int counter2[1000] = { 0 };
 			for (int i = 0; i < subject.getCount(); i++)
 			{
 				counter2[subject[i]]++;
@@ -202,8 +200,7 @@ namespace UnitTestVC
 
 		TEST_METHOD(List_ClearString)
 		{
-			String data[5] = { L"a", L"b", L"c", L"d", L"e" };
-			_TestClear<String>(data, 5, L"x", L"y");
+			_TestClear<String>(mem.stringData, mem.strDataCount, L"xxxxxxxxxxxxxxxxxx", L"yyyyyyyyyyyyyyyyyy");
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -222,8 +219,7 @@ namespace UnitTestVC
 
 		TEST_METHOD(List_CopyString)
 		{
-			String data[5] = { L"a", L"b", L"c", L"d", L"e" };
-			_TestCopy<String>(data, 5, L"x", L"y");
+			_TestCopy<String>(mem.stringData, mem.strDataCount, L"xxxxxxxxxxxxxxxxxx", L"yyyyyyyyyyyyyyyyyy");
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -259,59 +255,96 @@ namespace UnitTestVC
 
 		TEST_METHOD(List_RemoveString)
 		{
-			String data[5] = { L"a", L"b", L"c", L"d", L"e" };
-			_TestRemove<String>(data, 5, L"missing");
+			_TestRemove<String>(mem.stringData, mem.strDataCount, L"[missing]");
 		}
 
 		//////////////////////////////////////////////////////////////////////////
 
 		TEST_METHOD(List_Insert)
 		{
-			List<int> lst = { 1, 2, 3, 4, 5 };
+			const List<String> srcLst =
+			{
+				L"0000000000000000000",
+				L"1111111111111111111",
+				L"2222222222222222222",
+				L"3333333333333333333",
+				L"4444444444444444444",
+				L"5555555555555555555"
+			};
+			List<String> lst = 
+			{
+				srcLst[1],
+				srcLst[2],
+				srcLst[3],
+				srcLst[4],
+				srcLst[5],
+			};
 
-			lst.Insert(0, 0);
+			lst.Insert(0, srcLst[0]);
 			Assert::AreEqual(6, lst.getCount());
 			
-			Assert::AreEqual(0, lst[0]);
-			Assert::AreEqual(1, lst[1]);
-			Assert::AreEqual(2, lst[2]);
-			Assert::AreEqual(3, lst[3]);
-			Assert::AreEqual(4, lst[4]);
-			Assert::AreEqual(5, lst[5]);
+			Assert::AreEqual(srcLst[0], lst[0]);
+			Assert::AreEqual(srcLst[1], lst[1]);
+			Assert::AreEqual(srcLst[2], lst[2]);
+			Assert::AreEqual(srcLst[3], lst[3]);
+			Assert::AreEqual(srcLst[4], lst[4]);
+			Assert::AreEqual(srcLst[5], lst[5]);
 
 			lst.RemoveAt(0);
 			Assert::AreEqual(5, lst.getCount());
 
 
-			int32 testData[] = { 2, 1, 0 };
+			String testData[] = { srcLst[2], srcLst[1], srcLst[0] };
 			lst.InsertArray(3, testData, countof(testData));
 
 			Assert::AreEqual(8, lst.getCount());
 
-			Assert::AreEqual(1, lst[0]);
-			Assert::AreEqual(2, lst[1]);
-			Assert::AreEqual(3, lst[2]);
-			Assert::AreEqual(2, lst[3]);
-			Assert::AreEqual(1, lst[4]);
-			Assert::AreEqual(0, lst[5]);
-			Assert::AreEqual(4, lst[6]);
-			Assert::AreEqual(5, lst[7]);
+			Assert::AreEqual(srcLst[1], lst[0]);
+			Assert::AreEqual(srcLst[2], lst[1]);
+			Assert::AreEqual(srcLst[3], lst[2]);
+			Assert::AreEqual(srcLst[2], lst[3]);
+			Assert::AreEqual(srcLst[1], lst[4]);
+			Assert::AreEqual(srcLst[0], lst[5]);
+			Assert::AreEqual(srcLst[4], lst[6]);
+			Assert::AreEqual(srcLst[5], lst[7]);
+
+			lst.InsertArray(6, testData, countof(testData));
+
+			Assert::AreEqual(11, lst.getCount());
+
+			lst = srcLst;
+			lst.InsertArray(4, testData, countof(testData));
+
+			Assert::AreEqual(9, lst.getCount());
+
+			Assert::AreEqual(srcLst[0], lst[0]);
+			Assert::AreEqual(srcLst[1], lst[1]);
+			Assert::AreEqual(srcLst[2], lst[2]);
+			Assert::AreEqual(srcLst[3], lst[3]);
+			Assert::AreEqual(srcLst[2], lst[4]);
+			Assert::AreEqual(srcLst[1], lst[5]);
+			Assert::AreEqual(srcLst[0], lst[6]);
+			Assert::AreEqual(srcLst[4], lst[7]);
+			Assert::AreEqual(srcLst[5], lst[8]);
+
 		}
 
 
 		TEST_METHOD(List_RemoveAt)
-		{		
-			//int32 k = 0;
-
+		{
 			for (int32 k = 0; k < 10000; k++)
 			{
-				List<int32> data = { 0, 1, 2, 3, 4, 5, 6 };
+				List<String> data;
+				data.AddArray(mem.stringData, mem.strDataCount);
+
+				List<String> emulatedResult = data;
 				List<int32> indices(data.getCount());
-				List<int32> emulatedResult = data;
 
 				if (k == 0)
 				{
-					indices = data;
+					//indices = data;
+					for (int32 i = 0; i < data.getCount(); i++)
+						indices.Add(i);
 					emulatedResult.Clear();
 				}
 				else
@@ -320,7 +353,7 @@ namespace UnitTestVC
 					{
 						if (Randomizer::NextBool())
 						{
-							indices.Add(data[i]);
+							indices.Add(i);
 
 							emulatedResult.RemoveAt(i);
 						}

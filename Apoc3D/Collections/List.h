@@ -341,6 +341,7 @@ namespace Apoc3D
 					{
 						elm[i] = std::move(elm[i + count]);
 					}
+					
 					DoDestory(m_count, count);
 				}
 			}
@@ -412,7 +413,7 @@ namespace Apoc3D
 
 			~ListBase() { }
 
-			void DoPut(const T& val, int32 idx)
+			void DoPutNew(const T& val, int32 idx)
 			{
 				assert(idx >= 0);
 
@@ -427,7 +428,7 @@ namespace Apoc3D
 					new (&elm[idx])T(val);
 				}
 			}
-			void DoPut(T&& val, int32 idx)
+			void DoPutNew(T&& val, int32 idx)
 			{
 				assert(idx >= 0);
 
@@ -438,7 +439,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					new (&elm[idx])T(std::forward<T>(val));
+					new (&elm[idx])T(std::move(val));
 				}
 			}
 
@@ -491,7 +492,7 @@ namespace Apoc3D
 			}
 			static void MoveToNew(T* dest, T* src, int32 count)
 			{
-				if (!std::is_trivially_copyable<T>::value && std::is_move_assignable<T>::value)
+				if (!std::is_trivially_copyable<T>::value)
 				{
 					if (NoRAII)
 					{
@@ -501,7 +502,7 @@ namespace Apoc3D
 					else
 					{
 						for (int32 i = 0; i < count; i++)
-							new (&dest[i])T(std::forward<T>(src[i]));
+							new (&dest[i])T(std::move(src[i]));
 					}
 				}
 				else
@@ -534,7 +535,7 @@ namespace Apoc3D
 				m_count = o.m_count;
 				CopyToNew((T*)m_elements, (T*)o.m_elements, m_count);
 			}
-			FixedList& operator=(const FixedList<T, MaxSize>& o)
+			FixedList& operator=(const FixedList& o)
 			{
 				if (this != &o)
 				{
@@ -544,6 +545,23 @@ namespace Apoc3D
 				}
 				return *this;
 			}
+
+			FixedList(FixedList&& o)
+			{
+				m_count = o.m_count;
+				MoveToNew((T*)m_elements, (T*)o.m_elements, m_count);
+			}
+			FixedList& operator=(FixedList&& o)
+			{
+				if (this != &o)
+				{
+					Clear();
+					m_count = o.m_count;
+					MoveToNew((T*)m_elements, (T*)o.m_elements, m_count);
+				}
+				return *this;
+			}
+
 			~FixedList()
 			{
 				Clear();
@@ -553,14 +571,14 @@ namespace Apoc3D
 			{
 				assert(m_count < MaxSize);
 				if (m_count < MaxSize)
-					DoPut(val, m_count++);
+					DoPutNew(val, m_count++);
 			}
 
 			void Add(T&& val)
 			{
 				assert(m_count < MaxSize);
 				if (m_count < MaxSize)
-					DoPut(std::move(val), m_count++);
+					DoPutNew(std::move(val), m_count++);
 			}
 
 			template <int32 N>
@@ -569,7 +587,7 @@ namespace Apoc3D
 			{
 				assert(m_count + count <= MaxSize);
 				for (int32 i = 0; i < count && m_count < MaxSize; i++)
-					DoPut(val[i], m_count++);
+					DoPutNew(val[i], m_count++);
 			}
 
 			template <int32 N>
@@ -578,7 +596,7 @@ namespace Apoc3D
 			{
 				assert(m_count + l.size() <= MaxSize);
 				for (auto iter = l.begin(); iter != l.end() && m_count < MaxSize; ++iter)
-					DoPut(*iter, m_count++);
+					DoPutNew(*iter, m_count++);
 			}
 
 			void Reserve(int32 newCount) { assert(newCount <= MaxSize); m_count = newCount; }
@@ -680,7 +698,7 @@ namespace Apoc3D
 				EnsureElements();
 				
 				for (const T& e : l)
-					DoPut(e, m_count++);
+					DoPutNew(e, m_count++);
 			}
 
 			List(const List& another)
@@ -752,12 +770,12 @@ namespace Apoc3D
 			void Add(const T& val)
 			{
 				EnsureElementIncrSize();
-				DoPut(val, m_count++);
+				DoPutNew(val, m_count++);
 			}
 			void Add(T&& val)
 			{
 				EnsureElementIncrSize();
-				DoPut(std::move(val), m_count++);
+				DoPutNew(std::move(val), m_count++);
 			}
 
 			template <int32 N>
@@ -767,7 +785,7 @@ namespace Apoc3D
 				EnsureElementIncrSize(count);
 
 				for (int32 i = 0; i < count; i++)
-					DoPut(val[i], m_count++);
+					DoPutNew(val[i], m_count++);
 			}
 
 			template <typename = void>
@@ -780,7 +798,7 @@ namespace Apoc3D
 				EnsureElementIncrSize((int32)l.size());
 
 				for (const T& e : l)
-					DoPut(e, m_count++);
+					DoPutNew(e, m_count++);
 			}
 
 			
@@ -840,37 +858,58 @@ namespace Apoc3D
 
 			void Insert(int32 index, const T& item)
 			{
+				assert(index >= 0 && index <= m_count);
 				EnsureElementIncrSize();
 
 				if (index < m_count)
 				{
-					for (int32 i = m_count; i > index; i--)
+					DoPutNew(std::move(m_elements[m_count - 1]), m_count);
+
+					for (int32 i = m_count - 1; i > index; i--)
 					{
 						m_elements[i] = std::move(m_elements[i - 1]);
 					}
+
+					m_elements[index] = item;
 				}
-				DoPut(item, index);
+				else
+				{
+					DoPutNew(item, m_count);
+				}
+
 				m_count++;
 			}
 
+
 			void InsertArray(int32 index, const T* item, int32 count)
 			{
+				assert(index >= 0 && index <= m_count);
+
 				EnsureElementIncrSize(count);
 
 				if (index < m_count)
 				{
-					for (int32 i = m_count + count - 1; i > index; i--)
+					for (int32 i = m_count + count - 1; i >= index + count; i--)
 					{
-						m_elements[i] = std::move(m_elements[i - count]);
+						if (i >= m_count)
+							DoPutNew(std::move(m_elements[i - count]), i);
+						else
+							m_elements[i] = std::move(m_elements[i - count]);
 					}
-				}
 
-				for (int32 i = 0; i < count; i++)
+					for (int32 i = 0; i < count; i++)
+					{
+						if (index + i >= m_count)
+							DoPutNew(item[i], index + i);
+						else
+							m_elements[index + i] = item[i];
+					}
+					m_count += count;
+				}
+				else
 				{
-					DoPut(item[i], index + i);
+					AddArray(item, count);
 				}
-
-				m_count += count;
 			}
 
 			//////////////////////////////////////////////////////////////////////////
