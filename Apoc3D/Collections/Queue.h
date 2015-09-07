@@ -33,186 +33,63 @@ namespace Apoc3D
 {
 	namespace Collections
 	{
-		template<typename T, typename ST>
-		class QueueBase
+		namespace QueueImpl
 		{
-		public:
-
-			void Clear()
+			template <typename T>
+			void CopyToNew(T* dest, const T* src, int32 arrLength, int32 head, int32 tail)
 			{
-				if (!std::is_trivially_copyable<T>::value)
+				if (std::is_trivially_copyable<T>::value)
 				{
-					if (m_head < m_tail)
-						DoDestory(m_head, m_tail - m_head);
-					else
-					{
-						DoDestory(m_head, m_arrLength - m_head);
-						DoDestory(0, m_tail);
-					}
-				}
-
-				m_head = m_tail = 0;
-				m_count = 0;
-			}
-
-			template <typename = typename std::enable_if<std::is_pointer<T>::value && std::is_destructible<typename std::remove_pointer<T>::type>::value>::type>
-			void DeleteAndClear()
-			{
-				for (int32 i = 0; i < getCount(); i++)
-					delete Element(i);
-				Clear();
-			}
-
-			bool Replace(const T& item, const T& item2)
-			{
-				T* arr = (T*)m_array;
-
-				int index = m_head;
-				int counter = m_count;
-
-				while (counter-- > 0)
-				{
-					if (arr[index] == item)
-					{
-						arr[index] = item2;
-						return true;
-					}
-
-					index = (index + 1) % m_arrLength;
-				}
-				return false;
-			}
-			bool Contains(const T& item) const
-			{
-				T* arr = (T*)m_array;
-
-				int index = m_head;
-				int counter = m_count;
-
-				while (counter-- > 0)
-				{
-					if (arr[index] == item)
-					{
-						return true;
-					}
-
-					index = (index + 1) % m_arrLength;
-				}
-				return false;
-			}
-
-			void CopyTo(T* dest) const
-			{
-				T* arr = (T*)m_array;
-
-				int remaining = m_count;
-
-				if (remaining > 0)
-				{
-					int numHeadToEnd = (m_arrLength - m_head < remaining) ? (m_arrLength - m_head) : remaining;
-					for (int i = 0; i < numHeadToEnd; i++)
-					{
-						dest[i] = arr[i + m_head];
-					}
-					remaining -= numHeadToEnd;
-					if (remaining > 0)
-					{
-						for (int i = 0; i < remaining; i++)
-						{
-							dest[i + m_arrLength - m_head] = arr[i];
-						}
-					}
-				}
-			}
-
-			void DequeueOnly()
-			{
-				assert(m_count > 0);
-
-				DoDestory(m_head, 1);
-				m_head = (m_head + 1) % m_arrLength;
-				m_count--;
-			}
-			T Dequeue()
-			{
-				assert(m_count > 0);
-				T* arr = (T*)m_array;
-
-				T temp = std::move(arr[m_head]);
-				DequeueOnly();
-				return temp;
-			}
-
-
-			void RemoveAt(int32 idx)
-			{
-				assert(m_count > 0);
-				assert(idx >= 0 && idx < m_count);
-
-				T* arr = (T*)m_array;
-
-				int32 head = m_head;
-				int32 tail = m_tail;
-				if (head < tail)
-				{
-					for (int32 i = head + idx + 1; i < tail; i++)
-					{
-						arr[i - 1] = std::move(arr[i]);
-					}
+					memcpy(dest, src, arrLength * sizeof(T));
 				}
 				else
 				{
-					if (head + idx < m_arrLength)
+					if (head < tail)
 					{
-						for (int32 i = head + idx + 1; i < m_arrLength; i++)
-						{
-							arr[i - 1] = std::move(arr[i]);
-						}
-
-						arr[m_arrLength - 1] = std::move(arr[0]);
-
-						for (int32 i = 1; i < m_tail; i++)
-						{
-							arr[i - 1] = std::move(arr[i]);
-						}
+						for (int i = head; i < tail; i++)
+							new (&dest[i])T(src[i]);
 					}
 					else
 					{
-						for (int32 i = head + idx - m_arrLength + 1; i < m_tail; i++)
-						{
-							arr[i - 1] = std::move(arr[i]);
-						}
+						for (int i = 0; i < tail; i++)
+							new (&dest[i])T(src[i]);
+
+						for (int i = head; i < arrLength; i++)
+							new (&dest[i])T(src[i]);
 					}
 				}
-
-				m_tail--;
-				if (m_tail < 0)
-					m_tail = m_arrLength - 1;
-
-				DoDestory(m_tail, 1);
-
-				m_count--;
 			}
 
-			int getCount() const { return m_count; }
+			template <typename T>
+			void MoveToNew(T* dest, const T* src, int32 arrLength, int32 head, int32 tail)
+			{
+				if (std::is_trivially_copyable<T>::value)
+				{
+					memcpy(dest, src, arrLength * sizeof(T));
+				}
+				else
+				{
+					if (head < tail)
+					{
+						for (int i = head; i < tail; i++)
+							new (&dest[i])T(std::move(src[i]));
+					}
+					else
+					{
+						for (int i = 0; i < tail; i++)
+							new (&dest[i])T(std::move(src[i]));
 
-			T& operator[](int i) { assert(i >= 0 && i < m_count); return ((T*)m_array)[(m_head + i) % m_arrLength]; }
-			const T& operator[](int i) const { assert(i >= 0 && i < m_count); return  ((T*)m_array)[(m_head + i) % m_arrLength]; }
-
-			T& Element(int i) { return  ((T*)m_array)[(m_head + i) % m_arrLength]; }
-			const T& GetElement(int i) const { return  ((T*)m_array)[(m_head + i) % m_arrLength]; }
-			void SetElement(int i, const T& value) { ((T*)m_array)[(m_head + i) % m_arrLength] = value; }
-
-			const T& Head() const { return ((T*)m_array)[m_head]; }
-			const T& Tail() const { return operator[](m_count - 1); }
+						for (int i = head; i < arrLength; i++)
+							new (&dest[i])T(std::move(src[i]));
+					}
+				}
+			}
 
 
-		protected:
-			void DoPutNew(const T& val, int32 idx)
+			template <typename T>
+			void DoPutNew(const T& val, int32 idx, T* elm)
 			{
 				assert(idx >= 0);
-
-				T* elm = (T*)m_array;
 
 				if (std::is_trivially_copyable<T>::value)
 				{
@@ -223,11 +100,12 @@ namespace Apoc3D
 					new (&elm[idx])T(val);
 				}
 			}
-			void DoPutNew(T&& val, int32 idx)
+
+			template <typename T>
+			void DoPutNew(T&& val, int32 idx, T* elm)
 			{
 				assert(idx >= 0);
 
-				T* elm = (T*)m_array;
 				if (std::is_trivially_copyable<T>::value)
 				{
 					elm[idx] = std::move(val);
@@ -237,29 +115,171 @@ namespace Apoc3D
 					new (&elm[idx])T(std::move(val));
 				}
 			}
-			void DoDestory(int32 start, int32 count)
+
+			template <typename T>
+			void DoDestory(T* elm, int32 start, int32 count, int32 arrLen)
 			{
-				assert(start >= 0);
+				assert(start >= 0 && start + count <= arrLen);
 				if (!std::is_trivially_copyable<T>::value)
 				{
-					T* elm = (T*)m_array;
-
 					for (int32 i = start; i < start + count; i++)
-					{
 						elm[i].~T();
+				}
+			}
+
+			template <typename T>
+			void DoDestroyAll(T* elm, int32 head, int32 tail, int32 arrLen)
+			{
+				if (!std::is_trivially_copyable<T>::value)
+				{
+					if (head < tail)
+						DoDestory(elm, head, tail - head, arrLen);
+					else
+					{
+						DoDestory(elm, head, arrLen - head, arrLen);
+						DoDestory(elm, 0, tail, arrLen);
 					}
 				}
 			}
 
+			template <typename T>
+			void Clear(T* arr, int32& head, int32& tail, int32& count, int32 arrLen)
+			{
+				if (count > 0)
+					DoDestroyAll(arr, head, tail, arrLen);
 
-			ST m_array;
+				head = tail = 0;
+				count = 0;
+			}
 
-			int32 m_arrLength;
-			int32 m_count = 0;
+			template <typename T>
+			bool Replace(const T& item, const T& item2, const T* arr, int32 head, int32 count, int32 arrLen)
+			{
+				int index = head;
+				int counter = count;
 
-			int32 m_head = 0;
-			int32 m_tail = 0;
-		};
+				while (counter-- > 0)
+				{
+					if (arr[index] == item)
+					{
+						arr[index] = item2;
+						return true;
+					}
+
+					index = (index + 1) % arrLen;
+				}
+				return false;
+			}
+			
+			template <typename T>
+			bool Contains(const T& item, const T* arr, int32 head, int32 count, int32 arrLen)
+			{
+				int index = head;
+				int counter = count;
+
+				while (counter-- > 0)
+				{
+					if (arr[index] == item)
+						return true;
+
+					index = (index + 1) % arrLen;
+				}
+				return false;
+			}
+
+
+			template <typename T>
+			void DequeueOnly(T* arr, int32& head, int32& count, int32 arrLen)
+			{
+				assert(count > 0);
+
+				DoDestory(arr, head, 1, arrLen);
+				head = (head + 1) % arrLen;
+				count--;
+			}
+
+			template <typename T>
+			void DequeueOnly(int32 amount, T* arr, int32& head, int32& count, int32 arrLen)
+			{
+				assert(amount <= count);
+
+				if (!std::is_trivially_copyable<T>::value)
+				{
+					if (amount > arrLen - head)
+					{
+						int32 p1 = arrLen - head;
+
+						DoDestory(arr, head, p1, arrLen);
+						DoDestory(arr, 0, amount - p1, arrLen);
+					}
+					else
+						DoDestory(arr, head, amount, arrLen);
+				}
+
+				head = (head + amount) % arrLen;
+				count -= amount;
+			}
+
+			template <typename T>
+			T Dequeue(T* arr, int32& head, int32& count, int32 arrLen)
+			{
+				assert(count > 0);
+
+				T temp = std::move(arr[head]);
+				DequeueOnly(arr, head, count, arrLen);
+				return temp;
+			}
+
+			template <typename T>
+			void RemoveAt(int32 idx, T* arr, int32& head, int32& tail, int32& count, int32 arrLen)
+			{
+				assert(count > 0);
+				assert(idx >= 0 && idx < count);
+
+				if (head < tail)
+				{
+					for (int32 i = head + idx + 1; i < tail; i++)
+					{
+						arr[i - 1] = std::move(arr[i]);
+					}
+				}
+				else
+				{
+					if (head + idx < arrLen)
+					{
+						for (int32 i = head + idx + 1; i < arrLen; i++)
+						{
+							arr[i - 1] = std::move(arr[i]);
+						}
+
+						arr[arrLen - 1] = std::move(arr[0]);
+
+						for (int32 i = 1; i < tail; i++)
+						{
+							arr[i - 1] = std::move(arr[i]);
+						}
+					}
+					else
+					{
+						for (int32 i = head + idx - arrLen + 1; i < tail; i++)
+						{
+							arr[i - 1] = std::move(arr[i]);
+						}
+					}
+				}
+
+				tail--;
+				if (tail < 0)
+					tail = arrLen - 1;
+
+				DoDestory(arr, tail, 1, arrLen);
+
+				count--;
+			}
+
+		}
+
+
 
 		template<typename T>
 		class Queue
@@ -268,41 +288,23 @@ namespace Apoc3D
 			Queue()
 				: m_arrLength(4)
 			{
-				m_array = new T[4];
+				m_array = Allocate(4);
 			}
 			explicit Queue(int capacity)
 				: m_arrLength(capacity)
 			{
-				m_array = new T[capacity];
-			}
-			~Queue()
-			{
-				delete[] m_array;
+				m_array = Allocate(capacity);
 			}
 
-			Queue(const Queue& another)
-				: m_head(another.m_head), m_tail(another.m_tail), m_count(another.m_count), m_arrLength(another.m_arrLength)
-			{
-				m_array = new T[m_arrLength];
-				for (int i = 0; i < m_arrLength; i++)
-					m_array[i] = another.m_array[i];
-			}
-			Queue& operator=(const Queue& rhs)
-			{
-				if (this != &rhs)
-				{
-					delete[] m_array;
+			~Queue() { Destruct(); }
 
-					m_head = rhs.m_head;
-					m_tail = rhs.m_tail;
-					m_count = rhs.m_count;
-					m_arrLength = rhs.m_arrLength;
+			Queue(const Queue& o)
+				: m_head(o.m_head), m_tail(o.m_tail), m_count(o.m_count), m_arrLength(o.m_arrLength)
+			{
+				m_array = Allocate(m_arrLength);
 
-					m_array = new T[m_arrLength];
-					for (int i = 0; i < m_arrLength; i++)
-						m_array[i] = rhs.m_array[i];
-				}
-				return *this;
+				if (m_count > 0)
+					QueueImpl::CopyToNew(m_array, o.m_array, m_arrLength, m_head, m_tail);
 			}
 
 			Queue(Queue&& o)
@@ -314,21 +316,28 @@ namespace Apoc3D
 				o.m_head = 0;
 				o.m_tail = 0;
 			}
+
+			Queue& operator=(const Queue& o)
+			{
+				if (this != &o)
+				{
+					Destruct();
+					new (this)Queue(o);
+				}
+				return *this;
+			}
+
 			Queue& operator=(Queue&& o)
 			{
 				if (this != &o)
 				{
-					delete[] m_array;
+					Destruct();
 					new (this)Queue(std::move(o));
 				}
 				return *this;
 			}
 
-			void Clear()
-			{
-				m_head = m_tail = 0;
-				m_count = 0;
-			}
+			void Clear() { QueueImpl::Clear(m_array, m_head, m_tail, m_count, m_arrLength); }
 
 			template <typename = typename std::enable_if<std::is_pointer<T>::value && std::is_destructible<typename std::remove_pointer<T>::type>::value>::type>
 			void DeleteAndClear()
@@ -338,83 +347,57 @@ namespace Apoc3D
 				Clear();
 			}
 
-			bool Replace(const T& item, const T& item2)
-			{
-				int index = m_head;
-				int counter = m_count;
-
-				while (counter-- > 0)
-				{
-					if (m_array[index] == item)
-					{
-						m_array[index] = item2;
-						return true;
-					}
-
-					index = (index + 1) % m_arrLength;
-				}
-				return false;
-			}
-			bool Contains(const T& item) const
-			{
-				int index = m_head;
-				int counter = m_count;
-
-				while (counter-- > 0)
-				{
-					if (m_array[index] == item)
-					{
-						return true;
-					}
-
-					index = (index + 1) % m_arrLength;
-				}
-				return false;
-			}
-
+			bool Replace(const T& item, const T& item2) { return QueueImpl::Contains(item, item2, m_array, item, m_head, m_count, m_arrLength); }
+			bool Contains(const T& item) const { return QueueImpl::Contains(item, m_array, m_head, m_count, m_arrLength); }
+			
 			void CopyTo(T* dest) const
 			{
 				int remaining = m_count;
 
 				if (remaining > 0)
 				{
-					int numHeadToEnd = (m_arrLength - m_head < remaining) ? (m_arrLength - m_head) : remaining;
+					int32 head = m_head;
+					int32 arrLength = m_arrLength;
+
+					int numHeadToEnd = (arrLength - head < remaining) ? (arrLength - head) : remaining;
 					for (int i = 0; i < numHeadToEnd; i++)
 					{
-						dest[i] = m_array[i + m_head];
+						dest[i] = m_array[i + head];
 					}
 					remaining -= numHeadToEnd;
 					if (remaining > 0)
 					{
 						for (int i = 0; i < remaining; i++)
 						{
-							dest[i + m_arrLength - m_head] = m_array[i];
+							dest[i + arrLength - head] = m_array[i];
 						}
 					}
 				}
 			}
 
-			void DequeueOnly()
-			{
-				assert(m_count > 0);
+			void DequeueOnly() { QueueImpl::DequeueOnly(m_array, m_head, m_count, m_arrLength); }
+			void DequeueOnly(int32 amount) { QueueImpl::DequeueOnly(amount, m_array, m_head, m_count, m_arrLength); }
 
-				m_head = (m_head + 1) % m_arrLength;
-				m_count--;
-			}
-			T Dequeue()
-			{
-				assert(m_count > 0);
+			T Dequeue() { return QueueImpl::Dequeue(m_array, m_head, m_count, m_arrLength); }
 
-				int32 oldHead = m_head;
-				DequeueOnly();
-				return m_array[oldHead];
+			void RemoveAt(int32 idx)
+			{
+				int32 head = m_head;
+				int32 tail = m_tail;
+				int32 count = m_count;
+				QueueImpl::RemoveAt(idx, m_array, head, tail, count, m_arrLength);
+
+				m_head = head;
+				m_tail = tail;
+				m_count = count;
 			}
+
 
 			void Enqueue(const T& item)
 			{
 				EnsureIncrCapacity();
 
-				m_array[m_tail] = item;
+				QueueImpl::DoPutNew(item, m_tail, m_array);
 				m_tail = (m_tail + 1) % m_arrLength;
 				m_count++;
 			}
@@ -423,59 +406,11 @@ namespace Apoc3D
 			{
 				EnsureIncrCapacity();
 
-				m_array[m_tail] = std::move(item);
+				QueueImpl::DoPutNew(std::move(item), m_tail, m_array);
 				m_tail = (m_tail + 1) % m_arrLength;
 				m_count++;
 			}
 
-			void RemoveAt(int32 idx)
-			{
-				assert(m_count > 0);
-				assert(idx >= 0 && idx < m_count);
-
-				int32 head = m_head;
-				int32 tail = m_tail;
-				if (head < tail)
-				{
-					for (int32 i = head + idx + 1; i < tail; i++)
-					{
-						m_array[i - 1] = std::move(m_array[i]);
-					}
-				}
-				else
-				{
-					if (head + idx < m_arrLength)
-					{
-						for (int32 i = head + idx + 1; i < m_arrLength; i++)
-						{
-							m_array[i - 1] = std::move(m_array[i]);
-						}
-
-						m_array[m_arrLength - 1] = std::move(m_array[0]);
-
-						for (int32 i = 1; i < m_tail; i++)
-						{
-							m_array[i - 1] = std::move(m_array[i]);
-						}
-					}
-					else
-					{
-						for (int32 i = head + idx - m_arrLength + 1; i < m_tail; i++)
-						{
-							m_array[i - 1] = std::move(m_array[i]);
-						}
-					}
-				}
-				//for (int32 i = idx + 1; i < m_count; i++)
-				//{
-				//	m_array[(m_head + i - 1) % m_arrLength] = std::move(m_array[(m_head + i) % m_arrLength]);
-				//}
-				m_tail--;
-				if (m_tail < 0)
-					m_tail = m_arrLength - 1;
-				
-				m_count--;
-			}
 
 			int getCount() const { return m_count; }
 
@@ -488,8 +423,6 @@ namespace Apoc3D
 
 			const T& Head() const { return m_array[m_head]; }
 			const T& Tail() const { return operator[](m_count - 1); }
-
-
 
 
 			class Iterator
@@ -528,33 +461,53 @@ namespace Apoc3D
 			Iterator end() const { return Iterator(*this); }
 
 		private:
+			static T* Allocate(int32 size) { return (T*)malloc(sizeof(T)*size); }
+			static void Free(T* ptr) { free(ptr); }
+
 			void SetCapacity(int capacity)
 			{
-				T* destinationArray = new T[capacity];
+				T* dest = Allocate(capacity);
 				if (m_count > 0)
 				{
-					if (m_head < m_tail)
+					int32 head = m_head;
+					int32 tail = m_tail;
+					int32 arrLength = m_arrLength;
+
+					if (std::is_trivially_copyable<T>::value)
 					{
-						for (int i = 0; i < m_count; i++)
+						if (head < tail)
 						{
-							destinationArray[i] = std::move(m_array[i + m_head]);
+							memcpy(dest, m_array + head, sizeof(T)*m_count);
+						}
+						else
+						{
+							memcpy(dest, m_array + head, sizeof(T)*(arrLength - head));
+							memcpy(dest + arrLength - head, m_array, sizeof(T)*tail);
 						}
 					}
 					else
 					{
-						for (int i = m_head; i < m_arrLength; i++)
+						if (head < tail)
 						{
-							destinationArray[i - m_head] = std::move(m_array[i]);
+							for (int i = 0; i < m_count; i++)
+								new (&dest[i])T(std::move(m_array[i + head]));
 						}
-
-						for (int i = 0; i < m_tail; i++)
+						else
 						{
-							destinationArray[m_arrLength - m_head + i] = std::move(m_array[i]);
+							for (int i = head; i < arrLength; i++)
+								new (&dest[i - head])T(std::move(m_array[i]));
+
+							for (int i = 0; i < tail; i++)
+								new (&dest[arrLength - head + i])T(std::move(m_array[i]));
 						}
 					}
+
+					QueueImpl::DoDestroyAll(m_array, head, tail, arrLength);
 				}
-				delete[] m_array;
-				m_array = destinationArray;
+				
+				Free(m_array);
+				
+				m_array = dest;
 				m_arrLength = capacity;
 				m_head = 0;
 				m_tail = (m_count == capacity) ? 0 : m_count;
@@ -573,7 +526,11 @@ namespace Apoc3D
 				}
 			}
 
-
+			void Destruct()
+			{
+				Clear();
+				Free(m_array);
+			}
 
 			T* m_array;
 			int32 m_arrLength;
@@ -590,13 +547,42 @@ namespace Apoc3D
 			static const int32 Size = N;
 
 			FixedQueue() { }
-			~FixedQueue() { }
-
-			void Clear()
+			FixedQueue(const FixedQueue& o)
+				: m_head(o.m_head), m_tail(o.m_tail), m_count(o.m_count)
 			{
-				m_head = m_tail = 0;
-				m_count = 0;
+				if (m_count > 0)
+					QueueImpl::CopyToNew((T*)m_storage, (T*)o.m_storage, N, m_head, m_tail);
 			}
+			
+			FixedQueue(FixedQueue&& o)
+				: m_head(o.m_head), m_tail(o.m_tail), m_count(o.m_count)
+			{
+				if (m_count > 0)
+					QueueImpl::MoveToNew((T*)m_storage, (T*)o.m_storage, N, m_head, m_tail);
+			}
+
+			~FixedQueue() { Clear(); }
+
+			FixedQueue& operator=(const FixedQueue& o)
+			{
+				if (this != &o)
+				{
+					Clear();
+					new (this)FixedQueue(o);
+				}
+				return *this;
+			}
+			FixedQueue& operator=(FixedQueue&& o)
+			{
+				if (this != &o)
+				{
+					Clear();
+					new (this)FixedQueue(std::move(o));
+				}
+				return *this;
+			}
+
+			void Clear() { QueueImpl::Clear((T*)m_storage, m_head, m_tail, m_count, N); }
 
 			template <typename = typename std::enable_if<std::is_pointer<T>::value && std::is_destructible<typename std::remove_pointer<T>::type>::value>::type>
 			void DeleteAndClear()
@@ -606,39 +592,8 @@ namespace Apoc3D
 				Clear();
 			}
 
-			bool Replace(const T& item, const T& item2)
-			{
-				int index = m_head;
-				int counter = m_count;
-
-				while (counter-- > 0)
-				{
-					if (m_array[index] == item)
-					{
-						m_array[index] = item2;
-						return true;
-					}
-
-					index = (index + 1) % N;
-				}
-				return false;
-			}
-			bool Contains(const T& item) const
-			{
-				int index = m_head;
-				int counter = m_count;
-
-				while (counter-- > 0)
-				{
-					if (m_array[index] == item)
-					{
-						return true;
-					}
-
-					index = (index + 1) % N;
-				}
-				return false;
-			}
+			bool Replace(const T& item, const T& item2) { return QueueImpl::Contains(item, item2, (T*)m_storage, item, m_head, m_count, N); }
+			bool Contains(const T& item) const { return QueueImpl::Contains(item, (T*)m_storage, m_head, m_count, N); }
 
 			void CopyTo(T* dest, int32 amount) const
 			{
@@ -647,48 +602,51 @@ namespace Apoc3D
 
 				if (remaining > 0)
 				{
-					int numHeadToEnd = (N - m_head < remaining) ? (N - m_head) : remaining;
+					T* arr = (T*)m_storage;
+
+					int32 head = m_head;
+
+					int numHeadToEnd = (N - head < remaining) ? (N - head) : remaining;
 					for (int i = 0; i < numHeadToEnd; i++)
 					{
-						dest[i] = m_array[i + m_head];
+						dest[i] = arr[i + head];
 					}
 					remaining -= numHeadToEnd;
 					if (remaining > 0)
 					{
 						for (int i = 0; i < remaining; i++)
 						{
-							dest[i + N - m_head] = m_array[i];
+							dest[i + N - head] = arr[i];
 						}
 					}
 				}
 			}
 
-			void DequeueOnly(int32 amount)
-			{
-				assert(m_count >= amount);
-				m_head = (m_head + amount) % N;
-				m_count -= amount;
-			}
-			void DequeueOnly()
-			{
-				assert(m_count > 0);
-				m_head = (m_head + 1) % N;
-				m_count--;
-			}
-			T Dequeue()
-			{
-				assert(m_count > 0);
+			void DequeueOnly() { QueueImpl::DequeueOnly((T*)m_storage, m_head, m_count, N); }
+			void DequeueOnly(int32 amount) { QueueImpl::DequeueOnly(amount, (T*)m_storage, m_head, m_count, N); }
 
-				const T& local = m_array[m_head];
-				DequeueOnly();
-				return local;
+			T Dequeue() { return QueueImpl::Dequeue((T*)m_storage, m_head, m_count, N); }
+
+			void RemoveAt(int32 idx)
+			{
+				int32 head = m_head;
+				int32 tail = m_tail;
+				int32 count = m_count;
+				QueueImpl::RemoveAt(idx, (T*)m_storage, head, tail, count, N);
+
+				m_head = head;
+				m_tail = tail;
+				m_count = count;
 			}
 
 			void Enqueue(const T& item)
 			{
 				assert(m_count < N);
 
-				m_array[m_tail] = item;
+				T* arr = (T*)m_storage;
+
+				QueueImpl::DoPutNew(item, m_tail, arr);
+				
 				m_tail = (m_tail + 1) % N;
 				m_count++;
 			}
@@ -696,27 +654,43 @@ namespace Apoc3D
 			{
 				assert(m_count + count <= N);
 
+				T* arr = (T*)m_storage;
+
 				int32 partCount = Math::Min(count, N - m_tail);
 
 				if (partCount > 0)
 				{
-					for (int32 i = 0; i < partCount; i++)
+					if (std::is_trivially_copyable<T>::value)
 					{
-						m_array[m_tail++] = items[i];
+						memcpy(arr + m_tail, items, partCount * sizeof(T));
+						m_tail += partCount;
 					}
+					else
+					{
+						for (int32 i = 0; i < partCount; i++)
+							QueueImpl::DoPutNew(items[i], m_tail++, arr);
+					}
+
 					m_tail = m_tail % N;
 					m_count += partCount;
 
 					items += partCount;
 					count -= partCount;
 				}
-				
+
 				if (count > 0)
 				{
-					for (int32 i = 0; i < count; i++)
+					if (std::is_trivially_copyable<T>::value)
 					{
-						m_array[m_tail++] = items[i];
+						memcpy(arr + m_tail, items, count * sizeof(T));
+						m_tail += count;
 					}
+					else
+					{
+						for (int32 i = 0; i < count; i++)
+							QueueImpl::DoPutNew(items[i], m_tail++, arr);
+					}
+
 					m_tail = m_tail % N;
 					m_count += count;
 				}
@@ -725,10 +699,10 @@ namespace Apoc3D
 			int getCount() const { return m_count; }
 			int32 getCapacity() const { return N; }
 
-			T& operator[](int i) { assert(i >= 0 && i < m_count); return m_array[(m_head + i) % N]; }
-			const T& operator[](int i) const { assert(i >= 0 && i < m_count); return m_array[(m_head + i) % N]; }
+			T& operator[](int i) { assert(i >= 0 && i < m_count); return ((T*)m_storage)[(m_head + i) % N]; }
+			const T& operator[](int i) const { assert(i >= 0 && i < m_count); return ((T*)m_storage)[(m_head + i) % N]; }
 
-			const T& Head() const { return m_array[m_head]; }
+			const T& Head() const { return ((T*)m_storage)[m_head]; }
 			const T& Tail() const { return operator[](m_count - 1); }
 
 		private:
@@ -737,7 +711,7 @@ namespace Apoc3D
 			int32 m_head = 0;
 			int32 m_tail = 0;
 
-			T m_array[N];
+			char m_storage[N * sizeof(T)];
 		};
 
 

@@ -451,9 +451,7 @@ namespace Apoc3D
 					T* elm = (T*)m_elements;
 
 					for (int32 i = start; i < start + count; i++)
-					{
 						elm[i].~T();
-					}
 				}
 			}
 

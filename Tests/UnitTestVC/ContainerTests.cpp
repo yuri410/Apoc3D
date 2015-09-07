@@ -1,4 +1,4 @@
-#include "MemoryLeakChecker.h"
+#include "TestCommon.h"
 
 namespace UnitTestVC
 {		
@@ -657,6 +657,19 @@ namespace UnitTestVC
 					}
 				}
 				Assert::IsTrue(same);
+
+				FixedList<String, 1000> lst2 = std::move(lst);
+				same = lst2.getCount() == c.getCount();
+				for (int32 i = 0; i < lst2.getCount(); i++)
+				{
+					if (lst2[i] != c[i])
+					{
+						same = false;
+						break;
+					}
+				}
+				Assert::IsTrue(same);
+
 			}
 		}
 	};
@@ -1034,32 +1047,34 @@ namespace UnitTestVC
 
 	TEST_CLASS(QueueTest)
 	{
+		MemoryService mem;
+
 	public:
 		TEST_METHOD(Queue_General)
 		{
-			for (int32 i = 0; i < 100000; i++)
+			for (int32 i = 0; i < 5000; i++)
 			{
-				List<int32> source;
-				Queue<int32> queue;
+				List<String> source;
+				Queue<String> queue;
 				int32 count = Randomizer::NextExclusive(32);
 				for (int32 j = 0; j < count; j++)
 				{
-					int32 v = Randomizer::Next();
+					auto v = mem.randomString();
 					queue.Enqueue(v);
 					source.Add(v);
 				}
 
 				int32 k = 0;
-				for (int32 v : queue)
+				for (auto v : queue)
 				{
 					assert(source[k++] == v);
 				}
 
-				Queue<int32> moveTgt = std::move(queue);
+				Queue<String> moveTgt = std::move(queue);
 				assert(queue.getCount() == 0);
 
 				k = 0;
-				for (int32 v : moveTgt)
+				for (auto v : moveTgt)
 				{
 					assert(source[k++] == v);
 				}
@@ -1069,10 +1084,10 @@ namespace UnitTestVC
 
 		TEST_METHOD(Queue_Remove)
 		{
-			Queue<int32> testQueue;
-			List<int32> refList;
+			Queue<String> testQueue;
+			List<String> refList;
 
-			for (int32 k = 0; k < 1000; k++)
+			for (int32 k = 0; k < 100; k++)
 			{
 				int32 cnt = Randomizer::NextExclusive(64);
 				for (int32 i = 0; i < cnt; i++)
@@ -1085,7 +1100,7 @@ namespace UnitTestVC
 					}
 					else
 					{
-						int32 v = Randomizer::Next();
+						auto v = mem.randomString();
 						testQueue.Enqueue(v);
 						refList.Add(v);
 					}
@@ -1094,7 +1109,8 @@ namespace UnitTestVC
 				cnt = Randomizer::NextExclusive(4) + 4;
 				for (int32 i = 0; i < cnt; i++)
 				{
-					int32 v = Randomizer::Next();
+					auto v = mem.randomString();
+
 					testQueue.Enqueue(v);
 					refList.Add(v);
 				}
