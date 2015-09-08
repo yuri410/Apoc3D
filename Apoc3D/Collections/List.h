@@ -26,7 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "apoc3d/Common.h"
+
+#include "CollectionsCommon.h"
 
 namespace Apoc3D
 {
@@ -216,7 +217,7 @@ namespace Apoc3D
 			T* m_end = nullptr;
 		};
 
-		template <typename T, typename ST, bool NoRAII = false>
+		template <typename T, typename ST>
 		class ListBase
 		{
 		public:
@@ -233,7 +234,7 @@ namespace Apoc3D
 
 			void Clear()
 			{
-				DoDestory(0, m_count);
+				Utils::DoDestory(0, m_count, (T*)m_elements);
 				m_count = 0;
 			}
 
@@ -275,7 +276,7 @@ namespace Apoc3D
 				{
 					elm[i - 1] = std::move(elm[i]);
 				}
-				DoDestory(m_count - 1, 1);
+				Utils::DoDestory(m_count - 1, 1, elm);
 				m_count--;
 			}
 			template <typename DLT>
@@ -313,7 +314,7 @@ namespace Apoc3D
 						elm[writePos] = std::move(elm[i]);
 					}
 
-					DoDestory(dstCount, sourceCount - dstCount);
+					Utils::DoDestory(dstCount, sourceCount - dstCount, elm);
 					m_count = dstCount;
 				}
 			}
@@ -325,7 +326,7 @@ namespace Apoc3D
 
 				m_count--;
 				std::swap(elm[index], elm[m_count]);
-				DoDestory(m_count, 1);
+				Utils::DoDestory(m_count, 1, elm);
 			}
 			void RemoveRange(int32 start, int32 count)
 			{
@@ -342,7 +343,7 @@ namespace Apoc3D
 						elm[i] = std::move(elm[i + count]);
 					}
 					
-					DoDestory(m_count, count);
+					Utils::DoDestory(m_count, count, elm);
 				}
 			}
 
@@ -413,48 +414,7 @@ namespace Apoc3D
 
 			~ListBase() { }
 
-			void DoPutNew(const T& val, int32 idx)
-			{
-				assert(idx >= 0);
-
-				T* elm = (T*)m_elements;
-
-				if (std::is_trivially_copyable<T>::value || NoRAII)
-				{
-					elm[idx] = val;
-				}
-				else
-				{
-					new (&elm[idx])T(val);
-				}
-			}
-			void DoPutNew(T&& val, int32 idx)
-			{
-				assert(idx >= 0);
-
-				T* elm = (T*)m_elements;
-				if (std::is_trivially_copyable<T>::value || NoRAII)
-				{
-					elm[idx] = std::move(val);
-				}
-				else
-				{
-					new (&elm[idx])T(std::move(val));
-				}
-			}
-
-			void DoDestory(int32 start, int32 count)
-			{
-				assert(start >= 0);
-				if (!std::is_trivially_copyable<T>::value && !NoRAII)
-				{
-					T* elm = (T*)m_elements;
-
-					for (int32 i = start; i < start + count; i++)
-						elm[i].~T();
-				}
-			}
-
+			
 			static void CopyTo(T* dest, const T* src, int32 count)
 			{
 				if (std::is_trivially_copyable<T>::value)
@@ -467,48 +427,7 @@ namespace Apoc3D
 						dest[i] = src[i];
 				}
 			}
-
-			static void CopyToNew(T* dest, const T* src, int32 count)
-			{
-				if (std::is_trivially_copyable<T>::value)
-				{
-					memcpy(dest, src, count*sizeof(T));
-				}
-				else
-				{
-					if (NoRAII)
-					{
-						for (int32 i = 0; i < count; i++)
-							dest[i] = src[i];
-					}
-					else
-					{
-						for (int32 i = 0; i < count; i++)
-							new (&dest[i])T(src[i]);
-					}
-				}
-			}
-			static void MoveToNew(T* dest, T* src, int32 count)
-			{
-				if (!std::is_trivially_copyable<T>::value)
-				{
-					if (NoRAII)
-					{
-						for (int32 i = 0; i < count; i++)
-							dest[i] = std::move(src[i]);
-					}
-					else
-					{
-						for (int32 i = 0; i < count; i++)
-							new (&dest[i])T(std::move(src[i]));
-					}
-				}
-				else
-				{
-					memcpy(dest, src, count*sizeof(T));
-				}
-			}
-
+			
 			ST m_elements;
 			int m_count = 0;
 
@@ -531,7 +450,7 @@ namespace Apoc3D
 			FixedList(const FixedList& o)
 			{
 				m_count = o.m_count;
-				CopyToNew((T*)m_elements, (T*)o.m_elements, m_count);
+				Utils::CopyToNew((T*)m_elements, (T*)o.m_elements, m_count);
 			}
 			FixedList& operator=(const FixedList& o)
 			{
@@ -539,7 +458,7 @@ namespace Apoc3D
 				{
 					Clear();
 					m_count = o.m_count;
-					CopyToNew((T*)m_elements, (T*)o.m_elements, m_count);
+					Utils::CopyToNew((T*)m_elements, (T*)o.m_elements, m_count);
 				}
 				return *this;
 			}
@@ -547,7 +466,7 @@ namespace Apoc3D
 			FixedList(FixedList&& o)
 			{
 				m_count = o.m_count;
-				MoveToNew((T*)m_elements, (T*)o.m_elements, m_count);
+				Utils::MoveToNew((T*)m_elements, (T*)o.m_elements, m_count);
 				o.Clear();
 			}
 			FixedList& operator=(FixedList&& o)
@@ -556,7 +475,7 @@ namespace Apoc3D
 				{
 					Clear();
 					m_count = o.m_count;
-					MoveToNew((T*)m_elements, (T*)o.m_elements, m_count);
+					Utils::MoveToNew((T*)m_elements, (T*)o.m_elements, m_count);
 					o.Clear();
 				}
 				return *this;
@@ -571,14 +490,14 @@ namespace Apoc3D
 			{
 				assert(m_count < MaxSize);
 				if (m_count < MaxSize)
-					DoPutNew(val, m_count++);
+					Utils::DoPutNew(val, m_count++, (T*)m_elements);
 			}
 
 			void Add(T&& val)
 			{
 				assert(m_count < MaxSize);
 				if (m_count < MaxSize)
-					DoPutNew(std::move(val), m_count++);
+					Utils::DoPutNew(std::move(val), m_count++, (T*)m_elements);
 			}
 
 			template <int32 N>
@@ -587,7 +506,7 @@ namespace Apoc3D
 			{
 				assert(m_count + count <= MaxSize);
 				for (int32 i = 0; i < count && m_count < MaxSize; i++)
-					DoPutNew(val[i], m_count++);
+					Utils::DoPutNew(val[i], m_count++, (T*)m_elements);
 			}
 
 			template <int32 N>
@@ -596,7 +515,7 @@ namespace Apoc3D
 			{
 				assert(m_count + l.size() <= MaxSize);
 				for (auto iter = l.begin(); iter != l.end() && m_count < MaxSize; ++iter)
-					DoPutNew(*iter, m_count++);
+					Utils::DoPutNew(*iter, m_count++, (T*)m_elements);
 			}
 
 			void Reserve(int32 newCount) { assert(newCount <= MaxSize); m_count = newCount; }
@@ -627,7 +546,7 @@ namespace Apoc3D
 		};
 
 		template <typename T>
-		class WrappedList : public ListBase<T, T*, true>
+		class WrappedList : public ListBase<T, T*>
 		{
 		public:
 			WrappedList(T* externalBuffer, int32 maxCapacity)
@@ -698,7 +617,7 @@ namespace Apoc3D
 				EnsureElements();
 				
 				for (const T& e : l)
-					DoPutNew(e, m_count++);
+					Utils::DoPutNew(e, m_count++, m_elements);
 			}
 
 			List(const List& another)
@@ -707,7 +626,7 @@ namespace Apoc3D
 				if (another.m_elements)
 					m_elements = Allocate(m_length);
 
-				CopyToNew(m_elements, another.m_elements, m_count);
+				Utils::CopyToNew(m_elements, another.m_elements, m_count);
 			}
 			List(List&& other)
 				: ListBase(other.m_elements, other.m_count), m_length(other.m_length)
@@ -744,7 +663,7 @@ namespace Apoc3D
 					}
 
 					m_count = rhs.m_count;
-					CopyToNew(m_elements, rhs.m_elements, m_count);
+					Utils::CopyToNew(m_elements, rhs.m_elements, m_count);
 				}
 				return *this;
 			}
@@ -770,12 +689,12 @@ namespace Apoc3D
 			void Add(const T& val)
 			{
 				EnsureElementIncrSize();
-				DoPutNew(val, m_count++);
+				Utils::DoPutNew(val, m_count++, m_elements);
 			}
 			void Add(T&& val)
 			{
 				EnsureElementIncrSize();
-				DoPutNew(std::move(val), m_count++);
+				Utils::DoPutNew(std::move(val), m_count++, m_elements);
 			}
 
 			template <int32 N>
@@ -785,7 +704,7 @@ namespace Apoc3D
 				EnsureElementIncrSize(count);
 
 				for (int32 i = 0; i < count; i++)
-					DoPutNew(val[i], m_count++);
+					Utils::DoPutNew(val[i], m_count++, m_elements);
 			}
 
 			template <typename = void>
@@ -798,7 +717,7 @@ namespace Apoc3D
 				EnsureElementIncrSize((int32)l.size());
 
 				for (const T& e : l)
-					DoPutNew(e, m_count++);
+					Utils::DoPutNew(e, m_count++, m_elements);
 			}
 
 			
@@ -807,9 +726,9 @@ namespace Apoc3D
 				assert(newSize >= m_count);
 				T* newArr = Allocate(newSize);
 
-				MoveToNew(newArr, m_elements, m_count);
+				Utils::MoveToNew(newArr, m_elements, m_count);
 
-				DoDestory(0, m_count);
+				Utils::DoDestory(0, m_count, m_elements);
 				Free(m_elements);
 
 				m_elements = newArr;
@@ -863,7 +782,7 @@ namespace Apoc3D
 
 				if (index < m_count)
 				{
-					DoPutNew(std::move(m_elements[m_count - 1]), m_count);
+					Utils::DoPutNew(std::move(m_elements[m_count - 1]), m_count, m_elements);
 
 					for (int32 i = m_count - 1; i > index; i--)
 					{
@@ -874,7 +793,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					DoPutNew(item, m_count);
+					Utils::DoPutNew(item, m_count, m_elements);
 				}
 
 				m_count++;
@@ -892,7 +811,7 @@ namespace Apoc3D
 					for (int32 i = m_count + count - 1; i >= index + count; i--)
 					{
 						if (i >= m_count)
-							DoPutNew(std::move(m_elements[i - count]), i);
+							Utils::DoPutNew(std::move(m_elements[i - count]), i, m_elements);
 						else
 							m_elements[i] = std::move(m_elements[i - count]);
 					}
@@ -900,7 +819,7 @@ namespace Apoc3D
 					for (int32 i = 0; i < count; i++)
 					{
 						if (index + i >= m_count)
-							DoPutNew(item[i], index + i);
+							Utils::DoPutNew(item[i], index + i, m_elements);
 						else
 							m_elements[index + i] = item[i];
 					}

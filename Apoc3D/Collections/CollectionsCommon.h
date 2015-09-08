@@ -497,6 +497,94 @@ namespace Apoc3D
 
 			};
 
+			//////////////////////////////////////////////////////////////////////////
+
+
+			template <typename T, bool NoRAII = false>
+			void CopyToNew(T* dest, const T* src, int32 count)
+			{
+				if (std::is_trivially_copyable<T>::value)
+				{
+					memcpy(dest, src, count*sizeof(T));
+				}
+				else
+				{
+					if (NoRAII)
+					{
+						for (int32 i = 0; i < count; i++)
+							dest[i] = src[i];
+					}
+					else
+					{
+						for (int32 i = 0; i < count; i++)
+							new (&dest[i])T(src[i]);
+					}
+				}
+			}
+
+			template <typename T, bool NoRAII = false>
+			void MoveToNew(T* dest, T* src, int32 count)
+			{
+				if (!std::is_trivially_copyable<T>::value)
+				{
+					if (NoRAII)
+					{
+						for (int32 i = 0; i < count; i++)
+							dest[i] = std::move(src[i]);
+					}
+					else
+					{
+						for (int32 i = 0; i < count; i++)
+							new (&dest[i])T(std::move(src[i]));
+					}
+				}
+				else
+				{
+					memcpy(dest, src, count*sizeof(T));
+				}
+			}
+
+			template <typename T, bool NoRAII = false>
+			void DoPutNew(const T& val, int32 idx, T* elm)
+			{
+				assert(idx >= 0);
+
+				if (std::is_trivially_copyable<T>::value || NoRAII)
+				{
+					elm[idx] = val;
+				}
+				else
+				{
+					new (&elm[idx])T(val);
+				}
+			}
+
+			template <typename T, bool NoRAII = false>
+			void DoPutNew(T&& val, int32 idx, T* elm)
+			{
+				assert(idx >= 0);
+
+				if (std::is_trivially_copyable<T>::value || NoRAII)
+				{
+					elm[idx] = std::move(val);
+				}
+				else
+				{
+					new (&elm[idx])T(std::move(val));
+				}
+			}
+
+			template <typename T, bool NoRAII = false>
+			void DoDestory(int32 start, int32 count, T* elm)
+			{
+				assert(start >= 0);
+				if (!std::is_trivially_copyable<T>::value && !NoRAII)
+				{
+					for (int32 i = start; i < start + count; i++)
+						elm[i].~T();
+				}
+			}
+
 		};
 
 	}
