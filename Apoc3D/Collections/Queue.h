@@ -61,7 +61,7 @@ namespace Apoc3D
 			}
 
 			template <typename T>
-			void MoveToNew(T* dest, const T* src, int32 arrLength, int32 head, int32 tail)
+			void MoveToNew(T* dest, T* src, int32 arrLength, int32 head, int32 tail)
 			{
 				if (std::is_trivially_copyable<T>::value)
 				{
@@ -655,6 +655,17 @@ namespace Apoc3D
 
 				QueueImpl::DoPutNew(item, m_tail, arr);
 				
+				m_tail = (m_tail + 1) % N;
+				m_count++;
+			}
+			void Enqueue(T&& item)
+			{
+				assert(m_count < N);
+
+				T* arr = (T*)m_storage;
+
+				QueueImpl::DoPutNew(std::move(item), m_tail, arr);
+
 				m_tail = (m_tail + 1) % N;
 				m_count++;
 			}

@@ -181,6 +181,76 @@ private:
 	MEM_Variables;
 };
 
+struct FlaggerStates
+{
+	int32 ctorCount = 0;
+	int32 actualDtorCount = 0;
+	int32 copyCount = 0;
+	int32 moveCount = 0;
+
+	void Clear()
+	{
+		ctorCount = 0;
+		actualDtorCount = 0;
+		copyCount = 0;
+		moveCount = 0;
+	}
+};
+
+template <bool EnableMove>
+struct Flagger final
+{
+	Flagger(FlaggerStates* s)
+		: m_states(s)
+	{
+		if (m_states)
+			m_states->ctorCount++;
+	}
+	~Flagger()
+	{
+		if (m_states)
+			m_states->actualDtorCount++;
+	}
+
+	Flagger(const Flagger& o)
+		: m_states(o.m_states)
+	{
+		if (m_states)
+			m_states->copyCount++;
+	}
+
+	template <typename = typename std::enable_if<EnableMove>::type>
+	Flagger(Flagger&& o)
+		: m_states(o.m_states)
+	{
+		if (m_states)
+			m_states->moveCount++;
+		o.m_states = nullptr;
+	}
+
+	Flagger& operator=(const Flagger& o)
+	{
+		if (this != &o)
+		{
+			this->~Flagger();
+			new (this)Flagger(o);
+		}
+		return *this;
+	}
+
+	template <typename = typename std::enable_if<EnableMove>::type>
+	Flagger& operator=(Flagger&& o)
+	{
+		if (this != &o)
+		{
+			this->~Flagger();
+			new (this)Flagger(std::move(o));
+		}
+		return *this;
+	}
+
+	FlaggerStates* m_states = nullptr;
+};
 
 namespace Microsoft
 {

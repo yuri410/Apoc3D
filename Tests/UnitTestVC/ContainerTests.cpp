@@ -356,6 +356,32 @@ namespace UnitTestVC
 		TEST_METHOD(List_RandomC) { _TestRandom<NonMovableString>(mem.cstringData, mem.strDataCount); }
 		TEST_METHOD(List_RandomT) { _TestRandom<TrivialString>(mem.tstringData, mem.strDataCount); }
 
+		TEST_METHOD(List_RAII)
+		{
+			FlaggerStates states;
+
+			{
+				List<Flagger<true>> lst;
+
+				lst.Add({ &states });
+				lst.RemoveAt(0);
+			}
+			
+			Assert::AreEqual(1, states.ctorCount);
+			Assert::AreEqual(1, states.actualDtorCount);
+			Assert::AreEqual(1, states.moveCount);
+			Assert::AreEqual(0, states.copyCount);
+
+			states.Clear();
+			{
+				List<Flagger<false>>().Add({ &states });
+			}
+
+			Assert::AreEqual(1, states.ctorCount);
+			Assert::AreEqual(2, states.actualDtorCount);
+			Assert::AreEqual(0, states.moveCount);
+			Assert::AreEqual(1, states.copyCount);
+		}
 	private:
 
 #pragma region GenericTest
@@ -659,6 +685,35 @@ namespace UnitTestVC
 		TEST_METHOD(FixedList_Random) { _TestRandom<String>(mem.stringData, mem.strDataCount); }
 		TEST_METHOD(FixedList_RandomT) { _TestRandom<TrivialString>(mem.tstringData, mem.strDataCount); }
 		TEST_METHOD(FixedList_RandomC) { _TestRandom<NonMovableString>(mem.cstringData, mem.strDataCount); }
+
+		TEST_METHOD(FixedList_RAII)
+		{
+			FlaggerStates states1;
+			FlaggerStates states2;
+
+			{
+				FixedList<Flagger<true>, 4> lst;
+
+				lst.Add({ &states1 });
+
+				FixedList<Flagger<true>, 4> lst2 = std::move(lst);
+
+				lst2.Clear();
+				lst2.Add({ &states2 });
+
+				lst = lst2;
+			}
+
+			Assert::AreEqual(1, states1.ctorCount);
+			Assert::AreEqual(1, states1.actualDtorCount);
+			Assert::AreEqual(2, states1.moveCount);
+			Assert::AreEqual(0, states1.copyCount);
+
+			Assert::AreEqual(1, states2.ctorCount);
+			Assert::AreEqual(2, states2.actualDtorCount);
+			Assert::AreEqual(1, states2.moveCount);
+			Assert::AreEqual(1, states2.copyCount);
+		}
 	private:
 		template <typename S>
 		void _TestRandom(const S* data, int32 count)
@@ -1101,6 +1156,39 @@ namespace UnitTestVC
 		TEST_METHOD(Queue_RemoveT) { _TestRemove<TrivialString>(); }
 		TEST_METHOD(Queue_RemoveC) { _TestRemove<NonMovableString>(); }
 
+		TEST_METHOD(Queue_DeleteAndClear)
+		{
+			Queue<String*> vals;
+			for (int32 i = 0; i < mem.strDataCount; i++)
+				vals.Enqueue(new String(mem.stringData[i]));
+			vals.DeleteAndClear();
+		}
+
+		TEST_METHOD(Queue_RAII)
+		{
+			FlaggerStates states;
+
+			{
+				Queue<Flagger<true>> lst;
+
+				lst.Enqueue({ &states });
+				lst.DequeueOnly();
+			}
+			Assert::AreEqual(1, states.ctorCount);
+			Assert::AreEqual(1, states.actualDtorCount);
+			Assert::AreEqual(1, states.moveCount);
+			Assert::AreEqual(0, states.copyCount);
+
+			states.Clear();
+			{
+				Queue<Flagger<false>>().Enqueue({ &states });
+			}
+
+			Assert::AreEqual(1, states.ctorCount);
+			Assert::AreEqual(2, states.actualDtorCount);
+			Assert::AreEqual(0, states.moveCount);
+			Assert::AreEqual(1, states.copyCount);
+		}
 	private:
 		template <typename S>
 		void _TestGeneral()
@@ -1203,6 +1291,34 @@ namespace UnitTestVC
 		TEST_METHOD(FixedQueue_RemoveT) { _TestRemove<TrivialString>(); }
 		TEST_METHOD(FixedQueue_RemoveC) { _TestRemove<NonMovableString>(); }
 
+		TEST_METHOD(FixedQueue_RAII)
+		{
+			FlaggerStates states1;
+			FlaggerStates states2;
+
+			{
+				FixedQueue<Flagger<true>, 4> lst;
+
+				lst.Enqueue({ &states1 });
+
+				FixedQueue<Flagger<true>, 4> lst2 = std::move(lst);
+
+				lst2.Clear();
+				lst2.Enqueue({ &states2 });
+
+				lst = lst2;
+			}
+
+			Assert::AreEqual(1, states1.ctorCount);
+			Assert::AreEqual(1, states1.actualDtorCount);
+			Assert::AreEqual(2, states1.moveCount);
+			Assert::AreEqual(0, states1.copyCount);
+
+			Assert::AreEqual(1, states2.ctorCount);
+			Assert::AreEqual(2, states2.actualDtorCount);
+			Assert::AreEqual(1, states2.moveCount);
+			Assert::AreEqual(1, states2.copyCount);
+		}
 	private:
 		template <typename S>
 		void _TestGeneral()
