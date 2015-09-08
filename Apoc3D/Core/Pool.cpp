@@ -77,7 +77,7 @@ namespace Apoc3D
 			List<void*> blocksToClear;
 			for (int32 i = 0; i < m_pool.getCount();i++)
 			{
-				char* buf = (char*)m_pool.GetElement(i);
+				char* buf = (char*)m_pool[i];
 				uint32 id = *(uint32*)buf;
 
 				assert((id & 0xffffff00U) == PoolMemorySignature);

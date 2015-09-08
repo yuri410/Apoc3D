@@ -37,7 +37,7 @@ namespace APDesigner
 
 		for (int32 i = RecentProjects.getCount() - 1; i >= 0; i--)
 		{
-			const std::pair<String, String>& p = RecentProjects.GetElement(i);
+			const std::pair<String, String>& p = RecentProjects[i];
 
 			ConfigurationSection* ss = new ConfigurationSection(L"Item" + StringUtils::IntToString(i));
 			ss->AddAttributeString(L"Name", p.first);
@@ -54,10 +54,10 @@ namespace APDesigner
 		Queue<std::pair<String, String>> newList;
 		for (int i = RecentProjects.getCount() - 1; i >= 0; i--)
 		{
-			const String& curPath = RecentProjects.GetElement(i).second;
+			const String& curPath = RecentProjects[i].second;
 			if (!PathUtils::ComparePath(curPath, path))
 			{
-				newList.Enqueue(RecentProjects.GetElement(i));
+				newList.Enqueue(RecentProjects[i]);
 			}
 		}
 		RecentProjects = newList;
@@ -75,7 +75,7 @@ namespace APDesigner
 		{
 			if (i != index)
 			{
-				newList.Enqueue(RecentProjects.GetElement(i));
+				newList.Enqueue(RecentProjects[i]);
 			}
 		}
 		RecentProjects = newList;

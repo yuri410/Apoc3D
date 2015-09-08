@@ -417,7 +417,7 @@ namespace APDesigner
 
 		for (int i = 0; i < recents.getCount(); i++)
 		{
-			const std::pair<String, String>& p = recents.GetElement(i);
+			const std::pair<String, String>& p = recents[i];
 			String fileName = PathUtils::GetFileName(p.second);
 			MenuItem* mi = new MenuItem(p.first + L" (" + fileName + L")");
 
@@ -618,7 +618,7 @@ namespace APDesigner
 		const Queue<std::pair<String, String>>& prjs = cfGetRecentProjects();
 		if (idx < prjs.getCount())
 		{
-			String path = prjs.GetElement(idx).second;
+			String path = prjs[idx].second;
 			if (File::FileExists(path))
 				OpenProject(path);
 			else
@@ -635,7 +635,7 @@ namespace APDesigner
 		const Queue<std::pair<String, String>>& prjs = cfGetRecentProjects();
 		if (idx < prjs.getCount())
 		{
-			String path = prjs.GetElement(idx).second;
+			String path = prjs[idx].second;
 			if (File::FileExists(path))
 			{
 				Project prj;

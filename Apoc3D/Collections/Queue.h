@@ -187,6 +187,19 @@ namespace Apoc3D
 				return false;
 			}
 
+			template <typename T>
+			void DeletePointers(const T* arr, int32 head, int32 count, int32 arrLen)
+			{
+				int index = head;
+				int counter = count;
+
+				while (counter-- > 0)
+				{
+					delete arr[index];
+
+					index = (index + 1) % arrLen;
+				}
+			}
 
 			template <typename T>
 			void DequeueOnly(T* arr, int32& head, int32& count, int32 arrLen)
@@ -278,9 +291,8 @@ namespace Apoc3D
 				count--;
 			}
 
+
 		}
-
-
 
 		template<typename T>
 		class Queue
@@ -343,12 +355,11 @@ namespace Apoc3D
 			template <typename = typename std::enable_if<std::is_pointer<T>::value && std::is_destructible<typename std::remove_pointer<T>::type>::value>::type>
 			void DeleteAndClear()
 			{
-				for (int32 i = 0; i < getCount(); i++)
-					delete Element(i);
+				QueueImpl::DeletePointers(m_array, m_head, m_count, m_arrLength);
 				Clear();
 			}
 
-			bool Replace(const T& item, const T& item2) { return QueueImpl::Contains(item, item2, m_array, item, m_head, m_count, m_arrLength); }
+			bool Replace(const T& item, const T& item2) { return QueueImpl::Replace(item, item2, m_array, item, m_head, m_count, m_arrLength); }
 			bool Contains(const T& item) const { return QueueImpl::Contains(item, m_array, m_head, m_count, m_arrLength); }
 			
 			void CopyTo(T* dest) const
@@ -418,18 +429,12 @@ namespace Apoc3D
 			T& operator[](int i) { assert(i >= 0 && i < m_count); return m_array[(m_head + i) % m_arrLength]; }
 			const T& operator[](int i) const { assert(i >= 0 && i < m_count); return m_array[(m_head + i) % m_arrLength]; }
 
-			T& Element(int i) { return m_array[(m_head + i) % m_arrLength]; }
-			const T& GetElement(int i) const { return m_array[(m_head + i) % m_arrLength]; }
-			void SetElement(int i, const T& value) { m_array[(m_head + i) % m_arrLength] = value; }
-
 			const T& Head() const { return m_array[m_head]; }
 			const T& Tail() const { return operator[](m_count - 1); }
-
 
 			class Iterator
 			{
 			public:
-				Iterator() { }
 				Iterator(const Queue& ctn) : m_owner(&ctn) { }
 				Iterator(const Queue& ctn, int32 idx) : m_owner(&ctn), m_idx(idx) { }
 
@@ -438,7 +443,7 @@ namespace Apoc3D
 				bool operator==(const Iterator& o) const { return m_owner == o.m_owner && m_idx != o.m_idx; }
 				bool operator!=(const Iterator& o) const { return !(*this == o); }
 
-				Iterator& operator++() { m_idx++; if (m_idx > m_owner->getCount()) m_idx = -1; return *this; }
+				Iterator& operator++() { m_idx++; if (m_idx > m_owner->m_count) m_idx = -1; return *this; }
 				Iterator operator++(int)
 				{
 					Iterator result = *this;
@@ -559,7 +564,10 @@ namespace Apoc3D
 				: m_head(o.m_head), m_tail(o.m_tail), m_count(o.m_count)
 			{
 				if (m_count > 0)
+				{
 					QueueImpl::MoveToNew((T*)m_storage, (T*)o.m_storage, N, m_head, m_tail);
+					o.Clear();
+				}
 			}
 
 			~FixedQueue() { Clear(); }
@@ -588,12 +596,11 @@ namespace Apoc3D
 			template <typename = typename std::enable_if<std::is_pointer<T>::value && std::is_destructible<typename std::remove_pointer<T>::type>::value>::type>
 			void DeleteAndClear()
 			{
-				for (int32 i = 0; i < getCount(); i++)
-					delete Element(i);
+				QueueImpl::DeletePointers((T*)m_storage, m_head, m_count, m_arrLength);
 				Clear();
 			}
 
-			bool Replace(const T& item, const T& item2) { return QueueImpl::Contains(item, item2, (T*)m_storage, item, m_head, m_count, N); }
+			bool Replace(const T& item, const T& item2) { return QueueImpl::Replace(item, item2, (T*)m_storage, item, m_head, m_count, N); }
 			bool Contains(const T& item) const { return QueueImpl::Contains(item, (T*)m_storage, m_head, m_count, N); }
 
 			void CopyTo(T* dest, int32 amount) const
@@ -705,6 +712,40 @@ namespace Apoc3D
 
 			const T& Head() const { return ((T*)m_storage)[m_head]; }
 			const T& Tail() const { return operator[](m_count - 1); }
+
+			class Iterator
+			{
+			public:
+				Iterator(const FixedQueue& ctn) : m_owner(&ctn) { }
+				Iterator(const FixedQueue& ctn, int32 idx) : m_owner(&ctn), m_idx(idx) { }
+
+				T& operator*() const { return ((T*)m_owner->m_storage)[(m_owner->m_head + m_idx) % N]; }
+
+				bool operator==(const Iterator& o) const { return m_owner == o.m_owner && m_idx != o.m_idx; }
+				bool operator!=(const Iterator& o) const { return !(*this == o); }
+
+				Iterator& operator++() { m_idx++; if (m_idx > m_owner->m_count) m_idx = -1; return *this; }
+				Iterator operator++(int)
+				{
+					Iterator result = *this;
+					++(*this);
+					return result;
+				}
+
+				Iterator& operator=(const Iterator& o)
+				{
+					m_owner = o.m_owner;
+					m_idx = o.m_idx;
+					return *this;
+				}
+
+			private:
+				const FixedQueue* m_owner = nullptr;
+				int32 m_idx = -1;
+			};
+
+			Iterator begin() const { return Iterator(*this, 0); }
+			Iterator end() const { return Iterator(*this); }
 
 		private:
 			int32 m_count = 0;

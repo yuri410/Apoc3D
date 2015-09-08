@@ -41,11 +41,11 @@ public:
 	~TrivialString()
 	{ }
 
-	bool operator==(const String& o) { return wcscmp(o.c_str(), m_content) == 0; }
-	bool operator==(const TrivialString& o) { return wcscmp(o.m_content, m_content) == 0; }
+	bool operator==(const String& o) const { return wcscmp(o.c_str(), m_content) == 0; }
+	bool operator==(const TrivialString& o) const { return wcscmp(o.m_content, m_content) == 0; }
 
-	bool operator!=(const String& o) { return !this->operator ==(o); }
-	bool operator!=(const TrivialString& o) { return !this->operator ==(o); }
+	bool operator!=(const String& o) const { return !this->operator ==(o); }
+	bool operator!=(const TrivialString& o) const { return !this->operator ==(o); }
 
 	const wchar_t* c_str() const { return m_content; }
 private:
@@ -153,9 +153,20 @@ public:
 		MEM_EndCheckPoint;
 	}
 
+
+	template <typename T>
+	const T& randomString() const;
+
+	template <>
 	const String& randomString() const { return stringData[Randomizer::NextExclusive(strDataCount)]; }
-	const TrivialString& randomTString() const { return tstringData[Randomizer::NextExclusive(strDataCount)]; }
-	const NonMovableString& randomCString() const { return cstringData[Randomizer::NextExclusive(strDataCount)]; }
+
+	template <>
+	const TrivialString& randomString() const { return tstringData[Randomizer::NextExclusive(strDataCount)]; }
+
+	template <>
+	const NonMovableString& randomString() const { return cstringData[Randomizer::NextExclusive(strDataCount)]; }
+
+
 
 	int* intData;
 	int32 intDataCount;

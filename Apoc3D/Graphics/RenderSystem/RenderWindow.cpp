@@ -70,7 +70,7 @@ namespace Apoc3D
 					{
 						float base = m_frameTimes.Head();
 						for (int32 i = 0; i < m_frameTimes.getCount(); i++)
-							m_frameTimes.Element(i) -= base;
+							m_frameTimes[i] -= base;
 
 						m_currentWindowTimePos -= base;
 					}

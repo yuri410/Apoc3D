@@ -144,7 +144,7 @@ namespace Apoc3D
 
 				for (int i = 0; i < m_opQueue.getCount(); i++)
 				{
-					ResourceOperation& e = m_opQueue.Element(i);
+					ResourceOperation& e = m_opQueue[i];
 					if (e == op)
 					{
 						e.Invalidate();
@@ -159,7 +159,7 @@ namespace Apoc3D
 
 				for (int i = 0; i < m_opQueue.getCount(); i++)
 				{
-					ResourceOperation& e = m_opQueue.Element(i);
+					ResourceOperation& e = m_opQueue[i];
 					if (e.Subject == res)
 					{
 						e.Invalidate();
@@ -262,7 +262,7 @@ namespace Apoc3D
 			{
 				for (int i = 0; i < m_opQueue.getCount(); i++)
 				{
-					ResourceOperation& other = m_opQueue.Element(i);
+					ResourceOperation& other = m_opQueue[i];
 					if (other.Subject == res && other.Type == type)
 					{
 						other.Invalidate();

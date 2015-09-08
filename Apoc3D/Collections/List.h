@@ -548,6 +548,7 @@ namespace Apoc3D
 			{
 				m_count = o.m_count;
 				MoveToNew((T*)m_elements, (T*)o.m_elements, m_count);
+				o.Clear();
 			}
 			FixedList& operator=(FixedList&& o)
 			{
@@ -556,6 +557,7 @@ namespace Apoc3D
 					Clear();
 					m_count = o.m_count;
 					MoveToNew((T*)m_elements, (T*)o.m_elements, m_count);
+					o.Clear();
 				}
 				return *this;
 			}

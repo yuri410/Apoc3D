@@ -67,21 +67,9 @@ namespace Apoc3D
 
 		BatchDataBufferCache::~BatchDataBufferCache()
 		{
-			for (int32 i = 0; i < m_retiredOpList.getCount(); i++)
-			{
-				OperationList* opList = m_retiredOpList.GetElement(i);
-				delete opList;
-			}
-			for (int32 i = 0; i < m_retiredGeoTable.getCount(); i++)
-			{
-				GeometryTable* geoTable = m_retiredGeoTable.GetElement(i);
-				delete geoTable;
-			}
-			for (int32 i = 0; i < m_retiredMtrlTable.getCount(); i++)
-			{
-				MaterialTable* mtrlTable = m_retiredMtrlTable.GetElement(i);
-				delete mtrlTable;
-			}
+			m_retiredOpList.DeleteAndClear();
+			m_retiredGeoTable.DeleteAndClear();
+			m_retiredMtrlTable.DeleteAndClear();
 
 			m_retiredOpList.Clear();
 			m_retiredGeoTable.Clear();
@@ -140,20 +128,20 @@ namespace Apoc3D
 			// ensure current buffer's capacity
 			for (int32 i = 0; i < m_retiredOpList.getCount(); i++)
 			{
-				OperationList* opList = m_retiredOpList.GetElement(i);
+				OperationList* opList = m_retiredOpList[i];
 				if (opList->getCapacity() < m_minOpListSize)
 					opList->ResizeDiscard(m_minOpListSize);
 			}
 			for (int32 i = 0; i < m_retiredGeoTable.getCount(); i++)
 			{
-				GeometryTable* geoTable = m_retiredGeoTable.GetElement(i);
+				GeometryTable* geoTable = m_retiredGeoTable[i];
 				if (geoTable->getPrimeCapacity() < m_minGeoTableSize)
 					geoTable->Resize(m_minGeoTableSize);
 			}
 
 			for (int32 i = 0; i < m_retiredMtrlTable.getCount(); i++)
 			{
-				MaterialTable* mtrlTable = m_retiredMtrlTable.GetElement(i);
+				MaterialTable* mtrlTable = m_retiredMtrlTable[i];
 				if (mtrlTable->getPrimeCapacity() < m_minMtrlTableSize)
 					mtrlTable->Resize(m_minMtrlTableSize);
 			}

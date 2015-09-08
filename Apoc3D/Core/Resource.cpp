@@ -341,9 +341,9 @@ namespace Apoc3D
 			if (m_timeQueue.getCount())
 			{
 				result = 0;
-				for (int i=0;i<m_timeQueue.getCount();i++)
+				for (int i = 0; i < m_timeQueue.getCount(); i++)
 				{
-					result += m_timeQueue.GetElement(i);
+					result += m_timeQueue[i];
 				}
 				result /= (float)m_timeQueue.getCount();
 			}

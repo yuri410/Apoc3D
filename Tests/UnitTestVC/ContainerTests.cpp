@@ -274,7 +274,6 @@ namespace UnitTestVC
 		}
 
 		TEST_METHOD(List_RemoveString) { _TestRemove<String>(mem.stringData, mem.strDataCount, L"[missing]"); }
-		
 		TEST_METHOD(List_RemoveCString) { _TestRemove<NonMovableString>(mem.cstringData, mem.strDataCount, L"[missing]"); }
 
 		//////////////////////////////////////////////////////////////////////////
@@ -349,56 +348,13 @@ namespace UnitTestVC
 		}
 
 
-		TEST_METHOD(List_RemoveAt)
-		{
-			for (int32 k = 0; k < 10000; k++)
-			{
-				List<String> data;
-				data.AddArray(mem.stringData, mem.strDataCount);
-
-				List<String> emulatedResult = data;
-				List<int32> indices(data.getCount());
-
-				if (k == 0)
-				{
-					//indices = data;
-					for (int32 i = 0; i < data.getCount(); i++)
-						indices.Add(i);
-					emulatedResult.Clear();
-				}
-				else
-				{
-					for (int32 i = data.getCount() - 1; i >= 0; i--)
-					{
-						if (Randomizer::NextBool())
-						{
-							indices.Add(i);
-
-							emulatedResult.RemoveAt(i);
-						}
-					}
-					indices.Sort();
-				}
-
-				data.RemoveAt(indices);
-
-				bool same = data.getCount() == emulatedResult.getCount();
-				for (int32 i = 0; i < data.getCount(); i++)
-				{
-					if (data[i] != emulatedResult[i])
-					{
-						same = false;
-						break;
-					}
-				}
-				Assert::IsTrue(same);
-			}
-		}
-
+		TEST_METHOD(List_RandomAt) { _TestRemoveAt<String>(mem.stringData, mem.strDataCount); }
+		TEST_METHOD(List_RandomAtC) { _TestRemoveAt<NonMovableString>(mem.cstringData, mem.strDataCount); }
+		TEST_METHOD(List_RandomAtT) { _TestRemoveAt<TrivialString>(mem.tstringData, mem.strDataCount); }
 
 		TEST_METHOD(List_Random) { _TestRandom<String>(mem.stringData, mem.strDataCount); }
-		TEST_METHOD(List_CRandom) { _TestRandom<NonMovableString>(mem.cstringData, mem.strDataCount); }
-		TEST_METHOD(List_TRandom) { _TestRandom<TrivialString>(mem.tstringData, mem.strDataCount); }
+		TEST_METHOD(List_RandomC) { _TestRandom<NonMovableString>(mem.cstringData, mem.strDataCount); }
+		TEST_METHOD(List_RandomT) { _TestRandom<TrivialString>(mem.tstringData, mem.strDataCount); }
 
 	private:
 
@@ -578,6 +534,53 @@ namespace UnitTestVC
 				Assert::IsTrue(same);
 			}
 		}
+
+		template <typename S>
+		void _TestRemoveAt(const S* _data, int32 dataCount)
+		{
+			for (int32 k = 0; k < 10000; k++)
+			{
+				List<S> data;
+				data.AddArray(_data, dataCount);
+
+				List<S> emulatedResult = data;
+				List<int32> indices(data.getCount());
+
+				if (k == 0)
+				{
+					//indices = data;
+					for (int32 i = 0; i < data.getCount(); i++)
+						indices.Add(i);
+					emulatedResult.Clear();
+				}
+				else
+				{
+					for (int32 i = data.getCount() - 1; i >= 0; i--)
+					{
+						if (Randomizer::NextBool())
+						{
+							indices.Add(i);
+
+							emulatedResult.RemoveAt(i);
+						}
+					}
+					indices.Sort();
+				}
+
+				data.RemoveAt(indices);
+
+				bool same = data.getCount() == emulatedResult.getCount();
+				for (int32 i = 0; i < data.getCount(); i++)
+				{
+					if (data[i] != emulatedResult[i])
+					{
+						same = false;
+						break;
+					}
+				}
+				Assert::IsTrue(same);
+			}
+		}
 #pragma endregion
 	};
 
@@ -653,12 +656,17 @@ namespace UnitTestVC
 		}
 
 
-		TEST_METHOD(FixedList_Random)
+		TEST_METHOD(FixedList_Random) { _TestRandom<String>(mem.stringData, mem.strDataCount); }
+		TEST_METHOD(FixedList_RandomT) { _TestRandom<TrivialString>(mem.tstringData, mem.strDataCount); }
+		TEST_METHOD(FixedList_RandomC) { _TestRandom<NonMovableString>(mem.cstringData, mem.strDataCount); }
+	private:
+		template <typename S>
+		void _TestRandom(const S* data, int32 count)
 		{
-			FixedList<String, 1000> c;
+			FixedList<S, 1000> c;
 			for (int32 k = 0; k < 1000; k++)
 			{
-				int32 cnt = Randomizer::NextExclusive(mem.strDataCount);
+				int32 cnt = Randomizer::NextExclusive(count);
 				for (int32 i = 0; i < cnt; i++)
 				{
 					if ((Randomizer::NextBool() && c.getCount() > 0) || c.isFull())
@@ -667,11 +675,11 @@ namespace UnitTestVC
 					}
 					else
 					{
-						c.Add(mem.stringData[i]);
+						c.Add(data[i]);
 					}
 				}
 
-				FixedList<String, 1000> lst = c;
+				FixedList<S, 1000> lst = c;
 				bool same = lst.getCount() == c.getCount();
 				for (int32 i = 0; i < lst.getCount(); i++)
 				{
@@ -683,7 +691,7 @@ namespace UnitTestVC
 				}
 				Assert::IsTrue(same);
 
-				FixedList<String, 1000> lst2 = std::move(lst);
+				FixedList<S, 1000> lst2 = std::move(lst);
 				same = lst2.getCount() == c.getCount();
 				for (int32 i = 0; i < lst2.getCount(); i++)
 				{
@@ -768,67 +776,13 @@ namespace UnitTestVC
 			}
 		}
 
-		TEST_METHOD(HashMap_Copy)
-		{
-			HashMap<String, String> m1(10);
+		TEST_METHOD(HashMap_Copy) { _TestCopy<String>(); }
+		TEST_METHOD(HashMap_CopyT) { _TestCopy<TrivialString>(); }
+		TEST_METHOD(HashMap_CopyC) { _TestCopy<NonMovableString>(); }
 
-			HashMap<String, String> m2 = m1;
-			m2.Add(L"1", L"");
-			m2.Add(L"sssssssssssssssssssssssssssssssss", L"llllllllllllllllllllllllllllllll");
-			m2.Add(L"s", L"dsa");
-
-			HashMap<String, String> m3 = m2;
-			m3.Clear();
-
-
-			HashMap<String, String> m4;
-
-			HashMap<String, String> m5;
-			m5 = m4;
-			m5.Add(L"1", L"");
-			m5.Add(L"sssssssssssssssssssssssssssssssss", L"llllllllllllllllllllllllllllllll");
-			m5.Add(L"s", L"dsa");
-
-			m5.Clear();
-
-			HashMap<String, String> m6 = m5;
-		}
-
-		TEST_METHOD(HashMap_Count)
-		{
-			HashMap<String, String> m2;
-			m2.Add(L"1", L"");
-			m2.Add(L"sssssssssssssssssssssssssssssssss", L"llllllllllllllllllllllllllllllll");
-			m2.Add(L"s", L"dsa");
-
-			Assert::AreEqual(3, m2.getCount());
-
-			m2.Remove(L"1");
-			Assert::AreEqual(2, m2.getCount());
-
-			m2.Remove(L"s");
-			Assert::AreEqual(1, m2.getCount());
-
-			m2.Add(L"asdsa", L"da");
-			Assert::AreEqual(2, m2.getCount());
-
-			m2.Add(L"sdasd", L"f");
-			Assert::AreEqual(3, m2.getCount());
-
-			m2.Add(L"sdsdsaf", L"s");
-			Assert::AreEqual(4, m2.getCount());
-
-			m2.Remove(L"sssssssssssssssssssssssssssssssss"); 
-			Assert::AreEqual(3, m2.getCount());
-
-
-			HashMap<String, String> m3 = m2;
-			Assert::AreEqual(3, m3.getCount());
-
-			m3.Clear();
-			Assert::AreEqual(0, m3.getCount());
-
-		}
+		TEST_METHOD(HashMap_Count) { _TestCount<String>(); }
+		TEST_METHOD(HashMap_CountT) { _TestCount<TrivialString>(); }
+		TEST_METHOD(HashMap_CountC) { _TestCount<NonMovableString>(); }
 
 		TEST_METHOD(HashMap_AddRemove)
 		{
@@ -871,6 +825,70 @@ namespace UnitTestVC
 
 		}
 
+	private:
+		template <typename S>
+		void _TestCopy()
+		{
+			HashMap<String, S> m1(10);
+
+			HashMap<String, S> m2 = m1;
+			m2.Add(L"1", L"");
+			m2.Add(L"sssssssssssssssssssssssssssssssss", L"llllllllllllllllllllllllllllllll");
+			m2.Add(L"s", L"dsa");
+
+			HashMap<String, S> m3 = m2;
+			m3.Clear();
+
+
+			HashMap<String, S> m4;
+
+			HashMap<String, S> m5;
+			m5 = m4;
+			m5.Add(L"1", L"");
+			m5.Add(L"sssssssssssssssssssssssssssssssss", L"llllllllllllllllllllllllllllllll");
+			m5.Add(L"s", L"dsa");
+
+			m5.Clear();
+
+			HashMap<String, S> m6 = m5;
+		}
+
+		template <typename S>
+		void _TestCount()
+		{
+			HashMap<String, S> m2;
+			m2.Add(L"1", L"");
+			m2.Add(L"sssssssssssssssssssssssssssssssss", L"llllllllllllllllllllllllllllllll");
+			m2.Add(L"s", L"dsa");
+
+			Assert::AreEqual(3, m2.getCount());
+
+			m2.Remove(L"1");
+			Assert::AreEqual(2, m2.getCount());
+
+			m2.Remove(L"s");
+			Assert::AreEqual(1, m2.getCount());
+
+			m2.Add(L"asdsa", L"da");
+			Assert::AreEqual(2, m2.getCount());
+
+			m2.Add(L"sdasd", L"f");
+			Assert::AreEqual(3, m2.getCount());
+
+			m2.Add(L"sdsdsaf", L"s");
+			Assert::AreEqual(4, m2.getCount());
+
+			m2.Remove(L"sssssssssssssssssssssssssssssssss");
+			Assert::AreEqual(3, m2.getCount());
+
+
+			HashMap<String, S> m3 = m2;
+			Assert::AreEqual(3, m3.getCount());
+
+			m3.Clear();
+			Assert::AreEqual(0, m3.getCount());
+
+		}
 	};
 
 	TEST_CLASS(HashSetTest)
@@ -1075,16 +1093,26 @@ namespace UnitTestVC
 		MemoryService mem;
 
 	public:
-		TEST_METHOD(Queue_General)
+		TEST_METHOD(Queue_General) { _TestGeneral<String>(); }
+		TEST_METHOD(Queue_GeneralT) { _TestGeneral<TrivialString>(); }
+		TEST_METHOD(Queue_GeneralC) { _TestGeneral<NonMovableString>(); }
+
+		TEST_METHOD(Queue_Remove) { _TestRemove<String>(); }
+		TEST_METHOD(Queue_RemoveT) { _TestRemove<TrivialString>(); }
+		TEST_METHOD(Queue_RemoveC) { _TestRemove<NonMovableString>(); }
+
+	private:
+		template <typename S>
+		void _TestGeneral()
 		{
 			for (int32 i = 0; i < 5000; i++)
 			{
-				List<String> source;
-				Queue<String> queue;
+				List<S> source;
+				Queue<S> queue;
 				int32 count = Randomizer::NextExclusive(32);
 				for (int32 j = 0; j < count; j++)
 				{
-					auto v = mem.randomString();
+					auto v = mem.randomString<S>();
 					queue.Enqueue(v);
 					source.Add(v);
 				}
@@ -1095,7 +1123,7 @@ namespace UnitTestVC
 					assert(source[k++] == v);
 				}
 
-				Queue<String> moveTgt = std::move(queue);
+				Queue<S> moveTgt = std::move(queue);
 				assert(queue.getCount() == 0);
 
 				k = 0;
@@ -1104,17 +1132,17 @@ namespace UnitTestVC
 					assert(source[k++] == v);
 				}
 			}
-
 		}
 
-		TEST_METHOD(Queue_Remove)
+		template <typename S>
+		void _TestRemove()
 		{
 			for (int32 w : {10, 43333 })
 			{
 				Randomizer::setSeed(w, true);
 
-				Queue<String> testQueue;
-				List<String> refList;
+				Queue<S> testQueue;
+				List<S> refList;
 
 				for (int32 k = 0; k < 100; k++)
 				{
@@ -1129,7 +1157,7 @@ namespace UnitTestVC
 						}
 						else
 						{
-							auto v = mem.randomString();
+							auto v = mem.randomString<S>();
 							testQueue.Enqueue(v);
 							refList.Add(v);
 						}
@@ -1138,7 +1166,7 @@ namespace UnitTestVC
 					cnt = Randomizer::NextExclusive(4) + 4;
 					for (int32 i = 0; i < cnt; i++)
 					{
-						auto v = mem.randomString();
+						auto v = mem.randomString<S>();
 
 						testQueue.Enqueue(v);
 						refList.Add(v);
@@ -1155,11 +1183,112 @@ namespace UnitTestVC
 
 					for (int32 i = 0; i < refList.getCount(); i++)
 					{
-						Assert::IsTrue(testQueue.GetElement(i) == refList[i]);
+						Assert::IsTrue(testQueue[i] == refList[i]);
 					}
 				}
 			}
+		}
+	};
 
+	TEST_CLASS(FixedQueueTest)
+	{
+		MemoryService mem;
+
+	public:
+		TEST_METHOD(FixedQueue_General) { _TestGeneral<String>(); }
+		TEST_METHOD(FixedQueue_GeneralT) { _TestGeneral<TrivialString>(); }
+		TEST_METHOD(FixedQueue_GeneralC) { _TestGeneral<NonMovableString>(); }
+
+		TEST_METHOD(FixedQueue_Remove) { _TestRemove<String>(); }
+		TEST_METHOD(FixedQueue_RemoveT) { _TestRemove<TrivialString>(); }
+		TEST_METHOD(FixedQueue_RemoveC) { _TestRemove<NonMovableString>(); }
+
+	private:
+		template <typename S>
+		void _TestGeneral()
+		{
+			for (int32 i = 0; i < 5000; i++)
+			{
+				List<S> source;
+				FixedQueue<S, 32> queue;
+				int32 count = Randomizer::NextExclusive(32);
+				for (int32 j = 0; j < count; j++)
+				{
+					auto v = mem.randomString<S>();
+					queue.Enqueue(v);
+					source.Add(v);
+				}
+
+				int32 k = 0;
+				for (auto v : queue)
+				{
+					Assert::AreEqual(source[k++], v);
+				}
+
+				FixedQueue<S, 32> moveTgt = std::move(queue);
+				Assert::AreEqual(0, queue.getCount());
+
+				k = 0;
+				for (auto v : moveTgt)
+				{
+					Assert::AreEqual(source[k++], v);
+				}
+			}
+		}
+
+		template <typename S>
+		void _TestRemove()
+		{
+			for (int32 w : {10, 43333 })
+			{
+				Randomizer::setSeed(w, true);
+
+				FixedQueue<S, 3600> testQueue;
+				List<S> refList;
+
+				for (int32 k = 0; k < 50; k++)
+				{
+					int32 cnt = Randomizer::NextExclusive(64);
+					for (int32 i = 0; i < cnt; i++)
+					{
+						if (refList.getCount()>0 &&
+							Randomizer::NextBool())
+						{
+							testQueue.Dequeue();
+							refList.RemoveAt(0);
+						}
+						else
+						{
+							auto v = mem.randomString<S>();
+							testQueue.Enqueue(v);
+							refList.Add(v);
+						}
+					}
+
+					cnt = Randomizer::NextExclusive(4) + 4;
+					for (int32 i = 0; i < cnt; i++)
+					{
+						auto v = mem.randomString<S>();
+
+						testQueue.Enqueue(v);
+						refList.Add(v);
+					}
+
+					Assert::IsTrue(testQueue.getCount() == refList.getCount());
+
+					int32 ridx = Randomizer::NextExclusive(refList.getCount());
+
+					testQueue.RemoveAt(ridx);
+					refList.RemoveAt(ridx);
+
+					Assert::IsTrue(testQueue.getCount() == refList.getCount());
+
+					for (int32 i = 0; i < refList.getCount(); i++)
+					{
+						Assert::IsTrue(testQueue[i] == refList[i]);
+					}
+				}
+			}
 		}
 	};
 }
