@@ -252,7 +252,8 @@ namespace Apoc3D
 							arr[i - 1] = std::move(arr[i]);
 						}
 
-						arr[arrLen - 1] = std::move(arr[0]);
+						if (0 < tail)
+							arr[arrLen - 1] = std::move(arr[0]);
 
 						for (int32 i = 1; i < tail; i++)
 						{

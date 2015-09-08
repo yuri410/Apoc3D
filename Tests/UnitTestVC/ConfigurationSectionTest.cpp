@@ -1,53 +1,44 @@
+#include "TestCommon.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
-namespace Microsoft
-{ 
-	namespace VisualStudio
-	{ 
-		namespace CppUnitTestFramework
-		{
-			template<> static std::wstring ToString<Vector3>(const Vector3& t) { return t.ToTextString(1); }
-			template<> static std::wstring ToString<Point>(const Point& t) { return StringUtils::IntToString(t.X) + L", " + StringUtils::IntToString(t.Y); }
-		}
-	}
-}
 
 namespace UnitTestVC
 {
 	TEST_CLASS(ConfigurationSectionTest)
 	{
+		MemoryService mem;
 	public:
 		TEST_METHOD(ConfigSect_Bool)
 		{
-			ConfigurationSection* sect = new ConfigurationSection(L"test");
+			ConfigurationSection sect(L"test");
 
-			sect->AddBool(L"A", false);
-			sect->AddBool(L"B", true);
-			sect->AddAttributeBool(L"A", true);
-			sect->AddAttributeBool(L"B", false);
+			sect.AddBool(L"A", false);
+			sect.AddBool(L"B", true);
+			sect.AddAttributeBool(L"A", true);
+			sect.AddAttributeBool(L"B", false);
 
-			Assert::IsTrue(sect->GetAttributeBool(L"A"));
-			Assert::IsFalse(sect->GetAttributeBool(L"B"));
-			Assert::IsFalse(sect->GetBool(L"A"));
-			Assert::IsTrue(sect->GetBool(L"B"));
+			Assert::IsTrue(sect.GetAttributeBool(L"A"));
+			Assert::IsFalse(sect.GetAttributeBool(L"B"));
+			Assert::IsFalse(sect.GetBool(L"A"));
+			Assert::IsTrue(sect.GetBool(L"B"));
 
 			bool x;
-			Assert::IsFalse(sect->TryGetBool(L"C", x));
-			Assert::IsFalse(sect->TryGetAttributeBool(L"C", x));
+			Assert::IsFalse(sect.TryGetBool(L"C", x));
+			Assert::IsFalse(sect.TryGetAttributeBool(L"C", x));
 
 			//Assert::IsTrue(sect->)
 			x = false;
-			Assert::IsTrue(sect->TryGetBool(L"B", x));
+			Assert::IsTrue(sect.TryGetBool(L"B", x));
 			Assert::IsTrue(x);
-			Assert::IsTrue(sect->TryGetAttributeBool(L"B", x));
+			Assert::IsTrue(sect.TryGetAttributeBool(L"B", x));
 			Assert::IsFalse(x);
 
 		}
 
 		TEST_METHOD(ConfigSect_Int)
 		{
-			ConfigurationSection* sect = new ConfigurationSection(L"test");
+			ConfigurationSection _sect(L"test");
+			ConfigurationSection* sect = &_sect;
 
 			sect->AddInt(L"A", 1);
 			sect->AddInt(L"B", 2);
@@ -109,7 +100,8 @@ namespace UnitTestVC
 
 		TEST_METHOD(ConfigSect_Vector3)
 		{
-			ConfigurationSection* sect = new ConfigurationSection(L"test");
+			ConfigurationSection _sect(L"test");
+			ConfigurationSection* sect = &_sect;
 
 			const Vector3 vecVal = Vector3(1,2,3);
 
@@ -154,7 +146,8 @@ namespace UnitTestVC
 
 		TEST_METHOD(ConfigSect_Point)
 		{
-			ConfigurationSection* sect = new ConfigurationSection(L"test");
+			ConfigurationSection _sect (L"test");
+			ConfigurationSection* sect = &_sect;
 
 			const Point vecVal = Point(1,2);
 

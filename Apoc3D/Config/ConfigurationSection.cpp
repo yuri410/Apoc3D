@@ -549,7 +549,7 @@ namespace Apoc3D
 						thisSubSect->getAttributeCount() == 0 && thatSubSect->getAttributeCount() == 0 &&
 						thisSubSect->getValue() == thatSubSect->getValue())
 					{
-						m_subSection.Remove(thisSubSect->getName());
+						m_subSection.RemoveAndDelete(thisSubSect->getName());
 						continue;
 					}
 				}

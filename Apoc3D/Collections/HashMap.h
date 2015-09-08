@@ -53,39 +53,8 @@ namespace Apoc3D
 				}
 			}
 
-			bool Remove(const T& item)
-			{
-				if (m_buckets)
-				{
-					int hash = ComparerType::GetHashCode(item) & PositiveMask;
-					int index = hash % m_bucketsLength;
-					int prev = -1;
-					for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
-					{
-						if (m_entries[i].hashCode == hash && 
-							ComparerType::Equals(m_entries[i].getData(), item))
-						{
-							if (prev < 0)
-							{
-								m_buckets[index] = m_entries[i].next;
-							}
-							else
-							{
-								m_entries[prev].next = m_entries[i].next;
-							}
-							m_entries[i].Clear();
-							//m_entries[i].hashCode = -1;
-							m_entries[i].next = m_emptySlot;
-							m_emptySlot = i;
-							m_count--;
+			bool Remove(const T& item) { return RemoveGeneric<nullptr>(item); }
 
-							return true;
-						}
-						prev = i;
-					}
-				}
-				return false;
-			}
 			bool Contains(const T& item) const { return FindEntry(item) != -1; }
 			void Resize(int32 newSize)
 			{
@@ -307,6 +276,43 @@ namespace Apoc3D
 
 				m_buckets[index] = pos;
 			}
+
+			template <void (*additionalAction)(E&)>
+			bool RemoveGeneric(const T& item)
+			{
+				if (m_buckets)
+				{
+					int hash = ComparerType::GetHashCode(item) & PositiveMask;
+					int index = hash % m_bucketsLength;
+					int prev = -1;
+					for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
+					{
+						if (m_entries[i].hashCode == hash &&
+							ComparerType::Equals(m_entries[i].getData(), item))
+						{
+							if (prev < 0)
+							{
+								m_buckets[index] = m_entries[i].next;
+							}
+							else
+							{
+								m_entries[prev].next = m_entries[i].next;
+							}
+							if (additionalAction)
+								additionalAction(m_entries[i]);
+							m_entries[i].Clear();
+							//m_entries[i].hashCode = -1;
+							m_entries[i].next = m_emptySlot;
+							m_emptySlot = i;
+							m_count--;
+
+							return true;
+						}
+						prev = i;
+					}
+				}
+				return false;
+			}
 		};
 
 		template <typename T, typename S, typename ComparerType = Apoc3D::Collections::EqualityComparer<T>>
@@ -523,6 +529,9 @@ namespace Apoc3D
 			}
 
 			template <typename = typename std::enable_if<std::is_pointer<S>::value && std::is_destructible<typename std::remove_pointer<S>::type>::value>::type>
+			bool RemoveAndDelete(const T& item) { return RemoveGeneric<EntryValueDeleter>(item); }
+
+			template <typename = typename std::enable_if<std::is_pointer<S>::value && std::is_destructible<typename std::remove_pointer<S>::type>::value>::type>
 			void DeleteValuesAndClear()
 			{
 				auto& c = *this;
@@ -560,6 +569,11 @@ namespace Apoc3D
 			Iterator begin() const { return Iterator(this); }
 			Iterator end() const { return Iterator(this, m_touchedSlots + 1); }
 
+		private:
+			static void EntryValueDeleter(Entry& e)
+			{
+				delete e.getValue();
+			}
 		};
 
 		template <typename T, typename ComparerType = Apoc3D::Collections::EqualityComparer<T>>
