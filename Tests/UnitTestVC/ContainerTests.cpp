@@ -1192,6 +1192,36 @@ namespace UnitTestVC
 			Assert::AreEqual(0, states.moveCount);
 			Assert::AreEqual(1, states.copyCount);
 		}
+
+		TEST_METHOD(Queue_Iterator)
+		{
+			Queue<int> subject;
+
+			subject.Enqueue(0);
+			subject.Enqueue(1);
+			subject.Enqueue(2);
+
+			FixedList<int, 5> result;
+			for (int e : subject)
+			{
+				result.Add(e);
+			}
+
+			Assert::AreEqual(3, result.getCount());
+			if (result.getCount() == 3)
+			{
+				Assert::AreEqual(0, result[0]);
+				Assert::AreEqual(1, result[1]);
+				Assert::AreEqual(2, result[2]);
+			}
+
+			subject.Clear();
+
+			for (auto e : subject)
+			{
+				Assert::Fail();
+			}
+		}
 	private:
 		template <typename S>
 		void _TestGeneral()
@@ -1211,16 +1241,16 @@ namespace UnitTestVC
 				int32 k = 0;
 				for (auto v : queue)
 				{
-					assert(source[k++] == v);
+					Assert::AreEqual(source[k++], v);
 				}
 
 				Queue<S> moveTgt = std::move(queue);
-				assert(queue.getCount() == 0);
+				Assert::AreEqual(queue.getCount(), 0);
 
 				k = 0;
 				for (auto v : moveTgt)
 				{
-					assert(source[k++] == v);
+					Assert::AreEqual(source[k++], v);
 				}
 			}
 		}
