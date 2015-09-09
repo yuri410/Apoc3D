@@ -440,7 +440,7 @@ namespace Apoc3D
 
 				T& operator*() const { return  m_owner->m_array[(m_owner->m_head + m_idx) % m_owner->m_arrLength]; }
 
-				bool operator==(const Iterator& o) const { return m_owner == o.m_owner && m_idx != o.m_idx; }
+				bool operator==(const Iterator& o) const { return m_owner == o.m_owner && m_idx == o.m_idx; }
 				bool operator!=(const Iterator& o) const { return !(*this == o); }
 
 				Iterator& operator++() { m_idx++; if (m_idx > m_owner->m_count) m_idx = -1; return *this; }
@@ -449,13 +449,6 @@ namespace Apoc3D
 					Iterator result = *this;
 					++(*this);
 					return result;
-				}
-
-				Iterator& operator=(const Iterator& o)
-				{
-					m_owner = o.m_owner;
-					m_idx = o.m_idx;
-					return *this;
 				}
 
 			private:
@@ -732,7 +725,7 @@ namespace Apoc3D
 
 				T& operator*() const { return ((T*)m_owner->m_storage)[(m_owner->m_head + m_idx) % N]; }
 
-				bool operator==(const Iterator& o) const { return m_owner == o.m_owner && m_idx != o.m_idx; }
+				bool operator==(const Iterator& o) const { return m_owner == o.m_owner && m_idx == o.m_idx; }
 				bool operator!=(const Iterator& o) const { return !(*this == o); }
 
 				Iterator& operator++() { m_idx++; if (m_idx > m_owner->m_count) m_idx = -1; return *this; }
@@ -742,14 +735,7 @@ namespace Apoc3D
 					++(*this);
 					return result;
 				}
-
-				Iterator& operator=(const Iterator& o)
-				{
-					m_owner = o.m_owner;
-					m_idx = o.m_idx;
-					return *this;
-				}
-
+				
 			private:
 				const FixedQueue* m_owner = nullptr;
 				int32 m_idx = -1;
