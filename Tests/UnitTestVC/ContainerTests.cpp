@@ -697,6 +697,7 @@ namespace UnitTestVC
 				lst.Add({ &states1 });
 
 				FixedList<Flagger<true>, 4> lst2 = std::move(lst);
+				Assert::AreEqual(0, lst.getCount());
 
 				lst2.Clear();
 				lst2.Add({ &states2 });
@@ -747,6 +748,8 @@ namespace UnitTestVC
 				Assert::IsTrue(same);
 
 				FixedList<S, 1000> lst2 = std::move(lst);
+				Assert::AreEqual(0, lst.getCount());
+
 				same = lst2.getCount() == c.getCount();
 				for (int32 i = 0; i < lst2.getCount(); i++)
 				{
@@ -1406,5 +1409,62 @@ namespace UnitTestVC
 				}
 			}
 		}
+	};
+
+	TEST_CLASS(StackTest)
+	{
+		MemoryService mem;
+	public:
+		TEST_METHOD(Stack_General) { _TestGeneral<String>(); }
+		TEST_METHOD(Stack_GeneralT) { _TestGeneral<TrivialString>(); }
+		TEST_METHOD(Stack_GeneralC) { _TestGeneral<NonMovableString>(); }
+
+	private:
+		template <typename S>
+		void _TestGeneral()
+		{
+			for (int32 i = 0; i < 5000; i++)
+			{
+				List<S> source;
+				Stack<S> stack;
+				int32 count = Randomizer::NextExclusive(32);
+				for (int32 j = 0; j < count; j++)
+				{
+					if (source.getCount() > 0 && 
+						Randomizer::NextBool())
+					{
+						stack.Pop();
+						source.RemoveAt(source.getCount() - 1);
+					}
+					else
+					{
+						auto v = mem.randomString<S>();
+						stack.Push(v);
+						source.Add(v);
+					}
+				}
+
+				Stack<S> stackCopy = stack;
+
+				int32 k = stackCopy.getCount();
+				while (stackCopy.getCount() > 0)
+				{
+					auto v = stackCopy.Pop();
+					Assert::AreEqual(source[--k], v);
+				}
+
+				Stack<S> moveTgt = std::move(stack);
+				Assert::AreEqual(0, stack.getCount());
+
+				k = moveTgt.getCount();
+				while (moveTgt.getCount() > 0)
+				{
+					auto v = moveTgt.Pop();
+					Assert::AreEqual(source[--k], v);
+				}
+			}
+		}
+
+
 	};
 }
