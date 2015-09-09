@@ -443,7 +443,7 @@ namespace Apoc3D
 				bool operator==(const Iterator& o) const { return m_owner == o.m_owner && m_idx == o.m_idx; }
 				bool operator!=(const Iterator& o) const { return !(*this == o); }
 
-				Iterator& operator++() { m_idx++; if (m_idx > m_owner->m_count) m_idx = -1; return *this; }
+				Iterator& operator++() { m_idx++; if (m_idx >= m_owner->m_count) m_idx = -1; return *this; }
 				Iterator operator++(int)
 				{
 					Iterator result = *this;
@@ -456,7 +456,7 @@ namespace Apoc3D
 				int32 m_idx = -1;
 			};
 
-			Iterator begin() const { return Iterator(*this, 0); }
+			Iterator begin() const { return Iterator(*this, m_count > 0 ? 0 : -1); }
 			Iterator end() const { return Iterator(*this); }
 
 		private:
@@ -728,7 +728,7 @@ namespace Apoc3D
 				bool operator==(const Iterator& o) const { return m_owner == o.m_owner && m_idx == o.m_idx; }
 				bool operator!=(const Iterator& o) const { return !(*this == o); }
 
-				Iterator& operator++() { m_idx++; if (m_idx > m_owner->m_count) m_idx = -1; return *this; }
+				Iterator& operator++() { m_idx++; if (m_idx >= m_owner->m_count) m_idx = -1; return *this; }
 				Iterator operator++(int)
 				{
 					Iterator result = *this;
@@ -741,7 +741,7 @@ namespace Apoc3D
 				int32 m_idx = -1;
 			};
 
-			Iterator begin() const { return Iterator(*this, 0); }
+			Iterator begin() const { return Iterator(*this, m_count > 0 ? 0 : -1); }
 			Iterator end() const { return Iterator(*this); }
 
 		private:
