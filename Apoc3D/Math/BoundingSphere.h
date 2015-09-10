@@ -141,7 +141,31 @@ namespace Apoc3D
 				return result;
 			}
 
+			template <typename T>
+			static BoundingSphere CreateFromObjects(const T* objects, int count, FunctorReference<Vector3(const T&)> positionGetter)
+			{
+				BoundingSphere res;
 
+				Vector3 center = Vector3::Zero;
+				for (int i = 0; i < count; i++)
+					center += positionGetter(objects[i]);
+
+				if (count > 0)
+					center /= (float)count;
+
+				float radius = 0;
+				for (int i = 0; i < count; i++)
+				{
+					float dist = Vector3::DistanceSquared(center, positionGetter(objects[i]));
+					if (dist > radius)
+						radius = dist;
+				}
+
+				res.Center = center;
+				res.Radius = sqrtf(radius);
+
+				return result;
+			}
 
 			/** Constructs a BoundingSphere that is the as large as the total combined area of the two specified spheres. */
 			static void Merge(BoundingSphere& res, const BoundingSphere& sphere1, const BoundingSphere& sphere2);
