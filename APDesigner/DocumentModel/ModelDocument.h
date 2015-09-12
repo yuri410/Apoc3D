@@ -109,6 +109,7 @@ namespace APDesigner
 		Button* m_applyColorToAll;
 		Button* m_applyFXToAll;
 		Button* m_autoTex;
+		Button* m_applyTranspToAll;
 
 		ComboBox* m_cbMesh;
 		ComboBox* m_cbMeshPart;
@@ -147,7 +148,6 @@ namespace APDesigner
 		//ListBox* m_customParameterList;
 
 		TextBox* m_tbPriority;
-		TextBox* m_tbAlphaTest;
 
 
 		CheckBox* m_cbDepthTest;
@@ -192,6 +192,7 @@ namespace APDesigner
 		void ApplyColorToAll_Pressed(Button* ctrl);
 		void ApplyFXToAll_Pressed(Button* ctrl);
 		void AutoTex_Pressed(Button* ctrl);
+		void TranspAll_Pressed(Button* ctrl);
 
 		void PassViewSelect_SelectionChanged(ComboBox* ctrl);
 

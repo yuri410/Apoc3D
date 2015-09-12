@@ -66,7 +66,9 @@ void main()
 	//std::wcout << std::numeric_limits<float>::digits10+1 << L"\n";
 
 
+	TestIterator2();
 
+	return;
 
 	FileSystem::Initialize();
 	wchar_t workingDir[260];
@@ -84,7 +86,6 @@ void main()
 	TestXml();
 
 	//TestRandom();
-	TestIterator2();
 	//TestHalfFloat();
 	
 }
@@ -411,14 +412,42 @@ void TestIterator2()
 	const int Iterations = 1000;
 
 	List<int> test3(Count);
-	
+	std::vector<int> test2;
+
 	for (int32 i = 0; i < Count; i++)
 	{
 		test3.Add(i);
+		test2.push_back(i);
 	}
 
 	volatile int64 ifTime;
 	volatile int64 cndTime;
+
+	//if (1)
+	//{
+	//	{
+	//		volatile auto t1 = high_resolution_clock::now();
+	//		for (int k = 0; k < Iterations; k++)
+	//		{
+	//			for (auto e : ConditionalAccessor<int32, int32, TestCond>(test3.begin(), test3.end()))
+	//				OptimizationBlocker(e);
+	//		}
+	//		volatile auto t2 = high_resolution_clock::now();
+	//		cndTime = getTimeDiff(t1, t2);
+	//	}
+	//	{
+	//		volatile auto t1 = high_resolution_clock::now();
+	//		for (int k = 0; k < Iterations; k++)
+	//		{
+	//			for (auto& e : test3)
+	//				if (TestCond(e))
+	//					OptimizationBlocker(e);
+	//		}
+	//		volatile auto t2 = high_resolution_clock::now();
+	//		ifTime = getTimeDiff(t1, t2);
+	//	}
+	//	printf("ConditionalAccessor:\tif=%lld,\tcond=%lld\n", ifTime, cndTime);
+	//}
 
 	if (1)
 	{
@@ -426,7 +455,7 @@ void TestIterator2()
 			volatile auto t1 = high_resolution_clock::now();
 			for (int k = 0; k < Iterations; k++)
 			{
-				for (auto e : ConditionalAccessor<int32, int32, TestCond>(test3.begin(), test3.end()))
+				for (auto e : test3)
 					OptimizationBlocker(e);
 			}
 			volatile auto t2 = high_resolution_clock::now();
@@ -436,14 +465,13 @@ void TestIterator2()
 			volatile auto t1 = high_resolution_clock::now();
 			for (int k = 0; k < Iterations; k++)
 			{
-				for (auto& e : test3)
-					if (TestCond(e))
-						OptimizationBlocker(e);
+				for (auto& e : test2)
+					OptimizationBlocker(e);
 			}
 			volatile auto t2 = high_resolution_clock::now();
 			ifTime = getTimeDiff(t1, t2);
 		}
-		printf("ConditionalAccessor:\tif=%lld,\tcond=%lld\n", ifTime, cndTime);
+		printf("std:%lld\napoc:%lld\n", ifTime, cndTime);
 	}
 }
 

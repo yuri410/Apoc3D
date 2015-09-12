@@ -229,12 +229,7 @@ namespace APDesigner
 
 			m_cbDepthWrite = new CheckBox(skin, Point(sx + 250 + 100, sy), L"DepthWrite", false);
 
-			sy += 25;
-			lbl = new Label(skin, Point(sx, sy), L"AlphaTest[0,1]", 120);
-			m_mtrlPanelLabels.Add(lbl);
-			m_tbAlphaTest = new TextBox(skin, Point(sx2, sy), 200, L"");
-
-
+			
 			sy += 25;
 
 			m_cbTransparent = new CheckBox(skin, Point(sx + 250 + 100, sy), L"Transparent", false);
@@ -348,6 +343,11 @@ namespace APDesigner
 			m_autoTex->eventPress.Bind(this, &ModelDocument::AutoTex_Pressed);
 			sx += btnWidth + 10;
 
+			btnWidth = 100;
+			m_applyTranspToAll = new Button(skin, Point(sx, sy), btnWidth, L"Transp All");
+			m_applyTranspToAll->eventPress.Bind(this, &ModelDocument::TranspAll_Pressed);
+			sx += btnWidth + 10;
+
 		}
 
 		getDocumentForm()->setMinimumSize(Point(1070, 512 + 137 + 50));
@@ -415,7 +415,6 @@ namespace APDesigner
 		//delete m_tbTex6;
 
 		delete m_tbPriority;
-		delete m_tbAlphaTest;
 		delete m_cbTransparent;
 		delete m_cbSrcBlend;
 		delete m_cbDstBlend;
@@ -439,6 +438,7 @@ namespace APDesigner
 		delete m_applyColorToAll;
 		delete m_applyFXToAll;
 		delete m_autoTex;
+		delete m_applyTranspToAll;
 		delete m_passViewSelect;
 	}
 
@@ -543,6 +543,7 @@ namespace APDesigner
 		getDocumentForm()->getControls().Add(m_applyColorToAll);
 		getDocumentForm()->getControls().Add(m_applyFXToAll);
 		getDocumentForm()->getControls().Add(m_autoTex);
+		getDocumentForm()->getControls().Add(m_applyTranspToAll);
 
 		getDocumentForm()->getControls().Add(m_passViewSelect);
 		{
@@ -565,7 +566,6 @@ namespace APDesigner
 			//getDocumentForm()->getControls().Add(m_tbTex6);
 
 			getDocumentForm()->getControls().Add(m_tbPriority);
-			getDocumentForm()->getControls().Add(m_tbAlphaTest);
 
 			getDocumentForm()->getControls().Add(m_cbTransparent);
 			getDocumentForm()->getControls().Add(m_cbBlendFunction);
@@ -904,7 +904,6 @@ namespace APDesigner
 			m_tbTex5->Visible = v;
 
 			m_tbPriority->Visible = v;
-			m_tbAlphaTest->Visible = v;
 
 			m_cbDepthTest->Visible = v;
 			m_cbDepthWrite->Visible = v;
@@ -932,7 +931,6 @@ namespace APDesigner
 				m_tbTex5->SetText(mtrl->getTextureName(4));
 
 				m_tbPriority->SetText(StringUtils::UIntToString(mtrl->getPriority()));
-				m_tbAlphaTest->SetText(StringUtils::UIntToString(mtrl->AlphaReference));
 
 				m_cbDepthTest->Checked = mtrl->DepthTestEnabled;
 				m_cbDepthWrite->Checked = mtrl->DepthWriteEnabled;
@@ -974,7 +972,6 @@ namespace APDesigner
 			m_tbTex5->Visible = false;
 
 			m_tbPriority->Visible = false;
-			m_tbAlphaTest->Visible = false;
 
 			m_cbDepthTest->Visible = false;
 			m_cbDepthWrite->Visible = false;
@@ -1015,7 +1012,6 @@ namespace APDesigner
 					mtrl->setTextureName(4, m_tbTex5->getText());
 
 					mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->getText()));
-					mtrl->AlphaReference = StringUtils::ParseUInt32(m_tbAlphaTest->getText());
 
 					mtrl->DepthTestEnabled = m_cbDepthTest->Checked;
 					mtrl->DepthWriteEnabled = m_cbDepthWrite->Checked;
@@ -1105,7 +1101,6 @@ namespace APDesigner
 				mtrl->setTextureName(4, m_tbTex5->getText());
 
 				mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->getText()));
-				mtrl->AlphaReference = StringUtils::ParseUInt32(m_tbAlphaTest->getText());
 
 				mtrl->DepthTestEnabled = m_cbDepthTest->Checked;
 				mtrl->DepthWriteEnabled = m_cbDepthWrite->Checked;
@@ -1384,6 +1379,27 @@ namespace APDesigner
 
 				if (processed)
 					mtrl->Reload();
+			}
+		}
+	}
+	void ModelDocument::TranspAll_Pressed(Button* ctrl)
+	{
+		Material* currentMtrl = GetSelectedMaterial();
+
+		if (currentMtrl)
+		{
+			for (Mesh* m : m_modelSData->getEntities())
+			{
+				for (Material* mtrl : m->getMaterials())
+				{
+					if (mtrl != currentMtrl)
+					{
+						mtrl->SourceBlend = currentMtrl->SourceBlend;
+						mtrl->DestinationBlend = currentMtrl->DestinationBlend;
+						mtrl->IsBlendTransparent = currentMtrl->IsBlendTransparent;
+						mtrl->BlendFunction = currentMtrl->BlendFunction;
+					}
+				}
 			}
 		}
 	}
