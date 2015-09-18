@@ -162,6 +162,11 @@ namespace Apoc3D
 		inline double Max(double a, double b) { return _Max(a, b); }
 		inline double Min(double a, double b) { return _Min(a, b); }
 
+		inline bool Within(float a, float b, float e)
+		{
+			float diff = a - b;
+			return (-e <= diff) && (diff <= e);
+		}
 
 		inline int32 Round(float x)
 		{

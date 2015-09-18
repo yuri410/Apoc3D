@@ -602,6 +602,29 @@ namespace Apoc3D
 			int m_length = 0;
 		};
 
+		//template <typename T>
+		//class ListAllocatedStorage
+		//{
+		//public:
+		//	ListAllocatedStorage(int32 sz);
+		//	~ListAllocatedStorage();
+		//
+		//	void EnsureElements();
+		//	void EnsureElementIncrSize();
+		//	void EnsureElementIncrSize(int32 count);
+		//
+		//	T* getElements() const;
+		//
+		//private:
+		//	static T* Allocate(int32 size) { return (T*)malloc(sizeof(T)*size); }
+		//	static void Free(T* ptr) { free(ptr); }
+		//
+		//	T* m_elements;
+		//	int32 m_length = 0;
+		//
+		//};
+
+
 		template <typename T>
 		class List : public ListBase<T, T*>
 		{

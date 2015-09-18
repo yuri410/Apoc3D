@@ -63,6 +63,11 @@ namespace Apoc3D
 		public:
 			Vector3 Start;
 			Vector3 End;
+
+			RaySegment() { }
+			RaySegment(const Vector3& start, const Vector3& end)
+				: Start(start), End(end) { }
+
 		};
 	}
 }

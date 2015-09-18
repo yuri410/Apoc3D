@@ -118,7 +118,7 @@ namespace Apoc3D
 			// Load textures
 			{
 				bool hasTexture[MaxTextures];
-				data->GetBool(TAG_3_HasTexture, hasTexture, MaxTextures);
+				data->GetBool(TAG_3_HasTexture, hasTexture);
 
 				for (int32 i = 0; i < MaxTextures; i++)
 				{
@@ -142,7 +142,7 @@ namespace Apoc3D
 			// Load effects
 			{
 				bool hasEffect[MaxScenePass];
-				data->GetBool(TAG_3_HasEffect, hasEffect, MaxScenePass);
+				data->GetBool(TAG_3_HasEffect, hasEffect);
 
 				for (int32 i = 0; i < MaxScenePass; i++)
 				{
@@ -193,26 +193,14 @@ namespace Apoc3D
 			data->TryGetBool(TAG_3_UsePointSprite, UsePointSprite);
 
 			// load material basic color
+			data->ProcessData(TAG_3_MaterialColorTag, [this](BinaryReader* br)
 			{
-				data->ProcessData(TAG_3_MaterialColorTag, [this](BinaryReader* br)
-				{
-					br->ReadColor4(Ambient);
-					br->ReadColor4(Diffuse);
-					br->ReadColor4(Emissive);
-					br->ReadColor4(Specular);
-					Power = br->ReadSingle();
-				});
-
-				/*BinaryReader* br = data->GetData(TAG_3_MaterialColorTag);
-
 				br->ReadColor4(Ambient);
 				br->ReadColor4(Diffuse);
 				br->ReadColor4(Emissive);
 				br->ReadColor4(Specular);
 				Power = br->ReadSingle();
-
-				delete br;*/
-			}
+			});
 
 			data->TryGetString(TAG_3_MaterialRefName, ExternalRefName);
 		}

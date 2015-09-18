@@ -65,10 +65,8 @@ namespace Apoc3D
 		uint32 MeshData::ComputeVertexSize(const List<VertexElement>& elements)
 		{
 			uint32 vertexSize = 0;
-			for (int i = 0; i < elements.getCount(); i++)
-			{
-				vertexSize += elements[i].getSize();
-			}
+			for (const VertexElement& ve : elements)
+				vertexSize += ve.getSize();
 			return vertexSize;
 		}
 		void MeshData::LoadData(TaggedDataReader* data)
@@ -77,11 +75,9 @@ namespace Apoc3D
 			Materials.Resize(materialCount);
 
 			// load material set
-			
+			data->ProcessData(TAG_3_MaterialsTag, [&](BinaryReader* br)
 			{
-				BinaryReader* br = data->GetData(TAG_3_MaterialsTag);
-
-				for (uint32 j = 0; j<materialCount; j++)
+				for (uint32 j = 0; j < materialCount; j++)
 				{
 					int32 frameCount = br->ReadInt32();
 
@@ -103,9 +99,7 @@ namespace Apoc3D
 						});
 					}
 				}
-
-				delete br;
-			}
+			});
 
 			//ParentBoneID = -1;
 			//data->TryGetDataInt32(TAG_3_ParentBoneTag, ParentBoneID);
