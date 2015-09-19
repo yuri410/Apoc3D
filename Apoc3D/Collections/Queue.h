@@ -188,6 +188,21 @@ namespace Apoc3D
 			}
 
 			template <typename T>
+			int32 IndexOf(const T& item, const T* arr, int32 head, int32 count, int32 arrLen)
+			{
+				int index = head;
+				int counter = count;
+
+				while (counter-- > 0)
+				{
+					if (arr[index] == item)
+						return index;
+
+					index = (index + 1) % arrLen;
+				}
+				return -1;
+			}
+			template <typename T>
 			void DeletePointers(const T* arr, int32 head, int32 count, int32 arrLen)
 			{
 				int index = head;
@@ -391,6 +406,15 @@ namespace Apoc3D
 			void DequeueOnly(int32 amount) { QueueImpl::DequeueOnly(amount, m_array, m_head, m_count, m_arrLength); }
 
 			T Dequeue() { return QueueImpl::Dequeue(m_array, m_head, m_count, m_arrLength); }
+
+			void Remove(const T& item)
+			{
+				int32 idx = QueueImpl::IndexOf(item);
+				if (idx != -1)
+				{
+					RemoveAt(idx);
+				}
+			}
 
 			void RemoveAt(int32 idx)
 			{
