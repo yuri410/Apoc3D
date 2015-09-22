@@ -25,6 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Exception.h"
 #include "apoc3d/Math/MathCommon.h"
+#include "apoc3d/Graphics/EffectSystem/Effect.h"
+#include "apoc3d/Graphics/EffectSystem/EffectManager.h"
 
 namespace Apoc3D
 {
@@ -304,6 +306,27 @@ namespace Apoc3D
 					m_sprite->Begin(m_oldSettings);
 				}
 			}
+
+			//////////////////////////////////////////////////////////////////////////
+
+			SpriteShadedScope::SpriteShadedScope(Sprite* spr, Sprite::SpriteSettings baseSettings, const String& effectName)
+				: SpriteBeginEndScope(spr, (Sprite::SpriteSettings)(baseSettings | Sprite::SPR_AllowShading))
+			{
+				m_effect = up_cast<EffectSystem::AutomaticEffect*>(EffectSystem::EffectManager::getSingleton().getEffect(effectName));
+				assert(m_effect);
+				m_effect->Begin();
+				m_effect->BeginPass(0);
+
+				m_effect->Setup(nullptr, nullptr, 0);
+			}
+			SpriteShadedScope::~SpriteShadedScope()
+			{
+				m_sprite->Flush();
+
+				m_effect->EndPass();
+				m_effect->End();
+			}
+
 		}
 	}
 }

@@ -216,12 +216,25 @@ namespace Apoc3D
 			{
 			public:
 				SpriteBeginEndScope(Sprite* spr, Sprite::SpriteSettings settings);
-				~SpriteBeginEndScope();
+				virtual ~SpriteBeginEndScope();
+
+			protected:
+				Sprite* m_sprite;
 
 			private:
-				Sprite* m_sprite;
 				bool m_oldBegan;
 				Sprite::SpriteSettings m_oldSettings;
+			};
+
+			class APAPI SpriteShadedScope : SpriteBeginEndScope
+			{
+			public:
+				SpriteShadedScope(Sprite* spr, Sprite::SpriteSettings baseSettings, const String& effectName);
+				virtual ~SpriteShadedScope();
+
+				EffectSystem::AutomaticEffect* getEffect() const { return m_effect; }
+			private:
+				EffectSystem::AutomaticEffect* m_effect;
 			};
 		}
 	}
