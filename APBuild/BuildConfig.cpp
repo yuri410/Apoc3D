@@ -45,6 +45,8 @@ namespace APBuild
 		if (!sect->tryGetAttribute(L"Assemble", tmp))
 		{
 			SourceFile = sect->getAttribute(L"SourceFile");
+
+			sect->tryGetAttribute(L"SourceAlphaFile", SourceAlphaFile);
 		}
 		else
 		{

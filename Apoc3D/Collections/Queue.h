@@ -485,7 +485,7 @@ namespace Apoc3D
 
 		private:
 			static T* Allocate(int32 size) { return (T*)malloc(sizeof(T)*size); }
-			static void Free(T* ptr) { free(ptr); }
+			static void Free(T*& ptr) { free(ptr); ptr = nullptr; }
 
 			void SetCapacity(int capacity)
 			{

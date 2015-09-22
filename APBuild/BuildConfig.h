@@ -35,6 +35,7 @@ namespace APBuild
 	struct TextureBuildConfig 
 	{
 		String SourceFile;
+		String SourceAlphaFile;
 		String DestinationFile;
 
 		ProjectTextureResizingOptions Resizing;

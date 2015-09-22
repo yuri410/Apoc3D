@@ -130,17 +130,29 @@ namespace APBuild
 			const VertexElement* posElem = VertexElement::FindElementBySemantic(elements, VEU_Position);
 
 			data->VertexData = new char[vertexSize*data->VertexCount];
-			for (uint j=0;j<data->VertexCount;j++)
+			for (uint j = 0; j < data->VertexCount; j++)
 			{
+				memcpy(data->VertexData + j*vertexSize, verticePointers[j], vertexSize);
+
 				if (posElem)
 				{
 					const float* vtx = reinterpret_cast<const float*>(data->VertexData + j*vertexSize + posElem->getOffset());
-					Vector3 p = Vector3::Set(vtx);
-					data->BoundingSphere.Center += p;
+					data->BoundingSphere.Center += Vector3::Set(vtx);
 				}
-				memcpy(data->VertexData+j*vertexSize, verticePointers[j], vertexSize);
 			}
 			data->BoundingSphere.Center /= (float)data->VertexCount;
+
+			if (posElem)
+			{
+				for (uint j = 0; j < data->VertexCount; j++)
+				{
+					const float* vtx = reinterpret_cast<const float*>(data->VertexData + j*vertexSize + posElem->getOffset());
+					float dist = Vector3::DistanceSquared(Vector3::Set(vtx), data->BoundingSphere.Center);
+					if (dist > data->BoundingSphere.Radius)
+						data->BoundingSphere.Radius = dist;
+				}
+				data->BoundingSphere.Radius = sqrtf(data->BoundingSphere.Radius);
+			}
 
 			result->Entities.Add(data);
 		}

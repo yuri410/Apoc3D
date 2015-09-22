@@ -70,6 +70,9 @@ namespace APBuild
 			if (tex.isError())
 				return;
 			
+			if (config.SourceAlphaFile.size())
+				tex.LoadAlphaMap(config.SourceAlphaFile);
+
 			if (config.Resizing.IsResizing())
 			{
 				int32 newWidth = config.Resizing.GetResizedWidth(tex.getWidth());
@@ -92,7 +95,7 @@ namespace APBuild
 					return;
 				
 			}
-			
+
 			tex.Save(config.DestinationFile, config.CompressionType);
 		}
 	}

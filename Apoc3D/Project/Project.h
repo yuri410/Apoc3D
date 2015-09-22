@@ -270,6 +270,7 @@ namespace Apoc3D
 			: ProjectAssetItemData(prj, item) { }
 
 		String SourceFile;
+		String SourceAlphaFile;
 		String DestinationFile;
 
 		ProjectTextureResizingOptions Resizing;

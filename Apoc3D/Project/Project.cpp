@@ -154,6 +154,7 @@ namespace Apoc3D
 		if (!sect->tryGetAttribute(L"Assemble", tmp))
 		{
 			SourceFile = sect->getAttribute(L"SourceFile");
+			sect->tryGetAttribute(L"SourceAlphaFile", SourceAlphaFile);
 		}
 		else
 		{
@@ -308,6 +309,9 @@ namespace Apoc3D
 		else
 		{
 			sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
+
+			if (SourceAlphaFile.size())
+				sect->AddAttributeString(L"SourceAlphaFile", WrapSourcePath(SourceAlphaFile, savingBuild));
 		}
 
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestinationFile, savingBuild));
@@ -331,28 +335,6 @@ namespace Apoc3D
 			sect->AddAttributeString(L"Compression", ProjectUtils::TextureCompressionTypeConv.ToString(CompressionType));
 		}
 	}
-	//bool ProjectResTexture::IsOutdated()
-	//{
-	//	time_t destFileTime;
-	//	
-	//	if (IsSettingsNewerThan(DestinationFile, destFileTime))
-	//		return true;
-	//	
-	//	if (AssembleCubemap || AssembleVolumeMap)
-	//	{
-	//		for (const String& srcFile : SubMapTable.getValueAccessor())
-	//		{
-	//			if (IsSourceFileNewer(srcFile, destFileTime))
-	//				return true;
-	//		}
-	//	}
-	//	else
-	//	{
-	//		if (IsSourceFileNewer(SourceFile, destFileTime))
-	//			return true;
-	//	}
-	//	return false;
-	//}
 
 	List<String> ProjectResTexture::GetAllInputFiles() 
 	{
@@ -363,7 +345,7 @@ namespace Apoc3D
 
 			return MakeInputFileList(srcFiles);
 		}
-		return MakeInputFileList(SourceFile);
+		return MakeInputFileList(SourceFile, SourceAlphaFile);
 	}
 	List<String> ProjectResTexture::GetAllOutputFiles() { return MakeOutputFileList(DestinationFile); }
 
