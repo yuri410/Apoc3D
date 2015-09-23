@@ -384,17 +384,18 @@ namespace APBuild
 			BuildSystem::LogError(config.SourceFile, L"Could not find source file.");
 			return;
 		}
+		if (!config.AssembleCubemap && !config.AssembleVolumeMap && config.SourceAlphaFile.size() && !File::FileExists(config.SourceAlphaFile))
+		{
+			BuildSystem::LogError(config.SourceAlphaFile, L"Could not find source alpha file.");
+			return;
+		}
 
 		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestinationFile));
 
 		switch (config.Method)
 		{
-		case TextureBuildMethod::D3D:
-			BuildByD3D(config);
-			break;
-		case TextureBuildMethod::Devil:
-			BuildByDevIL(config);
-			break;
+			case TextureBuildMethod::D3D: BuildByD3D(config); break;
+			case TextureBuildMethod::Devil: BuildByDevIL(config); break;
 		}
 
 		BuildSystem::LogEntryProcessed(config.DestinationFile, hierarchyPath);
