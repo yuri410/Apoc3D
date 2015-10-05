@@ -81,11 +81,6 @@ namespace Apoc3D
 			/** Let the renderer use RootTransform as the final transformation, not multiplying obj's transform */
 			bool RootTransformIsFinal = false;
 
-			RenderOperation()
-			{
-			}
-			~RenderOperation() { }
-
 			bool operator ==(const RenderOperation& other)
 			{
 				return GeometryData == other.GeometryData && 
