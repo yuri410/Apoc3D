@@ -29,7 +29,7 @@ namespace Apoc3D
 	Exception Exception::CreateException(ExceptID type, const String& msg, const wchar_t* file, int line)
 	{
 		String text = exceptTypeConverter.ToString(type);
-
+		text.append(L" ");
 		text.append(msg);
 		
 		text.append(L" @ Line ");
