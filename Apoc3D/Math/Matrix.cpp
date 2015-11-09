@@ -406,6 +406,11 @@ namespace Apoc3D
 			CreateRotationQuaternion(result, quaternion);
 		}
 
+		void Matrix::CreateRotationYawPitchRoll(Matrix& result, const Vector3& euler)
+		{
+			CreateRotationYawPitchRoll(result, euler.Y, euler.X, euler.Z);
+		}
+
 		void Matrix::CreateCubemapRenderingView(Matrix& view, CubeMapFace face)
 		{
 			switch (face)

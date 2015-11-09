@@ -843,6 +843,7 @@ namespace Apoc3D
 
 			static void CreateRotationQuaternion(Matrix& result, const Quaternion& rotation);
 			static void CreateRotationYawPitchRoll(Matrix& result, float yaw, float pitch, float roll);
+			static void CreateRotationYawPitchRoll(Matrix& result, const Vector3& euler);
 
 			static void CreateTranslation(Matrix& res, const Vector3& pos)
 			{
