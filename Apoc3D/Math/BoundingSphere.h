@@ -164,7 +164,7 @@ namespace Apoc3D
 				res.Center = center;
 				res.Radius = sqrtf(radius);
 
-				return result;
+				return res;
 			}
 
 			/** Constructs a BoundingSphere that is the as large as the total combined area of the two specified spheres. */
