@@ -347,6 +347,19 @@ namespace Apoc3D
 				}
 			}
 
+			void RemoveEnd(int32 start)
+			{
+				int32 count = m_count - start;
+				if (count > 0)
+				{
+					assert(start >= 0 );
+
+					m_count -= count;
+
+					Utils::DoDestory(m_count, count, (T*)m_elements);
+				}
+			}
+
 
 			void Reverse()
 			{
@@ -518,7 +531,16 @@ namespace Apoc3D
 					Utils::DoPutNew(*iter, m_count++, (T*)m_elements);
 			}
 
-			void Reserve(int32 newCount) { assert(newCount <= MaxSize); m_count = newCount; }
+			void Reserve(int32 newCount)
+			{
+				assert(newCount <= MaxSize); 
+				
+				for (int32 i = m_count; i < newCount; i++)
+					new (&m_elements[i])T();
+
+				m_count = newCount; 
+			}
+
 
 			int32 getCapacity() const { return MaxSize; }
 			bool isFull() const { return m_count >= MaxSize; }
