@@ -805,6 +805,7 @@ namespace Apoc3D
 				else
 					EnsureElements();
 
+				Utils::DoDestory(0, m_count, m_elements);
 				for (int32 i = 0; i < newCount;i++)
 					new (&m_elements[i])T();
 				m_count = newCount;
