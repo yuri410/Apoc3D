@@ -536,7 +536,7 @@ namespace Apoc3D
 				assert(newCount <= MaxSize); 
 				
 				for (int32 i = m_count; i < newCount; i++)
-					new (&m_elements[i])T();
+					new ((T*)(m_elements) + i)T();
 
 				m_count = newCount; 
 			}
