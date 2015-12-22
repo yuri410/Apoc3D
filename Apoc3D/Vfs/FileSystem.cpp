@@ -165,9 +165,15 @@ namespace Apoc3D
 			}
 
 			FileLocation fl = Locate(filePath, rule);
-			res = CreateArchive(fl);
+			String fullPath = PathUtils::NormalizePath(fl.getPath());
 
-			StoreNewArchive(PathUtils::Combine(PathUtils::NormalizePath(res->getDirectory()), res->getFileName()), res);
+			if (ObtainOpenedArchive(fullPath, res))
+			{
+				return res;
+			}
+
+			res = CreateArchive(fl);
+			StoreNewArchive(fullPath, res);
 			
 			return res;
 		}
