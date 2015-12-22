@@ -71,10 +71,6 @@ namespace Apoc3D
 			m_retiredGeoTable.DeleteAndClear();
 			m_retiredMtrlTable.DeleteAndClear();
 
-			m_retiredOpList.Clear();
-			m_retiredGeoTable.Clear();
-			m_retiredMtrlTable.Clear();
-
 			delete m_invalidMtrlPointers;
 			delete m_invalidGeoPointers;
 		}

@@ -346,7 +346,6 @@ namespace Apoc3D
 				{
 					if (hashCode != -1)
 						new (dataStor)A(std::move(o.getData()));
-					//o.hashCode = -1;
 				}
 
 				~HashMapEntry() { Clear(); } 
@@ -424,8 +423,6 @@ namespace Apoc3D
 						new (keyStor)A(std::move(o.getData()));
 						new (valueStor)B(std::move(o.getValue()));
 					}
-
-					//o.hashCode = -1;
 				}
 
 				~HashMapEntryPair() { Clear(); }
