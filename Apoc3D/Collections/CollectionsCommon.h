@@ -346,7 +346,7 @@ namespace Apoc3D
 				{
 					if (hashCode != -1)
 						new (dataStor)A(std::move(o.getData()));
-					o.hashCode = -1;
+					//o.hashCode = -1;
 				}
 
 				~HashMapEntry() { Clear(); } 
@@ -383,7 +383,7 @@ namespace Apoc3D
 				}
 
 				template <typename AA, typename Acceptable = typename std::enable_if<IsSimilar<A, AA>::value>::type>
-				void Set(int32 hash, AA d)
+				void Set(int32 hash, AA&& d)
 				{
 					assert(hash != -1);
 
@@ -425,7 +425,7 @@ namespace Apoc3D
 						new (valueStor)B(std::move(o.getValue()));
 					}
 
-					o.hashCode = -1;
+					//o.hashCode = -1;
 				}
 
 				~HashMapEntryPair() { Clear(); }
@@ -465,7 +465,7 @@ namespace Apoc3D
 				template <typename AA, typename BB,
 					typename AcceptableKey = typename std::enable_if<IsSimilar<A, AA>::value>::type,
 					typename AcceptableValue = typename std::enable_if<IsSimilar<B, BB>::value>::type>
-				void Set(int32 hash, AA key, BB val)
+				void Set(int32 hash, AA&& key, BB&& val)
 				{
 					assert(hash != -1);
 					if (hashCode != -1)
@@ -483,7 +483,7 @@ namespace Apoc3D
 
 
 				template <typename BB, typename AcceptableValue = typename std::enable_if<IsSimilar<B, BB>::value>::type>
-				void SetValue(BB d)
+				void SetValue(BB&& d)
 				{
 					if (hashCode != -1)
 						getValue() = std::forward<BB>(d);
