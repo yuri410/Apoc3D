@@ -670,7 +670,7 @@ namespace Apoc3D
 			}
 		}
 
-		FORCE_INLINE void Font::DrawCharacter(Sprite* sprite, int32 ch, PointF& pos, uint color, float hozShrink, float extLineSpace, float widthCap, float xOrig, bool pixelAligned)
+		FORCE_INLINE void Font::DrawCharacter(Sprite* sprite, int32 ch, PointF& pos, uint color, float horizShrink, float extLineSpace, float widthCap, float xOrig, bool pixelAligned)
 		{
 			const float lineSpacing = extLineSpace != 0 ? 
 				(pixelAligned ? floorf(extLineSpace) : extLineSpace) : 
@@ -687,18 +687,21 @@ namespace Apoc3D
 				Character chdef;
 				if (m_charTable.TryGetValue(ch, chdef))
 				{
+					// draw characters that are part of the font
+
 					Glyph& glyph = m_glyphList[chdef.GlyphIndex];
 
 					if (glyph.Width == 0 || glyph.Height == 0)
 					{
-						x += chdef.AdvanceX + hozShrink;
+						x += chdef.AdvanceX + horizShrink;
 						return;
 					}
 
 					if (widthCap)
 					{
-						float nextX = x + chdef.AdvanceX + hozShrink;
-						if (nextX>=widthCap + xOrig)
+						// change line if a width cap is present
+						float nextX = x + chdef.AdvanceX + horizShrink;
+						if (nextX >= widthCap + xOrig)
 						{
 							x = xOrig;
 							nextX = x + chdef.AdvanceX;
@@ -706,11 +709,13 @@ namespace Apoc3D
 						}
 					}
 
-
 					if (!glyph.IsMapped)
 					{
+						// load glyph bitmap if not loaded
 						EnsureGlyph(glyph);
 					}
+
+					SetUseFreqToMax(glyph);
 
 					if (pixelAligned)
 					{
@@ -719,7 +724,6 @@ namespace Apoc3D
 						rect.Y = (int32)(y + 0.5f) + chdef.Top;
 						rect.Width = glyph.Width;
 						rect.Height = glyph.Height;
-						SetUseFreqToMax(glyph);
 
 						sprite->Draw(m_fontPack, rect, &glyph.MappedRect, color);
 					}
@@ -730,12 +734,11 @@ namespace Apoc3D
 						rect.Y = y + chdef.Top;
 						rect.Width = (float)glyph.Width;
 						rect.Height = (float)glyph.Height;
-						SetUseFreqToMax(glyph);
 
 						sprite->Draw(m_fontPack, rect, &glyph.MappedRectF, color);
 					}
 
-					x += chdef.AdvanceX + hozShrink;
+					x += chdef.AdvanceX + horizShrink;
 				}
 				else
 				{
@@ -775,7 +778,7 @@ namespace Apoc3D
 							sprite->Draw(cgdef->Graphic, rect, &cgdef->SrcRectF, color);
 						}
 
-						x += cgdef->AdvanceX + hozShrink;
+						x += cgdef->AdvanceX + horizShrink;
 					}
 				}
 			}
@@ -786,24 +789,6 @@ namespace Apoc3D
 			}
 		}
 		
-		PointF Font::GetOrigin(int32 x, int32 y) const
-		{
-			PointF r = { (float)x, (float)y + m_descender };
-			if (m_hasDrawOffset)
-			{
-				r.X -= (int32)m_drawOffset.X;
-				r.Y -= (int32)m_drawOffset.Y;
-			}
-			return r;
-		}
-		PointF Font::GetOrigin(float x, float y) const
-		{
-			PointF r = { x, y + m_descender };
-			if (m_hasDrawOffset)
-				r -= m_drawOffset;
-			return r;
-		}
-
 
 		int32 Font::CalculateLineCount(const String& text, int32 width)
 		{
@@ -1253,6 +1238,24 @@ namespace Apoc3D
 					x += cgdef->AdvanceX;
 				}
 			}
+		}
+
+		PointF Font::GetOrigin(int32 x, int32 y) const
+		{
+			PointF r = { (float)x, (float)y + m_descender };
+			if (m_hasDrawOffset)
+			{
+				r.X -= (int32)m_drawOffset.X;
+				r.Y -= (int32)m_drawOffset.Y;
+			}
+			return r;
+		}
+		PointF Font::GetOrigin(float x, float y) const
+		{
+			PointF r = { x, y + m_descender };
+			if (m_hasDrawOffset)
+				r -= m_drawOffset;
+			return r;
 		}
 
 
