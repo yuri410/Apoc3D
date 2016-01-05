@@ -36,7 +36,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Math/Color.h"
 #include "apoc3d/Math/Math.h"
-#include "apoc3d/Math/RandomUtils.h"
 #include "apoc3d/Math/PerlinNoise.h"
 
 using namespace Apoc3D::IO;
@@ -54,25 +53,22 @@ namespace Apoc3D
 		};
 
 		Font::Font(RenderDevice* device, const ResourceLocation& rl)
-			: m_charTable(255), m_resource(rl.Clone()), 
-			m_bucketSearchRandomizer(nullptr), m_isUsingCaching(false),m_usedInFrame(false),
-			m_hasLuminance(false), m_hasDrawOffset(false),
-			m_drawOffset(0,0)
+			: m_charTable(255), m_resource(rl.Clone())
 		{
-			m_bucketSearchRandomizer = new Random();
-
 			m_selectTextureSize = FontManager::MaxTextureSize;
 
 			ObjectFactory* fac = device->getObjectFactory();
 			
 			BinaryReader br(rl);
 
-			int fileID = br.ReadInt32();
-			int charCount;
+			int32 fileID = br.ReadInt32();
+			int32 charCount;
 
 			bool hasMetrics = false;
-			if (((uint)fileID & 0xffffff00) == 0xffffff00)
+			if (((uint32)fileID & 0xffffff00) == 0xffffff00)
 			{
+				// new font format version
+
 				hasMetrics = true;
 
 				int32 ver = (fileID & 0xff);
@@ -94,7 +90,7 @@ namespace Apoc3D
 
 			if (hasMetrics)
 			{
-				m_height = br.ReadSingle();
+				m_glyphHeight = br.ReadSingle();
 				m_lineGap = br.ReadSingle();
 				m_ascender = br.ReadSingle();
 				m_descender = br.ReadSingle();
@@ -105,10 +101,10 @@ namespace Apoc3D
 					m_drawOffset.Y = br.ReadSingle();
 				}
 
-				for (int i=0;i<charCount;i++)
+				for (int32 i = 0; i < charCount; i++)
 				{
 					Character ch;
-					ch._Character = static_cast<wchar_t>( br.ReadInt32());
+					ch._Character = (char16_t)(br.ReadInt32());
 					ch.GlyphIndex = br.ReadInt32();
 					ch.Left = br.ReadInt16();
 					ch.Top = br.ReadInt16();
@@ -120,32 +116,28 @@ namespace Apoc3D
 			{
 				m_lineGap = m_ascender = m_descender = 0;
 
-				for (int i=0;i<charCount;i++)
+				for (int32 i = 0; i < charCount; i++)
 				{
 					Character ch;
-					ch._Character = static_cast<wchar_t>( br.ReadInt32());
+					ch._Character = (char16_t)br.ReadInt32();
 					ch.GlyphIndex = br.ReadInt32();
-					ch.Left = ch.Top = 0;
 					m_charTable.Add(ch._Character, ch);
 				}
 			}
 			
-			int maxWidth = 1;
-			int maxHeight = 1;
-			int glyphCount = br.ReadInt32();
+			int32 maxWidth = 1;
+			int32 maxHeight = 1;
+			int32 glyphCount = br.ReadInt32();
 			m_glyphList = new Glyph[glyphCount];
-			for (int i=0;i<glyphCount;i++)
+			for (int32 i = 0; i < glyphCount; i++)
 			{
 				Glyph glyph;
 				glyph.Index = br.ReadInt32();
 				glyph.Width = br.ReadInt32();
 				glyph.Height = br.ReadInt32();
 				glyph.Offset = br.ReadInt64();
-				glyph.IsMapped = false;
-				glyph.NumberOfBucketsUsing = 0;
-				glyph.StartingParentBucket = -1;
-
-				assert(glyph.Index<glyphCount);
+				
+				assert(glyph.Index < glyphCount);
 				m_glyphList[glyph.Index] = glyph;
 
 				if (glyph.Width > maxWidth)
@@ -159,69 +151,64 @@ namespace Apoc3D
 			}
 			if (!hasMetrics)
 			{
-				m_height = (float)maxHeight;
+				m_glyphHeight = (float)maxHeight;
 			}
-			m_heightInt = (int32)(m_height + 0.5f);
+			m_glyphHeightInt = (int32)(m_glyphHeight + 0.5f);
 
 			m_maxGlyphWidth = maxWidth;
 			m_maxGlyphHeight = maxHeight;
 
 			// estimate suitable texture size
-			int estEdgeCount;
+			int32 estEdgeCount;
 			const int32 MinTextureSize = 8;
 			do 
 			{
-				m_selectTextureSize/=2;
+				m_selectTextureSize /= 2;
 				estEdgeCount = m_selectTextureSize / maxHeight;
 			} while (estEdgeCount * estEdgeCount > glyphCount * 1.5f && m_selectTextureSize > MinTextureSize);
 			m_selectTextureSize *= 2;
 
-			m_font = fac->CreateTexture(m_selectTextureSize, m_selectTextureSize, 1, TU_Static, FMT_A8L8);
+			m_fontPack = fac->CreateTexture(m_selectTextureSize, m_selectTextureSize, 1, TU_Static, FMT_A8L8);
 
 			m_edgeCount = m_selectTextureSize / maxHeight;
-			m_buckets = new Bucket[m_edgeCount*m_edgeCount];
-			m_currentFreqTable = new int[m_edgeCount*m_edgeCount];
-			m_lastFreqTable = new int[m_edgeCount*m_edgeCount];
+			m_grids = new Grid[m_edgeCount*m_edgeCount];
+			m_currentFreqTable = new int32[m_edgeCount*m_edgeCount]();
+			m_lastFreqTable = new int32[m_edgeCount*m_edgeCount]();
 
-			// initializes the buckets
-			for (int i=0;i<m_edgeCount;i++)
+			// initializes the grids
+			for (int32 i = 0; i < m_edgeCount; i++)
 			{
-				for (int j=0;j<m_edgeCount;j++)
+				for (int32 j = 0; j < m_edgeCount; j++)
 				{
-					Bucket& bk = m_buckets[i*m_edgeCount+j];
-					
-					bk.BucketIndex = i * m_edgeCount+j;
-					bk.CurrentGlyph = -1;
-					bk.SrcRect = Apoc3D::Math::RectangleF((float)(j*maxHeight), (float)(i*maxHeight), (float)maxHeight, (float)maxHeight);
+					Grid& grd = m_grids[i*m_edgeCount + j];
+
+					grd.GridIndex = i * m_edgeCount + j;
+					grd.SrcRect = RectangleF((float)(j*maxHeight), (float)(i*maxHeight), (float)maxHeight, (float)maxHeight);
 				}
 			}
-			m_lineBucketsFreqClassificationCount = new int[m_edgeCount*MaxFreq];
-			m_lasttime_lineBucketsFreqClassificationCount = new int[m_edgeCount*MaxFreq];
+			m_rowGridsFreqClassificationCount = new int32[m_edgeCount*MaxFreq]();
+			m_lasttime_rowGridsFreqClassificationCount = new int32[m_edgeCount*MaxFreq]();
 
-			memset(m_lasttime_lineBucketsFreqClassificationCount, 0, sizeof(int)*m_edgeCount*MaxFreq);
-			memset(m_lineBucketsFreqClassificationCount,0,sizeof(int)*m_edgeCount*MaxFreq);
-			memset(m_currentFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
-			memset(m_lastFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
-
-			for (int i=0;i<m_edgeCount;i++)
+			// set the ClassificationCount to max for each row for Freq 0
+			for (int32 i = 0; i < m_edgeCount; i++)
 			{
-				m_lineBucketsFreqClassificationCount[i * MaxFreq + 0] = m_edgeCount;
-				m_lasttime_lineBucketsFreqClassificationCount[i * MaxFreq + 0] = m_edgeCount;
+				m_rowGridsFreqClassificationCount[i * MaxFreq + 0] = m_edgeCount;
+				m_lasttime_rowGridsFreqClassificationCount[i * MaxFreq + 0] = m_edgeCount;
 			}
 
 
 			
-			// now put the glyphs into the buckets. Initially the largest glyphs are inserted.
+			// now put the glyphs into the grids. Initially the largest glyphs are inserted.
 			{
 				// this temp list is used to store sorting without changing the original one
 				Glyph* tempList = new Glyph[glyphCount];
 				memcpy(tempList, m_glyphList, sizeof(Glyph) * glyphCount);
 
-				// sort glyphs from wider to thiner.
-				if (glyphCount>0)
+				// sort glyphs from wider to thiner in width.
+				if (glyphCount > 0)
 				{
 					QuickSort(tempList, 0, glyphCount - 1,
-						[](const Glyph& ga, const Glyph& gb)->int
+						[](const Glyph& ga, const Glyph& gb)->int32
 					{
 						return Apoc3D::Collections::OrderComparer(ga.Width, gb.Width);
 					});
@@ -229,39 +216,38 @@ namespace Apoc3D
 
 				m_isUsingCaching = false;
 
-				int buckY = 0;
-				int* buckX = new int[m_edgeCount];
-				memset(buckX,0,sizeof(int)*m_edgeCount);
-
-				// use up the buckets from column to column.
-				// The first column will have the most fat glyph, while the latter ones will have thiner ones.
-				for (int i=0;i<glyphCount;i++)
+				int32 gridY = 0;
+				int32* gridX = new int32[m_edgeCount]();
+				
+				// use up the grids from column to column.
+				// The first column will have the fattest glyph, while the latter ones will have thiner ones.
+				for (int32 i = 0; i < glyphCount; i++)
 				{
-					if (buckX[buckY]>=m_edgeCount)
+					if (gridX[gridY] >= m_edgeCount)
 					{
 						m_isUsingCaching = true;
 					}
 
-					int startX = buckX[buckY];
+					int32 startX = gridX[gridY];
 
 					Glyph& glyph = tempList[i];
-					int bucketsNeeded = (int)ceil((double)glyph.Width/maxHeight);
+					int32 gridsNeeded = (int32)ceil((double)glyph.Width / maxHeight);
 
-					if (startX+bucketsNeeded-1<m_edgeCount)
+					if (startX + gridsNeeded - 1 < m_edgeCount)
 					{
 						Glyph& oglyph = m_glyphList[glyph.Index];
 
-						UseBuckets(&oglyph, buckY, startX, bucketsNeeded);
+						UseGrids(&oglyph, gridY, startX, gridsNeeded);
 
 						LoadGlyphData(&br, oglyph);
 
-						buckX[buckY]+=bucketsNeeded;
+						gridX[gridY] += gridsNeeded;
 					}
-					buckY = (buckY+1) % m_edgeCount;
+					gridY = (gridY + 1) % m_edgeCount;
 				}
 
 				delete[] tempList;
-				delete[] buckX;
+				delete[] gridX;
 			}
 
 
@@ -274,16 +260,20 @@ namespace Apoc3D
 					ch.AdvanceX = (float)g.Width;
 				}
 			}
-				
 		}
+
 		Font::~Font()
 		{
-			delete[] m_lineBucketsFreqClassificationCount;
-			delete[] m_buckets;
-			delete[] m_glyphList;
-			delete m_bucketSearchRandomizer;
+			delete[] m_currentFreqTable;
+			delete[] m_lastFreqTable;
 
-			delete m_font;
+			delete[] m_lasttime_rowGridsFreqClassificationCount;
+			delete[] m_rowGridsFreqClassificationCount;
+
+			delete[] m_grids;
+			delete[] m_glyphList;
+
+			delete m_fontPack;
 			delete m_resource;
 		}
 
@@ -338,22 +328,23 @@ namespace Apoc3D
 			short left = -padLeft;
 			float advX = (float)(srcRect.Width - padLeft - padRight);
 
+			int32 top;
 			if (vertAlignment == CGA_Center)
 			{
-				int32 top = (getLineHeightInt() - (int32)m_descender - srcRect.Height) / 2 + vaValue;
-				RegisterCustomGlyph(charCode, graphic, srcRect, left, top, advX);
+				top = (getLineHeightInt() - (int32)m_descender - srcRect.Height) / 2 + vaValue;
 			}
 			else if (vertAlignment == CGA_Bottom)
 			{
 				// bottom to baseline
 				int32 adjustedContentHeight = srcRect.Height - vaValue;
-				int32 top = getLineHeightInt() - (int32)m_descender - adjustedContentHeight;
-				RegisterCustomGlyph(charCode, graphic, srcRect, left, top, advX);
+				top = getLineHeightInt() - (int32)m_descender - adjustedContentHeight;
 			}
 			else if (vertAlignment == CGA_Top)
 			{
-				RegisterCustomGlyph(charCode, graphic, srcRect, left, vaValue, advX);
+				top = vaValue;
 			}
+
+			RegisterCustomGlyph(charCode, graphic, srcRect, left, top, advX);
 		}
 
 		void Font::UnregisterCustomGlyph(int32 utf16code) { m_customCharacters.Remove(utf16code); }
@@ -400,13 +391,13 @@ namespace Apoc3D
 					rect.X += rndDir.X * _srcRect.Width * progress;
 					rect.Y += rndDir.Y * _srcRect.Height * progress;
 
-					sprite->Draw(m_font, rect, &srcRect, color);
+					sprite->Draw(m_fontPack, rect, &srcRect, color);
 				}
 			}
 		}
 
 		void Font::DrawStringDissolving(Sprite* sprite, const String& text, float x, float y, uint color, float length,
-			int dissolvingLength, const Point& dissolvePatchSize, float maxDissolvingScale)
+			int32 dissolvingLength, const Point& dissolvePatchSize, float maxDissolvingScale)
 		{
 			const PointF origin = GetOrigin(x, y);
 
@@ -416,7 +407,7 @@ namespace Apoc3D
 			size_t maxLen = text.length();
 			int32 loopCount;
 			
-			if (dissolvingLength <0)
+			if (dissolvingLength < 0)
 			{
 				// by word
 
@@ -426,7 +417,7 @@ namespace Apoc3D
 				size_t i = 0;
 				for (i = 0; i < text.size() && wordCount < maxWord; i++)
 				{
-					wchar_t ch = text[i];
+					char16_t ch = text[i];
 					if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r')
 					{
 						if (!wasSpace)
@@ -453,12 +444,12 @@ namespace Apoc3D
 				loopCount = Math::Min((int32)text.length(), (int32)(length+0.5f));
 			}
 
-			float lineSpacing = m_height + m_lineGap;
+			float lineSpacing = m_glyphHeight + m_lineGap;
 			int32 wordIndex = 0;
 			bool wasSpace = false;
 
 			int32 concurrentWords = 1;
-			if (dissolvingLength<-1)
+			if (dissolvingLength < -1)
 			{
 				concurrentWords = -dissolvingLength;
 			}
@@ -466,7 +457,7 @@ namespace Apoc3D
 
 			for (int32 i = 0; i < loopCount; i++)
 			{
-				wchar_t ch = text[i];
+				char16_t ch = text[i];
 
 				if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r')
 				{
@@ -505,11 +496,11 @@ namespace Apoc3D
 					if (shouldDissolve)
 					{
 						if (dissolvingLength > 0)
-							dissolveProgress = maxDissolvingScale * (float)(i-length+dissolvingLength) / dissolvingLength;
+							dissolveProgress = maxDissolvingScale * (float)(i - length + dissolvingLength) / dissolvingLength;
 						else if (dissolvingLength == 0)
 							dissolveProgress = maxDissolvingScale * length;
 						else
-							dissolveProgress = maxDissolvingScale * (1 - Math::Saturate((length - wordIndex)/concurrentWords));
+							dissolveProgress = maxDissolvingScale * (1 - Math::Saturate((length - wordIndex) / concurrentWords));
 					}
 
 					Character chdef;
@@ -519,7 +510,7 @@ namespace Apoc3D
 
 						if (glyph.Width == 0 || glyph.Height == 0)
 						{
-							x += chdef.AdvanceX ;
+							x += chdef.AdvanceX;
 							continue;
 						}
 
@@ -527,7 +518,7 @@ namespace Apoc3D
 						{
 							EnsureGlyph(glyph);
 						}
-						SetUseFreq(glyph);
+						SetUseFreqToMax(glyph);
 
 						if (shouldDissolve)
 						{
@@ -543,7 +534,7 @@ namespace Apoc3D
 							rect.Width = (float)glyph.Width;
 							rect.Height = (float)glyph.Height;
 							
-							sprite->Draw(m_font, rect, &glyph.MappedRectF, color);
+							sprite->Draw(m_fontPack, rect, &glyph.MappedRectF, color);
 						}
 						
 						x += chdef.AdvanceX ;
@@ -587,7 +578,7 @@ namespace Apoc3D
 		}
 
 		void Font::DrawStringDissolving(Sprite* sprite, const String& text, const Point& pos, uint color, float length, 
-			int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale)
+			int32 dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale)
 		{
 			DrawStringDissolving(sprite, text, (float)pos.X, (float)pos.Y, color, length,
 				dissolvingCount, dissolvePatchSize, maxDissolvingScale);
@@ -598,20 +589,20 @@ namespace Apoc3D
 			return length != -1 ? Math::Min(length, (int32)text.length()) : text.length();
 		}
 
-		void Font::DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length, float extLineSpace, wchar_t suffix, float hozShrink)
+		void Font::DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int32 length, float extLineSpace, char16_t suffix, float hozShrink)
 		{
 			DrawStringExT(sprite, text, x, y, color, 0, length, extLineSpace, suffix, hozShrink);
 		}
-		void Font::DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length, int extLineSpace, wchar_t suffix, float hozShrink)
+		void Font::DrawStringEx(Sprite* sprite, const String& text, int32 x, int32 y, uint color, int32 length, int32 extLineSpace, char16_t suffix, float hozShrink)
 		{
 			DrawStringExT(sprite, text, x, y, color, 0, length, extLineSpace, suffix, hozShrink);
 		}
 
-		void Font::DrawString(Sprite* sprite, const String& text, float x, float y, int width, uint color)
+		void Font::DrawString(Sprite* sprite, const String& text, float x, float y, int32 width, uint color)
 		{
 			DrawStringExT(sprite, text, x, y, color, width);
 		}
-		void Font::DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color)
+		void Font::DrawString(Sprite* sprite, const String& text, int32 x, int32 y, int32 width, uint color)
 		{
 			DrawStringExT(sprite, text, x, y, color, width);
 		}
@@ -627,7 +618,7 @@ namespace Apoc3D
 
 		template <typename UnitType>
 		void Font::DrawStringExT(Sprite* sprite, const String& text, UnitType x, UnitType y, uint color, 
-			int _width, int length, UnitType _extLineSpace, wchar_t suffix, float hozShrink)
+			int32 _width, int32 length, UnitType _extLineSpace, char16_t suffix, float hozShrink)
 		{
 			const float extLineSpace = (float)_extLineSpace;
 			const float width = (float)_width;
@@ -638,10 +629,10 @@ namespace Apoc3D
 
 			for (int32 i = 0; i < len; i++)
 			{
-				wchar_t ch = text[i];
+				char16_t ch = text[i];
 				ScanColorControlCodes(text, ch, i, len, &color);
 				ScanMoveControlCode(text, ch, i, len, &orig, &pos);
-				ScanUselessControlCodes(text, ch, i, len);
+				ScanOtherControlCodes(text, ch, i, len);
 
 				DrawCharacter(sprite, ch, pos, color, hozShrink, extLineSpace, width, orig.X, true);
 			}
@@ -651,12 +642,12 @@ namespace Apoc3D
 		}
 
 		template void Font::DrawStringExT<int32>(Sprite* sprite, const String& text, int32 x, int32 y, uint color, 
-			int width, int length, int32 extLineSpace, wchar_t suffix, float hozShrink);
+			int32 width, int32 length, int32 extLineSpace, char16_t suffix, float hozShrink);
 		template void Font::DrawStringExT<float>(Sprite* sprite, const String& text, float x, float y, uint color, 
-			int width, int length, float extLineSpace, wchar_t suffix, float hozShrink);
+			int32 width, int32 length, float extLineSpace, char16_t suffix, float hozShrink);
 
 
-		void Font::DrawStringGradient(Sprite* sprite, const String& text, int _x, int _y, uint _startColor, uint _endColor)
+		void Font::DrawStringGradient(Sprite* sprite, const String& text, int32 _x, int32 _y, uint _startColor, uint _endColor)
 		{
 			const int32 len = (int32)text.length();
 
@@ -672,7 +663,7 @@ namespace Apoc3D
 
 				Color4 curColor = Color4::Lerp(startColor, endColor, lerpAmount);
 
-				wchar_t ch = text[i];
+				char16_t ch = text[i];
 				ScanMoveControlCode(text, ch, i, len, &orig, &pos);
 
 				DrawCharacter(sprite, ch, pos, curColor.ToArgb(), 0, 0, 0, orig.X, true);
@@ -683,7 +674,7 @@ namespace Apoc3D
 		{
 			const float lineSpacing = extLineSpace != 0 ? 
 				(pixelAligned ? floorf(extLineSpace) : extLineSpace) : 
-				(pixelAligned ? floorf(m_height + m_lineGap) : (m_height + m_lineGap));
+				(pixelAligned ? floorf(m_glyphHeight + m_lineGap) : (m_glyphHeight + m_lineGap));
 		
 			float& x = pos.X;
 			float& y = pos.Y;
@@ -728,9 +719,9 @@ namespace Apoc3D
 						rect.Y = (int32)(y + 0.5f) + chdef.Top;
 						rect.Width = glyph.Width;
 						rect.Height = glyph.Height;
-						SetUseFreq(glyph);
+						SetUseFreqToMax(glyph);
 
-						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
+						sprite->Draw(m_fontPack, rect, &glyph.MappedRect, color);
 					}
 					else
 					{
@@ -739,9 +730,9 @@ namespace Apoc3D
 						rect.Y = y + chdef.Top;
 						rect.Width = (float)glyph.Width;
 						rect.Height = (float)glyph.Height;
-						SetUseFreq(glyph);
+						SetUseFreqToMax(glyph);
 
-						sprite->Draw(m_font, rect, &glyph.MappedRectF, color);
+						sprite->Draw(m_fontPack, rect, &glyph.MappedRectF, color);
 					}
 
 					x += chdef.AdvanceX + hozShrink;
@@ -755,7 +746,7 @@ namespace Apoc3D
 						if (widthCap)
 						{
 							float nextX = x + cgdef->AdvanceX;
-							if (nextX>=widthCap + xOrig)
+							if (nextX >= widthCap + xOrig)
 							{
 								x = xOrig;
 								nextX = x + cgdef->AdvanceX;
@@ -795,7 +786,477 @@ namespace Apoc3D
 			}
 		}
 		
-		FORCE_INLINE bool Font::ScanColorControlCodes(const String& str, wchar_t& cur, int32& i, int32 len, uint* color)
+		PointF Font::GetOrigin(int32 x, int32 y) const
+		{
+			PointF r = { (float)x, (float)y + m_descender };
+			if (m_hasDrawOffset)
+			{
+				r.X -= (int32)m_drawOffset.X;
+				r.Y -= (int32)m_drawOffset.Y;
+			}
+			return r;
+		}
+		PointF Font::GetOrigin(float x, float y) const
+		{
+			PointF r = { x, y + m_descender };
+			if (m_hasDrawOffset)
+				r -= m_drawOffset;
+			return r;
+		}
+
+
+		int32 Font::CalculateLineCount(const String& text, int32 width)
+		{
+			const int32 len = (int32)text.length();
+
+			int32 lineCount = 1;
+			float x = 0;
+			for (int32 i = 0; i < len; i++)
+			{
+				char16_t ch = text[i];
+				ScanColorControlCodes(text, ch, i, len, nullptr);
+				ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
+				ScanOtherControlCodes(text, ch, i, len);
+
+				if (ch != '\n')
+				{
+					if (x >= width)
+					{
+						x = 0;
+						lineCount++;
+					}
+
+					AdvanceXSimple(x, ch);
+				}
+				else
+				{
+					x = 0;
+					lineCount++;
+				}
+
+				if (ch == '\n')
+					lineCount++;
+			}
+			return lineCount;
+		}
+		Point Font::MeasureString(const String& text, int32 start, int32 end)
+		{
+			PointF result = PointF(0, m_glyphHeight);
+			
+			if (start < 0) start = 0;
+			if (end >= (int32)text.size()) end = (int32)text.size() - 1;
+
+			const int32 len = end + 1;
+
+			float x = 0.f;
+			float y = m_glyphHeight + m_lineGap + m_descender;
+			for (int32 i = start; i <= end; i++)
+			{
+				char16_t ch = text[i];
+				ScanColorControlCodes(text, ch, i, len, nullptr);
+				ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
+				ScanOtherControlCodes(text, ch, i, len);
+
+				if (ch != '\n')
+				{
+					if (IgnoreCharDrawing(ch))
+						continue;
+
+					AdvanceXSimple(x, ch);
+				}
+				else
+				{
+					x = 0;
+					y += m_glyphHeight;
+				}
+
+				if (result.X < x)
+					result.X = x;
+				if (result.Y < y)
+					result.Y = y;
+			}
+
+			return Point((int32)result.X, (int32)result.Y);
+		}
+		Point Font::MeasureString(const String& text)
+		{
+			return MeasureString(text, 0, (int32)text.size() - 1);
+		}
+		int32 Font::FitSingleLineString(const String& text, int32 width)
+		{
+			int32 chCount = 0;
+
+			PointF result = PointF(0, m_glyphHeight);
+			const int32 len = (int32)text.length();
+
+			int32 lineSpacing = (int32)(m_glyphHeight + m_lineGap + 0.5f);
+
+			float x = 0.f;
+			float y = lineSpacing + m_descender;
+			for (int32 i = 0; i < len; i++)
+			{
+				char16_t ch = text[i];
+				ScanColorControlCodes(text, ch, i, len, nullptr);
+				ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
+				ScanOtherControlCodes(text, ch, i, len);
+
+				if (IgnoreCharDrawing(ch))
+					continue;
+
+				AdvanceXSimple(x, ch);
+
+				if (x > width) break;
+				chCount++;
+
+				if (result.X < x)
+					result.X = x;
+				if (result.Y < y)
+					result.Y = y;
+			}
+			return chCount;
+		}
+		
+		String Font::LineBreakString(const String& text, int32 width, bool byWord, int32& lineCount)
+		{
+			String result;
+			result.reserve(text.size() + 5);
+			
+			lineCount = 1;
+			int32 lineBreakCount = 0;
+
+			if (byWord)
+			{
+				float x = 0;
+				int32 len = (int32)text.length();
+
+				int32 prevWordBegin = 0;
+				float prevWordBeginAdvX = 0;
+				for (int32 i = 0; i < len; i++)
+				{
+					char16_t ch = text[i];
+					//ScanColorControlCodes(text, ch, i, len, nullptr);
+					//ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
+					//ScanUselessControlCodes(text, ch, i, len);
+
+					bool isBlankCh = ch == ' ' || ch == '\t';
+					if (isBlankCh)
+					{
+						prevWordBegin = i;
+						prevWordBeginAdvX = x;
+					}
+
+					AdvanceXSimple(x, ch);
+
+					if (x > width && !isBlankCh)
+					{
+						int32 insertPos = prevWordBegin + lineBreakCount + 1;
+						if (insertPos < (int32)result.size())
+						{
+							result.insert(insertPos, 1, '\n');
+							x -= prevWordBeginAdvX;
+						}
+						else
+						{
+							result.append(1, '\n');
+							x = 0;
+						}
+
+						lineBreakCount++;
+						lineCount++;
+					}
+
+					result.append(1, text[i]);
+
+					if (ch == '\n')
+					{
+						x = 0;
+						lineCount++;
+					}
+				}
+			}
+			else
+			{
+				float x = 0;
+				int32 len = (int32)text.length() - 1;
+
+				if (text.length())
+					result.append(1, text[0]);
+
+				for (int32 i = 0; i < len; i++)
+				{
+					char16_t ch = text[i]; 
+					//ScanColorControlCodes(text, ch, i, len, nullptr);
+					//ScanMoveControlCodeNoSkip(text, ch, i, len, nullptr, nullptr);
+					//ScanUselessControlCodes(text, ch, i, len);
+
+					char16_t nch = text[i+1];
+
+					AdvanceXSimple(x, ch);
+
+					if (x > width)
+					{
+						if (nch == ' ' || nch == '\t' || ch == ' ' || ch == '\t')
+							result.append(1, nch);
+						else
+							result.append(1, '-');
+
+						result.append(1, '\n');
+						lineCount++;
+						x = 0;
+					}
+					else result.append(1, nch);
+
+
+					if (ch == '\n')
+					{
+						x = 0;
+						lineCount++;
+					}
+				}
+			}
+
+			return result;
+		}
+
+		void Font::FrameStartReset()
+		{
+			if (m_isUsingCaching)
+			{
+				// copy the data to its "last-frame" buffer
+				memcpy(m_lasttime_rowGridsFreqClassificationCount, m_rowGridsFreqClassificationCount, sizeof(int32)*m_edgeCount*MaxFreq);
+				memcpy(m_lastFreqTable, m_currentFreqTable, sizeof(int32)*m_edgeCount*m_edgeCount);
+
+
+				// then reset the current to zero for statistics in the current frame
+				// this will be recalcualted below
+				memset(m_rowGridsFreqClassificationCount, 0, sizeof(int32)*m_edgeCount*MaxFreq);
+
+				if (m_usedInFrame)
+				{
+					// decay used frequency in m_currentFreqTable
+					// and calculate current ClassificationCount based on current Freq table
+
+					for (int32 i = 0; i < m_edgeCount; i++)
+					{
+						for (int32 j = 0; j < m_edgeCount; j++)
+						{
+							int32& f = m_currentFreqTable[i*m_edgeCount + j];
+							if (f > 0)
+							{
+								f--;
+								if (f < 0) f = 0;
+							}
+							m_rowGridsFreqClassificationCount[i*MaxFreq + f]++;
+						}
+					}
+					m_usedInFrame = false;
+				}
+			}
+
+		}
+
+		void Font::LoadGlyphData(BinaryReader* br, Glyph& glyph)
+		{
+			if (glyph.Width == 0 || glyph.Height == 0)
+				return;
+
+			br->getBaseStream()->Seek(glyph.Offset, SeekMode::Begin);
+
+			assert(glyph.Width <= m_selectTextureSize && glyph.Width >=0);
+			assert(glyph.Height <= m_selectTextureSize && glyph.Height >=0);
+
+
+			Apoc3D::Math::Rectangle lockRect((int32)glyph.MappedRect.X, (int32)glyph.MappedRect.Y,
+				(int32)glyph.MappedRect.Width, (int32)glyph.MappedRect.Height);
+			DataRectangle dataRect = m_fontPack->Lock(0, LOCK_None, lockRect);
+
+			if (m_hasLuminance)
+			{
+				uint16* buf = new uint16[glyph.Width * glyph.Height];
+				br->ReadBytes((char*)buf, glyph.Width * glyph.Height * sizeof(uint16));
+
+				for (int32 j = 0; j < dataRect.getHeight(); j++)
+				{
+					uint16* src = buf + j*glyph.Width;
+					char* dest = (char*)dataRect.getDataPointer() + j*dataRect.getPitch();
+					for (int32 i = 0; i < dataRect.getWidth(); i++)
+					{
+						uint16* pix = (uint16*)(dest)+i;
+
+						*pix = *(src + i);
+					}
+				}
+				delete[] buf;
+			}
+			else
+			{
+				char* buf = new char[glyph.Width * glyph.Height];
+				br->ReadBytes(buf, glyph.Width * glyph.Height);
+
+				for (int32 j = 0; j < dataRect.getHeight(); j++)
+				{
+					char* src = buf + j*glyph.Width;
+					char* dest = (char*)dataRect.getDataPointer() + j*dataRect.getPitch();
+					for (int32 i = 0; i < dataRect.getWidth(); i++)
+					{
+						uint16* pix = (uint16*)(dest)+i;
+
+						ushort highA = (byte)*(src + i);
+
+						*pix = highA << 8 | 0xff;
+					}
+				}
+				delete[] buf;
+			}
+			
+			m_fontPack->Unlock(0);
+		}
+		void Font::EnsureGlyph(Glyph& glyph)
+		{
+			// grids are squares. m_glyphHeight is the edge length in pixels of a grid
+			int32 gridsNeeded = (int32)ceil((double)glyph.Width / m_glyphHeight);
+
+			bool done = false;
+
+			// find enough space for the glyph, testing from lower use time to higher use time
+			int32 startColumnffset = m_gridSearchRandomizer.NextExclusive(m_edgeCount);
+			for (int32 freq = 0; freq < MaxFreq && !done; freq++)
+			{
+				// search by row
+				for (int32 ii = 0; ii < m_edgeCount && !done; ii++)
+				{
+					// some randomness to be at some chances finding unused glyph that is out of the range of use freq stat
+					int32 i = (startColumnffset + ii) % m_edgeCount;
+
+					int32 freqIdx = freq + i * MaxFreq;
+					if (m_rowGridsFreqClassificationCount[freqIdx] >= gridsNeeded &&
+						m_lasttime_rowGridsFreqClassificationCount[freqIdx] >= gridsNeeded)
+					{
+						// even though the number of grids in the row is sufficient enough
+						// whether they are consecutive still needed to be checked here.
+						int32 numOfConsqGrids = 0;
+						int32 gridPosition = -1;
+						for (int32 j = 0; j < m_edgeCount && numOfConsqGrids < gridsNeeded; j++)
+						{
+							int32 cellIdx = i*m_edgeCount + j;
+							if (m_currentFreqTable[cellIdx] <= freq && m_lastFreqTable[cellIdx] <= freq)
+							{
+								numOfConsqGrids++;
+								if (gridPosition == -1)
+									gridPosition = j;
+							}
+							else
+							{
+								numOfConsqGrids = 0; // resets if it meets any obstacle
+							}
+						}
+
+						if (numOfConsqGrids == gridsNeeded)
+						{
+							// once the space has been located,
+							// load the glyph
+
+							// 1. Clears the grids
+							UseGrids(nullptr, i, gridPosition, gridsNeeded);
+
+							Stream* strm = m_resource->GetReadStream();
+							BinaryReader br(strm, true);
+
+							// 2. Tag the grids
+							UseGrids(&glyph, i, gridPosition, gridsNeeded);
+
+							// 3. Load the data
+							LoadGlyphData(&br, glyph);
+
+
+							done = true;
+
+							break;
+						}
+
+					}
+				}
+			}
+		}
+		void Font::SetUseFreqToMax(const Glyph& glyph)
+		{
+			if (m_isUsingCaching)
+			{
+				m_usedInFrame = true;
+
+				for (int32 i = 0; i < glyph.NumberOfGridsUsing; i++)
+				{
+					const Grid& grd = m_grids[glyph.StartingParentGrid + i];
+					int32& freq = m_currentFreqTable[grd.GridIndex];
+					int32 rowIndex = grd.GridIndex / m_edgeCount;
+					int32 spFreqRowIdx = rowIndex*MaxFreq;
+
+					m_rowGridsFreqClassificationCount[freq + spFreqRowIdx]--;
+
+					freq = MaxFreq - 1;
+
+					m_rowGridsFreqClassificationCount[freq + spFreqRowIdx]++;
+				}
+			}
+		}
+		void Font::UseGrids(Glyph* g, int32 i, int32 j, int32 amount)
+		{
+			if (g)
+			{
+				// use grids
+				const Apoc3D::Math::RectangleF& bukRect = m_grids[i*m_edgeCount + j].SrcRect;
+
+				g->NumberOfGridsUsing = amount;
+				g->StartingParentGrid = i*m_edgeCount + j;
+				for (int32 k = 0; k < amount; k++)
+				{
+					m_grids[i*m_edgeCount + j + k].CurrentGlyph = g->Index;
+				}
+				g->MappedRect = Apoc3D::Math::Rectangle((int32)bukRect.X, (int32)bukRect.Y, g->Width, g->Height);
+				g->MappedRectF = Apoc3D::Math::RectangleF(bukRect.X, bukRect.Y, (float)g->Width, (float)g->Height);
+				g->IsMapped = true;
+			}
+			else
+			{
+				// clear the requested amount of grids one by one
+				for (int32 s = 0; s < amount; s++)
+				{
+					int32 index = m_grids[i*m_edgeCount + j + s].CurrentGlyph;
+					if (index != -1)
+					{
+						Glyph& oglyph = m_glyphList[index];
+						oglyph.IsMapped = false;
+
+						for (int32 k = 0; k < oglyph.NumberOfGridsUsing; k++)
+						{
+							m_grids[oglyph.StartingParentGrid + k].CurrentGlyph = -1;
+						}
+						oglyph.StartingParentGrid = -1;
+						oglyph.NumberOfGridsUsing = 0;
+					}
+				}
+			}
+		}
+		
+		void Font::AdvanceXSimple(float& x, char16_t ch)
+		{
+			Character chdef;
+			if (m_charTable.TryGetValue(ch, chdef))
+			{
+				x += chdef.AdvanceX;
+			}
+			else
+			{
+				CustomGlyph* cgdef = m_customCharacters.TryGetValue(ch);
+				if (cgdef)
+				{
+					x += cgdef->AdvanceX;
+				}
+			}
+		}
+
+
+		FORCE_INLINE bool Font::ScanColorControlCodes(const String& str, char16_t& cur, int32& i, int32 len, uint* color)
 		{
 			if (cur == ControlCodes::Font_Color)
 			{
@@ -816,7 +1277,7 @@ namespace Apoc3D
 			return false;
 		}
 
-		FORCE_INLINE bool Font::ScanMoveControlCode(const String& str, wchar_t& cur, int32& i, int32 len, const PointF* orig, PointF* pos)
+		FORCE_INLINE bool Font::ScanMoveControlCode(const String& str, char16_t& cur, int32& i, int32 len, const PointF* orig, PointF* pos)
 		{
 			if (cur == ControlCodes::Font_Move)
 			{
@@ -876,7 +1337,7 @@ namespace Apoc3D
 			return false;
 		}
 
-		FORCE_INLINE void Font::ScanUselessControlCodes(const String& str, wchar_t& cur, int32& i, int32 len)
+		FORCE_INLINE void Font::ScanOtherControlCodes(const String& str, char16_t& cur, int32& i, int32 len)
 		{
 			if (cur == ControlCodes::Label_HyperLinkStart)
 			{
@@ -898,546 +1359,14 @@ namespace Apoc3D
 
 
 
-		PointF Font::GetOrigin(int32 x, int32 y) const
-		{
-			PointF r = { (float)x, (float)y + m_descender };
-			if (m_hasDrawOffset)
-			{
-				r.X -= (int32)m_drawOffset.X;
-				r.Y -= (int32)m_drawOffset.Y;
-			}
-			return r;
-		}
-		PointF Font::GetOrigin(float x, float y) const
-		{
-			PointF r = { x, y + m_descender };
-			if (m_hasDrawOffset)
-				r -= m_drawOffset;
-			return r;
-		}
 
-
-		int Font::CalculateLineCount(const String& text, int width)
-		{
-			const int32 len = (int32)text.length();
-
-			int lineCount = 1;
-			float x = 0;
-			for (int32 i = 0; i < len; i++)
-			{
-				wchar_t ch = text[i]; 
-				ScanColorControlCodes(text, ch, i, len, nullptr);
-				ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
-				ScanUselessControlCodes(text, ch, i, len);
-
-				if (ch != '\n')
-				{
-					if (x>=width)
-					{
-						x =0;
-						lineCount++;
-					}
-
-					Character chdef;
-					if (m_charTable.TryGetValue(ch, chdef))
-					{
-						x += chdef.AdvanceX;
-					}
-					else
-					{
-						CustomGlyph* cgdef = m_customCharacters.TryGetValue(ch);
-						if (cgdef)
-						{
-							x += cgdef->AdvanceX;
-						}
-					}
-				}
-				else
-				{
-					x = 0;
-					lineCount++;
-				}
-			}
-			return lineCount;
-		}
-		Point Font::MeasureString(const String& text, int32 start, int32 end)
-		{
-			PointF result = PointF(0, m_height);
-			
-			if (start < 0) start = 0;
-			if (end >= (int32)text.size()) end = (int32)text.size() - 1;
-
-			const int32 len = end + 1;
-
-			float x = 0.f;
-			float y = m_height + m_lineGap + m_descender;
-			for (int32 i = start; i <= end; i++)
-			{
-				wchar_t ch = text[i];
-				ScanColorControlCodes(text, ch, i, len, nullptr);
-				ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
-				ScanUselessControlCodes(text, ch, i, len);
-
-				if (ch != '\n')
-				{
-					if (IgnoreCharDrawing(ch))
-						continue;
-
-					Character chdef;
-					if (m_charTable.TryGetValue(ch, chdef))
-					{
-						x += chdef.AdvanceX;
-					}
-					else
-					{
-						CustomGlyph* cgdef = m_customCharacters.TryGetValue(ch);
-						if (cgdef)
-						{
-							x += cgdef->AdvanceX;
-						}
-					}
-				}
-				else
-				{
-					x = 0;
-					y += m_height;
-				}
-
-				if (result.X < x)
-					result.X = x;
-				if (result.Y < y)
-					result.Y = y;
-			}
-
-			return Point((int32)result.X, (int32)result.Y);
-		}
-		Point Font::MeasureString(const String& text)
-		{
-			return MeasureString(text, 0, (int32)text.size() - 1);
-		}
-		int Font::FitSingleLineString(const String& text, int width)
-		{
-			int chCount = 0;
-
-			PointF result = PointF(0, m_height);
-			const int32 len = (int32)text.length();
-
-			int32 lineSpacing = (int32)(m_height + m_lineGap + 0.5f);
-
-			float x = 0.f;
-			float y = lineSpacing + m_descender;
-			for (int32 i = 0; i < len; i++)
-			{
-				wchar_t ch = text[i];
-				ScanColorControlCodes(text, ch, i, len, nullptr);
-				ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
-				ScanUselessControlCodes(text, ch, i, len);
-
-				if (IgnoreCharDrawing(ch))
-					continue;
-
-				Character chdef;
-				if (m_charTable.TryGetValue(ch, chdef))
-				{
-					x += chdef.AdvanceX;
-				}
-				else
-				{
-					CustomGlyph* cgdef = m_customCharacters.TryGetValue(ch);
-					if (cgdef)
-					{
-						x += cgdef->AdvanceX;
-					}
-				}
-
-				if (x > width) break;
-				chCount++;
-
-				if (result.X < x)
-					result.X = x;
-				if (result.Y < y)
-					result.Y = y;
-			}
-			return chCount;
-		}
-		
-		String Font::LineBreakString(const String& text, int width, bool byWord, int& lineCount)
-		{
-			String result;
-			result.reserve(text.size() + 5);
-			
-			lineCount = 1;
-			int32 lineBreakCount = 0;
-
-			if (byWord)
-			{
-				float x = 0;
-				int32 len = (int32)text.length();
-
-				int32 prevWordBegin = 0;
-				float prevWordBeginAdvX = 0;
-				for (int32 i = 0; i < len; i++)
-				{
-					wchar_t ch = text[i];
-					//ScanColorControlCodes(text, ch, i, len, nullptr);
-					//ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
-					//ScanUselessControlCodes(text, ch, i, len);
-
-					bool isBlankCh = ch == ' ' || ch == '\t';
-					if (isBlankCh)
-					{
-						prevWordBegin = i;
-						prevWordBeginAdvX = x;
-					}
-
-					Character chdef;
-					if (m_charTable.TryGetValue(ch, chdef))
-					{
-						const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
-
-						x += chdef.AdvanceX;
-					}
-					else
-					{
-						CustomGlyph* cgdef = m_customCharacters.TryGetValue(ch);
-						if (cgdef)
-						{
-							x += cgdef->AdvanceX;
-						}
-					}
-
-					if (x > width && !isBlankCh)
-					{
-						int32 insertPos = prevWordBegin + lineBreakCount + 1;
-						if (insertPos < (int32)result.size())
-						{
-							result.insert(insertPos, 1, '\n');
-							x -= prevWordBeginAdvX;
-						}
-						else
-						{
-							result.append(1, '\n');
-							x = 0;
-						}
-
-						lineBreakCount++;
-						lineCount++;
-					}
-
-					result.append(1, text[i]);
-
-					if (ch == '\n')
-					{
-						x = 0;
-						lineCount++;
-					}
-				}
-			}
-			else
-			{
-				float x = 0;
-				int32 len = (int32)text.length() - 1;
-
-				if (text.length())
-					result.append(1, text[0]);
-
-				for (int32 i = 0; i < len; i++)
-				{
-					wchar_t ch = text[i]; 
-					//ScanColorControlCodes(text, ch, i, len, nullptr);
-					//ScanMoveControlCodeNoSkip(text, ch, i, len, nullptr, nullptr);
-					//ScanUselessControlCodes(text, ch, i, len);
-
-					wchar_t nch = text[i+1];
-
-					Character chdef;
-					if (m_charTable.TryGetValue(nch, chdef))
-					{
-						const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
-
-						x += chdef.AdvanceX;
-					}
-					else
-					{
-						CustomGlyph* cgdef = m_customCharacters.TryGetValue(ch);
-						if (cgdef)
-						{
-							x += cgdef->AdvanceX;
-						}
-					}
-
-					if (x > width)
-					{
-						if (nch == ' ' || nch == '\t' || ch == ' ' || ch == '\t')
-							result.append(1, nch);
-						else
-							result.append(1, '-');
-
-						result.append(1, '\n');
-						lineCount++;
-						x = 0;
-					}
-					else result.append(1, nch);
-
-
-					if (ch == '\n')
-					{
-						x = 0;
-						lineCount++;
-					}
-				}
-			}
-
-			return result;
-		}
-
-		void Font::FrameStartReset()
-		{
-			if (m_isUsingCaching)
-			{
-				// copy the data to its "last-frame" buffer
-				memcpy(m_lasttime_lineBucketsFreqClassificationCount, m_lineBucketsFreqClassificationCount, sizeof(int)*m_edgeCount*MaxFreq);
-
-				memcpy(m_lastFreqTable, m_currentFreqTable, sizeof(int)*m_edgeCount*m_edgeCount);
-
-
-				// then reset the current to zero for statistics in the current frame
-				memset(m_lineBucketsFreqClassificationCount,0,sizeof(int)*m_edgeCount*MaxFreq);
-
-				if (m_usedInFrame)
-				{
-					//memset(m_currentFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
-					for (int i=0;i<m_edgeCount;i++)
-					{
-						for (int j=0;j<m_edgeCount;j++)
-						{
-							int& f = m_currentFreqTable[i*m_edgeCount+j];
-							if (f>0)
-							{
-								f--;
-								if (f<0) f = 0;
-							}
-							m_lineBucketsFreqClassificationCount[i*MaxFreq + f]++;
-						}
-					}
-					m_usedInFrame = false;
-				}
-			}
-
-		}
-
-		void Font::LoadGlyphData(BinaryReader* br, Glyph& glyph)
-		{
-			if (glyph.Width == 0 || glyph.Height == 0)
-				return;
-
-			br->getBaseStream()->Seek(glyph.Offset, SeekMode::Begin);
-
-			assert(glyph.Width <= m_selectTextureSize && glyph.Width >=0);
-			assert(glyph.Height <= m_selectTextureSize && glyph.Height >=0);
-
-
-			Apoc3D::Math::Rectangle lockRect((int32)glyph.MappedRect.X, (int32)glyph.MappedRect.Y,
-				(int32)glyph.MappedRect.Width, (int32)glyph.MappedRect.Height);
-			DataRectangle dataRect = m_font->Lock(0, LOCK_None, lockRect);
-
-			if (m_hasLuminance)
-			{
-				uint16* buf = new uint16[glyph.Width * glyph.Height];
-				br->ReadBytes((char*)buf, glyph.Width * glyph.Height * sizeof(uint16));
-
-				for (int j=0;j<dataRect.getHeight();j++)
-				{
-					uint16* src= buf+j*glyph.Width;
-					char* dest = (char*)dataRect.getDataPointer()+j*dataRect.getPitch();
-					for (int i=0;i<dataRect.getWidth();i++)
-					{
-						uint16* pix = (uint16*)(dest)+i;
-
-						*pix = *(src + i);
-					}
-				}
-				delete[] buf;
-			}
-			else
-			{
-				char* buf = new char[glyph.Width * glyph.Height];
-				br->ReadBytes(buf, glyph.Width * glyph.Height);
-
-				for (int j=0;j<dataRect.getHeight();j++)
-				{
-					char* src=buf+j*glyph.Width;
-					char* dest = (char*)dataRect.getDataPointer()+j*dataRect.getPitch();
-					for (int i=0;i<dataRect.getWidth();i++)
-					{
-						uint16* pix = (uint16*)(dest)+i;
-
-						ushort highA = (byte)*(src+i);
-
-						*pix = highA<<8 | 0xff;
-					}
-				}
-				delete[] buf;
-			}
-			
-			m_font->Unlock(0);
-		}
-		void Font::EnsureGlyph(Glyph& glyph)
-		{
-			int bucketsNeeded = (int)ceil((double)glyph.Width/m_height);
-
-			bool done = false;
-
-			// find enough space for the glyph, testing from lower use time to higher use time
-			int32 startEdgeOffset = m_bucketSearchRandomizer->NextExclusive(m_edgeCount);
-			for (int freq = 0; freq<MaxFreq && !done; freq++)
-			{
-				for (int ii=0;ii<m_edgeCount && !done;ii++)
-				{
-					// some randomness to be at some chances finding unused glyph that is out of the range of use freq stat
-					int32 i = (startEdgeOffset + ii) % m_edgeCount;
-
-					int32 freqIdx = freq + i * MaxFreq;
-					if (m_lineBucketsFreqClassificationCount[freqIdx]>=bucketsNeeded &&
-						m_lasttime_lineBucketsFreqClassificationCount[freqIdx]>=bucketsNeeded)
-					{
-						// even though the number of buckets in line is sufficient enough
-						// whether they are consecutive still needed to be checked.
-						int numOfConsqBuckets = 0;
-						int bucketPosition = -1;
-						for (int j=0;j<m_edgeCount && numOfConsqBuckets<bucketsNeeded;j++)
-						{
-							int32 cellIdx = i*m_edgeCount+j;
-							if (m_currentFreqTable[cellIdx]<=freq && m_lastFreqTable[cellIdx]<=freq)
-							{
-								numOfConsqBuckets++;
-								if (bucketPosition==-1)
-									bucketPosition = j;
-							}
-							else
-							{
-								numOfConsqBuckets=0; // resets if it meets any obstacle
-							}
-						}
-
-						if (numOfConsqBuckets==bucketsNeeded)
-						{
-							// once the space has been located,
-							// load the glyph
-
-							// 1. Clears the buckets
-							UseBuckets(nullptr, i, bucketPosition, bucketsNeeded);
-
-							Stream* strm = m_resource->GetReadStream();
-							BinaryReader br(strm, true);
-
-							// 2. Tag the buckets
-							UseBuckets(&glyph, i, bucketPosition, bucketsNeeded);
-
-							// 3. Load the data
-							LoadGlyphData(&br, glyph);
-
-
-							done = true;
-
-							break;
-						}
-
-					}
-				}
-			}
-		}
-		void Font::SetUseFreq(const Glyph& glyph)
-		{
-			if (m_isUsingCaching)
-			{
-				m_usedInFrame = true;
-
-				for (int i=0;i<glyph.NumberOfBucketsUsing;i++)
-				{
-					const Bucket& buk = m_buckets[glyph.StartingParentBucket+i];
-					int& freq = m_currentFreqTable[buk.BucketIndex];
-					int lineIndex = buk.BucketIndex / m_edgeCount;
-					int spFreqLineIdx = lineIndex*MaxFreq;
-
-					m_lineBucketsFreqClassificationCount[freq+spFreqLineIdx]--;
-
-					freq = MaxFreq-1;
-					//freq++;
-					//if (freq >= MaxFreq)
-						//freq = MaxFreq-1;
-					m_lineBucketsFreqClassificationCount[freq+spFreqLineIdx]++;
-				}
-
-				//for (int i=0;i<glyph.NumberOfBucketsUsing;i++)
-				//{
-				//	const Bucket& buk = m_buckets[glyph.StartingParentBucket+i];
-				//	int& freq = m_currentFreqTable[buk.BucketIndex];
-				//	int lineIndex = buk.BucketIndex / m_edgeCount;
-				//	int spFreqLineIdx = lineIndex * MaxFreq;
-				//	m_lineBucketsFreqClassificationCount[freq + spFreqLineIdx]--;
-				//
-				//	/*if (max)
-				//	{
-				//		freq = MaxFreq -1;
-				//	}
-				//	else*/
-				//	{
-				//		freq++;
-				//		if (freq >= MaxFreq)
-				//			freq = MaxFreq-1;
-				//	}
-				//
-				//	m_lineBucketsFreqClassificationCount[freq + spFreqLineIdx]++;
-				//}
-			}
-		}
-		void Font::UseBuckets(Glyph* g, int i, int j, int amount)
-		{
-			if (g)
-			{
-				// use buckets
-				const Apoc3D::Math::RectangleF& bukRect = m_buckets[i*m_edgeCount+j].SrcRect;
-
-				g->NumberOfBucketsUsing = amount;
-				g->StartingParentBucket = i*m_edgeCount+j;
-				for (int k=0;k<amount;k++)
-				{
-					m_buckets[i*m_edgeCount+j+k].CurrentGlyph = g->Index;
-				}
-				g->MappedRect = Apoc3D::Math::Rectangle((int32)bukRect.X, (int32)bukRect.Y, g->Width, g->Height);
-				g->MappedRectF = Apoc3D::Math::RectangleF(bukRect.X, bukRect.Y, (float)g->Width, (float)g->Height);
-				g->IsMapped = true;
-			}
-			else
-			{
-				// clear the requested amount of buckets one by one
-				for (int s = 0; s<amount; s++)
-				{
-					int index = m_buckets[i*m_edgeCount+j + s].CurrentGlyph;
-					if (index != -1)
-					{
-						Glyph& oglyph = m_glyphList[index];
-						oglyph.IsMapped = false;
-						
-						for (int k=0;k<oglyph.NumberOfBucketsUsing;k++)
-						{
-							m_buckets[oglyph.StartingParentBucket+k].CurrentGlyph = -1;
-						}
-						oglyph.StartingParentBucket = -1;
-						oglyph.NumberOfBucketsUsing = 0;
-					}
-				}
-			}
-		}
-		
 		/************************************************************************/
 		/*  FontManager                                                         */
 		/************************************************************************/
 
 		SINGLETON_IMPL(FontManager);
 
-		int FontManager::MaxTextureSize = 1024;
+		int32 FontManager::MaxTextureSize = 1024;
 
 		FontManager::FontManager()
 			: m_fontTable()

@@ -3,11 +3,11 @@
 namespace SampleFont
 {
 	const int32 MaxPressure = 10;
-	const String mlText = 
-		L"This font supports multiple language.\n"
-		L"这种字体支持多国语言\n"
-		L"このフォントは、複数の言語をサポートしています\n"
-		L"этот шрифт поддерживает несколько языков";
+	const String mlText =
+		L"This font supports multiple languages.\n"
+		L"这种字体支持多国语言。\n"
+		L"このフォントは、複数の言語をサポートしています。\n"
+		L"ta czcionka obsługuje wiele języków.";
 
 	FontDemo::FontDemo(RenderWindow* wnd)
 		: Game(wnd), m_currentPressure(5)
@@ -169,7 +169,7 @@ namespace SampleFont
 		english->DrawString(m_sprite, L"Move Control Code: " + ControlCodes::MakeMoveControl({ 15, 0 }, false, true) + L"[P]",
 			Point(200, areaSize.Height - 50), CV_White);
 
-
+		if (0)
 		{
 			Apoc3D::Math::Rectangle testArea = { { (int32)(m_test*areaSize.Width), 0 }, { 5, areaSize.Height } };
 			m_sprite->Draw(SystemUI::GetWhitePixel(), testArea, nullptr, CV_Red);
