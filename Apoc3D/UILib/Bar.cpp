@@ -436,6 +436,7 @@ namespace Apoc3D
 		/************************************************************************/
 		/* SlideBar                                                             */
 		/************************************************************************/
+		SliderBar::SliderBarEvent SliderBar::eventAnyTick;
 
 		SliderBar::SliderBar(const SliderBarVisualSettings& settings, const Point& position, BarDirection type, int32 length)
 			: Control(nullptr, position), m_type(type)
@@ -563,6 +564,7 @@ namespace Apoc3D
 						if (CurrentValue != m_lastValueBeforeDrag)
 						{
 							eventValueChanged.Invoke(this, true);
+							eventAnyTick.Invoke(this, true);
 						}
 					}
 
@@ -592,6 +594,7 @@ namespace Apoc3D
 							{
 								SetValueFromCurrentPosition(mouse, area);
 								eventValueChanged.Invoke(this, true);
+								eventAnyTick.Invoke(this, true);
 							}
 						}
 					}

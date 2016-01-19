@@ -184,6 +184,8 @@ namespace Apoc3D
 			UIGraphicSimple LargeTickGraphic;
 
 			SliderBarEvent eventValueChanged;
+
+			static SliderBarEvent eventAnyTick;
 		private:
 			int32 GetScrollableLength() const;
 			Apoc3D::Math::Rectangle GetHandleArea() const;
