@@ -593,8 +593,7 @@ namespace Apoc3D
 							if (mouse->IsLeftPressed())
 							{
 								SetValueFromCurrentPosition(mouse, area);
-								eventValueChanged.Invoke(this, true);
-								eventAnyTick.Invoke(this, true);
+								//eventValueChanged.Invoke(this, true);
 							}
 						}
 					}
@@ -680,6 +679,9 @@ namespace Apoc3D
 			if (prevValue != CurrentValue)
 			{
 				eventValueChanged.Invoke(this, false);
+
+				if (hasLargeTicks())
+					eventAnyTick.Invoke(this, true);
 			}
 		}
 	}
