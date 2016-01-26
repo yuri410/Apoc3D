@@ -316,6 +316,11 @@ namespace Apoc3D
 			}
 			return false;
 		}
+		bool FileSystem::TryLocate(const String& filePath, const FileLocateRule& rule)
+		{
+			FileLocation fl;
+			return TryLocate(filePath, rule, fl);
+		}
 
 		bool FileSystem::ObtainOpenedArchive(const String& filePath, Archive*& entry) 
 		{

@@ -92,6 +92,7 @@ namespace Apoc3D
 			Archive* LocateArchive(const String& filePath, const FileLocateRule& rule);
 			FileLocation Locate(const String& filePath, const FileLocateRule& rule);
 			bool TryLocate(const String& filePath, const FileLocateRule& rule, FileLocation& result);
+			bool TryLocate(const String& filePath, const FileLocateRule& rule);
 
 
 		private:
