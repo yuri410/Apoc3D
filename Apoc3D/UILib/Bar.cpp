@@ -592,9 +592,16 @@ namespace Apoc3D
 						{
 							if (mouse->IsLeftPressed())
 							{
+								m_lastValueBeforeDrag = CurrentValue;
+
 								SetValueFromCurrentPosition(mouse, area);
-								//eventValueChanged.Invoke(this, true);
+
+								if (CurrentValue != m_lastValueBeforeDrag)
+								{
+									eventValueChanged.Invoke(this, true);
+								}
 							}
+							
 						}
 					}
 					else

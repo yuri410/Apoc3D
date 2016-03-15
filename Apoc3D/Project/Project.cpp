@@ -97,10 +97,10 @@ namespace Apoc3D
 
 		// a package file/archive build config section needs every item's path
 		int pakEntryIndex = 0;
-		AddPackBuildSubItems(sect, pakEntryIndex);
+		AddPackBuildSubItems(sect, pakEntryIndex, IncludeUnpackedSubFolderItems);
 	}
 
-	void ProjectFolder::AddPackBuildSubItems(ConfigurationSection* sect, int32& idx)
+	void ProjectFolder::AddPackBuildSubItems(ConfigurationSection* sect, int32& idx, bool includeUnpackedSubFolderItems)
 	{
 		// this will also search sub folder which is not packed
 		for (ProjectItem* pi : SubItems)
@@ -112,9 +112,9 @@ namespace Apoc3D
 				if (item->getType() == ProjectItemType::Folder)
 				{
 					ProjectFolder* fol = static_cast<ProjectFolder*>(item);
-					if (fol->PackType.empty() && IncludeUnpackedSubFolderItems)
+					if (fol->PackType.empty() && includeUnpackedSubFolderItems)
 					{
-						fol->AddPackBuildSubItems(sect, idx);
+						fol->AddPackBuildSubItems(sect, idx, includeUnpackedSubFolderItems);
 					}
 				}
 

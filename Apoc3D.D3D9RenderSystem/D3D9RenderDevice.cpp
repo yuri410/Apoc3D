@@ -76,14 +76,14 @@ namespace Apoc3D
 						dev->SetTexture(0, tex->getBaseTexture());
 					}
 
-					dev->SetTransform(D3DTS_WORLD, &reinterpret_cast<const D3DMatrix&>(rop->RootTransform));
+					dev->SetTransform(D3DTS_WORLD, &reinterpret_cast<const D3DMATRIX&>(rop->RootTransform));
 					if (RendererEffectParams::CurrentCamera)
 					{
 						const Matrix& view = RendererEffectParams::CurrentCamera->getViewMatrix();
-						dev->SetTransform(D3DTS_VIEW, &reinterpret_cast<const D3DMatrix&>(view));
+						dev->SetTransform(D3DTS_VIEW, &reinterpret_cast<const D3DMATRIX&>(view));
 
 						const Matrix& proj = RendererEffectParams::CurrentCamera->getProjMatrix();
-						dev->SetTransform(D3DTS_PROJECTION, &reinterpret_cast<const D3DMatrix&>(proj));
+						dev->SetTransform(D3DTS_PROJECTION, &reinterpret_cast<const D3DMATRIX&>(proj));
 					}
 					dev->SetFVF(D3DFVF_NORMAL | D3DFVF_XYZ | D3DFVF_TEX1);
 				}

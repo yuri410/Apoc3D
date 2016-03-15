@@ -251,7 +251,7 @@ namespace Apoc3D
 		ProjectItem* GetItem(const String& path);
 
 	private:
-		void AddPackBuildSubItems(ConfigurationSection* sect, int32& idx);
+		void AddPackBuildSubItems(ConfigurationSection* sect, int32& idx, bool includeUnpackedSubFolderItems);
 	};
 
 	/**

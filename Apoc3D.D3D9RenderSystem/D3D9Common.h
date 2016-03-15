@@ -34,7 +34,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include <Windows.h>
 #include <d3d9.h>
-#include <d3dx9.h>
 #include <d3d9types.h>
 #include "apoc3d/Meta/EventDelegate.h"
 
@@ -42,20 +41,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #pragma comment(lib, "Apoc3D.Win32.lib")
 
 #pragma comment(lib, "d3d9.lib")
-#if _DEBUG
-#pragma comment(lib, "d3dx9d.lib")
-#else
-#pragma comment(lib, "d3dx9.lib")
-#endif
+//#if _DEBUG
+//#pragma comment(lib, "d3dx9d.lib")
+//#else
+//#pragma comment(lib, "d3dx9.lib")
+//#endif
 #pragma comment(lib, "dxguid.lib")
-
-typedef D3DXMATRIX D3DMatrix;
-typedef D3DXPLANE D3DPlane;
-typedef D3DXVECTOR2 D3DVector2;
-typedef D3DXVECTOR3 D3DVector3;
-typedef D3DXVECTOR4 D3DVector4;
-typedef D3DXQUATERNION D3DQuaternion;
-typedef D3DCOLORVALUE D3DColor4;
 
 typedef IDirect3DDevice9 D3DDevice;
 typedef IDirect3DBaseTexture9 D3DBaseTexture;
@@ -63,7 +54,7 @@ typedef IDirect3DTexture9 D3DTexture2D;
 typedef IDirect3DVolumeTexture9 D3DTexture3D;
 typedef IDirect3DCubeTexture9 D3DTextureCube;
 
-typedef ID3DXSprite D3DSprite;
+//typedef ID3DXSprite D3DSprite;
 typedef IDirect3DIndexBuffer9 D3DIndexBuffer;
 typedef IDirect3DVertexBuffer9 D3DVertexBuffer;
 typedef IDirect3DVertexShader9 D3DVertexShader;
