@@ -457,15 +457,6 @@ namespace Apoc3D
 
 			~HashMap() { }
 
-			HashMap(HashMap&& other)
-				: HashMapCore(std::move(other)) { }
-
-			HashMap& operator=(HashMap&& other)
-			{
-				HashMapCore::operator =(std::move(other));
-				return *this;
-			}
-
 			void Add(const T& item, const S& value) { InsertEntry(false, item, value); }
 			void Add(const T& item, S&& value) { InsertEntry(false, item, std::move(value)); }
 			void Add(T&& item, const S& value) { InsertEntry(false, std::move(item), value); }
@@ -648,16 +639,6 @@ namespace Apoc3D
 			}
 
 			~HashSet() { }
-
-			
-			HashSet(HashSet&& other)
-				: HashMapCore(std::move(other)) { }
-
-			HashSet& operator=(HashSet&& other)
-			{
-				HashMapCore::operator =(std::move(other));
-				return *this;
-			}
 
 			void Add(const T& item) { InsertEntry(false, item); }
 			void Add(T&& item) { InsertEntry(false, std::move(item)); }

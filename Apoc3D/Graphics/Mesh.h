@@ -159,11 +159,9 @@ namespace Apoc3D
 			int32 m_vertexSize;
 			bool m_opBufferBuilt = false;
 			RenderOperationBuffer m_bufferedOp;
-			//MeshMaterialSet<Material*> m_materials;
 			VertexBuffer* m_vertexBuffer;
 
 			List<SubPart> m_subParts;
-			//List<IndexBuffer*> m_indexBuffers;
 
 			/** An array indicating the primitive 
 			 *  count for each sub mesh (or sub part, cut by materials; see the Mesh class)

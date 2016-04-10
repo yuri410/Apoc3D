@@ -752,12 +752,12 @@ namespace Apoc3D
 			String result;
 			if (a == 0xff)
 			{
-				int32 vals[3] = { r, g, b };
+				int32 vals[3] = { (int32)r, (int32)g, (int32)b };
 				IntsToString(vals, result);
 			}
 			else
 			{
-				int32 vals[4] = { r, g, b, a };
+				int32 vals[4] = { (int32)r, (int32)g, (int32)b, (int32)a };
 				IntsToString(vals, result);
 			}
 			return result;

@@ -64,19 +64,6 @@ namespace Apoc3D
 				: m_name(name), m_size(size)
 			{ }
 
-			ResourceLocation(const ResourceLocation& rl) = default;
-			ResourceLocation(ResourceLocation&& rl)
-				: m_name(std::move(rl.m_name)), m_size(rl.m_size)
-			{ }
-
-			ResourceLocation& operator=(ResourceLocation&& rl)
-			{
-				assert(this != &rl);
-				m_name = std::move(rl.m_name);
-				m_size = rl.m_size;
-				return *this;
-			}
-
 			int64 m_size;
 
 		private:

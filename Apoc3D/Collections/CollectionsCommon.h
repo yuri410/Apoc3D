@@ -496,49 +496,78 @@ namespace Apoc3D
 
 			//////////////////////////////////////////////////////////////////////////
 
+			struct CopyToNew_Memcpy
+			{
+				template <typename T>
+				static void Invoke(T* dest, const T* src, int32 count)
+				{
+					memcpy(dest, src, count * sizeof(T));
+				}
+			};
+			
+			struct CopyToNew_Assign
+			{
+				template <typename T>
+				static void Invoke(T* dest, const T* src, int32 count)
+				{
+					for (int32 i = 0; i < count; i++)
+						dest[i] = src[i];
+				}
+			};
+			
+			struct CopyToNew_Construct
+			{
+				template <typename T>
+				static void Invoke(T* dest, const T* src, int32 count)
+				{
+					for (int32 i = 0; i < count; i++)
+						new (&dest[i])T(src[i]);
+				}
+			};
+
 
 			template <typename T, bool NoRAII = false>
 			void CopyToNew(T* dest, const T* src, int32 count)
 			{
-				if (std::is_trivially_copyable<T>::value)
-				{
-					memcpy(dest, src, count*sizeof(T));
-				}
-				else
-				{
-					if (NoRAII)
-					{
-						for (int32 i = 0; i < count; i++)
-							dest[i] = src[i];
-					}
-					else
-					{
-						for (int32 i = 0; i < count; i++)
-							new (&dest[i])T(src[i]);
-					}
-				}
+				constexpr bool isTrivial = std::is_trivially_copyable<T>::value;
+				std::conditional<isTrivial, CopyToNew_Memcpy, std::conditional<NoRAII, CopyToNew_Assign, CopyToNew_Construct>::type>::type::Invoke(dest, src, count);
 			}
+
+
+			struct MoveToNew_Memcpy
+			{
+				template <typename T>
+				static void Invoke(T* dest, T* src, int32 count)
+				{
+					memcpy(dest, src, count * sizeof(T));
+				}
+			};
+
+			struct MoveToNew_Assign
+			{
+				template <typename T>
+				static void Invoke(T* dest, T* src, int32 count)
+				{
+					for (int32 i = 0; i < count; i++)
+						dest[i] = std::move(src[i]);
+				}
+			};
+
+			struct MoveToNew_Construct
+			{
+				template <typename T>
+				static void Invoke(T* dest, T* src, int32 count)
+				{
+					for (int32 i = 0; i < count; i++)
+						new (&dest[i])T(std::move(src[i]));
+				}
+			};
 
 			template <typename T, bool NoRAII = false>
 			void MoveToNew(T* dest, T* src, int32 count)
 			{
-				if (!std::is_trivially_copyable<T>::value)
-				{
-					if (NoRAII)
-					{
-						for (int32 i = 0; i < count; i++)
-							dest[i] = std::move(src[i]);
-					}
-					else
-					{
-						for (int32 i = 0; i < count; i++)
-							new (&dest[i])T(std::move(src[i]));
-					}
-				}
-				else
-				{
-					memcpy(dest, src, count*sizeof(T));
-				}
+				constexpr bool isTrivial = std::is_trivially_copyable<T>::value;
+				std::conditional<isTrivial, MoveToNew_Memcpy, std::conditional<NoRAII, MoveToNew_Assign, MoveToNew_Construct>::type>::type::Invoke(dest, src, count);
 			}
 
 			template <typename T, bool NoRAII = false>

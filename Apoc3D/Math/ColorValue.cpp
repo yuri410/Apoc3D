@@ -5,9 +5,9 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-#define CVE(x) { x, String(L#x + 3) } // remove prefix CV_
+#define CVE(x) x, String(L#x + 3) // remove prefix CV_
 
-		const Apoc3D::Utility::TypeParseConverter<ColorValue> ColorValueConverter = 
+		const Apoc3D::Utility::TypeParseConverter<ColorValue> ColorValueConverter = std::initializer_list<std::pair<ColorValue, String>>
 		{
 			{ CVE(CV_TransparentBlack) },
 			{ CVE(CV_TransparentWhite) },

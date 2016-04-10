@@ -46,16 +46,6 @@ namespace Apoc3D
 			LocateCheckPoint() { }
 			LocateCheckPoint(std::initializer_list<String> list);
 
-			LocateCheckPoint(LocateCheckPoint&& other)
-				: m_pathList(std::move(other.m_pathList)) { }
-
-			LocateCheckPoint& operator=(LocateCheckPoint&& rhs)
-			{
-				if (this != &rhs)
-					m_pathList = std::move(rhs.m_pathList);
-				return *this;
-			}
-
 			/**
 			 *  Add a check point path
 			 */ 
@@ -106,8 +96,6 @@ namespace Apoc3D
 				String ArchivePath;
 
 				Entry() { }
-				Entry(Entry&& other)
-					: Path(std::move(other.Path)), ArchivePath(std::move(other.ArchivePath)) { }
 
 				Entry(const String& path, const String& ap)
 					: Path(path), ArchivePath(ap) { }
@@ -142,22 +130,8 @@ namespace Apoc3D
 
 			FileLocateRule() { }
 
-			FileLocateRule(FileLocateRule&& other)
-				: m_pathChkPt(std::move(other.m_pathChkPt)) { }
-
 			FileLocateRule(std::initializer_list<LocateCheckPoint> checkPoints)
 				: m_pathChkPt(checkPoints) { }
-
-			FileLocateRule(const List<LocateCheckPoint>& checkPoints)
-				: m_pathChkPt(checkPoints) { }
-
-
-			FileLocateRule& operator=(FileLocateRule&& rhs)
-			{
-				if (this != &rhs)
-					m_pathChkPt = std::move(rhs.m_pathChkPt);
-				return *this;
-			}
 
 			FileLocateRule& operator=(std::initializer_list<LocateCheckPoint> checkPoints)
 			{

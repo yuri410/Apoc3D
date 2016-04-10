@@ -1,5 +1,5 @@
 
-#include "Exception.h"
+#include "Common.h"
 #include "Core/Logging.h"
 #include "Utility/StringUtils.h"
 #include "Utility/TypeConverter.h"

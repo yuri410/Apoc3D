@@ -739,13 +739,13 @@ namespace Apoc3D
 			template <uint32 Base, typename IntType> FORCE_INLINE
 			String IntegerToString16(IntType val, uint64 flags) 
 			{
-				return IntegerToString<String, char16_t, Base, IntType>(val, GetWidth(flags), GetFill(flags), flagCut(flags));
+				return IntegerToString<String, char16_t, Base, IntType>(val, GetWidth(flags), (char16_t)GetFill(flags), flagCut(flags));
 			}
 
 			template <uint32 Base, typename IntType> FORCE_INLINE
 			nstring IntegerToString8(IntType val, uint64 flags) 
 			{
-				return IntegerToString<nstring, char, Base, IntType>(val, GetWidth(flags), GetFill(flags), flagCut(flags)); 
+				return IntegerToString<nstring, char, Base, IntType>(val, GetWidth(flags), (char)GetFill(flags), flagCut(flags));
 			}
 
 
@@ -1150,11 +1150,11 @@ namespace Apoc3D
 
 		String StringUtils::SingleToString(float val, uint64 flags) 
 		{
-			return Impl::DoubleToString<String, char16_t>(val, FLT_DIG, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfffff)); 
+			return Impl::DoubleToString<String, char16_t>(val, FLT_DIG, GetWidth(flags), (char16_t)GetFill(flags), static_cast<uint32>(flags & 0xfffff));
 		}
 		String StringUtils::DoubleToString(double val, uint64 flags)
 		{
-			return Impl::DoubleToString<String, char16_t>(val, DBL_DIG, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfffff));
+			return Impl::DoubleToString<String, char16_t>(val, DBL_DIG, GetWidth(flags), (char16_t)GetFill(flags), static_cast<uint32>(flags & 0xfffff));
 		}
 
 		String StringUtils::IntToString(int16 val, uint64 flags) { return Impl::IntegerToString16<10>(val, flags); } 
@@ -1176,11 +1176,11 @@ namespace Apoc3D
 		nstring StringUtils::UIntToNarrowString(uint64 val, uint64 flags) { return Impl::IntegerToString8<10>(val, flags); }
 		nstring StringUtils::SingleToNarrowString(float val, uint64 flags)
 		{
-			return Impl::DoubleToString<nstring, char>(val, FLT_DIG, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfff)); 
+			return Impl::DoubleToString<nstring, char>(val, FLT_DIG, GetWidth(flags), (char)GetFill(flags), static_cast<uint32>(flags & 0xfff)); 
 		}
 		nstring StringUtils::DoubleToNarrowString(double val, uint64 flags)
 		{
-			return Impl::DoubleToString<nstring, char>(val, DBL_DIG, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfff)); 
+			return Impl::DoubleToString<nstring, char>(val, DBL_DIG, GetWidth(flags), (char)GetFill(flags), static_cast<uint32>(flags & 0xfff)); 
 		}
 
 		nstring StringUtils::IntToNarrowString(int16 val, uint64 flags) { return Impl::IntegerToString8<10>(val, flags);  }
