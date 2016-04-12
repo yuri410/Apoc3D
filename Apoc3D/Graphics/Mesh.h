@@ -162,16 +162,7 @@ namespace Apoc3D
 			VertexBuffer* m_vertexBuffer;
 
 			List<SubPart> m_subParts;
-
-			/** An array indicating the primitive 
-			 *  count for each sub mesh (or sub part, cut by materials; see the Mesh class)
-			 *  at specific index.
-			 */
-			//int32* m_partPrimitiveCount;
-			//int32* m_partVertexCount;			/** Similar to m_partPrimitiveCount but the vertex count. */
-			//int32* m_partVertexRangedUsedStart;
-			//int32* m_partVertexRangedUsedCount;
-
+			
 			RenderDevice* m_renderDevice;
 			ObjectFactory* m_factory;
 

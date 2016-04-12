@@ -1469,7 +1469,7 @@ namespace Apoc3D
 			Vector3 Origin;
 
 			AxisSystem() { }
-			explicit AxisSystem(const Matrix& m)
+			AxisSystem(const Matrix& m)
 			{
 				X = m.GetX();
 				Y = m.GetY();

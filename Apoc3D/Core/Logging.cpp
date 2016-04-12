@@ -83,34 +83,7 @@ namespace Apoc3D
 #if _DEBUG
 					OutputDebugString(msg.c_str());
 #endif
-					{
-						HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
-						if (hConsole != INVALID_HANDLE_VALUE)
-						{
-							WORD conTextAtt = 0;
-							switch (lastest.Level)
-							{
-							case LOGLVL_Fatal:
-								conTextAtt = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE;
-								break;
-							case LOGLVL_Error:
-								conTextAtt = FOREGROUND_INTENSITY | FOREGROUND_RED;
-								break;
-							case LOGLVL_Warning:
-								conTextAtt = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN;
-								break;
-							case LOGLVL_Infomation:
-								conTextAtt = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
-								break;
-							case LOGLVL_Default:
-								conTextAtt = FOREGROUND_INTENSITY;
-								break;
-							}
-							if (conTextAtt)
-								SetConsoleTextAttribute(hConsole, conTextAtt);
-						}
-						
-					}
+					
 #endif
 
 					std::wcout << ( msg );
@@ -222,35 +195,25 @@ namespace Apoc3D
 
 				if (Type != LOG_Game)
 				{
-					result.append(L" [");
+					result += L" [";
 					switch (Type)
 					{
-						case LOG_System:
-							result.append(L"SYS");
-							break;
-						case LOG_Graphics:
-							result.append(L"GRP");
-							break;
-						case LOG_Audio:
-							result.append(L"AUD");
-							break;
-						case LOG_Scene:
-							result.append(L"SCE");
-							break;
-						case LOG_Network:
-							result.append(L"NET");
-							break;
+					case LOG_System:	result += L"SYS"; break;
+					case LOG_Graphics:	result += L"GRP"; break;
+					case LOG_Audio:		result += L"AUD"; break;
+					case LOG_Scene:		result += L"SCE"; break;
+					case LOG_Network:	result += L"NET"; break;
 					}
-					result.append(L"] ");
+					result += L"] ";
 				}
 				else
 				{
-					result.append(L" ");
+					result += L" ";
 				}
 			}
 			else if (Type != LOG_CommandResponse)
 			{
-				result.append(L" >");
+				result += L" >";
 			}
 			
 
@@ -258,18 +221,10 @@ namespace Apoc3D
 			{
 				switch (Level)
 				{
-				case LOGLVL_Error:
-					result.append(L"[Err] ");
-					break;
-				case LOGLVL_Warning:
-					result.append(L"[Warn] ");
-					break;
-				case LOGLVL_Fatal:
-					result.append(L"[Critical] ");
-					break;
-				case LOGLVL_Infomation:
-					result.append(L" ");
-					break;
+				case LOGLVL_Error:		result += L"[Err] "; break;
+				case LOGLVL_Warning:	result += L"[Warn] "; break;
+				case LOGLVL_Fatal:		result += L"[Critical] "; break;
+				case LOGLVL_Infomation:	result += L" "; break;
 				}
 			}
 
