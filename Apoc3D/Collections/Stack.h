@@ -252,7 +252,7 @@ namespace Apoc3D
 
 			void Push(const T& item)
 			{
-				assert(m_count < m_length);
+				assert(m_count < N);
 				Utils::DoPutNew(item, m_count++, (T*)m_storage);
 			}
 

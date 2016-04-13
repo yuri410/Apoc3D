@@ -316,10 +316,10 @@ namespace Apoc3D
 		};
 
 		template <typename T, typename S, typename ComparerType = Apoc3D::Collections::EqualityComparer<T>>
-		class HashMap : public HashMapCore<T, Utils::HashMapEntryPair<T,S>, ComparerType>
+		class HashMap : public HashMapCore<T, Utils::HashMapEntry<T,S>, ComparerType>
 		{
 			typedef HashMap<T, S, ComparerType> HashMapType;
-			typedef Utils::HashMapEntryPair<T, S> Entry;
+			typedef Utils::HashMapEntry<T, S> Entry;
 		public:
 			class IteratorBase
 			{
@@ -568,10 +568,10 @@ namespace Apoc3D
 		};
 
 		template <typename T, typename ComparerType = Apoc3D::Collections::EqualityComparer<T>>
-		class HashSet : public HashMapCore < T, Utils::HashMapEntry<T>, ComparerType >
+		class HashSet : public HashMapCore < T, Utils::HashSetEntry<T>, ComparerType >
 		{
 			typedef HashSet<T, ComparerType> HashSetType;			
-			typedef Utils::HashMapEntry<T> Entry;
+			typedef Utils::HashSetEntry<T> Entry;
 
 		public:
 		

@@ -25,6 +25,9 @@
 #include "apoc3d/Library/lz4.h"
 #include "apoc3d/Library/lz4hc.h"
 #include "apoc3d/Library/tinyxml.h"
+#include "apoc3d/Collections/LinkedList.h"
+#include "apoc3d/Collections/Stack.h"
+#include "apoc3d/Collections/Queue.h"
 #include "apoc3d/Vfs/File.h"
 #include "apoc3d/Vfs/FileSystem.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
@@ -65,10 +68,9 @@ void main()
 	//std::wcout << s.c_str() << L"\n";
 	//std::wcout << std::numeric_limits<float>::digits10+1 << L"\n";
 
+	//TestIterator2();
 
-	TestIterator2();
-
-	return;
+	//return;
 
 	FileSystem::Initialize();
 	wchar_t workingDir[260];

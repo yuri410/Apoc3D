@@ -312,7 +312,6 @@ namespace Apoc3D
 		namespace Utils
 		{
 			int APAPI GetHashTableSize(int min);
-			bool APAPI IsPrime(int candidate);
 
 			template <typename T>
 			struct _ToString
@@ -326,46 +325,46 @@ namespace Apoc3D
 			
 
 			template <typename A>
-			struct HashMapEntry final
+			struct HashSetEntry final
 			{
 				int32 hashCode = -1;
 				int32 next;
 
 				char dataStor[sizeof(A)];
 
-				HashMapEntry() { }
+				HashSetEntry() { }
 
-				HashMapEntry(const HashMapEntry& o)
+				HashSetEntry(const HashSetEntry& o)
 					: hashCode(o.hashCode), next(o.next)
 				{
 					if (hashCode != -1)
 						new (dataStor)A(o.getData());
 				}
-				HashMapEntry(HashMapEntry&& o)
+				HashSetEntry(HashSetEntry&& o)
 					: hashCode(o.hashCode), next(o.next)
 				{
 					if (hashCode != -1)
 						new (dataStor)A(std::move(o.getData()));
 				}
 
-				~HashMapEntry() { Clear(); } 
+				~HashSetEntry() { Clear(); } 
 
-				HashMapEntry& operator=(HashMapEntry&& o)
+				HashSetEntry& operator=(HashSetEntry&& o)
 				{
 					if (this != &o)
 					{
-						this->~HashMapEntry();
-						new (this)HashMapEntry(std::move(o));
+						this->~HashSetEntry();
+						new (this)HashSetEntry(std::move(o));
 					}
 					return *this;
 				}
 
-				HashMapEntry& operator=(const HashMapEntry& o)
+				HashSetEntry& operator=(const HashSetEntry& o)
 				{
 					if (this != &o)
 					{
-						this->~HashMapEntry();
-						new (this)HashMapEntry(o);
+						this->~HashSetEntry();
+						new (this)HashSetEntry(o);
 					}
 					return *this;
 				}
@@ -397,7 +396,7 @@ namespace Apoc3D
 			};
 
 			template <typename A, typename B>
-			struct HashMapEntryPair final
+			struct HashMapEntry final
 			{
 				int32 hashCode = -1;
 				int32 next;
@@ -405,8 +404,8 @@ namespace Apoc3D
 				char keyStor[sizeof(A)];
 				char valueStor[sizeof(B)];
 
-				HashMapEntryPair() { }
-				HashMapEntryPair(const HashMapEntryPair& o)
+				HashMapEntry() { }
+				HashMapEntry(const HashMapEntry& o)
 					: hashCode(o.hashCode), next(o.next)
 				{
 					if (hashCode != -1)
@@ -415,7 +414,7 @@ namespace Apoc3D
 						new (valueStor)B(o.getValue());
 					}
 				}
-				HashMapEntryPair(HashMapEntryPair&& o)
+				HashMapEntry(HashMapEntry&& o)
 					: hashCode(o.hashCode), next(o.next)
 				{
 					if (hashCode != -1)
@@ -425,24 +424,24 @@ namespace Apoc3D
 					}
 				}
 
-				~HashMapEntryPair() { Clear(); }
+				~HashMapEntry() { Clear(); }
 
-				HashMapEntryPair& operator=(HashMapEntryPair&& o)
+				HashMapEntry& operator=(HashMapEntry&& o)
 				{
 					if (this != &o)
 					{
-						this->~HashMapEntryPair();
-						new (this)HashMapEntryPair(std::move(o));
+						this->~HashMapEntry();
+						new (this)HashMapEntry(std::move(o));
 					}
 					return *this;
 				}
 
-				HashMapEntryPair& operator=(const HashMapEntryPair& o)
+				HashMapEntry& operator=(const HashMapEntry& o)
 				{
 					if (this != &o)
 					{
-						this->~HashMapEntryPair();
-						new (this)HashMapEntryPair(o);
+						this->~HashMapEntry();
+						new (this)HashMapEntry(o);
 					}
 					return *this;
 				}
