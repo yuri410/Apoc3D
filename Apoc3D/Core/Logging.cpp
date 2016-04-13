@@ -48,6 +48,8 @@ namespace Apoc3D
 
 		LogManager::LogManager()
 		{
+			m_lock = new tthread::mutex();
+
 			for (size_t i = 0; i < LOG_Count; i++)
 			{
 				m_logs[i] = new LogSet(static_cast<LogType>(i));
@@ -60,6 +62,9 @@ namespace Apoc3D
 				delete m_logs[i];
 				m_logs[i] = nullptr;
 			}
+
+			delete m_lock;
+			m_lock = nullptr;
 		}
 
 		void LogManager::Write(LogType type, const String& message, LogMessageLevel level)
@@ -69,6 +74,8 @@ namespace Apoc3D
 
 			if (ret)
 			{
+				m_lock->lock();
+
 				const LogEntry& lastest = *m_logs[(int32)type]->LastEntry();
 
 				eventNewLogWritten.Invoke(lastest);
@@ -88,6 +95,8 @@ namespace Apoc3D
 
 					std::wcout << ( msg );
 				}
+
+				m_lock->unlock();
 			}
 
 		}

@@ -114,6 +114,8 @@ namespace Apoc3D
 			NewLogWrittenHandler eventNewLogWritten;
 		private:
 			LogSet* m_logs[LOG_Count];
+
+			tthread::mutex* m_lock;
 		};
 
 		inline void ApocLog(LogType type, const String& message, LogMessageLevel level = LOGLVL_Infomation);
