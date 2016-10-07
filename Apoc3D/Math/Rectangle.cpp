@@ -66,6 +66,28 @@ namespace Apoc3D
 		Rectangle Rectangle::Intersect(const Rectangle& a, const Rectangle& b) { return IntersectRect(a, b); }
 		Rectangle Rectangle::Union(const Rectangle& a, const Rectangle& b) { return UnionRect(a, b); }
 
+
+		void Rectangle::SplitVert(int32 ypos, Rectangle& top, Rectangle& bottom)
+		{
+			top = *this;
+			top.Height = ypos;
+
+			bottom = *this;
+			bottom.Y = Y + ypos;
+			bottom.Height = Height - (ypos - Y);
+		}
+
+		void Rectangle::SplitHorizontal(int32 xpos, Rectangle& left, Rectangle& right)
+		{
+			left = *this;
+			left.X = X;
+			left.Width = xpos;
+
+			right = *this;
+			right.X = X + xpos;
+			right.Width = Width - (xpos - X);
+		}
+
 		void Rectangle::DivideTo9Regions(int32 left, int32 right, int32 top, int32 bottom, Rectangle(&result)[9]) const
 		{
 			UI::ControlBounds bounds(left, right, top, bottom);
