@@ -33,7 +33,7 @@ namespace Apoc3D
 	namespace Core
 	{
 		/** Contains the current timing state of the game. */
-		struct GameTime
+		struct APAPI GameTime
 		{
 			GameTime();
 			GameTime(float elapsedRTime, float fps);

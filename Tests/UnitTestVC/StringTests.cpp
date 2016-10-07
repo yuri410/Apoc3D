@@ -1,5 +1,5 @@
-
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+#include "TestCommon.h"
+#include "Apoc3D/ApocString.h"
 
 namespace UnitTestVC
 {
@@ -460,5 +460,16 @@ namespace UnitTestVC
 			Assert::AreEqual(2.0f, resultArr[1], 0.0001f);
 			Assert::AreEqual(90.0f, resultArr[2], 0.0001f);
 		}
+	};
+
+	TEST_CLASS(StringTest)
+	{
+		MemoryService mem;
+
+	public:
+		using Str = StringBase<char>;
+
+	private:
+
 	};
 }

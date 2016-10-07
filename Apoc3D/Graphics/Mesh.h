@@ -74,6 +74,9 @@ namespace Apoc3D
 			Mesh(RenderDevice* device, const MeshData* data);
 			~Mesh();
 
+			Mesh(const Mesh&) = delete;
+			Mesh& operator=(const Mesh&) = delete;
+
 			/** Copies the indices to a given buffer. */
 			void GetIndices(uint* dest) const;
 

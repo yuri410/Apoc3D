@@ -452,13 +452,6 @@ namespace Apoc3D
 
 			}
 
-			template <typename T>
-			void AutomaticEffect::SetParameterValue(int index, const T* value, int count)
-			{
-				ResolvedEffectParameter& param = m_parameters[index];
-				param.RS_TargetShader->SetValue(param.RegisterIndex, value, count);
-			}
-
 			void AutomaticEffect::SetParameterValue(int index, const Vector2* value, int count)
 			{
 				ResolvedEffectParameter& param = m_parameters[index];

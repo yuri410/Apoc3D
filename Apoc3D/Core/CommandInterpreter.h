@@ -40,7 +40,7 @@ namespace Apoc3D
 		typedef const Apoc3D::Collections::List<String>& CommandArgsConstRef;
 		typedef fastdelegate::FastDelegate<void(CommandArgsConstRef)> CommandHandler;
 
-		struct CommandDescription
+		struct APAPI CommandDescription
 		{
 			String Name;
 			String Description;
