@@ -158,5 +158,10 @@ namespace Apoc3D
 
 			Encoding::WriteAllText(strm, resultBuffer, Encoding::TEC_UTF8);
 		}
+
+		List<String> IniConfigurationFormat::GetSupportedFileSystemExtensions()
+		{
+			return{ L"ini" };
+		}
 	}
 }

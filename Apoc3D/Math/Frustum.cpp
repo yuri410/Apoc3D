@@ -124,5 +124,17 @@ namespace Apoc3D
             m_planes[FPL_Near].NormalizeInPlace();
 		}
 
+		bool Frustum::Intersects(const BoundingSphere& sp) const
+		{
+			for (int i = 0; i < ClipPlaneCount; i++)
+			{
+				float d = m_planes[i].Dot3(sp.Center);
+				if (d <= -sp.Radius)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
 	};
 };

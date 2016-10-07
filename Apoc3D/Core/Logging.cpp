@@ -42,6 +42,15 @@ namespace Apoc3D
 {
 	namespace Core
 	{
+		LogEntry::LogEntry(uint64 serIdx, time_t time, const String& content, LogMessageLevel level, LogType type)
+			: SerialIndex(serIdx), Time(time), Level(level), Content(content), Type(type)
+		{
+		}
+
+		/************************************************************************/
+		/*   LogManager                                                         */
+		/************************************************************************/
+
 		SINGLETON_IMPL(LogManager);
 
 		static uint64 LogItemSerialCounter = 1;

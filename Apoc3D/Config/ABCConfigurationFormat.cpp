@@ -82,6 +82,11 @@ namespace Apoc3D
 			});
 		}
 
+		List<String> ABCConfigurationFormat::GetSupportedFileSystemExtensions()
+		{
+			return{ L"abc" };
+		}
+
 		void ABCConfigurationFormat::SaveNode(ConfigurationSection* section, BinaryWriter* bw)
 		{
 			// 2 tagged to one

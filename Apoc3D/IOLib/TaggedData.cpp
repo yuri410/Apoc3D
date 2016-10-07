@@ -243,6 +243,114 @@ namespace Apoc3D
 		}
 
 
+		void TaggedDataReader::GetAuto(const KeyType& name, int64& value)	{ value = GetInt64(name); }
+		void TaggedDataReader::GetAuto(const KeyType& name, int32& value)	{ value = GetInt32(name); }
+		void TaggedDataReader::GetAuto(const KeyType& name, int16& value)	{ value = GetInt16(name); }
+		void TaggedDataReader::GetAuto(const KeyType& name, uint64& value)	{ value = GetUInt64(name); }
+		void TaggedDataReader::GetAuto(const KeyType& name, uint32& value)	{ value = GetUInt32(name); }
+		void TaggedDataReader::GetAuto(const KeyType& name, uint16& value)	{ value = GetUInt16(name); }
+		void TaggedDataReader::GetAuto(const KeyType& name, float& value)	{ value = GetSingle(name); }
+		void TaggedDataReader::GetAuto(const KeyType& name, double& value)	{ value = GetDouble(name); }
+		void TaggedDataReader::GetAuto(const KeyType& name, bool& value)	{ value = GetBool(name); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Vector2& vec)	{ GetVector2(name, vec); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Vector3& vec)	{ GetVector3(name, vec); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Vector4& vec)	{ GetVector4(name, vec); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Matrix& mat)	{ GetMatrix(name, mat); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Quaternion& quad)	{ GetQuaternion(name, quad); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Color4& clr)		{ GetColor4(name, clr); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Plane& plane)		{ GetPlane(name, plane); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Apoc3D::Math::Rectangle& rect)	{ GetRectangle(name, rect); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Apoc3D::Math::RectangleF& rect)	{ GetRectangleF(name, rect); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Point& pt)				{ GetPoint(name, pt); }
+		void TaggedDataReader::GetAuto(const KeyType& name, PointF& pt)				{ GetPointF(name, pt); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Apoc3D::Math::Size& sz)	{ GetMathSize(name, sz); }
+		void TaggedDataReader::GetAuto(const KeyType& name, BoundingBox& bb)		{ GetBoundingBox(name, bb); }
+		void TaggedDataReader::GetAuto(const KeyType& name, BoundingSphere& bs)		{ GetBoundingSphere(name, bs); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Ray& r)					{ GetRay(name, r); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Viewport& vp)			{ GetViewport(name, vp); }
+		void TaggedDataReader::GetAuto(const KeyType& name, String& str)			{ GetString(name, str); }
+
+		void TaggedDataReader::GetAuto(const KeyType& name, int64* value, int32 count)	{ GetInt64(name, value, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, int32* value, int32 count)	{ GetInt32(name, value, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, int16* value, int32 count)	{ GetInt16(name, value, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, uint64* value, int32 count)	{ GetUInt64(name, value, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, uint32* value, int32 count)	{ GetUInt32(name, value, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, uint16* value, int32 count)	{ GetUInt16(name, value, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, float* value, int32 count)	{ GetSingle(name, value, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, double* value, int32 count)	{ GetDouble(name, value, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, bool* value, int32 count)	{ GetBool(name, value, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Vector2* vec, int32 count)	{ GetVector2(name, vec, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Vector3* vec, int32 count)	{ GetVector3(name, vec, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Vector4* vec, int32 count)	{ GetVector4(name, vec, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Matrix* mat, int32 count)	{ GetMatrix(name, mat, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Quaternion* quad, int32 count)	{ GetQuaternion(name, quad, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Color4* clr, int32 count)		{ GetColor4(name, clr, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Plane* plane, int32 count)		{ GetPlane(name, plane, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Apoc3D::Math::Rectangle* rect, int32 count)	{ GetRectangle(name, rect, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, RectangleF* rect, int32 count)				{ GetRectangleF(name, rect, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Point* pt, int32 count)						{ GetPoint(name, pt, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, PointF* pt, int32 count)					{ GetPointF(name, pt, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Apoc3D::Math::Size* sz, int32 count)		{ GetMathSize(name, sz, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, BoundingBox* bb, int32 count)				{ GetBoundingBox(name, bb, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, BoundingSphere* bs, int32 count)			{ GetBoundingSphere(name, bs, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Ray* r, int32 count)						{ GetRay(name, r, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, Viewport* vp, int32 count)					{ GetViewport(name, vp, count); }
+		void TaggedDataReader::GetAuto(const KeyType& name, String* str, int32 count)					{ GetString(name, str, count); }
+
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, int64& value)	{ return TryGetInt64(name, value); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, int32& value)	{ return TryGetInt32(name, value); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, int16& value)	{ return TryGetInt16(name, value); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, uint64& value)	{ return TryGetUInt64(name, value); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, uint32& value)	{ return TryGetUInt32(name, value); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, uint16& value)	{ return TryGetUInt16(name, value); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, float& value)	{ return TryGetSingle(name, value); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, double& value)	{ return TryGetDouble(name, value); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, bool& value)		{ return TryGetBool(name, value); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Vector2& vec)	{ return TryGetVector2(name, vec); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Vector3& vec)	{ return TryGetVector3(name, vec); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Vector4& vec)	{ return TryGetVector4(name, vec); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Matrix& mat)		{ return TryGetMatrix(name, mat); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Quaternion& quad)				{ return TryGetQuaternion(name, quad); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Color4& clr)						{ return TryGetColor4(name, clr); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Plane& plane)					{ return TryGetPlane(name, plane); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Apoc3D::Math::Rectangle& rect)	{ return TryGetRectangle(name, rect); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, RectangleF& rect)				{ return TryGetRectangleF(name, rect); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Point& pt)						{ return TryGetPoint(name, pt); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, PointF& pt)						{ return TryGetPointF(name, pt); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Apoc3D::Math::Size& sz)			{ return TryGetSize(name, sz); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, BoundingBox& bb)					{ return TryGetBoundingBox(name, bb); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, BoundingSphere& bs)				{ return TryGetBoundingSphere(name, bs); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Ray& r)							{ return TryGetRay(name, r); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Viewport& vp)					{ return TryGetViewport(name, vp); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, String& str)						{ return TryGetString(name, str); }
+
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, int64* value, int32 count)		{ return TryGetInt64(name, value, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, int32* value, int32 count)		{ return TryGetInt32(name, value, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, int16* value, int32 count)		{ return TryGetInt16(name, value, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, uint64* value, int32 count)		{ return TryGetUInt64(name, value, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, uint32* value, int32 count)		{ return TryGetUInt32(name, value, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, uint16* value, int32 count)		{ return TryGetUInt16(name, value, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, float* value, int32 count)		{ return TryGetSingle(name, value, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, double* value, int32 count)		{ return TryGetDouble(name, value, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, bool* value, int32 count)		{ return TryGetBool(name, value, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Vector2* vec, int32 count)		{ return TryGetVector2(name, vec, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Vector3* vec, int32 count)		{ return TryGetVector3(name, vec, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Vector4* vec, int32 count)		{ return TryGetVector4(name, vec, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Matrix* mat, int32 count)		{ return TryGetMatrix(name, mat, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Quaternion* quad, int32 count)	{ return TryGetQuaternion(name, quad, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Color4* clr, int32 count)		{ return TryGetColor4(name, clr, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Plane* plane, int32 count)		{ return TryGetPlane(name, plane, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Apoc3D::Math::Rectangle* rect, int32 count) { return TryGetRectangle(name, rect, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, RectangleF* rect, int32 count)		{ return TryGetRectangleF(name, rect, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Point* pt, int32 count)				{ return TryGetPoint(name, pt, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, PointF* pt, int32 count)				{ return TryGetPointF(name, pt, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Apoc3D::Math::Size* sz, int32 count)	{ return TryGetSize(name, sz, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, BoundingBox* bb, int32 count)		{ return TryGetBoundingBox(name, bb, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, BoundingSphere* bs, int32 count)		{ return TryGetBoundingSphere(name, bs, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Ray* r, int32 count)					{ return TryGetRay(name, r, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, Viewport* vp, int32 count)			{ return TryGetViewport(name, vp, count); }
+		bool TaggedDataReader::TryGetAuto(const KeyType& name, String* str, int32 count)			{ return TryGetString(name, str, count); }
+
 #define TDR_GETDATA(name, value, getter) const Entry* ent = FindEntry(name); assert(ent); getter(ent, value);
 #define TDR_GETDATA_ARR(name, value, count, getter) const Entry* ent = FindEntry(name); assert(ent); getter(ent, value, count);
 
@@ -1762,6 +1870,61 @@ namespace Apoc3D
 			return new BinaryWriter(new VirtualStream(ent->Buffer, 0), true);
 		}
 
+
+		void TaggedDataWriter::AddAuto(const KeyType& name, int64 value)	{ AddInt64(name, value); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, int32 value)	{ AddInt32(name, value); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, int16 value)	{ AddInt16(name, value); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, uint64 value)	{ AddUInt64(name, value); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, uint32 value)	{ AddUInt32(name, value); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, uint16 value)	{ AddUInt16(name, value); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, float value)	{ AddSingle(name, value); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, double value)	{ AddDouble(name, value); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, bool value)		{ AddBool(name, value); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Vector2& vec)	{ AddVector2(name, vec); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Vector3& vec)	{ AddVector3(name, vec); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Vector4& vec)	{ AddVector4(name, vec); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Matrix& mat)	{ AddMatrix(name, mat); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Color4& clr)	{ AddColor4(name, clr); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Plane& plane)	{ AddPlane(name, plane); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Quaternion& quad)					{ AddQuaternion(name, quad); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const String& str)						{ AddString(name, str); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Apoc3D::Math::Rectangle& rect)	{ AddRectangle(name, rect); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const RectangleF& rect)					{ AddRectangleF(name, rect); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Point& pt)						{ AddPoint(name, pt); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const PointF& pt)						{ AddPointF(name, pt); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Apoc3D::Math::Size& sz)			{ AddMathSize(name, sz); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const BoundingBox& bb)					{ AddBoundingBox(name, bb); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const BoundingSphere& bs)				{ AddBoundingSphere(name, bs); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Ray& r)							{ AddRay(name, r); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Viewport& vp)						{ AddViewport(name, vp); }
+
+		void TaggedDataWriter::AddAuto(const KeyType& name, const int64* value, int32 count)		{ AddInt64(name, value, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const int32* value, int32 count)		{ AddInt32(name, value, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const int16* value, int32 count)		{ AddInt16(name, value, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const uint64* value, int32 count)		{ AddUInt64(name, value, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const uint32* value, int32 count)		{ AddUInt32(name, value, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const uint16* value, int32 count)		{ AddUInt16(name, value, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const float* value, int32 count)		{ AddSingle(name, value, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const double* value, int32 count)		{ AddDouble(name, value, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const bool* value, int32 count)			{ AddBool(name, value, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Vector2* vec, int32 count)		{ AddVector2(name, vec, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Vector3* vec, int32 count)		{ AddVector3(name, vec, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Vector4* vec, int32 count)		{ AddVector4(name, vec, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Matrix* mat, int32 count)			{ AddMatrix(name, mat, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Color4* clr, int32 count)			{ AddColor4(name, clr, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Plane* plane, int32 count)		{ AddPlane(name, plane, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Quaternion* quad, int32 count)	{ AddQuaternion(name, quad, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const String* str, int32 count)			{ AddString(name, str, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Apoc3D::Math::Rectangle* rect, int32 count)	{ AddRectangle(name, rect, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const RectangleF* rect, int32 count)				{ AddRectangleF(name, rect, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Point* pt, int32 count)						{ AddPoint(name, pt, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const PointF* pt, int32 count)						{ AddPointF(name, pt, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Apoc3D::Math::Size* sz, int32 count)			{ AddMathSize(name, sz, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const BoundingBox* bb, int32 count)					{ AddBoundingBox(name, bb, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const BoundingSphere* bs, int32 count)				{ AddBoundingSphere(name, bs, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Ray* r, int32 count)							{ AddRay(name, r, count); }
+		void TaggedDataWriter::AddAuto(const KeyType& name, const Viewport* vp, int32 count)					{ AddViewport(name, vp, count); }
+
 #define TAGW_NEW_ENTRY(name, value, setvalue) Entry ent = Entry(name); m_positions.Add(name, ent); setvalue(ent, value);
 #define TAGW_NEW_ENTRY_ARR(name, value, count, setvalue) Entry ent = Entry(name); m_positions.Add(name, ent); setvalue(ent, value, count);
 
@@ -1771,7 +1934,7 @@ namespace Apoc3D
 		void TaggedDataWriter::AddUInt64(const KeyType& name, uint64 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataUInt64); }
 		void TaggedDataWriter::AddUInt32(const KeyType& name, uint32 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataUInt32); }
 		void TaggedDataWriter::AddUInt16(const KeyType& name, uint16 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataUInt16); }
-		void TaggedDataWriter::AddSingle(const KeyType& name, float value)		{ TAGW_NEW_ENTRY(name, value, _SetEntryDataSingle); }
+		void TaggedDataWriter::AddSingle(const KeyType& name, float value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataSingle); }
 		void TaggedDataWriter::AddDouble(const KeyType& name, double value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataDouble); }
 		void TaggedDataWriter::AddBool(const KeyType& name, bool value)		{ TAGW_NEW_ENTRY(name, value, _SetEntryDataBool); }
 
@@ -1797,12 +1960,12 @@ namespace Apoc3D
 		void TaggedDataWriter::AddInt64(const KeyType& name, const int64* value, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataInt64); }
 		void TaggedDataWriter::AddInt32(const KeyType& name, const int32* value, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataInt32); }
 		void TaggedDataWriter::AddInt16(const KeyType& name, const int16* value, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataInt16); }
-		void TaggedDataWriter::AddUInt64(const KeyType& name, const uint64* value, int32 count){ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataUInt64); }
-		void TaggedDataWriter::AddUInt32(const KeyType& name, const uint32* value, int32 count){ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataUInt32); }
-		void TaggedDataWriter::AddUInt16(const KeyType& name, const uint16* value, int32 count){ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataUInt16); }
+		void TaggedDataWriter::AddUInt64(const KeyType& name, const uint64* value, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataUInt64); }
+		void TaggedDataWriter::AddUInt32(const KeyType& name, const uint32* value, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataUInt32); }
+		void TaggedDataWriter::AddUInt16(const KeyType& name, const uint16* value, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataUInt16); }
 		void TaggedDataWriter::AddSingle(const KeyType& name, const float* value, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataSingle); }
-		void TaggedDataWriter::AddDouble(const KeyType& name, const double* value, int32 count){ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataDouble); }
-		void TaggedDataWriter::AddBool(const KeyType& name, const bool* value, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataBool); }
+		void TaggedDataWriter::AddDouble(const KeyType& name, const double* value, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataDouble); }
+		void TaggedDataWriter::AddBool(const KeyType& name, const bool* value, int32 count)		{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataBool); }
 
 		void TaggedDataWriter::AddVector2(const KeyType& name, const Vector2* vec, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, vec, count, _SetEntryDataVector2); }
 		void TaggedDataWriter::AddVector3(const KeyType& name, const Vector3* vec, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, vec, count, _SetEntryDataVector3); }

@@ -30,11 +30,20 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
+		Camera::Camera()
+		{
+			m_view.LoadIdentity();
+			m_invView.LoadIdentity();
+			m_proj.LoadIdentity();
+			m_viewProj.LoadIdentity();
+		}
+
 		Camera::Camera(const Matrix& view, const Matrix& proj)
 			: m_view(view), m_proj(proj)
 		{
 			CalculateMatrices();
 		}
+
 		void Camera::CalculateMatrices()
 		{
 			Matrix::Inverse(m_invView, m_view);
@@ -176,6 +185,58 @@ namespace Apoc3D
 			}
 			
 			CalculateMatrices();
+		}
+
+		void FreeCamera::MoveForward()
+		{
+			Vector3 dir = m_invView.GetZ();
+			dir.NormalizeInPlace();
+			Move(dir);
+		}
+		void FreeCamera::MoveBackward()
+		{
+			Vector3 dir = -m_invView.GetZ();
+			dir.NormalizeInPlace();
+			Move(dir);
+		}
+		void FreeCamera::MoveLeft()
+		{
+			Vector3 dir = -m_invView.GetX();
+			dir.NormalizeInPlace();
+			Move(dir);
+		}
+		void FreeCamera::MoveRight()
+		{
+			Vector3 dir = m_invView.GetX();
+			dir.NormalizeInPlace();
+			Move(dir);
+		}
+		void FreeCamera::MoveUp()
+		{
+			Vector3 dir = m_invView.GetY();
+			dir.NormalizeInPlace();
+			Move(dir);
+		}
+		void FreeCamera::MoveDown()
+		{
+			Vector3 dir = -m_invView.GetY();
+			dir.NormalizeInPlace();
+			Move(dir);
+		}
+		void FreeCamera::Move(const Vector3 &dir)
+		{
+			m_velChange += dir;
+		}
+
+		void FreeCamera::Turn(float dx, float dy)
+		{
+			m_rotX += ToRadian(dx);
+			m_rotY += ToRadian(dy);
+
+			if (m_rotY < ToRadian(-89))
+				m_rotY = ToRadian(-89);
+			else if (m_rotY > ToRadian(89))
+				m_rotY = ToRadian(89);
 		}
 
 		/************************************************************************/

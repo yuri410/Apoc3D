@@ -21,6 +21,36 @@ namespace Apoc3D
 {
 	namespace Core
 	{
+		CommandDescription::CommandDescription() { }
+
+		CommandDescription::CommandDescription(const String& command, int paramCount, const CommandHandler& handler, const String& name, const String& description)
+			: Name(name), Description(description), CommandName(command), NumOfParameters(paramCount), Handler(handler)
+		{ }
+
+		CommandDescription::CommandDescription(const String& command, int paramCount, 
+			const CommandHandler& handler, const String& name, const String& description, std::initializer_list<CommandDescription> subCmds)
+			: CommandDescription(command, paramCount, handler, name, description)
+		{
+			for (const CommandDescription& cd : subCmds)
+			{
+				SubCommands.PushBack(cd);
+			}
+		}
+
+		CommandDescription::CommandDescription(const String& command, int paramCount, const CommandHandler& handler, const String& name)
+			: CommandDescription(command, paramCount, handler, name, L"") { }
+
+		CommandDescription::CommandDescription(const String& command, int paramCount, const CommandHandler& handler, const String& name, std::initializer_list<CommandDescription> subCmds)
+			: CommandDescription(command, paramCount, handler, name, L"", subCmds) { }
+
+		CommandDescription::CommandDescription(const String& command, int paramCount, const CommandHandler& handler)
+			: CommandDescription(command, paramCount, handler, command, L"") { }
+
+
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+
 		SINGLETON_IMPL(CommandInterpreter);
 
 		/************************************************************************/

@@ -222,5 +222,15 @@ namespace Apoc3D
 				*dest++ = vector;
 			}
 		}
+
+		bool Viewport::operator==(const Viewport &other) const
+		{
+			return other.X == X && other.Y == Y && other.Width == Width && other.Height == Height && other.MinZ == MinZ && other.MaxZ == MaxZ;
+		}
+		bool Viewport::operator!=(const Viewport &other) const
+		{
+			return !(*this == other); 
+		}
+
 	}
 }

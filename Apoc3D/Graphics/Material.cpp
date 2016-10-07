@@ -289,6 +289,12 @@ namespace Apoc3D
 			}
 			return nullptr;
 		}
+		Effect* Material::getPassEffect(int index) const 
+		{
+			if (index == -1) 
+				return GetFirstValidEffect(); 
+			return m_effects[index]; 
+		}
 
 		const String& Material::getTextureName(int index) const 
 		{

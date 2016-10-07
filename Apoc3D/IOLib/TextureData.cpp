@@ -51,7 +51,10 @@ namespace Apoc3D
 		const char Tag_Content[] = "Content";
 		const char Tag_LevelSize[] = "LevelSize";
 		
+		TextureLevelData::TextureLevelData()
+		{
 
+		}
 		TextureLevelData::~TextureLevelData()
 		{
 			delete[] ContentData;
@@ -206,6 +209,8 @@ namespace Apoc3D
 		const char Tag_Flags[] = "Flags";
 
 
+		TextureData::TextureData() { }
+		TextureData::~TextureData() { }
 
 		TextureData::TextureData(TextureData&& rhs)
 			: Type(rhs.Type), Levels(std::move(rhs.Levels)), Format(rhs.Format),

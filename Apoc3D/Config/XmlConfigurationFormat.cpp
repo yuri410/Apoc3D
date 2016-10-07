@@ -156,5 +156,9 @@ namespace Apoc3D
 			
 		}
 
+		List<String> XMLConfigurationFormat::GetSupportedFileSystemExtensions()
+		{
+			return{ L"xml" };
+		}
 	}
 }

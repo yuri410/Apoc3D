@@ -78,7 +78,32 @@ namespace Apoc3D
 
 		const char TAG_3_UsePointSprite[] = "UsePointSprite";
 
-		
+
+		MaterialData::MaterialData() { }
+		MaterialData::~MaterialData() { }
+
+		void MaterialData::SetDefaults()
+		{
+			DepthTestEnabled = DepthWriteEnabled = true;
+			Cull = CULL_CounterClockwise;
+			IsBlendTransparent = false;
+			BlendFunction = BlendFunction::Add;
+			SourceBlend = Blend::One;
+			DestinationBlend = Blend::Zero;
+			Priority = DefaultMaterialPriority;
+			PassFlags = 1;
+			UsePointSprite = false;
+
+			AlphaReference = 0;
+			AlphaTestEnabled = false;
+
+			Ambient = Color4(0, 0, 0, 0);
+			Diffuse = Color4(1.f, 1.f, 1.f, 1.f);
+			Emissive = Color4(0, 0, 0, 0);
+			Specular = Color4(0, 0, 0, 0);
+			Power = 0;
+		}
+
 		void MaterialData::AddCustomParameter(const MaterialCustomParameter& value)
 		{
 			if (value.Usage.empty())

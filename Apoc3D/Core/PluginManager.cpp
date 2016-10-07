@@ -42,10 +42,10 @@ namespace Apoc3D
 		SINGLETON_IMPL(PluginManager);
 
 		typedef Plugin* (*LIB_GET_PLUGIN)(void);
-		//void PluginManager::Initialize()
-		//{
-		//	
-		//}
+		
+
+		PluginManager::PluginManager() { }
+
 		PluginManager::~PluginManager()
 		{
 			UnloadPlugins();

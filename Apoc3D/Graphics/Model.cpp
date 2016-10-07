@@ -179,6 +179,16 @@ namespace Apoc3D
 			}
 		}
 
+		RenderOperationBuffer* Model::GetRenderOperationSimple()
+		{
+			if (!m_isOpBufferBuilt)
+			{
+				BuildROPBuffer();
+				m_isOpBufferBuilt = true;
+			}
+
+			return &m_opBuffer;
+		}
 		RenderOperationBuffer* Model::GetRenderOperation(int lod)
 		{
 			ModelSharedData* data = m_data->ObtainLoaded();
@@ -550,6 +560,21 @@ namespace Apoc3D
 			}
 		}
 
+		void Model::RigidAnim_Competed()
+		{
+			m_rigidAnimCompleted = true;
+			m_eventAnimCompleted.Invoke(ANIMTYPE_Rigid);
+		}
+		void Model::SkinAnim_Completed()
+		{
+			m_skinAnimCompleted = true;
+			m_eventAnimCompleted.Invoke(ANIMTYPE_Skinned);
+		}
+		void Model::MtrlAnim_Completed()
+		{
+			m_mtrlAnimCompleted = true;
+			m_eventAnimCompleted.Invoke(ANIMTYPE_Material);
+		}
 		
 		void Model::ReloadAnimation(AnimationType type)
 		{

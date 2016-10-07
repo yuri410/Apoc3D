@@ -8,6 +8,20 @@ namespace Apoc3D
 {
 	namespace Core
 	{
+		GameTime::GameTime() { }
+		GameTime::~GameTime() { }
+
+		GameTime::GameTime(float elapsedRTime, float fps)
+			: ElapsedTime(elapsedRTime), ElapsedRealTime(elapsedRTime), FPS(fps) 
+		{ }
+
+		GameTime::GameTime(float elapsedTime, float elapsedRTime, float elapsedTimeSubstep, int32 iteractionCount, float fps, bool isRenderingSlow)
+			: ElapsedTime(elapsedTime), ElapsedTimeSubstep(elapsedTimeSubstep),
+			ElapsedRealTime(elapsedRTime), IterationCount(iteractionCount),
+			FPS(fps), IsRenderingSlow(isRenderingSlow) 
+		{ }
+
+
 		void GameTime::Write(BinaryWriter* bw)
 		{
 			bw->WriteSingle(ElapsedTime);

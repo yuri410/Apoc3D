@@ -345,6 +345,50 @@ namespace Apoc3D
 		/*  VirtualStream                                                       */
 		/************************************************************************/
 
+		VirtualStream::VirtualStream(Stream* strm)
+			: m_baseStream(strm), m_isOutput(true), m_length(strm->getLength())
+		{
+			strm->setPosition(0);
+		}
+
+		VirtualStream::VirtualStream(Stream* strm, int64 baseOffset)
+			: m_baseStream(strm), m_isOutput(true), m_baseOffset(baseOffset)
+		{
+			strm->setPosition(baseOffset);
+		}
+
+		VirtualStream::VirtualStream(Stream* strm, int64 baseOffset, int64 length)
+			: VirtualStream(strm, baseOffset, length, false) { }
+
+		VirtualStream::VirtualStream(Stream* strm, int64 baseOffset, int64 length, bool releaseStream)
+			: m_baseStream(strm), m_length(length), m_baseOffset(baseOffset), m_releaseStream(releaseStream)
+		{
+			strm->setPosition(baseOffset);
+		}
+
+		VirtualStream::~VirtualStream()
+		{
+			if (m_releaseStream)
+				DELETE_AND_NULL(m_baseStream);
+		}
+
+		VirtualStream::VirtualStream(VirtualStream&& other)
+			: m_baseStream(other.m_baseStream), m_length(other.m_length), m_baseOffset(other.m_baseOffset),
+			m_isOutput(other.m_isOutput), m_releaseStream(other.m_releaseStream)
+		{
+			other.m_releaseStream = false;
+			other.m_baseStream = 0;
+		}
+
+		VirtualStream& VirtualStream::operator=(VirtualStream&& other)
+		{
+			if (this != &other)
+			{
+				this->~VirtualStream();
+				new (this)VirtualStream(std::move(other));
+			}
+			return *this;
+		}
 		int64 VirtualStream::getLength() const
 		{
 			return m_isOutput ? m_baseStream->getLength() : m_length;

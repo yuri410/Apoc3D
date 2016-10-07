@@ -362,6 +362,7 @@
     <ClCompile Include="Graphics\ModelManager.cpp" />
     <ClCompile Include="Graphics\ParticleSystem.cpp" />
     <ClCompile Include="Graphics\Patch.cpp" />
+    <ClCompile Include="Graphics\RenderOperation.cpp" />
     <ClCompile Include="Graphics\RenderOperationBuffer.cpp" />
     <ClCompile Include="Graphics\RenderSystem\DeviceContext.cpp" />
     <ClCompile Include="Graphics\RenderSystem\InstancingData.cpp" />

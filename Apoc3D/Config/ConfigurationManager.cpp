@@ -89,6 +89,13 @@ namespace Apoc3D
 			}
 			throw AP_EXCEPTION(ExceptID::Argument, L"Either a FileLocation or a ConfigurationFormat is required.");
 		}
+		
+		Configuration* ConfigurationManager::getConfiguration(const String& name) const
+		{
+			Configuration* result = nullptr;
+			m_configs.TryGetValue(name, result);
+			return result;
+		}
 
 		void ConfigurationManager::RegisterFormat(ConfigurationFormat* fmt)
 		{

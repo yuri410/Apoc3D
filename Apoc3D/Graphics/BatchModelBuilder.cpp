@@ -280,9 +280,26 @@ namespace Apoc3D
 			return mdlData;
 		}
 
+		BatchModelBuilder::BatchModelBuilder() 
+		{
+
+		}
+
 		BatchModelBuilder::~BatchModelBuilder()
 		{
 
 		}
+
+		void BatchModelBuilder::AddEntry(int source, const Matrix& transform)
+		{
+			Entry ent = { source, transform };
+			m_entires.Add(ent);
+		}
+
+		void BatchModelBuilder::AddSource(const FileLocation& fl)
+		{
+			m_modelTable.Add(fl);
+		}
+
 	}
 }

@@ -490,6 +490,13 @@ namespace Apoc3D
 		void ConfigurationSection::SetInts(const int32* v, int32 count)					{ IntsToString(v, count, m_value); }
 		void ConfigurationSection::SetUInts(const uint32* v, int32 count)				{ UIntsToString(v, count, m_value); }
 		void ConfigurationSection::SetVector3s(const Vector3* v, int count)				{ Vector3sToString(v, count, m_value); }
+		
+		void ConfigurationSection::SetStrings(const List<String>& v)					{ SetStrings(&v[0], v.getCount()); }
+		void ConfigurationSection::SetSingles(const List<float>& v)						{ SetSingles(&v[0],  v.getCount()); }
+		void ConfigurationSection::SetPercentages(const List<float>& v)					{ SetPercentages(&v[0],  v.getCount()); }
+		void ConfigurationSection::SetInts(const List<int32>& v)						{ SetInts(&v[0],  v.getCount()); }
+		void ConfigurationSection::SetUInts(const List<uint32>& v)						{ SetUInts(&v[0],  v.getCount()); }
+
 
 		void ConfigurationSection::Merge(const ConfigurationSection* thatSect, bool noMessages)
 		{

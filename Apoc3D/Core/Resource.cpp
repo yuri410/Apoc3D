@@ -215,6 +215,13 @@ namespace Apoc3D
 			}
 		}
 
+		int Resource::GetGeneration() const
+		{
+			if (m_generation)
+				return m_generation->Generation;
+			return -1;
+		}
+
 		bool Resource::IsUnloadable()
 		{
 			if (m_lock)
