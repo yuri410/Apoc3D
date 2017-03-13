@@ -463,6 +463,87 @@ namespace APBuild
 		}
 	}
 
+	void RenderGlyphsByFreeType(FT_Library& library, FT_Face& face, int ch, float fontSize, bool antiAlias,
+		List<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable)
+	{
+		//Load the Glyph for our character.
+		if (FT_Load_Glyph(face, FT_Get_Char_Index(face, (FT_ULong)ch), FT_LOAD_DEFAULT))
+			throw std::runtime_error("FT_Load_Glyph failed");
+
+		//Move the face's glyph into a Glyph object.
+		FT_Glyph glyph;
+		if (FT_Get_Glyph(face->glyph, &glyph))
+			throw std::runtime_error("FT_Get_Glyph failed");
+
+		//Convert the glyph to a bitmap.
+		if (antiAlias)
+			FT_Glyph_To_Bitmap(&glyph, FT_RENDER_MODE_NORMAL, nullptr, 1);
+		else
+			FT_Glyph_To_Bitmap(&glyph, FT_RENDER_MODE_MONO, nullptr, 1);
+
+		FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph)glyph;
+
+		FT_Bitmap tempbitmap;
+		if (!antiAlias)
+		{
+			FT_Bitmap_New(&tempbitmap);
+			FT_Error ret = FT_Bitmap_Convert(library, &bitmap_glyph->bitmap, &tempbitmap, 1);
+			assert(ret == 0);
+		}
+
+		FT_Bitmap& readSource = antiAlias ? bitmap_glyph->bitmap : tempbitmap;
+
+		int height = readSource.rows;
+		int width = readSource.width;
+
+		char* buffer = new char[width * height];
+		memset(buffer, 0, width*height);
+
+
+		//assert(sy>=0);
+
+		int srcofs = 0;
+		int dstofs = 0;
+		for (int k = 0; k < readSource.rows; k++)
+		{
+			for (int j = 0; j < readSource.width; j++)
+			{
+				if (antiAlias)
+					buffer[dstofs + j] = readSource.buffer[srcofs + j];
+				else
+					buffer[dstofs + j] = readSource.buffer[srcofs + j] ? 0xff : 0;
+			}
+
+			srcofs += readSource.width;
+			dstofs += width;
+		}
+
+		if (!antiAlias)
+		{
+			FT_Bitmap_Done(library, &tempbitmap);
+		}
+
+		// check duplicated glyphs using hash table
+		// use the previous glyph if a same one already exists
+		GlyphBitmap result;
+		GlyphBitmap glyphMap(width, height, buffer, false);
+		if (!glyphHashTable.TryGetValue(glyphMap, result))
+		{
+			glyphMap.Index = glyphHashTable.getCount();// index++;
+			glyphHashTable.Add(glyphMap, glyphMap);
+		}
+		else
+		{
+			glyphMap = result;
+			delete[] buffer;
+		}
+
+		{
+			CharMapping m = { (wchar_t)ch, glyphMap.Index, (short)bitmap_glyph->left, (short)(fontSize - bitmap_glyph->top), (face->glyph->advance.x / 64.0f) };
+			charMap.Add(m);
+		}
+	}
+
 	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, bool antiAlias,
 		List<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo)
 	{
@@ -483,7 +564,6 @@ namespace APBuild
 
 		FT_Select_Charmap(face, FT_ENCODING_UNICODE );
 
-
 		//For some twisted reason, Freetype measures font size
 		//in terms of 1/64ths of pixels.  Thus, to make a font
 		//h pixels high, we need to request a size of h*64.
@@ -497,88 +577,31 @@ namespace APBuild
 		float height = metrics.height / 64.f; //(metrics.height >> 6) / 100.0f;
 		float lineGap = height - ascender + descender;
 
-		for (int i=0;i<ranges.getCount();i++)
+		if (ranges.getCount())
 		{
-			for (int ch = ranges[i].MinChar; 
-				ch <= ranges[i].MaxChar; ch++)
+			for (const CharRange& cr : ranges)
 			{
-				//Load the Glyph for our character.
-				if(FT_Load_Glyph( face, FT_Get_Char_Index( face, (FT_ULong)ch ), FT_LOAD_DEFAULT ))
-					throw std::runtime_error("FT_Load_Glyph failed");
-
-				//Move the face's glyph into a Glyph object.
-				FT_Glyph glyph;
-				if(FT_Get_Glyph( face->glyph, &glyph ))
-					throw std::runtime_error("FT_Get_Glyph failed");
-
-				//Convert the glyph to a bitmap.
-				if (antiAlias)
-					FT_Glyph_To_Bitmap( &glyph, FT_RENDER_MODE_NORMAL, nullptr, 1 );
-				else
-					FT_Glyph_To_Bitmap( &glyph, FT_RENDER_MODE_MONO, nullptr, 1 );
-
-				FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph)glyph;
-
-				FT_Bitmap tempbitmap;
-				if (!antiAlias)
+				for (int ch = cr.MinChar; ch <= cr.MaxChar; ch++)
 				{
-					FT_Bitmap_New(&tempbitmap);
-					FT_Error ret = FT_Bitmap_Convert( library, &bitmap_glyph->bitmap, &tempbitmap, 1);
-					assert(ret == 0);
-				}
-
-				FT_Bitmap& readSource = antiAlias ? bitmap_glyph->bitmap : tempbitmap;
-
-				int height = readSource.rows;
-				int width = readSource.width;
-
-				char* buffer = new char[width * height];
-				memset(buffer, 0, width*height);
-
-
-				//assert(sy>=0);
-
-				int srcofs = 0;
-				int dstofs = 0;
-				for (int k=0;k<readSource.rows;k++)
-				{
-					for (int j=0;j<readSource.width;j++)
-					{
-						if (antiAlias)
-							buffer[dstofs+j] = readSource.buffer[srcofs + j];
-						else
-							buffer[dstofs+j] = readSource.buffer[srcofs + j] ? 0xff : 0;
-					}
-
-					srcofs += readSource.width;
-					dstofs += width;
-				}
-
-				if (!antiAlias)
-				{
-					FT_Bitmap_Done( library, &tempbitmap );
-				}
-
-				// check duplicated glyphs using hash table
-				// use the previous glyph if a same one already exists
-				GlyphBitmap result;
-				GlyphBitmap glyphMap(width, height, buffer, false);
-				if (!glyphHashTable.TryGetValue(glyphMap, result))
-				{
-					glyphMap.Index = glyphHashTable.getCount();// index++;
-					glyphHashTable.Add(glyphMap, glyphMap);
-				}
-				else
-				{
-					glyphMap = result;
-					delete[] buffer;
-				}
-
-				{
-					CharMapping m = { (wchar_t)ch, glyphMap.Index, (short)bitmap_glyph->left, (short)(fontSize-bitmap_glyph->top), (face->glyph->advance.x / 64.0f) };
-					charMap.Add(m);
+					RenderGlyphsByFreeType(library, face, ch, fontSize, antiAlias, charMap, glyphHashTable);
 				}
 			}
+		}
+		else
+		{
+			uint counter = 0;
+			FT_UInt lastIdx = 0;
+			for (uint ch = 0; ch < 65535; ch++)
+			{
+				FT_UInt idx = FT_Get_Char_Index(face, ch);
+				if (idx)
+				{ 
+					RenderGlyphsByFreeType(library, face, ch, fontSize, antiAlias, charMap, glyphHashTable);
+					counter++;
+				}
+			}
+			BuildSystem::LogInformation(L"Automatically detected " + StringUtils::UIntToString(counter) 
+				+ L" characters. Compiled to " + StringUtils::IntToString(glyphHashTable.getCount()) + L" glyphs.", L"");
 		}
 
 

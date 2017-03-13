@@ -7,7 +7,6 @@
                SourceFile="fonts\SourceSansPro-Regular.otf"
                Size="11"
                DestinationFile="apoc_system\skin\english.fnt">
-          <Range1 Start="0" End="255"/>
         </english>
         <ds_skin Type="Texture" Method="d3d" SourceFile="apoc_system\ds_skin.png" DestinationFile="apoc_system\skin\ds_skin.tex" />
         <skin Type="Copy" SourceFile="apoc_system\ds_skin_met.xml" DestinationFile="apoc_system\skin\skin.xml" />
