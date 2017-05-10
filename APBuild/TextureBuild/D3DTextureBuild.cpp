@@ -918,10 +918,17 @@ namespace APBuild
 
 		hr = D3DXLoadSurfaceFromFile(psurfOrig, NULL, NULL, fileName.c_str(), NULL, D3DX_DEFAULT, 0, NULL);
 
+		if (FAILED(hr))
+		{
+			Error(L"Can't load map " + fileName, m_name);
+			return hr;
+		}
+
 		if (alphaFile)
 		{
 			if (FAILED(hr = LoadAlphaIntoSurface(*alphaFile, psurfOrig)))
 			{
+				Error(L"Can't load alpha map " + *alphaFile, m_name);
 				return hr;
 			}
 		}

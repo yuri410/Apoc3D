@@ -74,6 +74,7 @@ namespace Apoc3D
 		inline float ToDegree(float x) { return x * (180.0f / L_PIf); }
 		inline float ToDegree(int32 x) { return x * (180.0f / L_PIf); }
 
+		inline float Square(float x) { return x*x; }
 
 		inline float SqrtFast(float x)
 		{

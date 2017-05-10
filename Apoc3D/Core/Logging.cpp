@@ -110,34 +110,32 @@ namespace Apoc3D
 
 		}
 
-		void LogManager::DumpLogs(String& result)
+		void LogManager::DumpLogs(String& result, bool lastFirst)
 		{
 			int32 totalEntryCount = 0;
-			for (size_t i = 0; i < LOG_Count; i++)
+			for (LogSet* ls : m_logs)
 			{
-				totalEntryCount += m_logs[i]->getCount();
+				totalEntryCount += ls->getCount();
 			}
 
 			List<const LogEntry*> allEntries(totalEntryCount);
-			for (size_t i = 0; i < LOG_Count; i++)
+			for (LogSet* ls : m_logs)
 			{
-				LogSet* ls = m_logs[i];
-				for (LogSet::Iterator iter = ls->begin(); iter != ls->end(); ++iter)
+				for (const LogEntry& e : *ls)
 				{
-					const LogEntry& e = *iter;
 					allEntries.Add(&e);
 				}
 			}
 
-			allEntries.Sort([](const LogEntry* a, const LogEntry* b)->int
+			allEntries.Sort([lastFirst](const LogEntry* a, const LogEntry* b)->int
 			{
-				return Apoc3D::Collections::OrderComparer(a->SerialIndex, b->SerialIndex);
+				return Apoc3D::Collections::OrderComparer(a->SerialIndex, b->SerialIndex) * (lastFirst ? -1 : 1);
 			});
 			
 			result.reserve(10240);
-			for (int32 i = 0; i < allEntries.getCount(); i++)
+			for (const LogEntry* ent : allEntries)
 			{
-				String str = allEntries[i]->ToString();
+				String str = ent->ToString();
 				result.append(str);
 				result.append(L"\n");
 			}

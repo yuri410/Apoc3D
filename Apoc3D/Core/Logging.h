@@ -105,7 +105,7 @@ namespace Apoc3D
 
 			void Write(LogType type, const String& message, LogMessageLevel level = LOGLVL_Infomation);
 
-			void DumpLogs(String& result);
+			void DumpLogs(String& result, bool lastFirst);
 			
 			bool WriteLogToStd;
 			NewLogWrittenHandler eventNewLogWritten;
