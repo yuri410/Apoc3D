@@ -301,7 +301,7 @@ namespace Apoc3D
 			memcpy(&effect, inst.Args[1].DefaultValue, sizeof(void*));
 
 			Material mtrl(m_renderDevice);
-			mtrl.Cull = CULL_None;
+			mtrl.Cull = CullMode::None;
 			//mtrl.IsBlendTransparent = true;
 
 			// the post here is expected to be an AutomaticEffect
@@ -462,7 +462,7 @@ namespace Apoc3D
 
 			}
 
-			mtrl.setPassEffect(m_selectorID, effect);
+			mtrl.SetPassEffect(m_selectorID, effect);
 			mtrl.setPassFlags((uint64)1<<(uint64)m_selectorID);
 			
 			//mtrl.IsBlendTransparent = true;
@@ -471,7 +471,7 @@ namespace Apoc3D
 			geoData.BaseVertex = 0;
 			geoData.IndexBuffer = 0;
 			geoData.PrimitiveCount = 2;
-			geoData.PrimitiveType = PT_TriangleList;
+			geoData.PrimitiveType = PrimitiveType::TriangleList;
 			geoData.VertexBuffer = m_quadBuffer;
 			geoData.VertexCount = 6;
 			geoData.VertexDecl = m_quadVtxDecl;
@@ -512,7 +512,18 @@ namespace Apoc3D
 			}
 
 			uint colorFlags = inst.Args[2].DefaultValue[0];
-			m_renderDevice->getRenderState()->setColorWriteEnabled(index, !!(colorFlags & 0x0100), !!(colorFlags & 0x0010), !!(colorFlags & 0x0001), !!(colorFlags & 0x1000));
+
+			uint masks = ColorWrite_None;
+			if (colorFlags & 0x0100)
+				masks |= ColorWrite_Red;
+			if (colorFlags & 0x0010)
+				masks |= ColorWrite_Green;
+			if (colorFlags & 0x0001)
+				masks |= ColorWrite_Blue;
+			if (colorFlags & 0x1000)
+				masks |= ColorWrite_Alpha;
+			m_renderDevice->getRenderState()->setColorWriteMasks(index, (ColorWriteMasks)masks);
+			//m_renderDevice->getRenderState()->SetColorWriteEnabled(index, !!(colorFlags & 0x0100), !!(colorFlags & 0x0010), !!(colorFlags & 0x0001), !!(colorFlags & 0x1000));
 		}
 
 		void ScenePass::UseDS(const SceneInstruction& inst)

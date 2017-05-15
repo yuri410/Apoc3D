@@ -42,7 +42,7 @@ namespace Apoc3D
 			class D3D9IndexBuffer : public IndexBuffer, public VolatileResource
 			{
 			public:
-				D3D9IndexBuffer(D3D9RenderDevice* device, IndexBufferType type, int32 size, BufferUsageFlags usage);
+				D3D9IndexBuffer(D3D9RenderDevice* device, IndexBufferFormat type, int32 size, BufferUsageFlags usage);
 				~D3D9IndexBuffer();
 
 				void ReleaseVolatileResource() override;

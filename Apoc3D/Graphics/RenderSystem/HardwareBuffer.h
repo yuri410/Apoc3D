@@ -91,19 +91,19 @@ namespace Apoc3D
 			class APAPI IndexBuffer : public HardwareBuffer
 			{
 			public:
-				IndexBufferType getIndexType() const { return m_type; }
-				int getIndexElementSize() const { return m_type == IBT_Bit16 ? sizeof(ushort) : sizeof(uint); }
+				IndexBufferFormat getIndexType() const { return m_type; }
+				int getIndexElementSize() const { return m_type == IndexBufferFormat::Bit16 ? sizeof(ushort) : sizeof(uint); }
 				int getIndexCount() const { return m_indexCount; }
 
 			protected:
-				IndexBuffer(IndexBufferType type, int size, BufferUsageFlags usage)
+				IndexBuffer(IndexBufferFormat type, int size, BufferUsageFlags usage)
 					: HardwareBuffer(usage, size)
 				{
 					m_type = type;
 					m_indexCount = size / getIndexElementSize();
 				}
 			private:
-				IndexBufferType m_type;
+				IndexBufferFormat m_type;
 
 				int m_indexCount;
 

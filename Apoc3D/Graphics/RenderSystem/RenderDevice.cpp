@@ -42,7 +42,7 @@ namespace Apoc3D
 		{
 			bool RenderDevice::HasBatchReportRequest = false;
 
-			void RenderDevice::Render(Material* mtrl, const RenderOperation* op, int count, int passSelID)
+			void RenderDevice::Render(Material* mtrl, const RenderOperation* op, int32 count, int32 passSelID)
 			{
 				if (HasBatchReportRequest && count > 0)
 				{
@@ -61,7 +61,7 @@ namespace Apoc3D
 						entry = &m_reportTableByMaterial->operator[](mtrl);
 					}
 
-					Effect* fx = mtrl->getPassEffect(passSelID);
+					Effect* fx = mtrl->GetPassEffect(passSelID);
 
 					if (fx->SupportsInstancing())
 					{
@@ -171,7 +171,7 @@ namespace Apoc3D
 			/* ObjectFactory                                                        */
 			/************************************************************************/
 
-			Texture* ObjectFactory::CreateTexture(const Point& size2d, int levelCount, TextureUsage usage, PixelFormat format)
+			Texture* ObjectFactory::CreateTexture(const Point& size2d, int32 levelCount, TextureUsage usage, PixelFormat format)
 			{
 				return CreateTexture(size2d.X, size2d.Y, levelCount, usage, format);
 			}

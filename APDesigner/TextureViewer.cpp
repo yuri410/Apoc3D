@@ -44,14 +44,14 @@ namespace APDesigner
 	{
 		switch (m_texture->getType())
 		{
-		case TT_Texture1D:
-		case TT_Texture2D:
+		case TextureType::Texture1D:
+		case TextureType::Texture2D:
 			sprite->Draw(m_texture, *rect, 0, CV_White);
 			break;
-		case TT_Texture3D:
+		case TextureType::Texture3D:
 
 			break;
-		case TT_CubeTexture:
+		case TextureType::CubeTexture:
 			
 			break;
 		}
@@ -122,7 +122,7 @@ namespace APDesigner
 		Point newSize = MaxSize;
 		switch(m_texture->getType())
 		{
-		case TT_CubeTexture:
+		case TextureType::CubeTexture:
 			{
 				ObjectFactory* objFac = m_device->getObjectFactory();
 				m_previewCubeFaces[0] = ExtractCubemapFace(objFac, texture, CUBE_NegativeX);
@@ -134,7 +134,7 @@ namespace APDesigner
 
 			}
 			break;
-		case TT_Texture3D:
+		case TextureType::Texture3D:
 			{
 				ObjectFactory* objFac = m_device->getObjectFactory();
 				m_previewCubeFaces[0] = ExtractVolumeSlice(objFac, texture, 0);
@@ -143,7 +143,7 @@ namespace APDesigner
 				m_previewCubeFaces[3] = ExtractVolumeSlice(objFac, texture, texture->getDepth()-1);
 
 			}
-		case TT_Texture2D:
+		case TextureType::Texture2D:
 			if (texture->getWidth() < MaxSize.X && texture->getHeight() < MaxSize.Y)
 			{
 				newSize.X = texture->getWidth();
@@ -165,7 +165,7 @@ namespace APDesigner
 			}
 			
 			break;
-		case TT_Texture1D:
+		case TextureType::Texture1D:
 			if (texture->getWidth() >1)
 			{
 				newSize.X = MaxSize.X;
@@ -293,8 +293,8 @@ namespace APDesigner
 			sprite->Draw(m_texture,dr,&srcRect,CV_White);
 			switch(m_texture->getType())
 			{
-			case TT_Texture1D:
-			case TT_Texture2D:
+			case TextureType::Texture1D:
+			case TextureType::Texture2D:
 				{
 
 					String msg = L"Type: 2D.\nFormat: ";
@@ -323,7 +323,7 @@ namespace APDesigner
 			//}
 			//switch(m_texture->getType())
 			//{
-			//case TT_Texture2D:
+			//case TextureType::Texture2D:
 			//	if (m_texture->getWidth() < MaxSize.X && m_texture->getHeight() < MaxSize.Y)
 			//	{
 			//		newSize.X = m_texture->getWidth();
@@ -345,7 +345,7 @@ namespace APDesigner
 			//	}
 
 			//	break;
-			//case TT_Texture1D:
+			//case TextureType::Texture1D:
 			//	if (m_texture->getWidth() >1)
 			//	{
 			//		newSize.X = MaxSize.X;

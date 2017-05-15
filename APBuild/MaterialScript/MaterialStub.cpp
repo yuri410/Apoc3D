@@ -35,10 +35,7 @@ namespace APBuild
 
 		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DstFile));
 
-		MaterialData empty;
-		empty.SetDefaults();
-
-		empty.Save(FileOutStream(config.DstFile));
+		MaterialData().Save(FileOutStream(config.DstFile));
 
 		BuildSystem::LogEntryProcessed(config.DstFile, hierarchyPath);
 	}

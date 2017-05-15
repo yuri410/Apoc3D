@@ -122,11 +122,11 @@ namespace Apoc3D
 
 				if (useIndex16)
 				{
-					sp.SetIndexData<ushort, IBT_Bit16>(m_factory, partIndices[i], m_vertexCount, used);
+					sp.SetIndexData<ushort, IndexBufferFormat::Bit16>(m_factory, partIndices[i], m_vertexCount, used);
 				}
 				else
 				{
-					sp.SetIndexData<uint32, IBT_Bit32>(m_factory, partIndices[i], m_vertexCount, used);
+					sp.SetIndexData<uint32, IndexBufferFormat::Bit32>(m_factory, partIndices[i], m_vertexCount, used);
 				}
 			}
 
@@ -187,7 +187,7 @@ namespace Apoc3D
 			{
 				const SubPart& sp = m_subParts[i];
 
-				if (sp.Indices->getIndexType() == IBT_Bit16)
+				if (sp.Indices->getIndexType() == IndexBufferFormat::Bit16)
 				{
 					ushort* isrc = (ushort*)sp.Indices->Lock(0, 0, LOCK_ReadOnly);
 
@@ -221,7 +221,7 @@ namespace Apoc3D
 			int index = 0;
 			for (const SubPart& sp : m_subParts)
 			{
-				if (sp.Indices->getIndexType() == IBT_Bit16)
+				if (sp.Indices->getIndexType() == IndexBufferFormat::Bit16)
 				{
 					const ushort* isrc = (ushort*)sp.Indices->Lock(0, 0, LOCK_ReadOnly);
 
@@ -308,7 +308,7 @@ namespace Apoc3D
 					md->VertexDecl = m_vtxDecl;
 
 					md->PrimitiveCount = sp.PrimitiveCount;
-					md->PrimitiveType = PT_TriangleList;
+					md->PrimitiveType = PrimitiveType::TriangleList;
 
 					md->VertexCount = sp.VertexCount;
 					md->VertexSize = m_vertexSize;
@@ -358,7 +358,7 @@ namespace Apoc3D
 			return *this;
 		}
 
-		template <typename T, IndexBufferType IBT>
+		template <typename T, IndexBufferFormat IBT>
 		void Mesh::SubPart::SetIndexData(ObjectFactory* fac, const List<uint>& pi, int32 vertexCount, bool* used)
 		{
 			int32 vertexUsedMin = vertexCount - 1;
@@ -369,7 +369,7 @@ namespace Apoc3D
 			T* ib = (T*)indexBuffer->Lock(0, 0, LOCK_None);
 			// put the indices in to the buffer
 			// and do some other stats work
-			for (int j = 0; j < pi.getCount(); j++)
+			for (int32 j = 0; j < pi.getCount(); j++)
 			{
 				uint idx = pi[j];
 
@@ -385,7 +385,7 @@ namespace Apoc3D
 
 			// find out how many vertex that this index buffer
 			// is pointing to.
-			for (int j = 0; j < vertexCount; j++)
+			for (int32 j = 0; j < vertexCount; j++)
 			{
 				if (used[j])
 					VertexCount++;

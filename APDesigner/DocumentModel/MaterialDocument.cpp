@@ -140,9 +140,9 @@ namespace APDesigner
 
 			sy += 25;
 			List<String> items;
-			items.Add(CullModeConverter[CULL_None]);
-			items.Add(CullModeConverter[CULL_Clockwise]);
-			items.Add(CullModeConverter[CULL_CounterClockwise]);
+			items.Add(CullModeConverter[CullMode::None]);
+			items.Add(CullModeConverter[CullMode::Clockwise]);
+			items.Add(CullModeConverter[CullMode::CounterClockwise]);
 			lbl = new Label(skin, Point(sx, sy), L"Cull Mode", 100);
 			m_mtrlPanelLabels.Add(lbl);
 			m_cbCull = new ComboBox(skin, Point(sx + 100, sy), 200, items);
@@ -447,11 +447,11 @@ namespace APDesigner
 		mtrl->Emissive = Color4(m_cfEmissive->GetValue());
 		mtrl->Power = StringUtils::ParseSingle(m_tbShinness->getText());
 
-		mtrl->setTextureName(0, m_tbTex1->getText());
-		mtrl->setTextureName(1, m_tbTex2->getText());
-		mtrl->setTextureName(2, m_tbTex3->getText());
-		mtrl->setTextureName(3, m_tbTex4->getText());
-		mtrl->setTextureName(4, m_tbTex5->getText());
+		mtrl->SetTextureName(0, m_tbTex1->getText());
+		mtrl->SetTextureName(1, m_tbTex2->getText());
+		mtrl->SetTextureName(2, m_tbTex3->getText());
+		mtrl->SetTextureName(3, m_tbTex4->getText());
+		mtrl->SetTextureName(4, m_tbTex5->getText());
 
 		mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->getText()));
 		mtrl->AlphaReference = StringUtils::ParseUInt32(m_tbAlphaTest->getText());
@@ -524,11 +524,11 @@ namespace APDesigner
 
 			m_tbShinness->SetText(StringUtils::SingleToString(mtrl->Power));
 
-			m_tbTex1->SetText(mtrl->getTextureName(0));
-			m_tbTex2->SetText(mtrl->getTextureName(1));
-			m_tbTex3->SetText(mtrl->getTextureName(2));
-			m_tbTex4->SetText(mtrl->getTextureName(3));
-			m_tbTex5->SetText(mtrl->getTextureName(4));
+			m_tbTex1->SetText(mtrl->GetTextureName(0));
+			m_tbTex2->SetText(mtrl->GetTextureName(1));
+			m_tbTex3->SetText(mtrl->GetTextureName(2));
+			m_tbTex4->SetText(mtrl->GetTextureName(3));
+			m_tbTex5->SetText(mtrl->GetTextureName(4));
 
 			m_tbPriority->SetText(StringUtils::UIntToString(mtrl->getPriority()));
 			m_tbAlphaTest->SetText(StringUtils::UIntToString(mtrl->AlphaReference));
@@ -713,7 +713,7 @@ namespace APDesigner
 		m_mtrl = mtrl;
 		for (int i=0;i<MaxScenePass;i++)
 		{
-			m_tbTable[i]->SetText(mtrl->getPassEffectName(i));
+			m_tbTable[i]->SetText(mtrl->GetPassEffectName(i));
 		}
 		m_form->ShowModal();
 	}
@@ -730,14 +730,14 @@ namespace APDesigner
 				passFlags |= (uint64)1<<i;
 			}
 			//passFlags = passFlags << (uint)1;
-			m_mtrl->setPassEffectName(i, tv);
+			m_mtrl->SetPassEffectName(i, tv);
 			if (tv.size())
 			{
-				m_mtrl->setPassEffect(i, EffectManager::getSingleton().getEffect(m_mtrl->getPassEffectName(i)));
+				m_mtrl->SetPassEffect(i, EffectManager::getSingleton().getEffect(m_mtrl->GetPassEffectName(i)));
 			}
 			else
 			{
-				m_mtrl->setPassEffect(i, 0);
+				m_mtrl->SetPassEffect(i, 0);
 			}
 			
 		}

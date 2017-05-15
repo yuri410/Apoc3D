@@ -42,7 +42,7 @@ namespace APBuild
 			int32 height = config.Resizing.getNewHeight();
 			int32 depth = config.Resizing.getNewDepth();
 
-			DXTex tex(config.AssembleCubemap ? TT_CubeTexture : TT_Texture3D, config.DestinationFile,
+			DXTex tex(config.AssembleCubemap ? TextureType::CubeTexture : TextureType::Texture3D, config.DestinationFile,
 				width, height, depth, config.NewFormat);
 
 			if (tex.isError())
@@ -255,11 +255,11 @@ namespace APBuild
 
 		if (cubeFlags)
 		{
-			texData.Type = TT_CubeTexture;
+			texData.Type = TextureType::CubeTexture;
 		}
 		else
 		{
-			texData.Type = depth0 > 1 ? TT_Texture3D : TT_Texture2D;
+			texData.Type = depth0 > 1 ? TextureType::Texture3D : TextureType::Texture2D;
 		}
 
 		int dxtFormat = ilGetInteger(IL_DXTC_DATA_FORMAT);

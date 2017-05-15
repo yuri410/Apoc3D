@@ -120,7 +120,7 @@ namespace Apoc3D
 				AutomaticEffect(RenderDevice* device, const ResourceLocation& rl);
 				~AutomaticEffect();
 
-				virtual void Setup(Material* mtrl, const RenderOperation* rop, int count);
+				virtual void Setup(Material* mtrl, const RenderOperation* rop, int32 count);
 
 				virtual void BeginPass(int passId);
 				virtual void EndPass();
@@ -134,38 +134,38 @@ namespace Apoc3D
 
 				void Reload(const ResourceLocation& rl);
 
-				int FindParameterIndex(const String& name);
+				int32 FindParameterIndex(const String& name);
 
 				template<typename T>
-				void SetParameterValue(int index, const T* value, int count)
+				void SetParameterValue(int32 index, const T* value, int32 count)
 				{
 					ResolvedEffectParameter& param = m_parameters[index];
 					param.RS_TargetShader->SetValue(param.RegisterIndex, value, count);
 				}
 
 
-				void SetParameterValue(int index, const Vector2* value, int count);
-				void SetParameterValue(int index, const Vector3* value, int count);
-				void SetParameterValue(int index, const Vector4* value, int count);
-				void SetParameterValue(int index, const Matrix* value, int count);
+				void SetParameterValue(int32 index, const Vector2* value, int32 count);
+				void SetParameterValue(int32 index, const Vector3* value, int32 count);
+				void SetParameterValue(int32 index, const Vector4* value, int32 count);
+				void SetParameterValue(int32 index, const Matrix* value, int32 count);
 
-				void SetParameterValue(int index, bool value) { SetParameterValue(index, &value, 1); }
-				void SetParameterValue(int index, float value) { SetParameterValue(index, &value, 1); }
-				void SetParameterValue(int index, const Vector2& value) { SetParameterValue(index, &value, 1); }
-				void SetParameterValue(int index, const Vector3& value) { SetParameterValue(index, &value, 1); }
-				void SetParameterValue(int index, const Vector4& value) { SetParameterValue(index, &value, 1); }
-				void SetParameterValue(int index, const Matrix& value) { SetParameterValue(index, &value, 1); }
+				void SetParameterValue(int32 index, bool value) { SetParameterValue(index, &value, 1); }
+				void SetParameterValue(int32 index, float value) { SetParameterValue(index, &value, 1); }
+				void SetParameterValue(int32 index, const Vector2& value) { SetParameterValue(index, &value, 1); }
+				void SetParameterValue(int32 index, const Vector3& value) { SetParameterValue(index, &value, 1); }
+				void SetParameterValue(int32 index, const Vector4& value) { SetParameterValue(index, &value, 1); }
+				void SetParameterValue(int32 index, const Matrix& value) { SetParameterValue(index, &value, 1); }
 
 
 				template<typename T>
-				void SetParameterValueByName(const String& name, const T* value, int count);
+				void SetParameterValueByName(const String& name, const T* value, int32 count);
 
 				template<typename T>
 				void SetParameterValueByName(const String& name, const T& value);
 
 
-				void SetParameterTexture(int index, ResourceHandle<Texture>* value);
-				void SetParameterTexture(int index, Texture* value);
+				void SetParameterTexture(int32 index, ResourceHandle<Texture>* value);
+				void SetParameterTexture(int32 index, Texture* value);
 				void SetParameterTextureByName(const String& name, ResourceHandle<Texture>* value);
 				void SetParameterTextureByName(const String& name, Texture* value);
 
@@ -173,7 +173,7 @@ namespace Apoc3D
 
 				RenderDevice* getDevice() const { return m_device; }
 			protected:
-				virtual int begin();
+				virtual int32 begin();
 				virtual void end();
 
 			private:
@@ -205,23 +205,23 @@ namespace Apoc3D
 					void SetVector2(const Vector2& value) const;
 					void SetVector3(const Vector3& value) const;
 					void SetVector4(const Vector4& value) const;
-					void SetVector4(const Vector4* value, int count) const;
+					void SetVector4(const Vector4* value, int32 count) const;
 					
 					void SetColor4(const Color4& value) const;
 
-					void Set4X3Matrix(const Matrix* transfroms, int count) const;
+					void Set4X3Matrix(const Matrix* transfroms, int32 count) const;
 
 					void SetMatrix(const Matrix& m) const;
-					void SetMatrix(const Matrix* transfroms, int count) const;
+					void SetMatrix(const Matrix* transfroms, int32 count) const;
 
 					void SetFloat(const float values) const;
-					void SetFloat(const float* values, int count) const;
+					void SetFloat(const float* values, int32 count) const;
 
-					void SetInt(const int values) const;
-					void SetInt(const int* values, int count) const;
+					void SetInt(const int32 values) const;
+					void SetInt(const int32* values, int32 count) const;
 
 					void SetBool(const bool values) const;
-					void SetBool(const bool* values, int count) const;
+					void SetBool(const bool* values, int32 count) const;
 
 				};
 
@@ -251,7 +251,7 @@ namespace Apoc3D
 			};
 
 			template<typename T>
-			void AutomaticEffect::SetParameterValueByName(const String& name, const T* value, int count)
+			void AutomaticEffect::SetParameterValueByName(const String& name, const T* value, int32 count)
 			{
 				int32 idx = FindParameterIndex(name);
 				assert(idx != -1);

@@ -60,9 +60,9 @@ namespace Apoc3D
 
 			const TypeDualConverter<CullMode> CullModeConverter = 
 			{
-				{ CULL_None, L"None" },
-				{ CULL_Clockwise, L"Clockwise" },
-				{ CULL_CounterClockwise, L"CounterClockwise" }
+				{ CullMode::None, L"None" },
+				{ CullMode::Clockwise, L"Clockwise" },
+				{ CullMode::CounterClockwise, L"CounterClockwise" }
 			};
 
 			const TypeDualConverter<TextureAddressMode> TextureAddressModeConverter = 
@@ -76,10 +76,10 @@ namespace Apoc3D
 
 			const TypeDualConverter<TextureFilter> TextureFilterConverter = 
 			{
-				{ TFLT_None, L"None" },
-				{ TFLT_Point, L"Point" },
-				{ TFLT_Linear, L"Linear" },
-				{ TFLT_Anisotropic, L"Anisotropic" }
+				{ TextureFilter::None, L"None" },
+				{ TextureFilter::Point, L"Point" },
+				{ TextureFilter::Linear, L"Linear" },
+				{ TextureFilter::Anisotropic, L"Anisotropic" }
 
 			};
 

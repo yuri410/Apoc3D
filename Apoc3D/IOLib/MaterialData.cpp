@@ -42,6 +42,62 @@ namespace Apoc3D
 {
 	namespace IO
 	{
+		namespace
+		{
+			void InsertName(uint32 index, const String& name, HashMap<int32, String>& entries)
+			{
+				String* val = entries.TryGetValue(index);
+				if (val)
+					*val = name;
+				else
+					entries.Add(index, name);
+			}
+
+			void ReadNames(BinaryReader* br, HashMap<int32, String>& entries)
+			{
+				int32 version = br->ReadInt32();
+				(void)version;
+
+				int32 flags = br->ReadInt32();
+				(void)flags;
+
+				int32 count = br->ReadInt32();
+				entries.Resize(count);
+
+				for (int32 i = 0; i < count; i++)
+				{
+					int32 index = br->ReadInt32();
+					String name = br->ReadString();
+
+					InsertName(index, name, entries);
+				}
+			}
+
+			void WriteNameEntries(BinaryWriter* bw, const HashMap<int32, String>& entries)
+			{
+				int32 count = 0;
+				for (auto e : entries)
+				{
+					if (e.Value.size())
+						count++;
+				}
+
+				bw->WriteInt32(1);
+				bw->WriteInt32(0);
+				bw->WriteInt32(count);
+
+				for (auto e : entries)
+				{
+					if (e.Value.size())
+					{
+						bw->WriteInt32(e.Key);
+						bw->WriteString(e.Value);
+					}
+				}
+			}
+
+		}
+
 		/** Used only when storing a material as a file */
 		const int MtrlId_V3 = ((byte)'M' << 24) | ((byte)'T' << 16) | ((byte)'R' << 8) | ((byte)'L');
 
@@ -54,10 +110,14 @@ namespace Apoc3D
 		const char TAG_3_Texture[] = "Texture";
 		const char TAG_3_HasEffect[] = "HasEffect";
 		const char TAG_3_Effect[] = "Effect";
-
+		
+		const char TAG_3_1_Textures[] = "Textures";
+		const char TAG_3_1_Effects[] = "Effects";
 
 		const char TAG_3_RenderPriority[] = "RenderPriority";
 		const char TAG_3_PassFlags[] = "PassFlags";
+
+		const char TAG_3_ColorWriteMasks[] = "ColorWriteMasks";
 
 		const char TAG_3_IsBlendTransparent[] = "IsBlendTransparent";
 		const char TAG_3_SourceBlend[] = "SourceBlend";
@@ -79,30 +139,10 @@ namespace Apoc3D
 		const char TAG_3_UsePointSprite[] = "UsePointSprite";
 
 
+
 		MaterialData::MaterialData() { }
 		MaterialData::~MaterialData() { }
 
-		void MaterialData::SetDefaults()
-		{
-			DepthTestEnabled = DepthWriteEnabled = true;
-			Cull = CULL_CounterClockwise;
-			IsBlendTransparent = false;
-			BlendFunction = BlendFunction::Add;
-			SourceBlend = Blend::One;
-			DestinationBlend = Blend::Zero;
-			Priority = DefaultMaterialPriority;
-			PassFlags = 1;
-			UsePointSprite = false;
-
-			AlphaReference = 0;
-			AlphaTestEnabled = false;
-
-			Ambient = Color4(0, 0, 0, 0);
-			Diffuse = Color4(1.f, 1.f, 1.f, 1.f);
-			Emissive = Color4(0, 0, 0, 0);
-			Specular = Color4(0, 0, 0, 0);
-			Power = 0;
-		}
 
 		void MaterialData::AddCustomParameter(const MaterialCustomParameter& value)
 		{
@@ -113,34 +153,32 @@ namespace Apoc3D
 			CustomParametrs.Add(value.Usage, value);
 		}
 
-		void MaterialData::LoadV3(TaggedDataReader* data)
+		void MaterialData::LoadData(TaggedDataReader* data)
 		{
 			// load custom material parameters
 			uint32 cmpCount = 0;
 			data->TryGetUInt32(TAG_3_CustomParamCount, cmpCount);
-			//m_customParametrs.reserve(cmpCount);
 			CustomParametrs.Resize(cmpCount);
 
 			for (uint32 i = 0; i < cmpCount; i++)
 			{
-				std::string tag = StringUtils::UIntToNarrowString(i);
-				tag = TAG_3_CustomParam + tag;
+				std::string tag = TAG_3_CustomParam + StringUtils::UIntToNarrowString(i);
 
-				BinaryReader* br = data->GetData(tag);
+				data->ProcessData(tag, [this](BinaryReader* br) 
+				{
+					MaterialCustomParameter mcp;
+					mcp.Type = static_cast<CustomEffectParameterType>(br->ReadUInt32());
 
-				MaterialCustomParameter mcp;
-				mcp.Type = static_cast<CustomEffectParameterType>(br->ReadUInt32());
+					br->ReadBytes(reinterpret_cast<char*>(mcp.Value), sizeof(mcp.Value));
 
-				br->ReadBytes(reinterpret_cast<char*>(mcp.Value), sizeof(mcp.Value));
+					mcp.Usage = br->ReadString();
 
-				mcp.Usage = br->ReadString();
-
-				delete br;
-
-				AddCustomParameter(mcp);
+					AddCustomParameter(mcp);
+				});
 			}
 
 			// Load textures
+			if (data->Contains(TAG_3_HasTexture))
 			{
 				bool hasTexture[MaxTextures];
 				data->GetBool(TAG_3_HasTexture, hasTexture);
@@ -155,16 +193,20 @@ namespace Apoc3D
 						String name;
 						data->GetString(tag, name);
 
-						if (!TextureName.Contains(i))
-							TextureName.Add(i, name);
-						else
-							TextureName[i] = name;
-
+						InsertName(i, name, TextureNames);
 					}
 				}
 			}
+			else
+			{
+				data->ProcessData(TAG_3_1_Textures, [this](BinaryReader* br)
+				{
+					ReadNames(br, TextureNames);
+				});
+			}
 
 			// Load effects
+			if (data->Contains(TAG_3_HasEffect))
 			{
 				bool hasEffect[MaxScenePass];
 				data->GetBool(TAG_3_HasEffect, hasEffect);
@@ -179,18 +221,23 @@ namespace Apoc3D
 						String name;
 						data->GetString(tag, name);
 
-						if (!EffectName.Contains(i))
-							EffectName.Add(i, name);
-						else
-							EffectName[i] = name;
-
-						//data->GetDataString(tag, EffectName[i]);
+						InsertName(i, name, EffectNames);
 					}
 				}
+			}
+			else
+			{
+				data->ProcessData(TAG_3_1_Effects, [this](BinaryReader* br)
+				{
+					ReadNames(br, EffectNames);
+				});
 			}
 
 			Priority = data->GetInt32(TAG_3_RenderPriority);
 			PassFlags = data->GetUInt64(TAG_3_PassFlags);
+
+			ColorWriteMasks = 0xffffffffffffffffull;
+			data->TryGetUInt64(TAG_3_ColorWriteMasks, ColorWriteMasks);
 
 			IsBlendTransparent = data->GetBool(TAG_3_IsBlendTransparent);
 
@@ -229,11 +276,6 @@ namespace Apoc3D
 
 			data->TryGetString(TAG_3_MaterialRefName, ExternalRefName);
 		}
-
-		void MaterialData::LoadData(TaggedDataReader* data)
-		{
-			LoadV3(data);
-		}
 		TaggedDataWriter* MaterialData::SaveData()
 		{
 			TaggedDataWriter* data = new TaggedDataWriter(true);
@@ -246,75 +288,30 @@ namespace Apoc3D
 				{
 					std::string tag = TAG_3_CustomParam + StringUtils::IntToNarrowString(index++);
 
-					BinaryWriter* bw = data->AddEntry(tag);
-
-					bw->WriteUInt32(static_cast<uint32>(mcp.Type));
-					bw->Write(reinterpret_cast<const char*>(mcp.Value), sizeof(mcp.Value));
-					bw->WriteString(mcp.Usage);
-
-					delete bw;
+					data->AddEntry(tag, [&mcp](BinaryWriter* bw) 
+					{
+						bw->WriteUInt32(static_cast<uint32>(mcp.Type));
+						bw->Write(reinterpret_cast<const char*>(mcp.Value), sizeof(mcp.Value));
+						bw->WriteString(mcp.Usage);
+					});
 				}
 			}
 
 			// save textures
+			data->AddEntry(TAG_3_1_Textures, [this](BinaryWriter* bw)
 			{
-				bool hasTexture[MaxTextures];
-				for (int32 i=0;i<MaxTextures;i++)
-				{
-					if (TextureName.Contains(i))
-					{
-						String name = TextureName[i];
-						hasTexture[i] = !!name.size();
-					}
-					else
-					{
-						hasTexture[i] = false;
-					}
-				}
-				data->AddBool(TAG_3_HasTexture, hasTexture, MaxTextures);
+				WriteNameEntries(bw, TextureNames);
+			});
 
-				for (int32 i=0;i<MaxTextures;i++)
-				{
-					if (hasTexture[i])
-					{
-						std::string tag = StringUtils::IntToNarrowString(i);
-						tag = tag + TAG_3_Texture;
-
-						data->AddString(tag, TextureName[i]);
-					}
-				}
-			}
 			// save effects
+			data->AddEntry(TAG_3_1_Effects, [this](BinaryWriter* bw) 
 			{
-				bool hasEffects[MaxScenePass];
-				for (int32 i=0;i<MaxScenePass;i++)
-				{
-					if (EffectName.Contains(i))
-					{
-						String name = EffectName[i];
-						hasEffects[i] = !!name.size();
-					}
-					else
-					{
-						hasEffects[i] = false;
-					}
-				}
-				data->AddBool(TAG_3_HasEffect, hasEffects, MaxScenePass);
-
-				for (int32 i=0;i<MaxScenePass;i++)
-				{
-					if (hasEffects[i])
-					{
-						std::string tag = StringUtils::IntToNarrowString(i);
-						tag = tag + TAG_3_Effect;
-
-						data->AddString(tag, EffectName[i]);
-					}
-				}
-			}
-
+				WriteNameEntries(bw, EffectNames);
+			});
+			
 			data->AddInt32(TAG_3_RenderPriority, Priority);
 			data->AddUInt64(TAG_3_PassFlags, PassFlags);
+			data->AddUInt64(TAG_3_ColorWriteMasks, ColorWriteMasks);
 
 			data->AddBool(TAG_3_IsBlendTransparent, IsBlendTransparent);
 			data->AddUInt32(TAG_3_SourceBlend, static_cast<uint32>(SourceBlend));
@@ -331,17 +328,14 @@ namespace Apoc3D
 			data->AddBool(TAG_3_UsePointSprite, UsePointSprite);
 
 			// save material basic color
+			data->AddEntry(TAG_3_MaterialColorTag, [this](BinaryWriter* bw)
 			{
-				BinaryWriter* bw = data->AddEntry(TAG_3_MaterialColorTag);
-
 				bw->WriteColor4(Ambient);
 				bw->WriteColor4(Diffuse);
 				bw->WriteColor4(Emissive);
 				bw->WriteColor4(Specular);
 				bw->WriteSingle(Power);
-
-				delete bw;
-			}
+			});
 
 			data->AddString(TAG_3_MaterialRefName, ExternalRefName);
 
@@ -415,7 +409,7 @@ namespace Apoc3D
 
 			sect->TryGetAttributeBool(L"UsePointSprite", UsePointSprite);
 			sect->tryGetAttribute(L"ExternalRefName", ExternalRefName);
-			sect->TryGetAttributeInt(L"Priority", Priority);
+			sect->TryGetAttributeUInt(L"Priority", Priority);
 			sect->TryGetAttributeBool(L"IsBlendTransparent", IsBlendTransparent);
 			sect->TryGetAttributeBool(L"AlphaTestEnabled", AlphaTestEnabled);
 			sect->TryGetAttributeUInt(L"AlphaReference", AlphaReference);
@@ -441,10 +435,7 @@ namespace Apoc3D
 				
 				if (sect->tryGetAttribute(attrName, temp))
 				{
-					if (TextureName.Contains(i))
-						TextureName[i] = temp;
-					else
-						TextureName.Add(i, temp);
+					InsertName(i, temp, TextureNames);
 				}
 			}
 			
@@ -464,17 +455,14 @@ namespace Apoc3D
 					if (lr.getCount() == 1)
 					{
 						if (lr[0] == L"RST")
-							EffectName.Clear();
+							EffectNames.Clear();
 					}
 					else
 					{
 						int ord = StringUtils::ParseInt32(lr[0].substr(1));
 						String name = lr[1];
 
-						if (!EffectName.Contains(ord - 1))
-							EffectName.Add(ord - 1, name);
-						else
-							EffectName[ord - 1] = name;
+						InsertName(ord - 1, name, EffectNames);
 					}
 
 				}
@@ -579,6 +567,60 @@ namespace Apoc3D
 			}
 		}
 
+		void MaterialData::CopyNonDefaultFieldsFrom(MaterialData* mtrl, bool copyTextureNames)
+		{
+			const MaterialData defaultMtrlSetup;
+
+			if (mtrl->ExternalRefName != defaultMtrlSetup.ExternalRefName) ExternalRefName = mtrl->ExternalRefName;
+
+			if (mtrl->EffectNames.getCount() > 0)
+			{
+				EffectNames = mtrl->EffectNames;
+			}
+
+			if (mtrl->CustomParametrs.getCount() > 0)
+			{
+				CustomParametrs = mtrl->CustomParametrs;
+			}
+
+			if (copyTextureNames && mtrl->TextureNames.getCount() > 0)
+			{
+				TextureNames = mtrl->TextureNames;
+			}
+
+			if (mtrl->PassFlags != defaultMtrlSetup.PassFlags) PassFlags = mtrl->PassFlags;
+
+			if (mtrl->Priority != defaultMtrlSetup.Priority) Priority = mtrl->Priority;
+
+			if (mtrl->ColorWriteMasks != defaultMtrlSetup.ColorWriteMasks) ColorWriteMasks = mtrl->ColorWriteMasks;
+
+
+			if (mtrl->UsePointSprite != defaultMtrlSetup.UsePointSprite) UsePointSprite = mtrl->UsePointSprite;
+
+			if (mtrl->SourceBlend != defaultMtrlSetup.SourceBlend) SourceBlend = mtrl->SourceBlend;
+			if (mtrl->DestinationBlend != defaultMtrlSetup.DestinationBlend) DestinationBlend = mtrl->DestinationBlend;
+			if (mtrl->BlendFunction != defaultMtrlSetup.BlendFunction) BlendFunction = mtrl->BlendFunction;
+			if (mtrl->IsBlendTransparent != defaultMtrlSetup.IsBlendTransparent) IsBlendTransparent = mtrl->IsBlendTransparent;
+
+			if (mtrl->Cull != defaultMtrlSetup.Cull) Cull = mtrl->Cull;
+
+			if (mtrl->DepthWriteEnabled != defaultMtrlSetup.DepthWriteEnabled) DepthWriteEnabled = mtrl->DepthWriteEnabled;
+			if (mtrl->DepthTestEnabled != defaultMtrlSetup.DepthTestEnabled) DepthTestEnabled = mtrl->DepthTestEnabled;
+
+			if (mtrl->Ambient != defaultMtrlSetup.Ambient) Ambient = mtrl->Ambient;
+			if (mtrl->Diffuse != defaultMtrlSetup.Diffuse) Diffuse = mtrl->Diffuse;
+			if (mtrl->Emissive != defaultMtrlSetup.Emissive) Emissive = mtrl->Emissive;
+			if (mtrl->Specular != defaultMtrlSetup.Specular) Specular = mtrl->Specular;
+			if (mtrl->Power != defaultMtrlSetup.Power) Power = mtrl->Power;
+		}
+
+		void MaterialData::SetTextureName(int32 index, const String& name)
+		{
+			if (name.size())
+				InsertName(index, name, TextureNames);
+			else
+				TextureNames.Remove(index);
+		}
 
 		void MaterialData::CheckObsoleteProps()
 		{

@@ -334,9 +334,9 @@ namespace APDesigner
 		m_labels.Add(lbl);
 
 		items.Clear();
-		items.Add(TextureFilterConverter.ToString(TFLT_Point));
-		items.Add(TextureFilterConverter.ToString(TFLT_Linear));
-		items.Add(TextureFilterConverter.ToString(TFLT_Anisotropic));
+		items.Add(TextureFilterConverter.ToString(TextureFilter::Point));
+		items.Add(TextureFilterConverter.ToString(TextureFilter::Linear));
+		items.Add(TextureFilterConverter.ToString(TextureFilter::Anisotropic));
 		m_cbVsMagFilter = new ComboBox(skin, Point(sx+100, sy), 140, items);
 
 		sy+= lineHeight;
@@ -349,9 +349,9 @@ namespace APDesigner
 		m_labels.Add(lbl);
 
 		items.Clear();
-		items.Add(TextureFilterConverter.ToString(TFLT_None));
-		items.Add(TextureFilterConverter.ToString(TFLT_Point));
-		items.Add(TextureFilterConverter.ToString(TFLT_Linear));
+		items.Add(TextureFilterConverter.ToString(TextureFilter::None));
+		items.Add(TextureFilterConverter.ToString(TextureFilter::Point));
+		items.Add(TextureFilterConverter.ToString(TextureFilter::Linear));
 		m_cbVsMipFilter = new ComboBox(skin, Point(sx+100, sy), 140, items);
 
 		sy+= lineHeight;
@@ -443,9 +443,9 @@ namespace APDesigner
 		m_labels.Add(lbl);
 
 		items.Clear();
-		items.Add(TextureFilterConverter.ToString(TFLT_Point));
-		items.Add(TextureFilterConverter.ToString(TFLT_Linear));
-		items.Add(TextureFilterConverter.ToString(TFLT_Anisotropic));
+		items.Add(TextureFilterConverter.ToString(TextureFilter::Point));
+		items.Add(TextureFilterConverter.ToString(TextureFilter::Linear));
+		items.Add(TextureFilterConverter.ToString(TextureFilter::Anisotropic));
 		m_cbPsMagFilter = new ComboBox(skin, Point(sx+100, sy), 140, items);
 
 		sy+= lineHeight;
@@ -458,9 +458,9 @@ namespace APDesigner
 		m_labels.Add(lbl);
 
 		items.Clear();
-		items.Add(TextureFilterConverter.ToString(TFLT_None));
-		items.Add(TextureFilterConverter.ToString(TFLT_Point));
-		items.Add(TextureFilterConverter.ToString(TFLT_Linear));
+		items.Add(TextureFilterConverter.ToString(TextureFilter::None));
+		items.Add(TextureFilterConverter.ToString(TextureFilter::Point));
+		items.Add(TextureFilterConverter.ToString(TextureFilter::Linear));
 		m_cbPsMipFilter = new ComboBox(skin, Point(sx+100, sy), 140, items);
 
 		sy+= lineHeight;
@@ -649,7 +649,7 @@ namespace APDesigner
 				idx = i;break;
 			}
 		cbTemp->setSelectedIndex(idx);
-		hasSamplerState |= p.SamplerState.MagFilter != TFLT_Point;
+		hasSamplerState |= p.SamplerState.MagFilter != TextureFilter::Point;
 
 		idx = -1;
 		strV = TextureFilterConverter.ToString(p.SamplerState.MinFilter);
@@ -660,7 +660,7 @@ namespace APDesigner
 				idx = i;break;
 			}
 		cbTemp->setSelectedIndex(idx);
-		hasSamplerState |= p.SamplerState.MinFilter != TFLT_Point;
+		hasSamplerState |= p.SamplerState.MinFilter != TextureFilter::Point;
 
 		idx = -1;
 		strV = TextureFilterConverter.ToString(p.SamplerState.MipFilter);
@@ -671,7 +671,7 @@ namespace APDesigner
 				idx = i;break;
 			}
 		cbTemp->setSelectedIndex(idx);
-		hasSamplerState |= p.SamplerState.MipFilter != TFLT_None;
+		hasSamplerState |= p.SamplerState.MipFilter != TextureFilter::None;
 
 		(isVS ? m_tbVsMaxAnisotropy : m_tbPsMaxAnisotropy)->SetText(StringUtils::IntToString(p.SamplerState.MaxAnisotropy));
 		hasSamplerState |= p.SamplerState.MaxAnisotropy!=1;

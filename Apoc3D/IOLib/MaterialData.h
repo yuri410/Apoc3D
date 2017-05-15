@@ -46,43 +46,44 @@ namespace Apoc3D
 		class APAPI MaterialData
 		{
 		public:
+
 #if _DEBUG
 			String DebugName;
 #endif
 
 			String ExternalRefName;		/** Name for retiring material reference  */
 
-
-			HashMap<int, String> EffectName;
-
 			CustomParamTable CustomParametrs;
-			HashMap<int, String> TextureName;
+			HashMap<int32, String> EffectNames;
+			HashMap<int32, String> TextureNames;
 
-			uint64 PassFlags;
+			uint64 PassFlags = 1;
 
-			int32 Priority;  // [0, 31] Lower the higher the priority
+			uint32 Priority = DefaultMaterialPriority;  // [0, 31] Lower the higher the priority
 			
-			bool UsePointSprite;
+			Blend SourceBlend = Blend::One;
+			Blend DestinationBlend = Blend::Zero;
+			BlendFunction BlendFunction = BlendFunction::Add;
+			bool IsBlendTransparent = false;
 
-			Blend SourceBlend;
-			Blend DestinationBlend;
-			BlendFunction BlendFunction;
-			bool IsBlendTransparent;
+			uint64 ColorWriteMasks = 0xffffffffffffffffull;
 
-			CullMode Cull;
+			CullMode Cull = CullMode::CounterClockwise;
 
-			bool AlphaTestEnabled;
-			uint32 AlphaReference;
+			uint32 AlphaReference = 0;
+			bool AlphaTestEnabled = false;
 
-			bool DepthWriteEnabled;
-			bool DepthTestEnabled;
+			bool UsePointSprite = false;
+
+			bool DepthWriteEnabled = true;
+			bool DepthTestEnabled = true;
 
 			
-			Color4 Ambient;		/**  the ambient component of this material  */
-			Color4 Diffuse;		/**  the diffuse component of this material */
-			Color4 Emissive;	/**  the emissive component of this material */
-			Color4 Specular;	/** the specular component of this material */
-			float Power;		/** the specular shininess */
+			Color4 Ambient = Color4::Zero;		/**  the ambient component of this material  */
+			Color4 Diffuse = Color4::One;		/**  the diffuse component of this material */
+			Color4 Emissive = Color4::Zero;		/**  the emissive component of this material */
+			Color4 Specular = Color4::Zero;		/**  the specular component of this material */
+			float Power = 0;					/**  the specular shininess */
 
 
 			MaterialData();
@@ -92,21 +93,18 @@ namespace Apoc3D
 
 			void AddCustomParameter(const MaterialCustomParameter& value);
 
-			void SetDefaults();
-
 			void LoadData(TaggedDataReader *data);
 			TaggedDataWriter* SaveData();
-
 
 			void Load(const ResourceLocation& rl);
 			void Save(Stream& strm);
 			
 			void Parse(const ConfigurationSection* sect, const String& baseName = L"", FunctorReference<Color4(const String&)> colorParser = nullptr);
 
-		private:
+			void CopyNonDefaultFieldsFrom(MaterialData* mtrl, bool copyTextureNames);
 
-			/** Load with format version 3 */
-			void LoadV3(TaggedDataReader* data);
+			void SetTextureName(int32 index, const String& name);
+		private:
 
 			void ParseMaterialCustomParams(const String& value, FunctorReference<Color4(const String&)> colorParser);
 

@@ -43,9 +43,9 @@ namespace Apoc3D
 			Texture::Texture(RenderDevice* device, const ResourceLocation& rl, TextureUsage usage, bool managed)
 				: Resource(managed ? &TextureManager::getSingleton() : 0, rl.getName()),
 				m_renderDevice(device), m_resourceLocation(managed ? rl.Clone() : nullptr), m_usage(usage),
-				m_format(FMT_Unknown), m_type(TT_Texture2D)
+				m_format(FMT_Unknown), m_type(TextureType::Texture2D)
 			{
-
+				
 			}
 
 			Texture::Texture(RenderDevice* device, int32 width, int32 height, int32 depth, 
@@ -58,16 +58,16 @@ namespace Apoc3D
 				{
 					if (width == 1 || height == 1)
 					{
-						m_type = TT_Texture1D;
+						m_type = TextureType::Texture1D;
 					}
 					else
 					{
-						m_type = TT_Texture2D;
+						m_type = TextureType::Texture2D;
 					}
 				}
 				else
 				{
-					m_type = TT_Texture3D;
+					m_type = TextureType::Texture3D;
 				}
 				RecalculateContentSize();
 			}
@@ -75,7 +75,7 @@ namespace Apoc3D
 				: m_renderDevice(device), m_usage(usage), 
 				m_levelCount(levelCount), m_width(length), m_height(length), 
 				m_depth(1), m_format(format),
-				m_type(TT_CubeTexture)
+				m_type(TextureType::CubeTexture)
 			{
 				RecalculateContentSize();
 			}
@@ -124,7 +124,7 @@ namespace Apoc3D
 					if (depth > 1) depth = depth / 2;//>>= 1;
 				}
 
-				if (m_type == TT_CubeTexture)
+				if (m_type == TextureType::CubeTexture)
 					m_contentSize *= 6;
 			}
 
@@ -133,7 +133,7 @@ namespace Apoc3D
 			{
 				if (!m_isLocked)
 				{
-					if (m_type == TT_Texture3D)
+					if (m_type == TextureType::Texture3D)
 					{
 						if (isManaged() && !isLoaded())
 						{
@@ -159,7 +159,7 @@ namespace Apoc3D
 			{
 				if (!m_isLocked)
 				{
-					if (m_type == TT_Texture1D || m_type == TT_Texture2D)
+					if (m_type == TextureType::Texture1D || m_type == TextureType::Texture2D)
 					{
 						if (isManaged() && !isLoaded())
 						{
@@ -184,7 +184,7 @@ namespace Apoc3D
 			{
 				if (!m_isLocked)
 				{
-					if (m_type == TT_CubeTexture)
+					if (m_type == TextureType::CubeTexture)
 					{
 						if (isManaged() && !isLoaded())
 						{
@@ -229,9 +229,9 @@ namespace Apoc3D
 			
 			void Texture::FillColor(ColorValue cv)
 			{
-				if (m_type == TT_Texture2D || m_type == TT_Texture1D)
+				if (m_type == TextureType::Texture2D || m_type == TextureType::Texture1D)
 					FillColor(cv, Apoc3D::Math::Rectangle(0, 0, m_width, m_height));
-				else if (m_type == TT_Texture3D)
+				else if (m_type == TextureType::Texture3D)
 					;
 				else
 					;

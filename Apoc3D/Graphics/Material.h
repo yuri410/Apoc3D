@@ -60,47 +60,48 @@ namespace Apoc3D
 
 			String ExternalReferenceName;
 
-			bool UsePointSprite;
 
-			Blend SourceBlend;
-			Blend DestinationBlend;
-			BlendFunction BlendFunction;
-			bool IsBlendTransparent;
+			Blend SourceBlend = Blend::SourceAlpha;
+			Blend DestinationBlend = Blend::InverseSourceAlpha;
+			BlendFunction BlendFunction = BlendFunction::Add;
+			bool IsBlendTransparent = false;
 
-			CullMode Cull;
+			CullMode Cull = CullMode::None;
 
-			bool AlphaTestEnabled;
-			uint32 AlphaReference;
+			uint32 AlphaReference = 0;
+			bool AlphaTestEnabled = false;
 
-			bool DepthWriteEnabled;
-			bool DepthTestEnabled;
+			bool UsePointSprite = false;
 
-			Color4 Ambient;		/** the ambient component of this material */
-			Color4 Diffuse;		/** the diffuse component of this material */
-			Color4 Emissive;	/** the emissive component of this material */
-			Color4 Specular;	/** the specular component of this material */
-			float Power;		/** the specular shininess */
+			bool DepthWriteEnabled = true;
+			bool DepthTestEnabled = true;
+
+			Color4 Ambient = Color4::Zero;		/** the ambient component of this material */
+			Color4 Diffuse = Color4::One;		/** the diffuse component of this material */
+			Color4 Emissive = Color4::Zero;		/** the emissive component of this material */
+			Color4 Specular = Color4::Zero;		/** the specular component of this material */
+			float Power = 0;					/** the specular shininess */
 
 
 			const MaterialCustomParameter* getCustomParameter(const String& usage) const;
 			void AddCustomParameter(const MaterialCustomParameter& value);
 
-			const String& getPassEffectName(int index);
-			void setPassEffectName(int index, const String& en);
+			const String& GetPassEffectName(int32 index);
+			void SetPassEffectName(int32 index, const String& en);
 			/** 
 			 *  Gets the material's texture's name at given index.
 			 * 
 			 *  The texture name is the file name. The engine will try to locate
 			 *  the texture file with the rule "FileLocateRule::Textures".
 			 */
-			const String& getTextureName(int index) const;
+			const String& GetTextureName(int32 index) const;
 			/** 
 			 *  Sets the material's texture's name at given index.
 			 *
 			 *  The texture name is the file name. The engine will try to locate
 			 *  the texture file with the rule "FileLocateRule::Textures".
 			 */
-			void setTextureName(int index, const String& name);
+			void SetTextureName(int32 index, const String& name);
 
 			/** 
 			 *  Get the first effect appeared when passing the mtrl's effect 
@@ -109,14 +110,14 @@ namespace Apoc3D
 			Effect* GetFirstValidEffect() const;
 
 			/** Get the effect at the given index in the mtrl's effect table. */
-			Effect* getPassEffect(int index) const;
-			void setPassEffect(int index, Effect* eff) { m_effects[index] = eff; }
+			Effect* GetPassEffect(int32 index) const;
+			void SetPassEffect(int32 index, Effect* eff) { m_effects[index] = eff; }
 
 			/** Gets the texture at texture layer idx */
-			ResourceHandle<Texture>* getTexture(int idx) const { return m_tex[idx]; }
+			ResourceHandle<Texture>* getTexture(int32 idx) const { return m_tex[idx]; }
 
 			/** Sets the texture at texture layer idx */
-			void setTexture(int idx, ResourceHandle<Texture>* value) { m_tex[idx] = value; }
+			void setTexture(int32 idx, ResourceHandle<Texture>* value) { m_tex[idx] = value; }
 
 			/** 
 			 *  Gets the priority of this material. The legal range should be from 0 to BatchData::MaxPriority.
@@ -134,6 +135,8 @@ namespace Apoc3D
 			uint64 getPassFlags() const { return m_passFlags; }
 			void setPassFlags(uint64 val) { m_passFlags = val; }
 
+			ColorWriteMasks GetTargetWriteMask(uint32 rtIndex) const;
+			void SetTargetWriteMask(uint32 rtIndex, ColorWriteMasks masks);
 
 			void Load(const MaterialData& data);
 			void Save(MaterialData& data);
@@ -163,20 +166,22 @@ namespace Apoc3D
 			// @@: it is found that an array of Strings will use up considerable
 			// amount of memory as the Stl String will initialize their inner objects. 
 			// Thousands of Materials are space consuming if not using map.
-			HashMap<int, String> m_effectName;			/** A map of effect names */
+			HashMap<int32, String> m_effectName;			/** A map of effect names */
 
 			CustomParamTable m_customParametrs;
 			ResourceHandle<Texture>* m_tex[MaxTextures];
-			HashMap<int, String> m_texName;
+			HashMap<int32, String> m_texName;
 			bool m_texDirty[MaxTextures];
 
 			/** 
 			 *  The bit field used for object selection during scene rendering, 
 			 *  as mentioned in the Material class's description.
 			 */
-			uint64 m_passFlags;
+			uint64 m_passFlags = 0;
 
-			int32 m_priority;
+			uint64 m_colorWriteMasks = 0xffffffffffffffffull;
+
+			uint32 m_priority = DefaultMaterialPriority;
 
 			void LoadTexture(int32 index);
 			void LoadEffect(int32 index);

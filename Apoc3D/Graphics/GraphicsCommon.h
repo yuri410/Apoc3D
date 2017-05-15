@@ -37,14 +37,14 @@ namespace Apoc3D
 		namespace RenderSystem
 		{
 			const int32 MaxScenePass = 64;
-			const int32 DefaultMaterialPriority = 10;
+			const uint32 DefaultMaterialPriority = 10;
 
-			enum TextureType
+			enum struct TextureType
 			{
-				TT_Texture1D = 0,
-				TT_Texture2D,
-				TT_Texture3D,
-				TT_CubeTexture
+				Texture1D = 0,
+				Texture2D,
+				Texture3D,
+				CubeTexture
 			};
 
 
@@ -69,36 +69,36 @@ namespace Apoc3D
 				BU_PointSpriteVertex = 8
 			};
 
-			enum IndexBufferType    
+			enum struct IndexBufferFormat
 			{
-				IBT_Bit16 = 0,
-				IBT_Bit32 = 1
+				Bit16 = 0,
+				Bit32 = 1
 			};
 
-			enum CullMode
+			enum struct CullMode
 			{
-				CULL_None = 0,				/** Do not cull back faces. */
-				CULL_Clockwise = 1,			/** Cull back faces with clockwise vertices. */
-				CULL_CounterClockwise = 2,	/** Cull back faces with counterclockwise vertices. */
-				CULL_Count = 3
+				None = 0,				/** Do not cull back faces. */
+				Clockwise = 1,			/** Cull back faces with clockwise vertices. */
+				CounterClockwise = 2,	/** Cull back faces with counterclockwise vertices. */
+				Count = 3
 			};
-			enum FillMode
+			enum struct FillMode
 			{
-				FILL_Point = 0,			/** Draw a point at each vertex. */
-				FILL_WireFrame = 1,		/** Draw lines connecting the vertices that define a primitive face. */
-				FILL_Solid = 2,			/** Draw solid faces for each primitive. */
-				FILL_Count = 3
+				Point = 0,			/** Draw a point at each vertex. */
+				WireFrame = 1,		/** Draw lines connecting the vertices that define a primitive face. */
+				Solid = 2,			/** Draw solid faces for each primitive. */
+				Count = 3
 			};
 			
-			enum PrimitiveType
+			enum struct PrimitiveType
 			{
-				PT_PointList = 0,		/** Render the vertices as individual points. */
-				PT_LineList = 1,		/** Render the vertices as a series of individual lines. */
-				PT_LineStrip = 2,		/** Render the vertices as a continuous line. */
-				PT_TriangleList = 3,	/** Render the vertices as a series of individual triangles. */
-				PT_TriangleStrip = 4,	/** Render the vertices as a continous set of triangles in a zigzag type fashion. */
-				PT_TriangleFan = 5,		/** Render the vertices as a set of trinagles in a fan like formation. */
-				PT_Count = 6
+				PointList = 0,		/** Render the vertices as individual points. */
+				LineList = 1,		/** Render the vertices as a series of individual lines. */
+				LineStrip = 2,		/** Render the vertices as a continuous line. */
+				TriangleList = 3,	/** Render the vertices as a series of individual triangles. */
+				TriangleStrip = 4,	/** Render the vertices as a continuous set of triangles in a zigzag type fashion. */
+				TriangleFan = 5,		/** Render the vertices as a set of triangles in a fan like formation. */
+				Count = 6
 			};
 			
 			
@@ -109,6 +109,16 @@ namespace Apoc3D
 				CLEAR_Stencil = 4,
 				CLEAR_ColorAndDepth = CLEAR_ColorBuffer | CLEAR_DepthBuffer,
 				CLEAR_All = CLEAR_ColorBuffer | CLEAR_DepthBuffer | CLEAR_Stencil
+			};
+
+			enum ColorWriteMasks : byte
+			{
+				ColorWrite_None = 0,
+				ColorWrite_Red = 1 << 0,
+				ColorWrite_Green = 1 << 1,
+				ColorWrite_Blue = 1 << 2,
+				ColorWrite_Alpha = 1 << 3,
+				ColorWrite_All = ColorWrite_Red | ColorWrite_Green | ColorWrite_Blue | ColorWrite_Alpha
 			};
 
 			/** Defines stencil buffer operations. */
@@ -157,8 +167,7 @@ namespace Apoc3D
 				*/
 				Clamp = 2,        
 				
-				/** Texture coordinates outside the range [0.0, 1.0] are set to the border color.
-				*/
+				/** Texture coordinates outside the range [0.0, 1.0] are set to the border color. */
 				Border = 3,
 
 				/** Similar to Mirror and Clamp. Takes the absolute value of the texture coordinate
@@ -171,21 +180,18 @@ namespace Apoc3D
 				Count = 5
 			};
 
-			/**
-			 *  Defines how a texture will be filtered as it is minified for each mipmap level.
-			 */
-			enum TextureFilter
+			/** Defines how a texture will be filtered as it is minified for each mipmap level. */
+			enum struct TextureFilter
 			{
-				/* Mipmapping disabled. The rasterizer uses the magnification filter instead.
-				*/
-				TFLT_None = 0,
+				/* Mipmapping disabled. The rasterizer uses the magnification filter instead. */
+				None = 0,
 
 				/*  Point filtering used as a texture magnification or minification filter. The
 				*   texel with coordinates nearest to the desired pixel value is used. The texture
 				*    filter used between mipmap levels is based on the nearest point; that is,
 				*    the rasterizer uses the color from the texel of the nearest mipmap texture.
 				*/
-				TFLT_Point = 1,
+				Point = 1,
 
 				/*  Bilinear interpolation filtering used as a texture magnification or minification
 				*   filter. A weighted average of a 2×2 area of texels surrounding the desired
@@ -193,15 +199,15 @@ namespace Apoc3D
 				*    mipmap interpolation, in which the rasterizer performs linear interpolation
 				*    on pixel color, using the texels of the two nearest mipmap textures.
 				*/
-				TFLT_Linear = 2,
+				Linear = 2,
 
 				/*  Anisotropic texture filtering used as a texture magnification or minification
 				*   filter. This type of filtering compensates for distortion caused by the difference
 				*    in angle between the texture polygon and the plane of the screen.
 				*/
-				TFLT_Anisotropic = 3,
+				Anisotropic = 3,
 				
-				TFLT_Count = 4
+				Count = 4
 			};
 
 

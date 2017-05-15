@@ -402,7 +402,7 @@ namespace Apoc3D
 				int dstLvlSize = PixelFormatUtils::GetMemorySize(
 					dstLvl.Width, dstLvl.Height, dstLvl.Depth, newdata.Format);
 
-				if (Type == TT_CubeTexture)
+				if (Type == TextureType::CubeTexture)
 				{
 					dstLvlSize *= 6;
 				}
@@ -412,7 +412,7 @@ namespace Apoc3D
 				dstLvl.ContentData = new char[dstLvlSize];
 				newdata.ContentSize += dstLvlSize;
 
-				if (Type == TT_CubeTexture)
+				if (Type == TextureType::CubeTexture)
 				{
 					int32 srcFaceSize = srcLvl.LevelSize / 6;
 					int32 dstFaceSize = dstLvlSize / 6;
@@ -453,7 +453,7 @@ namespace Apoc3D
 				int dstLvlSize = PixelFormatUtils::GetMemorySize(
 					dstLvl.Width, dstLvl.Height, dstLvl.Depth, newData.Format);
 
-				if (Type == TT_CubeTexture)
+				if (Type == TextureType::CubeTexture)
 				{
 					dstLvlSize *= 6;
 				}
@@ -462,7 +462,7 @@ namespace Apoc3D
 				dstLvl.ContentData = new char[dstLvlSize];
 				newData.ContentSize += dstLvlSize;
 
-				if (Type == TT_CubeTexture)
+				if (Type == TextureType::CubeTexture)
 				{
 					int32 srcFaceSize = srcLvl.LevelSize / 6;
 					int32 dstFaceSize = dstLvlSize / 6;

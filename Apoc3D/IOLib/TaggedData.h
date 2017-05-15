@@ -405,7 +405,7 @@ namespace Apoc3D
 			bool m_endianIndependent;
 			bool m_suspendStreamRelease = false;
 
-			int m_sectCount;
+			int32 m_sectCount;
 			SectionTable m_positions;
 			Stream* m_stream;
 

@@ -72,58 +72,58 @@ namespace Apoc3D
 				D3D9Shader(D3D9RenderDevice* device, const ResourceLocation& rl);
 				virtual ~D3D9Shader();
 
-				virtual int GetParamIndex(const String& paramName);
-				virtual int GetSamplerIndex(const String& paramName);
-				virtual bool TryGetParamIndex(const String& paramName, int& result);
-				virtual bool TryGetSamplerIndex(const String& paramName, int& result);
+				int GetParamIndex(const String& paramName) override;
+				int GetSamplerIndex(const String& paramName) override;
+				bool TryGetParamIndex(const String& paramName, int& result) override;
+				bool TryGetSamplerIndex(const String& paramName, int& result) override;
 
 
-				virtual void SetVector2(int reg, const Vector2& value);
-				virtual void SetVector3(int reg, const Vector3& value);
-				virtual void SetVector4(int reg, const Vector4& value);
-				virtual void SetValue(int reg, const Quaternion& value);
-				virtual void SetValue(int reg, const Matrix& value);
-				virtual void SetValue(int reg, const Color4& value);
-				virtual void SetValue(int reg, const Plane& value);
+				void SetVector2(int32 reg, const Vector2& value) override;
+				void SetVector3(int32 reg, const Vector3& value) override;
+				void SetVector4(int32 reg, const Vector4& value) override;
+				void SetValue(int32 reg, const Quaternion& value) override;
+				void SetValue(int32 reg, const Matrix& value) override;
+				void SetValue(int32 reg, const Color4& value) override;
+				void SetValue(int32 reg, const Plane& value) override;
 
-				virtual void SetVector2(int reg, const Vector2* value, int count);
-				virtual void SetVector3(int reg, const Vector3* value, int count);
-				virtual void SetVector4(int reg, const Vector4* value, int count);
-				virtual void SetValue(int reg, const Quaternion* value, int count);
-				virtual void SetValue(int reg, const Matrix* value, int count);
-				virtual void SetValue(int reg, const Color4* value, int count);
-				virtual void SetValue(int reg, const Plane* value, int count);
-				virtual void SetMatrix4x3(int reg, const Matrix* value, int count);
+				void SetVector2(int32 reg, const Vector2* value, int32 count) override;
+				void SetVector3(int32 reg, const Vector3* value, int32 count) override;
+				void SetVector4(int32 reg, const Vector4* value, int32 count) override;
+				void SetValue(int32 reg, const Quaternion* value, int32 count) override;
+				void SetValue(int32 reg, const Matrix* value, int32 count) override;
+				void SetValue(int32 reg, const Color4* value, int32 count) override;
+				void SetValue(int32 reg, const Plane* value, int32 count) override;
+				void SetMatrix4x3(int32 reg, const Matrix* value, int32 count) override;
 
-				virtual void SetValue(int reg, bool value);
-				virtual void SetValue(int reg, float value);
-				virtual void SetValue(int reg, int value);
-				virtual void SetValue(int reg, const bool* value, int count);
-				virtual void SetValue(int reg, const float* value, int count);
-				virtual void SetValue(int reg, const int* value, int count);
+				void SetValue(int32 reg, bool value) override;
+				void SetValue(int32 reg, float value) override;
+				void SetValue(int32 reg, int32 value) override;
+				void SetValue(int32 reg, const bool* value, int32 count) override;
+				void SetValue(int32 reg, const float* value, int32 count) override;
+				void SetValue(int32 reg, const int32* value, int32 count) override;
 
-				virtual void SetVector2(const String& paramName, const Vector2& value);
-				virtual void SetVector3(const String& paramName, const Vector3& value);
-				virtual void SetVector4(const String& paramName, const Vector4& value);
-				virtual void SetValue(const String& paramName, const Quaternion& value);
-				virtual void SetValue(const String& paramName, const Matrix& value);
-				virtual void SetValue(const String& paramName, const Color4& value);
-				virtual void SetValue(const String& paramName, const Plane& value);
+				void SetVector2(const String& paramName, const Vector2& value) override;
+				void SetVector3(const String& paramName, const Vector3& value) override;
+				void SetVector4(const String& paramName, const Vector4& value) override;
+				void SetValue(const String& paramName, const Quaternion& value) override;
+				void SetValue(const String& paramName, const Matrix& value) override;
+				void SetValue(const String& paramName, const Color4& value) override;
+				void SetValue(const String& paramName, const Plane& value) override;
 
-				virtual void SetVector2(const String& paramName, const Vector2* value, int count);
-				virtual void SetVector3(const String& paramName, const Vector3* value, int count);
-				virtual void SetVector4(const String& paramName, const Vector4* value, int count);
-				virtual void SetValue(const String& paramName, const Quaternion* value, int count);
-				virtual void SetValue(const String& paramName, const Matrix* value, int count);
-				virtual void SetValue(const String& paramName, const Plane* value, int count);
-				virtual void SetValue(const String& paramName, const Color4* value, int count);
+				void SetVector2(const String& paramName, const Vector2* value, int32 count) override;
+				void SetVector3(const String& paramName, const Vector3* value, int32 count) override;
+				void SetVector4(const String& paramName, const Vector4* value, int32 count) override;
+				void SetValue(const String& paramName, const Quaternion* value, int32 count) override;
+				void SetValue(const String& paramName, const Matrix* value, int32 count) override;
+				void SetValue(const String& paramName, const Plane* value, int32 count) override;
+				void SetValue(const String& paramName, const Color4* value, int32 count) override;
 
-				virtual void SetValue(const String& paramName, bool value);
-				virtual void SetValue(const String& paramName, float value);
-				virtual void SetValue(const String& paramName, int value);
-				virtual void SetValue(const String& paramName, const bool* value, int count);
-				virtual void SetValue(const String& paramName, const float* value, int count);
-				virtual void SetValue(const String& paramName, const int* value, int count);
+				void SetValue(const String& paramName, bool value) override;
+				void SetValue(const String& paramName, float value) override;
+				void SetValue(const String& paramName, int32 value) override;
+				void SetValue(const String& paramName, const bool* value, int32 count) override;
+				void SetValue(const String& paramName, const float* value, int32 count) override;
+				void SetValue(const String& paramName, const int32* value, int32 count) override;
 
 			protected:
 				NO_INLINE static void ThrowKeyNotFoundEx(const String& name)
@@ -173,7 +173,7 @@ namespace Apoc3D
 
 
 
-			GST int ShaderTT::GetParamIndex(const String& paramName)
+			GST int32 ShaderTT::GetParamIndex(const String& paramName)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
@@ -182,12 +182,12 @@ namespace Apoc3D
 				}
 				return cons.RegisterIndex;
 			}
-			GST int ShaderTT::GetSamplerIndex(const String& paramName)
+			GST int32 ShaderTT::GetSamplerIndex(const String& paramName)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				return cons.SamplerIndex;
 			}
-			GST bool ShaderTT::TryGetParamIndex(const String& paramName, int& result)
+			GST bool ShaderTT::TryGetParamIndex(const String& paramName, int32& result)
 			{
 				const ShaderConstant* sc = m_constantTable->tryGetConstant(paramName);
 				if (sc && !sc->IsSampler)
@@ -197,7 +197,7 @@ namespace Apoc3D
 				}
 				return false;
 			}			
-			GST bool ShaderTT::TryGetSamplerIndex(const String& paramName, int& result)
+			GST bool ShaderTT::TryGetSamplerIndex(const String& paramName, int32& result)
 			{
 				const ShaderConstant* sc = m_constantTable->tryGetConstant(paramName);
 				if (sc && sc->IsSampler)
@@ -209,14 +209,14 @@ namespace Apoc3D
 			}
 
 			
-			GST void ShaderTT::SetVector2(int reg, const Vector2& value)
+			GST void ShaderTT::SetVector2(int32 reg, const Vector2& value)
 			{
 				SharedFloatBuffer[0] = value.X;
 				SharedFloatBuffer[1] = value.Y;
 				SharedFloatBuffer[2] = SharedFloatBuffer[3] = 0;
 				(m_device->getDevice()->*SetConstantF)(reg, SharedFloatBuffer, 1);
 			}
-			GST void ShaderTT::SetVector3(int reg, const Vector3& value)
+			GST void ShaderTT::SetVector3(int32 reg, const Vector3& value)
 			{
 				SharedFloatBuffer[0] = value.X;
 				SharedFloatBuffer[1] = value.Y;
@@ -224,29 +224,29 @@ namespace Apoc3D
 				SharedFloatBuffer[3] = 0;
 				(m_device->getDevice()->*SetConstantF)(reg, SharedFloatBuffer, 1);
 			}
-			GST void ShaderTT::SetVector4(int reg, const Vector4& value) 
+			GST void ShaderTT::SetVector4(int32 reg, const Vector4& value)
 			{
 				(m_device->getDevice()->*SetConstantF)(reg, value, 1);
 			}
-			GST void ShaderTT::SetValue(int reg, const Quaternion& value)  
+			GST void ShaderTT::SetValue(int32 reg, const Quaternion& value)
 			{
 				(m_device->getDevice()->*SetConstantF)(reg, &value.X, 1);
 			}
-			GST void ShaderTT::SetValue(int reg, const Matrix& value) 
+			GST void ShaderTT::SetValue(int32 reg, const Matrix& value)
 			{
 				(m_device->getDevice()->*SetConstantF)(reg, &value.M11, 4);
 			}
-			GST void ShaderTT::SetValue(int reg, const Color4& value) 
+			GST void ShaderTT::SetValue(int32 reg, const Color4& value)
 			{
 				(m_device->getDevice()->*SetConstantF)(reg, &value.Red, 1);
 			}
-			GST void ShaderTT::SetValue(int reg, const Plane& value) 
+			GST void ShaderTT::SetValue(int32 reg, const Plane& value)
 			{
 				(m_device->getDevice()->*SetConstantF)(reg, &value.X, 1);
 			}
 
 			
-			GST void ShaderTT::SetVector2(int reg, const Vector2* value, int count) 
+			GST void ShaderTT::SetVector2(int32 reg, const Vector2* value, int32 count)
 			{
 				assert(count<=SharedBufferSize/4);
 
@@ -259,7 +259,7 @@ namespace Apoc3D
 				}
 				(m_device->getDevice()->*SetConstantF)(reg, SharedFloatBuffer, count);
 			}
-			GST void ShaderTT::SetVector3(int reg, const Vector3* value, int count) 
+			GST void ShaderTT::SetVector3(int32 reg, const Vector3* value, int32 count)
 			{
 				assert(count<=SharedBufferSize/4);
 
@@ -273,19 +273,19 @@ namespace Apoc3D
 				}
 				(m_device->getDevice()->*SetConstantF)(reg, SharedFloatBuffer, count);
 			}
-			GST void ShaderTT::SetVector4(int reg, const Vector4* value, int count)
+			GST void ShaderTT::SetVector4(int32 reg, const Vector4* value, int32 count)
 			{
 				(m_device->getDevice()->*SetConstantF)(reg, (const float*)value, count);
 			}
-			GST void ShaderTT::SetValue(int reg, const Quaternion* value, int count)
+			GST void ShaderTT::SetValue(int32 reg, const Quaternion* value, int32 count)
 			{
 				(m_device->getDevice()->*SetConstantF)(reg, (const float*)value, count);
 			}
-			GST void ShaderTT::SetValue(int reg, const Matrix* value, int count) 
+			GST void ShaderTT::SetValue(int32 reg, const Matrix* value, int32 count)
 			{
 				(m_device->getDevice()->*SetConstantF)(reg, (const float*)value, count * 4);
 			}
-			GST void ShaderTT::SetMatrix4x3(int reg, const Matrix* value, int count)
+			GST void ShaderTT::SetMatrix4x3(int32 reg, const Matrix* value, int32 count)
 			{
 				assert(count*12<=SharedBufferSize);
 
@@ -299,35 +299,35 @@ namespace Apoc3D
 					(m_device->getDevice()->*SetConstantF)(reg, SharedFloatBuffer, count * 3);
 				}
 			}
-			GST void ShaderTT::SetValue(int reg, const Color4* value, int count) 
+			GST void ShaderTT::SetValue(int32 reg, const Color4* value, int32 count)
 			{
 				(m_device->getDevice()->*SetConstantF)(reg, (const float*)value, count);
 			}
-			GST void ShaderTT::SetValue(int reg, const Plane* value, int count) 
+			GST void ShaderTT::SetValue(int32 reg, const Plane* value, int32 count)
 			{
 				(m_device->getDevice()->*SetConstantF)(reg, (const float*)value, count);
 			}
 
 			
-			GST void ShaderTT::SetValue(int reg, bool value) 
+			GST void ShaderTT::SetValue(int32 reg, bool value)
 			{
 				const BOOL b = value ? 1 : 0;
 				(m_device->getDevice()->*SetConstantB)(reg, &b, 1);
 			}
-			GST void ShaderTT::SetValue(int reg, float value) 
+			GST void ShaderTT::SetValue(int32 reg, float value)
 			{
 				SharedFloatBuffer[0] = value;
 				SharedFloatBuffer[1] = SharedFloatBuffer[2] = SharedFloatBuffer[3] = 0;
 				(m_device->getDevice()->*SetConstantF)(reg, SharedFloatBuffer, 1);
 			}
-			GST void ShaderTT::SetValue(int reg, int value) 
+			GST void ShaderTT::SetValue(int32 reg, int32 value)
 			{
 				SharedIntBuffer[0] = value;
 				SharedIntBuffer[1] = SharedIntBuffer[2] = SharedIntBuffer[3] = 0;
 				(m_device->getDevice()->*SetConstantI)(reg, SharedIntBuffer, 1);
 			}
 			
-			GST void ShaderTT::SetValue(int reg, const bool* value, int count) 
+			GST void ShaderTT::SetValue(int32 reg, const bool* value, int32 count)
 			{
 				assert(count<=SharedBufferSize);
 
@@ -343,7 +343,7 @@ namespace Apoc3D
 				(m_device->getDevice()->*SetConstantB)(reg, SharedBoolBuffer, alignedCount / 4);
 			}
 			
-			GST void ShaderTT::SetValue(int reg, const float* value, int count) 
+			GST void ShaderTT::SetValue(int32 reg, const float* value, int32 count)
 			{
 				int regCount = count / 4;
 				if (regCount>0)
@@ -366,7 +366,7 @@ namespace Apoc3D
 				}
 			}
 			
-			GST void ShaderTT::SetValue(int reg, const int* value, int count) 
+			GST void ShaderTT::SetValue(int32 reg, const int* value, int32 count)
 			{
 				int regCount = count/4;
 				if (regCount>0)
@@ -470,7 +470,7 @@ namespace Apoc3D
 
 
 			
-			GST void ShaderTT::SetVector2(const String &paramName, const Vector2* value, int count)
+			GST void ShaderTT::SetVector2(const String &paramName, const Vector2* value, int32 count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
@@ -480,7 +480,7 @@ namespace Apoc3D
 				SetVector2(cons.RegisterIndex, value, count);
 			}
 			
-			GST void ShaderTT::SetVector3(const String &paramName, const Vector3* value, int count)
+			GST void ShaderTT::SetVector3(const String &paramName, const Vector3* value, int32 count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
@@ -489,7 +489,7 @@ namespace Apoc3D
 				}
 				SetVector3(cons.RegisterIndex, value, count);
 			}
-			GST void ShaderTT::SetVector4(const String &paramName, const Vector4* value, int count)
+			GST void ShaderTT::SetVector4(const String &paramName, const Vector4* value, int32 count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
@@ -498,7 +498,7 @@ namespace Apoc3D
 				}
 				SetVector4(cons.RegisterIndex, value, count);
 			}
-			GST void ShaderTT::SetValue(const String &paramName, const Quaternion* value, int count)
+			GST void ShaderTT::SetValue(const String &paramName, const Quaternion* value, int32 count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
@@ -507,7 +507,7 @@ namespace Apoc3D
 				}
 				SetValue(cons.RegisterIndex, value, count);
 			}
-			GST void ShaderTT::SetValue(const String &paramName, const Matrix* value, int count)
+			GST void ShaderTT::SetValue(const String &paramName, const Matrix* value, int32 count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
@@ -516,7 +516,7 @@ namespace Apoc3D
 				}
 				SetValue(cons.RegisterIndex, value, count);
 			}
-			GST void ShaderTT::SetValue(const String &paramName, const Plane* value, int count)
+			GST void ShaderTT::SetValue(const String &paramName, const Plane* value, int32 count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
@@ -525,7 +525,7 @@ namespace Apoc3D
 				}
 				SetValue(cons.RegisterIndex, value, count);
 			}
-			GST void ShaderTT::SetValue(const String &paramName, const Color4* value, int count)
+			GST void ShaderTT::SetValue(const String &paramName, const Color4* value, int32 count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
@@ -553,7 +553,7 @@ namespace Apoc3D
 				}
 				SetValue(cons.RegisterIndex, value);
 			}
-			GST void ShaderTT::SetValue(const String &paramName, int value)
+			GST void ShaderTT::SetValue(const String &paramName, int32 value)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
@@ -562,7 +562,7 @@ namespace Apoc3D
 				}
 				SetValue(cons.RegisterIndex, value);
 			}
-			GST void ShaderTT::SetValue(const String &paramName, const bool* value, int count)
+			GST void ShaderTT::SetValue(const String &paramName, const bool* value, int32 count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
@@ -571,7 +571,7 @@ namespace Apoc3D
 				}
 				SetValue(cons.RegisterIndex, value, count);
 			}
-			GST void ShaderTT::SetValue(const String &paramName, const float* value, int count)
+			GST void ShaderTT::SetValue(const String &paramName, const float* value, int32 count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
@@ -580,7 +580,7 @@ namespace Apoc3D
 				}
 				SetValue(cons.RegisterIndex, value, count);
 			}
-			GST void ShaderTT::SetValue(const String &paramName, const int* value, int count)
+			GST void ShaderTT::SetValue(const String &paramName, const int32* value, int32 count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)

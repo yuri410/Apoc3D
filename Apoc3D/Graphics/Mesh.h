@@ -149,7 +149,7 @@ namespace Apoc3D
 				SubPart(){}
 				~SubPart();
 
-				template <typename T, IndexBufferType IBT>
+				template <typename T, IndexBufferFormat IBT>
 				void SetIndexData(ObjectFactory* fac, const List<uint>& pi, int32 vertexCount, bool* used);
 			};
 

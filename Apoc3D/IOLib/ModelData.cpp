@@ -292,8 +292,8 @@ namespace Apoc3D
 				bw.WriteColor4(md->Specular);
 				bw.WriteColor4(md->Emissive);
 				bw.WriteSingle(md->Power);
-				if (md->TextureName.Contains(0))
-					bw.WriteString(PathUtils::GetFileNameNoExt(md->TextureName[0]));
+				if (md->TextureNames.Contains(0))
+					bw.WriteString(PathUtils::GetFileNameNoExt(md->TextureNames[0]));
 				else
 					bw.WriteString(PathUtils::GetFileNameNoExt(L""));
 			}

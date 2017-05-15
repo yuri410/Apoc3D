@@ -30,14 +30,14 @@ namespace SampleTerrain
 		m_bx(bx), m_bz(bz), m_material(rd)
 	{
 
-		m_material.Cull = CULL_Clockwise;
+		m_material.Cull = CullMode::Clockwise;
 		m_material.Ambient = Color4(0.35f,0.35f,0.35f);
 		m_material.Diffuse = Color4(1.0f, 1.0f, 1.0f);
 		m_material.Specular = Color4(0.0f, 0.0f, 0.0f);
 		m_material.Power = 1;
 		m_material.setPriority(5);
 		m_material.setPassFlags(1);
-		m_material.setPassEffect(0, EffectManager::getSingleton().getEffect(L"Terrain"));
+		m_material.SetPassEffect(0, EffectManager::getSingleton().getEffect(L"Terrain"));
 		m_material.setTexture(0, TerrainMeshManager::getSingleton().getTexture(0));
 		m_material.setTexture(1, TerrainMeshManager::getSingleton().getTexture(1));
 		m_material.setTexture(2, TerrainMeshManager::getSingleton().getTexture(2));
@@ -166,7 +166,7 @@ namespace SampleTerrain
 		m_geoData.IndexBuffer = m_sharedIndex;
 		m_geoData.PrimitiveCount = m_primitiveCount;
 		m_geoData.VertexCount = vertexCount;
-		m_geoData.PrimitiveType = PT_TriangleList;
+		m_geoData.PrimitiveType = PrimitiveType::TriangleList;
 		m_geoData.BaseVertex = 0;
 		m_geoData.Discard = false;
 
@@ -314,7 +314,7 @@ namespace SampleTerrain
 
 		int primCount = terrSize * terrSize * 2;
 		int indexCount = primCount * 3;
-		m_indexBuffer = objFac->CreateIndexBuffer(IBT_Bit32, indexCount, BU_WriteOnly);
+		m_indexBuffer = objFac->CreateIndexBuffer(IndexBufferFormat::Bit32, indexCount, BU_WriteOnly);
 		
 		uint* idxData = reinterpret_cast<uint*>(m_indexBuffer->Lock(LOCK_None));
 

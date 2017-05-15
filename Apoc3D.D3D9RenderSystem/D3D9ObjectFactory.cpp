@@ -50,21 +50,21 @@ namespace Apoc3D
 			{
 				return new D3D9Texture(m_device, rl, usage, managed);
 			}
-			Texture* D3D9ObjectFactory::CreateTexture(int width, int height, int levelCount, TextureUsage usage, PixelFormat format)
+			Texture* D3D9ObjectFactory::CreateTexture(int32 width, int32 height, int32 levelCount, TextureUsage usage, PixelFormat format)
 			{
 				return new D3D9Texture(m_device, width, height, 1, levelCount, format, usage);
 			}
-			Texture* D3D9ObjectFactory::CreateTexture(int width, int height, int depth, int levelCount, TextureUsage usage, PixelFormat format)
+			Texture* D3D9ObjectFactory::CreateTexture(int32 width, int32 height, int32 depth, int32 levelCount, TextureUsage usage, PixelFormat format)
 			{
 				return new D3D9Texture(m_device, width, height, depth, levelCount, format, usage);
 			}
-			Texture* D3D9ObjectFactory::CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format)
+			Texture* D3D9ObjectFactory::CreateTexture(int32 length, int32 levelCount, TextureUsage usage, PixelFormat format)
 			{
 				return new D3D9Texture(m_device, length, levelCount, format, usage);
 			}
 
 
-			RenderTarget* D3D9ObjectFactory::CreateRenderTarget(int width, int height, PixelFormat clrFmt, const String& multisampleMode)
+			RenderTarget* D3D9ObjectFactory::CreateRenderTarget(int32 width, int32 height, PixelFormat clrFmt, const String& multisampleMode)
 			{
 				return new D3D9RenderTarget(m_device, width, height, clrFmt, multisampleMode);
 			}
@@ -78,11 +78,11 @@ namespace Apoc3D
 			}
 
 
-			IndexBuffer* D3D9ObjectFactory::CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage)
+			IndexBuffer* D3D9ObjectFactory::CreateIndexBuffer(IndexBufferFormat type, int32 count, BufferUsageFlags usage)
 			{
-				return new D3D9IndexBuffer(m_device, type, count * (type == IBT_Bit16 ? sizeof(ushort) : sizeof(uint)), usage);
+				return new D3D9IndexBuffer(m_device, type, count * (type == IndexBufferFormat::Bit16 ? sizeof(ushort) : sizeof(uint)), usage);
 			}
-			VertexBuffer* D3D9ObjectFactory::CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage)
+			VertexBuffer* D3D9ObjectFactory::CreateVertexBuffer(int32 vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage)
 			{
 				return new D3D9VertexBuffer(m_device, vertexCount, vtxDecl->GetVertexSize(), usage);
 			}

@@ -47,9 +47,9 @@ namespace Apoc3D
 				TextureAddressMode AddressW = TextureAddressMode::Wrap;
 
 				uint BorderColor = 0;
-				TextureFilter MagFilter = TFLT_Point;
-				TextureFilter MinFilter = TFLT_Point;
-				TextureFilter MipFilter = TFLT_None;
+				TextureFilter MagFilter = TextureFilter::Point;
+				TextureFilter MinFilter = TextureFilter::Point;
+				TextureFilter MipFilter = TextureFilter::None;
 				int32 MaxAnisotropy = 1;
 				int32 MaxMipLevel = 0;
 				int32 MipMapLODBias = 0;
@@ -64,8 +64,8 @@ namespace Apoc3D
 			public:
 				RenderDevice* getRenderDevice() { return m_renderDevice; }
 
-				virtual int GetParamIndex(const String& paramName) = 0;
-				virtual int GetSamplerIndex(const String& paramName) = 0;
+				virtual int32 GetParamIndex(const String& paramName) = 0;
+				virtual int32 GetSamplerIndex(const String& paramName) = 0;
 				virtual bool TryGetParamIndex(const String& paramName, int& result) = 0;
 				virtual bool TryGetSamplerIndex(const String& paramName, int& result) = 0;
 

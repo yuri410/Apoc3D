@@ -101,9 +101,9 @@ namespace Apoc3D
 			static Vector4 s_instancingVector4Buffer[InstancingData::MaxOneTimeInstances];
 			
 			
-			template void AutomaticEffect::SetParameterValue<bool>(int index, const bool* value, int count);
-			template void AutomaticEffect::SetParameterValue<int>(int index, const int* value, int count);
-			template void AutomaticEffect::SetParameterValue<float>(int index, const float* value, int count);
+			template void AutomaticEffect::SetParameterValue<bool>(int32 index, const bool* value, int32 count);
+			template void AutomaticEffect::SetParameterValue<int>(int32 index, const int* value, int32 count);
+			template void AutomaticEffect::SetParameterValue<float>(int32 index, const float* value, int32 count);
 
 
 
@@ -223,14 +223,14 @@ namespace Apoc3D
 				}
 			}
 
-			void AutomaticEffect::Setup(Material* mtrl, const RenderOperation* rop, int count)
+			void AutomaticEffect::Setup(Material* mtrl, const RenderOperation* rop, int32 count)
 			{
 				// set the param's value one by one. 
 
 				// the material for all the render operations in the list is the same.
 				// it is better to be set only once. by checking m_previousMaterialPointer
 
-				bool isMaterialChanged = m_previousMaterialPointer != mtrl;
+				bool materialChanged = m_previousMaterialPointer != mtrl;
 				m_previousMaterialPointer = mtrl;
 
 				for (int32 i = 0; i < m_parameters.getCount();i++)
@@ -243,23 +243,23 @@ namespace Apoc3D
 					switch (ep.Usage)
 					{
 						case EPUSAGE_MtrlC4_Ambient:
-							if (isMaterialChanged)
+							if (materialChanged)
 								ep.SetColor4(mtrl->Ambient);
 							break;
 						case EPUSAGE_MtrlC4_Diffuse:
-							if (isMaterialChanged)
+							if (materialChanged)
 								ep.SetColor4(mtrl->Diffuse);
 							break;
 						case EPUSAGE_MtrlC4_Emissive:
-							if (isMaterialChanged)
+							if (materialChanged)
 								ep.SetColor4(mtrl->Emissive);
 							break;
 						case EPUSAGE_MtrlC4_Specular:
-							if (isMaterialChanged)
+							if (materialChanged)
 								ep.SetColor4(mtrl->Specular);
 							break;
 						case EPUSAGE_MtrlC_Power:
-							if (isMaterialChanged)
+							if (materialChanged)
 								ep.SetFloat(mtrl->Power);
 							break;
 						case EPUSAGE_Tex0:
@@ -278,7 +278,7 @@ namespace Apoc3D
 						case EPUSAGE_Tex13:
 						case EPUSAGE_Tex14:
 						case EPUSAGE_Tex15:
-							if (isMaterialChanged)
+							if (materialChanged)
 							{
 								SetTexture(ep, mtrl->getTexture(ep.Usage - EPUSAGE_Tex0));
 							}
@@ -323,7 +323,7 @@ namespace Apoc3D
 						{
 							int32 legalCount = Math::Min(count, InstancingData::MaxOneTimeInstances);
 
-							for (int i = 0; i < legalCount; i++)
+							for (int32 i = 0; i < legalCount; i++)
 							{
 								s_instancingMatrixBuffer[i] = rop[i].RootTransform;
 							}
@@ -355,7 +355,7 @@ namespace Apoc3D
 									{
 										case CEPT_Float:
 										{
-											for (int i = 0; i < legalCont; i++)
+											for (int32 i = 0; i < legalCont; i++)
 												s_instancingFloatBuffer[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsSingle();
 
 											int32 alignedCount = (legalCont + 3) & ~0x03;
@@ -371,12 +371,12 @@ namespace Apoc3D
 
 											if (paramType == CEPT_Ref_Vector2)
 											{
-												for (int i = 0; i < legalCont; i++)
+												for (int32 i = 0; i < legalCont; i++)
 													dst[i] = *(*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector2Ref();
 											}
 											else
 											{
-												for (int i = 0; i < legalCont; i++)
+												for (int32 i = 0; i < legalCont; i++)
 													dst[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector2();
 											}
 
@@ -385,24 +385,24 @@ namespace Apoc3D
 											break;
 										}
 										case CEPT_Vector4:
-											for (int i = 0; i < legalCont; i++)
+											for (int32 i = 0; i < legalCont; i++)
 												s_instancingVector4Buffer[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector4();
 											ep.SetVector4(s_instancingVector4Buffer, count);
 											break;
 										case CEPT_Ref_Vector4:
-											for (int i = 0; i < legalCont; i++)
+											for (int32 i = 0; i < legalCont; i++)
 												s_instancingVector4Buffer[i] = *(*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector4Ref();
 											ep.SetVector4(s_instancingVector4Buffer, count);
 											break;
 
 										case CEPT_Matrix:
-											for (int i = 0; i < legalCont; i++)
+											for (int32 i = 0; i < legalCont; i++)
 												s_instancingMatrixBuffer[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsMatrix();
 											ep.SetMatrix(s_instancingMatrixBuffer, count);
 											break;
 
 										case CEPT_Ref_Vector3:
-											for (int i = 0; i < legalCont; i++)
+											for (int32 i = 0; i < legalCont; i++)
 												s_instancingVector4Buffer[i] = Vector4(*(*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector3Ref(), 0);
 											ep.SetVector4(s_instancingVector4Buffer, count);
 											break;
@@ -432,7 +432,7 @@ namespace Apoc3D
 							break;
 
 						case EPUSAGE_CustomMaterialParam:
-							if (isMaterialChanged)
+							if (materialChanged)
 							{
 								if (mtrl && ep.ReferenceSource->CustomMaterialParamName.size())
 								{
@@ -443,7 +443,7 @@ namespace Apoc3D
 					}
 				}
 			}
-			void AutomaticEffect::BeginPass(int passId)
+			void AutomaticEffect::BeginPass(int32 passId)
 			{
 
 			}
@@ -452,29 +452,29 @@ namespace Apoc3D
 
 			}
 
-			void AutomaticEffect::SetParameterValue(int index, const Vector2* value, int count)
+			void AutomaticEffect::SetParameterValue(int32 index, const Vector2* value, int32 count)
 			{
 				ResolvedEffectParameter& param = m_parameters[index];
 				param.RS_TargetShader->SetVector2(param.RegisterIndex, value, count);
 			}
-			void AutomaticEffect::SetParameterValue(int index, const Vector3* value, int count)
+			void AutomaticEffect::SetParameterValue(int32 index, const Vector3* value, int32 count)
 			{
 				ResolvedEffectParameter& param = m_parameters[index];
 				param.RS_TargetShader->SetVector3(param.RegisterIndex, value, count);
 			}
-			void AutomaticEffect::SetParameterValue(int index, const Vector4* value, int count)
+			void AutomaticEffect::SetParameterValue(int32 index, const Vector4* value, int32 count)
 			{
 				ResolvedEffectParameter& param = m_parameters[index];
 				param.SetVector4(value, count);
 			}
-			void AutomaticEffect::SetParameterValue(int index, const Matrix* value, int count)
+			void AutomaticEffect::SetParameterValue(int32 index, const Matrix* value, int32 count)
 			{
 				ResolvedEffectParameter& param = m_parameters[index];
 				param.SetMatrix(value, count);
 			}
 
 
-			void AutomaticEffect::SetParameterTexture(int index, ResourceHandle<Texture>* value)
+			void AutomaticEffect::SetParameterTexture(int32 index, ResourceHandle<Texture>* value)
 			{
 				ResolvedEffectParameter& param = m_parameters[index];
 				Texture* tex = nullptr;
@@ -488,7 +488,7 @@ namespace Apoc3D
 				param.RS_TargetShader->SetTexture(param.SamplerIndex, tex);
 			}
 
-			void AutomaticEffect::SetParameterTexture(int index, Texture* tex)
+			void AutomaticEffect::SetParameterTexture(int32 index, Texture* tex)
 			{
 				ResolvedEffectParameter& param = m_parameters[index];
 				
@@ -496,9 +496,9 @@ namespace Apoc3D
 			}
 
 
-			int AutomaticEffect::FindParameterIndex(const String& name)
+			int32 AutomaticEffect::FindParameterIndex(const String& name)
 			{
-				for (int i = 0; i < m_parametersSrc.getCount(); i++)
+				for (int32 i = 0; i < m_parametersSrc.getCount(); i++)
 				{
 					if (m_parametersSrc[i].Name == name)
 						return i;
@@ -707,22 +707,22 @@ namespace Apoc3D
 			void AutomaticEffect::ResolvedEffectParameter::SetVector2(const Vector2& value) const { RS_TargetShader->SetVector2(RegisterIndex, value); }
 			void AutomaticEffect::ResolvedEffectParameter::SetVector3(const Vector3& value) const { RS_TargetShader->SetVector3(RegisterIndex, value); }
 			void AutomaticEffect::ResolvedEffectParameter::SetVector4(const Vector4& value) const { RS_TargetShader->SetVector4(RegisterIndex, value); }
-			void AutomaticEffect::ResolvedEffectParameter::SetVector4(const Vector4* value, int count) const { RS_TargetShader->SetVector4(RegisterIndex, value, count); }
+			void AutomaticEffect::ResolvedEffectParameter::SetVector4(const Vector4* value, int32 count) const { RS_TargetShader->SetVector4(RegisterIndex, value, count); }
 			
 			void AutomaticEffect::ResolvedEffectParameter::SetColor4(const Color4& value) const { RS_TargetShader->SetValue(RegisterIndex, value); }
 
 			void AutomaticEffect::ResolvedEffectParameter::SetFloat(const float values) const { RS_TargetShader->SetValue(RegisterIndex, values); }
-			void AutomaticEffect::ResolvedEffectParameter::SetFloat(const float* values, int count) const { RS_TargetShader->SetValue(RegisterIndex, values, count); }
+			void AutomaticEffect::ResolvedEffectParameter::SetFloat(const float* values, int32 count) const { RS_TargetShader->SetValue(RegisterIndex, values, count); }
 
-			void AutomaticEffect::ResolvedEffectParameter::SetInt(const int values) const { RS_TargetShader->SetValue(RegisterIndex, values); }
-			void AutomaticEffect::ResolvedEffectParameter::SetInt(const int* values, int count) const { RS_TargetShader->SetValue(RegisterIndex, values, count); }
+			void AutomaticEffect::ResolvedEffectParameter::SetInt(const int32 values) const { RS_TargetShader->SetValue(RegisterIndex, values); }
+			void AutomaticEffect::ResolvedEffectParameter::SetInt(const int32* values, int32 count) const { RS_TargetShader->SetValue(RegisterIndex, values, count); }
 
 			void AutomaticEffect::ResolvedEffectParameter::SetBool(const bool values) const { RS_TargetShader->SetValue(RegisterIndex, values); }
-			void AutomaticEffect::ResolvedEffectParameter::SetBool(const bool* values, int count) const { RS_TargetShader->SetValue(RegisterIndex, values, count); }
+			void AutomaticEffect::ResolvedEffectParameter::SetBool(const bool* values, int32 count) const { RS_TargetShader->SetValue(RegisterIndex, values, count); }
 
 
-			void AutomaticEffect::ResolvedEffectParameter::Set4X3Matrix(const Matrix* transfroms, int count) const { RS_TargetShader->SetMatrix4x3(RegisterIndex, transfroms, count); }
-			void AutomaticEffect::ResolvedEffectParameter::SetMatrix(const Matrix* transfroms, int count) const { RS_TargetShader->SetValue(RegisterIndex, transfroms, count); }
+			void AutomaticEffect::ResolvedEffectParameter::Set4X3Matrix(const Matrix* transfroms, int32 count) const { RS_TargetShader->SetMatrix4x3(RegisterIndex, transfroms, count); }
+			void AutomaticEffect::ResolvedEffectParameter::SetMatrix(const Matrix* transfroms, int32 count) const { RS_TargetShader->SetValue(RegisterIndex, transfroms, count); }
 			void AutomaticEffect::ResolvedEffectParameter::SetMatrix(const Matrix& m) const { RS_TargetShader->SetValue(RegisterIndex, m); }
 
 

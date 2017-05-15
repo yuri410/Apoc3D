@@ -275,11 +275,11 @@ namespace Apoc3D
 				assert(SUCCEEDED(hr));
 
 			}
-			void NativeD3DStateManager::SetVertexSampler(int samplerIndex, const ShaderSamplerState& state)
+			void NativeD3DStateManager::SetVertexSampler(int32 samplerIndex, const ShaderSamplerState& state)
 			{
 				if (m_vertexSamplers)
 				{
-					assert(samplerIndex < 4 && samplerIndex >= 0);
+					assert(samplerIndex >= 0 && samplerIndex < 4);
 
 					D3DDevice* dev = m_device->getDevice();
 					ShaderSamplerState& curState = m_vertexSamplers[samplerIndex];
@@ -287,7 +287,7 @@ namespace Apoc3D
 					SetSampler(samplerIndex + D3DVERTEXTEXTURESAMPLER0, curState, state);
 				}
 			}
-			void NativeD3DStateManager::SetPixelSampler(int samplerIndex, const ShaderSamplerState& state)
+			void NativeD3DStateManager::SetPixelSampler(int32 samplerIndex, const ShaderSamplerState& state)
 			{
 				D3DDevice* dev = m_device->getDevice();
 				
@@ -363,38 +363,47 @@ namespace Apoc3D
 				}
 			}
 
-			const ShaderSamplerState& NativeD3DStateManager::getPixelSampler(int samplerIndex) const { return m_pixelSamplers[samplerIndex]; }
-			const ShaderSamplerState& NativeD3DStateManager::getVertexSampler(int samplerIndex) const { return m_vertexSamplers[samplerIndex]; }
+			const ShaderSamplerState& NativeD3DStateManager::getPixelSampler(int32 samplerIndex) const { return m_pixelSamplers[samplerIndex]; }
+			const ShaderSamplerState& NativeD3DStateManager::getVertexSampler(int32 samplerIndex) const { return m_vertexSamplers[samplerIndex]; }
 
 			/************************************************************************/
 			/* Color Write                                                          */
 			/************************************************************************/
 
-			void NativeD3DStateManager::getColorWriteEnabled0(bool& r, bool& g, bool& b, bool& a)
+			ColorWriteMasks NativeD3DStateManager::GetColorWriteMasks(int32 rtIndex)
 			{
-				r = m_colorWrite0[0]; g = m_colorWrite0[1]; b = m_colorWrite0[2]; a = m_colorWrite0[3];
-			}
-			void NativeD3DStateManager::setColorWriteEnabled0(bool r, bool g, bool b, bool a)
-			{
-				if (m_colorWrite0[0] != r || m_colorWrite0[1] != g || m_colorWrite0[2] != b || m_colorWrite0[3] != a)
+				if (rtIndex >= 0 && rtIndex < countof(m_colorWriteMasks))
 				{
-					m_colorWrite0[0] = r;
-					m_colorWrite0[1] = g;
-					m_colorWrite0[2] = b;
-					m_colorWrite0[3] = a;
+					return m_colorWriteMasks[rtIndex];
+				}
+				return ColorWrite_All;
+			}
 
+			void NativeD3DStateManager::SetColorWriteMasks(int32 rtIndex, ColorWriteMasks masks)
+			{
+				if (rtIndex >= 0 && rtIndex < countof(m_colorWriteMasks))
+				{
+					m_colorWriteMasks[rtIndex] = masks;
+
+					D3DRENDERSTATETYPE stateSlot = D3DRS_COLORWRITEENABLE;
+
+					if (rtIndex == 1)
+						stateSlot = D3DRS_COLORWRITEENABLE1;
+					else if (rtIndex == 2)
+						stateSlot = D3DRS_COLORWRITEENABLE2;
+					else if (rtIndex == 3)
+						stateSlot = D3DRS_COLORWRITEENABLE3;
 
 					DWORD writeFlags = 0;
 
-					if (r)
+					if (masks & ColorWrite_Red)
 						writeFlags |= D3DCOLORWRITEENABLE_RED;
-					if (g)
+					if (masks & ColorWrite_Green)
 						writeFlags |= D3DCOLORWRITEENABLE_GREEN;
-					if (b)
+					if (masks & ColorWrite_Blue)
 						writeFlags |= D3DCOLORWRITEENABLE_BLUE;
-					if (a)
+					if (masks & ColorWrite_Alpha)
 						writeFlags |= D3DCOLORWRITEENABLE_ALPHA;
-
 
 					D3DDevice* dev = m_device->getDevice();
 					HRESULT hr = dev->SetRenderState(D3DRS_COLORWRITEENABLE, writeFlags);
@@ -402,102 +411,9 @@ namespace Apoc3D
 				}
 			}
 
-			void NativeD3DStateManager::getColorWriteEnabled1(bool& r, bool& g, bool& b, bool& a)
+			void NativeD3DStateManager::SetTexture(int32 i, D3D9Texture* tex)
 			{
-				r = m_colorWrite1[0]; g = m_colorWrite1[1]; b = m_colorWrite1[2]; a = m_colorWrite1[3];
-			}
-			void NativeD3DStateManager::setColorWriteEnabled1(bool r, bool g, bool b, bool a)
-			{
-				if (m_colorWrite1[0] != r || m_colorWrite1[1] != g || m_colorWrite1[2] != b || m_colorWrite1[3] != a)
-				{
-					m_colorWrite1[0] = r;
-					m_colorWrite1[1] = g;
-					m_colorWrite1[2] = b;
-					m_colorWrite1[3] = a;
-
-					DWORD writeFlags = 0;
-
-					if (r)
-						writeFlags |= D3DCOLORWRITEENABLE_RED;
-					if (g)
-						writeFlags |= D3DCOLORWRITEENABLE_GREEN;
-					if (b)
-						writeFlags |= D3DCOLORWRITEENABLE_BLUE;
-					if (a)
-						writeFlags |= D3DCOLORWRITEENABLE_ALPHA;
-
-
-					D3DDevice* dev = m_device->getDevice();
-					HRESULT hr = dev->SetRenderState(D3DRS_COLORWRITEENABLE1, writeFlags);
-					assert(SUCCEEDED(hr));
-				}
-			}
-
-			void NativeD3DStateManager::getColorWriteEnabled2(bool& r, bool& g, bool& b, bool& a)
-			{
-				r = m_colorWrite2[0]; g = m_colorWrite2[1]; b = m_colorWrite2[2]; a = m_colorWrite2[3];
-			}
-			void NativeD3DStateManager::setColorWriteEnabled2(bool r, bool g, bool b, bool a)
-			{
-				if (m_colorWrite2[0] != r || m_colorWrite2[1] != g || m_colorWrite2[2] != b || m_colorWrite2[3] != a)
-				{
-					m_colorWrite2[0] = r;
-					m_colorWrite2[1] = g;
-					m_colorWrite2[2] = b;
-					m_colorWrite2[3] = a;
-
-					DWORD writeFlags = 0;
-
-					if (r)
-						writeFlags |= D3DCOLORWRITEENABLE_RED;
-					if (g)
-						writeFlags |= D3DCOLORWRITEENABLE_GREEN;
-					if (b)
-						writeFlags |= D3DCOLORWRITEENABLE_BLUE;
-					if (a)
-						writeFlags |= D3DCOLORWRITEENABLE_ALPHA;
-
-
-					D3DDevice* dev = m_device->getDevice();
-					HRESULT hr = dev->SetRenderState(D3DRS_COLORWRITEENABLE2, writeFlags);
-					assert(SUCCEEDED(hr));
-				}
-			}
-
-			void NativeD3DStateManager::getColorWriteEnabled3(bool& r, bool& g, bool& b, bool& a)
-			{
-				r = m_colorWrite3[0]; g = m_colorWrite3[1]; b = m_colorWrite3[2]; a = m_colorWrite3[3];
-			}
-			void NativeD3DStateManager::setColorWriteEnabled3(bool r, bool g, bool b, bool a)
-			{
-				if (m_colorWrite3[0] != r || m_colorWrite3[1] != g || m_colorWrite3[2] != b || m_colorWrite3[3] != a)
-				{
-					m_colorWrite3[0] = r;
-					m_colorWrite3[1] = g;
-					m_colorWrite3[2] = b;
-					m_colorWrite3[3] = a;
-
-					DWORD writeFlags = 0;
-
-					if (r)
-						writeFlags |= D3DCOLORWRITEENABLE_RED;
-					if (g)
-						writeFlags |= D3DCOLORWRITEENABLE_GREEN;
-					if (b)
-						writeFlags |= D3DCOLORWRITEENABLE_BLUE;
-					if (a)
-						writeFlags |= D3DCOLORWRITEENABLE_ALPHA;
-
-
-					D3DDevice* dev = m_device->getDevice();
-					HRESULT hr = dev->SetRenderState(D3DRS_COLORWRITEENABLE3, writeFlags);
-					assert(SUCCEEDED(hr));
-				}
-			}
-
-			void NativeD3DStateManager::SetTexture(int i, D3D9Texture* tex)
-			{
-				assert(i < m_textureSlotCount && i >= 0);
+				assert(i >= 0 && i < m_textureSlotCount);
 				if (m_textureSlots[i] != tex)
 				{
 					D3DBaseTexture* value = NULL;
@@ -545,16 +461,16 @@ namespace Apoc3D
 				SetStencil(false, StencilOperation::Keep, StencilOperation::Keep, StencilOperation::Keep, 0, CompareFunction::Always, 0xFFFFFFFF, 0xFFFFFFFF);
 				SetStencilTwoSide(false, StencilOperation::Keep, StencilOperation::Keep, StencilOperation::Keep, CompareFunction::Always);
 
-				SetFillMode(FILL_Solid);
-				SetCullMode(CULL_None);
+				SetFillMode(FillMode::Solid);
+				SetCullMode(CullMode::None);
 
 				D3DCAPS9 caps;
 				dev->GetDeviceCaps(&caps);
 				
-				setColorWriteEnabled0(true, true, true, true);
-				setColorWriteEnabled1(true, true, true, true);
-				setColorWriteEnabled2(true, true, true, true);
-				setColorWriteEnabled3(true, true, true, true);
+				SetColorWriteMasks(0, ColorWrite_All);
+				SetColorWriteMasks(1, ColorWrite_All);
+				SetColorWriteMasks(2, ColorWrite_All);
+				SetColorWriteMasks(3, ColorWrite_All);
 				
 				if (caps.VertexShaderVersion >= D3DVS_VERSION((uint)3, (uint)0))
 				{
@@ -568,9 +484,9 @@ namespace Apoc3D
 						m_vertexSamplers[i].AddressV = TextureAddressMode::Wrap;
 						m_vertexSamplers[i].AddressW = TextureAddressMode::Wrap;
 						m_vertexSamplers[i].BorderColor = 0x00000000;
-						m_vertexSamplers[i].MagFilter = TFLT_Point;
-						m_vertexSamplers[i].MinFilter = TFLT_Point;
-						m_vertexSamplers[i].MipFilter = TFLT_None;
+						m_vertexSamplers[i].MagFilter = TextureFilter::Point;
+						m_vertexSamplers[i].MinFilter = TextureFilter::Point;
+						m_vertexSamplers[i].MipFilter = TextureFilter::None;
 						m_vertexSamplers[i].MipMapLODBias = 0;
 						m_vertexSamplers[i].MaxMipLevel = 0;
 						m_vertexSamplers[i].MaxAnisotropy = 1;
@@ -602,9 +518,9 @@ namespace Apoc3D
 					m_pixelSamplers[i].AddressV = TextureAddressMode::Wrap;
 					m_pixelSamplers[i].AddressW = TextureAddressMode::Wrap;
 					m_pixelSamplers[i].BorderColor = 0x00000000;
-					m_pixelSamplers[i].MagFilter = TFLT_Point;
-					m_pixelSamplers[i].MinFilter = TFLT_Point;
-					m_pixelSamplers[i].MipFilter = TFLT_None;
+					m_pixelSamplers[i].MagFilter = TextureFilter::Point;
+					m_pixelSamplers[i].MinFilter = TextureFilter::Point;
+					m_pixelSamplers[i].MipFilter = TextureFilter::None;
 					m_pixelSamplers[i].MipMapLODBias = 0;
 					m_pixelSamplers[i].MaxMipLevel = 0;
 					m_pixelSamplers[i].MaxAnisotropy = 1;
@@ -625,7 +541,7 @@ namespace Apoc3D
 					delete[] m_textureSlots;
 
 				m_textureSlots = new D3D9Texture*[caps.MaxSimultaneousTextures]();
-				m_textureSlotCount = (int)caps.MaxSimultaneousTextures;
+				m_textureSlotCount = (int32)caps.MaxSimultaneousTextures;
 			}
 
 
@@ -737,27 +653,14 @@ namespace Apoc3D
 			/************************************************************************/
 			/* Color Write                                                          */
 			/************************************************************************/
-			void D3D9RenderStateManager::getColorWriteEnabled(int rtIndex, bool& r, bool& g, bool& b, bool& a)
+			ColorWriteMasks D3D9RenderStateManager::getColorWriteMasks(uint32 rtIndex)
 			{
-				if (rtIndex == 0)
-					m_stMgr->getColorWriteEnabled0(r,g,b,a);
-				else if (rtIndex == 1)
-					m_stMgr->getColorWriteEnabled1(r,g,b,a);
-				else if (rtIndex == 2)
-					m_stMgr->getColorWriteEnabled2(r,g,b,a);
-				else if (rtIndex == 3)
-					m_stMgr->getColorWriteEnabled3(r,g,b,a);
+				return m_stMgr->GetColorWriteMasks(rtIndex);
 			}
-			void D3D9RenderStateManager::setColorWriteEnabled(int rtIndex, bool r, bool g, bool b, bool a)
+
+			void D3D9RenderStateManager::setColorWriteMasks(uint32 rtIndex, ColorWriteMasks masks)
 			{
-				if (rtIndex == 0)
-					m_stMgr->setColorWriteEnabled0(r,g,b,a);
-				else if (rtIndex == 1)
-					m_stMgr->setColorWriteEnabled1(r,g,b,a);
-				else if (rtIndex == 2)
-					m_stMgr->setColorWriteEnabled2(r,g,b,a);
-				else if (rtIndex == 3)
-					m_stMgr->setColorWriteEnabled3(r,g,b,a);
+				m_stMgr->SetColorWriteMasks(rtIndex, masks);
 			}
 		}
 	}

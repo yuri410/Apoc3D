@@ -124,7 +124,7 @@ namespace SampleAtmosphere
 		data.ContentSize = PixelFormatUtils::GetMemorySize(width, height, depth, data.Format);
 		data.Flags = 0;// TextureData::TDF_LZ4Compressed;
 		data.LevelCount = 1;
-		data.Type = depth == 1 ? TT_Texture2D : TT_Texture3D;
+		data.Type = depth == 1 ? TextureType::Texture2D : TextureType::Texture3D;
 		data.Levels.ReserveDiscard(1);
 
 		TextureLevelData& tld = data.Levels[0];
@@ -316,14 +316,14 @@ namespace SampleAtmosphere
 
 	void AtmosphereDemo::DrawQuad(AutomaticEffect* fx)
 	{
-		m_quadTempMtrl->Cull = CULL_None;
-		m_quadTempMtrl->setPassEffect(0, fx);
+		m_quadTempMtrl->Cull = CullMode::None;
+		m_quadTempMtrl->SetPassEffect(0, fx);
 		m_quadTempMtrl->setPassFlags(1);
 
 		m_quadTempGeoData.BaseVertex = 0;
 		m_quadTempGeoData.IndexBuffer = nullptr;
 		m_quadTempGeoData.PrimitiveCount = 2;
-		m_quadTempGeoData.PrimitiveType = PT_TriangleList;
+		m_quadTempGeoData.PrimitiveType = PrimitiveType::TriangleList;
 		m_quadTempGeoData.VertexBuffer = m_quadBuffer;
 		m_quadTempGeoData.VertexCount = 6;
 		m_quadTempGeoData.VertexDecl = m_quadVtxDecl;

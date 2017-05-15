@@ -67,7 +67,7 @@ namespace Apoc3D
 				}
 
 				m_quadBuffer = new D3D9VertexBuffer(device, (MaxDeferredDraws * 4), m_vtxDecl->GetVertexSize(), (BufferUsageFlags)(BU_Dynamic|BU_WriteOnly));
-				m_quadIndices = new D3D9IndexBuffer(device, IBT_Bit16, sizeof(uint16) * MaxDeferredDraws * 6, BU_WriteOnly);
+				m_quadIndices = new D3D9IndexBuffer(device, IndexBufferFormat::Bit16, sizeof(uint16) * MaxDeferredDraws * 6, BU_WriteOnly);
 
 				{
 					uint16* indices = (uint16*)m_quadIndices->Lock(LOCK_None);
@@ -128,7 +128,7 @@ namespace Apoc3D
 				if (getSettings() & SPR_ChangeState)
 				{
 					mgr->SetDepth(false, mgr->getDepthBufferWriteEnabled());
-					mgr->SetCullMode(CULL_None);
+					mgr->SetCullMode(CullMode::None);
 
 					if ((getSettings() & SPR_AlphaBlended) == SPR_AlphaBlended)
 						mgr->SetAlphaBlend(true, BlendFunction::Add, Blend::SourceAlpha, Blend::InverseSourceAlpha, m_storedState.oldBlendFactor);
@@ -143,9 +143,9 @@ namespace Apoc3D
 					else
 					{
 						ShaderSamplerState state = mgr->getPixelSampler(0);
-						state.MinFilter = TFLT_Linear;
-						state.MagFilter = TFLT_Linear;
-						state.MipFilter = TFLT_None;
+						state.MinFilter = TextureFilter::Linear;
+						state.MagFilter = TextureFilter::Linear;
+						state.MipFilter = TextureFilter::None;
 						state.AddressU = TextureAddressMode::Clamp;
 						state.AddressV = TextureAddressMode::Clamp;
 						state.MaxMipLevel = 0;

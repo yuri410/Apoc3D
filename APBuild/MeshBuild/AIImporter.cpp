@@ -89,7 +89,6 @@ namespace APBuild
 				aiMaterial* amtrl = scene->mMaterials[m->mMaterialIndex];
 
 				MaterialData* mtrl = new MaterialData();
-				mtrl->SetDefaults();
 
 				for (uint j=0;j<amtrl->mNumProperties;j++)
 				{
@@ -114,7 +113,7 @@ namespace APBuild
 					{
 						String texFile = StringUtils::toPlatformWideString(prop->mData);
 						StringUtils::Trim(texFile, L" \t\r\n\07");
-						mtrl->TextureName[0] = texFile;
+						mtrl->SetTextureName(0, texFile);
 					}
 				}
 

@@ -89,7 +89,7 @@ namespace Apoc3D
 
 			m_geoData.VertexBuffer = m_vertexBuffer;
 			m_geoData.VertexDecl = m_vertexDeclaration;
-			m_geoData.PrimitiveType = PT_PointList;
+			m_geoData.PrimitiveType = PrimitiveType::PointList;
 			m_geoData.VertexSize = m_vertexDeclaration->GetVertexSize();
 			m_geoData.UserData = this;
 

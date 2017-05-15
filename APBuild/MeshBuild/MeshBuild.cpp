@@ -292,9 +292,6 @@ namespace APBuild
 
 	void MeshBuild::ExecuteMaterialConversion(ModelData* data, const ModelPreset& preset, const ProjectResModel& config)
 	{
-		MaterialData defaultMtrlSetup;
-		defaultMtrlSetup.SetDefaults();
-
 		if (preset.CopyEntireMaterial)
 		{
 			for (MeshData* md : data->Entities)
@@ -309,7 +306,7 @@ namespace APBuild
 
 				for (MaterialData* mtrl : md->Materials)
 				{
-					new (mtrl)MaterialData(*selectedNewMtrl);
+					*mtrl = *selectedNewMtrl;
 				}
 			}
 		}
@@ -321,13 +318,12 @@ namespace APBuild
 				{
 					for (MaterialData* mtrl : md->Materials)
 					{
-						for (auto& e : mtrl->TextureName)
+						for (auto& e : mtrl->TextureNames)
 						{
 							String& tn = e.Value;
 							if (tn.size() && tn.find('.', 0) != String::npos)
 							{
-								tn = PathUtils::GetFileNameNoExt(tn);
-								tn.append(L".tex");
+								tn = PathUtils::GetFileNameNoExt(tn) + L".tex";
 							}
 						}
 					}
@@ -346,44 +342,7 @@ namespace APBuild
 
 				for (MaterialData* mtrl : md->Materials)
 				{
-					if (selectedNewMtrl->ExternalRefName != defaultMtrlSetup.ExternalRefName) mtrl->ExternalRefName = selectedNewMtrl->ExternalRefName;
-
-					if (selectedNewMtrl->EffectName.getCount() > 0)
-					{
-						mtrl->EffectName = selectedNewMtrl->EffectName;
-					}
-
-					if (selectedNewMtrl->CustomParametrs.getCount() > 0)
-					{
-						mtrl->CustomParametrs = selectedNewMtrl->CustomParametrs;
-					}
-
-					if (!preset.UseTextureNameConversion && selectedNewMtrl->TextureName.getCount() > 0)
-					{
-						mtrl->TextureName = selectedNewMtrl->TextureName;
-					}
-
-					if (selectedNewMtrl->PassFlags != defaultMtrlSetup.PassFlags) mtrl->PassFlags = selectedNewMtrl->PassFlags;
-
-					if (selectedNewMtrl->Priority != defaultMtrlSetup.Priority) mtrl->Priority = selectedNewMtrl->Priority;
-
-					if (selectedNewMtrl->UsePointSprite != defaultMtrlSetup.UsePointSprite) mtrl->UsePointSprite = selectedNewMtrl->UsePointSprite;
-
-					if (selectedNewMtrl->SourceBlend != defaultMtrlSetup.SourceBlend) mtrl->SourceBlend = selectedNewMtrl->SourceBlend;
-					if (selectedNewMtrl->DestinationBlend != defaultMtrlSetup.DestinationBlend) mtrl->DestinationBlend = selectedNewMtrl->DestinationBlend;
-					if (selectedNewMtrl->BlendFunction != defaultMtrlSetup.BlendFunction) mtrl->BlendFunction = selectedNewMtrl->BlendFunction;
-					if (selectedNewMtrl->IsBlendTransparent != defaultMtrlSetup.IsBlendTransparent) mtrl->IsBlendTransparent = selectedNewMtrl->IsBlendTransparent;
-
-					if (selectedNewMtrl->Cull != defaultMtrlSetup.Cull) mtrl->Cull = selectedNewMtrl->Cull;
-
-					if (selectedNewMtrl->DepthWriteEnabled != defaultMtrlSetup.DepthWriteEnabled) mtrl->DepthWriteEnabled = selectedNewMtrl->DepthWriteEnabled;
-					if (selectedNewMtrl->DepthTestEnabled != defaultMtrlSetup.DepthTestEnabled) mtrl->DepthTestEnabled = selectedNewMtrl->DepthTestEnabled;
-
-					if (selectedNewMtrl->Ambient != defaultMtrlSetup.Ambient) mtrl->Ambient = selectedNewMtrl->Ambient;
-					if (selectedNewMtrl->Diffuse != defaultMtrlSetup.Diffuse) mtrl->Diffuse = selectedNewMtrl->Diffuse;
-					if (selectedNewMtrl->Emissive != defaultMtrlSetup.Emissive) mtrl->Emissive = selectedNewMtrl->Emissive;
-					if (selectedNewMtrl->Specular != defaultMtrlSetup.Specular) mtrl->Specular = selectedNewMtrl->Specular;
-					if (selectedNewMtrl->Power != defaultMtrlSetup.Power) mtrl->Power = selectedNewMtrl->Power;
+					mtrl->CopyNonDefaultFieldsFrom(selectedNewMtrl, !preset.UseTextureNameConversion);
 				}
 			}
 		}

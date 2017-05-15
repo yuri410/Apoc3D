@@ -58,8 +58,8 @@ namespace Apoc3D
 				virtual void EndFrame() override;
 				virtual void Clear(ClearFlags flags, uint color, float depth, int stencil) override;
 
-				virtual void SetRenderTarget(int index, RenderTarget* rt) override;
-				virtual RenderTarget* GetRenderTarget(int index) override;
+				virtual void SetRenderTarget(int32 index, RenderTarget* rt) override;
+				virtual RenderTarget* GetRenderTarget(int32 index) override;
 
 				virtual void SetDepthStencilBuffer(DepthStencilBuffer* buf) override;
 				virtual DepthStencilBuffer* GetDepthStencilBuffer() override;
@@ -71,14 +71,14 @@ namespace Apoc3D
 				virtual void BindVertexShader(Shader* shader) override;
 				virtual void BindPixelShader(Shader* shader) override;
 
-				virtual void Render(Material* mtrl, const RenderOperation* op, int count, int passSelID) override;
+				virtual void Render(Material* mtrl, const RenderOperation* op, int32 count, int32 passSelID) override;
 
 				virtual Viewport getViewport() override;
 				virtual void setViewport(const Viewport& vp) override;
 
 				virtual Capabilities* const getCapabilities() const override;
 
-				virtual int32 GetAvailableVideoRamInMB() override;
+				virtual uint32 GetAvailableVideoRamInMB() override;
 
 				D3D9Capabilities* getD3D9Capabilities() const { return m_caps; }
 				NativeD3DStateManager* getNativeStateManager() const { return m_nativeState; }
@@ -142,15 +142,16 @@ namespace Apoc3D
 				D3D9Capabilities(D3D9RenderDevice* device);
 				~D3D9Capabilities();
 
-				virtual bool SupportsRenderTarget(const String& multisampleMode, PixelFormat pixFormat, DepthFormat depthFormat);
-				virtual bool SupportsPixelShader(const char* implType, int majorVer, int minorVer);
-				virtual bool SupportsVertexShader(const char* implType, int majorVer, int minorVer);
+				bool SupportsRenderTarget(const String& multisampleMode, PixelFormat pixFormat, DepthFormat depthFormat) override;
+				bool SupportsPixelShader(const char* implType, int majorVer, int minorVer) override;
+				bool SupportsVertexShader(const char* implType, int majorVer, int minorVer) override;
 
-				virtual void EnumerateRenderTargetMultisampleModes(PixelFormat pixFormat, DepthFormat depthFormat, Apoc3D::Collections::List<String>& modes);
-				virtual const String* FindClosesetMultisampleMode(uint32 sampleCount, PixelFormat pixFormat, DepthFormat depthFormat);
+				void EnumerateRenderTargetMultisampleModes(PixelFormat pixFormat, DepthFormat depthFormat, Apoc3D::Collections::List<String>& modes) override;
+				const String* FindClosesetMultisampleMode(uint32 sampleCount, PixelFormat pixFormat, DepthFormat depthFormat) override;
 				
-				virtual int GetMRTCount();
-				virtual bool SupportsMRTDifferentBits();
+				int32 GetMRTCount() override;
+				bool SupportsMRTDifferentBits() override;
+				bool SupportsMRTWriteMasks() override;
 
 				const AAProfile* LookupAAProfile(const String& name, PixelFormat pixFormat, DepthFormat depthFormat);
 

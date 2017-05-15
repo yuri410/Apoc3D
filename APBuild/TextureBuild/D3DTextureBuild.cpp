@@ -117,8 +117,8 @@ namespace APBuild
 
 		switch (type)
 		{
-			case TT_Texture1D:
-			case TT_Texture2D:
+			case TextureType::Texture1D:
+			case TextureType::Texture2D:
 			{
 				LPDIRECT3DTEXTURE9 pmiptex;
 				HRESULT hr = pd3ddev->CreateTexture(m_dwWidth, m_dwHeight, m_numMips,
@@ -131,7 +131,7 @@ namespace APBuild
 				m_ptexOrig = pmiptex;
 			}
 			break;
-			case TT_CubeTexture:
+			case TextureType::CubeTexture:
 			{
 				// Cube Map
 				LPDIRECT3DCUBETEXTURE9 pcubetex;
@@ -146,7 +146,7 @@ namespace APBuild
 				m_ptexOrig = pcubetex;
 			}
 			break;
-			case TT_Texture3D:
+			case TextureType::Texture3D:
 			{
 				LPDIRECT3DVOLUMETEXTURE9 pvoltex;
 				m_dwDepth = depth;
@@ -476,7 +476,7 @@ namespace APBuild
 
 			fmt = sd.Format;
 
-			data.Type = TT_CubeTexture;
+			data.Type = TextureType::CubeTexture;
 		}
 		else if (IsVolumeMap())
 		{
@@ -485,7 +485,7 @@ namespace APBuild
 
 			fmt = vd.Format;
 
-			data.Type = TT_Texture3D;
+			data.Type = TextureType::Texture3D;
 		}
 		else
 		{
@@ -495,11 +495,11 @@ namespace APBuild
 
 			if (m_dwWidth == 1 || m_dwHeight == 1)
 			{
-				data.Type = TT_Texture1D;
+				data.Type = TextureType::Texture1D;
 			}
 			else
 			{
-				data.Type = TT_Texture2D;
+				data.Type = TextureType::Texture2D;
 			}
 		}
 
@@ -507,14 +507,14 @@ namespace APBuild
 		data.ContentSize = 0;
 		switch (data.Type)
 		{
-			case (int)TT_Texture1D:
-			case (int)TT_Texture2D:
+			case (int)TextureType::Texture1D:
+			case (int)TextureType::Texture2D:
 				getData(data, (LPDIRECT3DTEXTURE9)ptex);
 				break;
-			case (int)TT_CubeTexture:
+			case (int)TextureType::CubeTexture:
 				getData(data, (LPDIRECT3DCUBETEXTURE9)ptex);
 				break;
-			case (int)TT_Texture3D:
+			case (int)TextureType::Texture3D:
 				getData(data, (LPDIRECT3DVOLUMETEXTURE9)ptex);
 				break;
 		}

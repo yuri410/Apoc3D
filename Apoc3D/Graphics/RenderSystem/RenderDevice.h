@@ -62,7 +62,7 @@ namespace Apoc3D
 				/** Gets the depth pixel format of default render target. */
 				virtual DepthFormat GetDefaultDepthStencilFormat() = 0;
 
-				virtual int32 GetAvailableVideoRamInMB() = 0;
+				virtual uint32 GetAvailableVideoRamInMB() = 0;
 
 				/**
 				 *  Initialize. 
@@ -88,8 +88,8 @@ namespace Apoc3D
 				virtual void Clear(ClearFlags flags, uint color, float depth, int stencil) = 0;
 
 				/** Sets the current render target at given index. A value of 0 will reset the rendertarget to default. */
-				virtual void SetRenderTarget(int index, RenderTarget* rt) = 0;
-				virtual RenderTarget* GetRenderTarget(int index) = 0;
+				virtual void SetRenderTarget(int32 index, RenderTarget* rt) = 0;
+				virtual RenderTarget* GetRenderTarget(int32 index) = 0;
 
 				virtual void SetDepthStencilBuffer(DepthStencilBuffer* buf) = 0;
 				virtual DepthStencilBuffer* GetDepthStencilBuffer() = 0;
@@ -103,19 +103,19 @@ namespace Apoc3D
 				 *  @param passSelID An index used to tell which shader effect inside materials to be used. 
 				 *   A number of -1 mean the first available shader effect will be used. 
 				 */
-				virtual void Render(Material* mtrl, const RenderOperation* op, int count, int passSelID);
+				virtual void Render(Material* mtrl, const RenderOperation* op, int32 count, int32 passSelID);
 
 				virtual Viewport getViewport() = 0;
 				virtual void setViewport(const Viewport& vp) = 0;
 
 				/** Gets the number of draw calls on the last frame if the frame is done, or the current draw call count if not. */
-				uint getBatchCount() const { return m_batchCount; }
+				uint32 getBatchCount() const { return m_batchCount; }
 
 				/** Gets the number of primitives drawn on the last frame if the frame is done, or the current value if not. */
-				uint getPrimitiveCount() const { return m_primitiveCount; }
+				uint32 getPrimitiveCount() const { return m_primitiveCount; }
 
 				/** Gets the number of vertices drawn on the last frame if the frame is done, or the current value if not. */
-				uint getVertexCount() const { return m_vertexCount; }
+				uint32 getVertexCount() const { return m_vertexCount; }
 
 			private:
 				struct BatchReportEntry
@@ -144,10 +144,10 @@ namespace Apoc3D
 				Apoc3D::Collections::HashMap<void*, BatchReportEntry>* m_reportTableByMaterial = nullptr;
 
 			protected:
-				//Capabilities m_caps;
-				uint m_batchCount = 0;
-				uint m_primitiveCount = 0;
-				uint m_vertexCount = 0;
+
+				uint32 m_batchCount = 0;
+				uint32 m_primitiveCount = 0;
+				uint32 m_vertexCount = 0;
 
 				ObjectFactory* m_objectFactory = nullptr;
 				RenderStateManager* m_renderStates = nullptr;
@@ -169,8 +169,10 @@ namespace Apoc3D
 				virtual void EnumerateRenderTargetMultisampleModes(PixelFormat pixFormat, DepthFormat depthFormat, Apoc3D::Collections::List<String>& modes) = 0;
 				virtual const String* FindClosesetMultisampleMode(uint32 sampleCount, PixelFormat pixFormat, DepthFormat depthFormat) = 0;
 
-				virtual int GetMRTCount() = 0;
+				virtual int32 GetMRTCount() = 0;
 				virtual bool SupportsMRTDifferentBits() = 0;
+				virtual bool SupportsMRTWriteMasks() = 0;
+
 			};
 
 			/** 
@@ -205,17 +207,17 @@ namespace Apoc3D
 				 *  They are almost purely API level.
 				 *  Thus, no more comment unless clarification is needed.
 				 */
-				virtual Texture* CreateTexture(int width, int height, int levelCount, TextureUsage usage, PixelFormat format) = 0;
-				Texture* CreateTexture(const Point& size2d, int levelCount, TextureUsage usage, PixelFormat format);
+				virtual Texture* CreateTexture(int32 width, int32 height, int32 levelCount, TextureUsage usage, PixelFormat format) = 0;
+				Texture* CreateTexture(const Point& size2d, int32 levelCount, TextureUsage usage, PixelFormat format);
 
 				/**
 				 *  Creates a blank 2D, 1D or 3D texture.
 				 *  In addition to the above one, a volume texture will be created if depth is more than 1.
 				 */
-				virtual Texture* CreateTexture(int width, int height, int depth, int levelCount, TextureUsage usage, PixelFormat format) = 0;
+				virtual Texture* CreateTexture(int32 width, int32 height, int32 depth, int32 levelCount, TextureUsage usage, PixelFormat format) = 0;
 
 				/** Creates a blank Cube map. */
-				virtual Texture* CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format) = 0;
+				virtual Texture* CreateTexture(int32 length, int32 levelCount, TextureUsage usage, PixelFormat format) = 0;
 
 				/**
 				 *  Creates a RenderTarget. 
@@ -228,12 +230,12 @@ namespace Apoc3D
 				 *  When using render targets in scene-render scripts, do not worry about checking the capabilities,
 				 *  as the script will auto fall back if not supported.
 				 */
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, const String& multisampleMode) = 0;
+				virtual RenderTarget* CreateRenderTarget(int32 width, int32 height, PixelFormat clrFmt, const String& multisampleMode) = 0;
 				virtual DepthStencilBuffer* CreateDepthStencilBuffer(int32 width, int32 height, DepthFormat depFmt, const String& multisampleMode) = 0;
 				
 				RenderTarget* CreateRenderTarget(const Point& size2d, PixelFormat clrFmt, const String& multisampleMode);
 				RenderTarget* CreateRenderTarget(const Point& size2d, PixelFormat clrFmt);
-				RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt);
+				RenderTarget* CreateRenderTarget(int32 width, int32 height, PixelFormat clrFmt);
 
 				DepthStencilBuffer* CreateDepthStencilBuffer(const Point& size2d, DepthFormat depFmt, const String& multisampleMode);
 				DepthStencilBuffer* CreateDepthStencilBuffer(const Point& size2d, DepthFormat depFmt);
@@ -243,8 +245,8 @@ namespace Apoc3D
 
 			
 
-				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage) = 0;
-				virtual VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage) = 0;
+				virtual IndexBuffer* CreateIndexBuffer(IndexBufferFormat type, int32 count, BufferUsageFlags usage) = 0;
+				virtual VertexBuffer* CreateVertexBuffer(int32 vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage) = 0;
 
 
 				virtual VertexDeclaration* CreateVertexDeclaration(const Apoc3D::Collections::List<VertexElement>& elements) = 0;

@@ -107,7 +107,7 @@ namespace Apoc3D
 
 		namespace Utils
 		{
-			const int Int32PrimeSizes[] =
+			const int32 Int32PrimeSizes[] =
 			{
 				7, 11, 17, 23, 29, 37, 53, 71, 97, 127, 167, 223, 293, 383, 499, 653, 853, 1109,
 				1447, 1889, 2459, 3203, 4177, 5431, 7069, 9199, 11959, 15551, 20219, 26293, 34183,
@@ -117,11 +117,10 @@ namespace Apoc3D
 				68944181, 89627443, 116515687, 151470409, 196911553
 			};
 
-			int GetHashTableSize(int min)
+			int32 GetHashTableSize(int32 min)
 			{
-				for (int i = 0; i < countof(Int32PrimeSizes); i++)
+				for (int32 val : Int32PrimeSizes)
 				{
-					int val = Int32PrimeSizes[i];
 					if (val >= min)
 					{
 						return val;

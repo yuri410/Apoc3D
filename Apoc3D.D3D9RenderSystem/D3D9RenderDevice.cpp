@@ -240,7 +240,7 @@ namespace Apoc3D
 				}
 			}
 
-			void D3D9RenderDevice::SetRenderTarget(int index, RenderTarget* rt)
+			void D3D9RenderDevice::SetRenderTarget(int32 index, RenderTarget* rt)
 			{
 				D3DDevice* dev = getDevice();
 				RenderTarget* oldRt = m_cachedRenderTarget[index];
@@ -261,7 +261,7 @@ namespace Apoc3D
 					
 					if (rtTex)
 					{
-						for (int i = 0; i < m_nativeState->getTextureSlotCount(); i++)
+						for (int32 i = 0; i < m_nativeState->getTextureSlotCount(); i++)
 						{
 							if (m_nativeState->getTexture(i) == rtTex)
 							{
@@ -295,7 +295,7 @@ namespace Apoc3D
 #endif
 			}
 
-			RenderTarget* D3D9RenderDevice::GetRenderTarget(int index)
+			RenderTarget* D3D9RenderDevice::GetRenderTarget(int32 index)
 			{
 				return m_cachedRenderTarget[index];
 			}
@@ -381,7 +381,7 @@ namespace Apoc3D
 				}
 			}
 
-			void D3D9RenderDevice::Render(Material* mtrl, const RenderOperation* op, int count, int passSelID)
+			void D3D9RenderDevice::Render(Material* mtrl, const RenderOperation* op, int32 count, int32 passSelID)
 			{
 				if (!op || count == 0)
 					return;
@@ -389,7 +389,7 @@ namespace Apoc3D
 				if (HasBatchReportRequest)
 					RenderDevice::Render(mtrl, op, count, passSelID);
 
-				Effect* fx = mtrl->getPassEffect(passSelID);
+				Effect* fx = mtrl->GetPassEffect(passSelID);
 				if (!fx)
 				{
 					fx = m_defaultEffect;
@@ -432,6 +432,13 @@ namespace Apoc3D
 					m_nativeState->getDepthBufferWriteEnabled() != mtrl->DepthWriteEnabled)
 				{
 					m_nativeState->SetDepth(mtrl->DepthTestEnabled, mtrl->DepthWriteEnabled);
+				}
+
+				for (uint32 i = 0; i < 4; i++)
+				{
+					ColorWriteMasks masks = mtrl->GetTargetWriteMask(i);
+					if (m_nativeState->GetColorWriteMasks(i) != masks)
+						m_nativeState->SetColorWriteMasks(i, masks);
 				}
 
 				D3DDevice* d3dd = getDevice();
@@ -559,7 +566,7 @@ namespace Apoc3D
 					bool isAnyRtNotMultisampled = false;
 					for (int32 i = 0; i < m_caps->GetMRTCount(); i++)
 					{
-						if (i>0 && m_cachedRenderTarget[i] == nullptr)
+						if (i > 0 && m_cachedRenderTarget[i] == nullptr)
 							break;
 
 						bool rtIsMultisampeld = (m_cachedRenderTarget[i] && m_cachedRenderTarget[i]->isMultiSampled()) ||
@@ -626,7 +633,7 @@ namespace Apoc3D
 
 				return D3D9Utils::ConvertBackDepthFormat(desc.Format);
 			}
-			int32 D3D9RenderDevice::GetAvailableVideoRamInMB()
+			uint32 D3D9RenderDevice::GetAvailableVideoRamInMB()
 			{
 				D3DDevice* dev = m_devManager->getDevice();
 				return dev->GetAvailableTextureMem();
@@ -706,13 +713,17 @@ namespace Apoc3D
 				return m_caps.VertexShaderVersion >= D3DVS_VERSION((uint)majorVer, (uint)minorVer);
 			}
 
-			int D3D9Capabilities::GetMRTCount()
+			int32 D3D9Capabilities::GetMRTCount()
 			{
-				return m_caps.NumSimultaneousRTs;
+				return (int32)m_caps.NumSimultaneousRTs;
 			}
 			bool D3D9Capabilities::SupportsMRTDifferentBits()
 			{
 				return (m_caps.PrimitiveMiscCaps & D3DPMISCCAPS_MRTINDEPENDENTBITDEPTHS) != 0;
+			}
+			bool D3D9Capabilities::SupportsMRTWriteMasks()
+			{
+				return (m_caps.PrimitiveMiscCaps & D3DPMISCCAPS_INDEPENDENTWRITEMASKS) != 0;
 			}
 			int32 AAProfileComparison(const D3D9Capabilities::AAProfile& a, const D3D9Capabilities::AAProfile& b)
 			{

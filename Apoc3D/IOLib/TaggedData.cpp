@@ -70,16 +70,16 @@ namespace Apoc3D
 			uint32 firstInt = br.ReadUInt32();
 			if ((firstInt & 0x80000000U) == 0x80000000U)
 			{
+				// format ver 1.1, firstInt is flag
 				uint32 flags = firstInt & 0x7fffffffU;
 
 				bool narrowKeyFormat = flags & TF_NarrowKeyFormat;
 
-				// format ver 1.1, firstInt is flag then
 				m_sectCount = br.ReadInt32();
 
 				if (narrowKeyFormat)
 				{
-					for (int i = 0; i < m_sectCount; i++)
+					for (int32 i = 0; i < m_sectCount; i++)
 					{
 						std::string name = br.ReadMBString();
 						Entry e = Entry(name, 0, 0);
@@ -88,7 +88,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					for (int i = 0; i < m_sectCount; i++)
+					for (int32 i = 0; i < m_sectCount; i++)
 					{
 						std::string name = StringUtils::UTF16toUTF8(br.ReadString());
 						m_positions.Add(name, Entry(name, 0, 0));
@@ -502,14 +502,14 @@ namespace Apoc3D
 			while (len >= sizeof(m_buffer))
 			{
 				FillBufferCurrent(sizeof(m_buffer));
-				for (int i = 0; i < sizeof(m_buffer); i++)
-					*val++ = m_buffer[i] != 0;
+				for (char c : m_buffer)
+					*val++ = c != 0;
 				len -= sizeof(m_buffer);
 			}
 			if (len > 0)
 			{
 				FillBufferCurrent(len);
-				for (int i = 0; i < len; i++)
+				for (int32 i = 0; i < len; i++)
 					*val++ = m_buffer[i] != 0;
 			}
 		}

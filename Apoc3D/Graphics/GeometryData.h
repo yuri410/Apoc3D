@@ -42,15 +42,15 @@ namespace Apoc3D
 		class APAPI GeometryData
 		{
 		public:
-			RenderSystem::VertexBuffer* VertexBuffer = nullptr;			/** the vertex buffer used to draw the geometry */
-			RenderSystem::IndexBuffer* IndexBuffer = nullptr;				/** the index buffer used to draw the geometry */
-			RenderSystem::VertexDeclaration* VertexDecl = nullptr;		/** the vertex declaration for vertex in the geometry */
+			RenderSystem::VertexBuffer* VertexBuffer	= nullptr;		/** the vertex buffer used to draw the geometry */
+			RenderSystem::IndexBuffer* IndexBuffer		= nullptr;		/** the index buffer used to draw the geometry */
+			RenderSystem::VertexDeclaration* VertexDecl	= nullptr;		/** the vertex declaration for vertex in the geometry */
 
 			int32 BaseVertex = 0;							/** The starting vertex offset in the vertex buffer */
 			int32 StartIndex = 0;
 
 			int32 PrimitiveCount = 0;
-			RenderSystem::PrimitiveType PrimitiveType = RenderSystem::PT_PointList;
+			RenderSystem::PrimitiveType PrimitiveType = RenderSystem::PrimitiveType::PointList;
 
 			int32 VertexCount = 0;
 			int32 VertexSize = 0;

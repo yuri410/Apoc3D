@@ -106,14 +106,13 @@ namespace APBuild
 
 			D3DXMATERIAL d3dmtrl = *(((D3DXMATERIAL*)d3dmaterials->GetBufferPointer()) + i);
 			MaterialData* mtrl = new MaterialData();
-			mtrl->SetDefaults();
 			mtrl->Ambient = ToColor4( d3dmtrl.MatD3D.Ambient);
 			mtrl->Diffuse = ToColor4( d3dmtrl.MatD3D.Diffuse);
 			mtrl->Specular = ToColor4( d3dmtrl.MatD3D.Specular);
 			mtrl->Emissive = ToColor4( d3dmtrl.MatD3D.Emissive);
 			mtrl->Power = d3dmtrl.MatD3D.Power;
 			if (d3dmtrl.pTextureFilename)
-				mtrl->TextureName.Add(0, StringUtils::toPlatformWideString(d3dmtrl.pTextureFilename));
+				mtrl->SetTextureName(0, StringUtils::toPlatformWideString(d3dmtrl.pTextureFilename));
 
 			MeshData* data = new MeshData();
 			data->Name = L"Part" + StringUtils::UIntToString(i, StrFmt::a<2, '0'>::val);

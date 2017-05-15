@@ -46,15 +46,7 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		Material::Material(RenderDevice* device)
-			: m_device(device),
-			m_passFlags(0), m_priority(DefaultMaterialPriority), 
-			BlendFunction(BlendFunction::Add), IsBlendTransparent(false), 
-			SourceBlend(Blend::SourceAlpha), DestinationBlend(Blend::InverseSourceAlpha),
-			AlphaTestEnabled(false), AlphaReference(0),
-			DepthWriteEnabled(true), DepthTestEnabled(true),
-			Ambient(0,0,0,0), Diffuse(1.f,1.f,1.f,1.f), Specular(0,0,0,0), Emissive(0,0,0,0), Power(0),
-			Cull(CULL_None),
-			UsePointSprite(false)
+			: m_device(device)
 		{
 			ZeroArray(m_tex);
 			ZeroArray(m_effects);
@@ -63,14 +55,14 @@ namespace Apoc3D
 
 		Material::Material(const Material& m)
 			: m_device(m.m_device), 
-			m_passFlags(m.m_passFlags), m_priority(m.m_priority),
+			m_passFlags(m.m_passFlags), m_priority(m.m_priority), m_colorWriteMasks(m.m_colorWriteMasks),
 			BlendFunction(m.BlendFunction), IsBlendTransparent(m.IsBlendTransparent),
 			SourceBlend(m.SourceBlend), DestinationBlend(m.DestinationBlend),
 			AlphaTestEnabled(m.AlphaTestEnabled), AlphaReference(m.AlphaReference),
 			DepthWriteEnabled(m.DepthWriteEnabled), DepthTestEnabled(m.DepthTestEnabled),
+			UsePointSprite(m.UsePointSprite),
 			Ambient(m.Ambient), Diffuse(m.Diffuse), Specular(m.Specular), Emissive(m.Emissive), Power(m.Power),
 			Cull(m.Cull),
-			UsePointSprite(m.UsePointSprite),
 			ExternalReferenceName(m.ExternalReferenceName),
 			m_customParametrs(m.m_customParametrs), m_effectName(m.m_effectName), m_texName(m.m_texName)
 		{
@@ -131,7 +123,6 @@ namespace Apoc3D
 				return;
 			}
 			// load texture
-			//FileLocation* fl = FileSystem::getSingleton().TryLocate(*name, FileLocateRule::Textures);
 			FileLocation fl;
 			if (FileSystem::getSingleton().TryLocate(*name, FileLocateRule::Textures, fl))
 			{
@@ -190,6 +181,7 @@ namespace Apoc3D
 
 			m_customParametrs = mdata.CustomParametrs;
 			m_passFlags = mdata.PassFlags;
+			m_colorWriteMasks = mdata.ColorWriteMasks;
 			m_priority = mdata.Priority;
 
 			SourceBlend = mdata.SourceBlend;
@@ -210,8 +202,8 @@ namespace Apoc3D
 			Specular = mdata.Specular;
 			Power = mdata.Power;
 
-			m_effectName = mdata.EffectName;
-			m_texName = mdata.TextureName;
+			m_effectName = mdata.EffectNames;
+			m_texName = mdata.TextureNames;
 
 			for (int idx : m_effectName.getKeyAccessor())
 			{
@@ -227,6 +219,7 @@ namespace Apoc3D
 			data.ExternalRefName = ExternalReferenceName;
 			data.CustomParametrs = m_customParametrs;
 			data.PassFlags = m_passFlags;
+			data.ColorWriteMasks = m_colorWriteMasks;
 			data.Priority = m_priority;
 
 			data.SourceBlend = SourceBlend;
@@ -247,8 +240,8 @@ namespace Apoc3D
 			data.Specular = Specular;
 			data.Power = Power;
 
-			data.EffectName = m_effectName;
-			data.TextureName = m_texName;
+			data.EffectNames = m_effectName;
+			data.TextureNames = m_texName;
 		}
 		void Material::Load(TaggedDataReader* data)
 		{
@@ -268,13 +261,13 @@ namespace Apoc3D
 
 		void Material::Reload()
 		{
-			for (int i = 0; i < MaxTextures; i++)
+			for (int32 i = 0; i < MaxTextures; i++)
 			{
 				if (m_texDirty[i])
 				{
 					m_texDirty[i] = false;
 
-					delete m_tex[i];
+					DELETE_AND_NULL(m_tex[i]);
 					LoadTexture(i);
 				}
 			}
@@ -289,24 +282,25 @@ namespace Apoc3D
 			}
 			return nullptr;
 		}
-		Effect* Material::getPassEffect(int index) const 
+		Effect* Material::GetPassEffect(int32 index) const
 		{
 			if (index == -1) 
 				return GetFirstValidEffect(); 
 			return m_effects[index]; 
 		}
 
-		const String& Material::getTextureName(int index) const 
+		const String& Material::GetTextureName(int32 index) const
 		{
-			assert(index<MaxTextures);
+			assert(index >= 0 && index < MaxTextures);
 			if (!m_texName.Contains(index))
 				return StringUtils::Empty;
 			return m_texName[index];
 		}
 
-		void Material::setTextureName(int index, const String& name)
+		void Material::SetTextureName(int32 index, const String& name)
 		{
-			assert(index<MaxTextures);
+			assert(index >= 0 && index < MaxTextures);
+
 			if (!m_texName.Contains(index))
 			{
 				if (name.size())
@@ -322,7 +316,7 @@ namespace Apoc3D
 					String& tn = m_texName[index];
 					if (tn != name)
 					{
-						tn.operator=(name);
+						tn = name;
 						m_texDirty[index] = true;
 					}
 				}
@@ -334,14 +328,14 @@ namespace Apoc3D
 			}
 		}
 
-		const String& Material::getPassEffectName(int index) 
+		const String& Material::GetPassEffectName(int32 index)
 		{
 			assert(index<MaxScenePass); 
 			if (!m_effectName.Contains(index))
 				return StringUtils::Empty;
 			return m_effectName[index]; 
 		}
-		void Material::setPassEffectName(int index, const String& en) 
+		void Material::SetPassEffectName(int32 index, const String& en)
 		{
 			assert(index<MaxScenePass); 
 
@@ -351,7 +345,20 @@ namespace Apoc3D
 			{
 				m_effectName[index] = en;
 			}
-			
+		}
+
+		ColorWriteMasks Material::GetTargetWriteMask(uint32 rtIndex) const
+		{
+			return (ColorWriteMasks)((m_colorWriteMasks >> (rtIndex * 4)) & 0xf);
+		}
+		void Material::SetTargetWriteMask(uint32 rtIndex, ColorWriteMasks masks)
+		{
+			uint64 fldMask = 0xfull << (rtIndex * 4);
+			uint64 bits = ((uint64)masks) << (rtIndex * 4);
+			assert((bits & fldMask) == bits);
+
+			m_colorWriteMasks &= ~fldMask;
+			m_colorWriteMasks |= bits;
 		}
 	}
 };

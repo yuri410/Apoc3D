@@ -63,7 +63,7 @@ namespace Apoc3D
 				m_geoData->BaseVertex = 0;
 				m_geoData->IndexBuffer = m_indexBuffer;
 				m_geoData->PrimitiveCount = m_primitiveCount;
-				m_geoData->PrimitiveType = PT_TriangleStrip;
+				m_geoData->PrimitiveType = PrimitiveType::TriangleStrip;
 				m_geoData->VertexBuffer = m_vertexBuffer;
 				m_geoData->VertexCount = m_vertexCount;
 				m_geoData->VertexDecl = m_vertexDecl;

@@ -40,6 +40,9 @@ namespace Apoc3D
 		class Color4
 		{
 		public:
+			static const Color4 Zero;
+			static const Color4 One;
+
 			float Red = 0;				/** the color's red component. */
 			float Green = 0;			/** the color's green component. */
 			float Blue = 0;				/** the color's blue component. */

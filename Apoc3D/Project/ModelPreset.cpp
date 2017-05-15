@@ -67,7 +67,6 @@ namespace Apoc3D
 						mpm.NamePattern = L"*";
 
 					mpm.Data = new MaterialData();
-					mpm.Data->SetDefaults();
 					mpm.Data->Parse(ss);
 
 					BaseData.Add(std::move(mpm));

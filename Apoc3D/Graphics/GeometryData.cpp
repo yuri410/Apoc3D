@@ -22,24 +22,24 @@ namespace Apoc3D
 
 			switch (pt)
 			{
-				case PT_PointList:
+				case PrimitiveType::PointList:
 					PrimitiveCount = count;
 					break;
 
-				case PT_LineList:
+				case PrimitiveType::LineList:
 					PrimitiveCount = count / 2;
 					break;
 
-				case PT_LineStrip:
+				case PrimitiveType::LineStrip:
 					PrimitiveCount = count - 1;
 					break;
 
-				case PT_TriangleList:
+				case PrimitiveType::TriangleList:
 					PrimitiveCount = count / 3;
 					break;
 
-				case PT_TriangleStrip:
-				case PT_TriangleFan:
+				case PrimitiveType::TriangleStrip:
+				case PrimitiveType::TriangleFan:
 					PrimitiveCount = count - 2;
 					break;
 			}

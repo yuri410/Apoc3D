@@ -43,34 +43,36 @@ namespace Apoc3D
 			 */
 			class D3D9ObjectFactory final : public ObjectFactory
 			{
-			private:
-				D3D9RenderDevice* m_device;
 			public:
 				D3D9ObjectFactory(D3D9RenderDevice* device);
 
-				virtual Texture* CreateTexture(const ResourceLocation& rl, TextureUsage usage, bool managed) override;
-				virtual Texture* CreateTexture(int width, int height, int levelCount, TextureUsage usage, PixelFormat format) override;
-				virtual Texture* CreateTexture(int width, int height, int depth, int levelCount, TextureUsage usage, PixelFormat format) override;
-				virtual Texture* CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format) override;
+				Texture* CreateTexture(const ResourceLocation& rl, TextureUsage usage, bool managed) override;
+				Texture* CreateTexture(int32 width, int32 height, int32 levelCount, TextureUsage usage, PixelFormat format) override;
+				Texture* CreateTexture(int32 width, int32 height, int32 depth, int32 levelCount, TextureUsage usage, PixelFormat format) override;
+				Texture* CreateTexture(int32 length, int32 levelCount, TextureUsage usage, PixelFormat format) override;
 
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, const String& multisampleMode) override;
-				virtual DepthStencilBuffer* CreateDepthStencilBuffer(int32 width, int32 height, DepthFormat depFmt, const String& multisampleMode) override;
+				RenderTarget* CreateRenderTarget(int32 width, int32 height, PixelFormat clrFmt, const String& multisampleMode) override;
+				DepthStencilBuffer* CreateDepthStencilBuffer(int32 width, int32 height, DepthFormat depFmt, const String& multisampleMode) override;
 
-				virtual CubemapRenderTarget* CreateCubemapRenderTarget(int32 length, PixelFormat clrFmt) override;
+				CubemapRenderTarget* CreateCubemapRenderTarget(int32 length, PixelFormat clrFmt) override;
 
 
-				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage) override;
-				virtual VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage) override;
+				IndexBuffer* CreateIndexBuffer(IndexBufferFormat type, int32 count, BufferUsageFlags usage) override;
+				VertexBuffer* CreateVertexBuffer(int32 vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage) override;
 
-				virtual VertexDeclaration* CreateVertexDeclaration(const List<VertexElement> &elements) override;
+				VertexDeclaration* CreateVertexDeclaration(const List<VertexElement> &elements) override;
 
-				virtual Shader* CreateVertexShader(const ResourceLocation& resLoc) override;
-				virtual Shader* CreatePixelShader(const ResourceLocation& resLoc) override;
+				Shader* CreateVertexShader(const ResourceLocation& resLoc) override;
+				Shader* CreatePixelShader(const ResourceLocation& resLoc) override;
 
-				virtual Shader* CreateVertexShader(const byte* byteCode) override;
-				virtual Shader* CreatePixelShader(const byte* byteCode) override;
+				Shader* CreateVertexShader(const byte* byteCode) override;
+				Shader* CreatePixelShader(const byte* byteCode) override;
 
-				virtual Sprite* CreateSprite() override;
+				Sprite* CreateSprite() override;
+
+			private:
+				D3D9RenderDevice* m_device;
+
 			};
 		}
 	}

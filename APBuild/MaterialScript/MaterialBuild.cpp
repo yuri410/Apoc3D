@@ -200,10 +200,7 @@ namespace APBuild
 		if (baseMtrl)
 			newNode = new MaterialData(*baseMtrl);
 		else
-		{
 			newNode = new MaterialData();
-			newNode->SetDefaults();
-		}
 
 		// build a name
 		String name = baseMtrlName;

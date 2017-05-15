@@ -43,7 +43,7 @@ namespace Apoc3D
 			class APAPI InstancingData
 			{
 			public:
-				static const int MaxOneTimeInstances = 50;
+				static const int32 MaxOneTimeInstances = 50;
 
 				InstancingData(RenderDevice* device);
 				virtual ~InstancingData();
@@ -53,7 +53,7 @@ namespace Apoc3D
 				 *
 				 *  @return: the actual prepared number of render operations in this call.
 				 */
-				virtual int Setup(const RenderOperation* op, int count, int beginIndex) = 0;
+				virtual int32 Setup(const RenderOperation* op, int32 count, int32 beginIndex) = 0;
 
 			private:
 				RenderDevice* m_device;

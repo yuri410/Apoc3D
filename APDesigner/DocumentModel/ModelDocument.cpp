@@ -220,9 +220,9 @@ namespace APDesigner
 
 			sy += 25;
 			List<String> items;
-			items.Add(CullModeConverter.ToString(CULL_None));
-			items.Add(CullModeConverter.ToString(CULL_Clockwise));
-			items.Add(CullModeConverter.ToString(CULL_CounterClockwise));
+			items.Add(CullModeConverter.ToString(CullMode::None));
+			items.Add(CullModeConverter.ToString(CullMode::Clockwise));
+			items.Add(CullModeConverter.ToString(CullMode::CounterClockwise));
 			lbl = new Label(skin, Point(sx, sy), L"Cull Mode", 120);
 			m_mtrlPanelLabels.Add(lbl);
 			m_cbCull = new ComboBox(skin, Point(sx2, sy), 200, items);
@@ -924,11 +924,11 @@ namespace APDesigner
 
 				m_tbShinness->SetText(StringUtils::SingleToString(mtrl->Power));
 
-				m_tbTex1->SetText(mtrl->getTextureName(0));
-				m_tbTex2->SetText(mtrl->getTextureName(1));
-				m_tbTex3->SetText(mtrl->getTextureName(2));
-				m_tbTex4->SetText(mtrl->getTextureName(3));
-				m_tbTex5->SetText(mtrl->getTextureName(4));
+				m_tbTex1->SetText(mtrl->GetTextureName(0));
+				m_tbTex2->SetText(mtrl->GetTextureName(1));
+				m_tbTex3->SetText(mtrl->GetTextureName(2));
+				m_tbTex4->SetText(mtrl->GetTextureName(3));
+				m_tbTex5->SetText(mtrl->GetTextureName(4));
 
 				m_tbPriority->SetText(StringUtils::UIntToString(mtrl->getPriority()));
 
@@ -1005,11 +1005,11 @@ namespace APDesigner
 					mtrl->Emissive = Color4(m_cfEmissive->GetValue());
 					mtrl->Power = StringUtils::ParseSingle(m_tbShinness->getText());
 
-					mtrl->setTextureName(0, m_tbTex1->getText());
-					mtrl->setTextureName(1, m_tbTex2->getText());
-					mtrl->setTextureName(2, m_tbTex3->getText());
-					mtrl->setTextureName(3, m_tbTex4->getText());
-					mtrl->setTextureName(4, m_tbTex5->getText());
+					mtrl->SetTextureName(0, m_tbTex1->getText());
+					mtrl->SetTextureName(1, m_tbTex2->getText());
+					mtrl->SetTextureName(2, m_tbTex3->getText());
+					mtrl->SetTextureName(3, m_tbTex4->getText());
+					mtrl->SetTextureName(4, m_tbTex5->getText());
 
 					mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->getText()));
 
@@ -1041,17 +1041,17 @@ namespace APDesigner
 					}
 
 					mtrl->setPassFlags(currentMtrl->getPassFlags());
-					for (int i = 0; i < MaxScenePass; i++)
+					for (int32 i = 0; i < MaxScenePass; i++)
 					{
-						mtrl->setPassEffectName(i, currentMtrl->getPassEffectName(i));
+						mtrl->SetPassEffectName(i, currentMtrl->GetPassEffectName(i));
 						//mtrl->getPassEffectName(i) = currentMtrl->getPassEffectName(i);
-						if (mtrl->getPassEffectName(i).size())
+						if (mtrl->GetPassEffectName(i).size())
 						{
-							mtrl->setPassEffect(i, EffectManager::getSingleton().getEffect(mtrl->getPassEffectName(i)));
+							mtrl->SetPassEffect(i, EffectManager::getSingleton().getEffect(mtrl->GetPassEffectName(i)));
 						}
 						else
 						{
-							mtrl->setPassEffect(i, 0);
+							mtrl->SetPassEffect(i, 0);
 						}
 					}
 
@@ -1094,11 +1094,11 @@ namespace APDesigner
 				mtrl->Emissive = Color4(m_cfEmissive->GetValue());
 				mtrl->Power = StringUtils::ParseSingle(m_tbShinness->getText());
 
-				mtrl->setTextureName(0, m_tbTex1->getText());
-				mtrl->setTextureName(1, m_tbTex2->getText());
-				mtrl->setTextureName(2, m_tbTex3->getText());
-				mtrl->setTextureName(3, m_tbTex4->getText());
-				mtrl->setTextureName(4, m_tbTex5->getText());
+				mtrl->SetTextureName(0, m_tbTex1->getText());
+				mtrl->SetTextureName(1, m_tbTex2->getText());
+				mtrl->SetTextureName(2, m_tbTex3->getText());
+				mtrl->SetTextureName(3, m_tbTex4->getText());
+				mtrl->SetTextureName(4, m_tbTex5->getText());
 
 				mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->getText()));
 
@@ -1346,10 +1346,10 @@ namespace APDesigner
 			{
 				for (Material* mtrl : m->getMaterials())
 				{
-					for (int p = 0; p < MaxScenePass; p++)
+					for (int32 p = 0; p < MaxScenePass; p++)
 					{
-						mtrl->setPassEffectName(p, currentMtrl->getPassEffectName(p));
-						mtrl->setPassEffect(p, currentMtrl->getPassEffect(p));
+						mtrl->SetPassEffectName(p, currentMtrl->GetPassEffectName(p));
+						mtrl->SetPassEffect(p, currentMtrl->GetPassEffect(p));
 					}
 
 					mtrl->setPassFlags(currentMtrl->getPassFlags());
@@ -1364,15 +1364,14 @@ namespace APDesigner
 			for (Material* mtrl : m->getMaterials())
 			{
 				bool processed = false;
-				for (int p = 0; p < MaxTextures; p++)
+				for (int32 p = 0; p < MaxTextures; p++)
 				{
-					const String& tn = mtrl->getTextureName(p);
+					const String& tn = mtrl->GetTextureName(p);
 					if (tn.size() && tn.find('.', 0) != String::npos)
 					{
-						String newName = PathUtils::GetFileNameNoExt(tn);
-						newName.append(L".tex");
+						String newName = PathUtils::GetFileNameNoExt(tn) + L".tex";
 
-						mtrl->setTextureName(p, newName);
+						mtrl->SetTextureName(p, newName);
 						processed = true;
 					}
 				}
@@ -1548,7 +1547,7 @@ namespace APDesigner
 			String texName = StringUtils::toPlatformWideString(buffer);
 
 			Material* newMtrl = new Material(*baseMtrl);
-			newMtrl->setTextureName(0, texName);
+			newMtrl->SetTextureName(0, texName);
 			newMtrl->Reload();
 
 			m_mtrls->Add(newMtrl);

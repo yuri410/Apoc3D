@@ -34,18 +34,18 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 			// pre-calculated fast type cast tables
-			static D3DPRIMITIVETYPE ptTable[PT_Count];
+			static D3DPRIMITIVETYPE ptTable[(int)PrimitiveType::Count];
 			static D3DDECLTYPE vefTable[VEF_Count];
 			static D3DDECLUSAGE veuTable[VEU_Count];
-			static D3DFILLMODE fillTable[FILL_Count];
-			static D3DCULL cullTable[CULL_Count];
+			static D3DFILLMODE fillTable[(int)FillMode::Count];
+			static D3DCULL cullTable[(int)CullMode::Count];
 			static D3DBLEND blendTable[(int)Blend::Count];
 			static D3DCMPFUNC comfunTable[(int)CompareFunction::Count];
 			static D3DBLENDOP blendopTable[(int)BlendFunction::Count];
 			static D3DSTENCILOP stencilTable[(int)StencilOperation::Count];
 			static D3DFORMAT pixFmtTable[FMT_Count];
 			static D3DFORMAT depFmtTable[DEPFMT_Count];
-			static D3DTEXTUREFILTERTYPE tfltTable[TFLT_Count];
+			static D3DTEXTUREFILTERTYPE tfltTable[(int)TextureFilter::Count];
 			static D3DCUBEMAP_FACES cubeTable[CUBE_Count];
 			static D3DTEXTUREADDRESS taTable[(int)TextureAddressMode::Count];
 			
@@ -507,12 +507,12 @@ namespace Apoc3D
 
 			void FieldInitilizer::InitPrimitiveTable()
 			{
-				ptTable[PT_PointList] = D3DPT_POINTLIST;
-				ptTable[PT_LineList] = D3DPT_LINELIST;
-				ptTable[PT_LineStrip] = D3DPT_LINESTRIP;
-				ptTable[PT_TriangleList] = D3DPT_TRIANGLELIST;
-				ptTable[PT_TriangleStrip] = D3DPT_TRIANGLESTRIP;
-				ptTable[PT_TriangleFan] = D3DPT_TRIANGLEFAN;
+				ptTable[(int)PrimitiveType::PointList] = D3DPT_POINTLIST;
+				ptTable[(int)PrimitiveType::LineList] = D3DPT_LINELIST;
+				ptTable[(int)PrimitiveType::LineStrip] = D3DPT_LINESTRIP;
+				ptTable[(int)PrimitiveType::TriangleList] = D3DPT_TRIANGLELIST;
+				ptTable[(int)PrimitiveType::TriangleStrip] = D3DPT_TRIANGLESTRIP;
+				ptTable[(int)PrimitiveType::TriangleFan] = D3DPT_TRIANGLEFAN;
 			}
 			void FieldInitilizer::InitVertexElementFormat()
 			{
@@ -552,15 +552,15 @@ namespace Apoc3D
 			}
 			void FieldInitilizer::InitFillTable()
 			{
-				fillTable[FILL_Point] = D3DFILL_POINT;
-				fillTable[FILL_WireFrame] = D3DFILL_WIREFRAME;
-				fillTable[FILL_Solid] = D3DFILL_SOLID;
+				fillTable[(int)FillMode::Point] = D3DFILL_POINT;
+				fillTable[(int)FillMode::WireFrame] = D3DFILL_WIREFRAME;
+				fillTable[(int)FillMode::Solid] = D3DFILL_SOLID;
 			}
 			void FieldInitilizer::InitCullTable()
 			{
-				cullTable[CULL_None] = D3DCULL_NONE;
-				cullTable[CULL_Clockwise] = D3DCULL_CW;
-				cullTable[CULL_CounterClockwise] = D3DCULL_CCW;
+				cullTable[(int)CullMode::None] = D3DCULL_NONE;
+				cullTable[(int)CullMode::Clockwise] = D3DCULL_CW;
+				cullTable[(int)CullMode::CounterClockwise] = D3DCULL_CCW;
 			}
 			void FieldInitilizer::InitBlendTable()
 			{
@@ -665,10 +665,10 @@ namespace Apoc3D
 			}
 			void FieldInitilizer::InitTFLTTable()
 			{
-				tfltTable[TFLT_None] = D3DTEXF_NONE;
-				tfltTable[TFLT_Point] = D3DTEXF_POINT;
-				tfltTable[TFLT_Linear] = D3DTEXF_LINEAR;
-				tfltTable[TFLT_Anisotropic] = D3DTEXF_ANISOTROPIC;
+				tfltTable[(int)TextureFilter::None] = D3DTEXF_NONE;
+				tfltTable[(int)TextureFilter::Point] = D3DTEXF_POINT;
+				tfltTable[(int)TextureFilter::Linear] = D3DTEXF_LINEAR;
+				tfltTable[(int)TextureFilter::Anisotropic] = D3DTEXF_ANISOTROPIC;
 			}
 			void FieldInitilizer::InitCubeTable()
 			{

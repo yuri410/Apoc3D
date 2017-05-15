@@ -276,7 +276,7 @@ namespace APBuild
 					std::string strFileName = pDiffuseTexture->GetFileName();
 					if( strFileName.length() == 0 )
 						strFileName = pDiffuseTexture->GetRelativeFileName();
-					pMaterial->TextureName[0] = StringUtils::toPlatformWideString( strFileName );
+					pMaterial->SetTextureName(0, StringUtils::toPlatformWideString(strFileName));
 				}
 			}
 			
@@ -309,7 +309,6 @@ namespace APBuild
 					fSpecularPower = static_cast<float>( FBXSpecularPowerProperty.Get() );
 			}
 
-			pMaterial->SetDefaults();
 			pMaterial->Ambient = Color4( AmbientColor );
 			pMaterial->Diffuse = Color4( DiffuseColor );
 			pMaterial->Emissive = Color4( EmissiveColor );
@@ -1268,10 +1267,9 @@ namespace APBuild
 				MeshData* meshData = new MeshData();
 				// add materials
 				{
-					for (int j=0;j<materialData.getCount();j++)
+					for (MaterialData* mtrlData : materialData)
 					{
-						MaterialData* mtrlData = materialData[j];
-						mtrlData->Cull = CULL_Clockwise;
+						mtrlData->Cull = CullMode::Clockwise;
 						meshData->Materials.Add(mtrlData);
 					}
 				}

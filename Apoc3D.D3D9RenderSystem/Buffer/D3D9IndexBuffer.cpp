@@ -33,12 +33,12 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			IndexBufferType GetIBType(D3DIndexBuffer* ib)
+			IndexBufferFormat GetIBType(D3DIndexBuffer* ib)
 			{
 				D3DINDEXBUFFER_DESC desc;
 				ib->GetDesc(&desc);
 
-				return desc.Format == D3DFMT_INDEX16 ? IBT_Bit16 : IBT_Bit32;
+				return desc.Format == D3DFMT_INDEX16 ? IndexBufferFormat::Bit16 : IndexBufferFormat::Bit32;
 			}
 			int32 GetIBSize(D3DIndexBuffer* ib)
 			{
@@ -90,7 +90,7 @@ namespace Apoc3D
 					D3DDevice* dev = m_device->getDevice();
 					HRESULT hr = dev->CreateIndexBuffer(getSize(), 
 						D3D9Utils::ConvertBufferUsage(getUsage()), 
-						getIndexType() == IBT_Bit16 ? D3DFMT_INDEX16 : D3DFMT_INDEX32, 
+						getIndexType() == IndexBufferFormat::Bit16 ? D3DFMT_INDEX16 : D3DFMT_INDEX32,
 						D3DPOOL_DEFAULT, &m_indexBuffer, NULL);
 					assert(SUCCEEDED(hr));
 
@@ -108,13 +108,7 @@ namespace Apoc3D
 				}
 			}
 
-			//D3D9IndexBuffer::D3D9IndexBuffer(D3D9RenderDevice* device, D3DIndexBuffer* ib)
-			//	: IndexBuffer(GetIBType(ib), GetIBSize(ib), GetIBUsage(ib))
-			//{
-
-			//}
-
-			D3D9IndexBuffer::D3D9IndexBuffer(D3D9RenderDevice* device, IndexBufferType type, int32 size, BufferUsageFlags usage)
+			D3D9IndexBuffer::D3D9IndexBuffer(D3D9RenderDevice* device, IndexBufferFormat type, int32 size, BufferUsageFlags usage)
 				: IndexBuffer(type, size, usage), VolatileResource(device), m_device(device)
 			{
 				D3DDevice* dev = device->getDevice();
@@ -133,7 +127,7 @@ namespace Apoc3D
 
 				HRESULT hr = dev->CreateIndexBuffer(size, 
 					D3D9Utils::ConvertBufferUsage(usage), 
-					type == IBT_Bit16 ? D3DFMT_INDEX16 : D3DFMT_INDEX32, 
+					type == IndexBufferFormat::Bit16 ? D3DFMT_INDEX16 : D3DFMT_INDEX32,
 					pool, &m_indexBuffer, NULL);
 				assert(SUCCEEDED(hr));
 			}

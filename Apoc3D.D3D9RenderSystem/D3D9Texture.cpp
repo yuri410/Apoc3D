@@ -104,14 +104,14 @@ namespace Apoc3D
 			{
 				D3DDevice* dev = device->getDevice();
 
-				if (getType() == TT_Texture2D || getType() == TT_Texture1D)
+				if (getType() == TextureType::Texture2D || getType() == TextureType::Texture1D)
 				{
 					HRESULT hr = dev->CreateTexture(width, height, level, 
 						D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
 						(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_tex2D, NULL);;
 					assert(SUCCEEDED(hr));
 				}
-				else if (getType() == TT_Texture3D)
+				else if (getType() == TextureType::Texture3D)
 				{
 					HRESULT hr = dev->CreateVolumeTexture(width, height,depth, level, 
 						D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
@@ -220,11 +220,11 @@ namespace Apoc3D
 			void D3D9Texture::unlock(int32 surface)
 			{
 				TextureType type = getType();
-				if (type == TT_Texture3D)
+				if (type == TextureType::Texture3D)
 				{
 					m_tex3D->UnlockBox(surface);
 				}
-				else if (type != TT_CubeTexture)
+				else if (type != TextureType::CubeTexture)
 				{
 					m_tex2D->UnlockRect(surface);
 				}
@@ -276,14 +276,14 @@ namespace Apoc3D
 					{
 						switch (data.Type)
 						{
-							case TT_Texture1D:
-							case TT_Texture2D:
+							case TextureType::Texture1D:
+							case TextureType::Texture2D:
 								impossible |= !caps->FindCompatibleTextureDimension(newWidth, newHeight, levels);
 								break;
-							case TT_CubeTexture:
+							case TextureType::CubeTexture:
 								impossible |= !caps->FindCompatibleCubeTextureDimension(newWidth, levels);
 								break;
-							case TT_Texture3D:
+							case TextureType::Texture3D:
 								impossible |= !caps->FindCompatibleVolumeTextureDimension(newWidth, newHeight, newDepth, levels);
 								break;
 						}
@@ -291,7 +291,7 @@ namespace Apoc3D
 
 
 					// Currently not handling volume texture resizing
-					if (!impossible && data.Type == TT_Texture3D &&
+					if (!impossible && data.Type == TextureType::Texture3D &&
 						(newHeight != height || newWidth != width || newDepth != depth))
 					{
 						String name = getResourceLocationName(rl);
@@ -348,8 +348,8 @@ namespace Apoc3D
 
 					switch (data.Type)
 					{
-						case TT_Texture1D:
-						case TT_Texture2D:
+						case TextureType::Texture1D:
+						case TextureType::Texture2D:
 							hr = dev->CreateTexture(getWidth(), getHeight(), getLevelCount(),
 								usage, D3D9Utils::ConvertPixelFormat(newFmt),
 								D3DPOOL_MANAGED, &m_tex2D, NULL);
@@ -374,7 +374,7 @@ namespace Apoc3D
 							}
 							break;
 
-						case TT_CubeTexture:
+						case TextureType::CubeTexture:
 							hr = dev->CreateCubeTexture(getWidth(), getLevelCount(),
 								usage, D3D9Utils::ConvertPixelFormat(newFmt),
 								D3DPOOL_MANAGED, &m_cube, NULL);
@@ -397,7 +397,7 @@ namespace Apoc3D
 							}
 							break;
 
-						case TT_Texture3D:
+						case TextureType::Texture3D:
 							hr = dev->CreateVolumeTexture(getWidth(), getHeight(), getDepth(), getLevelCount(),
 								usage, D3D9Utils::ConvertPixelFormat(newFmt),
 								D3DPOOL_MANAGED, &m_tex3D, NULL);
@@ -476,14 +476,14 @@ namespace Apoc3D
 				data.Flags = TextureData::TDF_None;
 				switch (data.Type)
 				{
-					case TT_Texture1D:
-					case TT_Texture2D:
+					case TextureType::Texture1D:
+					case TextureType::Texture2D:
 						getData(data, m_tex2D);
 						break;
-					case TT_CubeTexture:
+					case TextureType::CubeTexture:
 						getData(data, m_cube);
 						break;
-					case TT_Texture3D:
+					case TextureType::Texture3D:
 						getData(data, m_tex3D);
 						break;
 				}
@@ -504,7 +504,7 @@ namespace Apoc3D
 						m_tempData = NULL;
 					}
 
-					if (getType() == TT_Texture2D || getType() == TT_Texture1D)
+					if (getType() == TextureType::Texture2D || getType() == TextureType::Texture1D)
 					{
 						DataRectangle dr = lock(0, LOCK_ReadOnly, Apoc3D::Math::Rectangle(0,0,getWidth(), getHeight()));
 						m_tempData = new char[dr.getMemorySize()];
@@ -520,12 +520,12 @@ namespace Apoc3D
 						m_tex2D->Release();
 						m_tex2D = NULL;
 					}
-					else if (getType() == TT_Texture3D)
+					else if (getType() == TextureType::Texture3D)
 					{
 						m_tex3D->Release();
 						m_tex3D = NULL;
 					}
-					else if (getType() == TT_CubeTexture)
+					else if (getType() == TextureType::CubeTexture)
 					{
 						m_cube->Release();
 						m_cube = NULL;
@@ -542,21 +542,21 @@ namespace Apoc3D
 					int32 level = getLevelCount();
 					PixelFormat format = getFormat();
 
-					if (getType() == TT_Texture2D || getType() == TT_Texture1D)
+					if (getType() == TextureType::Texture2D || getType() == TextureType::Texture1D)
 					{
 						HRESULT hr = dev->CreateTexture(getWidth(), getHeight(), level, 
 							D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
 							(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_tex2D, NULL);;
 						assert(SUCCEEDED(hr));
 					}
-					else if (getType() == TT_Texture3D)
+					else if (getType() == TextureType::Texture3D)
 					{
 						HRESULT hr = dev->CreateVolumeTexture(getWidth(), getHeight(), getDepth(), level, 
 							D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
 							(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_tex3D, NULL);;
 						assert(SUCCEEDED(hr));
 					}
-					else if (getType() == TT_CubeTexture)
+					else if (getType() == TextureType::CubeTexture)
 					{
 						HRESULT hr = dev->CreateCubeTexture(getWidth(), level, 
 							D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
@@ -566,7 +566,7 @@ namespace Apoc3D
 
 					if (m_tempData)
 					{
-						if (getType() == TT_Texture2D || getType() == TT_Texture1D)
+						if (getType() == TextureType::Texture2D || getType() == TextureType::Texture1D)
 						{
 							DataRectangle dr = lock(0, LOCK_Discard, Apoc3D::Math::Rectangle(0,0,getWidth(), getHeight()));
 							
@@ -594,14 +594,14 @@ namespace Apoc3D
 			{
 				m_tex2D = tex;
 
-				UpdateProperties(TT_Texture2D, newWidth, newHeight, 1, 
+				UpdateProperties(TextureType::Texture2D, newWidth, newHeight, 1, 
 					newLevelCount, newFormat, D3D9Utils::GetD3DTextureUsage(tex));
 			}
 			void D3D9Texture::SetInternalCube(D3DTextureCube* tex, int32 newLength, int32 newLevelCount, PixelFormat newFormat)
 			{
 				m_cube = tex;
 
-				UpdateProperties(TT_CubeTexture, newLength, newLength, 1, newLevelCount, newFormat, D3D9Utils::GetD3DTextureUsage(tex));
+				UpdateProperties(TextureType::CubeTexture, newLength, newLength, 1, newLevelCount, newFormat, D3D9Utils::GetD3DTextureUsage(tex));
 			}
 
 			String D3D9Texture::getResourceLocationName(const ResourceLocation* rl)
