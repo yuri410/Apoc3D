@@ -46,11 +46,11 @@ namespace Apoc3D
 
 			void ClearAll() { ZeroArray(m_arr); }
 
-			template <int32 N>
+			template <uint32 N>
 			class AssignmentProxy 
 			{
 			public:
-				AssignmentProxy(BitArray<N>& arr, int32 i)
+				AssignmentProxy(BitArray<N>& arr, uint32 i)
 					: m_arr(arr), m_index(i) { }
 
 				bool operator= (bool v) { m_arr.Set(m_index, v); return v; }
@@ -65,10 +65,10 @@ namespace Apoc3D
 				int32 m_index;
 			};
 
-			AssignmentProxy<N> operator[](int i) { return { *this, i }; }
-			bool operator[](int i) const { return getBit(i); }
+			AssignmentProxy<N> operator[](uint32 i) { return { *this, i }; }
+			bool operator[](uint32 i) const { return getBit(i); }
 			
-			void Set(int i, bool v) { if (v) setBit(i); else clearBit(i); }
+			void Set(uint32 i, bool v) { if (v) setBit(i); else clearBit(i); }
 
 			const InternalArrayType& getData() const { return m_arr; }
 			InternalArrayType& getData() { return m_arr; }
@@ -79,8 +79,8 @@ namespace Apoc3D
 			void clearBit(uint32 i) { assert(i < N); m_arr[bindex(i)] &= ~(1 << boffset(i)); }
 			bool getBit(uint32 i) const { assert(i < N); return (m_arr[bindex(i)] & (1 << boffset(i))) != 0; }
 
-			static int bindex(uint32 i) { return i >> ElementBitsDivShift; }
-			static int boffset(uint32 i) { return i & ElementBitsRemainderMask; }
+			static uint32 bindex(uint32 i) { return i >> ElementBitsDivShift; }
+			static uint32 boffset(uint32 i) { return i & ElementBitsRemainderMask; }
 
 			InternalArrayType m_arr;
 		};

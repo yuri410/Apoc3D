@@ -77,7 +77,7 @@ namespace Apoc3D
 
 		void XMLConfigurationFormat::BuildNode(Configuration* config, const TiXmlNode* node, ConfigurationSection* parent, const TiXmlDocument& doc)
 		{
-			int type = node->Type();
+			int32 type = node->Type();
 
 			switch (type)
 			{

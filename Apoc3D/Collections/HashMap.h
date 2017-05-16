@@ -58,16 +58,16 @@ namespace Apoc3D
 			bool Contains(const T& item) const { return FindEntry(item) != -1; }
 			void Resize(int32 newSize)
 			{
-				int primeCapacity = Utils::GetHashTableSize(newSize);
-				int* newBuckets = new int[primeCapacity];
-				for (int i = 0; i < primeCapacity; i++)
+				int32 primeCapacity = Utils::GetHashTableSize(newSize);
+				int32* newBuckets = new int32[primeCapacity];
+				for (int32 i = 0; i < primeCapacity; i++)
 				{
 					newBuckets[i] = -1;
 				}
 				E* newEntries = new E[primeCapacity];
-				for (int j = 0; j < m_touchedSlots; j++)
+				for (int32 j = 0; j < m_touchedSlots; j++)
 				{
-					int index = m_entries[j].hashCode % primeCapacity;
+					int32 index = m_entries[j].hashCode % primeCapacity;
 
 					newEntries[j] = std::move(m_entries[j]);
 					newEntries[j].next = newBuckets[index];
@@ -86,7 +86,7 @@ namespace Apoc3D
 		protected:
 			static const int32 PositiveMask = 0x7fffffff;
 
-			explicit HashMapCore(int capacity)
+			explicit HashMapCore(int32 capacity)
 			{
 				if (capacity > 0)
 					Initialize(capacity);
@@ -99,14 +99,14 @@ namespace Apoc3D
 			{
 				if (other.m_buckets)
 				{
-					m_buckets = new int[m_bucketsLength];
-					memcpy(m_buckets, other.m_buckets, sizeof(int)*m_bucketsLength);
+					m_buckets = new int32[m_bucketsLength];
+					memcpy(m_buckets, other.m_buckets, sizeof(int32)*m_bucketsLength);
 				}
 				
 				if (other.m_entries)
 				{
 					m_entries = new E[m_bucketsLength];
-					for (int i = 0; i < m_bucketsLength; i++)
+					for (int32 i = 0; i < m_bucketsLength; i++)
 						m_entries[i] = other.m_entries[i];
 				}
 			}
@@ -137,7 +137,7 @@ namespace Apoc3D
 						m_bucketsLength = other.m_bucketsLength;
 
 						if (other.m_buckets)
-							m_buckets = new int[m_bucketsLength];
+							m_buckets = new int32[m_bucketsLength];
 						if (other.m_entries)
 							m_entries = new E[m_bucketsLength];
 					}
@@ -147,7 +147,7 @@ namespace Apoc3D
 							m_entries[i].Clear();
 
 						if (m_buckets == nullptr && other.m_buckets)
-							m_buckets = new int[m_bucketsLength];
+							m_buckets = new int32[m_bucketsLength];
 						if (m_entries == nullptr && other.m_entries)
 							m_entries = new E[m_bucketsLength];
 					}
@@ -156,10 +156,10 @@ namespace Apoc3D
 					m_count = other.m_count;
 					m_emptySlot = other.m_emptySlot;
 
-					for (int i = 0; i < m_bucketsLength; i++)
+					for (int32 i = 0; i < m_bucketsLength; i++)
 						m_entries[i] = other.m_entries[i];
 
-					memcpy(m_buckets, other.m_buckets, sizeof(int)*m_bucketsLength);
+					memcpy(m_buckets, other.m_buckets, sizeof(int32)*m_bucketsLength);
 				}
 				return *this;
 			}
@@ -194,42 +194,42 @@ namespace Apoc3D
 				delete[] m_buckets;
 			}
 
-			int* m_buckets = nullptr;
+			int32* m_buckets = nullptr;
 			E* m_entries = nullptr;
 
-			int m_bucketsLength = 0;
-			int m_touchedSlots = 0;
+			int32 m_bucketsLength = 0;
+			int32 m_touchedSlots = 0;
 
-			int m_count = 0;
-			int m_emptySlot = -1;
+			int32 m_count = 0;
+			int32 m_emptySlot = -1;
 
-			void Initialize(int capacity)
+			void Initialize(int32 capacity)
 			{
-				int primeCapacity = Utils::GetHashTableSize(capacity);
+				int32 primeCapacity = Utils::GetHashTableSize(capacity);
 				m_bucketsLength = primeCapacity;
 				m_entries = new E[primeCapacity];
-				m_buckets = new int[primeCapacity];
-				for (int i = 0; i < primeCapacity; i++)
+				m_buckets = new int32[primeCapacity];
+				for (int32 i = 0; i < primeCapacity; i++)
 				{
 					m_buckets[i] = -1;
 				}
 			}
 
-			int FindEntry(const T& item) const
+			int32 FindEntry(const T& item) const
 			{
 				if (m_buckets)
 				{
-					int hash = ComparerType::GetHashCode(item) & PositiveMask;
-					int index = hash % m_bucketsLength;
+					int32 hash = ComparerType::GetHashCode(item) & PositiveMask;
+					int32 index = hash % m_bucketsLength;
 
 					return FindEntry(item, hash, index);
 				}
 				return -1;
 			}
 
-			int FindEntry(const T& item, int32 hash, int32 index) const
+			int32 FindEntry(const T& item, int32 hash, int32 index) const
 			{
-				for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
+				for (int32 i = m_buckets[index]; i >= 0; i = m_entries[i].next)
 				{
 					if (m_entries[i].hashCode == hash &&
 						ComparerType::Equals(m_entries[i].getData(), item))
@@ -248,14 +248,14 @@ namespace Apoc3D
 					Initialize(7);
 				}
 
-				int hash = ComparerType::GetHashCode(std::forward<TT>(item)) & PositiveMask;
-				int index = hash % m_bucketsLength;
+				int32 hash = ComparerType::GetHashCode(std::forward<TT>(item)) & PositiveMask;
+				int32 index = hash % m_bucketsLength;
 
 				if (!noDuplicationCheck && FindEntry(std::forward<TT>(item), hash, index) != -1)
 					throw AP_EXCEPTION(ExceptID::Duplicate, Utils::ToString(item));
 
 				
-				int pos = m_emptySlot;
+				int32 pos = m_emptySlot;
 				if (pos >= 0)
 				{
 					m_emptySlot = m_entries[pos].next;
@@ -282,10 +282,10 @@ namespace Apoc3D
 			{
 				if (m_buckets)
 				{
-					int hash = ComparerType::GetHashCode(item) & PositiveMask;
-					int index = hash % m_bucketsLength;
-					int prev = -1;
-					for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
+					int32 hash = ComparerType::GetHashCode(item) & PositiveMask;
+					int32 index = hash % m_bucketsLength;
+					int32 prev = -1;
+					for (int32 i = m_buckets[index]; i >= 0; i = m_entries[i].next)
 					{
 						if (m_entries[i].hashCode == hash &&
 							ComparerType::Equals(m_entries[i].getData(), item))
@@ -343,7 +343,7 @@ namespace Apoc3D
 					MoveToNext();
 				}
 
-				IteratorBase(const HashMapType* dict, int idx)
+				IteratorBase(const HashMapType* dict, int32 idx)
 					: m_dict(dict), m_next(idx) { }
 
 
@@ -360,7 +360,7 @@ namespace Apoc3D
 				}
 
 				const HashMapType* m_dict;
-				int m_next = 0;
+				int32 m_next = 0;
 			};
 
 			template <bool IsAccessingKey>
@@ -380,12 +380,12 @@ namespace Apoc3D
 				explicit IteratorKV(const HashMapType* dict)
 					: IteratorBase(dict) { }
 
-				IteratorKV(const HashMapType* dict, int idx)
+				IteratorKV(const HashMapType* dict, int32 idx)
 					: IteratorBase(dict, idx) { }
 
 				struct KeyGetter
 				{
-					static const T& Get(const HashMapType* dict, int idx)
+					static const T& Get(const HashMapType* dict, int32 idx)
 					{
 						assert(idx > 0 && idx <= dict->m_touchedSlots);
 						return dict->m_entries[idx - 1].getData();
@@ -393,7 +393,7 @@ namespace Apoc3D
 				};
 				struct ValueGetter
 				{
-					static S& Get(const HashMapType* dict, int idx)
+					static S& Get(const HashMapType* dict, int32 idx)
 					{
 						assert(idx > 0 && idx <= dict->m_touchedSlots);
 						return dict->m_entries[idx - 1].getValue();
@@ -416,7 +416,7 @@ namespace Apoc3D
 				explicit Iterator(const HashMapType* dict)
 					: IteratorBase(dict) { }
 
-				Iterator(const HashMapType* dict, int idx)
+				Iterator(const HashMapType* dict, int32 idx)
 					: IteratorBase(dict, idx) { }
 			};
 
@@ -442,7 +442,7 @@ namespace Apoc3D
 
 			HashMap() 
 				: HashMapCore(0) { }
-			explicit HashMap(int capacity)
+			explicit HashMap(int32 capacity)
 				: HashMapCore(capacity) { }
 
 			HashMap(std::initializer_list<KeyPairValue<T, S>> list)
@@ -464,7 +464,7 @@ namespace Apoc3D
 
 			void AddOrReplace(const T& item, const S& value)
 			{
-				int index = FindEntry(item);
+				int32 index = FindEntry(item);
 				if (index >= 0)
 				{
 					m_entries[index].SetValue(value);
@@ -477,7 +477,7 @@ namespace Apoc3D
 
 			void AddOrReplace(const T& item, S&& value)
 			{
-				int index = FindEntry(item);
+				int32 index = FindEntry(item);
 				if (index >= 0)
 				{
 					m_entries[index].SetValue(std::move(value));
@@ -491,7 +491,7 @@ namespace Apoc3D
 
 			S& operator [](const T& key) const
 			{
-				int index = FindEntry(key);
+				int32 index = FindEntry(key);
 				if (index >= 0)
 				{
 					return m_entries[index].getValue();
@@ -501,7 +501,7 @@ namespace Apoc3D
 
 			bool TryGetValue(const T& key, S& value) const
 			{
-				int index = FindEntry(key);
+				int32 index = FindEntry(key);
 				if (index >= 0)
 				{
 					value = m_entries[index].getValue();
@@ -511,7 +511,7 @@ namespace Apoc3D
 			}
 			S* TryGetValue(const T& key) const
 			{
-				int index = FindEntry(key);
+				int32 index = FindEntry(key);
 				if (index >= 0)
 				{
 					return &m_entries[index].getValue();
@@ -603,7 +603,7 @@ namespace Apoc3D
 					MoveToNext();
 				}
 
-				Iterator(const HashSetType* dict, int idx)
+				Iterator(const HashSetType* dict, int32 idx)
 					: m_dict(dict), m_next(idx) { }
 
 
@@ -620,13 +620,13 @@ namespace Apoc3D
 				}
 
 				const HashSetType* m_dict;
-				int m_next = 0;
+				int32 m_next = 0;
 			};
 
 
 			HashSet()
 				: HashMapCore(0) { }
-			explicit HashSet(int capacity)
+			explicit HashSet(int32 capacity)
 				: HashMapCore(capacity) { }
 
 			HashSet(std::initializer_list<T> list)

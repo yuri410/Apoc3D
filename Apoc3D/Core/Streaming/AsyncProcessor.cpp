@@ -142,7 +142,7 @@ namespace Apoc3D
 			{
 				LockQueue();
 
-				for (int i = 0; i < m_opQueue.getCount(); i++)
+				for (int32 i = 0; i < m_opQueue.getCount(); i++)
 				{
 					ResourceOperation& e = m_opQueue[i];
 					if (e == op)
@@ -157,7 +157,7 @@ namespace Apoc3D
 			{
 				LockQueue();
 
-				for (int i = 0; i < m_opQueue.getCount(); i++)
+				for (int32 i = 0; i < m_opQueue.getCount(); i++)
 				{
 					ResourceOperation& e = m_opQueue[i];
 					if (e.Subject == res)

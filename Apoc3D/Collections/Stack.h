@@ -36,7 +36,7 @@ namespace Apoc3D
 		class Stack
 		{
 		public:	
-			explicit Stack(int capacity = 8)
+			explicit Stack(int32 capacity = 8)
 				: m_capacity(capacity)
 			{
 				m_array = Allocate(m_capacity); // new T[m_length];
@@ -93,7 +93,7 @@ namespace Apoc3D
 				return *this;
 			}
 
-			int getCount() const { return m_count; }
+			int32 getCount() const { return m_count; }
 
 			void Clear()
 			{
@@ -160,8 +160,8 @@ namespace Apoc3D
 			}
 
 			T* m_array;
-			int m_count = 0;
-			int m_capacity;
+			int32 m_count = 0;
+			int32 m_capacity;
 		};
 
 		template<typename T, int32 N>
@@ -212,7 +212,7 @@ namespace Apoc3D
 
 
 
-			int getCount() const { return m_count; }
+			int32 getCount() const { return m_count; }
 
 			void Clear() 
 			{
@@ -257,7 +257,7 @@ namespace Apoc3D
 			}
 
 		private:
-			int m_count = 0;
+			int32 m_count = 0;
 			char m_storage[sizeof(T)*N];
 		};
 	}

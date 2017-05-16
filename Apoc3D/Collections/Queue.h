@@ -46,15 +46,15 @@ namespace Apoc3D
 				{
 					if (head < tail)
 					{
-						for (int i = head; i < tail; i++)
+						for (int32 i = head; i < tail; i++)
 							new (&dest[i])T(src[i]);
 					}
 					else
 					{
-						for (int i = 0; i < tail; i++)
+						for (int32 i = 0; i < tail; i++)
 							new (&dest[i])T(src[i]);
 
-						for (int i = head; i < arrLength; i++)
+						for (int32 i = head; i < arrLength; i++)
 							new (&dest[i])T(src[i]);
 					}
 				}
@@ -71,15 +71,15 @@ namespace Apoc3D
 				{
 					if (head < tail)
 					{
-						for (int i = head; i < tail; i++)
+						for (int32 i = head; i < tail; i++)
 							new (&dest[i])T(std::move(src[i]));
 					}
 					else
 					{
-						for (int i = 0; i < tail; i++)
+						for (int32 i = 0; i < tail; i++)
 							new (&dest[i])T(std::move(src[i]));
 
-						for (int i = head; i < arrLength; i++)
+						for (int32 i = head; i < arrLength; i++)
 							new (&dest[i])T(std::move(src[i]));
 					}
 				}
@@ -155,8 +155,8 @@ namespace Apoc3D
 			template <typename T>
 			bool Replace(const T& item, const T& item2, const T* arr, int32 head, int32 count, int32 arrLen)
 			{
-				int index = head;
-				int counter = count;
+				int32 index = head;
+				int32 counter = count;
 
 				while (counter-- > 0)
 				{
@@ -174,8 +174,8 @@ namespace Apoc3D
 			template <typename T>
 			bool Contains(const T& item, const T* arr, int32 head, int32 count, int32 arrLen)
 			{
-				int index = head;
-				int counter = count;
+				int32 index = head;
+				int32 counter = count;
 
 				while (counter-- > 0)
 				{
@@ -190,8 +190,8 @@ namespace Apoc3D
 			template <typename T>
 			int32 IndexOf(const T& item, const T* arr, int32 head, int32 count, int32 arrLen)
 			{
-				int index = head;
-				int counter = count;
+				int32 index = head;
+				int32 counter = count;
 
 				while (counter-- > 0)
 				{
@@ -205,8 +205,8 @@ namespace Apoc3D
 			template <typename T>
 			void DeletePointers(const T* arr, int32 head, int32 count, int32 arrLen)
 			{
-				int index = head;
-				int counter = count;
+				int32 index = head;
+				int32 counter = count;
 
 				while (counter-- > 0)
 				{
@@ -318,7 +318,7 @@ namespace Apoc3D
 			{
 				m_array = Allocate(4);
 			}
-			explicit Queue(int capacity)
+			explicit Queue(int32 capacity)
 				: m_arrLength(capacity)
 			{
 				m_array = Allocate(capacity);
@@ -379,22 +379,22 @@ namespace Apoc3D
 			
 			void CopyTo(T* dest) const
 			{
-				int remaining = m_count;
+				int32 remaining = m_count;
 
 				if (remaining > 0)
 				{
 					int32 head = m_head;
 					int32 arrLength = m_arrLength;
 
-					int numHeadToEnd = (arrLength - head < remaining) ? (arrLength - head) : remaining;
-					for (int i = 0; i < numHeadToEnd; i++)
+					int32 numHeadToEnd = (arrLength - head < remaining) ? (arrLength - head) : remaining;
+					for (int32 i = 0; i < numHeadToEnd; i++)
 					{
 						dest[i] = m_array[i + head];
 					}
 					remaining -= numHeadToEnd;
 					if (remaining > 0)
 					{
-						for (int i = 0; i < remaining; i++)
+						for (int32 i = 0; i < remaining; i++)
 						{
 							dest[i + arrLength - head] = m_array[i];
 						}
@@ -448,10 +448,10 @@ namespace Apoc3D
 			}
 
 
-			int getCount() const { return m_count; }
+			int32 getCount() const { return m_count; }
 
-			T& operator[](int i) { assert(i >= 0 && i < m_count); return m_array[(m_head + i) % m_arrLength]; }
-			const T& operator[](int i) const { assert(i >= 0 && i < m_count); return m_array[(m_head + i) % m_arrLength]; }
+			T& operator[](int32 i) { assert(i >= 0 && i < m_count); return m_array[(m_head + i) % m_arrLength]; }
+			const T& operator[](int32 i) const { assert(i >= 0 && i < m_count); return m_array[(m_head + i) % m_arrLength]; }
 
 			const T& Head() const { return m_array[m_head]; }
 			const T& Tail() const { return operator[](m_count - 1); }
@@ -487,7 +487,7 @@ namespace Apoc3D
 			static T* Allocate(int32 size) { return (T*)malloc(sizeof(T)*size); }
 			static void Free(T*& ptr) { free(ptr); ptr = nullptr; }
 
-			void SetCapacity(int capacity)
+			void SetCapacity(int32 capacity)
 			{
 				T* dest = Allocate(capacity);
 				if (m_count > 0)
@@ -512,15 +512,15 @@ namespace Apoc3D
 					{
 						if (head < tail)
 						{
-							for (int i = 0; i < m_count; i++)
+							for (int32 i = 0; i < m_count; i++)
 								new (&dest[i])T(std::move(m_array[i + head]));
 						}
 						else
 						{
-							for (int i = head; i < arrLength; i++)
+							for (int32 i = head; i < arrLength; i++)
 								new (&dest[i - head])T(std::move(m_array[i]));
 
-							for (int i = 0; i < tail; i++)
+							for (int32 i = 0; i < tail; i++)
 								new (&dest[arrLength - head + i])T(std::move(m_array[i]));
 						}
 					}
@@ -540,7 +540,7 @@ namespace Apoc3D
 			{
 				if (m_count == m_arrLength)
 				{
-					int newCapacity = m_arrLength * 2;
+					int32 newCapacity = m_arrLength * 2;
 					if (newCapacity < m_arrLength + 4)
 					{
 						newCapacity = m_arrLength + 4;
@@ -623,7 +623,7 @@ namespace Apoc3D
 			void CopyTo(T* dest, int32 amount) const
 			{
 				assert(amount <= m_count);
-				int remaining = amount;
+				int32 remaining = amount;
 
 				if (remaining > 0)
 				{
@@ -631,15 +631,15 @@ namespace Apoc3D
 
 					int32 head = m_head;
 
-					int numHeadToEnd = (N - head < remaining) ? (N - head) : remaining;
-					for (int i = 0; i < numHeadToEnd; i++)
+					int32 numHeadToEnd = (N - head < remaining) ? (N - head) : remaining;
+					for (int32 i = 0; i < numHeadToEnd; i++)
 					{
 						dest[i] = arr[i + head];
 					}
 					remaining -= numHeadToEnd;
 					if (remaining > 0)
 					{
-						for (int i = 0; i < remaining; i++)
+						for (int32 i = 0; i < remaining; i++)
 						{
 							dest[i + N - head] = arr[i];
 						}
@@ -732,11 +732,11 @@ namespace Apoc3D
 				}
 			}
 
-			int getCount() const { return m_count; }
+			int32 getCount() const { return m_count; }
 			int32 getCapacity() const { return N; }
 
-			T& operator[](int i) { assert(i >= 0 && i < m_count); return ((T*)m_storage)[(m_head + i) % N]; }
-			const T& operator[](int i) const { assert(i >= 0 && i < m_count); return ((T*)m_storage)[(m_head + i) % N]; }
+			T& operator[](int32 i) { assert(i >= 0 && i < m_count); return ((T*)m_storage)[(m_head + i) % N]; }
+			const T& operator[](int32 i) const { assert(i >= 0 && i < m_count); return ((T*)m_storage)[(m_head + i) % N]; }
 
 			const T& Head() const { return ((T*)m_storage)[m_head]; }
 			const T& Tail() const { return operator[](m_count - 1); }

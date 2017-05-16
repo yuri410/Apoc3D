@@ -36,7 +36,7 @@ namespace Apoc3D
 		class List2D
 		{
 		public:
-			List2D(int w, int h = 4)
+			List2D(int32 w, int32 h = 4)
 				: m_width(w), m_height(h), m_internalPointer(0)
 			{
 				m_data = new T*[h]();
@@ -47,10 +47,10 @@ namespace Apoc3D
 			{
 				m_data = new T*[m_height]();
 
-				for (int i = 0; i < m_internalPointer; i++)
+				for (int32 i = 0; i < m_internalPointer; i++)
 				{
 					m_data[i] = new T[m_width];
-					for (int j = 0; j < m_width; j++)
+					for (int32 j = 0; j < m_width; j++)
 					{
 						m_data[i][j] = another.m_data[i][j];
 					}
@@ -69,7 +69,7 @@ namespace Apoc3D
 			{
 				if (m_data)
 				{
-					for (int i = 0; i < m_internalPointer; i++)
+					for (int32 i = 0; i < m_internalPointer; i++)
 					{
 						delete[] m_data[i];
 					}
@@ -91,7 +91,7 @@ namespace Apoc3D
 					m_height = rhs.m_height;
 
 					m_data = new T*[m_height]();
-					for (int i = 0; i < m_internalPointer; i++)
+					for (int32 i = 0; i < m_internalPointer; i++)
 					{
 						m_data[i] = new T[m_width];
 						for (int j = 0; j < m_width; j++)
@@ -124,8 +124,8 @@ namespace Apoc3D
 			bool isIndexInRange(int32 i, int32 j) const { return i >= 0 && i < m_internalPointer && j >= 0 && j < m_width; }
 			bool isIndexInRange(int32 i) const { return i >= 0 && i < m_internalPointer; }
 
-			int getCount() const { return m_internalPointer; }
-			int getWidth() const { return m_width; }
+			int32 getCount() const { return m_internalPointer; }
+			int32 getWidth() const { return m_width; }
 
 			T& at(int32 i, int32 j) const
 			{
@@ -155,7 +155,7 @@ namespace Apoc3D
 					ResizeRows(m_height == 0 ? 4 : (m_height * 2));
 				}
 				m_data[m_internalPointer] = new T[m_width];
-				for (int i = 0; i < m_width; i++)
+				for (int32 i = 0; i < m_width; i++)
 				{
 					m_data[m_internalPointer][i] = val[i];
 				}
@@ -163,14 +163,14 @@ namespace Apoc3D
 			}
 			void Clear()
 			{
-				for (int i = 0; i < m_internalPointer; i++)
+				for (int32 i = 0; i < m_internalPointer; i++)
 				{
 					delete[] m_data[i];
 				}
 				m_internalPointer = 0;
 				
 			}
-			void RemoveRow(int index)
+			void RemoveRow(int32 index)
 			{
 				assert(isIndexInRange(index));
 
@@ -182,21 +182,21 @@ namespace Apoc3D
 				else
 				{
 					delete[] m_data[index];
-					for (int i = index; i < m_internalPointer - 1; i++)
+					for (int32 i = index; i < m_internalPointer - 1; i++)
 					{
 						m_data[i] = m_data[i + 1];
 					}
 					m_internalPointer--;
 				}
 			}
-			void RemoveRowRange(int index, int count)
+			void RemoveRowRange(int32 index, int32 count)
 			{
 				if (count > 0 && index < m_internalPointer)
 				{
-					for (int i = index; i < index + count; i++)
+					for (int32 i = index; i < index + count; i++)
 						delete[] m_data[i];
 
-					for (int i = index; i < m_internalPointer - count; i++)
+					for (int32 i = index; i < m_internalPointer - count; i++)
 					{
 						m_data[i] = m_data[i + count];
 					}
@@ -205,7 +205,7 @@ namespace Apoc3D
 			}
 
 		private:
-			void ResizeRows(int newSize)
+			void ResizeRows(int32 newSize)
 			{
 				T** newArr = new T*[newSize]();
 				memcpy(newArr, m_data, m_height*sizeof(T*));
@@ -216,9 +216,9 @@ namespace Apoc3D
 			}
 
 			T** m_data;
-			int m_width;
-			int m_height;
-			int m_internalPointer;
+			int32 m_width;
+			int32 m_height;
+			int32 m_internalPointer;
 		};
 	}
 }

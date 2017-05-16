@@ -68,12 +68,12 @@ namespace Apoc3D
 		void CombineString(const String* v, int32 count, String& result) { StringUtils::Pack<String, SimpleReturn<String>>(v, count, result); }
 		void SplitString(const String& str, List<String>& result);
 
-		void SinglesToString(const float* v, int count, String& result);
-		void PrecentagesToString(const float* v, int count, String& result);
-		void IntsToString(const int32* v, int count, String& result);
-		void UIntsToString(const uint32* v, int count, String& result);
-		void Vector3sToString(const Vector3* v, int count, String& result);
-		void PointsToString(const Point* v, int count, String& result);
+		void SinglesToString(const float* v, int32 count, String& result);
+		void PrecentagesToString(const float* v, int32 count, String& result);
+		void IntsToString(const int32* v, int32 count, String& result);
+		void UIntsToString(const uint32* v, int32 count, String& result);
+		void Vector3sToString(const Vector3* v, int32 count, String& result);
+		void PointsToString(const Point* v, int32 count, String& result);
 
 		template <int32 N> void IntsToString(const int32(&v)[N], String& result) { IntsToString(v, N, result); }
 
@@ -99,7 +99,7 @@ namespace Apoc3D
 		ConfigurationSection::ConfigurationSection(const String& name)
 			: m_name(name) { }
 
-		ConfigurationSection::ConfigurationSection(const String& name, int capacity)
+		ConfigurationSection::ConfigurationSection(const String& name, int32 capacity)
 			: m_name(name), m_subSection(capacity) { }
 
 		ConfigurationSection::ConfigurationSection(const String& name, const String& value)
@@ -489,7 +489,7 @@ namespace Apoc3D
 		void ConfigurationSection::SetPercentages(const float* v, int32 count)			{ PrecentagesToString(v, count, m_value); }
 		void ConfigurationSection::SetInts(const int32* v, int32 count)					{ IntsToString(v, count, m_value); }
 		void ConfigurationSection::SetUInts(const uint32* v, int32 count)				{ UIntsToString(v, count, m_value); }
-		void ConfigurationSection::SetVector3s(const Vector3* v, int count)				{ Vector3sToString(v, count, m_value); }
+		void ConfigurationSection::SetVector3s(const Vector3* v, int32 count)				{ Vector3sToString(v, count, m_value); }
 		
 		void ConfigurationSection::SetStrings(const List<String>& v)					{ SetStrings(&v[0], v.getCount()); }
 		void ConfigurationSection::SetSingles(const List<float>& v)						{ SetSingles(&v[0],  v.getCount()); }
@@ -873,12 +873,12 @@ namespace Apoc3D
 		String SimpleUInt32ToString(const uint32& v)	{ return StringUtils::UIntToString(v); }
 		String SimpleFloatToString(const float& v)		{ return StringUtils::SingleToString(v, GetCurrentFPFlags()); }
 		
-		void IntsToString(const int32* v, int count, String& result)		{ StringUtils::Pack<int32, SimpleInt32ToString>(v, count, result); }
-		void UIntsToString(const uint32* v, int count, String& result)		{ StringUtils::Pack<uint32, SimpleUInt32ToString>(v, count, result); }
-		void SinglesToString(const float* v, int count, String& result)		{ StringUtils::Pack<float, SimpleFloatToString>(v, count, result); }
-		void PrecentagesToString(const float* v, int count, String& result) { StringUtils::Pack<float, PercentageToString>(v, count, result); }
-		void Vector3sToString(const Vector3* v, int count, String& result)	{ StringUtils::Pack<Vector3, Vector3ToString>(v, count, result); }
-		void PointsToString(const Point* v, int count, String& result)		{ StringUtils::Pack<Point, PointToString>(v, count, result); }
+		void IntsToString(const int32* v, int32 count, String& result)		{ StringUtils::Pack<int32, SimpleInt32ToString>(v, count, result); }
+		void UIntsToString(const uint32* v, int32 count, String& result)		{ StringUtils::Pack<uint32, SimpleUInt32ToString>(v, count, result); }
+		void SinglesToString(const float* v, int32 count, String& result)		{ StringUtils::Pack<float, SimpleFloatToString>(v, count, result); }
+		void PrecentagesToString(const float* v, int32 count, String& result) { StringUtils::Pack<float, PercentageToString>(v, count, result); }
+		void Vector3sToString(const Vector3* v, int32 count, String& result)	{ StringUtils::Pack<Vector3, Vector3ToString>(v, count, result); }
+		void PointsToString(const Point* v, int32 count, String& result)		{ StringUtils::Pack<Point, PointToString>(v, count, result); }
 
 
 

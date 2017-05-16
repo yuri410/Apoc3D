@@ -50,7 +50,7 @@ namespace Apoc3D
 		{
 			BinaryReader br(rl);
 
-			int id = br.ReadInt32();
+			int32 id = br.ReadInt32();
 
 			if (id == FileID)
 			{
@@ -151,8 +151,8 @@ namespace Apoc3D
 
 				localValues->TryProcessData("Attributes", [section](BinaryReader* br2)
 				{
-					int count = br2->ReadInt32();
-					for (int i = 0; i < count; i++)
+					int32 count = br2->ReadInt32();
+					for (int32 i = 0; i < count; i++)
 					{
 						String key = br2->ReadString();
 						String val = br2->ReadString();

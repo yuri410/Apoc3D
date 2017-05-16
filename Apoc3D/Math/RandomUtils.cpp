@@ -57,7 +57,7 @@ namespace Apoc3D
 			m_seed = seed;
 			int32 holdRand = seed;
 
-			for (int32& s : m_state)
+			for (uint32& s : m_state)
 			{
 				s = (((holdRand = holdRand * 214013L + 2531011L) >> 16) & 0x7fff);
 			}

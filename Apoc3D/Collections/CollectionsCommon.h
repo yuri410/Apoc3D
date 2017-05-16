@@ -311,7 +311,7 @@ namespace Apoc3D
 
 		namespace Utils
 		{
-			int APAPI GetHashTableSize(int min);
+			int32 APAPI GetHashTableSize(int32 min);
 
 			template <typename T>
 			struct _ToString

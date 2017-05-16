@@ -51,13 +51,13 @@ namespace Apoc3D
 			{
 				assert(max>=0);
 				int32 result = static_cast<int32>(SampleD() * (max + 1));
-				if (result>max)
+				if (result > max)
 					result = max; // this might happen if processor float point precision is tuned down
 				return result;
 			}
 			int32 NextExclusive(int32 max) 
 			{
-				if (--max<=0)
+				if (--max <= 0)
 					return 0;
 				return NextInclusive(max);
 			}
@@ -65,7 +65,7 @@ namespace Apoc3D
 
 			int32 Next(int32 minValue, int32 maxValue)
 			{
-				assert(minValue<=maxValue);
+				assert(minValue <= maxValue);
 				int64 range = (int64)maxValue - (int64)minValue;
 				int64 val = static_cast<int64>(SampleD() * range) + minValue;
 				return static_cast<int32>(val);
@@ -73,14 +73,14 @@ namespace Apoc3D
 			float NextFloat() { return Sample(); }
 			double NextDouble() { return SampleD(); }
 		private:
-			int32 m_state[16];
+			uint32 m_state[16];
 			int32 m_index = 0;
 			int32 m_seed = 0;
 
 			int32 RawSample()
 			{
 				// WELLRNG512
-				unsigned long a, b, c, d;
+				uint32 a, b, c, d;
 				a = m_state[m_index];
 				c = m_state[(m_index+13)&15];
 				b = a^c^(a<<16)^(c<<15);
@@ -91,7 +91,7 @@ namespace Apoc3D
 				m_index = (m_index + 15)&15;
 				a = m_state[m_index];
 				m_state[m_index] = a^b^d^(a<<2)^(b<<18)^(c<<28);
-				return static_cast<int32>(m_state[m_index] & 0x7fffffffUL);
+				return static_cast<int32>(m_state[m_index] & 0x7fffffffU);
 			}
 			float Sample() { return RawSample() * (1.0f / 2147483647.0f); }
 			double SampleD() { return RawSample() * (1.0 / 2147483647.0); }

@@ -491,14 +491,14 @@ namespace Apoc3D
 		{
 			assert(inst.Args.getCount() == 3);
 
-			int index;
+			int32 index;
 			if (inst.Args[0].IsImmediate)
 			{
-				index = reinterpret_cast<const int&>(inst.Args[0].DefaultValue[0]);
+				index = reinterpret_cast<const int32&>(inst.Args[0].DefaultValue[0]);
 			}
 			else
 			{
-				index = reinterpret_cast<const int&>(inst.Args[0].Var->Value[0]);
+				index = reinterpret_cast<const int32&>(inst.Args[0].Var->Value[0]);
 			}
 
 			if (!inst.Args[1].IsImmediate)

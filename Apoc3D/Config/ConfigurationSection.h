@@ -85,7 +85,7 @@ namespace Apoc3D
 			};
 
 			ConfigurationSection(const String& name);
-			ConfigurationSection(const String& name, int capacity);
+			ConfigurationSection(const String& name, int32 capacity);
 			ConfigurationSection(const String& name, const String& value);
 			ConfigurationSection(const String& name, std::initializer_list<std::pair<String, String>> attribs, std::initializer_list<ConfigurationSection> values);
 			ConfigurationSection(const ConfigurationSection&);
@@ -102,8 +102,8 @@ namespace Apoc3D
 			AttributeAccessor getAttributes() const { return AttributeAccessor(m_attributes); }
 			SubSectionTable::ValueAccessor getSubSections() const { return m_subSection.getValueAccessor(); }
 
-			int getAttributeCount() const { return m_attributes.getCount(); }
-			int getSubSectionCount() const { return m_subSection.getCount(); }
+			int32 getAttributeCount() const { return m_attributes.getCount(); }
+			int32 getSubSectionCount() const { return m_subSection.getCount(); }
 
 			const String& getName() const { return m_name; }
 			const String& getValue() const { return m_value; }
@@ -239,12 +239,12 @@ namespace Apoc3D
 			void SetColorValue(ColorValue value);
 			void SetVector3(const Vector3& v);
 
-			void SetStrings(const String* v, int count);
-			void SetSingles(const float* v, int count);
-			void SetPercentages(const float* v, int count);
-			void SetInts(const int32* v, int count);
-			void SetUInts(const uint32* v, int count);
-			void SetVector3s(const Vector3* v, int count);
+			void SetStrings(const String* v, int32 count);
+			void SetSingles(const float* v, int32 count);
+			void SetPercentages(const float* v, int32 count);
+			void SetInts(const int32* v, int32 count);
+			void SetUInts(const uint32* v, int32 count);
+			void SetVector3s(const Vector3* v, int32 count);
 
 			void SetStrings(const List<String>& v);
 			void SetSingles(const List<float>& v);
