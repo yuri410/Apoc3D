@@ -440,9 +440,9 @@ namespace APBuild
 		for (const GlyphBitmap& g : glyphHashTable.getKeyAccessor())
 		{
 			if (info.HasLuminance)
-				bw.Write(g.PixelData, g.Width * g.Height * 2);
+				bw.WriteBytes(g.PixelData, g.Width * g.Height * 2);
 			else
-				bw.Write(g.PixelData, g.Width * g.Height);
+				bw.WriteBytes(g.PixelData, g.Width * g.Height);
 		}
 
 		fs.Seek(glyRecPos, SeekMode::Begin);

@@ -83,7 +83,7 @@ namespace Apoc3D
 
 				/**  Load animation data from a Tagged Data Block  */
 				void ReadData(TaggedDataReader* data);
-				TaggedDataWriter* WriteData() const;
+				void WriteData(TaggedDataWriter* data) const;
 
 
 				void Load(const ResourceLocation& rl);
@@ -100,6 +100,8 @@ namespace Apoc3D
 				int RigidEntityCount = 0;
 
 			private:
+				void ReadMaterialAnimationClips(BinaryReader* br, int32 count, bool readsFrameFlag);
+
 				ClipTable m_rigidAnimationClips;
 				ClipTable m_skinnedAnimationClips;
 				MtrlClipTable m_mtrlAnimationClips;

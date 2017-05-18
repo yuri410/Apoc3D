@@ -11,7 +11,10 @@ namespace Apoc3D
 		class FNVHash32
 		{
 		public:
-			void Accumulate(const void* buffer, int32 size)
+			FNVHash32() { }
+			FNVHash32(uint32 current) : m_result(current) { }
+
+			FNVHash32& Accumulate(const void* buffer, int32 size)
 			{
 				const uint32 p = 16777619;
 				const byte* src = (const byte*)buffer;
@@ -20,6 +23,7 @@ namespace Apoc3D
 				{
 					m_result = (*src++ ^ m_result) * p;
 				}
+				return *this;
 			}
 
 			uint32 getResult() const { return m_result; }
@@ -31,7 +35,10 @@ namespace Apoc3D
 		class FNVHash64
 		{
 		public:
-			void Accumulate(const void* buffer, int32 size)
+			FNVHash64() { }
+			FNVHash64(uint64 current) : m_result(current) { }
+
+			FNVHash64& Accumulate(const void* buffer, int32 size)
 			{
 				const uint64 p = 1099511628211;
 				const byte* src = (const byte*)buffer;
@@ -40,12 +47,25 @@ namespace Apoc3D
 				{
 					m_result = (*src++ ^ m_result) * p;
 				}
+				return *this;
 			}
 
 			uint64 getResult() const { return m_result; }
 		private:
 			uint64 m_result = 14695981039346656037;
 		};
+
+		// not including null terminator
+		constexpr uint32 FNVHash32Const(const char* str, const uint32 val = 2166136261u)
+		{
+			return (*str == '\0') ? val : FNVHash32Const(str + 1, (uint64)(val ^ (uint32)*str) * 16777619u);
+		}
+
+		//template <uint32 N>
+		//constexpr uint32 FNVHash32Const(const char(&str)[N], uint32 I = N)
+		//{
+		//	return (I == 1 ? (2166136261u ^ str[0]) : (uint64)(FNVHash32Const(str, I - 1) ^ str[I - 1])) * 16777619u;
+		//}
 
 
 		inline int32 MurmurHash(const void * key, int len)

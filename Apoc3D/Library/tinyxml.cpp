@@ -729,11 +729,11 @@ void TiXmlElement::Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const
 	for ( i=0; i<depth; i++ )
 	{
 		TIXML_STRING m1("    ");
-		bw->Write(m1.c_str(), m1.size());
+		bw->WriteBytes(m1.c_str(), m1.size());
 	}
 
 	TIXML_STRING m2("<"); m2.append(value);
-	bw->Write(m2.c_str(), m2.size());
+	bw->WriteBytes(m2.c_str(), m2.size());
 
 	const TiXmlAttribute* attrib;
 	for ( attrib = attributeSet.First(); attrib; attrib = attrib->Next() )
@@ -750,7 +750,7 @@ void TiXmlElement::Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const
 	if ( !firstChild )
 	{
 		TIXML_STRING m3(" />");
-		bw->Write(m3.c_str(), m3.size());
+		bw->WriteBytes(m3.c_str(), m3.size());
 	}
 	else if ( firstChild == lastChild && firstChild->ToText() )
 	{
@@ -758,7 +758,7 @@ void TiXmlElement::Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const
 		firstChild->Print( bw, depth + 1 );
 		
 		TIXML_STRING m3("</"); m3.append(value); m3.append(">");
-		bw->Write(m3.c_str(), m3.size());
+		bw->WriteBytes(m3.c_str(), m3.size());
 	}
 	else
 	{
@@ -776,11 +776,11 @@ void TiXmlElement::Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const
 		for( i=0; i<depth; ++i )
 		{
 			TIXML_STRING m1("    ");
-			bw->Write(m1.c_str(), m1.size());
+			bw->WriteBytes(m1.c_str(), m1.size());
 		}
 
 		TIXML_STRING m3("</"); m3.append(value); m3.append(">");
-		bw->Write(m3.c_str(), m3.size());
+		bw->WriteBytes(m3.c_str(), m3.size());
 	}
 }
 
@@ -1139,13 +1139,11 @@ void TiXmlAttribute::Print( Apoc3D::IO::BinaryWriter* bw, int /*depth*/, TIXML_S
 	if (value.find ('\"') == TIXML_STRING::npos) {
 		if ( bw )
 		{
-			bw->Write(n.c_str(), n.size());
+			bw->WriteBytes(n.c_str(), n.size());
 			bw->WriteByte((char)'=');
 			bw->WriteByte((char)'"');
-			bw->Write(v.c_str(), v.size());
+			bw->WriteBytes(v.c_str(), v.size());
 			bw->WriteByte((char)'"');
-
-			//fprintf (cfile, "%s=\"%s\"", n.c_str(), v.c_str() );
 		}
 		if ( str ) {
 			(*str) += n; (*str) += "=\""; (*str) += v; (*str) += "\"";
@@ -1154,13 +1152,11 @@ void TiXmlAttribute::Print( Apoc3D::IO::BinaryWriter* bw, int /*depth*/, TIXML_S
 	else {
 		if ( bw )
 		{
-			bw->Write(n.c_str(), n.size());
+			bw->WriteBytes(n.c_str(), n.size());
 			bw->WriteByte((char)'=');
 			bw->WriteByte((char)'"');
-			bw->Write(v.c_str(), v.size());
+			bw->WriteBytes(v.c_str(), v.size());
 			bw->WriteByte((char)'"');
-
-			//fprintf (cfile, "%s='%s'", n.c_str(), v.c_str() );
 		}
 		if ( str ) {
 			(*str) += n; (*str) += "='"; (*str) += v; (*str) += "'";
@@ -1234,11 +1230,11 @@ void TiXmlComment::Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const
 	for ( int i=0; i<depth; i++ )
 	{
 		TIXML_STRING m1("    ");
-		bw->Write(m1.c_str(), m1.size());
+		bw->WriteBytes(m1.c_str(), m1.size());
 	}
 
 	TIXML_STRING m2("<!--"); m2.append(value); m2.append("-->");
-	bw->Write(m2.c_str(), m2.size());
+	bw->WriteBytes(m2.c_str(), m2.size());
 }
 
 void TiXmlComment::CopyTo( TiXmlComment* target ) const
@@ -1280,18 +1276,18 @@ void TiXmlText::Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const
 		for ( i=0; i<depth; i++ )
 		{
 			TIXML_STRING m1("    ");
-			bw->Write(m1.c_str(), m1.size());
+			bw->WriteBytes(m1.c_str(), m1.size());
 		}
 
 		TIXML_STRING m2("<![CDATA["); m2.append(value); m2.append("]]>\n"); 
-		bw->Write(m2.c_str(), m2.size());	// unformatted output
+		bw->WriteBytes(m2.c_str(), m2.size());	// unformatted output
 	}
 	else
 	{
 		TIXML_STRING buffer;
 		EncodeString( value, &buffer );
 
-		bw->Write(buffer.c_str(), buffer.size());
+		bw->WriteBytes(buffer.c_str(), buffer.size());
 	}
 }
 
@@ -1364,7 +1360,7 @@ void TiXmlDeclaration::Print( Apoc3D::IO::BinaryWriter* bw, int /*depth*/, TIXML
 	if ( bw ) 
 	{
 		string m1("<?xml ");
-		bw->Write(m1.c_str(), m1.size());
+		bw->WriteBytes(m1.c_str(), m1.size());
 	}
 
 	if ( str )	 (*str) += "<?xml ";
@@ -1373,7 +1369,7 @@ void TiXmlDeclaration::Print( Apoc3D::IO::BinaryWriter* bw, int /*depth*/, TIXML
 		if ( bw )
 		{
 			string m2("version=\""); m2.append(version); m2.append("\" ");
-			bw->Write(m2.c_str(), m2.size());
+			bw->WriteBytes(m2.c_str(), m2.size());
 		}
 
 		if ( str ) 
@@ -1386,7 +1382,7 @@ void TiXmlDeclaration::Print( Apoc3D::IO::BinaryWriter* bw, int /*depth*/, TIXML
 		if ( bw )
 		{
 			string m2("encoding=\""); m2.append(encoding); m2.append("\" ");
-			bw->Write(m2.c_str(), m2.size());
+			bw->WriteBytes(m2.c_str(), m2.size());
 		}
 		if ( str ) { (*str) += "encoding=\""; (*str) += encoding; (*str) += "\" "; }
 	}
@@ -1395,14 +1391,14 @@ void TiXmlDeclaration::Print( Apoc3D::IO::BinaryWriter* bw, int /*depth*/, TIXML
 		if ( bw )
 		{
 			string m2("standalone=\""); m2.append(standalone); m2.append("\" ");
-			bw->Write(m2.c_str(), m2.size());
+			bw->WriteBytes(m2.c_str(), m2.size());
 		}
 		if ( str ) { (*str) += "standalone=\""; (*str) += standalone; (*str) += "\" "; }
 	}
 	if ( bw )
 	{
 		string m2("?>");
-		bw->Write(m2.c_str(), m2.size());
+		bw->WriteBytes(m2.c_str(), m2.size());
 	}
 	if ( str )	 (*str) += "?>";
 }
@@ -1441,9 +1437,9 @@ void TiXmlUnknown::Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const
 	for ( int i=0; i<depth; i++ )
 	{
 		string m1("    ");
-		bw->Write(m1.c_str(), m1.size());
+		bw->WriteBytes(m1.c_str(), m1.size());
 	}
-	bw->WriteByte((char)'<'); bw->Write(value.c_str(), value.size()); bw->WriteByte((char)'>');
+	bw->WriteByte((char)'<'); bw->WriteBytes(value.c_str(), value.size()); bw->WriteByte((char)'>');
 }
 
 

@@ -51,7 +51,7 @@ namespace Apoc3D
 			m_baseStream = nullptr;
 		}
 
-		void BinaryWriter::Write(const char* bytes, int64 count) const
+		void BinaryWriter::WriteBytes(const char* bytes, int64 count) const
 		{
 			m_baseStream->Write(bytes, count);
 		}
@@ -140,7 +140,7 @@ namespace Apoc3D
 		{
 			WriteUInt32(static_cast<uint32>( value.size()));
 
-			Write(value.c_str(), value.size());
+			WriteBytes(value.c_str(), value.size());
 		}
 
 		void BinaryWriter::WriteInt16(int16 value) const

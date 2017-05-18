@@ -225,7 +225,7 @@ namespace Apoc3D
 
 					if (count > 0)
 					{
-						bw.Write(buffer, count);
+						bw.WriteBytes(buffer, count);
 					}
 					else break;
 				}

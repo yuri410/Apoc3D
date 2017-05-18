@@ -103,40 +103,40 @@ namespace Apoc3D
 
 		// =============================================================
 
-		const char TAG_3_CustomParamCount[] = "CustomParamCount";
-		const char TAG_3_CustomParam[] = "CustomParam";
+		constexpr TaggedDataKey TAG_3_CustomParamCount = "CustomParamCount";
+		constexpr TaggedDataKey TAG_3_CustomParam = "CustomParam";
 
-		const char TAG_3_HasTexture[] = "HasTexture";
-		const char TAG_3_Texture[] = "Texture";
-		const char TAG_3_HasEffect[] = "HasEffect";
-		const char TAG_3_Effect[] = "Effect";
+		constexpr TaggedDataKey TAG_3_HasTexture = "HasTexture";
+		constexpr TaggedDataKey TAG_3_Texture = "Texture";
+		constexpr TaggedDataKey TAG_3_HasEffect = "HasEffect";
+		constexpr TaggedDataKey TAG_3_Effect = "Effect";
 		
-		const char TAG_3_1_Textures[] = "Textures";
-		const char TAG_3_1_Effects[] = "Effects";
+		constexpr TaggedDataKey TAG_3_1_Textures = "Textures";
+		constexpr TaggedDataKey TAG_3_1_Effects = "Effects";
 
-		const char TAG_3_RenderPriority[] = "RenderPriority";
-		const char TAG_3_PassFlags[] = "PassFlags";
+		constexpr TaggedDataKey TAG_3_RenderPriority = "RenderPriority";
+		constexpr TaggedDataKey TAG_3_PassFlags = "PassFlags";
 
-		const char TAG_3_ColorWriteMasks[] = "ColorWriteMasks";
+		constexpr TaggedDataKey TAG_3_ColorWriteMasks = "ColorWriteMasks";
 
-		const char TAG_3_IsBlendTransparent[] = "IsBlendTransparent";
-		const char TAG_3_SourceBlend[] = "SourceBlend";
-		const char TAG_3_DestinationBlend[] = "DestinationBlend";
-		const char TAG_3_BlendFunction[] = "BlendFunction";
+		constexpr TaggedDataKey TAG_3_IsBlendTransparent = "IsBlendTransparent";
+		constexpr TaggedDataKey TAG_3_SourceBlend = "SourceBlend";
+		constexpr TaggedDataKey TAG_3_DestinationBlend = "DestinationBlend";
+		constexpr TaggedDataKey TAG_3_BlendFunction = "BlendFunction";
 
-		const char TAG_3_CullMode[] = "CullMode";
+		constexpr TaggedDataKey TAG_3_CullMode = "CullMode";
 
 
-		const char TAG_3_AlphaReference[] = "AlphaReference";
-		const char TAG_3_AlphaTestEnable[] = "AlphaTestEnable";
+		constexpr TaggedDataKey TAG_3_AlphaReference = "AlphaReference";
+		constexpr TaggedDataKey TAG_3_AlphaTestEnable = "AlphaTestEnable";
 
-		const char TAG_3_DepthTestEnabled[] = "DepthTestEnabled";
-		const char TAG_3_DepthWriteEnabled[] = "DepthWriteEnabled";
+		constexpr TaggedDataKey TAG_3_DepthTestEnabled = "DepthTestEnabled";
+		constexpr TaggedDataKey TAG_3_DepthWriteEnabled = "DepthWriteEnabled";
 
-		const char TAG_3_MaterialColorTag[] = "MaterialColor";
-		const char TAG_3_MaterialRefName[] = "MaterialRefName";
+		constexpr TaggedDataKey TAG_3_MaterialColorTag = "MaterialColor";
+		constexpr TaggedDataKey TAG_3_MaterialRefName = "MaterialRefName";
 
-		const char TAG_3_UsePointSprite[] = "UsePointSprite";
+		constexpr TaggedDataKey TAG_3_UsePointSprite = "UsePointSprite";
 
 
 
@@ -162,7 +162,7 @@ namespace Apoc3D
 
 			for (uint32 i = 0; i < cmpCount; i++)
 			{
-				std::string tag = TAG_3_CustomParam + StringUtils::UIntToNarrowString(i);
+				TaggedDataKey tag = TAG_3_CustomParam + i;
 
 				data->ProcessData(tag, [this](BinaryReader* br) 
 				{
@@ -187,9 +187,8 @@ namespace Apoc3D
 				{
 					if (hasTexture[i])
 					{
-						std::string tag = StringUtils::IntToNarrowString(i);
-						tag = tag + TAG_3_Texture;
-
+						std::string tag = StringUtils::IntToNarrowString(i) + TAG_3_Texture.getString();
+						
 						String name;
 						data->GetString(tag, name);
 
@@ -215,9 +214,8 @@ namespace Apoc3D
 				{
 					if (hasEffect[i])
 					{
-						std::string tag = StringUtils::IntToNarrowString(i);
-						tag = tag + TAG_3_Effect;
-
+						std::string tag = StringUtils::IntToNarrowString(i) + TAG_3_Effect.getString();
+						
 						String name;
 						data->GetString(tag, name);
 
@@ -286,12 +284,12 @@ namespace Apoc3D
 			{	
 				if (!CustomEffectParameterType_IsReference(mcp.Type))
 				{
-					std::string tag = TAG_3_CustomParam + StringUtils::IntToNarrowString(index++);
+					TaggedDataKey tag = TAG_3_CustomParam + index++;
 
 					data->AddEntry(tag, [&mcp](BinaryWriter* bw) 
 					{
 						bw->WriteUInt32(static_cast<uint32>(mcp.Type));
-						bw->Write(reinterpret_cast<const char*>(mcp.Value), sizeof(mcp.Value));
+						bw->WriteBytes(reinterpret_cast<const char*>(mcp.Value), sizeof(mcp.Value));
 						bw->WriteString(mcp.Usage);
 					});
 				}
@@ -359,12 +357,10 @@ namespace Apoc3D
 			int32 id = br.ReadInt32();
 			if (id == MtrlId_V3)
 			{
-				TaggedDataReader* data = br.ReadTaggedDataBlock();
-
-				LoadData(data);
-
-				data->Close();
-				delete data;
+				br.ReadTaggedDataBlock([this](TaggedDataReader* data) 
+				{
+					LoadData(data);
+				});
 			}
 			else
 			{

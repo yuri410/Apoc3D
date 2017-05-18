@@ -51,18 +51,136 @@ namespace Apoc3D
 {
 	namespace IO
 	{
+		TaggedDataKey::TaggedDataKey(uint32 hash, const std::string& name)
+			: m_hash(hash)
+		{
+			size_t nameSize = name.size() + 1;
+			
+			//assert(nameSize <= StringMax);
+
+			nameSize = Math::Min((size_t)StringMax, nameSize);
+			m_nameLen = nameSize - 1;
+
+			memcpy(m_nameLocal, name.c_str(), m_nameLen);
+			m_nameLocal[m_nameLen] = 0;
+		}
+
+		void TaggedDataKey::Read(BinaryReader& br)
+		{
+			m_hash = br.ReadUInt32();
+
+			uint32 nameLen = br.ReadUInt32();
+			uint32 nameSize = nameLen + 1;
+
+			int64 seekForward = 0;
+			if (nameSize > StringMax)
+			{
+				seekForward = StringMax - nameSize;
+
+				nameSize = StringMax;
+				nameLen = StringMax - 1;
+			}
+
+			br.ReadBytes(m_nameLocal, nameLen);
+			m_nameLocal[nameLen] = 0;
+			m_nameLen = nameLen;
+
+			if (seekForward)
+				br.getBaseStream()->Seek(seekForward, SeekMode::Current);
+		}
+
+		void TaggedDataKey::Write(BinaryWriter& bw) const
+		{
+			bw.WriteUInt32(m_hash);
+			
+			const char* str = getString();
+			uint32 nameLen = Math::Min((uint32)StringMax - 1, m_nameLen);
+			bw.WriteUInt32(nameLen);
+			bw.WriteBytes(str, nameLen);
+		}
+
+		TaggedDataKey TaggedDataKey::CreateAppended(const char* str, uint32 len) const
+		{
+			TaggedDataKey r = *this;
+
+			// extend hash
+			r.m_hash = Utility::FNVHash32(m_hash).Accumulate(str, len).getResult();
+
+			//assert(m_nameLen + len <= StringMax - 1);
+			uint32 copiableSize = Math::Min(StringMax - 1 - m_nameLen, len);
+
+			if (r.m_nameConst)
+			{
+				memcpy(r.m_nameLocal, r.m_nameConst, m_nameLen);
+				r.m_nameConst = nullptr;
+			}
+
+			memcpy(r.m_nameLocal + m_nameLen, str, copiableSize);
+
+			r.m_nameLen += copiableSize;
+			r.m_nameLocal[r.m_nameLen] = 0;
+
+			return r;
+		}
+
+		TaggedDataKey TaggedDataKey::operator+(const std::string& o) const
+		{
+			return CreateAppended(o.c_str(), o.size());
+		}
+
+		uint32 _uitoa(uint32 value, char (&str)[16])
+		{
+			char tmp[16];
+			char *tp = tmp;
+			uint32 v = value;
+
+			while (v || tp == tmp)
+			{
+				uint32 i = v % 10;
+				v /= 10;
+
+				*tp++ = i + '0';
+			}
+
+			uint32 len = tp - tmp;
+
+			char* sp = str;
+			while (tp > tmp)
+				*sp++ = *--tp;
+
+			*sp = 0;
+			return len;
+		}
+
+		TaggedDataKey TaggedDataKey::operator+(uint32 o) const
+		{
+			char str[16];
+			uint32 len = _uitoa(o, str);
+
+			return CreateAppended(str, len);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////
+
+		/************************************************************************/
+		/* TaggedDataReader                                                     */
+		/************************************************************************/
+
 		enum
 		{
 			TF_None = 0,
-			TF_NarrowKeyFormat = 1<<0
+			TF_NarrowKeyFormat = 1,
+			TF_HashKeyFormat = 2, // fnv1-a w/o null terminator
+			TF_64Bit = 16
 		};
 
 		TaggedDataReader::TaggedDataReader(Stream* strm)
 			: m_stream(strm)
 		{
-			m_initialPosition = strm->getPosition();
+			m_endBlockPosition = strm->getPosition() + strm->getLength();
 
-			m_sizeInBytes = (uint32)strm->getLength();
 			m_endianIndependent = strm->IsReadEndianIndependent();
 
 			BinaryReader br(strm, false);
@@ -73,17 +191,28 @@ namespace Apoc3D
 				// format ver 1.1, firstInt is flag
 				uint32 flags = firstInt & 0x7fffffffU;
 
-				bool narrowKeyFormat = flags & TF_NarrowKeyFormat;
+				bool narrowKeyFormat = (flags & TF_NarrowKeyFormat) == TF_NarrowKeyFormat;
+				bool hashKeyFormat = (flags & TF_HashKeyFormat) == TF_HashKeyFormat;
+				bool use64Bit = (flags & TF_64Bit) == TF_64Bit;
 
 				m_sectCount = br.ReadInt32();
 
-				if (narrowKeyFormat)
+				if (hashKeyFormat)
+				{
+					for (int32 i = 0; i < m_sectCount; i++)
+					{
+						KeyType key;
+						key.Read(br);
+
+						m_positions.Add(key, Entry());
+					}
+				}
+				else if (narrowKeyFormat)
 				{
 					for (int32 i = 0; i < m_sectCount; i++)
 					{
 						std::string name = br.ReadMBString();
-						Entry e = Entry(name, 0, 0);
-						m_positions.Add(name, e);
+						m_positions.Add({ name }, Entry());
 					}
 				}
 				else
@@ -91,14 +220,25 @@ namespace Apoc3D
 					for (int32 i = 0; i < m_sectCount; i++)
 					{
 						std::string name = StringUtils::UTF16toUTF8(br.ReadString());
-						m_positions.Add(name, Entry(name, 0, 0));
+						m_positions.Add({ name }, Entry());
 					}
 				}
 
-				for (Entry& ent : m_positions.getValueAccessor())
+				if (use64Bit)
 				{
-					ent.Offset = br.ReadUInt32();
-					ent.Size = br.ReadUInt32();
+					for (Entry& ent : m_positions.getValueAccessor())
+					{
+						ent.Offset = br.ReadUInt64();
+						ent.Size = br.ReadUInt64();
+					}
+				}
+				else
+				{
+					for (Entry& ent : m_positions.getValueAccessor())
+					{
+						ent.Offset = br.ReadUInt32();
+						ent.Size = br.ReadUInt32();
+					}
 				}
 			}
 			else
@@ -106,12 +246,12 @@ namespace Apoc3D
 				// original format
 				m_sectCount = (int32)firstInt;
 
-				for (int i = 0; i < m_sectCount; i++)
+				for (int32 i = 0; i < m_sectCount; i++)
 				{
 					std::string name = StringUtils::UTF16toUTF8(br.ReadString());
 					uint size = br.ReadUInt32();
 
-					m_positions.Add(name, Entry(name, strm->getPosition(), size));
+					m_positions.Add({ name }, Entry(strm->getPosition(), size));
 					strm->Seek(size, SeekMode::Current);
 				}
 			}
@@ -136,12 +276,22 @@ namespace Apoc3D
 		void TaggedDataReader::Close(bool seekToEnd)
 		{
 			if (seekToEnd)
-				m_stream->setPosition(m_initialPosition + m_sizeInBytes);
+				m_stream->setPosition(m_endBlockPosition);
 		}
 
-		void TaggedDataReader::FillTagList(List<KeyType>& nameTags) const
+		void TaggedDataReader::FillTagList(List<std::string>& nameTags) const
 		{
-			m_positions.FillKeys(nameTags);
+			for (const KeyType& key : m_positions.getKeyAccessor())
+			{
+				nameTags.Add(key.getString());
+			}
+		}
+		void TaggedDataReader::FillTagList(List<const char*>& nameTags) const
+		{
+			for (const KeyType& key : m_positions.getKeyAccessor())
+			{
+				nameTags.Add(key.getString());
+			}
 		}
 
 
@@ -151,19 +301,19 @@ namespace Apoc3D
 
 			const Entry* ent = FindEntry(name);
 			m_stream->setPosition(ent->Offset);
-			m_stream->Read(reinterpret_cast<char*>(m_buffer), len);
+			m_stream->Read(m_buffer, len);
 		}
 		void TaggedDataReader::FillBuffer(const Entry& ent, uint32 len)
 		{
 			assert(len <= sizeof(m_buffer));
 
 			m_stream->setPosition(ent.Offset);
-			m_stream->Read(reinterpret_cast<char*>(m_buffer), len);
+			m_stream->Read(m_buffer, len);
 		}
 		void TaggedDataReader::FillBufferCurrent(uint32 len)
 		{
 			assert(len <= sizeof(m_buffer));
-			m_stream->Read(reinterpret_cast<char*>(m_buffer), len);
+			m_stream->Read(m_buffer, len);
 		}
 		bool TaggedDataReader::TryFillBuffer(const KeyType& name, uint32 len)
 		{
@@ -172,7 +322,7 @@ namespace Apoc3D
 
 			assert(len <= sizeof(m_buffer));
 			m_stream->setPosition(ent->Offset);
-			m_stream->Read(reinterpret_cast<char*>(m_buffer), len);
+			m_stream->Read(m_buffer, len);
 			return true;
 		}
 
@@ -1704,7 +1854,7 @@ namespace Apoc3D
 
 		void TaggedDataReader::throwKeynotFoundException(const KeyType& name)
 		{
-			throw AP_EXCEPTION(ExceptID::KeyNotFound, StringUtils::UTF8toUTF16(name));
+			throw AP_EXCEPTION(ExceptID::KeyNotFound, StringUtils::UTF8toUTF16(name.getString()));
 		}
 
 
@@ -1739,46 +1889,47 @@ namespace Apoc3D
 
 		void TaggedDataWriter::Save(Stream& stream) const
 		{
+			int64 totalSize = 0;
+			for (const Entry& e : m_positions.getValueAccessor())
+			{
+				totalSize += e.Buffer->getLength();
+			}
+
+			bool shouldUse64Bit = totalSize > 0xffffffffu;
+
 			BinaryWriter bw(&stream, false);
 
-			//uint32 firstInt = br->ReadUInt32();
-			//if ((firstInt & 0x80000000 == 0x80000000))
-			//{
-			//	// new format, first int is flag then
-			//	m_sectCount = br->ReadInt32();
-
-			//	for (int i=0; i<m_sectCount; i++)
-			//	{
-			//		String name = br->ReadString();
-			//		uint size = br->ReadUInt32();
-			//		m_positions.Add(name, Entry(name, strm->getPosition(), size));
-			//	}
-			//	br->Close();
-			//	delete br;
-			//}
-
-			// always write as the lastest format
+			// always write in the latest format
 
 			int64 startPos = stream.getPosition();
 
-			bw.WriteUInt32(0x80000000U | TF_NarrowKeyFormat);
+			bw.WriteUInt32(0x80000000U | TF_HashKeyFormat | (shouldUse64Bit ? TF_64Bit : 0));
 			bw.WriteInt32(m_positions.getCount());
 
 			for (const KeyType& key : m_positions.getKeyAccessor())
 			{
-				bw.WriteMBString(key);
+				key.Write(bw);
 			}
 
-			uint32 baseOffset = static_cast<uint32>(stream.getPosition() - startPos) + sizeof(uint32) * 2 * static_cast<uint32>(m_positions.getCount());
-			uint32 offset = 0;
+			const int64 offsetSize = shouldUse64Bit ? sizeof(int64) : sizeof(uint32);
+
+			int64 baseOffset = stream.getPosition() - startPos + offsetSize * 2 * m_positions.getCount();
+			int64 offset = 0;
 			for (const Entry& e : m_positions.getValueAccessor())
 			{
 				MemoryOutStream* memBlock = e.Buffer;
+				int64 blockSize = memBlock->getLength();
 
-				uint32 blockSize = static_cast<uint32>(memBlock->getLength());
-
-				bw.WriteUInt32(offset + baseOffset);
-				bw.WriteUInt32(blockSize);
+				if (shouldUse64Bit)
+				{
+					bw.WriteInt64(offset + baseOffset);
+					bw.WriteInt64(blockSize);
+				}
+				else
+				{
+					bw.WriteUInt32((uint32)(offset + baseOffset));
+					bw.WriteUInt32((uint32)blockSize);
+				}
 
 				offset += blockSize;
 			}
@@ -1786,13 +1937,13 @@ namespace Apoc3D
 			for (const Entry& e : m_positions.getValueAccessor())
 			{
 				MemoryOutStream* memBlock = e.Buffer;
-				bw.Write(memBlock->getDataPointer(), memBlock->getLength());
+				bw.WriteBytes(memBlock->getDataPointer(), memBlock->getLength());
 			}
 
 		}
 		ConfigurationSection* TaggedDataWriter::MakeDigest(const KeyType& name) const
 		{
-			ConfigurationSection* sect = new ConfigurationSection(StringUtils::UTF8toUTF16(name));
+			ConfigurationSection* sect = new ConfigurationSection(StringUtils::UTF8toUTF16(name.getString()));
 			for (const Entry& e : m_positions.getValueAccessor())
 			{
 				MemoryOutStream* memBlock = e.Buffer;
@@ -1813,7 +1964,7 @@ namespace Apoc3D
 					}
 				}
 
-				sect->AddStringValue(StringUtils::UTF8toUTF16(e.Name), text);
+				sect->AddStringValue(StringUtils::UTF8toUTF16(e.Name.getString()), text);
 			}
 			return sect;
 		}

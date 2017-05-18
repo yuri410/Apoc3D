@@ -297,8 +297,7 @@ void TestMath()
 	std::wcout << t << L"\n";
 
 	FileOutStream fs(L"testMath1.dat");
-	BinaryWriter bw(&fs, false);
-	bw.Write((char*)result, sizeof(Matrix) * count);
+	BinaryWriter(&fs, false).WriteBytes((char*)result, sizeof(Matrix) * count);
 }
 
 void TestIni()

@@ -31,6 +31,7 @@
 
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Math/Vector.h"
+#include "apoc3d/Utility/Hash.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;
@@ -39,6 +40,65 @@ namespace Apoc3D
 {
 	namespace IO
 	{
+		class APAPI TaggedDataKey
+		{
+			static constexpr bool CanFit(int32 N) { return N <= StringMax; }
+
+		public:
+			
+			template <int32 N, typename = std::enable_if<CanFit(N)>::type >
+			constexpr TaggedDataKey(const char (&name)[N])
+				: m_hash(Utility::FNVHash32Const(name)), m_nameConst(name), m_nameLocal(), m_nameLen(N-1) { }
+
+			template <int32 N, typename = std::enable_if<CanFit(N)>::type >
+			constexpr TaggedDataKey(const char(&name)[N], uint32 hash)
+				: m_hash(hash), m_nameConst(name), m_nameLocal(), m_nameLen(N - 1) { }
+
+
+			TaggedDataKey(const std::string& name)
+				: TaggedDataKey(Utility::FNVHash32().Accumulate(name.c_str(), name.size()).getResult(), name)
+			{ }
+
+			TaggedDataKey() { }
+
+			uint32 getHash() const { return m_hash; }
+
+			const char* getString() const { return m_nameConst ? m_nameConst : m_nameLocal; }
+
+			void Read(BinaryReader& br);
+			void Write(BinaryWriter& bw) const;
+
+			bool operator==(const TaggedDataKey& o) const 
+			{
+				if (this == &o)
+					return true;
+
+				return strcmp(getString(), o.getString()) == 0;
+			}
+			bool operator!=(const TaggedDataKey& o) const { return this->operator==(o); }
+
+			TaggedDataKey operator+(const std::string& o) const;
+			TaggedDataKey operator+(uint32 o) const;
+		private:
+			static const int32 StringMax = 64;
+			
+			TaggedDataKey(uint32 hash, const std::string& name);
+			TaggedDataKey CreateAppended(const char* str, uint32 len) const;
+
+			uint32 m_hash = 0;
+			uint32 m_nameLen = 0;
+			const char* m_nameConst = nullptr;
+			char m_nameLocal[StringMax];
+
+		};
+
+		struct TaggedDataKeyEqualityComparer
+		{
+			static bool Equals(const TaggedDataKey& x, const TaggedDataKey& y) { return x == y; }
+			static int32 GetHashCode(const TaggedDataKey& obj) { return obj.getHash(); }
+		};
+
+
 		/**
 		 *  Tagged data is a collection of key and values. 
 		 *  The keys are name of the corresponding value in string form. 
@@ -53,7 +113,8 @@ namespace Apoc3D
 		class APAPI TaggedDataReader
 		{
 		public:
-			typedef std::string KeyType;
+			typedef TaggedDataKey KeyType;
+			typedef TaggedDataKeyEqualityComparer KeyTypeComparer;
 
 			TaggedDataReader(Stream* strm);
 			~TaggedDataReader();
@@ -315,7 +376,8 @@ namespace Apoc3D
 			void Close(bool seekToEnd = false);
 
 			/** Exports a list of key names to the specified list. */
-			void FillTagList(List<KeyType>& nameTags) const;
+			void FillTagList(List<std::string>& nameTags) const;
+			void FillTagList(List<const char*>& nameTags) const;
 
 			bool isEndianIndependent() const { return !m_endianIndependent; }
 			Stream* getBaseStream() const { return m_stream; }
@@ -323,18 +385,16 @@ namespace Apoc3D
 			
 			struct Entry
 			{
-				KeyType Name;
+				int64 Offset = 0;
+				int64 Size = 0;
 
-				int64 Offset;
-				uint32 Size;
-
-				Entry(const KeyType& name, int64 offset, uint32 size)
-					: Name(name), Offset(offset), Size(size) { }
+				Entry(int64 offset, int64 size)
+					: Offset(offset), Size(size) { }
 
 				Entry() { }
 			};
 
-			typedef HashMap<KeyType, Entry> SectionTable;
+			typedef HashMap<KeyType, Entry, KeyTypeComparer> SectionTable;
 
 			inline void FillBuffer(const KeyType& name, uint32 len);
 			inline void FillBuffer(const Entry& ent, uint32 len);
@@ -410,15 +470,15 @@ namespace Apoc3D
 			Stream* m_stream;
 
 			char m_buffer[32];
-			uint32 m_sizeInBytes;
-			int64 m_initialPosition;
+			int64 m_endBlockPosition;
 		};
 
 		/** This class implements a writer for Tagged Data. */
 		class APAPI TaggedDataWriter
 		{
 		public:
-			typedef std::string KeyType;
+			typedef TaggedDataKey KeyType;
+			typedef TaggedDataKeyEqualityComparer KeyTypeComparer;
 
 			/**
 			 * param isEndianIndependent true if the data medium is a fixed Endianness across platform.
@@ -629,14 +689,15 @@ namespace Apoc3D
 			struct Entry
 			{
 				KeyType Name;
-				MemoryOutStream* Buffer;
-				Entry(const KeyType& name);
+				MemoryOutStream* Buffer = nullptr;
 
-				Entry() : Buffer(nullptr) { }
+				Entry(const KeyType& name);
+				Entry() { }
+
 				void ResetWritePosition() const;
 			};
 
-			typedef HashMap<KeyType, Entry> SectionTable;
+			typedef HashMap<KeyType, Entry, KeyTypeComparer> SectionTable;
 
 			const Entry* FindEntry(const KeyType& name) const
 			{

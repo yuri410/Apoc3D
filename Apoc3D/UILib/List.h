@@ -15,7 +15,8 @@
  * WITHOUT WARRANTY OF ANY KIND; either express or implied. See the 
  * Mozilla Public License for more details.
  * 
- * ------------------------------------------------------------------------ */
+ * ------------------------------------------------------------------------
+ */
 
 #include "Control.h"
 

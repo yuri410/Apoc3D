@@ -166,7 +166,7 @@ namespace Apoc3D
 		}
 		void EffectProfileData::SaveV5(BinaryWriter* bw)
 		{
-			bw->Write(ImplementationType, sizeof(ImplementationType));
+			bw->WriteBytes(ImplementationType, sizeof(ImplementationType));
 
 			bw->WriteInt32(MajorVer);
 			bw->WriteInt32(MinorVer);
@@ -195,7 +195,7 @@ namespace Apoc3D
 					bw->WriteInt32(0);
 
 					bw->WriteInt32(len);
-					bw->Write(codeData, len);
+					bw->WriteBytes(codeData, len);
 				}
 			}
 
@@ -227,12 +227,12 @@ namespace Apoc3D
 
 		const int CfxID_V5 = 'CFX2';
 
-		const char TAG_3_ParameterCountTag[] = "ParameterCount";
-		const char TAG_3_ParameterTag[] = "Parameter";
-		const char TAG_3_ParameterSamplerStateTag[] = "SamplerState";
-		const char TAG_3_ShaderCodeTag[] = "ShaderCode";
+		constexpr TaggedDataKey TAG_3_ParameterCountTag = "ParameterCount";
+		constexpr TaggedDataKey TAG_3_ParameterTag = "Parameter";
+		constexpr TaggedDataKey TAG_3_ParameterSamplerStateTag = "SamplerState";
+		constexpr TaggedDataKey TAG_3_ShaderCodeTag = "ShaderCode";
 		
-		const char TAG_3_ShaderCodeLengthTag[] = "ShaderCodeLength";
+		constexpr TaggedDataKey TAG_3_ShaderCodeLengthTag = "ShaderCodeLength";
 		
 		EffectData::EffectData() 
 		{

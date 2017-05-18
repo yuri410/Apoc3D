@@ -26,6 +26,8 @@
 * -----------------------------------------------------------------------------
 */
 
+#include "apoc3d/IOLib/TaggedData.h"
+
 namespace Apoc3D
 {
 	template <typename ClassType>
@@ -39,20 +41,20 @@ namespace Apoc3D
 	class DictionaryDataField : public DictionaryFieldInterface<ClassType>
 	{
 	public:
-		DictionaryDataField(const char name[], T ClassType::* ptr)
-			: m_name(name), m_member(ptr) { }
+		DictionaryDataField(const IO::TaggedDataKey& key, T ClassType::* ptr)
+			: m_key(key), m_member(ptr) { }
 
 		void Read(ClassType* inst, IO::TaggedDataReader* data) override
 		{
-			data->TryGetAuto(m_name, inst->*m_member);
+			data->TryGetAuto(m_key, inst->*m_member);
 		}
 		void Write(ClassType* inst, IO::TaggedDataWriter* data) override
 		{
-			data->AddAuto(m_name, inst->*m_member);
+			data->AddAuto(m_key, inst->*m_member);
 		}
 
 	private:
-		const char* m_name;
+		IO::TaggedDataKey m_key;
 		T ClassType::* m_member;
 	};
 
@@ -76,7 +78,7 @@ namespace Apoc3D
 		char m_storage[StorageSize];
 	};
 
-#define DICT_FIELD(classType, exp) DictionaryDataField<classType, decltype(exp)>(#exp, &classType::exp)
+#define DICT_FIELD(classType, exp) DictionaryDataField<classType, decltype(exp)>({#exp, std::integral_constant<uint32, Utility::FNVHash32Const(#exp)>::value }, &classType::exp)
 
 }
 

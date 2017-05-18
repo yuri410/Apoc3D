@@ -86,8 +86,8 @@ namespace Apoc3D
 			static uint32 ComputeVertexSize(const List<VertexElement>& elements);
 
 			void LoadData(TaggedDataReader* data);
-			TaggedDataWriter* SaveData();
-			void SaveLite(BinaryWriter& bw);
+			void SaveData(TaggedDataWriter* data) const;
+			void SaveLite(BinaryWriter& bw) const;
 
 			MeshData();
 			~MeshData();
@@ -116,8 +116,8 @@ namespace Apoc3D
 			void Save(Stream& strm) const;
 			void SaveLite(Stream& strm) const;
 		private:
-			void ReadData(TaggedDataReader* data, int32 id);
-			TaggedDataWriter* WriteData() const;
+			void ReadData(TaggedDataReader* data);
+			void WriteData(TaggedDataWriter*) const;
 		};
 	}
 }

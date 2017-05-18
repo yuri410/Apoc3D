@@ -45,11 +45,11 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		const char Tag1_Width[] = "Width";
-		const char Tag_Height[] = "Height";
-		const char Tag_Depth[] = "Depth";
-		const char Tag_Content[] = "Content";
-		const char Tag_LevelSize[] = "LevelSize";
+		constexpr TaggedDataKey Tag1_Width = "Width";
+		constexpr TaggedDataKey Tag_Height = "Height";
+		constexpr TaggedDataKey Tag_Depth = "Depth";
+		constexpr TaggedDataKey Tag_Content = "Content";
+		constexpr TaggedDataKey Tag_LevelSize = "LevelSize";
 		
 		TextureLevelData::TextureLevelData()
 		{
@@ -201,12 +201,12 @@ namespace Apoc3D
 		}
 
 		
-		const char Tag_Type[] = "Type";
-		const char Tag_Format[] = "Format";
-		const char Tag_ContentSize[] = "ContentSize";
-		const char Tag_LevelCount[] = "LevelCount";
-		const char Tag_Level[] = "Level";
-		const char Tag_Flags[] = "Flags";
+		constexpr TaggedDataKey Tag_Type = "Type";
+		constexpr TaggedDataKey Tag_Format = "Format";
+		constexpr TaggedDataKey Tag_ContentSize = "ContentSize";
+		constexpr TaggedDataKey Tag_LevelCount = "LevelCount";
+		constexpr TaggedDataKey Tag_Level = "Level";
+		constexpr TaggedDataKey Tag_Flags = "Flags";
 
 
 		TextureData::TextureData() { }
@@ -258,9 +258,8 @@ namespace Apoc3D
 
 					for (int32 i = 0; i < LevelCount; i++)
 					{
-						std::string levelName = Tag_Level;
-						levelName.append(StringUtils::IntToNarrowString(i));
-
+						TaggedDataKey levelName = Tag_Level + i;
+						
 						BinaryReader* br2 = data->GetData(levelName);
 						TaggedDataReader* data2 = br2->ReadTaggedDataBlock();
 
@@ -335,8 +334,7 @@ namespace Apoc3D
 
 			for (int32 i = 0; i < LevelCount; i++)
 			{
-				std::string levelName = Tag_Level;
-				levelName.append(StringUtils::IntToNarrowString(i));
+				TaggedDataKey levelName = Tag_Level + i;
 
 				BinaryWriter* bw2 = data->AddEntry(levelName);
 				TaggedDataWriter* data2 = new TaggedDataWriter(strm.IsWriteEndianIndependent());

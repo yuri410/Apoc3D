@@ -27,7 +27,6 @@
 #include "apoc3d/Collections/Queue.h"
 #include "apoc3d/Collections/Stack.h"
 
-#include "apoc3d/Config/ABCConfigurationFormat.h"
 #include "apoc3d/Config/Configuration.h"
 #include "apoc3d/Config/ConfigurationManager.h"
 #include "apoc3d/Config/ConfigurationSection.h"

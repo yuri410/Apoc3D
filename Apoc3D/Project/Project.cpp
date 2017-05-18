@@ -23,7 +23,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Project.h"
 #include "apoc3d/Config/ConfigurationManager.h"
-#include "apoc3d/Config/ABCConfigurationFormat.h"
 #include "apoc3d/Config/XmlConfigurationFormat.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"

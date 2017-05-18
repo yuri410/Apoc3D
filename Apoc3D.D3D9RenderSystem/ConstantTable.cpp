@@ -143,7 +143,7 @@ namespace Apoc3D
 				for (const ShaderConstant& sc : m_table.getValueAccessor())
 				{
 					std::string name = StringUtils::toASCIINarrowString(sc.Name);
-					bw->Write(name.c_str(), name.size()+1);
+					bw->WriteBytes(name.c_str(), name.size()+1);
 
 					bw->WriteUInt16(sc.RegisterIndex);
 					bw->WriteUInt16(sc.RegisterCount);

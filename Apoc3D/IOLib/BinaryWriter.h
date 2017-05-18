@@ -42,7 +42,7 @@ namespace Apoc3D
 			BinaryWriter(Stream* baseStream, bool releaseStream);
 			~BinaryWriter();
 
-			void Write(const char* bytes, int64 count) const;
+			void WriteBytes(const char* bytes, int64 count) const;
 
 			void WriteByte(char byte) const;
 			void WriteBoolean(bool value) const;

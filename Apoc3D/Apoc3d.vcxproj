@@ -168,7 +168,6 @@
     <ClInclude Include="Collections\LinkedList.h" />
     <ClInclude Include="Collections\Stack.h" />
     <ClInclude Include="Common.h" />
-    <ClInclude Include="Config\ABCConfigurationFormat.h" />
     <ClInclude Include="Config\Configuration.h" />
     <ClInclude Include="Config\ConfigurationManager.h" />
     <ClInclude Include="Config\ConfigurationSection.h" />
@@ -336,7 +335,6 @@
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="Collections\CollectionsCommon.cpp" />
     <ClCompile Include="Common.cpp" />
-    <ClCompile Include="Config\ABCConfigurationFormat.cpp" />
     <ClCompile Include="Config\ConfigurationSection.cpp" />
     <ClCompile Include="Config\Configuration.cpp" />
     <ClCompile Include="Config\ConfigurationManager.cpp" />

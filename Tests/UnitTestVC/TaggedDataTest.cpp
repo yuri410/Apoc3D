@@ -159,4 +159,75 @@ namespace UnitTestVC
 
 
 	};
+
+	TEST_CLASS(TaggedDataKeyTest)
+	{
+	public:
+
+		TEST_METHOD(TaggedDataKeyTest_General)
+		{
+			TaggedDataKey k1 = "sdsartre_2";
+			TaggedDataKey k2 = TaggedDataKey("sdsartre_") + "2";
+			TaggedDataKey k3 = TaggedDataKey(std::string("sdsartre_")) + "2";
+			TaggedDataKey k4 = TaggedDataKey("sdsartre_") + 2;
+
+			Assert::IsTrue(k1 == k2);
+			Assert::IsTrue(k1 == k3);
+			Assert::IsTrue(k1 == k4);
+
+			TaggedDataKey k5 = "sdsartre_0_fdshfiedsfsdlnsdsafewnrkwenrkejwenrkjwenrkesadsatretreterwnkrjew";
+			TaggedDataKey k6 = TaggedDataKey("sdsartre_0_") + "fdshfiedsfsdlnsdsafewnrkwenrkejwenrkjwenrkesadsatretreterwnkrjew";
+			Assert::IsTrue(k5 == k6);
+
+			TaggedDataKey* keys[] = { &k1,&k2,&k3,&k4,&k5,&k6 };
+			for (TaggedDataKey* k : keys)
+			{
+				MemoryOutStream buf(1024);
+				BinaryWriter bw(&buf, false);
+				k->Write(bw);
+
+				MemoryStream ms(buf.getDataPointer(), buf.getLength());
+				BinaryReader br(&ms, false);
+				TaggedDataKey nk;
+				nk.Read(br);
+
+				Assert::IsTrue(*k == nk);
+			}
+			
+		}
+
+		TEST_METHOD(TaggedDataKeyTest_Append)
+		{
+			{
+				TaggedDataKey k1 = "gfhtyu_fddsfsd";
+				TaggedDataKey k2 = TaggedDataKey("gfhtyu_") + "fddsfsd";
+				TaggedDataKey k3 = TaggedDataKey(std::string("gfhtyu_")) + "fddsfsd";
+
+				Assert::IsTrue(k1 == k2);
+				Assert::IsTrue(k1 == k3);
+			}
+
+			Random rnd(888);
+			for (int32 i = 0; i < 10000; i++)
+			{
+				TaggedDataKey k1 = "gfhtyu_fddsfsd_";
+
+				int32 appendLen = rnd.Next(4, 64);
+
+				std::string ap(appendLen, ' ');
+
+				for (char& c : ap)
+					c = rnd.Next('A', 'Z');
+
+				TaggedDataKey k2 = k1 + ap;
+				TaggedDataKey k3 = (std::string("gfhtyu_fddsfsd_") + ap);
+				Assert::IsTrue(k2 == k3);
+
+				int32 ap2 = abs(rnd.Next());
+				TaggedDataKey k4 = k1 + ap2;
+				TaggedDataKey k5 = (std::string("gfhtyu_fddsfsd_") + StringUtils::IntToNarrowString(ap2));
+				Assert::IsTrue(k4 == k5);
+			}
+		}
+	};
 }

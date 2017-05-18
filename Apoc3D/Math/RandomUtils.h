@@ -38,7 +38,7 @@ namespace Apoc3D
 		{
 		public:
 			Random();
-			Random(int seed) : m_index(0) { SetSeed(seed, true); }
+			Random(int32 seed) { SetSeed(seed, true); }
 			~Random() { }
 
 			int32 getSeed() const { return m_seed; }
@@ -125,16 +125,16 @@ namespace Apoc3D
 
 
 			template <int32 N>
-			static int Choose(const float(&p)[N]) { return Choose(p, N); }
+			static int32 Choose(const float(&p)[N]) { return Choose(p, N); }
 
-			static int Choose(const Apoc3D::Collections::List<float>& lst) { return Choose(lst.getElements(), lst.getCount()); }
+			static int32 Choose(const Apoc3D::Collections::List<float>& lst) { return Choose(lst.getElements(), lst.getCount()); }
 
-			static int Choose(const float* p, int count)
+			static int32 Choose(const float* p, int32 count)
 			{
 				RANDOMIZER_CHECKTHREAD;
 
 				float total = 0;
-				for (int i = 0; i < count; i++)
+				for (int32 i = 0; i < count; i++)
 				{
 					total += p[i];
 				}
@@ -142,7 +142,7 @@ namespace Apoc3D
 				float rnd = NextFloat() * total;
 
 				float cmp = 0;
-				for (int i = 0; i < count; i++)
+				for (int32 i = 0; i < count; i++)
 				{
 					cmp += p[i];
 					if (rnd < cmp)

@@ -210,7 +210,7 @@ namespace Apoc3D
 			bw.WriteInt32(compressedSize);
 			bw.WriteInt32((int32)buffer.getLength());
 			bw.WriteInt32(crc32);
-			bw.Write(compressedData, compressedSize);
+			bw.WriteBytes(compressedData, compressedSize);
 
 			delete[] compressedData;
 
@@ -257,10 +257,10 @@ namespace Apoc3D
 			Time.Write(bw);
 
 			bw->WriteByte((char)MouseStateSize);
-			bw->Write(MouseState, MouseStateSize);
+			bw->WriteBytes(MouseState, MouseStateSize);
 
 			bw->WriteByte((char)KeyboardStateSize);
-			bw->Write(KeyboardState, KeyboardStateSize);
+			bw->WriteBytes(KeyboardState, KeyboardStateSize);
 		}
 
 
