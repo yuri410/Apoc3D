@@ -1,26 +1,19 @@
-/*
------------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+/* -----------------------------------------------------------------------
+ * This source file is part of Apoc3D Framework
+ * 
+ * Copyright (c) 2010-2017 Tao Xin
+ * 
+ * This content of this file is subject to the terms of the Mozilla Public 
+ * License v2.0. If a copy of the MPL was not distributed with this file, 
+ * you can obtain one at http://mozilla.org/MPL/2.0/.
+ * 
+ * This program is distributed in the hope that it will be useful, 
+ * WITHOUT WARRANTY OF ANY KIND; either express or implied. See the 
+ * Mozilla Public License for more details.
+ * 
+ * ------------------------------------------------------------------------
+ */
 
-Copyright (c) 2009+ Tao Xin
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
-Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/gpl.txt.
-
------------------------------------------------------------------------------
-*/
 
 #include "MaterialData.h"
 
@@ -414,6 +407,23 @@ namespace Apoc3D
 
 			if (sect->tryGetAttribute(L"PassFlag", temp))
 				PassFlags = StringUtils::ParseUInt64Bin(temp);
+
+			if (sect->tryGetAttribute(L"ColorWriteMasks", temp))
+			{
+				ColorWriteMasks = 0xffffffffffffffffull;
+
+				for (const String& p : StringUtils::Split(temp, L", "))
+				{
+					String::size_type pos = p.find(':');
+					
+					uint32 id = StringUtils::ParseUInt32(p.substr(0, pos));
+					uint32 mask = StringUtils::ParseUInt32Bin(p.substr(pos + 1));
+
+					SetTargetWriteMaskBits(ColorWriteMasks, id, (byte)mask);
+				}
+			}
+
+
 			if (sect->tryGetAttribute(L"SourceBlend", temp))		SourceBlend = BlendConverter.Parse(temp);
 			if (sect->tryGetAttribute(L"DestinationBlend", temp))	DestinationBlend = BlendConverter.Parse(temp);
 			if (sect->tryGetAttribute(L"BlendFunction", temp))		BlendFunction = BlendFunctionConverter.Parse(temp);
@@ -463,8 +473,6 @@ namespace Apoc3D
 
 				}
 			}
-
-
 
 		}
 
@@ -624,6 +632,22 @@ namespace Apoc3D
 			{
 				ApocLog(LOG_System, L"Alpha test is obsolete.", LOGLVL_Warning);
 			}
+		}
+
+
+		byte MaterialData::GetTargetWriteMaskBits(uint64 m, uint32 rtIndex)
+		{
+			return (byte)((m >> (rtIndex * 4)) & 0xf);
+		}
+
+		void MaterialData::SetTargetWriteMaskBits(uint64& m, uint32 rtIndex, byte masks)
+		{
+			uint64 fldMask = 0xfull << (rtIndex * 4);
+			uint64 bits = ((uint64)masks) << (rtIndex * 4);
+			assert((bits & fldMask) == bits);
+
+			m &= ~fldMask;
+			m |= bits;
 		}
 
 	}

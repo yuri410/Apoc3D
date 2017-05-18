@@ -3,7 +3,7 @@
 /* -----------------------------------------------------------------------
  * This source file is part of Apoc3D Framework
  * 
- * Copyright (c) 2009-2014 Tao Xin
+ * Copyright (c) 2011-2017 Tao Xin
  * 
  * This content of this file is subject to the terms of the Mozilla Public 
  * License v2.0. If a copy of the MPL was not distributed with this file, 
@@ -13,7 +13,8 @@
  * WITHOUT WARRANTY OF ANY KIND; either express or implied. See the 
  * Mozilla Public License for more details.
  * 
- * ------------------------------------------------------------------------ */
+ * ------------------------------------------------------------------------
+ */
 
 #ifndef APOC3D_BITARRAY_H
 #define APOC3D_BITARRAY_H
