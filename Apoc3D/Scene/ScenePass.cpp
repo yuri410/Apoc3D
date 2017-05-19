@@ -510,20 +510,6 @@ namespace Apoc3D
 				// if Immediate then it can only be null
 				m_renderDevice->SetRenderTarget(index, nullptr);
 			}
-
-			uint colorFlags = inst.Args[2].DefaultValue[0];
-
-			uint masks = ColorWrite_None;
-			if (colorFlags & 0x0100)
-				masks |= ColorWrite_Red;
-			if (colorFlags & 0x0010)
-				masks |= ColorWrite_Green;
-			if (colorFlags & 0x0001)
-				masks |= ColorWrite_Blue;
-			if (colorFlags & 0x1000)
-				masks |= ColorWrite_Alpha;
-			m_renderDevice->getRenderState()->setColorWriteMasks(index, (ColorWriteMasks)masks);
-			//m_renderDevice->getRenderState()->SetColorWriteEnabled(index, !!(colorFlags & 0x0100), !!(colorFlags & 0x0010), !!(colorFlags & 0x0001), !!(colorFlags & 0x1000));
 		}
 
 		void ScenePass::UseDS(const SceneInstruction& inst)

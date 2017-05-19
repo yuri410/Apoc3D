@@ -703,17 +703,6 @@ namespace Apoc3D
 				else
 					inst.Args.Add(zeroArg);
 				
-				if (node->Attribute("Mask") && ParseCallArgUintHexImm(node, "Mask", arg))
-					inst.Args.Add(arg);
-				else
-				{
-					arg.DefaultValue[0] = 0x1111;
-					arg.Var = 0;
-					arg.IsImmediate = true;
-					arg.StrData = L"";
-					inst.Args.Add(arg);
-				}
-
 				instructions.Add(inst);
 			}
 			else if (stat == L"useds")
