@@ -175,7 +175,7 @@ namespace UnitTestVC
 			Assert::IsTrue(k1 == k3);
 			Assert::IsTrue(k1 == k4);
 
-			TaggedDataKey k5 = "sdsartre_0_fdshfiedsfsdlnsdsafewnrkwenrkejwenrkjwenrkesadsatretreterwnkrjew";
+			TaggedDataKey k5 = std::string("sdsartre_0_fdshfiedsfsdlnsdsafewnrkwenrkejwenrkjwenrkesadsatretreterwnkrjew");
 			TaggedDataKey k6 = TaggedDataKey("sdsartre_0_") + "fdshfiedsfsdlnsdsafewnrkwenrkejwenrkjwenrkesadsatretreterwnkrjew";
 			Assert::IsTrue(k5 == k6);
 

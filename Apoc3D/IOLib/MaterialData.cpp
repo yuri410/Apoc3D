@@ -14,7 +14,6 @@
  * ------------------------------------------------------------------------
  */
 
-
 #include "MaterialData.h"
 
 #include "Streams.h"
@@ -92,7 +91,7 @@ namespace Apoc3D
 		}
 
 		/** Used only when storing a material as a file */
-		const int MtrlId_V3 = ((byte)'M' << 24) | ((byte)'T' << 16) | ((byte)'R' << 8) | ((byte)'L');
+		const uint32 MtrlId_V3 = FourCC("MTRL");
 
 		// =============================================================
 
@@ -347,7 +346,7 @@ namespace Apoc3D
 
 			BinaryReader br(rl);
 
-			int32 id = br.ReadInt32();
+			uint32 id = br.ReadUInt32();
 			if (id == MtrlId_V3)
 			{
 				br.ReadTaggedDataBlock([this](TaggedDataReader* data) 
@@ -365,7 +364,7 @@ namespace Apoc3D
 		{
 			BinaryWriter bw(&strm, false);
 			
-			bw.WriteInt32(MtrlId_V3);
+			bw.WriteUInt32(MtrlId_V3);
 
 			TaggedDataWriter* mdlData = SaveData();
 			bw.WriteTaggedDataBlock(mdlData);

@@ -39,9 +39,10 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		const int MdlId_V2 = 0;
-		const int MdlId_V3 = ((byte)'M' << 24) | ((byte)'E' << 16) | ((byte)'S' << 8) | ((byte)'H');
-		const int MdlLiteID = 'LMDL';
+		const uint32 MdlId_V2 = 0;
+
+		const uint32 MdlId_V3 = FourCC("MESH");
+		const uint32 MdlLiteID = FourCC("LMDL");
 
 		constexpr TaggedDataKey TAG_3_MaterialCountTag = "MaterialCount";
 		constexpr TaggedDataKey TAG_3_MaterialsTag = "Materials";
@@ -280,9 +281,8 @@ namespace Apoc3D
 		/************************************************************************/
 		//  With the help from VirtualStream and TaggedData, data like this, models
 		//  are stored in a hierarchical structure, since a model contains meshes, and meshes
-		//  contain materials, materials at last contain effects, and this is not
+		//  contain materials, materials at least contain effects, and this is not
 		//  all of it.
-
 
 		constexpr TaggedDataKey TAG_3_EntityCountTag = "EntityCount";
 		constexpr TaggedDataKey TAG_3_EntityPrefix = "Ent";
@@ -332,7 +332,7 @@ namespace Apoc3D
 		{
 			BinaryReader br(rl);
 
-			int32 id = br.ReadInt32();
+			uint32 id = br.ReadUInt32();
 			if (id == MdlId_V2 || id == MdlId_V3)
 			{
 				br.ReadTaggedDataBlock([this](TaggedDataReader* data)
@@ -367,7 +367,7 @@ namespace Apoc3D
 		{
 			BinaryWriter bw(&strm, false);
 
-			bw.WriteInt32(MdlId_V3);
+			bw.WriteUInt32(MdlId_V3);
 			bw.WriteTaggedDataBlock([this](TaggedDataWriter* mdlData)
 			{
 				WriteData(mdlData);

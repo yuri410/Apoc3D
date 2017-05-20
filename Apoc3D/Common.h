@@ -114,6 +114,26 @@ namespace Apoc3D
 	template <typename T, int32 N>
 	void ZeroArray(T(&arr)[N]) { static_assert(std::is_trivially_default_constructible<T>::value, "Type not suitable"); memset(arr, 0, sizeof(T)*N); }
 
+	constexpr uint32 FourCC(const char(&str)[5])
+	{
+		return (uint32)((byte)str[0] << 24) | ((byte)str[1] << 16) | ((byte)str[2] << 8) | ((byte)str[3]);
+	};
+
+	constexpr uint32 FourCC(const char(&str)[4])
+	{
+		return (uint32)((byte)str[0] << 16) | ((byte)str[1] << 8) | ((byte)str[2]);
+	};
+
+	constexpr uint32 FourCC(const char(&str)[3])
+	{
+		return (uint32)((byte)str[0] << 8) | ((byte)str[1]);
+	};
+
+	constexpr uint32 FourCC(const char(&str)[2])
+	{
+		return (byte)str[1];
+	};
+
 	//template <typename X, typename Y, int32 N1, int32 N2>
 	//void CopyArray(X(&dst)[N1], const Y(&src)[N2]) 
 	//{

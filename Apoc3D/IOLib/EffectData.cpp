@@ -1,26 +1,18 @@
-/*
------------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
-
-Copyright (c) 2009+ Tao Xin
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
-Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/gpl.txt.
-
------------------------------------------------------------------------------
-*/
+/* -----------------------------------------------------------------------
+ * This source file is part of Apoc3D Framework
+ * 
+ * Copyright (c) 2011-2017 Tao Xin
+ * 
+ * This content of this file is subject to the terms of the Mozilla Public 
+ * License v2.0. If a copy of the MPL was not distributed with this file, 
+ * you can obtain one at http://mozilla.org/MPL/2.0/.
+ * 
+ * This program is distributed in the hope that it will be useful, 
+ * WITHOUT WARRANTY OF ANY KIND; either express or implied. See the 
+ * Mozilla Public License for more details.
+ * 
+ * ------------------------------------------------------------------------
+ */
 
 #include "EffectData.h"
 #include "apoc3d/IOLib/BinaryReader.h"
@@ -223,9 +215,8 @@ namespace Apoc3D
 
 		//////////////////////////////////////////////////////////////////////////
 
-		const int AfxId_V5 = 'AFX2';
-
-		const int CfxID_V5 = 'CFX2';
+		const uint32 AfxId_V5 = FourCC("AFX2");
+		const uint32 CfxID_V5 = FourCC("CFX2");
 
 		constexpr TaggedDataKey TAG_3_ParameterCountTag = "ParameterCount";
 		constexpr TaggedDataKey TAG_3_ParameterTag = "Parameter";
@@ -246,7 +237,7 @@ namespace Apoc3D
 		{
 			BinaryReader br(rl);
 
-			int id = br.ReadInt32();
+			uint32 id = br.ReadUInt32();
 
 			if (id == AfxId_V5)
 			{
@@ -279,14 +270,7 @@ namespace Apoc3D
 		{
 			BinaryWriter bw(&strm, false);
 
-			if (IsCFX)
-			{
-				bw.WriteInt32((int32)CfxID_V5);
-			}
-			else
-			{
-				bw.WriteInt32((int32)AfxId_V5);
-			}
+			bw.WriteUInt32(IsCFX ? CfxID_V5 : AfxId_V5);
 
 			bw.WriteString(Name);
 			bw.WriteInt32(Profiles.getCount());
