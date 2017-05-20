@@ -35,7 +35,6 @@ namespace APBuild
 
 		void BuildFromFontMap(const String& hierarchyPath, const ConfigurationSection* sect);
 		void BuildToFontMap(const String& hierarchyPath, const ConfigurationSection* sect);
-		void BuildGlyphAvailabilityRanges(const String& hierarchyPath, const ConfigurationSection* sect);
 	}
 }
 #endif

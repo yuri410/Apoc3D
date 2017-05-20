@@ -68,7 +68,7 @@ namespace Apoc3D
 				CGA_Top,
 				CGA_Bottom
 			};
-
+			
 			Font(RenderDevice* device, const ResourceLocation& fl);
 			~Font();
 
@@ -82,14 +82,14 @@ namespace Apoc3D
 			void UnregisterCustomGlyph(int32 utf16code);
 			void ClearCustomGlyph();
 
-			void DrawStringDissolving(Sprite* sprite, const String& text, float x, float y, uint color, float length, int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale);
-			void DrawStringDissolving(Sprite* sprite, const String& text, const Point& pos, uint color, float length, int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale);
+			void DrawStringDissolving(Sprite* sprite, const String& text, float x, float y, uint color, float length, int32 dissolvingLength, const Point& dissolvePatchSize, float maxDissolvingScale);
+			void DrawStringDissolving(Sprite* sprite, const String& text, const Point& pos, uint color, float length, int32 dissolvingLength, const Point& dissolvePatchSize, float maxDissolvingScale);
 
-			void DrawString(Sprite* sprite, const String& text, float x, float y, int width, uint color);
-			void DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color);
+			void DrawString(Sprite* sprite, const String& text, float x, float y, int32 width, uint color);
+			void DrawString(Sprite* sprite, const String& text, int32 x, int32 y, int32 width, uint color);
 
-			void DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length = -1, float lineSpace = 0, char16_t suffix = 0, float hozShrink = 0);
-			void DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length = -1, int lineSpace = 0, char16_t suffix = 0, float hozShrink = 0);
+			void DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int32 length = -1, float lineSpace = 0, char16_t suffix = 0, float hozShrink = 0);
+			void DrawStringEx(Sprite* sprite, const String& text, int32 x, int32 y, uint color, int32 length = -1, int32 lineSpace = 0, char16_t suffix = 0, float hozShrink = 0);
 
 			void DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, float hozShrink = 0);
 			void DrawString(Sprite* sprite, const String& text, const PointF& pt, uint color, float hozShrink = 0);

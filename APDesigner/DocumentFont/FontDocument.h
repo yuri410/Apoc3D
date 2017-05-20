@@ -25,8 +25,11 @@ namespace APDesigner
 		void GlyphDistribution_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 
 		String m_filePath;
+		Font* m_font = nullptr;
+		uint32 m_glyphCount = 0;
 
 		PictureBox* m_glyphDistribution;
+		Label* m_sampleRender;
 
 		List<std::pair<uint32, uint32>> m_regions;
 	};

@@ -7,12 +7,11 @@
 
 namespace APDesigner
 {
-	/** Model editor extension
-	*/
+	/** Font viewer extension */
 	class ExtensionFont : public EditorExtension
 	{
 	public:
-		virtual String GetName() { return L"Font Checker"; }
+		virtual String GetName() { return L"Font Viewer"; }
 		virtual Document* OpenItem(const ProjectItem* item);
 		virtual Document* DirectOpen(const String& filePath);
 
@@ -22,11 +21,7 @@ namespace APDesigner
 
 		virtual List<String> GetFileExtensions() 
 		{
-			List<String> r;
-			r.Add(L".ttf");
-			r.Add(L".ttc");
-			r.Add(L".otf");
-			return r;
+			return{ L".fnt" };
 		}
 
 		ExtensionFont(MainWindow* wnd)

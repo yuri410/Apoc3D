@@ -44,9 +44,7 @@ namespace APDesigner
 
 		virtual List<String> GetFileExtensions() 
 		{
-			List<String> r;
-			r.Add(L".mesh");
-			return r;
+			return{ L".mesh" };
 		}
 
 		ExtensionModel(MainWindow* wnd)

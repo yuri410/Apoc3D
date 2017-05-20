@@ -13,36 +13,59 @@ namespace APDesigner
 	FontDocument::FontDocument(MainWindow* window, EditorExtension* ext, const String& file)
 		: Document(window, ext), m_filePath(file)
 	{
-		m_glyphDistribution = new PictureBox(window->getUISkin(), Point(15, 27), 1);
+		m_glyphDistribution = new PictureBox(window->getUISkin(), Point(10, 27), 1);
 		m_glyphDistribution->setSize(512, 512);
 		
 		m_glyphDistribution->eventPictureDraw.Bind(this, &FontDocument::GlyphDistribution_Draw);
 
+		m_sampleRender = new Label(window->getUISkin(), Point(10, 27), L"", 512);
 
-		getDocumentForm()->setMinimumSize(Point(1000,600));
+		getDocumentForm()->ReleaseControls = true;
+		getDocumentForm()->setMinimumSize(Point(550,600));
 
 		getDocumentForm()->setTitle(file);
 	}
 	FontDocument::~FontDocument()
 	{
-		delete m_glyphDistribution;
 	}
 
 	void FontDocument::LoadRes()
 	{
+		m_sampleRender->SetFont(FontManager::getSingleton().getFont(L"english"));
+		DELETE_AND_NULL(m_font);
+		
 		m_regions.Clear();
+		m_glyphCount = 0;
 
-		FileStream fs(m_filePath);
-		BinaryReader br(&fs, false);
+		FileLocation fl(m_filePath);
+		m_font = new Font(getMainWindow()->getDevice(), fl);
 
-		int count = br.ReadInt32();
-		for (int i = 0; i < count; i++)
+		m_glyphDistribution->Position.Y += m_font->getLineHeightInt();
+		getDocumentForm()->setHeight(getDocumentForm()->getHeight() + m_font->getLineHeightInt());
+
+		uint lastIdx = 0;
+		for (uint i = 0; i < 65535; i++)
 		{
-			uint32 a = br.ReadUInt32();
-			uint32 b = br.ReadUInt32();
-			m_regions.Add(std::make_pair(a, b));
-		}
+			short left, top;
+			float advx;
 
+			bool exists = m_font->LookupCharacterSetting(i, left, top, advx);
+			if (!exists)
+			{
+				if (i - lastIdx > 1)
+				{
+					// put session
+					m_regions.Add(std::make_pair(lastIdx + 1, i - 1));
+				}
+				lastIdx = i;
+			}
+			else
+			{
+				m_glyphCount++;
+			}
+		}
+		m_sampleRender->SetFont(m_font);
+		m_sampleRender->SetText(L"Glyph Count: " + StringUtils::UIntToString(m_glyphCount));
 	}
 	void FontDocument::SaveRes()
 	{
@@ -53,6 +76,7 @@ namespace APDesigner
 	void FontDocument::Initialize(RenderDevice* device)
 	{
 		getDocumentForm()->getControls().Add(m_glyphDistribution);
+		getDocumentForm()->getControls().Add(m_sampleRender);
 
 		Document::Initialize(device);
 	}
@@ -60,7 +84,7 @@ namespace APDesigner
 	{
 		Document::Update(time);
 
-		m_glyphDistribution->setSize(getDocumentForm()->getSize() - Point(30, 50));
+		m_glyphDistribution->setSize(getDocumentForm()->getSize() - Point(m_glyphDistribution->Position.X + 10, m_glyphDistribution->Position.Y + 10));
 	}
 	void FontDocument::Render()
 	{

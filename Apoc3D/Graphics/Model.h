@@ -116,7 +116,7 @@ namespace Apoc3D
 		
 			/**
 			 *  Gets the ModelSharedData currently being used. 
-			 *  The caller's thread will be suspended if ModelSharedData is loaded.
+			 *  The caller's thread will be suspended if ModelSharedData is not loaded.
 			 */
 			ModelSharedData* GetData();
 

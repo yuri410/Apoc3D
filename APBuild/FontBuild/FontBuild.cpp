@@ -171,58 +171,6 @@ namespace APBuild
 		BuildSystem::LogEntryProcessed(config.DestFile, hierarchyPath);
 	}
 
-	void FontBuild::BuildGlyphAvailabilityRanges(const String& hierarchyPath, const ConfigurationSection* sect)
-	{
-		String srcFile = sect->getAttribute(L"SourceFile");
-		String dstFile = sect->getAttribute(L"DestinationFile");
-
-		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(dstFile));
-
-		FT_Library library;
-		if (FT_Init_FreeType(&library))
-			throw std::runtime_error("FT_Init_FreeType failed");
-
-		std::string name = StringUtils::toPlatformNarrowString(srcFile);
-		FT_Face face;
-		if (FT_New_Face(library, name.c_str(), 0, &face))
-			throw std::runtime_error("FT_New_Face failed (there is probably a problem with your font file)");
-
-		FT_Select_Charmap(face, FT_ENCODING_UNICODE);
-
-		List<std::pair<FT_UInt, FT_UInt>> regions;
-		FT_UInt lastIdx = 0;
-		for (uint i = 0; i < 65535; i++)
-		{
-			FT_UInt idx = FT_Get_Char_Index(face, i);
-
-			if (idx == 0)
-			{
-				if (i - lastIdx > 1)
-				{
-					// put session
-					regions.Add(std::make_pair(lastIdx + 1, i - 1));
-				}
-				lastIdx = i;
-			}
-		}
-
-
-		FT_Done_Face(face);
-		FT_Done_FreeType(library);
-
-		FileOutStream fs(dstFile);
-		BinaryWriter bw(&fs, false);
-
-		bw.WriteInt32(regions.getCount());
-
-		for (int i = 0; i < regions.getCount(); i++)
-		{
-			bw.WriteUInt32(regions[i].first);
-			bw.WriteUInt32(regions[i].second);
-		}
-
-		BuildSystem::LogEntryProcessed(dstFile, hierarchyPath);
-	}
 	void FontBuild::BuildToFontMap(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
 		FontMapBuildConfig config;
@@ -581,7 +529,7 @@ namespace APBuild
 		{
 			for (const CharRange& cr : ranges)
 			{
-				for (int ch = cr.MinChar; ch <= cr.MaxChar; ch++)
+				for (uint32 ch = cr.MinChar; ch <= cr.MaxChar; ch++)
 				{
 					RenderGlyphsByFreeType(library, face, ch, fontSize, antiAlias, charMap, glyphHashTable);
 				}

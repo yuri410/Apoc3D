@@ -203,9 +203,6 @@ namespace APBuild
 				case ProjectItemType::Font:
 					FontBuild::Build(hierarchyPath, sect);
 					break;
-				case ProjectItemType::FontGlyphDist:
-					FontBuild::BuildGlyphAvailabilityRanges(hierarchyPath, sect);
-					break;
 				case ProjectItemType::UILayout:
 					break;
 				case ProjectItemType::Copy:

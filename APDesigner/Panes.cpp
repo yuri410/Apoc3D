@@ -205,10 +205,6 @@ namespace APDesigner
 				AddEntry(ProjectItemType::Font, iti);
 			}
 			{
-				ItemTypeInformation iti = { L"adui_new_document", L"FontCheck" };
-				AddEntry(ProjectItemType::FontGlyphDist, iti);
-			}
-			{
 				ItemTypeInformation iti = { L"adui_material_32x32", L"Material" };
 				AddEntry(ProjectItemType::Material, iti);
 			}

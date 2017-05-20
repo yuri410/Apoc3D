@@ -60,8 +60,8 @@ namespace APBuild
 
 	struct CharRange
 	{
-		int MinChar;
-		int MaxChar;
+		uint32 MinChar;
+		uint32 MaxChar;
 	};
 	struct FontBuildConfig
 	{

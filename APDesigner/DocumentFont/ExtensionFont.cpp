@@ -5,11 +5,11 @@ namespace APDesigner
 {
 	Document* ExtensionFont::OpenItem(const ProjectItem* item)
 	{
-		if (item->getType() == ProjectItemType::FontGlyphDist)
+		if (item->getType() == ProjectItemType::Font)
 		{
 			const Project* prj = item->getProject();
-			ProjectResFontGlyphDist* mdl = static_cast<ProjectResFontGlyphDist*>(item->getData());
-			String path = mdl->GetAbsoluteDestinationPath(mdl->DestFile);
+			ProjectResFont* font = static_cast<ProjectResFont*>(item->getData());
+			String path = font->GetAbsoluteDestinationPath(font->DestFile);
 			if (File::FileExists(path))
 			{
 				FontDocument* md = new FontDocument(m_mainWindow, this, path);
@@ -25,7 +25,7 @@ namespace APDesigner
 
 	bool ExtensionFont::SupportsItem(const ProjectItem* item)
 	{
-		if (item->getType() == ProjectItemType::FontGlyphDist)
+		if (item->getType() == ProjectItemType::Font)
 			return true;
 		return false;
 	}

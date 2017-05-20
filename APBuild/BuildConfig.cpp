@@ -140,14 +140,13 @@ namespace APBuild
 		AntiAlias = true;
 		sect->TryGetAttributeBool(L"AntiAlias", AntiAlias);
 
+		DestFile = sect->getAttribute(L"DestinationFile");
 
 		for (const ConfigurationSection* ss : sect->getSubSections())
 		{
-			CharRange range = { ss->GetAttributeInt(L"Start"), ss->GetAttributeInt(L"End") };
+			CharRange range = { ss->GetAttributeUInt(L"Start"), ss->GetAttributeUInt(L"End") };
 			Ranges.Add(range);
 		}
-
-		DestFile = sect->getAttribute(L"DestinationFile");
 	}
 	void FontMapBuildConfig::Parse(const ConfigurationSection* sect)
 	{
@@ -161,7 +160,7 @@ namespace APBuild
 
 		for (const ConfigurationSection* ss : sect->getSubSections())
 		{
-			CharRange range = { ss->GetAttributeInt(L"Start"), ss->GetAttributeInt(L"End") };
+			CharRange range = { ss->GetAttributeUInt(L"Start"), ss->GetAttributeUInt(L"End") };
 			Ranges.Add(range);
 		}
 

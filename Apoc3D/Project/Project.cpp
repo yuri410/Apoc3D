@@ -692,7 +692,7 @@ namespace Apoc3D
 
 		for (const ConfigurationSection* ss : sect->getSubSections())
 		{
-			CharRange range = { ss->GetAttributeInt(L"Start"), ss->GetAttributeInt(L"End") };
+			CharRange range = { ss->GetAttributeUInt(L"Start"), ss->GetAttributeUInt(L"End") };
 			Ranges.Add(range);
 		}
 	}
@@ -710,26 +710,11 @@ namespace Apoc3D
 			const CharRange& cr = Ranges[i];
 
 			ConfigurationSection* ss = new ConfigurationSection(String(L"Range") + StringUtils::IntToString(i));
-			ss->AddAttributeString(L"Start", StringUtils::IntToString(cr.MinChar));
-			ss->AddAttributeString(L"End", StringUtils::IntToString(cr.MaxChar));
+			ss->AddAttributeUInt(L"Start", cr.MinChar);
+			ss->AddAttributeUInt(L"End", cr.MaxChar);
 
 			sect->AddSection(ss);
 		}
-	}
-
-	/************************************************************************/
-	/*   ProjectResFontGlyphDist                                            */
-	/************************************************************************/
-
-	void ProjectResFontGlyphDist::Parse(const ConfigurationSection* sect)
-	{
-		SourceFile = sect->getAttribute(L"SourceFile");
-		DestFile = sect->getAttribute(L"DestinationFile");
-	}
-	void ProjectResFontGlyphDist::Save(ConfigurationSection* sect, bool savingBuild)
-	{
-		sect->AddAttributeString(L"SourceFile", WrapSourcePath(SourceFile, savingBuild));
-		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
 	}
 
 	/************************************************************************/
@@ -1642,9 +1627,6 @@ namespace Apoc3D
 		case ProjectItemType::Font:
 			m_typeData = new ProjectResFont(m_project, this);
 			break;
-		case ProjectItemType::FontGlyphDist:
-			m_typeData = new ProjectResFontGlyphDist(m_project, this);
-			break;
 		case ProjectItemType::UILayout:
 			m_typeData = new ProjectResUILayout(m_project, this);
 			break;
@@ -2114,7 +2096,6 @@ namespace Apoc3D
 		{ L"CustomEffect", ProjectItemType::CustomEffect },
 		{ L"ShaderNetwork", ProjectItemType::ShaderNetwork },
 		{ L"Font", ProjectItemType::Font },
-		{ L"FontGlyphDist", ProjectItemType::FontGlyphDist },
 		{ L"UILayout", ProjectItemType::UILayout },
 		{ L"Copy", ProjectItemType::Copy },
 		{ L"preset", ProjectItemType::ItemPreset },

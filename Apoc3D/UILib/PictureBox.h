@@ -56,13 +56,7 @@ namespace Apoc3D
 			void setSize(int32 w, int32 h) { m_size = Point(w, h); }
 			void setWidth(int32 w) { m_size.X = w; }
 			void setHeight(int32 h) { m_size.Y = h; }
-
-			//Texture* getImage() const { return m_texture; }
-			//void setImage(Texture* tex) { m_texture = tex; }
-
-			//Texture* m_texture = nullptr;
-			//Apoc3D::Math::Rectangle m_srcRect;
-
+			
 			UIGraphicSimple Graphic;
 
 			PictureDrawEventHandler eventPictureDraw;

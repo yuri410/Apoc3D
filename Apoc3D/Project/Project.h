@@ -64,7 +64,6 @@ namespace Apoc3D
 		CustomEffect,
 		ShaderNetwork,
 		Font,
-		FontGlyphDist,
 		UILayout,
 		Copy,
 		ItemPreset
@@ -95,15 +94,6 @@ namespace Apoc3D
 		D3D
 	};
 	
-	//struct ProjectItemBuildStamp 
-	//{
-	//	int32 SettingsHash = 0;
-	//	int64 BuildTimeHash = 0;
-
-	//	bool operator==(const ProjectItemBuildStamp& h) const { return SettingsHash == h.SettingsHash && BuildTimeHash == h.BuildTimeHash; }
-	//	bool operator!=(const ProjectItemBuildStamp& h) const { return !operator==(h); }
-	//};
-
 	/** Represent the build configuration for a specific type of assert in the project. */
 	class APAPI ProjectItemData
 	{
@@ -511,8 +501,8 @@ namespace Apoc3D
 
 		struct CharRange
 		{
-			int MinChar;
-			int MaxChar;
+			uint32 MinChar;
+			uint32 MaxChar;
 		};
 
 		List<CharRange> Ranges;
@@ -524,24 +514,6 @@ namespace Apoc3D
 
 
 		virtual ProjectItemType getType() const override { return ProjectItemType::Font; }
-		virtual void Parse(const ConfigurationSection* sect) override;
-		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
-
-		virtual List<String> GetAllInputFiles() override { return MakeInputFileList(SourceFile); }
-		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DestFile); }
-	};
-
-	class APAPI ProjectResFontGlyphDist : public ProjectAssetItemData
-	{
-		RTTI_DERIVED(ProjectResFontGlyphDist, ProjectAssetItemData);
-	public:
-		ProjectResFontGlyphDist(Project* prj, ProjectItem* item)
-			: ProjectAssetItemData(prj, item) { }
-		
-		String SourceFile;
-		String DestFile;
-
-		virtual ProjectItemType getType() const override { return ProjectItemType::FontGlyphDist; }
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 

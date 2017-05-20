@@ -44,9 +44,7 @@ namespace APDesigner
 
 		virtual List<String> GetFileExtensions() 
 		{
-			List<String> r;
-			r.Add(L".mtrl");
-			return r;
+			return{ L".mtrl" };
 		}
 
 		ExtensionMaterial(MainWindow* wnd)
