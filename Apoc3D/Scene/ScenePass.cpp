@@ -489,7 +489,7 @@ namespace Apoc3D
 		}
 		void ScenePass::UseRT(const SceneInstruction& inst)
 		{
-			assert(inst.Args.getCount() == 3);
+			assert(inst.Args.getCount() == 2);
 
 			int32 index;
 			if (inst.Args[0].IsImmediate)
