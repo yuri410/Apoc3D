@@ -189,7 +189,7 @@ namespace UnitTestVC
 				MemoryStream ms(buf.getDataPointer(), buf.getLength());
 				BinaryReader br(&ms, false);
 				TaggedDataKey nk;
-				nk.Read(br);
+				nk.Read(br, 1);
 
 				Assert::IsTrue(*k == nk);
 			}

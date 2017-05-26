@@ -388,20 +388,19 @@ namespace Apoc3D
 		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DstAnimationFile, DstFile); }
 	};
 	
-	class APAPI ProjectResEffect : public ProjectAssetItemData
+	class APAPI ProjectResEffectBase : public ProjectAssetItemData
 	{
-		RTTI_DERIVED(ProjectResEffect, ProjectAssetItemData);
+		RTTI_DERIVED(ProjectResEffectBase, ProjectAssetItemData);
 	public:
 		typedef List<std::pair<String, String>> SettingList;
 
-		ProjectResEffect(Project* prj, ProjectItem* item)
+		ProjectResEffectBase(Project* prj, ProjectItem* item)
 			: ProjectAssetItemData(prj, item) { }
 
 		String VS;
 		String PS;
 		String GS;
 
-		String PListFile;
 		String DestFile;
 
 		String EntryPointVS;
@@ -415,6 +414,28 @@ namespace Apoc3D
 
 		SettingList Defines;
 
+		virtual void Parse(const ConfigurationSection* sect) override;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
+
+		static SettingList Split(const String& text);
+		static String Pack(const SettingList& lst);
+
+	private:
+		bool SpecifySource(const String& srcName, const String& source);
+		void SpecifySourceInferFromExtension(const String& source);
+
+	};
+
+	class APAPI ProjectResEffect : public ProjectResEffectBase
+	{
+		RTTI_DERIVED(ProjectResEffect, ProjectResEffectBase);
+	public:
+
+		ProjectResEffect(Project* prj, ProjectItem* item)
+			: ProjectResEffectBase(prj, item) { }
+
+		String PListFile;
+
 		virtual ProjectItemType getType() const override { return ProjectItemType::Effect; }
 		virtual void Parse(const ConfigurationSection* sect) override;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
@@ -422,32 +443,21 @@ namespace Apoc3D
 		virtual List<String> GetAllInputFiles() override;
 		virtual List<String> GetAllOutputFiles() override;
 
-		static SettingList Split(const String& text);
-		static String Pack(const SettingList& lst);
-
-	private:
-		bool SpecifySource(const String& srcName, const String& source);
 	};
-	class APAPI ProjectResCustomEffect : public ProjectAssetItemData
-	{
-		RTTI_DERIVED(ProjectResCustomEffect, ProjectAssetItemData);
-	public:
-		ProjectResCustomEffect(Project* prj, ProjectItem* item)
-			: ProjectAssetItemData(prj, item) { }
 
-		String SrcVSFile;
-		String SrcPSFile;
-		String DestFile;
-		String EntryPointVS;
-		String EntryPointPS;
-		String Profile;
+	class APAPI ProjectResCustomEffect : public ProjectResEffectBase
+	{
+		RTTI_DERIVED(ProjectResCustomEffect, ProjectResEffectBase);
+	public:
+		typedef ProjectResEffect::SettingList SettingList;
+
+		ProjectResCustomEffect(Project* prj, ProjectItem* item)
+			: ProjectResEffectBase(prj, item) { }
 
 		virtual ProjectItemType getType() const override { return ProjectItemType::CustomEffect; }
-		virtual void Parse(const ConfigurationSection* sect) override;
-		virtual void Save(ConfigurationSection* sect, bool savingBuild) override;
 
-		virtual List<String> GetAllInputFiles() override { return MakeInputFileList(SrcVSFile, SrcPSFile); }
-		virtual List<String> GetAllOutputFiles() override { return MakeOutputFileList(DestFile); }
+		virtual List<String> GetAllInputFiles() override;
+		virtual List<String> GetAllOutputFiles() override;
 	};
 
 	class APAPI ProjectResEffectList : public ProjectAssetItemData

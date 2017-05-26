@@ -718,10 +718,10 @@ namespace Apoc3D
 	}
 
 	/************************************************************************/
-	/*   ProjectResEffect                                                   */
+	/*   ProjectResEffectBase                                               */
 	/************************************************************************/
 
-	void ProjectResEffect::Parse(const ConfigurationSection* sect)
+	void ProjectResEffectBase::Parse(const ConfigurationSection* sect)
 	{
 		int32 sourceCount = 0;
 		String srcDesc = sect->getAttribute(L"Source");
@@ -737,6 +737,10 @@ namespace Apoc3D
 					{
 						SpecifySource(f, e.second);
 					}
+				}
+				else if (e.second.empty())
+				{
+					SpecifySourceInferFromExtension(e.first);
 				}
 			}
 		}
@@ -770,7 +774,6 @@ namespace Apoc3D
 		}
 
 		DestFile = sect->getAttribute(L"DestinationFile");
-		sect->tryGetAttribute(L"ParamList", PListFile);
 
 		StringUtils::Split(sect->getAttribute(L"Targets"), Targets, L"|");
 		for (String& s : Targets)
@@ -788,7 +791,7 @@ namespace Apoc3D
 			Defines = Split(defineDesc);
 		}
 	}
-	void ProjectResEffect::Save(ConfigurationSection* sect, bool savingBuild)
+	void ProjectResEffectBase::Save(ConfigurationSection* sect, bool savingBuild)
 	{
 		if (VS == PS && PS == GS)
 		{
@@ -806,9 +809,7 @@ namespace Apoc3D
 		}
 
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
-		if (PListFile.size())
-			sect->AddAttributeString(L"ParamList", WrapSourcePath(PListFile, savingBuild));
-
+		
 		if (EntryPointVS == EntryPointPS && EntryPointGS == EntryPointPS)
 		{
 			sect->AddAttributeString(L"EntryPoints", L"ALL:" + EntryPointVS);
@@ -829,7 +830,8 @@ namespace Apoc3D
 		sect->AddAttributeBool(L"IsDebug", IsDebug);
 		sect->AddAttributeBool(L"NoOptimization", NoOptimization);
 
-		sect->AddAttributeString(L"Defines", Pack(Defines));
+		if (Defines.getCount())
+			sect->AddAttributeString(L"Defines", Pack(Defines));
 
 	}
 
@@ -854,11 +856,11 @@ namespace Apoc3D
 		}
 	}
 
-	ProjectResEffect::SettingList ProjectResEffect::Split(const String& text)
+	ProjectResEffectBase::SettingList ProjectResEffectBase::Split(const String& text)
 	{
 		return StringUtils::SplitParse<String, SettingList, std::pair<String, String>, ParseFXSettingItem>(text, L"|");
 	}
-	String ProjectResEffect::Pack(const SettingList& lst)
+	String ProjectResEffectBase::Pack(const SettingList& lst)
 	{
 		String result;
 		for (int32 i = 0; i < lst.getCount();i++)
@@ -874,6 +876,53 @@ namespace Apoc3D
 				result.append(L" | ");
 		}
 		return result;
+	}
+
+	bool ProjectResEffectBase::SpecifySource(const String& srcName, const String& source)
+	{
+		if (srcName == L"VS")
+		{
+			VS = source;
+			return true;
+		}
+		else if (srcName == L"PS")
+		{
+			PS = source;
+			return true;
+		}
+		else if (srcName == L"GS")
+		{
+			GS = source;
+			return true;
+		}
+		else if (srcName == L"ALL")
+		{
+			VS = PS = GS = source;
+			return true;
+		}
+		return false;
+	}
+	void ProjectResEffectBase::SpecifySourceInferFromExtension(const String& source)
+	{
+		String ext = PathUtils::GetFileExtension(source);
+		StringUtils::ToLowerCase(ext);
+
+		if (ext == L"vs")
+		{
+			VS = source;
+		}
+		else if (ext == L"ps")
+		{
+			PS = source;
+		}
+		else if (ext == L"gs")
+		{
+			GS = source;
+		}
+		else if (ext == L"fx")
+		{
+			VS = PS = GS = source;
+		}
 	}
 
 	static void FindIncludeFiles(HashSet<String>& fileList, const String& curFilePath)
@@ -918,7 +967,27 @@ namespace Apoc3D
 		}
 	}
 
-	List<String> ProjectResEffect::GetAllInputFiles() 
+
+	/************************************************************************/
+	/*   ProjectResEffect                                                   */
+	/************************************************************************/
+
+	void ProjectResEffect::Parse(const ConfigurationSection* sect)
+	{
+		ProjectResEffectBase::Parse(sect);
+
+		sect->tryGetAttribute(L"ParamList", PListFile);
+	}
+
+	void ProjectResEffect::Save(ConfigurationSection* sect, bool savingBuild)
+	{
+		ProjectResEffectBase::Save(sect, savingBuild);
+
+		if (PListFile.size())
+			sect->AddAttributeString(L"ParamList", WrapSourcePath(PListFile, savingBuild));
+	}
+
+	List<String> ProjectResEffect::GetAllInputFiles()
 	{
 		List<String> initialFiles = MakeInputFileList({ VS, PS, GS, PListFile });
 		HashSet<String> fileList;
@@ -933,55 +1002,29 @@ namespace Apoc3D
 	}
 	List<String> ProjectResEffect::GetAllOutputFiles() { return MakeOutputFileList(DestFile); }
 
-
-	bool ProjectResEffect::SpecifySource(const String& srcName, const String& source)
-	{
-		if (srcName == L"VS")
-		{
-			VS = source;
-			return true;
-		}
-		else if (srcName == L"PS")
-		{
-			PS = source;
-			return true;
-		}
-		else if (srcName == L"GS")
-		{
-			GS = source;
-			return true;
-		}
-		else if (srcName == L"ALL")
-		{
-			VS = PS = GS = source;
-			return true;
-		}
-		return false;
-	}
-
 	/************************************************************************/
 	/*   ProjectResCustomEffect                                             */
 	/************************************************************************/
-	void ProjectResCustomEffect::Parse(const ConfigurationSection* sect)
-	{
-		SrcVSFile = sect->getAttribute(L"VSSource");
-		SrcPSFile = sect->getAttribute(L"PSSource");
-		DestFile = sect->getAttribute(L"DestinationFile");
-		EntryPointVS = sect->getAttribute(L"EntryPointVS");
-		EntryPointPS = sect->getAttribute(L"EntryPointPS");
-		Profile = sect->getAttribute(L"Profile");
-	}
-	void ProjectResCustomEffect::Save(ConfigurationSection* sect, bool savingBuild)
-	{
-		sect->AddAttributeString(L"VSSource", WrapSourcePath(SrcVSFile, savingBuild));
-		sect->AddAttributeString(L"PSSource", WrapSourcePath(SrcPSFile, savingBuild));
 
-		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
-		sect->AddAttributeString(L"EntryPointVS", EntryPointVS);
-		sect->AddAttributeString(L"EntryPointPS", EntryPointPS);
-		sect->AddAttributeString(L"Profile", Profile);
+
+	List<String> ProjectResCustomEffect::GetAllInputFiles()
+	{
+		List<String> initialFiles = MakeInputFileList({ VS, PS, GS });
+		HashSet<String> fileList;
+		for (const String& ifn : initialFiles)
+		{
+			FindIncludeFiles(fileList, ifn);
+		}
+
+		List<String> result;
+		fileList.FillItems(result);
+		return result;
 	}
-	
+	List<String> ProjectResCustomEffect::GetAllOutputFiles()
+	{
+		return MakeOutputFileList(DestFile);
+	}
+
 	/************************************************************************/
 	/*  ProjectResEffectList                                                */
 	/************************************************************************/

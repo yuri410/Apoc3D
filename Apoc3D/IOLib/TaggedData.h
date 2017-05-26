@@ -60,7 +60,7 @@ namespace Apoc3D
 
 			const char* getString() const { return m_nameConst ? m_nameConst : m_nameLocal; }
 
-			void Read(BinaryReader& br);
+			void Read(BinaryReader& br, int32 version);
 			void Write(BinaryWriter& bw) const;
 
 			bool operator==(const TaggedDataKey& o) const 

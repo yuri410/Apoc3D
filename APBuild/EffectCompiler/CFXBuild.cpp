@@ -37,44 +37,55 @@ namespace APBuild
 {
 	void CFXBuild::Build(const String& hierarchyPath, const ConfigurationSection* sect)
 	{
-		CFXBuildConfig config;
+		ProjectResCustomEffect config(nullptr, nullptr);
 		config.Parse(sect);
 
-		if (!File::FileExists(config.SrcVSFile))
+		if (!File::FileExists(config.VS))
 		{
-			BuildSystem::LogError(config.SrcVSFile, L"Could not find source file.");
+			BuildSystem::LogError(config.VS, L"Could not find source file.");
 			return;
 		}
-		if (!File::FileExists(config.SrcPSFile))
+		if (!File::FileExists(config.PS))
 		{
-			BuildSystem::LogError(config.SrcPSFile, L"Could not find source file.");
+			BuildSystem::LogError(config.PS, L"Could not find source file.");
 			return;
 		}
 		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
 
+		List<std::pair<std::string, std::string>> defines(config.Defines.getCount());
+		for (const auto& e : config.Defines)
+		{
+			defines.Add(
+			{ StringUtils::toPlatformNarrowString(e.first), StringUtils::toPlatformNarrowString(e.second) }
+			);
+		}
 
 		EffectData data;
-		data.Name = config.Name;
-		data.Profiles.ReserveDiscard(1);
+		data.Name = sect->getName();
+		data.Profiles.ReserveDiscard(config.Targets.getCount());
+
+		for (int i = 0; i < config.Targets.getCount(); i++)
+		{
+			EffectProfileData& proData = data.Profiles[i];
+
+			std::string impType;
+			if (ParseShaderProfileString(config.Targets[i], impType, proData.MajorVer, proData.MinorVer))
+			{
+				proData.SetImplType(impType);
+
+				if (!CompileShader(config.VS, config.EntryPointVS, data.Profiles[0], ShaderType::Vertex, config.IsDebug, config.NoOptimization, false, &defines))
+					return;
+				if (!CompileShader(config.PS, config.EntryPointPS, data.Profiles[0], ShaderType::Pixel, config.IsDebug, config.NoOptimization, false, &defines))
+					return;
+			}
+			else
+			{
+				BuildSystem::LogError(L"Profile not supported." + config.Targets[i], data.Name);
+				return;
+			}
+		}
 		
-		EffectProfileData& proData = data.Profiles[0];
-
-		std::string impType;
-		if (ParseShaderProfileString(config.Profile, impType, proData.MajorVer, proData.MinorVer))
-		{
-			proData.SetImplType(impType);
-
-			if (!CompileShader(config.SrcVSFile, config.EntryPointVS, data.Profiles[0], ShaderType::Vertex, false, false, nullptr, nullptr))
-				return;
-			if (!CompileShader(config.SrcPSFile, config.EntryPointPS, data.Profiles[0], ShaderType::Pixel, false, false, nullptr, nullptr))
-				return;
-		}
-		else
-		{
-			BuildSystem::LogError(L"Profile not supported." + config.Profile, config.Name);
-		}
-
-		data.IsCFX=true;
+		data.IsCFX = true;
 		data.SortProfiles();
 
 		data.Save(FileOutStream(config.DestFile));
