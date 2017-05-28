@@ -58,11 +58,11 @@ namespace Apoc3D
 			m_nameLocal[m_nameLen] = 0;
 		}
 
-		void TaggedDataKey::Read(BinaryReader& br, int32 version)
+		void TaggedDataKey::Read(BinaryReader& br)
 		{
 			m_hash = br.ReadUInt32();
 
-			uint32 nameLen = version == 0 ? br.ReadUInt32() : br.ReadByte();
+			uint32 nameLen = br.ReadByte();
 			uint32 nameSize = nameLen + 1;
 
 			int64 seekForward = 0;
@@ -165,8 +165,7 @@ namespace Apoc3D
 		{
 			TF_None = 0,
 			TF_NarrowKeyFormat = 1,
-			TF_HashKeyFormat = 2, // fnv1-a w/o null terminator
-			TF_HashKeyFormat2 = 4, // compacter string
+			TF_HashKeyFormat = 4, // fnv1-a w/o null terminator
 
 			TF_64Bit = 16
 		};
@@ -188,18 +187,16 @@ namespace Apoc3D
 
 				bool narrowKeyFormat = (flags & TF_NarrowKeyFormat) == TF_NarrowKeyFormat;
 				bool hashKeyFormat = (flags & TF_HashKeyFormat) == TF_HashKeyFormat;
-				bool hashKeyFormat2 = (flags & TF_HashKeyFormat2) == TF_HashKeyFormat2;
-
 				bool use64Bit = (flags & TF_64Bit) == TF_64Bit;
 
 				m_sectCount = br.ReadInt32();
 
-				if (hashKeyFormat || hashKeyFormat2)
+				if (hashKeyFormat)
 				{
 					for (int32 i = 0; i < m_sectCount; i++)
 					{
 						KeyType key;
-						key.Read(br, hashKeyFormat2);
+						key.Read(br);
 
 						m_positions.Add(key, Entry());
 					}
@@ -1900,7 +1897,7 @@ namespace Apoc3D
 
 			int64 startPos = stream.getPosition();
 
-			bw.WriteUInt32(0x80000000U | TF_HashKeyFormat2 | (shouldUse64Bit ? TF_64Bit : 0));
+			bw.WriteUInt32(0x80000000U | TF_HashKeyFormat | (shouldUse64Bit ? TF_64Bit : 0));
 			bw.WriteInt32(m_positions.getCount());
 
 			for (const KeyType& key : m_positions.getKeyAccessor())

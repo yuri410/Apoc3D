@@ -382,6 +382,14 @@ namespace Apoc3D
 				return result;
 			}
 
+			template <int32 N>
+			void CopyTo(T (&dst)[N])
+			{
+				assert(m_count <= N);
+				int32 count = m_count > N ? N : m_count;
+				CopyTo(dst, (T*)m_elements, count);
+			}
+
 			void Sort() { if (m_count > 0) QuickSort((T*)m_elements, 0, m_count - 1); }
 
 			template <int32(*comparer)(const T&, const T&)>
@@ -535,6 +543,7 @@ namespace Apoc3D
 				m_count = newCount; 
 			}
 
+			void CopyTo(T(&dst)[MaxSize]) { CopyTo<MaxSize>(dst); }
 
 			int32 getCapacity() const { return MaxSize; }
 			bool isFull() const { return m_count >= MaxSize; }

@@ -60,14 +60,6 @@ namespace Apoc3D
 					m->Load(*md);
 
 					m_subParts[i].MaterialFrames.Add(m);
-					//if (j)
-					//{
-					//	m_materials.AddFrame(m, i);
-					//}
-					//else
-					//{
-					//	m_materials.Add(m);
-					//}
 				}
 			}
 
@@ -77,10 +69,8 @@ namespace Apoc3D
 
 			m_primitiveCount = faceCount;
 			m_vertexCount = vertexCount;
-
 			m_vertexSize = data->VertexSize;
 
-			//m_vertexElements = data->VertexElements;
 			m_boundingSphere = data->BoundingSphere;
 
 			m_vtxDecl = m_factory->CreateVertexDeclaration(data->VertexElements);
@@ -92,7 +82,7 @@ namespace Apoc3D
 			m_vertexBuffer->Unlock();
 			
 			// index data
-			bool useIndex16 = vertexCount < MaxUInt16;
+			bool useIndex16 = vertexCount <= MaxUInt16;
 			List<uint>* partIndices = new List<uint>[matCount];
 
 			// Based on the face data, generate indices, grouping them to each sub part.

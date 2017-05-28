@@ -184,6 +184,7 @@ namespace Apoc3D
 			dst[i] = dataPtr[i];
 	}
 
+
 	void DebugBreak();
 
 	template <typename A, typename B>
