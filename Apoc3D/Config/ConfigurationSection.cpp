@@ -101,13 +101,8 @@ namespace Apoc3D
 		ConfigurationSection::ConfigurationSection(const String& name,
 			std::initializer_list<std::pair<String, String>> attribs,
 			std::initializer_list<ConfigurationSection> values)
-			: m_name(name), m_attributes(attribs.size()), m_subSection(values.size())
+			: m_name(name), m_attributes(attribs), m_subSection((int32)values.size())
 		{
-			for (const auto& e : attribs)
-			{
-				m_attributes.Add(e.first, e.second);
-			}
-
 			for (const auto& e : values)
 			{
 				m_subSection.Add(e.getName(), new ConfigurationSection(e));

@@ -123,17 +123,18 @@ namespace Apoc3D
 			}
 
 
-			template<> String _ToString<std::string>::Invoke(const std::string& str) { return StringUtils::toPlatformWideString(str); }
-			template<> String _ToString<const char*>::Invoke(const char* const& str) { return StringUtils::toPlatformWideString(str); }
-			template<> String _ToString<const wchar_t*>::Invoke(const wchar_t* const& str) { return str; }
+			String _ToString<std::string>::Invoke(const std::string& str) { return StringUtils::toPlatformWideString(str); }
+			String _ToString<String>::Invoke(const String& str) { return str; }
+			String _ToString<const char*>::Invoke(const char* const& str) { return StringUtils::toPlatformWideString(str); }
+			String _ToString<const wchar_t*>::Invoke(const wchar_t* const& str) { return str; }
 
-			template<> String _ToString<int16>::Invoke(const int16& v) { return StringUtils::IntToString(v); }
-			template<> String _ToString<int32>::Invoke(const int32& v) { return StringUtils::IntToString(v); }
-			template<> String _ToString<int64>::Invoke(const int64& v) { return StringUtils::IntToString(v); }
+			String _ToString<int16>::Invoke(const int16& v) { return StringUtils::IntToString(v); }
+			String _ToString<int32>::Invoke(const int32& v) { return StringUtils::IntToString(v); }
+			String _ToString<int64>::Invoke(const int64& v) { return StringUtils::IntToString(v); }
 
-			template<> String _ToString<uint16>::Invoke(const uint16& v) { return StringUtils::UIntToString(v); }
-			template<> String _ToString<uint32>::Invoke(const uint32& v) { return StringUtils::UIntToString(v); }
-			template<> String _ToString<uint64>::Invoke(const uint64& v) { return StringUtils::UIntToString(v); }
+			String _ToString<uint16>::Invoke(const uint16& v) { return StringUtils::UIntToString(v); }
+			String _ToString<uint32>::Invoke(const uint32& v) { return StringUtils::UIntToString(v); }
+			String _ToString<uint64>::Invoke(const uint64& v) { return StringUtils::UIntToString(v); }
 			
 
 			//template<> String ToString<std::string>(const std::string& str) { return StringUtils::toPlatformWideString(str); }

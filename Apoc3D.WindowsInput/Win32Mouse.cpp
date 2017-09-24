@@ -37,9 +37,9 @@ namespace Apoc3D
 			{
 				m_instance = this;
 
-				m_oldWndProc = GetWindowLongPtr(hwnd, GWLP_WNDPROC);
+				m_oldWndProc = (HWND)GetWindowLongPtr(hwnd, GWLP_WNDPROC);
 
-				SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG)(void*)WndProcStatic);
+				SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)(void*)WndProcStatic);
 			}
 			OldSchoolMouse::~OldSchoolMouse()
 			{

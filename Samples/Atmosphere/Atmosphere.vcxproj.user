@@ -3,11 +3,19 @@
   <PropertyGroup>
     <ShowAllFiles>true</ShowAllFiles>
     <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\assets\build\s_atmosphere</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\assets\build\s_atmosphere</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">WindowsLocalDebugger</DebuggerFlavor>
+    <DebuggerFlavor Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">$(SolutionDir)\assets\build\s_atmosphere</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Release_Static|x64'">$(SolutionDir)\assets\build\s_atmosphere</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">WindowsLocalDebugger</DebuggerFlavor>
+    <DebuggerFlavor Condition="'$(Configuration)|$(Platform)'=='Release_Static|x64'">WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)\assets\build\s_atmosphere</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|x64'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\assets\build\s_atmosphere</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>

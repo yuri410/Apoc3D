@@ -76,7 +76,7 @@ namespace APBuild
 			//const Vector3* vertices = reinterpret_cast<const Vector3*>(mesh->VertexData);
 			assert(mesh->VertexSize == 12);
 
-			uint totalVertexCount = mesh->VertexCount;
+			uint32 totalVertexCount = mesh->VertexCount;
 
 			HashMap<Vector3, int> vtxHashTable(totalVertexCount);
 			List<Vector3> newVertexList;

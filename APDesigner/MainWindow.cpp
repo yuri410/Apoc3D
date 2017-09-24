@@ -82,7 +82,7 @@ namespace APDesigner
 		m_device = m_window->getRenderDevice();
 		
 		UpdateWindowTitle();
-
+		
 		InputCreationParameters icp;
 		icp.UseKeyboard = true;
 		icp.UseMouse = true;

@@ -31,9 +31,7 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		/**
-		 *  Defines the level of importance for the messages.
-		 */
+		/** Defines the level of importance for the messages. */
 		enum LogMessageLevel
 		{
 			LOGLVL_Default,
@@ -43,9 +41,7 @@ namespace Apoc3D
 			LOGLVL_Fatal
 		};
 
-		/**
-		 *  Defines the field that the messages are related to.
-		 */
+		/** Defines the field that the messages are related to. */
 		enum LogType
 		{
 			LOG_System = 0,
@@ -59,9 +55,7 @@ namespace Apoc3D
 			LOG_Count = 8
 		};
 
-		/** 
-		 *  Defines a piece of message in the log system. 
-		 */
+		/** Defines a piece of message in the log system.  */
 		struct APAPI LogEntry
 		{
 			uint64 SerialIndex;

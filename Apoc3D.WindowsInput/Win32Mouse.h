@@ -48,7 +48,7 @@ namespace Apoc3D
 				int m_accumlatedMouseWheel;
 
 				LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-				LONG m_oldWndProc;
+				HWND m_oldWndProc;
 				HWND m_hwnd;
 
 				static LRESULT CALLBACK WndProcStatic(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

@@ -72,7 +72,7 @@ namespace Apoc3D
 
 				UINT count = d3d9->GetAdapterCount();
 
-				for (size_t i = 0; i < count; i++)
+				for (uint32 i = 0; i < count; i++)
 				{
 					AdapterInfo* adapter = new AdapterInfo(d3d9, i, MinimumSettings);
 
@@ -157,7 +157,7 @@ namespace Apoc3D
 				{
 					uint32 dispCount = d3d9->GetAdapterModeCount(index, fmt);
 
-					for (size_t k = 0; k < dispCount; k++)
+					for (uint32 k = 0; k < dispCount; k++)
 					{
 						D3DDISPLAYMODE mode;
 						hr = d3d9->EnumAdapterModes(index, fmt, k, &mode);

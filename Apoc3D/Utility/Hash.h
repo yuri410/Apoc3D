@@ -14,12 +14,12 @@ namespace Apoc3D
 			FNVHash32() { }
 			FNVHash32(uint32 current) : m_result(current) { }
 
-			FNVHash32& Accumulate(const void* buffer, int32 size)
+			FNVHash32& Accumulate(const void* buffer, size_t size)
 			{
 				const uint32 p = 16777619;
 				const byte* src = (const byte*)buffer;
 
-				while (--size >= 0)
+				while (size-- > 0)
 				{
 					m_result = (*src++ ^ m_result) * p;
 				}
@@ -38,12 +38,12 @@ namespace Apoc3D
 			FNVHash64() { }
 			FNVHash64(uint64 current) : m_result(current) { }
 
-			FNVHash64& Accumulate(const void* buffer, int32 size)
+			FNVHash64& Accumulate(const void* buffer, size_t size)
 			{
 				const uint64 p = 1099511628211;
 				const byte* src = (const byte*)buffer;
 
-				while (--size >= 0)
+				while (size-- > 0)
 				{
 					m_result = (*src++ ^ m_result) * p;
 				}
@@ -68,7 +68,7 @@ namespace Apoc3D
 		//}
 
 
-		inline int32 MurmurHash(const void * key, int len)
+		inline int32 MurmurHash(const void * key, size_t len)
 		{
 			/**
 			 * MurmurHash derived from http://sites.google.com/site/murmurhash/
@@ -79,10 +79,10 @@ namespace Apoc3D
 
 			const int32 seed = 2166136261;
 
-			const unsigned int m = 0x5bd1e995;
-			const int r = 24;
+			const uint32 m = 0x5bd1e995;
+			const int32 r = 24;
 
-			unsigned int h = seed ^ len;
+			uint32 h = seed ^ (uint32)len;
 
 			const unsigned char * data = (const unsigned char *)key;
 

@@ -657,10 +657,10 @@ namespace Apoc3D
 			List() : ListBase(nullptr), m_length(4) { }
 
 			explicit List(int32 capacity)
-				: ListBase(nullptr), m_length(capacity)  { }
+				: ListBase(nullptr), m_length(capacity) { }
 
 			List(std::initializer_list<T> l)
-				: ListBase(nullptr, 0), m_length(l.size())
+				: ListBase(nullptr, 0), m_length((int32)l.size())
 			{
 				EnsureElements();
 				

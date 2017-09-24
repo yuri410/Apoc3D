@@ -100,6 +100,7 @@ freely, subject to the following restrictions:
 /// the std::mutex class.
 namespace tthread
 {
+	const bool Is64Bit = sizeof(void*) == 8;
 
 	/// Mutex class.
 	/// This is a mutual exclusion object for synchronizing access to shared
@@ -138,7 +139,7 @@ namespace tthread
 
 	private:
 		struct mutex_data& get_data();
-		char m_data[28];
+		char m_data[Is64Bit ? 48 : 28];
 
 		friend class condition_variable;
 	};
@@ -181,7 +182,7 @@ namespace tthread
 
 	private:
 		struct recursive_mutex_data& get_data();
-		char m_data[24];
+		char m_data[Is64Bit ? 40 : 24];
 
 		friend class condition_variable;
 	};
@@ -289,7 +290,7 @@ namespace tthread
 		void _wait();
 #endif
 		struct condition_variable_data& get_data();
-		char m_data[36];
+		char m_data[Is64Bit ? 64 : 36];
 	};
 
 

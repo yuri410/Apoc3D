@@ -58,14 +58,14 @@ namespace Apoc3D
 				: m_cast(capacity), m_invCast(capacity) { }
 
 			TypeDualConverter(std::initializer_list<std::pair<T, String>> list)
-				: m_cast(list.size()), m_invCast(list.size())
+				: m_cast((int32)list.size()), m_invCast((int32)list.size())
 			{
 				for (const auto& e : list)
 					AddPair(e.first, e.second);
 			}
 
 			TypeDualConverter(std::initializer_list<std::pair<String, T>> list)
-				: m_cast(list.size()), m_invCast(list.size())
+				: m_cast((int32)list.size()), m_invCast((int32)list.size())
 			{
 				for (const auto& e : list)
 					AddPair(e.first, e.second);
@@ -135,16 +135,13 @@ namespace Apoc3D
 				: m_cast(capacity) { }
 
 			TypeToStringConverter(std::initializer_list<std::pair<T, String>> list)
-				: m_cast(list.size())
-			{
-				for (const auto& e : list)
-					m_cast.Add(e.first, e.second);
-			}
+				: m_cast(list) { }
+
 			TypeToStringConverter(std::initializer_list<std::pair<String, T>> list)
-				: m_cast(list.size())
+				: m_cast((int32)list.size())
 			{
 				for (const auto& e : list)
-					m_cast.Add(e.first, e.second);
+					m_cast.Add(e.second, e.first);
 			}
 
 			const String& ToString(T e) const { return m_cast[e]; }
@@ -182,11 +179,14 @@ namespace Apoc3D
 				: m_cast(capacity) { }
 
 			TypeParseConverter(std::initializer_list<std::pair<T, String>> list)
-				: m_cast(list.size())
+				: m_cast((int32)list.size())
 			{
 				for (const auto& e : list)
 					m_cast.Add(e.second, e.first);
 			}
+
+			TypeParseConverter(std::initializer_list<std::pair<String, T>> list)
+				: m_cast(list) { }
 
 			bool SupportsName(const String& name) const { return m_cast.Contains(name); }
 

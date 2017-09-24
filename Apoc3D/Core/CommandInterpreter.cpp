@@ -123,7 +123,7 @@ namespace Apoc3D
 		{
 			List<String> args;
 
-			int lastPos = -1;
+			int32 lastPos = -1;
 
 			bool isInQuote = false;
 			bool isSingleQuote = false;
@@ -172,16 +172,16 @@ namespace Apoc3D
 						}
 
 						args.Add(line.substr(lastPos + startBounds, i - lastPos - endbounds));
-						lastPos = i;
+						lastPos = (int32)i;
 					}
 					else
 					{
-						lastPos = i;
+						lastPos = (int32)i;
 					}
 
 				}
 			}
-			if (lastPos != static_cast<int32>(line.size())-1)
+			if (lastPos != (int32)line.size()-1)
 			{
 				int32 startBounds = previousIsQuoted ? 2 : 1;
 				int32 endbounds = previousIsQuoted ? 3 : 1;

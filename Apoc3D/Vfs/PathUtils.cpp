@@ -345,8 +345,8 @@ namespace Apoc3D
 			}
 
 			// remove the last DirectorySeparators
-			int32 leftLength = left.size();
-			int32 rightLength = right.size();
+			int32 leftLength = (int32)left.size();
+			int32 rightLength = (int32)right.size();
 			while (leftLength > 0 && isDirectorySeparatorChar(left[leftLength - 1]))
 				leftLength--;
 
@@ -359,10 +359,10 @@ namespace Apoc3D
 
 			//bool finished = false;
 
-			int lvll = 0;
-			int lvlr = 0;
-			int i = 0;
-			int j = 0;
+			int32 lvll = 0;
+			int32 lvlr = 0;
+			int32 i = 0;
+			int32 j = 0;
 
 			for (;;)
 			{

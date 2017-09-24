@@ -905,7 +905,7 @@ namespace Apoc3D
 
 
 			template <bool caseInsensitive, typename CharType> 
-			bool CompareString(const CharType* a, const CharType* b, int32 len)
+			bool CompareString(const CharType* a, const CharType* b, size_t len)
 			{
 				while (len > 0)
 				{
@@ -928,7 +928,7 @@ namespace Apoc3D
 			}
 
 			template <typename CharType>
-			bool CompareString(const CharType* a, const CharType* b, int32 len, bool caseInsensitive)
+			bool CompareString(const CharType* a, const CharType* b, size_t len, bool caseInsensitive)
 			{
 				return caseInsensitive ? CompareString<true>(a, b, len) : CompareString<false>(a, b, len);
 			}

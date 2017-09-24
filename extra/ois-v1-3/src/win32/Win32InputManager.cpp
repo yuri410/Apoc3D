@@ -67,7 +67,7 @@ void Win32InputManager::_initialize( ParamList &paramList )
 	if( i == paramList.end() ) 
 		OIS_EXCEPT( E_InvalidParam, "Win32InputManager::Win32InputManager >> No HWND found!" );
 
-	hWnd  = (HWND)strtoul(i->second.c_str(), 0, 10);
+	hWnd  = (HWND)strtoull(i->second.c_str(), 0, 10);
 
 	if( IsWindow(hWnd) == 0 )
 		OIS_EXCEPT( E_General, "Win32InputManager::Win32InputManager >> The sent HWND is not valid!");
@@ -152,7 +152,7 @@ BOOL CALLBACK Win32InputManager::_DIEnumDevCallback(LPCDIDEVICEINSTANCE lpddi, L
 		
 		char buffer[260];
 		BOOL dummy;
-		WideCharToMultiByte(CP_ACP, 0, lpddi->tszInstanceName, wcslen(lpddi->tszInstanceName), buffer, sizeof(buffer), "-", &dummy);
+		WideCharToMultiByte(CP_ACP, 0, lpddi->tszInstanceName, (int)wcslen(lpddi->tszInstanceName), buffer, (int)sizeof(buffer), "-", &dummy);
 		jsInfo.vendor = buffer;
 		jsInfo.devId = _this_->joySticks;
 

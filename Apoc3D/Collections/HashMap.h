@@ -432,19 +432,20 @@ namespace Apoc3D
 			typedef Accessor<false> ValueAccessor;
 
 
-			HashMap() 
-				: HashMapCore(0) { }
-			explicit HashMap(int32 capacity)
-				: HashMapCore(capacity) { }
+			HashMap()  : HashMapCore(0) { }
+			explicit HashMap(int32 capacity) : HashMapCore(capacity) { }
 
+			HashMap(std::initializer_list<std::pair<T, S>> list)
+				: HashMapCore((int32)list.size())
+			{
+				for (const auto& e : list)
+					Add(e.first, e.second);
+			}
 			HashMap(std::initializer_list<KeyPairValue<T, S>> list)
 				: HashMapCore((int32)list.size())
 			{
-				if (list.size())
-				{
-					for (const auto& e : list)
-						Add(e.Key, e.Value);
-				}
+				for (const auto& e : list)
+					Add(e.Key, e.Value);
 			}
 
 			~HashMap() { }
@@ -616,10 +617,8 @@ namespace Apoc3D
 			};
 
 
-			HashSet()
-				: HashMapCore(0) { }
-			explicit HashSet(int32 capacity)
-				: HashMapCore(capacity) { }
+			HashSet() : HashMapCore(0) { }
+			explicit HashSet(int32 capacity) : HashMapCore(capacity) { }
 
 			HashSet(std::initializer_list<T> list)
 				: HashMapCore((int32)list.size())

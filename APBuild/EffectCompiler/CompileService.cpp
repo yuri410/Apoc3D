@@ -291,7 +291,7 @@ namespace APBuild
 					return false;
 				}
 
-				FillEffectProfileCodeData(profData, (const char*)pBlobOut->GetBufferPointer(), pBlobOut->GetBufferSize(), type);
+				FillEffectProfileCodeData(profData, (const char*)pBlobOut->GetBufferPointer(), (int)pBlobOut->GetBufferSize(), type);
 
 				pBlobOut->Release();
 				return true;
@@ -390,9 +390,9 @@ namespace APBuild
 
 				std::string glslCode = generator.GetResult();
 
-				int newShaderCodeSize = LZ4_compressBound(glslCode.size());
+				int newShaderCodeSize = LZ4_compressBound((int)glslCode.size());
 				char* newShaderCode = new char[newShaderCodeSize];
-				newShaderCodeSize = LZ4_compressHC2(glslCode.c_str(), newShaderCode, glslCode.size(), 16);
+				newShaderCodeSize = LZ4_compressHC2(glslCode.c_str(), newShaderCode, (int)glslCode.size(), 16);
 
 				FillEffectProfileCodeData(profData, (const char*)newShaderCode, newShaderCodeSize, type);
 

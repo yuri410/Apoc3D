@@ -51,9 +51,9 @@ namespace Apoc3D
 				virtual String GetName() { return L"Direct3D9 Render System"; }
 
 			private:
-				char m_localData[48];
-
 				class D3D9GraphicsAPIFactory* m_factory;
+				char m_localData[256];
+
 			};
 		}
 	}

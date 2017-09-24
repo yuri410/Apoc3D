@@ -586,7 +586,7 @@ namespace Apoc3D
 
 		static int32 GetLength(const String& text, int32 length)
 		{
-			return length != -1 ? Math::Min(length, (int32)text.length()) : text.length();
+			return length != -1 ? Math::Min(length, (int32)text.length()) : (int32)text.length();
 		}
 
 		void Font::DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int32 length, float extLineSpace, char16_t suffix, float hozShrink)

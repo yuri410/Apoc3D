@@ -153,9 +153,15 @@ namespace Apoc3D
 
 		inline int32 Max(int32 a, int32 b) { return _Max(a, b); }
 		inline int32 Min(int32 a, int32 b) { return _Min(a, b); }
+		
+		inline int64 Max(int64 a, int64 b) { return _Max(a, b); }
+		inline int64 Min(int64 a, int64 b) { return _Min(a, b); }
 
 		inline uint32 Max(uint32 a, uint32 b) { return _Max(a, b); }
 		inline uint32 Min(uint32 a, uint32 b) { return _Min(a, b); }
+
+		inline uint64 Max(uint64 a, uint64 b) { return _Max(a, b); }
+		inline uint64 Min(uint64 a, uint64 b) { return _Min(a, b); }
 
 		inline float Max(float a, float b) { return _Max(a, b); }
 		inline float Min(float a, float b) { return _Min(a, b); }

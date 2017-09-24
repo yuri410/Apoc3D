@@ -314,7 +314,7 @@ namespace Apoc3D
 			if (!m_multiline)
 			{
 				m_text = m_text.insert(m_cursorLocation.X, newText);
-				m_cursorLocation.X += newText.size();
+				m_cursorLocation.X += (int32)newText.size();
 			}
 			else
 			{
@@ -345,7 +345,7 @@ namespace Apoc3D
 				else
 				{
 					m_lines[m_cursorLocation.Y] = m_lines[m_cursorLocation.Y].insert(m_cursorLocation.X, newText);
-					m_cursorLocation.X += newText.size();
+					m_cursorLocation.X += (int32)newText.size();
 				}
 			}
 
@@ -397,7 +397,7 @@ namespace Apoc3D
 							}
 						}
 						else
-							m_cursorLocation.X = spacePos+1;
+							m_cursorLocation.X = (int32)spacePos + 1;
 					}
 					else
 					{
@@ -439,7 +439,7 @@ namespace Apoc3D
 							}
 						}
 						else
-							m_cursorLocation.X = spacePos+1;
+							m_cursorLocation.X = (int32)spacePos + 1;
 					}
 					else
 					{
@@ -763,12 +763,12 @@ namespace Apoc3D
 		{
 			if (!m_multiline)
 			{
-				m_cursorLocation.X = m_text.length();
+				m_cursorLocation.X = (int32)m_text.length();
 			}
 			else
 			{
 				m_cursorLocation.Y = m_lines.getCount() - 1;
-				m_cursorLocation.X = (int)m_lines[m_lines.getCount() - 1].size();
+				m_cursorLocation.X = (int32)m_lines[m_lines.getCount() - 1].size();
 			}
 		}
 		void TextEditState::MoveCursorTo(const Point& cp)
@@ -844,8 +844,8 @@ namespace Apoc3D
 					epos = line.size();
 			}
 
-			m_selectionStart.X = spos;
-			m_selectionEnd.X = epos;
+			m_selectionStart.X = (int32)spos;
+			m_selectionEnd.X = (int32)epos;
 		}
 
 		void TextEditState::EraseSelectedText()
@@ -926,12 +926,12 @@ namespace Apoc3D
 			else if (line > fixedStart.Y && line < fixedEnd.Y)
 			{
 				start = 0;
-				end = m_lines[line].size();
+				end = (int32)m_lines[line].size();
 			}
 			else if (line == fixedStart.Y)
 			{
 				start = fixedStart.X;
-				end = m_lines[line].size();
+				end = (int32)m_lines[line].size();
 			}
 			else if (line == fixedEnd.Y)
 			{

@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OIS", "OIS_vc9.vcxproj", "{9CC704CB-4956-4479-BDEC-57CBC03F700E}"
 EndProject
@@ -22,8 +22,8 @@ Global
 		{9CC704CB-4956-4479-BDEC-57CBC03F700E}.Debug|Win32.Build.0 = Debug|Win32
 		{9CC704CB-4956-4479-BDEC-57CBC03F700E}.Debug|x64.ActiveCfg = Debug|x64
 		{9CC704CB-4956-4479-BDEC-57CBC03F700E}.Debug|x64.Build.0 = Debug|x64
-		{9CC704CB-4956-4479-BDEC-57CBC03F700E}.Release_MT|Win32.ActiveCfg = Release_MT|Win32
-		{9CC704CB-4956-4479-BDEC-57CBC03F700E}.Release_MT|Win32.Build.0 = Release_MT|Win32
+		{9CC704CB-4956-4479-BDEC-57CBC03F700E}.Release_MT|Win32.ActiveCfg = Release|Win32
+		{9CC704CB-4956-4479-BDEC-57CBC03F700E}.Release_MT|Win32.Build.0 = Release|Win32
 		{9CC704CB-4956-4479-BDEC-57CBC03F700E}.Release_MT|x64.ActiveCfg = Release_MT|x64
 		{9CC704CB-4956-4479-BDEC-57CBC03F700E}.Release_MT|x64.Build.0 = Release_MT|x64
 		{9CC704CB-4956-4479-BDEC-57CBC03F700E}.Release|Win32.ActiveCfg = Release|Win32

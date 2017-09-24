@@ -118,7 +118,7 @@ namespace Apoc3D
 
 		TaggedDataKey TaggedDataKey::operator+(const std::string& o) const
 		{
-			return CreateAppended(o.c_str(), o.size());
+			return CreateAppended(o.c_str(), (uint32)o.size());
 		}
 
 		uint32 _uitoa(uint32 value, char (&str)[16])
@@ -135,7 +135,7 @@ namespace Apoc3D
 				*tp++ = i + '0';
 			}
 
-			uint32 len = tp - tmp;
+			uint32 len = (uint32)(tp - tmp);
 
 			char* sp = str;
 			while (tp > tmp)
