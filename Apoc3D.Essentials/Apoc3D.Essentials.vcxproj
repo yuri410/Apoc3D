@@ -112,25 +112,28 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">
-    <IntDir>$(SolutionDir)objs\$(ProjectName)_$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\x86\$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x86\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|x64'">
-    <OutDir>$(SolutionDir)$(Configuration)64\</OutDir>
-    <IntDir>$(SolutionDir)objs64\$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x64\</OutDir>
+    <IntDir>$(SolutionDir)objs\x64\$(ProjectName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>$(SolutionDir)objs\$(ProjectName)_$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\x86\$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x86\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">
-    <IntDir>$(SolutionDir)objs\$(ProjectName)_$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\x86\$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x86\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)$(Configuration)64\</OutDir>
-    <IntDir>$(SolutionDir)objs64\$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x64\</OutDir>
+    <IntDir>$(SolutionDir)objs\x64\$(ProjectName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Static|x64'">
-    <OutDir>$(SolutionDir)$(Configuration)64\</OutDir>
-    <IntDir>$(SolutionDir)objs64\$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x64\</OutDir>
+    <IntDir>$(SolutionDir)objs\x64\$(ProjectName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -311,18 +311,18 @@ namespace Apoc3D
 				static String Invoke(const T& item) { return L""; }
 			};
 
-			template<> struct _ToString<std::string> { static String Invoke(const std::string& str); };
-			template<> struct _ToString<String> { static String Invoke(const String& str); };
-			template<> struct _ToString<const char*> { static String Invoke(const char* const& str); };
-			template<> struct _ToString<const wchar_t*> { static String Invoke(const wchar_t* const& str); };
+			template<> struct APAPI _ToString<std::string> { static String Invoke(const std::string& str); };
+			template<> struct APAPI _ToString<String> { static String Invoke(const String& str); };
+			template<> struct APAPI _ToString<const char*> { static String Invoke(const char* const& str); };
+			template<> struct APAPI _ToString<const wchar_t*> { static String Invoke(const wchar_t* const& str); };
 
-			template<> struct _ToString<int16> { static String Invoke(const int16& v); };
-			template<> struct _ToString<int32> { static String Invoke(const int32& v); };
-			template<> struct _ToString<int64> { static String Invoke(const int64& v); };
+			template<> struct APAPI _ToString<int16> { static String Invoke(const int16& v); };
+			template<> struct APAPI _ToString<int32> { static String Invoke(const int32& v); };
+			template<> struct APAPI _ToString<int64> { static String Invoke(const int64& v); };
 
-			template<> struct _ToString<uint16> { static String Invoke(const uint16& v); };
-			template<> struct _ToString<uint32> { static String Invoke(const uint32& v); };
-			template<> struct _ToString<uint64> { static String Invoke(const uint64& v); };
+			template<> struct APAPI _ToString<uint16> { static String Invoke(const uint16& v); };
+			template<> struct APAPI _ToString<uint32> { static String Invoke(const uint32& v); };
+			template<> struct APAPI _ToString<uint64> { static String Invoke(const uint64& v); };
 
 
 			template <typename T>

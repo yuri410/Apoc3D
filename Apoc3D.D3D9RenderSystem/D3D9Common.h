@@ -41,11 +41,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #pragma comment(lib, "Apoc3D.Win32.lib")
 
 #pragma comment(lib, "d3d9.lib")
-//#if _DEBUG
-//#pragma comment(lib, "d3dx9d.lib")
-//#else
-//#pragma comment(lib, "d3dx9.lib")
-//#endif
 #pragma comment(lib, "dxguid.lib")
 
 typedef IDirect3DDevice9 D3DDevice;

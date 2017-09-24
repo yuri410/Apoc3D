@@ -441,12 +441,6 @@ namespace Apoc3D
 				for (const auto& e : list)
 					Add(e.first, e.second);
 			}
-			HashMap(std::initializer_list<KeyPairValue<T, S>> list)
-				: HashMapCore((int32)list.size())
-			{
-				for (const auto& e : list)
-					Add(e.Key, e.Value);
-			}
 
 			~HashMap() { }
 

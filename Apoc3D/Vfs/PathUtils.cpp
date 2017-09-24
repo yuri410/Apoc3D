@@ -148,6 +148,13 @@ namespace Apoc3D
 			return ext;
 		}
 
+		String PathUtils::GetFilePathNoExt(const String& filePath)
+		{
+			String fp;
+			_SplitFileNameExtension(filePath, &fp, nullptr);
+			return fp;
+		}
+
 		void PathUtils::SplitFileNameExtension(const String& fileName, String& noext, String& ext) { _SplitFileNameExtension(fileName, &noext, &ext); }
 		void PathUtils::SplitFilePath(const String& filePath, String& fileName, String& parentDir) { _SplitFilePath(filePath, &fileName, &parentDir, true); }
 

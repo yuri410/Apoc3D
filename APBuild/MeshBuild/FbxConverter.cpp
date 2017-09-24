@@ -1228,14 +1228,14 @@ namespace APBuild
 		{
 			for (FIMesh* mesh : fbx.m_meshes.getValueAccessor())
 			{
-				const std::vector<FIMeshPart*>& parts = mesh->getParts();
+				const List<FIMeshPart*>& parts = mesh->getParts();
 				List<MaterialData*> materialData;
 				// materials
 				{
 					bool* useTable = new bool[fbx.m_materials.getCount()];
 					memset(useTable, 0, sizeof(bool)*fbx.m_materials.getCount());
 					
-					for (size_t j=0;j<parts.size();j++)
+					for (int32 j=0;j<parts.getCount();j++)
 					{
 						int mtrlIndex = fbx.m_materials.IndexOf(parts[j]->GetMaterial());
 						assert(mtrlIndex>=0);
@@ -1254,11 +1254,10 @@ namespace APBuild
 				int totalVertexCount=0;
 				bool use2TexCoords = false;
 				bool useSkinnedFormat = false;
-				for (size_t j=0;j<parts.size();j++)
+				for (FIMeshPart* part : parts)
 				{
-					FIMeshPart* part= parts[j];
-					use2TexCoords |= !!part->getTexCoord1().size();
-					totalVertexCount+=(int32)part->getPosition().size();
+					use2TexCoords |= part->getTexCoord1().getCount() != 0;
+					totalVertexCount+= part->getPosition().getCount();
 					useSkinnedFormat |= part->IsSkinnedModel();
 				}
 				
@@ -1284,18 +1283,17 @@ namespace APBuild
 				meshData->Faces.ResizeDiscard(totalVertexCount/3+2);
 
 				// vertex hashing & add to list
-				for (size_t j=0;j<parts.size();j++)
+				for (FIMeshPart* part : parts)
 				{
-					FIMeshPart* part= parts[j];
-					const std::vector<Vector3>& Positions = part->getPosition();
-					const std::vector<Vector3>& Normals = part->getNormal();
-					const std::vector<Vector2>& TexCoord0 = part->getTexCoord0();
-					const std::vector<Vector2>& TexCoord1 = part->getTexCoord1();
-					const std::vector<BoneWeight>& BoneWeights = part->getBoneWeights();
+					const List<Vector3>& Positions = part->getPosition();
+					const List<Vector3>& Normals = part->getNormal();
+					const List<Vector2>& TexCoord0 = part->getTexCoord0();
+					const List<Vector2>& TexCoord1 = part->getTexCoord1();
+					const List<BoneWeight>& BoneWeights = part->getBoneWeights();
 					
 					int mtrlIndex = materialData.IndexOf( part->GetMaterial());
 
-					for (size_t k=0;k<Positions.size();k+=3)
+					for (int32 k=0;k<Positions.getCount();k+=3)
 					{
 						FIVertex fiv;
 						int vi = k;

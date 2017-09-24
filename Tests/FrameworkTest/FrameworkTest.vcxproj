@@ -71,23 +71,25 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
-    <IntDir>$(SolutionDir)objs\Test_$(ProjectName)_$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\x86\Test_$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x86\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)$(Configuration)64\</OutDir>
-    <IntDir>$(SolutionDir)objs64\Test_$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x64\</OutDir>
+    <IntDir>$(SolutionDir)objs\x64\Test_$(ProjectName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IntDir>$(SolutionDir)objs\Test_$(ProjectName)_$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\x86\Test_$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x86\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Static|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Configuration)64\</OutDir>
-    <IntDir>$(SolutionDir)objs64\Test_$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x64\</OutDir>
+    <IntDir>$(SolutionDir)objs\x64\Test_$(ProjectName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -105,7 +107,6 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Apoc3D.lib;d3d9.lib;d3dx9.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\x86dbg;$(OutDir);$(SolutionDir)\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -125,7 +126,6 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Apoc3D.lib;d3d9.lib;d3dx9.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\x64dbg;$(OutDir);$(SolutionDir)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

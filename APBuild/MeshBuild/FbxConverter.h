@@ -17,41 +17,30 @@ namespace APBuild
 	public:
 		struct BoneWeight
 		{
-			std::vector<std::pair<int, float>> BoneWeights;
+			List<std::pair<int, float>> BoneWeights;
 
 			void NormalizeInPlace()
 			{
-				float total = 0.0f;
-				int nIndex = 0;
+				if (BoneWeights.getCount() > MAXBONES_PER_VERTEX)
+					BoneWeights.RemoveEnd(MAXBONES_PER_VERTEX);
 
-				for (std::vector<std::pair<int,float>>::iterator iter = BoneWeights.begin();
-					iter != BoneWeights.end(); )
+				float total = 0.0f;
+				for (auto& e : BoneWeights)
 				{
-					if( nIndex >= MAXBONES_PER_VERTEX )
-					{
-						iter = BoneWeights.erase(iter);
-					}
-					else
-					{
-						total += iter->second;
-						nIndex++;
-						iter++;
-					}
+					total += e.second;
 				}
 
-
 				float fScale = 1.0f/total;
-				for (std::vector<std::pair<int,float>>::iterator iter = BoneWeights.begin();
-					iter != BoneWeights.end(); iter++)
+				for (auto& e : BoneWeights)
 				{
-					iter->second *= fScale;
+					e.second *= fScale;
 				}
 
 			}
 
 			void AddBoneWeight(const BoneWeight& boneWeights)
 			{
-				for( size_t i = 0; i < boneWeights.BoneWeights.size(); ++i)	
+				for( int32 i = 0; i < boneWeights.BoneWeights.getCount(); ++i)	
 				{
 					const std::pair<int, float> e = boneWeights.BoneWeights[i];
 					AddBoneWeight(e.first, e.second);
@@ -60,24 +49,25 @@ namespace APBuild
 			void AddBoneWeight(int boneIndex, float boneWeight)
 			{
 				float passed = false;
-				for(std::vector<std::pair<int,float>>::iterator it = BoneWeights.begin(); 
-					it != BoneWeights.end(); ++it )
+				for (int32 i = 0; i < BoneWeights.getCount(); i++)
 				{
-					if( boneWeight > it->second )
+					const std::pair<int, float> e = BoneWeights[i];
+
+					if (boneWeight > e.second)
 					{
-						BoneWeights.insert(it, std::make_pair(boneIndex, boneWeight));
+						BoneWeights.Insert(i, std::make_pair(boneIndex, boneWeight));
 						passed = true;
 						break;
 					}
 				}
-				if( !passed )
-					BoneWeights.push_back(std::make_pair(boneIndex,boneWeight));
+				if (!passed)
+					BoneWeights.Add(std::make_pair(boneIndex, boneWeight));
 			}
 
 			Vector4 GetBlendIndex() const
 			{
 				float v[4] = {0};
-				for (size_t i=0;i<BoneWeights.size();i++)
+				for (int32 i=0;i<BoneWeights.getCount();i++)
 				{
 					v[i] = static_cast<float>( BoneWeights[i].first);
 				}
@@ -86,7 +76,7 @@ namespace APBuild
 			Vector4 GetBlendWeight() const
 			{
 				float v[4] = {0};
-				for (size_t i=0;i<BoneWeights.size();i++)
+				for (int32 i=0;i<BoneWeights.getCount();i++)
 				{
 					v[i] = BoneWeights[i].second;
 				}
@@ -105,12 +95,12 @@ namespace APBuild
 		class FIMeshPart
 		{
 		private:
-			std::vector<Vector3> m_Positions;
-			std::vector<Vector3> m_Normals;
-			std::vector<Vector2> m_TexCoord0;
-			std::vector<Vector2> m_TexCoord1;
-			std::vector<uint32> m_VertexIndices;
-			std::vector<BoneWeight> m_BoneWeights;
+			List<Vector3> m_Positions;
+			List<Vector3> m_Normals;
+			List<Vector2> m_TexCoord0;
+			List<Vector2> m_TexCoord1;
+			List<uint32> m_VertexIndices;
+			List<BoneWeight> m_BoneWeights;
 			MaterialData* m_pMaterial;
 
 			FIMesh* m_pModelParent;
@@ -130,26 +120,26 @@ namespace APBuild
 			void AddVertex(const Vector3& vPosition, const Vector3& vNormal, const Vector2& vTexCoord, 
 				const BoneWeight& boneWeights)
 			{
-				m_Positions.push_back(vPosition);
-				m_Normals.push_back(vNormal);
-				m_TexCoord0.push_back(vTexCoord);
-				m_BoneWeights.push_back(boneWeights);
+				m_Positions.Add(vPosition);
+				m_Normals.Add(vNormal);
+				m_TexCoord0.Add(vTexCoord);
+				m_BoneWeights.Add(boneWeights);
 
-				m_VertexIndices.push_back(m_VertexIndices.size());
-				if (boneWeights.BoneWeights.size())
+				m_VertexIndices.Add(m_VertexIndices.getCount());
+				if (boneWeights.BoneWeights.getCount())
 					m_bSkinnedModel = true;
 			}
 			void AddVertex(const Vector3& vPosition, const Vector3& vNormal, const Vector2& vTexCoord0, const Vector2& vTexCoord1,
 				const BoneWeight& boneWeights)
 			{
-				m_Positions.push_back(vPosition);
-				m_Normals.push_back(vNormal);
-				m_TexCoord0.push_back(vTexCoord0);
-				m_TexCoord1.push_back(vTexCoord1);
-				m_BoneWeights.push_back(boneWeights);
+				m_Positions.Add(vPosition);
+				m_Normals.Add(vNormal);
+				m_TexCoord0.Add(vTexCoord0);
+				m_TexCoord1.Add(vTexCoord1);
+				m_BoneWeights.Add(boneWeights);
 
-				m_VertexIndices.push_back(m_VertexIndices.size());
-				if (boneWeights.BoneWeights.size())
+				m_VertexIndices.Add(m_VertexIndices.getCount());
+				if (boneWeights.BoneWeights.getCount())
 					m_bSkinnedModel = true;
 			}
 			void FinishAndOptimize()
@@ -159,12 +149,12 @@ namespace APBuild
 
 			bool IsSkinnedModel() const { return m_bSkinnedModel; }
 			inline MaterialData* GetMaterial() const { return m_pMaterial; }
-			const std::vector<Vector3>& getPosition() const { return m_Positions; }
-			const std::vector<Vector3>& getNormal() const { return m_Normals; }
-			const std::vector<Vector2>& getTexCoord0() const { return m_TexCoord0; }
-			const std::vector<Vector2>& getTexCoord1() const { return m_TexCoord1; }
-			const std::vector<uint32>& getVertexIndices() const { return m_VertexIndices; }
-			const std::vector<BoneWeight>& getBoneWeights() const { return m_BoneWeights; }
+			const List<Vector3>& getPosition() const { return m_Positions; }
+			const List<Vector3>& getNormal() const { return m_Normals; }
+			const List<Vector2>& getTexCoord0() const { return m_TexCoord0; }
+			const List<Vector2>& getTexCoord1() const { return m_TexCoord1; }
+			const List<uint32>& getVertexIndices() const { return m_VertexIndices; }
+			const List<BoneWeight>& getBoneWeights() const { return m_BoneWeights; }
 			//void InitializeDeviceObjects(ID3D10Device* pd3dDevice);
 			//void ReleaseDeviceObjects();
 
@@ -176,7 +166,7 @@ namespace APBuild
 		private:
 			friend class FbxConverter;
 
-			std::vector<FIMeshPart*> m_ModelParts;
+			List<FIMeshPart*> m_ModelParts;
 
 			HashMap<std::string, FIPartialAnimation*> m_AnimationKeyFrames;
 
@@ -197,10 +187,8 @@ namespace APBuild
 			}
 			~FIMesh()
 			{
-				for (size_t i=0;i<m_ModelParts.size();i++)
-				{
-					delete m_ModelParts[i];
-				}
+				m_ModelParts.DeleteAndClear();
+
 				m_AnimationKeyFrames.DeleteValuesAndClear();
 			}
 
@@ -208,9 +196,8 @@ namespace APBuild
 			{
 				bool bNewMaterial = true;
 
-				for( size_t i = 0; i < m_ModelParts.size(); ++i )
+				for(FIMeshPart* pModelPart : m_ModelParts )
 				{
-					FIMeshPart* pModelPart = m_ModelParts[i];
 					if( pMaterial == pModelPart->GetMaterial() )
 					{
 						pModelPart->AddVertex(vPosition, vNormal, vTexCoord, boneWeights);
@@ -222,16 +209,15 @@ namespace APBuild
 				{
 					FIMeshPart* pModelPart = new FIMeshPart(this, pMaterial);
 					pModelPart->AddVertex(vPosition, vNormal, vTexCoord, boneWeights);
-					m_ModelParts.push_back(pModelPart);
+					m_ModelParts.Add(pModelPart);
 				}
 			}
 			void AddVertex(MaterialData* pMaterial, const Vector3& vPosition, const Vector3& vNormal, const Vector2& vTexCoord0, const Vector2& vTexCoord1, const BoneWeight& boneWeights)
 			{
 				bool bNewMaterial = true;
 
-				for( size_t i = 0; i < m_ModelParts.size(); ++i )
+				for (FIMeshPart* pModelPart : m_ModelParts)
 				{
-					FIMeshPart* pModelPart = m_ModelParts[i];
 					if( pMaterial == pModelPart->GetMaterial() )
 					{
 						pModelPart->AddVertex(vPosition, vNormal, vTexCoord0, vTexCoord1, boneWeights);
@@ -243,7 +229,7 @@ namespace APBuild
 				{
 					FIMeshPart* pModelPart = new FIMeshPart(this, pMaterial);
 					pModelPart->AddVertex(vPosition, vNormal, vTexCoord0, vTexCoord1, boneWeights);
-					m_ModelParts.push_back(pModelPart);
+					m_ModelParts.Add(pModelPart);
 				}
 			}
 
@@ -280,7 +266,7 @@ namespace APBuild
 			const Matrix& GetParentRelativeTransform() const { return m_parentRelativeTransform; }
 			//const Matrix& GetGeometricOffset() const	{ return m_matGeometricOffset; }
 			//const Matrix& GetAnimationTransform() const { return m_matAnimationTransform; }
-			const std::vector<FIMeshPart*>& getParts() const { return m_ModelParts; }
+			const List<FIMeshPart*>& getParts() const { return m_ModelParts; }
 
 			const std::string& GetName() const { return m_strName; }
 		};

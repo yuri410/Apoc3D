@@ -157,7 +157,6 @@ Global
 		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Release_DynLib|x64.Build.0 = Release_DynLib|x64
 		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Release_Static|Win32.ActiveCfg = Release_DynLib|Win32
 		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Release_Static|x64.ActiveCfg = Release_DynLib|x64
-		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Release_Static|x64.Build.0 = Release_DynLib|x64
 		{881548E3-B5CD-43EA-85DC-1A93C9E38D14}.Debug|Win32.ActiveCfg = Debug|Win32
 		{881548E3-B5CD-43EA-85DC-1A93C9E38D14}.Debug|Win32.Build.0 = Debug|Win32
 		{881548E3-B5CD-43EA-85DC-1A93C9E38D14}.Debug|x64.ActiveCfg = Debug|x64

@@ -98,34 +98,37 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IntDir>$(SolutionDir)objs\$(ProjectName)_$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\x86\$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x86\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Configuration)64\</OutDir>
-    <IntDir>$(SolutionDir)objs64\$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x64\</OutDir>
+    <IntDir>$(SolutionDir)objs\x64\$(ProjectName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
-    <IntDir>$(SolutionDir)objs\$(ProjectName)_$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\x86\$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x86\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)$(Configuration)64\</OutDir>
-    <IntDir>$(SolutionDir)objs64\$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x64\</OutDir>
+    <IntDir>$(SolutionDir)objs\x64\$(ProjectName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IntDir>$(SolutionDir)objs\$(ProjectName)_$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\x86\$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x86\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Static|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Configuration)64\</OutDir>
-    <IntDir>$(SolutionDir)objs64\$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x64\</OutDir>
+    <IntDir>$(SolutionDir)objs\x64\$(ProjectName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -147,8 +150,6 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\Debug\</AdditionalLibraryDirectories>
     </Link>
     <Lib>
       <TargetMachine>MachineX86</TargetMachine>
@@ -174,8 +175,6 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\Debug\</AdditionalLibraryDirectories>
     </Link>
     <Lib>
       <TargetMachine>MachineX64</TargetMachine>

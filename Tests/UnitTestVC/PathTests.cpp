@@ -20,6 +20,14 @@ namespace UnitTestVC
 			Assert::AreEqual(String(L"b"), result);
 		}
 		
+		TEST_METHOD(PathUtils_GetFilePathNoExt)
+		{
+			String result = PathUtils::GetFilePathNoExt(LR"(F:\Temp/\/\\ipch\0bulletsolution-2facbcfd\b.sdf)");
+
+			Assert::AreEqual(String(LR"(F:\Temp/\/\\ipch\0bulletsolution-2facbcfd\b)"), result);
+		}
+
+
 		TEST_METHOD(PathUtils_GetFileName)
 		{
 			String result = PathUtils::GetFileName(LR"(F:\Temp\ipch\0bulletsolution-2facbcfd\ .sdf)");
