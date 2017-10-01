@@ -571,6 +571,13 @@ namespace Apoc3D
 #endif
 			}
 
+			template <typename CharType, typename NumType, NumType(*Parser)(const CharType*, bool*)> FORCE_INLINE
+			bool Parse(const CharType* str, NumType& result)
+			{
+				bool hasError = false;
+				result = Parser(str, &hasError);
+				return !hasError;
+			}
 
 			template <typename StrType, typename CharType, int32 N1>
 			StrType NumberBufferToString(FixedList<CharType, N1>& digits, uint16 width, CharType fill, uint32 flags)
@@ -1086,6 +1093,21 @@ namespace Apoc3D
 				return !*wild;
 			}
 
+
+			template <typename StrType>
+			void Trim(StrType& str, const StrType& delims)
+			{
+				str.erase(str.find_last_not_of(delims) + 1);
+				str.erase(0, str.find_first_not_of(delims));
+			}
+
+			template <typename StrType>
+			void TrimLeft(StrType& str, const StrType& delims)  { str.erase(0, str.find_first_not_of(delims)); }
+
+			template <typename StrType>
+			void TrimRight(StrType& str, const StrType& delims) { str.erase(str.find_last_not_of(delims) + 1); }
+
+
 			template <typename CharType>
 			bool cstricmp(const CharType* a, const char* b)
 			{
@@ -1118,6 +1140,17 @@ namespace Apoc3D
 		float StringUtils::ParseSingle(const String& val) { return (float)Impl::ParseChecked<wchar_t, double, Impl::ParseFloatingPoint>(val.c_str()); }
 		double StringUtils::ParseDouble(const String& val) { return Impl::ParseChecked<wchar_t, double, Impl::ParseFloatingPoint>(val.c_str()); }
 
+		bool StringUtils::ParseUInt16(const String& val, uint16& result) { return Impl::Parse<wchar_t, uint16, Impl::ParseUnsignedInteger>(val.c_str(), result); }
+		bool StringUtils::ParseUInt32(const String& val, uint32& result) { return Impl::Parse<wchar_t, uint32, Impl::ParseUnsignedInteger>(val.c_str(), result); }
+		bool StringUtils::ParseUInt64(const String& val, uint64& result) { return Impl::Parse<wchar_t, uint64, Impl::ParseUnsignedInteger>(val.c_str(), result); }
+
+		bool StringUtils::ParseInt16(const String& val, int16& result) { return Impl::Parse<wchar_t, int16, Impl::ParseSignedInteger>(val.c_str(), result); }
+		bool StringUtils::ParseInt32(const String& val, int32& result) { return Impl::Parse<wchar_t, int32, Impl::ParseSignedInteger>(val.c_str(), result); }
+		bool StringUtils::ParseInt64(const String& val, int64& result) { return Impl::Parse<wchar_t, int64, Impl::ParseSignedInteger>(val.c_str(), result); }
+
+		bool StringUtils::ParseSingle(const String& val, float& result) { double r; return Impl::Parse<wchar_t, double, Impl::ParseFloatingPoint>(val.c_str(), r); result = (float)r; }
+		bool StringUtils::ParseDouble(const String& val, double& result) { return Impl::Parse<wchar_t, double, Impl::ParseFloatingPoint>(val.c_str(), result); }
+
 		//////////////////////////////////////////////////////////////////////////
 
 		bool StringUtils::ParseBool(const nstring& v) { return Impl::StartsWith<true>(v, "true") || Impl::StartsWith<true>(v, "yes") || Impl::StartsWith<true>(v, "1"); }
@@ -1140,6 +1173,17 @@ namespace Apoc3D
 		float StringUtils::ParseSingle(const nstring& val) { return (float)Impl::ParseChecked<char, double, Impl::ParseFloatingPoint>(val.c_str()); }
 		double StringUtils::ParseDouble(const nstring& val) { return Impl::ParseChecked<char, double, Impl::ParseFloatingPoint>(val.c_str()); }
 
+
+		bool StringUtils::ParseUInt16(const std::string& val, uint16& result) { return Impl::Parse<char, uint16, Impl::ParseUnsignedInteger>(val.c_str(), result); }
+		bool StringUtils::ParseUInt32(const std::string& val, uint32& result) { return Impl::Parse<char, uint32, Impl::ParseUnsignedInteger>(val.c_str(), result); }
+		bool StringUtils::ParseUInt64(const std::string& val, uint64& result) { return Impl::Parse<char, uint64, Impl::ParseUnsignedInteger>(val.c_str(), result); }
+		
+		bool StringUtils::ParseInt16(const std::string& val, int16& result) { return Impl::Parse<char, int16, Impl::ParseSignedInteger>(val.c_str(), result); }
+		bool StringUtils::ParseInt32(const std::string& val, int32& result) { return Impl::Parse<char, int32, Impl::ParseSignedInteger>(val.c_str(), result); }
+		bool StringUtils::ParseInt64(const std::string& val, int64& result) { return Impl::Parse<char, int64, Impl::ParseSignedInteger>(val.c_str(), result); }
+
+		bool StringUtils::ParseSingle(const std::string& val, float& result) { double r; return Impl::Parse<char, double, Impl::ParseFloatingPoint>(val.c_str(), r); result = (float)r; }
+		bool StringUtils::ParseDouble(const std::string& val, double& result) { return Impl::Parse<char, double, Impl::ParseFloatingPoint>(val.c_str(), result); }
 
 		//////////////////////////////////////////////////////////////////////////
 		
@@ -1206,19 +1250,14 @@ namespace Apoc3D
 
 		//////////////////////////////////////////////////////////////////////////
 
-		void StringUtils::Trim(String& str, const String& delims)
-		{
-			str.erase(str.find_last_not_of(delims)+1);
-			str.erase(0, str.find_first_not_of(delims));
-		}
-		void StringUtils::TrimLeft(String& str, const String& delims)
-		{
-			str.erase(0, str.find_first_not_of(delims));
-		}
-		void StringUtils::TrimRight(String& str, const String& delims)
-		{
-			str.erase(str.find_last_not_of(delims)+1);
-		}
+		void StringUtils::Trim(String& str, const String& delims) { Impl::Trim(str, delims); }
+		void StringUtils::TrimLeft(String& str, const String& delims) { Impl::TrimLeft(str, delims); }
+		void StringUtils::TrimRight(String& str, const String& delims) { Impl::TrimRight(str, delims); }
+
+		void StringUtils::Trim(std::string& str, const std::string& delims) { Impl::Trim(str, delims); }
+		void StringUtils::TrimLeft(std::string& str, const std::string& delims) { Impl::TrimLeft(str, delims); }
+		void StringUtils::TrimRight(std::string& str, const std::string& delims) { Impl::TrimRight(str, delims); }
+
 
 		void StringUtils::Split(const String& str, List<String>& result, const String& delims) { Impl::Split(str, result, delims); }
 		void StringUtils::Split(const nstring& str, List<nstring>& result, const nstring& delims) { Impl::Split(str, result, delims); }

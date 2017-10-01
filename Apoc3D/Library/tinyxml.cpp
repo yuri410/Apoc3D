@@ -464,6 +464,37 @@ const TiXmlElement* TiXmlNode::NextSiblingElement( const char * _value ) const
 	return 0;
 }
 
+TiXmlHandle TiXmlNode::FirstChildElementHandle() const
+{
+	return TiXmlHandle(static_cast<const TiXmlNode*>(FirstChildElement()));
+}
+TiXmlHandle TiXmlNode::FirstChildElementHandle(const char * _value) const 
+{
+	return TiXmlHandle(static_cast<const TiXmlNode*>(FirstChildElement(_value)));
+}
+TiXmlHandle TiXmlNode::FirstChildElementHandle(const std::string& _value) const
+{
+	return TiXmlHandle(static_cast<const TiXmlNode*>(FirstChildElement(_value.c_str())));
+}
+
+void TiXmlNode::SearchChildElements(const std::string& _value, List<const TiXmlElement*>& results, int depth) const
+{
+	SearchElements([this, &_value](const TiXmlElement* elem)
+	{
+		if (elem == this)
+			return false;
+
+		return elem->ValueStr() == _value;
+	}, results, depth);
+}
+
+List<const TiXmlElement*> TiXmlNode::SearchChildElements(const std::string& _value, int depth) const
+{
+	List<const TiXmlElement*> r;
+	SearchChildElements(_value, r, depth);
+	return r;
+}
+
 const TiXmlDocument* TiXmlNode::GetDocument() const
 {
 	const TiXmlNode* node;
@@ -906,19 +937,9 @@ TiXmlDocument& TiXmlDocument::operator=( const TiXmlDocument& copy )
 //	Print( fp, 0 );
 //	return (ferror(fp) == 0);
 //}
-bool TiXmlDocument::Load(Apoc3D::IO::Stream& strm, TiXmlEncoding encoding)
+
+static void NormalizeLines(char* buf, int32 length)
 {
-	// Delete the existing data:
-	Clear();
-	location.Clear();
-
-	int32 length = (int32)strm.getLength();
-	char* buf = new char[ length+1 ];
-	buf[length] = 0;
-
-	strm.Read(buf, length);
-
-
 	// Process the buffer in place to normalize new lines. (See comment above.)
 	// Copies from the 'p' to 'q' pointer, where p can advance faster if
 	// a newline-carriage return is hit.
@@ -935,16 +956,15 @@ bool TiXmlDocument::Load(Apoc3D::IO::Stream& strm, TiXmlEncoding encoding)
 	const char CR = 0x0d;
 	const char LF = 0x0a;
 
-	buf[length] = 0;
-	while( *p ) {
-		assert( p < (buf+length) );
-		assert( q <= (buf+length) );
-		assert( q <= p );
+	while (*p) {
+		assert(p < (buf + length));
+		assert(q <= (buf + length));
+		assert(q <= p);
 
-		if ( *p == CR ) {
+		if (*p == CR) {
 			*q++ = LF;
 			p++;
-			if ( *p == LF ) {		// check for CR+LF (and skip LF)
+			if (*p == LF) {		// check for CR+LF (and skip LF)
 				p++;
 			}
 		}
@@ -952,8 +972,23 @@ bool TiXmlDocument::Load(Apoc3D::IO::Stream& strm, TiXmlEncoding encoding)
 			*q++ = *p++;
 		}
 	}
-	assert( q <= (buf+length) );
+	assert(q <= (buf + length));
 	*q = 0;
+}
+
+bool TiXmlDocument::Load(Apoc3D::IO::Stream& strm, TiXmlEncoding encoding)
+{
+	// Delete the existing data:
+	Clear();
+	location.Clear();
+
+	int32 length = (int32)strm.getLength();
+	char* buf = new char[ length+1 ];
+	buf[length] = 0;
+
+	strm.Read(buf, length);
+
+	NormalizeLines(buf, length);
 
 	Parse( buf, 0, encoding );
 
@@ -976,6 +1011,25 @@ void TiXmlDocument::Save(Apoc3D::IO::Stream& strm)
 	}
 	
 	Print(&bw, 0);
+}
+
+bool TiXmlDocument::Parse(const std::string& txt, TiXmlEncoding encoding)
+{
+	// Delete the existing data:
+	Clear();
+	location.Clear();
+
+	int32 length = (int32)txt.size();
+	char* buf = new char[length + 1];
+	buf[length] = 0;
+	memcpy(buf, txt.c_str(), length);
+
+	NormalizeLines(buf, length);
+
+	Parse(buf, 0, encoding);
+
+	delete[] buf;
+	return !Error();
 }
 
 void TiXmlDocument::CopyTo( TiXmlDocument* target ) const
@@ -1597,7 +1651,7 @@ TiXmlHandle TiXmlHandle::FirstChild() const
 {
 	if ( node )
 	{
-		TiXmlNode* child = node->FirstChild();
+		const TiXmlNode* child = node->FirstChild();
 		if ( child )
 			return TiXmlHandle( child );
 	}
@@ -1609,7 +1663,7 @@ TiXmlHandle TiXmlHandle::FirstChild( const char * value ) const
 {
 	if ( node )
 	{
-		TiXmlNode* child = node->FirstChild( value );
+		const TiXmlNode* child = node->FirstChild( value );
 		if ( child )
 			return TiXmlHandle( child );
 	}
@@ -1621,7 +1675,7 @@ TiXmlHandle TiXmlHandle::FirstChildElement() const
 {
 	if ( node )
 	{
-		TiXmlElement* child = node->FirstChildElement();
+		const TiXmlElement* child = node->FirstChildElement();
 		if ( child )
 			return TiXmlHandle( child );
 	}
@@ -1633,7 +1687,7 @@ TiXmlHandle TiXmlHandle::FirstChildElement( const char * value ) const
 {
 	if ( node )
 	{
-		TiXmlElement* child = node->FirstChildElement( value );
+		const TiXmlElement* child = node->FirstChildElement( value );
 		if ( child )
 			return TiXmlHandle( child );
 	}
@@ -1646,7 +1700,7 @@ TiXmlHandle TiXmlHandle::Child( int count ) const
 	if ( node )
 	{
 		int i;
-		TiXmlNode* child = node->FirstChild();
+		const TiXmlNode* child = node->FirstChild();
 		for (	i=0;
 				child && i<count;
 				child = child->NextSibling(), ++i )
@@ -1665,7 +1719,7 @@ TiXmlHandle TiXmlHandle::Child( const char* value, int count ) const
 	if ( node )
 	{
 		int i;
-		TiXmlNode* child = node->FirstChild( value );
+		const TiXmlNode* child = node->FirstChild( value );
 		for (	i=0;
 				child && i<count;
 				child = child->NextSibling( value ), ++i )
@@ -1684,7 +1738,7 @@ TiXmlHandle TiXmlHandle::ChildElement( int count ) const
 	if ( node )
 	{
 		int i;
-		TiXmlElement* child = node->FirstChildElement();
+		const TiXmlElement* child = node->FirstChildElement();
 		for (	i=0;
 				child && i<count;
 				child = child->NextSiblingElement(), ++i )
@@ -1703,7 +1757,7 @@ TiXmlHandle TiXmlHandle::ChildElement( const char* value, int count ) const
 	if ( node )
 	{
 		int i;
-		TiXmlElement* child = node->FirstChildElement( value );
+		const TiXmlElement* child = node->FirstChildElement( value );
 		for (	i=0;
 				child && i<count;
 				child = child->NextSiblingElement( value ), ++i )
@@ -1715,6 +1769,33 @@ TiXmlHandle TiXmlHandle::ChildElement( const char* value, int count ) const
 	}
 	return TiXmlHandle( 0 );
 }
+
+const char* TiXmlHandle::GetText() const
+{
+	const TiXmlElement* element = ToElement();
+	if (element)
+	{
+		return element->GetText();
+	}
+	return nullptr;
+}
+
+const TiXmlElement* TiXmlHandle::ToElement() const
+{
+	return ((node && node->ToElement()) ? node->ToElement() : 0); 
+}
+
+const TiXmlText* TiXmlHandle::ToText() const
+{
+	return ((node && node->ToText()) ? node->ToText() : 0); 
+}
+
+const TiXmlUnknown* TiXmlHandle::ToUnknown() const
+{
+	return ((node && node->ToUnknown()) ? node->ToUnknown() : 0);
+}
+
+
 
 
 bool TiXmlPrinter::VisitEnter( const TiXmlDocument& )

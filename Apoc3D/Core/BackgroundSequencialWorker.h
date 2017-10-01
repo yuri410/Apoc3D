@@ -76,6 +76,15 @@ namespace Apoc3D
 				}
 			}
 
+			void StopBackgroundAsync()
+			{
+				if (m_thread)
+				{
+					m_terminated = true;
+					m_queueEmptyWait.notify_all();
+				}
+			}
+
 			void AddWorkItem(const T& item)
 			{
 				m_queueMutex.lock();
@@ -102,9 +111,11 @@ namespace Apoc3D
 				m_queueMutex.unlock();
 				return r;
 			}
+
+			bool IsRunning() const { return m_running; }
+			bool IsStopping() const { return m_running && m_terminated; }
 		protected:
-			BackgroundSequencialWorker()
-				: m_terminated(true), m_thread(nullptr) { }
+			BackgroundSequencialWorker() { }
 
 			~BackgroundSequencialWorker()
 			{
@@ -114,6 +125,7 @@ namespace Apoc3D
 			static void BackgroundMainStatic(void* thisInstance) { ((BackgroundSequencialWorker*)thisInstance)->BackgroundMain(); }
 			virtual void BackgroundMain()
 			{
+				m_running = true;
 				BackgroundMainBegining();
 
 				while (!m_terminated)
@@ -141,9 +153,8 @@ namespace Apoc3D
 					}
 				}
 
-				m_terminated = true;
-
 				BackgroundMainEnding();
+				m_running = false;
 			}
 
 			virtual void BackgroundMainBegining() { };
@@ -151,12 +162,15 @@ namespace Apoc3D
 
 			virtual void BackgroundMainProcess(T& item) = 0;
 
+			static void AsyncCleanupMainStatic(void* thisInstance) { }
+
 			tthread::condition_variable m_queueEmptyWait;
 			tthread::mutex m_queueMutex;
 			Apoc3D::Collections::Queue<T> m_taskQueue;
 
-			tthread::thread* m_thread;
-			volatile bool m_terminated;
+			tthread::thread* m_thread = nullptr;
+			volatile bool m_terminated = true;
+			volatile bool m_running = false;
 		};
 	}
 }

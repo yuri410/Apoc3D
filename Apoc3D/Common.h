@@ -520,9 +520,9 @@ namespace Apoc3D
 
 	namespace Utility
 	{
-		template <typename T> class TypeDualConverter;
-		template <typename T> class TypeToStringConverter;
-		template <typename T> class TypeParseConverter;
+		template <typename T, bool NarrowString = false> class TypeDualConverter;
+		template <typename T, bool NarrowString = false> class TypeToStringConverter;
+		template <typename T, bool NarrowString = false> class TypeParseConverter;
 
 	}
 };

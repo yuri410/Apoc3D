@@ -99,6 +99,16 @@ namespace Apoc3D
 			APAPI float ParseSingle(const String& val);
 			APAPI double ParseDouble(const String& val);
 
+			APAPI bool ParseUInt16(const String& val, uint16& result);
+			APAPI bool ParseUInt32(const String& val, uint32& result);
+			APAPI bool ParseUInt64(const String& val, uint64& result);
+
+			APAPI bool ParseInt16(const String& val, int16& result);
+			APAPI bool ParseInt32(const String& val, int32& result);
+			APAPI bool ParseInt64(const String& val, int64& result);
+			APAPI bool ParseSingle(const String& val, float& result);
+			APAPI bool ParseDouble(const String& val, double& result);
+
 			//////////////////////////////////////////////////////////////////////////
 
 			APAPI bool ParseBool(const std::string& val);
@@ -117,6 +127,16 @@ namespace Apoc3D
 			APAPI int64 ParseInt64(const std::string& val);
 			APAPI float ParseSingle(const std::string& val);
 			APAPI double ParseDouble(const std::string& val);
+
+			APAPI bool ParseUInt16(const std::string& val, uint16& result);
+			APAPI bool ParseUInt32(const std::string& val, uint32& result);
+			APAPI bool ParseUInt64(const std::string& val, uint64& result);
+
+			APAPI bool ParseInt16(const std::string& val, int16& result);
+			APAPI bool ParseInt32(const std::string& val, int32& result);
+			APAPI bool ParseInt64(const std::string& val, int64& result);
+			APAPI bool ParseSingle(const std::string& val, float& result);
+			APAPI bool ParseDouble(const std::string& val, double& result);
 
 			//////////////////////////////////////////////////////////////////////////
 
@@ -169,6 +189,10 @@ namespace Apoc3D
 			APAPI void Trim(String& str, const String& delims = L" \t\r");
 			APAPI void TrimLeft(String& str, const String& delims = L" \t\r");
 			APAPI void TrimRight(String& str, const String& delims = L" \t\r");
+
+			APAPI void Trim(std::string& str, const std::string& delims = " \t\r");
+			APAPI void TrimLeft(std::string& str, const std::string& delims = " \t\r");
+			APAPI void TrimRight(std::string& str, const std::string& delims = " \t\r");
 
 			//////////////////////////////////////////////////////////////////////////
 
