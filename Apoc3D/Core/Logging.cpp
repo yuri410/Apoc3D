@@ -71,7 +71,7 @@ namespace Apoc3D
 		void LogManager::Write(LogType type, const String& message, LogMessageLevel level)
 		{
 			bool ret = m_logs[static_cast<int32>(type)]->Write(message, level, 
-				type != LOG_CommandResponse && type != LOG_Command && type != LOG_Game);
+				type != LOG_CommandResponse && type != LOG_Command && type != LOG_App);
 
 			if (ret)
 			{
@@ -132,6 +132,12 @@ namespace Apoc3D
 				result.append(L"\n");
 			}
 		}
+
+		void ApocLog(LogType type, const std::string& message, LogMessageLevel level)
+		{
+			ApocLog(type, StringUtils::toPlatformWideString(message), level);
+		}
+
 		//////////////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////////////
 
@@ -201,7 +207,7 @@ namespace Apoc3D
 				result.append(StringUtils::IntToString(t->tm_hour * 10000 + t->tm_min * 100 + t->tm_sec, StrFmt::a<6, '0'>::val));
 				result.append(1, ' ');
 
-				if (Type != LOG_Game)
+				if (Type != LOG_App)
 				{
 					result += L" [";
 					switch (Type)

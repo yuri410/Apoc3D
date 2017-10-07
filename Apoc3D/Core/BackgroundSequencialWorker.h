@@ -57,7 +57,7 @@ namespace Apoc3D
 			{
 				StopBackground();
 
-				m_terminated = false;
+				m_terminating = false;
 				m_thread = new tthread::thread(BackgroundMainStatic, this);
 				Apoc3D::Platform::SetThreadName(m_thread, name);
 			}
@@ -65,7 +65,7 @@ namespace Apoc3D
 			{
 				if (m_thread)
 				{
-					m_terminated = true;
+					m_terminating = true;
 
 					m_queueEmptyWait.notify_all();
 
@@ -80,7 +80,7 @@ namespace Apoc3D
 			{
 				if (m_thread)
 				{
-					m_terminated = true;
+					m_terminating = true;
 					m_queueEmptyWait.notify_all();
 				}
 			}
@@ -113,7 +113,7 @@ namespace Apoc3D
 			}
 
 			bool IsRunning() const { return m_running; }
-			bool IsStopping() const { return m_running && m_terminated; }
+			bool IsStopping() const { return m_running && m_terminating; }
 		protected:
 			BackgroundSequencialWorker() { }
 
@@ -128,8 +128,14 @@ namespace Apoc3D
 				m_running = true;
 				BackgroundMainBegining();
 
-				while (!m_terminated)
+				while (!m_terminating)
 				{
+					if (m_autoStop && QueryTaskCount() == 0)
+					{
+						m_terminating = true;
+						break;
+					}
+
 					m_queueMutex.lock();
 					volatile bool hasTask = false;
 					T task;
@@ -144,7 +150,7 @@ namespace Apoc3D
 					}
 					m_queueMutex.unlock();
 
-					if (m_terminated)
+					if (m_terminating)
 						break;
 
 					if (hasTask)
@@ -169,8 +175,9 @@ namespace Apoc3D
 			Apoc3D::Collections::Queue<T> m_taskQueue;
 
 			tthread::thread* m_thread = nullptr;
-			volatile bool m_terminated = true;
+			volatile bool m_terminating = true;
 			volatile bool m_running = false;
+			volatile bool m_autoStop = false;
 		};
 	}
 }

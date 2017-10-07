@@ -48,7 +48,7 @@ namespace Apoc3D
 			LOG_Graphics = 1,
 			LOG_Audio = 2,
 			LOG_Scene = 3,
-			LOG_Game = 4,
+			LOG_App = 4,
 			LOG_Network = 5,
 			LOG_Command = 6,
 			LOG_CommandResponse = 7,
@@ -102,6 +102,7 @@ namespace Apoc3D
 
 		inline void ApocLog(LogType type, const String& message, LogMessageLevel level = LOGLVL_Infomation);
 		inline void ApocLog(LogType type, const String& message, LogMessageLevel level) { LogManager::getSingleton().Write(type, message, level); }
+		void ApocLog(LogType type, const std::string& message, LogMessageLevel level);
 
 		/** 
 		 *  A LogSet is a set of LogEntries with the same LogType. 

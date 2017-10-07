@@ -107,7 +107,7 @@ namespace Apoc3D
 					}
 					else
 					{
-						ApocLog(LOG_Game, L"[Record] Data not matching game version. Ignored. " + gameVersion + L" expected " + m_versionText, LOGLVL_Warning);
+						ApocLog(LOG_App, L"[Record] Data not matching game version. Ignored. " + gameVersion + L" expected " + m_versionText, LOGLVL_Warning);
 					}
 				}
 
@@ -165,7 +165,7 @@ namespace Apoc3D
 					}
 					else
 					{
-						ApocLog(LOG_Game, L"[Record] Invalid data. CRC32 test failed. ", LOGLVL_Warning);
+						ApocLog(LOG_App, L"[Record] Invalid data. CRC32 test failed. ", LOGLVL_Warning);
 					}
 
 					delete[] compressedBuffer;
