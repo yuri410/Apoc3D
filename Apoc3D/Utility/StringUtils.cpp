@@ -309,7 +309,7 @@ namespace Apoc3D
 						num += ch - '0';
 
 						if (num < prevVal)
-							*isInvalid = false; // overflow
+							*isInvalid = true; // overflow
 					}
 					else
 					{
