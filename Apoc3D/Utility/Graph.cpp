@@ -751,7 +751,7 @@ namespace Apoc3D
 
 		GraphLayout::PhysicsWorker::PhysicsWorker(int32 idx)
 		{
-			StartBackground(L"PhysicsWorker " + StringUtils::IntToString(idx));
+			StartBackground(L"PhysicsWorker " + StringUtils::IntToString(idx), 1);
 		}
 		void GraphLayout::PhysicsWorker::BackgroundMainProcess(PhysicsTask& item)
 		{

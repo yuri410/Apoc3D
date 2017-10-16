@@ -120,7 +120,7 @@ namespace Apoc3D
 			
 			T ParseFlags(const StringType& combo, const StringType& delim) const
 			{
-				return ParseFlagFields<T, TypeDualConverter<T, NarrowString>, &TypeDualConverter<T, NarrowString>::Parse>(combo, this, delim);
+				return ParseFlagFields<T, StringType, TypeDualConverter<T, NarrowString>, &TypeDualConverter<T, NarrowString>::Parse>(combo, this, delim);
 			}
 
 
@@ -250,7 +250,7 @@ namespace Apoc3D
 
 			T ParseFlags(const StringType& combo, const StringType& delim) const
 			{
-				return ParseFlagFields<T, TypeParseConverter<T, NarrowString>, &TypeParseConverter<T, NarrowString>::Parse>(combo, this, delim);
+				return ParseFlagFields<T, StringType, TypeParseConverter<T, NarrowString>, &TypeParseConverter<T, NarrowString>::Parse>(combo, this, delim);
 			}
 
 			T operator[](const StringType& name) const { return m_cast[name]; }

@@ -86,7 +86,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	params.FSAASampleCount = 0;
 	params.IsFullForm = true;
 	params.IsWindowed = true;
-
+	params.IgnoreMonitorChange = true;
 
 	RenderView* view =  devContent->Create(params);
 

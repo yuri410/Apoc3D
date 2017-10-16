@@ -8,7 +8,7 @@
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Collections/LinkedList.h"
 #include "apoc3d/Collections/HashMap.h"
-#include "apoc3d/Core/BackgroundSequencialWorker.h"
+#include "apoc3d/Core/BackgroundWorker.h"
 
 #include "apoc3d/Meta/FunctorReference.h"
 
@@ -135,7 +135,7 @@ namespace Apoc3D
 					: TaskType((decltype(TaskType))tskType), Subject(obj), DT(dt), SelectedTechnique(tec) { }
 			};
 
-			struct PhysicsWorker : public BackgroundSequencialWorker<PhysicsTask>
+			struct PhysicsWorker : public BackgroundWorker<PhysicsTask>
 			{
 				PhysicsWorker(int32 idx);
 				virtual void BackgroundMainProcess(PhysicsTask& item) override;

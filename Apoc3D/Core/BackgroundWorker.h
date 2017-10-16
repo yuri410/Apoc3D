@@ -23,62 +23,94 @@
 #include "apoc3d/Collections/Queue.h"
 #include "apoc3d/Platform/Thread.h"
 #include "apoc3d/Library/tinythread.h"
+#include "apoc3d/Utility/StringUtils.h"
+
+#include <atomic>
 
 namespace Apoc3D
 {
 	namespace Core
 	{
 		template <typename T>
-		class BackgroundSequencialWorker
+		class BackgroundWorker
 		{
 		public:
-			int32 WaitUntilClear(int32 timeOut = 0)
+			bool WaitUntilClear(int32 timeOut = 0)
 			{
 				bool allowTimeOut = timeOut > 0;
 
-				int32 count;
-				do 
+				for (;;)
 				{
-					m_queueMutex.lock();
-					count = m_taskQueue.getCount();
-					m_queueMutex.unlock();
+					bool isIdle = QueryTaskCount() == 0;
 
-					if (count == 0)
+					if (isIdle)
+					{
+						// check waiting threads
+						for (const ThreadData& td : m_threadData)
+						{
+							if (!td.m_isIdle)
+							{
+								isIdle = false;
+								break;
+							}
+						}
+					}
+
+					if (!isIdle)
+					{
+						Platform::ApocSleep(1);
+						timeOut--;
+					}
+					else
 						break;
+					
+					if (allowTimeOut && timeOut <= 0)
+						return true;
+				}
 
-					Platform::ApocSleep(1);
-					timeOut--;
-
-				} while (count > 0 && (!allowTimeOut || timeOut > 0));
-				return count;
+				return false;
 			}
 
-			void StartBackground(const String& name)
+			void StartBackground(const String& name, int32 threadCount)
 			{
 				StopBackground();
 
 				m_terminating = false;
-				m_thread = new tthread::thread(BackgroundMainStatic, this);
-				Apoc3D::Platform::SetThreadName(m_thread, name);
+				
+				m_threadData.ReserveDiscard(threadCount);
+				for (ThreadData& td : m_threadData)
+				{
+					td.m_owner = this;
+					td.m_isRunning = false;
+					td.m_isIdle = false;
+				}
+
+				for (int32 i = 0; i < threadCount; i++)
+				{
+					tthread::thread* th = new tthread::thread(BackgroundMainStatic, &m_threadData[i]);
+					Apoc3D::Platform::SetThreadName(th, threadCount == 1 ? name : (name + L"_" + Apoc3D::Utility::StringUtils::IntToString(i)));
+				}
 			}
 			void StopBackground()
 			{
-				if (m_thread)
+				if (m_threads.getCount())
 				{
 					m_terminating = true;
-
 					m_queueEmptyWait.notify_all();
 
-					if (m_thread->joinable())
-						m_thread->join();
-					delete m_thread;
-					m_thread = nullptr;
+					for (tthread::thread* th : m_threads)
+					{
+						if (th->joinable())
+							th->join();
+					}
+
+					m_threads.DeleteAndClear();
 				}
 			}
 
 			void StopBackgroundAsync()
 			{
-				if (m_thread)
+				if (m_threads.getCount())
 				{
 					m_terminating = true;
 					m_queueEmptyWait.notify_all();
@@ -103,6 +135,13 @@ namespace Apoc3D
 				m_queueMutex.unlock();
 			}
 
+			void ClearTasks()
+			{
+				m_queueMutex.lock();
+				m_taskQueue.Clear();
+				m_queueMutex.unlock();
+			}
+
 			int32 QueryTaskCount()
 			{
 				int32 r;
@@ -112,20 +151,51 @@ namespace Apoc3D
 				return r;
 			}
 
-			bool IsRunning() const { return m_running; }
-			bool IsStopping() const { return m_running && m_terminating; }
-		protected:
-			BackgroundSequencialWorker() { }
+			bool IsStopping() const { return m_terminating && IsRunning(); }
+			bool IsRunning() const 
+			{
+				for (const ThreadData& td : m_threadData)
+				{
+					if (td.m_isRunning)
+						return true;
+				}
+				return false;
+			}
 
-			~BackgroundSequencialWorker()
+		protected:
+
+			BackgroundWorker() { }
+
+			~BackgroundWorker()
 			{
 				StopBackground();
 			}
-			
-			static void BackgroundMainStatic(void* thisInstance) { ((BackgroundSequencialWorker*)thisInstance)->BackgroundMain(); }
-			virtual void BackgroundMain()
+
+			virtual void BackgroundMainBegining() { };
+			virtual void BackgroundMainEnding() { };
+
+			virtual void BackgroundMainProcess(T& item) = 0;
+
+			void SetAutoStop(bool v) { m_autoStop = v; }
+
+		private:
+			struct ThreadData
 			{
-				m_running = true;
+				BackgroundWorker* m_owner;
+				std::atomic<bool> m_isRunning;
+				std::atomic<bool> m_isIdle;
+			};
+
+			static void BackgroundMainStatic(void* data) 
+			{
+				ThreadData* td = (ThreadData*)data;
+				td->m_isRunning = true;
+				td->m_owner->BackgroundMain(td); 
+				td->m_isRunning = false;
+			}
+
+			void BackgroundMain(ThreadData* td)
+			{
 				BackgroundMainBegining();
 
 				while (!m_terminating)
@@ -141,7 +211,9 @@ namespace Apoc3D
 					T task;
 					if (m_taskQueue.getCount() == 0)
 					{
+						td->m_isIdle = true;
 						m_queueEmptyWait.wait(m_queueMutex);
+						td->m_isIdle = false;
 					}
 					else
 					{
@@ -160,24 +232,17 @@ namespace Apoc3D
 				}
 
 				BackgroundMainEnding();
-				m_running = false;
 			}
-
-			virtual void BackgroundMainBegining() { };
-			virtual void BackgroundMainEnding() { };
-
-			virtual void BackgroundMainProcess(T& item) = 0;
-
-			static void AsyncCleanupMainStatic(void* thisInstance) { }
 
 			tthread::condition_variable m_queueEmptyWait;
 			tthread::mutex m_queueMutex;
 			Apoc3D::Collections::Queue<T> m_taskQueue;
 
-			tthread::thread* m_thread = nullptr;
-			volatile bool m_terminating = true;
-			volatile bool m_running = false;
-			volatile bool m_autoStop = false;
+			Apoc3D::Collections::List<tthread::thread*> m_threads;
+			Apoc3D::Collections::List<ThreadData> m_threadData;
+
+			std::atomic<bool> m_terminating = true;
+			std::atomic<bool> m_autoStop = false;
 		};
 	}
 }

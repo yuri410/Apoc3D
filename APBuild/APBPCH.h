@@ -26,7 +26,7 @@
 #include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Config/XmlConfigurationFormat.h"
 
-#include "apoc3d/Core/BackgroundSequencialWorker.h"
+#include "apoc3d/Core/BackgroundWorker.h"
 #include "apoc3d/Core/CommandInterpreter.h"
 #include "apoc3d/Core/CoreCommon.h"
 #include "apoc3d/Core/GameTime.h"
