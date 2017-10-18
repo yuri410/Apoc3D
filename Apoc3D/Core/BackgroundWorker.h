@@ -89,6 +89,7 @@ namespace Apoc3D
 				{
 					tthread::thread* th = new tthread::thread(BackgroundMainStatic, &m_threadData[i]);
 					Apoc3D::Platform::SetThreadName(th, threadCount == 1 ? name : (name + L"_" + Apoc3D::Utility::StringUtils::IntToString(i)));
+					m_threads.Add(th);
 				}
 			}
 			void StopBackground()
