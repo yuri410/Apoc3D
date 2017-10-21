@@ -48,7 +48,7 @@ namespace Apoc3D
 						// check waiting threads
 						for (const ThreadData& td : m_threadData)
 						{
-							if (!td.m_isIdle)
+							if (td.m_isRunning && !td.m_isIdle)
 							{
 								isIdle = false;
 								break;
