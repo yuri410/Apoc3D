@@ -849,7 +849,7 @@ public:
 	}
 
 	template <typename Func>
-	List<const TiXmlNode*> SearchElements(Func func, int depth = -1) const
+	List<const TiXmlNode*> SearchNodes(Func func, int depth = -1) const
 	{
 		List<const TiXmlNode*> r;
 		SearchNodes(func, r, depth);
