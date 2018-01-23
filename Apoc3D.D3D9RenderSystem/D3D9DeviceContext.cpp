@@ -146,7 +146,7 @@ namespace Apoc3D
 					mode.GraphicsCardName = ai->GraphicsCardName;
 					mode.DisplayName = ai->DisplayName;
 					mode.MonitorNames = ai->MonitorNames;
-
+					
 					for (D3DDISPLAYMODE d3dmode : ai->DisplayModes)
 					{
 						mode.Height = d3dmode.Height;
@@ -159,6 +159,8 @@ namespace Apoc3D
 							{
 								for (SettingsCombo* sc : di->SettingCombos)
 								{
+									mode.FullScreen = !sc->Windowed;
+
 									for (int n = 0; n < sc->MultisampleTypes.getCount(); n++)
 									{
 										mode.FSAASampleCount = D3D9Utils::ConvertBackMultiSample(sc->MultisampleTypes[n]);
