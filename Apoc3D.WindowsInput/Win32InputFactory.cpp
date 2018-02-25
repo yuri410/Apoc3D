@@ -55,6 +55,12 @@ namespace Apoc3D
 				m_tempTitleParam = window->getTitle();
 
 				EnumThreadWindows(GetCurrentThreadId(), EnumWindowsProcStatic, 0);
+
+				if (m_hwnd == NULL)
+				{
+					m_hwnd = GetConsoleWindow();
+				}
+
 				if (m_hwnd)
 				{
 					OIS::ParamList pl;

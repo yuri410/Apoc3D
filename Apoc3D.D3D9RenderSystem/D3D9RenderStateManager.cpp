@@ -474,7 +474,7 @@ namespace Apoc3D
 				
 				if (caps.VertexShaderVersion >= D3DVS_VERSION((uint)3, (uint)0))
 				{
-					if (!m_vertexSamplers)
+					if (m_vertexSamplers)
 						delete[] m_vertexSamplers;
 
 					m_vertexSamplers = new ShaderSamplerState[4];
