@@ -181,25 +181,18 @@ namespace Apoc3D
 		{
 		public:
 			virtual ~Keyboard();
-			/**
-			 *  Is the specified key just pressed
-			 */
+
+			/** Is the specified key just pressed */
 			bool IsKeyDown(KeyboardKeyCode code) const { return m_keyState[code] && !m_lastKeyState[(int)code]; }
-			/**
-			 *  Is the specified key just released
-			 */
+			/** Is the specified key just released */
 			bool IsKeyUp(KeyboardKeyCode code) const { return !m_keyState[code] && m_lastKeyState[(int)code]; }
 
-			/**
-			 *  Is the specified key currently pressing
-			 */
+			/** Is the specified key currently pressing */
 			bool IsPressing(KeyboardKeyCode code) const { return m_keyState[code]; }
 
 			bool WasPressing(KeyboardKeyCode code) const { return m_lastKeyState[code]; }
 
-			/**
-			 *  Update keyboard state
-			 */
+			/** Update keyboard state */
 			virtual void Update(const GameTime* time) = 0;
 
 			void Serialize(Apoc3D::IO::BinaryWriter& bw);

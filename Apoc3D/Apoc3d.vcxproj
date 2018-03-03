@@ -324,6 +324,7 @@
     <ClInclude Include="Core\Streaming\GenerationTable.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Exception.h" />
+    <ClInclude Include="Input\NullInput.h" />
     <ClInclude Include="Meta\EventDelegate.h" />
     <ClInclude Include="ApocExportSettings.h" />
     <ClInclude Include="Meta\EventDelegateBinding.h" />
@@ -518,6 +519,7 @@
     <ClCompile Include="Input\InputAPI.cpp" />
     <ClCompile Include="Input\Keyboard.cpp" />
     <ClCompile Include="Input\Mouse.cpp" />
+    <ClCompile Include="Input\NullInput.cpp" />
     <ClCompile Include="IOLib\BinaryReader.cpp" />
     <ClCompile Include="IOLib\BinaryWriter.cpp" />
     <ClCompile Include="IOLib\EffectData.cpp" />

@@ -37,19 +37,20 @@ namespace Apoc3D
 		{
 			class Win32Keyboard : public Keyboard, public OIS::KeyListener
 			{
-			private:
-				OIS::InputManager* m_inpMgr;
-				OIS::Keyboard* m_keyboard;
-
 			public:
 				Win32Keyboard(OIS::InputManager* mgr);
 				~Win32Keyboard();
 
-				virtual void Update(const GameTime* time);
+				void Update(const GameTime* time) override;
 
 
 				bool keyPressed( const OIS::KeyEvent &arg );
 				bool keyReleased( const OIS::KeyEvent &arg );
+
+			private:
+				OIS::InputManager* m_inpMgr;
+				OIS::Keyboard* m_keyboard;
+
 			};
 		}
 	}

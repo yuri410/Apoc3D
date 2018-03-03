@@ -41,9 +41,9 @@ namespace Apoc3D
 				OldSchoolMouse(HWND hwnd);
 				~OldSchoolMouse();
 
-				virtual void SetPosition(const Point& loc) override;
+				void SetPosition(const Point& loc) override;
 
-				void Update(const GameTime* time);
+				void Update(const GameTime* time) override;
 			private:
 				int m_accumlatedMouseWheel;
 
