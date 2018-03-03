@@ -282,7 +282,6 @@
     <ClInclude Include="ConstantTable.h" />
     <ClInclude Include="NRSCommon.h" />
     <ClInclude Include="NRSDeviceContext.h" />
-    <ClInclude Include="NRSObjectFactory.h" />
     <ClInclude Include="NRSObjects.h" />
     <ClInclude Include="NRSRenderDevice.h" />
     <ClInclude Include="NRSRenderStateManager.h" />
@@ -297,7 +296,6 @@
   <ItemGroup>
     <ClCompile Include="NRSObjects.cpp" />
     <ClCompile Include="ConstantTable.cpp" />
-    <ClCompile Include="NRSObjectFactory.cpp" />
     <ClCompile Include="NRSRenderStateManager.cpp" />
     <ClCompile Include="NRSShader.cpp" />
     <ClCompile Include="NRSSprite.cpp" />

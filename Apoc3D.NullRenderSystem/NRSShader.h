@@ -105,10 +105,7 @@ namespace Apoc3D
 				void SetValue(const String& paramName, const int32* value, int32 count) override { }
 
 			protected:
-				NO_INLINE static void ThrowKeyNotFoundEx(const String& name)
-				{
-					throw AP_EXCEPTION(ExceptID::KeyNotFound, name);
-				}
+				static void ThrowKeyNotFoundEx(const String& name);
 
 				NRSRenderDevice* m_device;
 

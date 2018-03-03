@@ -19,6 +19,7 @@
 #include "NRSRenderStateManager.h"
 #include "NRSRenderDevice.h"
 #include "NRSTexture.h"
+#include "apoc3d/Core/Logging.h"
 
 namespace Apoc3D
 {
@@ -81,6 +82,11 @@ namespace Apoc3D
 					return true;
 				}
 				return false;
+			}
+
+			void NRSShader::ThrowKeyNotFoundEx(const String& name)
+			{
+				Apoc3D::Core::ApocLog(LOG_Graphics, L"Shader parameter " + name + L" not found.", LOGLVL_Warning);
 			}
 
 			//////////////////////////////////////////////////////////////////////////

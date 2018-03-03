@@ -20,7 +20,6 @@
 #include "NRSRenderTarget.h"
 #include "NRSTexture.h"
 #include "NRSRenderStateManager.h"
-#include "NRSObjectFactory.h"
 #include "NRSObjects.h"
 #include "NRSSprite.h"
 
