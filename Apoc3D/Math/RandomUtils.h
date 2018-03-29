@@ -94,9 +94,14 @@ namespace Apoc3D
 			static bool NextBool() { return (Next() & 1) != 0; }
 
 			static int32 Next() { RANDOMIZER_CHECKTHREAD; return m_randomizer.Next();  }
+			static int32 Next(int32 minValue, int32 maxValue) { RANDOMIZER_CHECKTHREAD; return m_randomizer.Next(minValue, maxValue); }
 			static int32 NextInclusive(int32 max) { RANDOMIZER_CHECKTHREAD; return m_randomizer.NextInclusive(max); }
 			static int32 NextExclusive(int32 max) { RANDOMIZER_CHECKTHREAD; return m_randomizer.NextExclusive(max); }
-			static int32 Next(int32 minValue, int32 maxValue) { RANDOMIZER_CHECKTHREAD; return m_randomizer.Next(minValue, maxValue); }
+
+			static int64 Next64() { RANDOMIZER_CHECKTHREAD; return m_randomizer.Next64(); }
+			static int64 Next64(int64 minValue, int64 maxValue) { RANDOMIZER_CHECKTHREAD; return m_randomizer.Next64(minValue, maxValue); }
+			static int64 Next64Inclusive(int64 max) { RANDOMIZER_CHECKTHREAD; return m_randomizer.Next64Inclusive(max); }
+			static int64 Next64Exclusive(int64 max) { RANDOMIZER_CHECKTHREAD; return m_randomizer.Next64Exclusive(max); }
 
 			static float NextFloat() { RANDOMIZER_CHECKTHREAD; return m_randomizer.NextFloat();  }
 			static float NextFloat(float minValue, float maxValue)
@@ -107,6 +112,17 @@ namespace Apoc3D
 				return minValue + (maxValue - minValue) * m_randomizer.NextFloat(); 
 			}
 			static float NextFloat(const float* ranges) { return NextFloat(ranges[0], ranges[1]);  }
+
+			static double NextDouble() { RANDOMIZER_CHECKTHREAD; return m_randomizer.NextDouble(); }
+			static double NextDouble(double minValue, double maxValue)
+			{
+				RANDOMIZER_CHECKTHREAD;
+				if (minValue >= maxValue)
+					return minValue;
+				return minValue + (maxValue - minValue) * m_randomizer.NextDouble();
+			}
+			static double NextDouble(const double* ranges) { return NextDouble(ranges[0], ranges[1]); }
+
 
 
 			template <int32 N>

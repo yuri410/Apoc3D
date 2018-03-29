@@ -88,30 +88,37 @@ namespace Apoc3D
 
 		int32 Random::Next(int32 minValue, int32 maxValue)
 		{
-			assert(minValue <= maxValue);
-			int64 range = (int64)maxValue - (int64)minValue;
-			int64 val = static_cast<int64>(SampleD() * range) + minValue;
-			return static_cast<int32>(val);
+			return (int32)Next64(minValue, maxValue);
 		}
 
 		int64 Random::Next64()
 		{
-
+			uint64 a = (uint64)RawSample();
+			uint64 b = (uint64)RawSample();
+			return (int64)(a << 32 | b);
 		}
 
 		int64 Random::Next64Inclusive(int64 max)
 		{
-
+			assert(max >= 0);
+			int64 result = static_cast<int64>(SampleD() * (max + 1));
+			if (result > max)
+				result = max; // this might happen if processor float point precision is tuned down
+			return result;
 		}
 
 		int64 Random::Next64Exclusive(int64 max)
 		{
-
+			if (--max <= 0)
+				return 0;
+			return Next64Inclusive(max);
 		}
 
 		int64 Random::Next64(int64 minValue, int64 maxValue)
 		{
-
+			assert(minValue <= maxValue);
+			int64 range = maxValue - minValue;
+			return static_cast<int64>(SampleD() * range) + minValue;
 		}
 
 
