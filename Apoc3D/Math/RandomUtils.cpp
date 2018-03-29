@@ -70,6 +70,51 @@ namespace Apoc3D
 			m_index = 0;
 		}
 
+		int32 Random::NextInclusive(int32 max)
+		{
+			assert(max >= 0);
+			int32 result = static_cast<int32>(SampleD() * (max + 1));
+			if (result > max)
+				result = max; // this might happen if processor float point precision is tuned down
+			return result;
+		}
+
+		int32 Random::NextExclusive(int32 max)
+		{
+			if (--max <= 0)
+				return 0;
+			return NextInclusive(max);
+		}
+
+		int32 Random::Next(int32 minValue, int32 maxValue)
+		{
+			assert(minValue <= maxValue);
+			int64 range = (int64)maxValue - (int64)minValue;
+			int64 val = static_cast<int64>(SampleD() * range) + minValue;
+			return static_cast<int32>(val);
+		}
+
+		int64 Random::Next64()
+		{
+
+		}
+
+		int64 Random::Next64Inclusive(int64 max)
+		{
+
+		}
+
+		int64 Random::Next64Exclusive(int64 max)
+		{
+
+		}
+
+		int64 Random::Next64(int64 minValue, int64 maxValue)
+		{
+
+		}
+
+
 #if _DEBUG
 		uint32 Randomizer::m_existingThreadID = 0;
 
