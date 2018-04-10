@@ -1075,7 +1075,7 @@ namespace UnitTestVC
 			List<int32> lst = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 			List<int32> result;
 
-			for (int32 v : ConditionalAccessor<int32>(lst.begin(), lst.end()))
+			for (int32 v : ConditionalAccessor<int32>(lst))
 			{
 				result.Add(v);
 			}
@@ -1094,7 +1094,7 @@ namespace UnitTestVC
 			List<int32> lst = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 			List<int32> result;
 
-			for (int32 v : ConditionalAccessor<int32, int32, TestCond>(lst.begin(), lst.end()))
+			for (int32 v : ConditionalAccessor<int32, int32, TestCond>(lst))
 			{
 				result.Add(v);
 			}
@@ -1103,6 +1103,28 @@ namespace UnitTestVC
 			for (int32 v : result)
 			{
 				Assert::IsTrue(TestCond(v));
+			}
+		}
+	};
+
+	TEST_CLASS(GroupAccessorTest)
+	{
+	public:
+		TEST_METHOD(GroupAccessorTest_Iterate)
+		{
+			List<int32> lst = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+			List<int32> result;
+
+			for (auto g : GroupAccessor<int32, 4>(lst))
+			{
+				for (int32 v : g)
+					result.Add(v);
+			}
+
+			Assert::AreEqual(lst.getCount(), result.getCount());
+			for (int32 i = 0; i < lst.getCount(); i++)
+			{
+				Assert::AreEqual(lst[i], result[i]);
 			}
 		}
 	};

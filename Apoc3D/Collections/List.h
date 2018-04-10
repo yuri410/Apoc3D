@@ -142,75 +142,6 @@ namespace Apoc3D
 			if (i < right) QuickSortWithSorter<T, SorterType>(arr, i, right, sorterCalc);
 		}
 
-		namespace Utils
-		{
-			template <typename T, typename RetType>
-			RetType defaultRetConv(T& e) { return static_cast<RetType>(e); }
-
-			template <typename T>
-			bool defaultChecker(T& e) { return true; }
-		}
-
-		template <typename T, typename RetType, bool(*checker)(T&), RetType(*retConv)(T&)>
-		class ConditonalInterator
-		{
-		public:
-			ConditonalInterator() { }
-			ConditonalInterator(T* begin, T* end) 
-				: m_item(begin), m_end(end)
-			{
-				MoveToNext();
-			}
-
-			ConditonalInterator& operator++()
-			{
-				MoveToNext();
-				return *this;
-			}
-			ConditonalInterator operator++(int) { ConditonalInterator result = *this; ++(*this); return result; }
-
-			bool operator==(const ConditonalInterator& rhs) const { return m_item == rhs.m_item && m_end == rhs.m_end; }
-			bool operator!=(const ConditonalInterator& rhs) const { return !this->operator==(rhs); }
-
-			RetType operator*() const
-			{
-				return retConv(*(m_item - 1));
-			}
-		private:
-			void MoveToNext()
-			{
-				while (m_item != m_end)
-				{
-					T& e = *m_item++;
-
-					if (checker(e))
-						return;
-				}
-				m_item = nullptr;
-				m_end = nullptr;
-			}
-
-			T* m_item = nullptr;
-			T* m_end = nullptr;
-		};
-
-		template <typename T, typename RetType = T, bool(*checker)(T&) = Utils::defaultChecker<T>, RetType(*retConv)(T&) = Utils::defaultRetConv<T, RetType>>
-		class ConditionalAccessor
-		{
-			typedef ConditonalInterator<T, RetType, checker, retConv> IterType;
-
-		public:
-			ConditionalAccessor(T* begin, T* end)
-				: m_begin(begin), m_end(end) { }
-
-			IterType begin() { return IterType(m_begin, m_end); }
-			IterType end() { return IterType(); }
-
-		private:
-			T* m_begin = nullptr;
-			T* m_end = nullptr;
-		};
-
 		template <typename T, typename ST>
 		class ListBase
 		{
@@ -939,6 +870,157 @@ namespace Apoc3D
 			int32 m_length = 0;
 
 		};
+
+		
+		namespace Utils
+		{
+			template <typename T, typename RetType>
+			RetType defaultRetConv(T& e) { return static_cast<RetType>(e); }
+
+			template <typename T>
+			bool defaultChecker(T& e) { return true; }
+		}
+
+		template <typename T, typename RetType, bool(*checker)(T&), RetType(*retConv)(T&)>
+		class ConditonalInterator
+		{
+		public:
+			ConditonalInterator() { }
+			ConditonalInterator(T* begin, T* end) 
+				: m_item(begin), m_end(end)
+			{
+				MoveToNext();
+			}
+
+			ConditonalInterator& operator++()
+			{
+				MoveToNext();
+				return *this;
+			}
+			ConditonalInterator operator++(int) { ConditonalInterator result = *this; ++(*this); return result; }
+
+			bool operator==(const ConditonalInterator& rhs) const { return m_item == rhs.m_item && m_end == rhs.m_end; }
+			bool operator!=(const ConditonalInterator& rhs) const { return !this->operator==(rhs); }
+
+			RetType operator*() const
+			{
+				return retConv(*(m_item - 1));
+			}
+		private:
+			void MoveToNext()
+			{
+				while (m_item != m_end)
+				{
+					T& e = *m_item++;
+
+					if (checker(e))
+						return;
+				}
+				m_item = nullptr;
+				m_end = nullptr;
+			}
+
+			T* m_item = nullptr;
+			T* m_end = nullptr;
+		};
+
+		template <typename T, typename RetType = T, bool(*checker)(T&) = Utils::defaultChecker<T>, RetType(*retConv)(T&) = Utils::defaultRetConv<T, RetType>>
+		class ConditionalAccessor
+		{
+			typedef ConditonalInterator<T, RetType, checker, retConv> IterType;
+
+		public:
+			ConditionalAccessor(T* begin, T* end)
+				: m_begin(begin), m_end(end) { }
+
+			ConditionalAccessor(const List<T>& cont)
+				: ConditionalAccessor(cont.begin(), cont.end()) { }
+			
+			IterType begin() { return IterType(m_begin, m_end); }
+			IterType end() { return IterType(); }
+
+		private:
+			T* m_begin = nullptr;
+			T* m_end = nullptr;
+		};
+
+
+		template <typename T, int32 GroupSize>
+		class GroupIteratorItem
+		{
+		public:
+			GroupIteratorItem(T* begin, T* end)
+				: m_begin(begin), m_end(end) { }
+
+			T* begin() { return m_begin; }
+			T* end() { return m_end; }
+
+		private:
+
+			T* m_begin = nullptr;
+			T* m_end = nullptr;
+		};
+
+		template <typename T, int32 GroupSize>
+		class GroupInterator
+		{
+			typedef GroupIteratorItem<T, GroupSize> ItemType;
+		public:
+			GroupInterator() { }
+			GroupInterator(T* begin, T* end)
+				: m_item(begin), m_end(end) { }
+
+			GroupInterator& operator++()
+			{
+				MoveToNext();
+				return *this;
+			}
+			GroupInterator operator++(int) { GroupInterator result = *this; ++(*this); return result; }
+
+			bool operator==(const GroupInterator& rhs) const { return m_item == rhs.m_item && m_end == rhs.m_end; }
+			bool operator!=(const GroupInterator& rhs) const { return !this->operator==(rhs); }
+
+			ItemType operator*() const
+			{
+				T* groupEnd = m_item + GroupSize;
+				return ItemType(m_item, groupEnd > m_end ? m_end : groupEnd);
+			}
+		private:
+			void MoveToNext()
+			{
+				m_item += GroupSize;
+
+				if (m_item >= m_end)
+				{
+					m_item = nullptr;
+					m_end = nullptr;
+				}
+			}
+
+			T* m_item = nullptr;
+			T* m_end = nullptr;
+		};
+
+		template <typename T, int32 GroupSize>
+		class GroupAccessor
+		{
+			typedef GroupInterator<T, GroupSize> IterType;
+
+		public:
+			GroupAccessor(T* begin, T* end)
+				: m_begin(begin), m_end(end) { }
+
+			GroupAccessor(const List<T>& cont)
+				: GroupAccessor(cont.begin(), cont.end()) { }
+
+			IterType begin() { return IterType(m_begin, m_end); }
+			IterType end() { return IterType(); }
+
+		private:
+			T* m_begin = nullptr;
+			T* m_end = nullptr;
+		};
+
 	}
 }
 #endif
