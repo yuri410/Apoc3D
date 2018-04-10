@@ -1110,21 +1110,56 @@ namespace UnitTestVC
 	TEST_CLASS(GroupAccessorTest)
 	{
 	public:
+		template <int32 G>
+		static void AddItems(const List<int32>& src, List<int32>& dst)
+		{
+			for (auto g : GroupAccessor<int32, G>(src))
+				for (int32 v : g)
+					dst.Add(v);
+		}
+
 		TEST_METHOD(GroupAccessorTest_Iterate)
 		{
 			List<int32> lst = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-			List<int32> result;
+			List<int32> r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11;
 
-			for (auto g : GroupAccessor<int32, 4>(lst))
-			{
-				for (int32 v : g)
-					result.Add(v);
-			}
+			AddItems<1>(lst, r1);
+			AddItems<2>(lst, r2);
+			AddItems<3>(lst, r3);
+			AddItems<4>(lst, r4);
+			AddItems<5>(lst, r5);
+			AddItems<6>(lst, r6);
+			AddItems<7>(lst, r7);
+			AddItems<8>(lst, r8);
+			AddItems<9>(lst, r9);
+			AddItems<10>(lst, r10);
+			AddItems<11>(lst, r11);
 
-			Assert::AreEqual(lst.getCount(), result.getCount());
+			Assert::AreEqual(lst.getCount(), r1.getCount());
+			Assert::AreEqual(lst.getCount(), r2.getCount());
+			Assert::AreEqual(lst.getCount(), r3.getCount());
+			Assert::AreEqual(lst.getCount(), r4.getCount());
+			Assert::AreEqual(lst.getCount(), r5.getCount());
+			Assert::AreEqual(lst.getCount(), r6.getCount());
+			Assert::AreEqual(lst.getCount(), r7.getCount());
+			Assert::AreEqual(lst.getCount(), r8.getCount());
+			Assert::AreEqual(lst.getCount(), r9.getCount());
+			Assert::AreEqual(lst.getCount(), r10.getCount());
+			Assert::AreEqual(lst.getCount(), r11.getCount());
+
 			for (int32 i = 0; i < lst.getCount(); i++)
 			{
-				Assert::AreEqual(lst[i], result[i]);
+				Assert::AreEqual(lst[i], r1[i]);
+				Assert::AreEqual(lst[i], r2[i]);
+				Assert::AreEqual(lst[i], r3[i]);
+				Assert::AreEqual(lst[i], r4[i]);
+				Assert::AreEqual(lst[i], r5[i]);
+				Assert::AreEqual(lst[i], r6[i]);
+				Assert::AreEqual(lst[i], r7[i]);
+				Assert::AreEqual(lst[i], r8[i]);
+				Assert::AreEqual(lst[i], r9[i]);
+				Assert::AreEqual(lst[i], r10[i]);
+				Assert::AreEqual(lst[i], r11[i]);
 			}
 		}
 	};

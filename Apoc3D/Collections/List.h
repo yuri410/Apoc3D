@@ -1005,7 +1005,7 @@ namespace Apoc3D
 		class GroupAccessor
 		{
 			typedef GroupInterator<T, GroupSize> IterType;
-
+			static_assert(GroupSize > 0, "GroupSize must be at least 1.");
 		public:
 			GroupAccessor(T* begin, T* end)
 				: m_begin(begin), m_end(end) { }
