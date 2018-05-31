@@ -285,7 +285,6 @@ namespace Apoc3D
 				}
 			}
 
-
 			void Reverse()
 			{
 				if (m_elements == nullptr)
@@ -306,6 +305,29 @@ namespace Apoc3D
 				std::swap(elm[i], elm[j]);
 			}
 
+			bool GetMinMax(T& minValue, T& maxValue) const
+			{
+				const int32 count = m_count;
+				if (count > 0)
+				{
+					const T* elm = (const T*)m_elements;
+
+					minValue = elm[0];
+					maxValue = elm[0];
+
+					for (int32 i = 0; i < count; i++)
+					{
+						const T& v = elm[i];
+						if (OrderComparer(v, minValue) < 0)
+							minValue = v;
+						if (OrderComparer(v, maxValue) > 0)
+							maxValue = v;
+					}
+					return true;
+				}
+				return false;
+			}
+
 			T* AllocateArrayCopy() const
 			{
 				T* result = new T[m_count];
@@ -314,7 +336,7 @@ namespace Apoc3D
 			}
 
 			template <int32 N>
-			void CopyTo(T (&dst)[N])
+			void CopyTo(T (&dst)[N]) const
 			{
 				assert(m_count <= N);
 				int32 count = m_count > N ? N : m_count;
@@ -955,6 +977,7 @@ namespace Apoc3D
 			T* begin() { return m_begin; }
 			T* end() { return m_end; }
 
+			bool isFullGroup() const { return m_end - m_begin == GroupSize; }
 		private:
 
 			T* m_begin = nullptr;

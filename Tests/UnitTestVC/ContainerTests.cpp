@@ -1113,9 +1113,22 @@ namespace UnitTestVC
 		template <int32 G>
 		static void AddItems(const List<int32>& src, List<int32>& dst)
 		{
+			bool lastFull = false;
 			for (auto g : GroupAccessor<int32, G>(src))
+			{
 				for (int32 v : g)
 					dst.Add(v);
+				lastFull = g.isFullGroup();
+			}
+
+			if ((src.getCount() % G) == 0)
+			{
+				Assert::IsTrue(lastFull);
+			}
+			else
+			{
+				Assert::IsFalse(lastFull);
+			}
 		}
 
 		TEST_METHOD(GroupAccessorTest_Iterate)
