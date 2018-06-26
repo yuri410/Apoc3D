@@ -54,7 +54,7 @@ namespace Apoc3D
 				m_tempClientSizeParam = window->getClientSize();
 				m_tempTitleParam = window->getTitle();
 
-				//EnumThreadWindows(GetCurrentThreadId(), EnumWindowsProcStatic, 0);
+				EnumThreadWindows(GetCurrentThreadId(), EnumWindowsProcStatic, 0);
 
 				if (m_hwnd == NULL)
 				{
