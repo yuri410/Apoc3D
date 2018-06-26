@@ -86,17 +86,28 @@ namespace Apoc3D
 
 			HRESULT GraphicsDeviceManager::ResetDevice()
 			{
-				LogManager::getSingleton().Write(LOG_Graphics, 
-					L"[D3D9]Device lost. ", 
-					LOGLVL_Default);
+				if (!m_handingDeviceReset)
+				{
+					LogManager::getSingleton().Write(LOG_Graphics, L"[D3D9]Device lost. ", LOGLVL_Default);
 
-				m_game->D3D9_OnDeviceLost();
+					m_game->D3D9_OnDeviceLost();
+					m_handingDeviceReset = true;
+				}
 
 				HRESULT hr = m_device->Reset(&m_currentSetting->PresentParameters);
 				
+				if (hr == D3DERR_DEVICELOST)
+				{
+					return hr;
+				}
+
+				LogManager::getSingleton().Write(LOG_Graphics, L"[D3D9]Device reset. ", LOGLVL_Default);
+
 				PropogateSettings();
 
 				m_game->D3D9_OnDeviceReset();
+				m_handingDeviceReset = false;
+
 				return hr;
 			}
 
@@ -375,7 +386,7 @@ namespace Apoc3D
 
 				// check if the device can be reset, or if we need to completely recreate it
 
-				int64 result = 0;
+				HRESULT result = 0;
 				bool canReset = CanDeviceBeReset(oldSettings, m_currentSetting);
 				if (canReset)
 					result = ResetDevice();

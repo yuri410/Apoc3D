@@ -147,10 +147,16 @@ namespace Apoc3D
 				{
 					m_volatileResources[i]->ReleaseVolatileResource();
 				}
-				m_defaultRT->Release();
-				m_defaultRT = 0;
-				m_defaultDS->Release();
-				m_defaultDS = 0;
+				if (m_defaultRT)
+				{
+					m_defaultRT->Release();
+					m_defaultRT = nullptr;
+				}
+				if (m_defaultDS)
+				{
+					m_defaultDS->Release();
+					m_defaultDS = nullptr;
+				}
 			}
 			void D3D9RenderDevice::OnDeviceReset()
 			{

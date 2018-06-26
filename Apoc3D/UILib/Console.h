@@ -79,6 +79,8 @@ namespace Apoc3D
 			void Log_New(LogEntry e);
 
 			void RegisterCommands();
+			void UnregisterCommands();
+
 			void ClearCommand(const List<String>& args);
 			//void Console_CommandSubmited(String cmd, List<String>* args);
 

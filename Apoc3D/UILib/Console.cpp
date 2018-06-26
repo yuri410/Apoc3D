@@ -105,6 +105,8 @@ namespace Apoc3D
 			LogManager::getSingleton().eventNewLogWritten.Unbind(this, &Console::Log_New);
 			SystemUI::Remove(m_form);
 
+			UnregisterCommands();
+
 			delete m_form;
 			delete m_pictureBox;
 			delete m_submit;
@@ -328,6 +330,11 @@ namespace Apoc3D
 		{
 			//ConsoleCommandSet* s = new ConsoleCommandSet(this);
 			CommandInterpreter::getSingleton().RegisterCommand({ L"clear", 0, CommandHandler(this, &Console::ClearCommand) });
+		}
+
+		void Console::UnregisterCommands()
+		{
+			CommandInterpreter::getSingleton().UnregisterCommand({ L"clear", 0, CommandHandler(this, &Console::ClearCommand) });
 		}
 
 		void Console::ClearCommand(const List<String>& args)

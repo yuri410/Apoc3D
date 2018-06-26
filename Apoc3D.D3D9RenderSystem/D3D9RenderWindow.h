@@ -142,6 +142,7 @@ namespace Apoc3D
 				void Window_Resume();
 				void Window_Paint();
 
+				void ExecuteChangeDevice();
 
 				D3D9DeviceContext* m_dc;
 				String m_hardwareName;
@@ -164,7 +165,7 @@ namespace Apoc3D
 
 				
 				bool m_active = false;
-
+				bool m_hasPendingDeviceChange = false;
 			};
 		}
 	}

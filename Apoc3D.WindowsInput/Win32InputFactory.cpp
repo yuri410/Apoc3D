@@ -54,7 +54,15 @@ namespace Apoc3D
 				m_tempClientSizeParam = window->getClientSize();
 				m_tempTitleParam = window->getTitle();
 
-				EnumThreadWindows(GetCurrentThreadId(), EnumWindowsProcStatic, 0);
+				//EnumThreadWindows(GetCurrentThreadId(), EnumWindowsProcStatic, 0);
+
+				if (m_hwnd == NULL)
+				{
+					// find again with relaxed rule
+					m_relaxedWindowFinding = true;
+					m_largestWindowSize = 0;
+					EnumThreadWindows(GetCurrentThreadId(), EnumWindowsProcStatic, 0);
+				}
 
 				if (m_hwnd == NULL)
 				{
@@ -80,17 +88,34 @@ namespace Apoc3D
 				info.cbSize = sizeof(WINDOWINFO);
 				GetWindowInfo(hwnd, &info);
 
-				if (m_tempClientSizeParam.Width == info.rcClient.right - info.rcClient.left &&
-					m_tempClientSizeParam.Height == info.rcClient.bottom - info.rcClient.top)
+				int32 wndWidth = info.rcClient.right - info.rcClient.left;
+				int32 wndHeight = info.rcClient.bottom - info.rcClient.top;
+
+				if (m_relaxedWindowFinding)
+				{
+					int32 area = wndWidth*wndHeight;
+					if (area > m_largestWindowSize)
+					{
+						m_largestWindowSize = area;
+						m_hwnd = hwnd;
+					}
+
+					return TRUE;
+				}
+
+				if (m_tempClientSizeParam.Width == wndWidth &&
+					m_tempClientSizeParam.Height == wndHeight)
 				{
 					int len = GetWindowTextLength(hwnd);
 					len += 8;
 					wchar_t* title = new wchar_t[len];
 					GetWindowText(hwnd, title, len);
 
-					if (String(title)==m_tempTitleParam)
+					String strTitle = title;
+					delete[] title;
+
+					if (strTitle == m_tempTitleParam)
 					{
-						delete[] title;
 						wchar_t buffer[40];
 						GetClassName(hwnd, buffer, 40);
 						if (StringUtils::StartsWith(String(buffer), Apoc3D::Win32::WindowClass))
@@ -101,8 +126,6 @@ namespace Apoc3D
 						}
 						return TRUE;
 					}
-
-					delete[] title;
 				}
 				return TRUE;
 			}

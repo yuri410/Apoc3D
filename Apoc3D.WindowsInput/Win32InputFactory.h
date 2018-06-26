@@ -41,7 +41,7 @@ namespace Apoc3D
 			{
 			public:
 				Win32InputFactory()
-					: InputAPIFactory(GetDescription()), m_hwnd(0), m_InputManager(NULL)
+					: InputAPIFactory(GetDescription())
 				{
 					m_instance = this;
 				}
@@ -55,11 +55,14 @@ namespace Apoc3D
 				virtual Keyboard* CreateKeyboard();
 
 			private:
-				OIS::InputManager* m_InputManager;
-				HWND m_hwnd;
+				OIS::InputManager* m_InputManager = nullptr;
+				HWND m_hwnd = 0;
 
 				String m_tempTitleParam;
 				Size m_tempClientSizeParam;
+
+				bool m_relaxedWindowFinding = false;
+				int32 m_largestWindowSize = 0;
 
 				BOOL EnumWindowsProc(_In_  HWND hwnd, _In_  LPARAM lParam);
 

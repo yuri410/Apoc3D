@@ -110,6 +110,7 @@ namespace Apoc3D
 
 				bool m_ignoreSizeChanges = false;
 				bool m_deviceLost = false;
+				bool m_handingDeviceReset = false;
 
 				int32 m_fullscreenWindowWidth;
 				int32 m_fullscreenWindowHeight;
@@ -118,7 +119,7 @@ namespace Apoc3D
 				WINDOWPLACEMENT m_windowedPlacement;
 				int64 m_windowedStyle;
 				//bool m_savedTopmost
-
+				
 
 			};
 		}

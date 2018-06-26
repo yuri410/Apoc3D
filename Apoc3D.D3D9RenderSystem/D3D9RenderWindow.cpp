@@ -111,10 +111,10 @@ namespace Apoc3D
 			{
 				RenderWindow::ChangeRenderParameters(params);
 
-				m_gameWindow->MakeFixedSize(params.IsFixedWindow);
-
-				m_graphicsDeviceManager->UserIgnoreMonitorChanges() = params.IgnoreMonitorChange;
-				m_graphicsDeviceManager->ChangeDevice(params);
+				if (m_renderDevice == nullptr)
+					ExecuteChangeDevice();
+				else
+					m_hasPendingDeviceChange = true;
 			}
 
 
@@ -293,6 +293,13 @@ namespace Apoc3D
 
 				renderingSlow = m_slowRenderFrameHits > 5;
 
+				if (m_hasPendingDeviceChange)
+				{
+					m_hasPendingDeviceChange = false;
+
+					ExecuteChangeDevice();
+				}
+
 				if (m_timeStepMode == TimeStepMode::FixedStep)
 				{
 					m_accumulatedDt_fixedStep += dt;
@@ -310,8 +317,11 @@ namespace Apoc3D
 
 					for (int32 i = 0; i < numUpdatesNeeded; i++)
 					{
-						GameTime gt(m_referenceElapsedTime, iterationFullDt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
-						D3D9_Update(&gt);
+						if (m_graphicsDeviceManager->IsDeviceReady())
+						{
+							GameTime gt(m_referenceElapsedTime, iterationFullDt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
+							D3D9_Update(&gt);
+						}
 					}
 
 					if (dt > 0)
@@ -328,8 +338,11 @@ namespace Apoc3D
 
 						for (int32 i = 0; i < numUpdatesNeeded; i++)
 						{
-							GameTime gt(dtPerIteration, dt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
-							D3D9_UpdateConstrainedVarTimeStep(&gt);
+							if (m_graphicsDeviceManager->IsDeviceReady())
+							{
+								GameTime gt(dtPerIteration, dt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
+								D3D9_UpdateConstrainedVarTimeStep(&gt);
+							}
 						}
 					}
 
@@ -352,8 +365,11 @@ namespace Apoc3D
 
 						for (int32 i = 0; i < numUpdatesNeeded; i++)
 						{
-							GameTime gt(dtPerIteration, dt / numUpdatesNeeded, 0, numUpdatesNeeded, fps, renderingSlow);
-							D3D9_Update(&gt);
+							if (m_graphicsDeviceManager->IsDeviceReady())
+							{
+								GameTime gt(dtPerIteration, dt / numUpdatesNeeded, 0, numUpdatesNeeded, fps, renderingSlow);
+								D3D9_Update(&gt);
+							}
 						}
 					}
 
@@ -364,7 +380,10 @@ namespace Apoc3D
 				{
 					GameTime gt(dt, fps);
 
-					D3D9_Update(&gt);
+					if (m_graphicsDeviceManager->IsDeviceReady())
+					{
+						D3D9_Update(&gt);
+					}
 					D3D9_DrawFrame(&gt);
 				}
 			}
@@ -440,6 +459,15 @@ namespace Apoc3D
 				//		elapsedRealTime,totalRealTime, m_fps, m_drawRunningSlowly);
 				//	DrawFrame(&gt);
 				//}		
+			}
+
+			void D3D9RenderWindow::ExecuteChangeDevice()
+			{
+				const RenderParameters& params = getRenderParams();
+				m_gameWindow->MakeFixedSize(params.IsFixedWindow);
+
+				m_graphicsDeviceManager->UserIgnoreMonitorChanges() = params.IgnoreMonitorChange;
+				m_graphicsDeviceManager->ChangeDevice(params);
 			}
 		}
 	}
