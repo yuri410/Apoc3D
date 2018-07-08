@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Win32Mouse.h"
 #include "apoc3d/Core/GameTime.h"
+#include "apoc3d.Win32/Win32Common.h"
 
 namespace Apoc3D
 {
@@ -37,9 +38,16 @@ namespace Apoc3D
 			{
 				m_instance = this;
 
-				m_oldWndProc = (HWND)GetWindowLongPtr(hwnd, GWLP_WNDPROC);
+				if (Apoc3D::Win32::MainWindowHandle == 0)
+				{
+					m_oldWndProc = (HWND)GetWindowLongPtr(hwnd, GWLP_WNDPROC);
 
-				SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)(void*)WndProcStatic);
+					SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)(void*)WndProcStatic);
+				}
+				else
+				{
+					m_usesMainWindowMouseWheel = true;
+				}
 			}
 			OldSchoolMouse::~OldSchoolMouse()
 			{
@@ -48,44 +56,53 @@ namespace Apoc3D
 
 			void OldSchoolMouse::Update(const GameTime* time)
 			{
+				POINT pt = { 0,0 };
+				GetCursorPos(&pt);
 				if (m_hwnd)
 				{
-					POINT pt;
-					GetCursorPos(&pt);
-					
 					ScreenToClient(m_hwnd, &pt);
+				}
 
-					m_lastPosition = m_currentPos;
-					m_lastZ = m_z;
+				m_lastPosition = m_currentPos;
+				m_lastZ = m_z;
+
+				if (!m_usesMainWindowMouseWheel)
+				{
 					m_z = m_accumlatedMouseWheel;
-					
-					memcpy(m_lastBtnState, m_btnState, sizeof(m_btnState));
+				}
+				else
+				{
+					m_z = Apoc3D::Win32::MainWindowMouseWheel;
+				}
 
-					m_currentPos.X = static_cast<int32>(pt.x);
-					m_currentPos.Y = static_cast<int32>(pt.y);
+				memcpy(m_lastBtnState, m_btnState, sizeof(m_btnState));
 
-					m_btnState[0] = !!GetAsyncKeyState(VK_LBUTTON);
-					m_btnState[1] = !!GetAsyncKeyState(VK_MBUTTON);
-					m_btnState[2] = !!GetAsyncKeyState(VK_RBUTTON);
+				m_currentPos.X = static_cast<int32>(pt.x);
+				m_currentPos.Y = static_cast<int32>(pt.y);
 
-					if (m_buttonSwapped)
-					{
-						std::swap(m_btnState[0], m_btnState[2]);
-					}
+				m_btnState[0] = !!GetAsyncKeyState(VK_LBUTTON);
+				m_btnState[1] = !!GetAsyncKeyState(VK_MBUTTON);
+				m_btnState[2] = !!GetAsyncKeyState(VK_RBUTTON);
+
+				if (m_buttonSwapped)
+				{
+					std::swap(m_btnState[0], m_btnState[2]);
 				}
 			}
 			void OldSchoolMouse::SetPosition(const Point& loc)
 			{
 				Mouse::SetPosition(loc);
+
+				POINT pt;
+				pt.x = loc.X;
+				pt.y = loc.Y;
+				
 				if (m_hwnd)
 				{
-					POINT pt;
-					pt.x = loc.X;
-					pt.y = loc.Y;
-
 					ClientToScreen(m_hwnd, &pt);
-					SetCursorPos(pt.x, pt.y);
 				}
+
+				SetCursorPos(pt.x, pt.y);
 			}
 
 			LRESULT OldSchoolMouse::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

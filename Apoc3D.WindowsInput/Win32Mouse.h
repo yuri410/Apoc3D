@@ -45,7 +45,8 @@ namespace Apoc3D
 
 				void Update(const GameTime* time) override;
 			private:
-				int m_accumlatedMouseWheel;
+				int32 m_accumlatedMouseWheel;
+				bool m_usesMainWindowMouseWheel = false;
 
 				LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 				HWND m_oldWndProc;

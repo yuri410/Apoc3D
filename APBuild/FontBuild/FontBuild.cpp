@@ -36,6 +36,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "freetype/ftoutln.h"
 #include "freetype/fttrigon.h"
 #include "freetype/ftbitmap.h"
+#include "apoc3d/Library/lz4.h"
 
 #pragma comment (lib, "Gdiplus.lib")
 
@@ -116,6 +117,12 @@ namespace APBuild
 
 	typedef HashMap<GlyphBitmap, GlyphBitmap, GlyphBitmapEqualityComparer> GlyphBitmapTable;
 
+	struct GlyphBitmapStoreState
+	{
+		const GlyphBitmap* GlyphRef;
+		int64 Offset;
+		int32 CompressedSize;
+	};
 
 	const int32 FIDXFileID = 'FIDX';
 
@@ -144,12 +151,12 @@ namespace APBuild
 		float DrawOffset[2];
 	};
 
-	typedef void (*GlyphRenderHandler)(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, bool antiAlias,
+	typedef void (*GlyphRenderHandler)(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, const List<CharRange>& invRanges, bool antiAlias,
 		List<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo);
 	void BuildFont(const FontBuildConfig& config, GlyphRenderHandler renderer);
-	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, bool antiAlias,
+	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, const List<CharRange>& invRanges, bool antiAlias,
 		List<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo);
-	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, bool antiAlias,
+	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, const List<CharRange>& invRanges, bool antiAlias,
 		List<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo);
 
 
@@ -183,7 +190,7 @@ namespace APBuild
 		GlyphBitmapTable glyphHashTable(0xffff);
 
 		FontRenderInfo info;
-		RenderGlyphsByFreeType(StringUtils::toPlatformNarrowString(config.SourceFile), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
+		RenderGlyphsByFreeType(StringUtils::toPlatformNarrowString(config.SourceFile), config.Size, config.Ranges, {}, config.AntiAlias, charMap, glyphHashTable, info);
 
 		FileOutStream fs(config.DestIndexFile);
 		BinaryWriter bw(&fs, false);
@@ -338,7 +345,7 @@ namespace APBuild
 		GlyphBitmapTable glyphHashTable(0xffff);
 
 		FontRenderInfo info;
-		renderer(StringUtils::toPlatformNarrowString(config.SourceFile), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
+		renderer(StringUtils::toPlatformNarrowString(config.SourceFile), config.Size, config.Ranges, config.InvRanges, config.AntiAlias, charMap, glyphHashTable, info);
 
 		FileOutStream fs(config.DestFile);
 		BinaryWriter bw(&fs, false);
@@ -350,6 +357,8 @@ namespace APBuild
 			flags |= 1;
 		if (info.HasDrawOffset)
 			flags |= 2;
+		if (config.Compress)
+			flags |= 4;
 
 		bw.WriteUInt32(flags);
 
@@ -364,48 +373,88 @@ namespace APBuild
 			bw.WriteSingle(info.DrawOffset[1]);
 		}
 
-		for (int i=0;i<charMap.getCount();i++)
+		for (const auto& ch : charMap)
 		{
-			bw.WriteInt32(charMap[i].Character);
-			bw.WriteInt32(charMap[i].GlyphIndex);
+			bw.WriteInt32(ch.Character);
+			bw.WriteInt32(ch.GlyphIndex);
 
-			bw.WriteInt16(charMap[i].Left);
-			bw.WriteInt16(charMap[i].Top);
-			bw.WriteSingle(charMap[i].AdvanceX);
+			bw.WriteInt16(ch.Left);
+			bw.WriteInt16(ch.Top);
+			bw.WriteSingle(ch.AdvanceX);
 		}
 
 		bw.WriteInt32(glyphHashTable.getCount());
 		int64 glyRecPos = fs.getPosition();
 		for (int i=0;i<glyphHashTable.getCount();i++)
 		{
-			bw.WriteInt32((int32)0);
-			bw.WriteInt32((int32)0);
-			bw.WriteInt32((int32)0);
-			bw.WriteInt64((int64)0);
+			if (config.Compress)
+			{
+				bw.WriteUInt16(0);
+				bw.WriteUInt16(0);
+				bw.WriteUInt16(0);
+				bw.WriteUInt32(0);
+				bw.WriteUInt32(0);
+			}
+			else
+			{
+				bw.WriteInt32(0);
+				bw.WriteInt32(0);
+				bw.WriteInt32(0);
+				bw.WriteInt64(0);
+			}	
 		}
-		int64 baseOfs = fs.getPosition();
-
+		
+		List<GlyphBitmapStoreState> glyphList(glyphHashTable.getCount());
 		for (const GlyphBitmap& g : glyphHashTable.getKeyAccessor())
 		{
-			if (info.HasLuminance)
-				bw.WriteBytes(g.PixelData, g.Width * g.Height * 2);
+			glyphList.Add({ &g, 0 });
+		}
+
+		for (GlyphBitmapStoreState& gr : glyphList)
+		{
+			gr.Offset = fs.getPosition();
+			gr.CompressedSize = 0;
+
+			const GlyphBitmap& g = *gr.GlyphRef;
+			const int32 srcDataSize = g.Width * g.Height * (info.HasLuminance ? 2 : 1);
+
+			if (config.Compress)
+			{
+				char* compressedData = new char[LZ4_compressBound(srcDataSize)];
+				int32 compressedSize = LZ4_compressHC2(g.PixelData, compressedData, srcDataSize, 16);
+
+				bw.WriteBytes(compressedData, compressedSize);
+
+				delete[] compressedData;
+
+				gr.CompressedSize = compressedSize;
+			}
 			else
-				bw.WriteBytes(g.PixelData, g.Width * g.Height);
+			{
+				bw.WriteBytes(g.PixelData, srcDataSize);
+			}
 		}
 
 		fs.Seek(glyRecPos, SeekMode::Begin);
 
-		for (const GlyphBitmap& g : glyphHashTable.getKeyAccessor())
+		for (GlyphBitmapStoreState& gr : glyphList)
 		{
-			bw.WriteInt32((int32)g.Index);
-			bw.WriteInt32((int32)g.Width);
-			bw.WriteInt32((int32)g.Height);
-			bw.WriteInt64((int64)baseOfs);
-
-			if (info.HasLuminance)
-				baseOfs += g.Width * g.Height * 2;
+			const GlyphBitmap& g = *gr.GlyphRef;
+			if (config.Compress)
+			{
+				bw.WriteUInt16(g.Index);
+				bw.WriteUInt16(g.Width);
+				bw.WriteUInt16(g.Height);
+				bw.WriteUInt32((uint32)gr.Offset);
+				bw.WriteUInt32(gr.CompressedSize);
+			}
 			else
-				baseOfs += g.Width * g.Height;
+			{
+				bw.WriteInt32(g.Index);
+				bw.WriteInt32(g.Width);
+				bw.WriteInt32(g.Height);
+				bw.WriteInt64(gr.Offset);
+			}
 
 			delete[] g.PixelData;
 		}
@@ -492,7 +541,7 @@ namespace APBuild
 		}
 	}
 
-	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, bool antiAlias,
+	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, const List<CharRange>& invRanges, bool antiAlias,
 		List<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo)
 	{
 		//Create and initialize a freetype font library.
@@ -539,8 +588,21 @@ namespace APBuild
 		{
 			uint counter = 0;
 			FT_UInt lastIdx = 0;
-			for (uint ch = 0; ch < 65535; ch++)
+			for (uint ch = 0; ch <= 65535; ch++)
 			{
+				bool isIgnored = false;
+				for (const CharRange& cr : invRanges)
+				{
+					if (ch >= cr.MinChar && ch <= cr.MaxChar)
+					{
+						isIgnored = true;
+						break;
+					}
+				}
+
+				if (isIgnored)
+					continue;
+
 				FT_UInt idx = FT_Get_Char_Index(face, ch);
 				if (idx)
 				{ 
@@ -554,7 +616,7 @@ namespace APBuild
 
 
 		//We don't need the face information now that the display
-		//lists have been created, so we free the assosiated resources.
+		//lists have been created, so we free the associated resources.
 		FT_Done_Face(face);
 
 		//Ditto for the library.
@@ -568,7 +630,7 @@ namespace APBuild
 		resultInfo.HasDrawOffset = false;
 	}
 	
-	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, bool antiAlias,
+	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, const List<CharRange>& invRanges, bool antiAlias,
 		List<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo)
 	{
 		String mapFile = StringUtils::toPlatformWideString(fontFile) + L".png";

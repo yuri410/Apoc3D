@@ -688,12 +688,35 @@ namespace Apoc3D
 		AntiAlias = true;
 		sect->TryGetAttributeBool(L"AntiAlias", AntiAlias);
 		
+		Compress = false;
+		sect->TryGetAttributeBool(L"Compress", Compress);
+
 		DestFile = sect->getAttribute(L"DestinationFile");
 
-		for (const ConfigurationSection* ss : sect->getSubSections())
+		String temp;
+		if (sect->tryGetAttribute(L"Ranges", temp))
 		{
-			CharRange range = { ss->GetAttributeUInt(L"Start"), ss->GetAttributeUInt(L"End") };
-			Ranges.Add(range);
+			List<int32> ranges = StringUtils::SplitParseInts(temp, L",[] ");
+			for (int32 i = 0; i < ranges.getCount() / 2; i++)
+			{
+				Ranges.Add({ (uint32)ranges[i * 2], (uint32)ranges[i * 2 + 1] });
+			}
+		}
+		else
+		{
+			for (const ConfigurationSection* ss : sect->getSubSections())
+			{
+				Ranges.Add({ ss->GetAttributeUInt(L"Start"), ss->GetAttributeUInt(L"End") });
+			}
+		}
+
+		if (sect->tryGetAttribute(L"InvRanges", temp))
+		{
+			List<int32> ranges = StringUtils::SplitParseInts(temp, L",[] ");
+			for (int32 i = 0; i < ranges.getCount() / 2; i++)
+			{
+				InvRanges.Add({ (uint32)ranges[i * 2], (uint32)ranges[i * 2 + 1] });
+			}
 		}
 	}
 	void ProjectResFont::Save(ConfigurationSection* sect, bool savingBuild)
@@ -702,18 +725,32 @@ namespace Apoc3D
 		sect->AddAttributeString(L"Size", StringUtils::SingleToString(Size));
 
 		sect->AddAttributeBool(L"AntiAlias", AntiAlias);
+		sect->AddAttributeBool(L"Compress", Compress);
 
 		sect->AddAttributeString(L"DestinationFile", WrapDestinationPath(DestFile, savingBuild));
 
-		for (int32 i = 0; i < Ranges.getCount(); i++)
+		if (Ranges.getCount() > 0)
 		{
-			const CharRange& cr = Ranges[i];
+			String temp;
+			for (auto& r : Ranges)
+			{
+				temp += L"[" + StringUtils::UIntToString(r.MinChar) + L" " + StringUtils::UIntToString(r.MaxChar) + L"] ";
+			}
+			if (temp.size())
+				temp.erase(temp.size() - 1);
+			sect->AddAttributeString(L"Ranges", temp);
+		}
 
-			ConfigurationSection* ss = new ConfigurationSection(String(L"Range") + StringUtils::IntToString(i));
-			ss->AddAttributeUInt(L"Start", cr.MinChar);
-			ss->AddAttributeUInt(L"End", cr.MaxChar);
-
-			sect->AddSection(ss);
+		if (InvRanges.getCount() > 0)
+		{
+			String temp;
+			for (auto& r : InvRanges)
+			{
+				temp += L"[" + StringUtils::UIntToString(r.MinChar) + L" " + StringUtils::UIntToString(r.MaxChar) + L"] ";
+			}
+			if (temp.size())
+				temp.erase(temp.size() - 1);
+			sect->AddAttributeString(L"InvRanges", temp);
 		}
 	}
 

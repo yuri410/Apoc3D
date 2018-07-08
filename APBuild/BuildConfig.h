@@ -66,9 +66,12 @@ namespace APBuild
 	struct FontBuildConfig
 	{
 		List<CharRange> Ranges;
+		List<CharRange> InvRanges;
+
 		String SourceFile;
 		float Size;
 		bool AntiAlias;
+		bool Compress;
 
 		String DestFile;
 		

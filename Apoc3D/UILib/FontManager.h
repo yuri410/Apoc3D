@@ -75,6 +75,8 @@ namespace Apoc3D
 			bool ChangeCharacterSetting(int32 ch, short left, short top, float adcanceX);
 			bool LookupCharacterSetting(int32 ch, short& left, short& top, float& adcanceX);
 
+			void RegisterBaseFontAsCustomGlyphs(Font* fnt);
+
 			void RegisterCustomGlyph(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, short top, float advanceX);
 			void RegisterCustomGlyph(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect);
 
@@ -145,6 +147,7 @@ namespace Apoc3D
 				int32 Index = 0;
 				int32 Width = 0;
 				int32 Height = 0;
+				int32 CompressedSize = 0;
 				int64 Offset = 0;
 
 				/**
@@ -201,6 +204,7 @@ namespace Apoc3D
 			 *  Load the glyph bitmap data for a mapped glyph into the m_fontPack texture
 			 */
 			void LoadGlyphData(BinaryReader* br, Glyph& glyph);
+			void ReadGlyphData(BinaryReader* br, void* buf, int32 pixelSize, Glyph& glyph);
 
 			/**
 			 *  Make sure the glyph is loaded and packed in to texture pack
@@ -272,6 +276,8 @@ namespace Apoc3D
 			 *  Whether or not the font glyph bitmap has luminance channel.
 			 */
 			bool m_hasLuminance = false;
+
+			bool m_compressedGlyph = false;		/// Is the glyph data LZ4 compressed
 
 			/**
 			*  Whether or not the font has a overall draw offset for all characters.

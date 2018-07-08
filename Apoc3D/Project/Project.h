@@ -516,12 +516,14 @@ namespace Apoc3D
 		};
 
 		List<CharRange> Ranges;
+		List<CharRange> InvRanges;
+
 		String SourceFile;
 		String DestFile;
 
 		float Size = 0;
 		bool AntiAlias = false;
-
+		bool Compress = false;
 
 		virtual ProjectItemType getType() const override { return ProjectItemType::Font; }
 		virtual void Parse(const ConfigurationSection* sect) override;

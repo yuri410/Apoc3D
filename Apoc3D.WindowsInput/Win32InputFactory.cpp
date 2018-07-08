@@ -28,9 +28,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Exception.h"
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Core/Logging.h"
 #include "apoc3d.Win32/Win32Common.h"
 
 using namespace Apoc3D::Utility;
+using namespace Apoc3D::Core;
 
 namespace Apoc3D
 {
@@ -54,7 +56,16 @@ namespace Apoc3D
 				m_tempClientSizeParam = window->getClientSize();
 				m_tempTitleParam = window->getTitle();
 
-				EnumThreadWindows(GetCurrentThreadId(), EnumWindowsProcStatic, 0);
+				m_hwnd = Apoc3D::Win32::MainWindowHandle;
+
+				if (m_hwnd == NULL)
+				{
+					EnumThreadWindows(GetCurrentThreadId(), EnumWindowsProcStatic, 0);
+				}
+				else
+				{
+					ApocLog(LOG_System, L"Direct Input Window found.", LOGLVL_Infomation);
+				}
 
 				if (m_hwnd == NULL)
 				{

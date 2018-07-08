@@ -98,6 +98,7 @@ namespace Apoc3D
 				return FALSE;
 			}
 			m_hWnd = hWnd;
+			MainWindowHandle = m_hWnd;
 
 			m_currentMonitor = MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTOPRIMARY);
 
@@ -320,6 +321,7 @@ namespace Apoc3D
 					//	break;
 				case WM_MOUSEWHEEL:
 					m_mouseWheel += (int16)(wParam >> 0x10);
+					MainWindowMouseWheel = m_mouseWheel;
 					break;
 			}
 

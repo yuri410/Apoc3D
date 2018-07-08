@@ -139,15 +139,32 @@ namespace APBuild
 
 		AntiAlias = true;
 		sect->TryGetAttributeBool(L"AntiAlias", AntiAlias);
+		
+		Compress = false;
+		sect->TryGetAttributeBool(L"Compress", Compress);
 
 		DestFile = sect->getAttribute(L"DestinationFile");
 
-		for (const ConfigurationSection* ss : sect->getSubSections())
+		String temp;
+		if (sect->tryGetAttribute(L"Ranges", temp))
 		{
-			CharRange range = { ss->GetAttributeUInt(L"Start"), ss->GetAttributeUInt(L"End") };
-			Ranges.Add(range);
+			List<int32> ranges = StringUtils::SplitParseInts(temp, L",[] ");
+			for (int32 i = 0; i < ranges.getCount()/2; i++)
+			{
+				Ranges.Add({ (uint32)ranges[i*2], (uint32)ranges[i*2 + 1] });
+			}
+		}
+
+		if (sect->tryGetAttribute(L"InvRanges", temp))
+		{
+			List<int32> ranges = StringUtils::SplitParseInts(temp, L",[] ");
+			for (int32 i = 0; i < ranges.getCount()/2; i++)
+			{
+				InvRanges.Add({ (uint32)ranges[i*2], (uint32)ranges[i*2 + 1] });
+			}
 		}
 	}
+
 	void FontMapBuildConfig::Parse(const ConfigurationSection* sect)
 	{
 		SourceFile = sect->getAttribute(L"SourceFile");
