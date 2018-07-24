@@ -43,6 +43,20 @@ namespace SampleFont
 			fl = FileSystem::getSingleton().Locate(L"uming22.fnt", FileLocateRule::Default);
 			FontManager::getSingleton().LoadFont(m_device, L"uming22", fl);
 
+			fl = FileSystem::getSingleton().Locate(L"HS14.fnt", FileLocateRule::Default);
+			FontManager::getSingleton().LoadFont(m_device, L"HS14", fl);
+			fl = FileSystem::getSingleton().Locate(L"HS14B.fnt", FileLocateRule::Default);
+			FontManager::getSingleton().LoadFont(m_device, L"HS14B", fl);
+			fl = FileSystem::getSingleton().Locate(L"HS14BB.fnt", FileLocateRule::Default);
+			FontManager::getSingleton().LoadFont(m_device, L"HS14BB", fl);
+
+			//fl = FileSystem::getSingleton().Locate(L"HSTC14.fnt", FileLocateRule::Default);
+			//FontManager::getSingleton().LoadFont(m_device, L"HSTC14", fl);
+			//fl = FileSystem::getSingleton().Locate(L"HSTC14B.fnt", FileLocateRule::Default);
+			//FontManager::getSingleton().LoadFont(m_device, L"HSTC14B", fl);
+			//fl = FileSystem::getSingleton().Locate(L"HSTC14BB.fnt", FileLocateRule::Default);
+			//FontManager::getSingleton().LoadFont(m_device, L"HSTC14BB", fl);
+
 			FontManager::getSingleton().ReportComplexFonts();
 		}
 		

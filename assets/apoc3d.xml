@@ -4,7 +4,7 @@
     <system Type="Folder" Pack="pak" DestinationPack="apoc_system\system.pak">
       <skin Type="Folder" Pack="pak" DestinationPack="apoc_system\skin.pak">
         <english Type ="Font"
-               SourceFile="fonts\SourceSansPro-Regular.otf"
+               SourceFile="fonts\SourceSansPro-Regular-lite.otf"
                Size="11"
                DestinationFile="apoc_system\skin\english.fnt">
         </english>

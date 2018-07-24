@@ -7,6 +7,18 @@
       <uming22 Type="font" SourceFile="fonts\uming.ttc" Size="22" AntiAlias="true" DestinationFile="s_font\uming22.fnt" LastModTime="1325484148">
         <Range0 Start="0" End="65535" />
       </uming22>
-    
-  </Project>
+      
+      <HSSC14 Type="font" SourceFile="fonts\SourceHanSansSC-Regular.otf" Size="14" AntiAlias="true" Compress="true" DestinationFile="s_font\HSSC14.fnt" InvRanges="[12337 12338]" />
+      <HSSC14B Type="font" SourceFile="fonts\SourceHanSansSC-Bold.otf" Size="14" AntiAlias="true" Compress="true" DestinationFile="s_font\HSSC14B.fnt" InvRanges="[12337 12338]" />
+      <HSSC14BB Type="font" SourceFile="fonts\SourceHanSansSC-Heavy.otf" Size="14" AntiAlias="true" Compress="true" DestinationFile="s_font\HSSC14BB.fnt" InvRanges="[12337 12338]" />
+
+      <HSTC14 Type="font" SourceFile="fonts\SourceHanSansTC-Regular.otf" Size="14" AntiAlias="true" Compress="true" DestinationFile="s_font\HSTC14.fnt" InvRanges="[12337 12338]" />
+      <HSTC14B Type="font" SourceFile="fonts\SourceHanSansTC-Bold.otf" Size="14" AntiAlias="true" Compress="true" DestinationFile="s_font\HSTC14B.fnt" InvRanges="[12337 12338]" />
+      <HSTC14BB Type="font" SourceFile="fonts\SourceHanSansTC-Heavy.otf" Size="14" AntiAlias="true" Compress="true" DestinationFile="s_font\HSTC14BB.fnt" InvRanges="[12337 12338]" />
+      
+      <HS14 Type="font" SourceFile="fonts\SourceHanSans-Regular.ttc" Size="14" AntiAlias="true" Compress="true" DestinationFile="s_font\HS14.fnt" InvRanges="[12337 12338]" />
+      <HS14B Type="font" SourceFile="fonts\SourceHanSans-Bold.ttc" Size="14" AntiAlias="true" Compress="true" DestinationFile="s_font\HS14B.fnt" InvRanges="[12337 12338]" />
+      <HS14BB Type="font" SourceFile="fonts\SourceHanSans-Heavy.ttc" Size="14" AntiAlias="true" Compress="true" DestinationFile="s_font\HS14BB.fnt" InvRanges="[12337 12338]" />
+
+    </Project>
 </Root>
