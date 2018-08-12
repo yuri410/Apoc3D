@@ -195,7 +195,7 @@ namespace Apoc3D
 			const StringType& ToString(T e) const { return m_cast[e]; }
 			const StringType& operator[](T e) const { return m_cast[e]; }
 
-			bool TryToString(T e, StringType& r) const { return m_invCast.TryGetValue(e); }
+			bool TryToString(T e, StringType& r) const { return m_cast.TryGetValue(e, r); }
 			StringType ToStringFlags(T flags, const StringType& delim) const { return FlagFieldsToString(flags, *this, delim); }
 
 			void DumpNames(NameList& names) const { m_cast.FillValues(names); }
