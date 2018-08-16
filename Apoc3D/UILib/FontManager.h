@@ -242,7 +242,7 @@ namespace Apoc3D
 
 			void DrawCharacter(Sprite* sprite, int32 ch, PointF& pos, uint color, float hozShrink, float extLineSpace, float widthCap, float xOrig, bool pixelAligned);
 
-			void DrawDisolvingCharacter(Sprite* sprite, float x, float y,
+			void DrawDisolvingCharacter(Sprite* sprite, Texture* fontPack, float x, float y,
 				int32 seed, const Apoc3D::Math::RectangleF& srcRect, int32 glyphLeft, int32 glyphTop, int32 glyphWidth, int32 glyphHeight, uint32 color,
 				const Point& dissolvePatchSize, float progress);
 

@@ -42,6 +42,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace Apoc3D::IO;
 using namespace Apoc3D::Utility;
 
+namespace
+{
+	bool IsLetter(int ch)
+	{
+		return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
+	}
+	bool IsChinese(int ch)
+	{
+		return ch >= 0x4E00 && ch <= 0x9fff;
+	}
+}
+
 namespace Apoc3D
 {
 	namespace UI
@@ -379,7 +391,7 @@ namespace Apoc3D
 		void Font::UnregisterCustomGlyph(int32 utf16code) { m_customCharacters.Remove(utf16code); }
 		void Font::ClearCustomGlyph() { m_customCharacters.Clear(); }
 		
-		void Font::DrawDisolvingCharacter(Sprite* sprite, float x, float y,
+		void Font::DrawDisolvingCharacter(Sprite* sprite, Texture* fontPack, float x, float y,
 			int32 seed, const Apoc3D::Math::RectangleF& _srcRect, int32 glyphLeft, int32 glyphTop, int32 glyphWidth, int32 glyphHeight, uint32 color,
 			const Point& dissolvePatchSize, float progress)
 		{
@@ -420,7 +432,7 @@ namespace Apoc3D
 					rect.X += rndDir.X * _srcRect.Width * progress;
 					rect.Y += rndDir.Y * _srcRect.Height * progress;
 
-					sprite->Draw(m_fontPack, rect, &srcRect, color);
+					sprite->Draw(fontPack, rect, &srcRect, color);
 				}
 			}
 		}
@@ -537,7 +549,7 @@ namespace Apoc3D
 					{
 						if (shouldDissolve)
 						{
-							DrawDisolvingCharacter(sprite, x, y, i,
+							DrawDisolvingCharacter(sprite, cgdef->Graphic, x, y, i,
 								cgdef->SrcRectF, cgdef->Left, cgdef->Top, (int32)cgdef->SrcRectF.Width, (int32)cgdef->SrcRectF.Height, color,
 								dissolvePatchSize, dissolveProgress);
 						}
@@ -575,7 +587,7 @@ namespace Apoc3D
 
 							if (shouldDissolve)
 							{
-								DrawDisolvingCharacter(sprite, x, y, i,
+								DrawDisolvingCharacter(sprite, m_fontPack, x, y, i,
 									glyph.MappedRectF, chdef.Left, chdef.Top, glyph.Width, glyph.Height, color,
 									dissolvePatchSize, dissolveProgress);
 							}
@@ -952,8 +964,9 @@ namespace Apoc3D
 					//ScanMoveControlCode(text, ch, i, len, nullptr, nullptr);
 					//ScanUselessControlCodes(text, ch, i, len);
 
-					bool isBlankCh = ch == ' ' || ch == '\t';
-					if (isBlankCh)
+					bool isChinese = IsChinese(ch);
+					bool isLetterCh = IsLetter(ch);
+					if (!isLetterCh)
 					{
 						prevWordBegin = i;
 						prevWordBeginAdvX = x;
@@ -961,22 +974,32 @@ namespace Apoc3D
 
 					AdvanceXSimple(x, ch);
 
-					if (x > width && !isBlankCh)
+					if (x > width)
 					{
-						int32 insertPos = prevWordBegin + lineBreakCount + 1;
-						if (insertPos < (int32)result.size())
+						if (isLetterCh)
 						{
-							result.insert(insertPos, 1, '\n');
-							x -= prevWordBeginAdvX;
+							int32 insertPos = prevWordBegin + lineBreakCount + 1;
+							if (insertPos < (int32)result.size())
+							{
+								result.insert(insertPos, 1, '\n');
+								x -= prevWordBeginAdvX;
+							}
+							else
+							{
+								result.append(1, '\n');
+								x = 0;
+							}
+
+							lineBreakCount++;
+							lineCount++;
 						}
-						else
+						else if (isChinese || x >= width + m_maxGlyphWidth)
 						{
+							// new line as Chinese or too much overage
 							result.append(1, '\n');
+							lineCount++;
 							x = 0;
 						}
-
-						lineBreakCount++;
-						lineCount++;
 					}
 
 					result.append(1, text[i]);
@@ -998,12 +1021,12 @@ namespace Apoc3D
 
 				for (int32 i = 0; i < len; i++)
 				{
-					char16_t ch = text[i]; 
+					char16_t ch = text[i];
+					char16_t nch = text[i + 1];
+
 					//ScanColorControlCodes(text, ch, i, len, nullptr);
 					//ScanMoveControlCodeNoSkip(text, ch, i, len, nullptr, nullptr);
 					//ScanUselessControlCodes(text, ch, i, len);
-
-					char16_t nch = text[i+1];
 
 					AdvanceXSimple(x, ch);
 

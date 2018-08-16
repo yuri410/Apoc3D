@@ -144,6 +144,10 @@ namespace Apoc3D
 			{
 				m_pathChkPt.Add(coll);
 			}
+			void InsertCheckPoint(int32 idx, const LocateCheckPoint& coll)
+			{
+				m_pathChkPt.Insert(idx, coll);
+			}
 
 			int getCount() const
 			{
