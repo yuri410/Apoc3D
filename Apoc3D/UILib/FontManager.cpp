@@ -500,7 +500,11 @@ namespace Apoc3D
 			{
 				char16_t ch = text[i];
 
-				if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r')
+				if (IsChinese(ch))
+				{
+					wordIndex++;
+				}
+				else if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r')
 				{
 					if (!wasSpace)
 					{
