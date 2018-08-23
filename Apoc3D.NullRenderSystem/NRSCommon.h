@@ -19,7 +19,7 @@
 #ifndef NRSCOMMON_H
 #define NRSCOMMON_H
 
-#include "apoc3d/Common.h"
+#include "apoc3d/ApocCommon.h"
 
 #include "apoc3d/Meta/EventDelegate.h"
 

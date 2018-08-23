@@ -18,7 +18,7 @@
  * ------------------------------------------------------------------------
  */
 
-#include "apoc3d/Common.h"
+#include "apoc3d/ApocCommon.h"
 
 #ifndef APOC3D_DYNLIB
 #	define PLUGINAPI

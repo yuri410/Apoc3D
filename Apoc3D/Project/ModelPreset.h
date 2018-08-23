@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_MODELPRESET_H
 #define APOC3D_MODELPRESET_H
 
-#include "apoc3d/Common.h"
+#include "apoc3d/ApocCommon.h"
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Graphics/RenderSystem/VertexElement.h"
 #include "apoc3d/Math/Color.h"

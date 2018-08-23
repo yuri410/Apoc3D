@@ -2,7 +2,7 @@
 #ifndef APOC3D_UTILS_GRAPH_H
 #define APOC3D_UTILS_GRAPH_H
 
-#include "apoc3d/Common.h"
+#include "apoc3d/ApocCommon.h"
 #include "apoc3d/Math/Vector.h"
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Collections/List.h"

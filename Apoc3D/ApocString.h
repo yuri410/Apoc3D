@@ -2,7 +2,7 @@
 #ifndef APOC3D_STRING_H
 #define APOC3D_STRING_H
 
-#include "Common.h"
+#include "ApocCommon.h"
 
 namespace Apoc3D
 {

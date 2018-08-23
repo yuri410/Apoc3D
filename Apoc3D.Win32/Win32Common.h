@@ -2,7 +2,7 @@
 #ifndef APOC3D_WIN32_COMMON_H
 #define APOC3D_WIN32_COMMON_H
 
-#include "apoc3d/Common.h"
+#include "apoc3d/ApocCommon.h"
 #include "apoc3d/Core/Plugin.h"
 
 #include <Windows.h>

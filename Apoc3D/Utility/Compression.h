@@ -3,7 +3,7 @@
 #define APOC3D_COMPRESSION_H
 
 
-#include "apoc3d/Common.h"
+#include "apoc3d/ApocCommon.h"
 
 namespace Apoc3D
 {

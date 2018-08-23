@@ -19,7 +19,7 @@
 #ifndef APOC3D_BITARRAY_H
 #define APOC3D_BITARRAY_H
 
-#include "../Common.h"
+#include "apoc3d/ApocCommon.h"
 
 namespace Apoc3D
 {

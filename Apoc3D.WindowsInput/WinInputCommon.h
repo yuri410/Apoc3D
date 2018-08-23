@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef WININPUTCOMMON_H
 #define WININPUTCOMMON_H
 
-#include "apoc3d/Common.h"
+#include "apoc3d/ApocCommon.h"
 
 #pragma warning ( push )
 #pragma warning ( disable:4512 )

@@ -14,7 +14,7 @@
  * ------------------------------------------------------------------------
  */
 
-#include "Common.h"
+#include "ApocCommon.h"
 #include "Core/Logging.h"
 #include "Utility/StringUtils.h"
 #include "Utility/TypeConverter.h"

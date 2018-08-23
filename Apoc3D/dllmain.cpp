@@ -1,5 +1,5 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
-#include "Common.h"
+#include "ApocCommon.h"
 
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS && APOC3D_DYNLIB
 

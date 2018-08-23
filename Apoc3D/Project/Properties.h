@@ -3,7 +3,7 @@
 #ifndef APOC3D_PROPERTIES_H
 #define APOC3D_PROPERTIES_H
 
-#include "apoc3d/Common.h"
+#include "apoc3d/ApocCommon.h"
 #include "apoc3d/Math/MathCommon.h"
 
 using namespace Apoc3D::Config;

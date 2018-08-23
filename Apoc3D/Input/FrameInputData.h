@@ -18,7 +18,7 @@
  * ------------------------------------------------------------------------
  */
 
-#include "../Common.h"
+#include "apoc3d/ApocCommon.h"
 #include "apoc3d/Collections/Queue.h"
 #include "apoc3d/Meta/EventDelegate.h"
 #include "apoc3d/Core/GameTime.h"

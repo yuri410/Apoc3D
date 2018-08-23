@@ -19,7 +19,7 @@
  * ------------------------------------------------------------------------
  */
 
-#include "apoc3d/Common.h"
+#include "apoc3d/ApocCommon.h"
 
 namespace Apoc3D
 {

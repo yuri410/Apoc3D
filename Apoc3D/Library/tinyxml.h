@@ -27,7 +27,7 @@ distribution.
 #ifndef TINYXML_INCLUDED
 #define TINYXML_INCLUDED
 
-#include "../Common.h"
+#include "apoc3d/ApocCommon.h"
 #include "apoc3d/Core/Pool.h"
 
 #ifdef _MSC_VER

@@ -18,7 +18,7 @@
  * ------------------------------------------------------------------------
  */
 
-#include "apoc3d/Common.h"
+#include "apoc3d/ApocCommon.h"
 #include "apoc3d/Collections/BitArray.h"
 
 using namespace Apoc3D::Core;

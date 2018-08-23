@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3DEX_ESSENTIALCOMMON_H
 #define APOC3DEX_ESSENTIALCOMMON_H
 
-#include "apoc3d/Common.h"
+#include "apoc3d/ApocCommon.h"
 
 #include <queue>
 

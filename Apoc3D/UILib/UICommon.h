@@ -26,7 +26,7 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "apoc3d/Common.h"
+#include "apoc3d/ApocCommon.h"
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Math/ColorValue.h"
 #include "apoc3d/Collections/List.h"

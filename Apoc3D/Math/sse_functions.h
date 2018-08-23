@@ -26,7 +26,7 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "../Common.h"
+#include "apoc3d/ApocCommon.h"
 
 #define ZERO_VECTOR
 

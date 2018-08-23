@@ -18,7 +18,7 @@
  * ------------------------------------------------------------------------
  */
 
-#include "apoc3d/Common.h"
+#include "apoc3d/ApocCommon.h"
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Collections/Queue.h"
 #include "apoc3d/Library/tinythread.h"

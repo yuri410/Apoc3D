@@ -2,7 +2,7 @@
 #ifndef APOC3D_HASH
 #define APOC3D_HASH
 
-#include "apoc3d/Common.h"
+#include "apoc3d/ApocCommon.h"
 
 namespace Apoc3D
 {

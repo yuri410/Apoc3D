@@ -18,7 +18,7 @@
  * ------------------------------------------------------------------------
  */
 
-#include "Common.h"
+#include "ApocCommon.h"
 #include "Collections/List.h"
 
 using namespace Apoc3D::Core;
