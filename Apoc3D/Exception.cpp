@@ -1,7 +1,7 @@
 /* -----------------------------------------------------------------------
  * This source file is part of Apoc3D Framework
  * 
- * Copyright (c) 2014-2017 Tao Xin
+ * Copyright (c) 2014-2018 Tao Xin
  * 
  * This content of this file is subject to the terms of the Mozilla Public 
  * License v2.0. If a copy of the MPL was not distributed with this file, 
