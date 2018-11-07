@@ -568,7 +568,7 @@ namespace Apoc3D
 					{
 						for (const SettingsCombo* combo : deviceInfo->SettingCombos)
 						{
-							if (combo->Windowed && combo->AdapterFormat == desktopMode.Format)
+							if (combo->Windowed && combo->AdapterFormat != desktopMode.Format)
 								continue;
 
 							float ranking = combo->RankSettingsCombo(raw, desktopMode);
@@ -603,6 +603,9 @@ namespace Apoc3D
 				result.PresentParameters.MultiSampleType = D3D9Utils::ConvertMultisample(input.FSAASampleCount);
 				result.PresentParameters.MultiSampleQuality = 0;
 				result.PresentParameters.FullScreen_RefreshRateInHz = input.RefreshRate;
+
+				if (GetSystemMetrics(SM_REMOTESESSION) != 0) 
+					result.PresentParameters.Windowed = true;
 
 				if (input.IsMultithreaded)
 					result.CreationFlags |= D3DCREATE_MULTITHREADED;
