@@ -128,6 +128,7 @@ namespace Apoc3D
 
 			const String& getText() const { return m_textEdit.getText(); }
 			void SetText(const String& text);
+			void SetText(const String& text, bool keepCursorAndScroll);
 
 			void setWidth(int w) { m_size.X = w; }
 			void setHeight(int h) { m_size.Y = h; }
@@ -136,6 +137,7 @@ namespace Apoc3D
 
 			bool ReadOnly = false;
 			bool HasFocus = false;
+			bool RaiseGlobalEvent = true;
 
 			TextRenderSettings TextSettings;
 			TextRenderSettings BackgroundTextSettings;
@@ -148,11 +150,12 @@ namespace Apoc3D
 			ControlBounds Margin;
 			ControlBounds ContentPadding;
 
-			TextBoxEvent eventEnterPressed;
-			TextBoxEvent eventContentChanged;
 			TextBoxEvent eventUpPressedSingleline;
 			TextBoxEvent eventDownPressedSingleline;
+			TextBoxEvent eventEnterPressed;
+			TextBoxEvent eventContentChanged;
 
+			static TextBoxEvent eventAnyContentChanged;
 		private:
 			void Initialize(const StyleSkin* skin);
 			void Initialize(const TextBoxVisualSettings& settings);
@@ -168,10 +171,10 @@ namespace Apoc3D
 			void _DrawText(Sprite* sprite);
 			void DrawCursor(Sprite* sprite);
 
-			void TextEditState_EnterPressed();
-			void TextEditState_ContentChanged();
 			void TextEditState_UpPressedSingleline();
 			void TextEditState_DownPressedSingleline();
+			void TextEditState_EnterPressed();
+			void TextEditState_ContentChanged();
 
 			void Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e);
 			void Keyboard_OnPaste(String value);

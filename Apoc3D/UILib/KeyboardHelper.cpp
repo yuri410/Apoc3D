@@ -274,7 +274,7 @@ namespace Apoc3D
 			}
 		}
 
-		void TextEditState::SetText(const String& text)
+		void TextEditState::SetText(const String& text, bool keepCursor)
 		{
 			if (!m_multiline)
 			{
@@ -289,8 +289,15 @@ namespace Apoc3D
 
 			Sync();
 
-			m_cursorLocation.X = 0;
-			m_cursorLocation.Y = 0;
+			if (keepCursor)
+			{
+				ClampCursorPos(m_cursorLocation);
+			}
+			else
+			{
+				m_cursorLocation.X = 0;
+				m_cursorLocation.Y = 0;
+			}
 			
 			ClearSelectionRegion();
 		}

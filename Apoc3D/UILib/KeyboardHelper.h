@@ -79,7 +79,7 @@ namespace Apoc3D
 			void Update(const GameTime* time);
 
 			void Add(const String& text);
-			void SetText(const String& text);
+			void SetText(const String& text, bool keepCursor);
 			bool GetLineSelectionRegion(int32 line, int32& start, int32& end);
 
 			const String& getText() const { return m_text; }

@@ -453,6 +453,7 @@ namespace Apoc3D
 		/************************************************************************/
 		/*   TextBox                                                            */
 		/************************************************************************/
+		TextBox::TextBoxEvent TextBox::eventAnyContentChanged;
 
 		TextBox::TextBox(const TextBoxVisualSettings& settings, const Point& position, int width)
 			: ScrollableControl(nullptr, position, width), m_textEdit(false)
@@ -940,16 +941,26 @@ namespace Apoc3D
 			return ContentPadding.ShrinkRect(GetContentArea());
 		}
 
-		void TextBox::TextEditState_EnterPressed() { eventEnterPressed.Invoke(this); }
-		void TextBox::TextEditState_ContentChanged() { eventContentChanged.Invoke(this); }
 		void TextBox::TextEditState_UpPressedSingleline() { eventUpPressedSingleline.Invoke(this); }
 		void TextBox::TextEditState_DownPressedSingleline() { eventDownPressedSingleline.Invoke(this); }
-
+		void TextBox::TextEditState_EnterPressed() { eventEnterPressed.Invoke(this); }
+		void TextBox::TextEditState_ContentChanged()
+		{
+			eventContentChanged.Invoke(this);
+			if (RaiseGlobalEvent)
+				eventAnyContentChanged.Invoke(this);
+		}
 
 		void TextBox::SetText(const String& text)
 		{
-			m_textEdit.SetText(text);
-			m_scrollOffset = Point(0, 0);
+			SetText(text, false);
+		}
+		void TextBox::SetText(const String& text, bool keepCursorAndScroll)
+		{
+			m_textEdit.SetText(text, keepCursorAndScroll);
+
+			if (!keepCursorAndScroll)
+				m_scrollOffset = Point(0, 0);
 		}
 
 		void TextBox::Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e)
