@@ -16,10 +16,14 @@ namespace Apoc3D
 		uint64 GetInstalledSystemMemorySizeInKB()
 		{
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-			ULONGLONG result;
-			GetPhysicallyInstalledSystemMemory(&result);
-
-			return result;
+			//ULONGLONG result;
+			//GetPhysicallyInstalledSystemMemory(&result);
+			//return result;
+			MEMORYSTATUSEX statex;
+			statex.dwLength = sizeof(statex);
+			if (GlobalMemoryStatusEx(&statex))
+				return statex.ullTotalPhys / 1024;
+			return 0;
 #else
 			MEMORYSTATUSEX status;
 			status.dwLength = sizeof(status);

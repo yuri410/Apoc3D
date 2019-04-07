@@ -22,6 +22,10 @@
 #include <sstream>
 #include <algorithm>
 
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+#include <Windows.h>
+#endif
+
 using namespace Apoc3D::Collections;
 
 namespace Apoc3D
@@ -37,6 +41,14 @@ namespace Apoc3D
 		nstring StringUtils::toPlatformNarrowString(const String& str) { return toPlatformNarrowString(str.c_str()); }
 		nstring StringUtils::toPlatformNarrowString(const wchar_t* str)
 		{
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+			size_t len = wcslen(str);
+			if (len == 0) return nstring();
+			int size_needed = WideCharToMultiByte(CP_ACP, 0, &str[0], (int)len, NULL, 0, NULL, NULL);
+			std::string strTo(size_needed, 0);
+			WideCharToMultiByte(CP_ACP, 0, &str[0], (int)len, &strTo[0], size_needed, NULL, NULL);
+			return strTo;
+#else
 			size_t bufSize = wcstombs(nullptr, str, 0);
 			if (bufSize != static_cast<size_t>(-1))
 			{
@@ -49,10 +61,19 @@ namespace Apoc3D
 				return result;
 			}
 			return nstring();
+#endif
 		}
 		String StringUtils::toPlatformWideString(const nstring& str) { return toPlatformWideString(str.c_str()); }
 		String StringUtils::toPlatformWideString(const char* str)
 		{
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+			size_t len = strlen(str);
+			if (len == 0) return String();
+			int size_needed = MultiByteToWideChar(CP_ACP, 0, &str[0], (int)len, NULL, 0);
+			std::wstring wstrTo(size_needed, 0);
+			MultiByteToWideChar(CP_ACP, 0, &str[0], (int)len, &wstrTo[0], size_needed);
+			return wstrTo;
+#else
 			size_t bufSize = mbstowcs(nullptr, str, 0);
 			if (bufSize != static_cast<size_t>(-1))
 			{
@@ -65,6 +86,7 @@ namespace Apoc3D
 				return result;
 			}
 			return L"";
+#endif
 		}
 
 		nstring StringUtils::toASCIINarrowString(const String& str) { return nstring(str.begin(), str.end()); }

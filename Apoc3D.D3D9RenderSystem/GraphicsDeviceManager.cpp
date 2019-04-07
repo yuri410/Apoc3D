@@ -476,7 +476,7 @@ namespace Apoc3D
 
 
 
-						SetWindowPos(wnd->getHandle(), 0, 
+						SetWindowPos(wnd->getHandle(), 0,
 							(scrnWidth - clientWidth)>>1, (scrnHeight - clientHeight)>>1, 
 							clientWidth, clientHeight, SWP_NOZORDER);
 
@@ -505,9 +505,14 @@ namespace Apoc3D
 
 				// set the execution state of the thread
 				if (!m_currentSetting->PresentParameters.Windowed)
+				{
 					SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
+				}
 				else
+				{
 					SetThreadExecutionState(ES_CONTINUOUS);
+					SetWindowPos(wnd->getHandle(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+				}
 
 				m_ignoreSizeChanges = false;
 
