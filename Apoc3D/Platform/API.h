@@ -46,6 +46,10 @@ namespace Apoc3D
 
 		APAPI int32 GetSystemDoubleClickIntervalInMS();
 
+		APAPI std::string GetPlatformNarrowString(const wchar_t* str);
+
+		APAPI String GetPlatformWideString(const char* str);
+
 	}
 }
 

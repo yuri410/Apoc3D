@@ -57,6 +57,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.Win32", "Apoc3D.Win3
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.NullRenderSystem", "Apoc3D.NullRenderSystem\Apoc3D_NullRenderSystem.vcxproj", "{1476E25C-AE89-45D2-9F76-9929F6C8263F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.OpenGL3RenderSystem", "Apoc3D.OpenGL3RenderSystem\Apoc3D.OpenGL3RenderSystem.vcxproj", "{4ECF9A4B-40A2-458D-BCDB-B48440527408}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -279,6 +281,16 @@ Global
 		{1476E25C-AE89-45D2-9F76-9929F6C8263F}.Release_Static|Win32.Build.0 = Release_Static|Win32
 		{1476E25C-AE89-45D2-9F76-9929F6C8263F}.Release_Static|x64.ActiveCfg = Release_Static|x64
 		{1476E25C-AE89-45D2-9F76-9929F6C8263F}.Release_Static|x64.Build.0 = Release_Static|x64
+		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Debug|Win32.Build.0 = Debug|Win32
+		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Debug|x64.ActiveCfg = Debug|Win32
+		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_DynLib|Win32.ActiveCfg = Release_DynLib|Win32
+		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_DynLib|Win32.Build.0 = Release_DynLib|Win32
+		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_DynLib|x64.ActiveCfg = Release_DynLib|Win32
+		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|Win32.ActiveCfg = Release_DynLib|Win32
+		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|Win32.Build.0 = Release_DynLib|Win32
+		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|x64.ActiveCfg = Debug|Win32
+		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|x64.Build.0 = Debug|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

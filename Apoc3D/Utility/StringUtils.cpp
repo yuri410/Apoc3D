@@ -18,13 +18,10 @@
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Library/ConvertUTF.h"
 #include "apoc3d/Math/Math.h"
+#include "apoc3d/Platform/API.h"
 #include <strstream>
 #include <sstream>
 #include <algorithm>
-
-#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-#include <Windows.h>
-#endif
 
 using namespace Apoc3D::Collections;
 
@@ -38,56 +35,10 @@ namespace Apoc3D
 		const String StringUtils::Empty;
 
 
-		nstring StringUtils::toPlatformNarrowString(const String& str) { return toPlatformNarrowString(str.c_str()); }
-		nstring StringUtils::toPlatformNarrowString(const wchar_t* str)
-		{
-#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-			size_t len = wcslen(str);
-			if (len == 0) return nstring();
-			int size_needed = WideCharToMultiByte(CP_ACP, 0, &str[0], (int)len, NULL, 0, NULL, NULL);
-			std::string strTo(size_needed, 0);
-			WideCharToMultiByte(CP_ACP, 0, &str[0], (int)len, &strTo[0], size_needed, NULL, NULL);
-			return strTo;
-#else
-			size_t bufSize = wcstombs(nullptr, str, 0);
-			if (bufSize != static_cast<size_t>(-1))
-			{
-				char* buffer = new char[bufSize+1];
-				buffer[bufSize] = 0;
-				wcstombs(buffer, str, bufSize);
-
-				nstring result = buffer;
-				delete[] buffer;
-				return result;
-			}
-			return nstring();
-#endif
-		}
-		String StringUtils::toPlatformWideString(const nstring& str) { return toPlatformWideString(str.c_str()); }
-		String StringUtils::toPlatformWideString(const char* str)
-		{
-#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-			size_t len = strlen(str);
-			if (len == 0) return String();
-			int size_needed = MultiByteToWideChar(CP_ACP, 0, &str[0], (int)len, NULL, 0);
-			std::wstring wstrTo(size_needed, 0);
-			MultiByteToWideChar(CP_ACP, 0, &str[0], (int)len, &wstrTo[0], size_needed);
-			return wstrTo;
-#else
-			size_t bufSize = mbstowcs(nullptr, str, 0);
-			if (bufSize != static_cast<size_t>(-1))
-			{
-				wchar_t* buffer = new wchar_t[bufSize+1];
-				buffer[bufSize] = 0;
-				mbstowcs(buffer, str, bufSize);
-
-				String result = buffer;
-				delete[] buffer;
-				return result;
-			}
-			return L"";
-#endif
-		}
+		nstring StringUtils::toPlatformNarrowString(const String& str)  { return Platform::GetPlatformNarrowString(str.c_str()); }
+		nstring StringUtils::toPlatformNarrowString(const wchar_t* str) { return Platform::GetPlatformNarrowString(str); }
+		String StringUtils::toPlatformWideString(const nstring& str) { return Platform::GetPlatformWideString(str.c_str()); }
+		String StringUtils::toPlatformWideString(const char* str) { return Platform::GetPlatformWideString(str); }
 
 		nstring StringUtils::toASCIINarrowString(const String& str) { return nstring(str.begin(), str.end()); }
 		String StringUtils::toASCIIWideString(const nstring& str) { return String(str.begin(), str.end()); }

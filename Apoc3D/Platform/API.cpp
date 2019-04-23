@@ -51,6 +51,14 @@ namespace Apoc3D
 			ft.dwHighDateTime = static_cast<DWORD>(temp >> 32);
 		}
 
+		std::string GetPlatformNarrowString(const wchar_t* str)
+		{
 
+		}
+
+		String GetPlatformWideString(const char* str)
+		{
+
+		}
 	}
 }
