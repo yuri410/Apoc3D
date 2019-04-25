@@ -36,7 +36,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GL3RenderSystem
 		{
 			Game::Game(GL1DeviceContext* devCont, const String& name)
 				: m_maxElapsedTime(0.5f), m_targetElapsedTime(1.0f / 60.0f), m_inactiveSleepTime(20),

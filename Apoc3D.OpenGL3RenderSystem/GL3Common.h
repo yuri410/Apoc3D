@@ -16,38 +16,48 @@
  * ------------------------------------------------------------------------
  */
 
-#ifndef GL3PLUGIN_H
-#define GL3PLUGIN_H
+#ifndef GL3COMMON_H
+#define GL3COMMON_H
 
-#include "GL3Common.h"
-#include "apoc3d/Core/Plugin.h"
-#include "GL3GraphicsAPIFactory.h"
+#include "apoc3d/ApocCommon.h"
 
-using namespace Apoc3D::Core;
+#include <Windows.h>
 
-#ifdef APOC3D_DYNLIB
-extern "C" PLUGINAPI Plugin* Apoc3DGetPlugin();
-#endif
+#include "GL/gl3w.h"
+
+#include "apoc3d/Meta/EventDelegate.h"
+
+#pragma comment(lib, "Apoc3D.lib")
 
 namespace Apoc3D
 {
+	typedef EventDelegate<bool*> CancellableEventHandler;
+	typedef EventDelegate<> EventHandler;
+
 	namespace Graphics
 	{
 		namespace GL3RenderSystem
 		{
-			class GL3RSPlugin : public Plugin
-			{
-			private:
-				GL3GraphicsAPIFactory m_factory;
-			public:
-				GL3RSPlugin();
-				virtual void Load();
-				virtual void Unload();
+			class Game;
+			class GraphicsDeviceManager;
 
-				virtual String GetName() { return L"OpenGL 3.1 Render System"; }
-			};
+			class GL3RenderView;
+			class GL3RenderWindow;
+
+			class GL3DeviceContext;
+			
+			class GL3ObjectFactory;
+			class GL3RenderDevice;
+			class GL3Capabilities;
+			class GL3RenderStateManager;
+			class GL3RenderTarget;
+
+			class NativeGL1StateManager;
+
+			class GL3Texture;
+			class GL3Sprite;
+			
 		}
 	}
 }
-
 #endif

@@ -66,6 +66,7 @@ namespace Apoc3D
 		inline float ToDegree(int32 x) { return x * (180.0f / L_PIf); }
 
 		inline float Square(float x) { return x*x; }
+		inline double Square(double x) { return x*x; }
 
 		inline float SqrtFast(float x)
 		{
@@ -83,50 +84,51 @@ namespace Apoc3D
 		inline float Frac(float value)
 		{
 			assert(value >= 0);
-			return value - floorf(value);
+			return value - floor(value);
+		}
+		inline double Frac(double value)
+		{
+			assert(value >= 0);
+			return value - floor(value);
 		}
 
-		inline float Sign(float value)
+		template <typename T>
+		T _Sign(T value)
 		{
-			if (value > 0)
-				return 1.0f;
-			return value < 0 ? -1.0f : 0.0f;
-		}
-		inline int32 Sign(int32 value)
-		{
-			if (value > 0)
-				return 1;
-			return value < 0 ? -1 : 0;
+			static_assert(std::is_floating_point<T>::value || std::is_integral<T>::value, "");
+			if (value > 0) return (T)1;
+			return value < 0 ? (T)-1 : (T)0;
 		}
 
-		inline float Lerp(float a, float b, float amount)
+		template <typename T>
+		T _Lerp(T a, T b, T amount)
 		{
+			static_assert(std::is_floating_point<T>::value, "");
 			return a + (b - a)*amount;
 		}
-		inline float InvLerp(float _min, float _max, float x)
+
+		template <typename T>
+		T _InvLerp(T _min, T _max, T x)
 		{
+			static_assert(std::is_floating_point<T>::value, "");
 			return (x - _min) / (_max - _min);
 		}
 
-		inline float Clamp(float v, float _min, float _max)
+		template <typename T>
+		T _Clamp(T v, T _min, T _max)
 		{
-			if (v > _max)
-				return _max;
-			return (v < _min) ? _min : v;
-		}
-		inline int32 Clamp(int32 v, int32 _min, int32 _max)
-		{
-			if (v > _max)
-				return _max;
+			static_assert(std::is_floating_point<T>::value || std::is_integral<T>::value, "");
+			if (v > _max) return _max;
 			return (v < _min) ? _min : v;
 		}
 
-		inline float Saturate(float v)
+		template <typename T>
+		T _Saturate(T v)
 		{
-			const float t = v < 0 ? 0 : v;
+			static_assert(std::is_floating_point<T>::value, "");
+			const T t = v < 0 ? 0 : v;
 			return t > 1 ? 1 : t;
 		}
-
 
 		template <typename T>
 		T _Max(T a, T b)
@@ -134,6 +136,7 @@ namespace Apoc3D
 			static_assert(std::is_floating_point<T>::value || std::is_integral<T>::value, "");
 			return (a > b) ? a : b;
 		}
+
 		template <typename T>
 		T _Min(T a, T b)
 		{
@@ -141,6 +144,22 @@ namespace Apoc3D
 			return (a < b) ? a : b;
 		}
 
+		inline int32  Sign(int32 value)  { return _Sign(value); }
+		inline float  Sign(float value)  { return _Sign(value); }
+		inline double Sign(double value) { return _Sign(value); }
+
+		inline float  Lerp(float a, float b, float amount)    { return _Lerp(a, b, amount); }
+		inline double Lerp(double a, double b, double amount) { return _Lerp(a, b, amount); }
+
+		inline float  InvLerp(float _min, float _max, float x)    { return _InvLerp(_min, _max, x); }
+		inline double InvLerp(double _min, double _max, double x) { return _InvLerp(_min, _max, x); }
+
+		inline int32  Clamp(int32 v, int32 _min, int32 _max)    { return _Clamp(v, _min, _max); }
+		inline float  Clamp(float v, float _min, float _max)    { return _Clamp(v, _min, _max); }
+		inline double Clamp(double v, double _min, double _max) { return _Clamp(v, _min, _max); }
+
+		inline float  Saturate(float v)  { return _Saturate(v); }
+		inline double Saturate(double v) { return _Saturate(v); }
 
 		inline int32 Max(int32 a, int32 b) { return _Max(a, b); }
 		inline int32 Min(int32 a, int32 b) { return _Min(a, b); }

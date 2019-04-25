@@ -16,18 +16,13 @@
  * ------------------------------------------------------------------------
  */
 
-#ifndef GL3PLUGIN_H
-#define GL3PLUGIN_H
+#ifndef GL3GRAPHICSAPIFACTORY_H
+#define GL3GRAPHICSAPIFACTORY_H
 
 #include "GL3Common.h"
-#include "apoc3d/Core/Plugin.h"
-#include "GL3GraphicsAPIFactory.h"
+#include "apoc3d/Graphics/RenderSystem/GraphicsAPI.h"
 
-using namespace Apoc3D::Core;
-
-#ifdef APOC3D_DYNLIB
-extern "C" PLUGINAPI Plugin* Apoc3DGetPlugin();
-#endif
+using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
 {
@@ -35,16 +30,17 @@ namespace Apoc3D
 	{
 		namespace GL3RenderSystem
 		{
-			class GL3RSPlugin : public Plugin
+			class GL3GraphicsAPIFactory : public GraphicsAPIFactory
 			{
 			private:
-				GL3GraphicsAPIFactory m_factory;
-			public:
-				GL3RSPlugin();
-				virtual void Load();
-				virtual void Unload();
+				static APIDescription GetDescription();
 
-				virtual String GetName() { return L"OpenGL 3.1 Render System"; }
+			public:
+				GL3GraphicsAPIFactory()
+					: GraphicsAPIFactory(GetDescription())
+				{ }
+
+				virtual DeviceContext* CreateDeviceContext();
 			};
 		}
 	}

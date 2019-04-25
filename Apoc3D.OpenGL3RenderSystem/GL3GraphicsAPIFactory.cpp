@@ -1,5 +1,3 @@
-#pragma once
-
 /* -----------------------------------------------------------------------
  * This source file is part of Apoc3D Framework
  *
@@ -16,18 +14,8 @@
  * ------------------------------------------------------------------------
  */
 
-#ifndef GL3PLUGIN_H
-#define GL3PLUGIN_H
-
-#include "GL3Common.h"
-#include "apoc3d/Core/Plugin.h"
 #include "GL3GraphicsAPIFactory.h"
-
-using namespace Apoc3D::Core;
-
-#ifdef APOC3D_DYNLIB
-extern "C" PLUGINAPI Plugin* Apoc3DGetPlugin();
-#endif
+#include "GL3DeviceContext.h"
 
 namespace Apoc3D
 {
@@ -35,19 +23,20 @@ namespace Apoc3D
 	{
 		namespace GL3RenderSystem
 		{
-			class GL3RSPlugin : public Plugin
+			APIDescription GL3GraphicsAPIFactory::GetDescription()
 			{
-			private:
-				GL3GraphicsAPIFactory m_factory;
-			public:
-				GL3RSPlugin();
-				virtual void Load();
-				virtual void Unload();
+				PlatformAPISupport platform = { 60, L"WINDOWS" };
 
-				virtual String GetName() { return L"OpenGL 3.1 Render System"; }
-			};
+				APIDescription desc;
+				desc.Name = L"OpenGL 3.1";
+				desc.SupportedPlatforms.Add(platform);
+				return desc;
+			}
+
+			DeviceContext* GL3GraphicsAPIFactory::CreateDeviceContext()
+			{
+				return new GL3DeviceContext();
+			}
 		}
 	}
 }
-
-#endif

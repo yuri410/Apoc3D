@@ -15,20 +15,21 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Apoc3D::Graphics::GL3RenderSystem</RootNamespace>
     <ProjectName>Apoc3D.OpenGL3RenderSystem</ProjectName>
+    <WindowsTargetPlatformVersion>5.01</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v140_xp</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v140_xp</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -42,11 +43,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IntDir>$(SolutionDir)objs\$(ProjectName)_$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\x86\$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x86\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IntDir>$(SolutionDir)objs\$(ProjectName)_$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\x86\$(ProjectName)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)_x86\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -54,7 +57,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
@@ -73,12 +76,13 @@
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;APOC3D_PLUGIN_DYLIB_EXPORT;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -88,18 +92,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="GL1Utils.h" />
+    <ClInclude Include="GL3Utils.h" />
     <ClInclude Include="GL1RenderStateManager.h" />
     <ClInclude Include="GL1ObjectFactory.h" />
     <ClInclude Include="GL1RenderDevice.h" />
     <ClInclude Include="GL1Sprite.h" />
     <ClInclude Include="GL1Texture.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="gl\gl3w.h" />
     <ClInclude Include="GraphicsDeviceManager.h" />
     <ClInclude Include="GL1RenderWindow.h" />
-    <ClInclude Include="GL1GraphicsAPIFactory.h" />
-    <ClInclude Include="GL1DeviceContext.h" />
-    <ClInclude Include="GL1Common.h" />
+    <ClInclude Include="GL3GraphicsAPIFactory.h" />
+    <ClInclude Include="GL3DeviceContext.h" />
+    <ClInclude Include="GL3Common.h" />
     <ClInclude Include="Plugin.h" />
   </ItemGroup>
   <ItemGroup>
@@ -110,11 +115,12 @@
     <ClCompile Include="GL1Sprite.cpp" />
     <ClCompile Include="GL1Texture.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GL1Utils.cpp" />
+    <ClCompile Include="GL3Utils.cpp" />
+    <ClCompile Include="gl\gl3w.c" />
     <ClCompile Include="GraphicsDeviceManager.cpp" />
     <ClCompile Include="GL1RenderWindow.cpp" />
-    <ClCompile Include="GL1GraphicsAPIFactory.cpp" />
-    <ClCompile Include="GL1DeviceContext.cpp" />
+    <ClCompile Include="GL3GraphicsAPIFactory.cpp" />
+    <ClCompile Include="GL3DeviceContext.cpp" />
     <ClCompile Include="Plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
