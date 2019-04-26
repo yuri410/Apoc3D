@@ -1,50 +1,41 @@
-/*
------------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+/* -----------------------------------------------------------------------
+ * This source file is part of Apoc3D Framework
+ * 
+ * Copyright (c) 2009-2018 Tao Xin
+ * 
+ * This content of this file is subject to the terms of the Mozilla Public 
+ * License v2.0. If a copy of the MPL was not distributed with this file, 
+ * you can obtain one at http://mozilla.org/MPL/2.0/.
+ * 
+ * This program is distributed in the hope that it will be useful, 
+ * WITHOUT WARRANTY OF ANY KIND; either express or implied. See the 
+ * Mozilla Public License for more details.
+ * 
+ * ------------------------------------------------------------------------
+ */
 
-Copyright (c) 2009+ Tao Xin
+#include "GL3RenderStateManager.h"
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
-Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/gpl.txt.
-
------------------------------------------------------------------------------
-*/
-
-#include "GL1RenderStateManager.h"
-
-#include "GL1RenderDevice.h"
-#include "GL1Utils.h"
+#include "GL3RenderDevice.h"
+#include "GL3Utils.h"
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GL3RenderSystem
 		{
-
-			NativeGL1StateManager::NativeGL1StateManager(GL1RenderDevice* device)
+			NativeGL3StateManager::NativeGL3StateManager(GL3RenderDevice* device)
 				: m_device(device)
 			{
 				InitializeDefaultState();
 			}
-			NativeGL1StateManager::~NativeGL1StateManager()
+			NativeGL3StateManager::~NativeGL3StateManager()
 			{
 
 			}
 
-			void NativeGL1StateManager::SetCullMode(CullMode mode)
+			void NativeGL3StateManager::SetCullMode(CullMode mode)
 			{
 				m_cachedCullMode = mode;
 
@@ -66,7 +57,7 @@ namespace Apoc3D
 				glFrontFace(GL_CCW);
 
 			}
-			void NativeGL1StateManager::SetFillMode(FillMode mode)
+			void NativeGL3StateManager::SetFillMode(FillMode mode)
 			{
 				m_cachedFillMode = mode;
 				GLenum pm = 0;
@@ -79,7 +70,7 @@ namespace Apoc3D
 
 				glPolygonMode(GL_FRONT_AND_BACK, pm);
 			}
-			void NativeGL1StateManager::SetAlphaTestParameters(bool enable, uint32 reference)
+			void NativeGL3StateManager::SetAlphaTestParameters(bool enable, uint32 reference)
 			{
 				m_cachedAlphaTestEnable = enable;
 				m_cachedAlphaReference = reference;
@@ -97,7 +88,7 @@ namespace Apoc3D
 				// this is true for this RS and the D3D9 RS.
 				glAlphaFunc(GLUtils::ConvertCompare(m_cachedAlphaTestFunction), reference/255.0f);
 			}
-			void NativeGL1StateManager::SetAlphaTestParameters(bool enable, CompareFunction func, uint32 reference)
+			void NativeGL3StateManager::SetAlphaTestParameters(bool enable, CompareFunction func, uint32 reference)
 			{
 				m_cachedAlphaTestEnable = enable;
 				m_cachedAlphaReference = reference;
@@ -117,7 +108,7 @@ namespace Apoc3D
 				glAlphaFunc(GLUtils::ConvertCompare(func), reference/255.0f);
 				
 			}
-			void NativeGL1StateManager::SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend)
+			void NativeGL3StateManager::SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend)
 			{
 				m_cachedAlphaBlendEnable = enable;
 				m_cachedAlphaBlendFunction = func;
@@ -136,7 +127,7 @@ namespace Apoc3D
 					glBlendEquation(GLUtils::ConvertBlendFunction(func));
 				}
 			}
-			void NativeGL1StateManager::SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint32 factor)
+			void NativeGL3StateManager::SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint32 factor)
 			{
 				m_cachedAlphaBlendEnable = enable;
 				m_cachedAlphaBlendFunction = func;
@@ -159,7 +150,7 @@ namespace Apoc3D
 
 			}
 
-			void NativeGL1StateManager::setAlphaBlendEnable(bool enable)
+			void NativeGL3StateManager::setAlphaBlendEnable(bool enable)
 			{
 				m_cachedAlphaBlendEnable = enable;
 
@@ -168,7 +159,7 @@ namespace Apoc3D
 				else
 					glDisable(GL_BLEND);
 			}
-			void NativeGL1StateManager::setAlphaBlendOperation(BlendFunction func)
+			void NativeGL3StateManager::setAlphaBlendOperation(BlendFunction func)
 			{
 				m_cachedAlphaBlendFunction = func;
 				if (GLEW_ARB_imaging)
@@ -176,21 +167,21 @@ namespace Apoc3D
 					glBlendEquation(GLUtils::ConvertBlendFunction(func));
 				}
 			}
-			void NativeGL1StateManager::setAlphaSourceBlend(Blend srcBlend)
+			void NativeGL3StateManager::setAlphaSourceBlend(Blend srcBlend)
 			{
 				m_cachedAlphaSourceBlend = srcBlend;
 
 				glBlendFunc(GLUtils::ConvertBlend(srcBlend), GLUtils::ConvertBlend(m_cachedAlphaDestBlend));
 
 			}
-			void NativeGL1StateManager::setAlphaDestinationBlend(Blend dstBlend)
+			void NativeGL3StateManager::setAlphaDestinationBlend(Blend dstBlend)
 			{
 				m_cachedAlphaDestBlend = dstBlend;
 
 				glBlendFunc(GLUtils::ConvertBlend(m_cachedAlphaSourceBlend), GLUtils::ConvertBlend(dstBlend));
 			}
 
-			void NativeGL1StateManager::SetSeparateAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend)
+			void NativeGL3StateManager::SetSeparateAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend)
 			{
 				m_cachedSepAlphaBlendEnable = enable;
 				m_cachedSepAlphaBlendFunction = func;
@@ -228,7 +219,7 @@ namespace Apoc3D
 				}
 			}
 
-			void NativeGL1StateManager::SetDepth(bool enable, bool writeEnable)
+			void NativeGL3StateManager::SetDepth(bool enable, bool writeEnable)
 			{
 				m_cachedDepthBufferEnabled = enable;
 				m_cachedDepthBufferWriteEnabled = writeEnable;
@@ -243,7 +234,7 @@ namespace Apoc3D
 				else
 					glDepthMask(GL_FALSE);
 			}
-			void NativeGL1StateManager::SetDepth(bool enable, bool writeEnable, float bias, float slopebias, CompareFunction compare)
+			void NativeGL3StateManager::SetDepth(bool enable, bool writeEnable, float bias, float slopebias, CompareFunction compare)
 			{
 				m_cachedDepthBufferEnabled = enable;
 				m_cachedDepthBufferWriteEnabled = writeEnable;
@@ -277,7 +268,7 @@ namespace Apoc3D
 
 				glDepthFunc(GLUtils::ConvertCompare(compare));
 			}
-			void NativeGL1StateManager::SetPointParameters(float size, float maxSize, float minSize, bool pointSprite)
+			void NativeGL3StateManager::SetPointParameters(float size, float maxSize, float minSize, bool pointSprite)
 			{
 				m_cachedPointSize = size;
 				m_cachedPointSizeMax = maxSize;
@@ -332,7 +323,7 @@ namespace Apoc3D
 				
 
 			}
-			void NativeGL1StateManager::SetStencil(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, 
+			void NativeGL3StateManager::SetStencil(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, 
 				uint32 ref, CompareFunction func, uint32 mask, uint32 writemask)
 			{
 				m_cachedStencilEnabled = enabled;
@@ -355,7 +346,7 @@ namespace Apoc3D
 					GLUtils::ConvertStencilOperation(pass));
 
 			}
-			void NativeGL1StateManager::SetStencilTwoSide(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, CompareFunction func)
+			void NativeGL3StateManager::SetStencilTwoSide(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, CompareFunction func)
 			{
 				m_cachedTwoSidedStencilMode = enabled;
 				m_cachedCounterClockwiseStencilFail = fail;
@@ -388,7 +379,7 @@ namespace Apoc3D
 			}
 
 
-			void NativeGL1StateManager::InitializeDefaultState()
+			void NativeGL3StateManager::InitializeDefaultState()
 			{
 				GLboolean zEnabled = glIsEnabled(GL_DEPTH_TEST);
 
@@ -408,28 +399,28 @@ namespace Apoc3D
 
 
 			
-			GL1RenderStateManager::GL1RenderStateManager(GL1RenderDevice* device, NativeGL1StateManager* nsmgr)
+			GL3RenderStateManager::GL3RenderStateManager(GL3RenderDevice* device, NativeGL3StateManager* nsmgr)
 				: RenderStateManager(device), m_device(device), clipPlaneEnable(0), m_stMgr(nsmgr)
 			{
 			}
-			GL1RenderStateManager::~GL1RenderStateManager()
+			GL3RenderStateManager::~GL3RenderStateManager()
 			{
 
 			}
 
-			bool GL1RenderStateManager::getScissorTestEnabled()
+			bool GL3RenderStateManager::getScissorTestEnabled()
 			{
 				GLboolean scissorTestEnabled = glIsEnabled(GL_SCISSOR_TEST);
 				return !!scissorTestEnabled;
 			}
-			Apoc3D::Math::Rectangle GL1RenderStateManager::getScissorTestRect()
+			Apoc3D::Math::Rectangle GL3RenderStateManager::getScissorTestRect()
 			{
 				GLint scissor[4];
 				glGetIntegerv(GL_SCISSOR_BOX, scissor);
 
 				return Apoc3D::Math::Rectangle(scissor[0], scissor[1], scissor[2], scissor[3]);
 			}
-			void GL1RenderStateManager::setScissorTest(bool enable, const Apoc3D::Math::Rectangle* r)
+			void GL3RenderStateManager::setScissorTest(bool enable, const Apoc3D::Math::Rectangle* r)
 			{
 
 				if (enable)

@@ -1,32 +1,24 @@
-/*
------------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+/* -----------------------------------------------------------------------
+ * This source file is part of Apoc3D Framework
+ *
+ * Copyright (c) 2011-2019 Tao Xin
+ *
+ * This content of this file is subject to the terms of the Mozilla Public
+ * License v2.0. If a copy of the MPL was not distributed with this file,
+ * you can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * WITHOUT WARRANTY OF ANY KIND; either express or implied. See the
+ * Mozilla Public License for more details.
+ *
+ * ------------------------------------------------------------------------
+ */
 
-Copyright (c) 2009+ Tao Xin
+#include "GL3RenderWindow.h"
+#include "GL3RenderDevice.h"
+#include "GL3Utils.h"
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
-Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/gpl.txt.
-
------------------------------------------------------------------------------
-*/
-
-#include "GL1RenderWindow.h"
-#include "GL1RenderDevice.h"
-#include "GL1Utils.h"
-
-#include "GL1DeviceContext.h"
+#include "GL3DeviceContext.h"
 #include "apoc3d/Core/Logging.h"
 
 #include "Win32GameWindow.h"
@@ -36,29 +28,25 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GL3RenderSystem
 		{
 
 			/************************************************************************/
 			/*                                                                      */
 			/************************************************************************/
 
-			// The implementation of the GLGame class is similar to D3D9RenderWindow::D3D9Game.
-			// Please refer to that class.
-			
-
-			void GL1RenderWindow::GLGame::Create()
+			void GL3RenderWindow::GLGame::Create()
 			{
 				// with this call, the RenderWindow and Game object are created.
 				Game::Create();
 
 				const RenderParameters& params = m_window->getRenderParams();
 
-				GL1RenderDevice* device = new GL1RenderDevice(getGraphicsDeviceManager());
+				GL3RenderDevice* device = new GL3RenderDevice(getGraphicsDeviceManager());
 				m_window->setDevice(device);
 
 				LogManager::getSingleton().Write(LOG_Graphics, 
-					L"[GL1]Creating render window. ", 
+					L"[GL3]Creating render window. ", 
 					LOGLVL_Infomation);
 
 				// Initialize() and Load() are called as the device is being created.
@@ -66,26 +54,26 @@ namespace Apoc3D
 				getGraphicsDeviceManager()->ChangeDevice(params);
 
 				LogManager::getSingleton().Write(LOG_Graphics, 
-					L"[GL1]Render window created. ", 
+					L"[GL3]Render window created. ", 
 					LOGLVL_Infomation);
-
 			}
 
 			/************************************************************************/
 			/*                                                                      */
 			/************************************************************************/
-			GL1RenderWindow::GL1RenderWindow(GL1RenderDevice* device, GL1DeviceContext* dc, const RenderParameters& pm)
+
+			GL3RenderWindow::GL3RenderWindow(GL3RenderDevice* device, GL3DeviceContext* dc, const RenderParameters& pm)
 				: RenderWindow(device, pm), m_dc(dc)
 			{
 				m_game = new GLGame(this, dc);
 			}
-			GL1RenderWindow::~GL1RenderWindow()
+			GL3RenderWindow::~GL3RenderWindow()
 			{
 				m_dc->NotifyWindowClosed(this);
 				delete m_game;
 			}
 
-			void GL1RenderWindow::ChangeRenderParameters(const RenderParameters& params)
+			void GL3RenderWindow::ChangeRenderParameters(const RenderParameters& params)
 			{
 				RenderWindow::ChangeRenderParameters(params);
 
@@ -95,13 +83,13 @@ namespace Apoc3D
 			}
 
 
-			void GL1RenderWindow::Exit()
+			void GL3RenderWindow::Exit()
 			{
 				RenderWindow::Exit();
 				m_game->Exit();
 			}
 
-			void GL1RenderWindow::Run()
+			void GL3RenderWindow::Run()
 			{
 				// This Run method is called from outside client code to create a render window
 				// for the first time and right after when the constructor is called. No other methods are
@@ -115,16 +103,16 @@ namespace Apoc3D
 				m_game->Release();
 			}
 
-			String GL1RenderWindow::getTitle()
+			String GL3RenderWindow::getTitle()
 			{
 				return m_game->getWindow()->getWindowTitle();
 			}
-			void GL1RenderWindow::setTitle(const String& name)
+			void GL3RenderWindow::setTitle(const String& name)
 			{
 				m_game->getWindow()->setWindowTitle(name);
 			}
 
-			Size GL1RenderWindow::getClientSize()
+			Size GL3RenderWindow::getClientSize()
 			{
 				return m_game->getWindow()->getCurrentSize();
 			}

@@ -1,30 +1,25 @@
-/*
------------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+#pragma once
 
-Copyright (c) 2009+ Tao Xin
+/* -----------------------------------------------------------------------
+ * This source file is part of Apoc3D Framework
+ *
+ * Copyright (c) 2011-2019 Tao Xin
+ *
+ * This content of this file is subject to the terms of the Mozilla Public
+ * License v2.0. If a copy of the MPL was not distributed with this file,
+ * you can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * WITHOUT WARRANTY OF ANY KIND; either express or implied. See the
+ * Mozilla Public License for more details.
+ *
+ * ------------------------------------------------------------------------
+ */
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+#ifndef GL3RENDERDEVICE_H
+#define GL3RENDERDEVICE_H
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
-Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/gpl.txt.
-
------------------------------------------------------------------------------
-*/
-#ifndef GL1RENDERDEVICE_H
-#define GL1RENDERDEVICE_H
-
-#include "GL1Common.h"
+#include "GL3Common.h"
 
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
 #include "apoc3d/Graphics/EffectSystem/Effect.h"
@@ -38,11 +33,11 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GL3RenderSystem
 		{
-			class GL1Capabilities;
+			class GL3Capabilities;
 
-			class GL1RenderDevice : public RenderDevice
+			class GL3RenderDevice : public RenderDevice
 			{
 			public:
 
@@ -54,8 +49,8 @@ namespace Apoc3D
 
 
 
-				GL1RenderDevice(GraphicsDeviceManager* devManager);
-				~GL1RenderDevice();
+				GL3RenderDevice(GraphicsDeviceManager* devManager);
+				~GL3RenderDevice();
 				
 				void OnDeviceReset();
 				void OnDeviceLost();
@@ -88,28 +83,28 @@ namespace Apoc3D
 				virtual Capabilities* const getCapabilities() const;
 
 
-				NativeGL1StateManager* getNativeState() const { return m_nativeState; }
+				NativeGL3StateManager* getNativeState() const { return m_nativeState; }
 			private:
 				friend class VolatileResource;
 
 				Effect* m_defaultEffect;
 				GraphicsDeviceManager* m_devManager;
-				GL1RenderStateManager* m_stateManager;
-				NativeGL1StateManager* m_nativeState;
+				GL3RenderStateManager* m_stateManager;
+				NativeGL3StateManager* m_nativeState;
 
-				GL1RenderTarget** m_cachedRenderTarget;
+				GL3RenderTarget** m_cachedRenderTarget;
 
 				//IDirect3DSurface9* m_defaultRT;
 				//IDirect3DSurface9* m_defaultDS;
 
-				GL1Capabilities* m_caps;
+				GL3Capabilities* m_caps;
 
 			};
 
-			class GL1Capabilities : public Capabilities
+			class GL3Capabilities : public Capabilities
 			{
 			public:
-				GL1Capabilities(GL1RenderDevice* device)
+				GL3Capabilities(GL3RenderDevice* device)
 					: m_device(device)
 				{
 
@@ -121,7 +116,7 @@ namespace Apoc3D
 
 				virtual int GetMRTCount();
 			private:
-				GL1RenderDevice* m_device;
+				GL3RenderDevice* m_device;
 			};
 		}
 	}

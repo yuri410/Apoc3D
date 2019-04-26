@@ -1,37 +1,30 @@
-/*
------------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
 
-Copyright (c) 2009+ Tao Xin
+/* -----------------------------------------------------------------------
+ * This source file is part of Apoc3D Framework
+ *
+ * Copyright (c) 2011-2019 Tao Xin
+ *
+ * This content of this file is subject to the terms of the Mozilla Public
+ * License v2.0. If a copy of the MPL was not distributed with this file,
+ * you can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * WITHOUT WARRANTY OF ANY KIND; either express or implied. See the
+ * Mozilla Public License for more details.
+ *
+ * ------------------------------------------------------------------------
+ */
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
-Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/gpl.txt.
-
------------------------------------------------------------------------------
-*/
-
-#include "GL1RenderDevice.h"
+#include "GL3RenderDevice.h"
 #include "GraphicsDeviceManager.h"
-#include "GL1Utils.h"
+#include "GL3Utils.h"
 
-#include "GL1Texture.h"
-#include "GL1RenderStateManager.h"
-#include "GL1ObjectFactory.h"
+#include "GL3Texture.h"
+#include "GL3RenderStateManager.h"
+#include "GL3ObjectFactory.h"
 //#include "GL1InstancingData.h"
 
-#include "GL1Sprite.h"
+#include "GL3Sprite.h"
 
 #include "apoc3d/Exception.h"
 
@@ -51,12 +44,12 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GL3RenderSystem
 		{
 			class BasicEffect : public Effect
 			{
 			public:
-				BasicEffect(GL1RenderDevice* device)
+				BasicEffect(GL3RenderDevice* device)
 					: m_device(device)
 				{
 
@@ -105,16 +98,16 @@ namespace Apoc3D
 
 				}
 			private:
-				GL1RenderDevice* m_device;
+				GL3RenderDevice* m_device;
 			};
 
-			GL1RenderDevice::GL1RenderDevice(GraphicsDeviceManager* devManager)
-				: RenderDevice(L"OpenGL 1.x RenderSystem"), m_devManager(devManager), 
+			GL3RenderDevice::GL3RenderDevice(GraphicsDeviceManager* devManager)
+				: RenderDevice(L"OpenGL 3.1 RenderSystem"), m_devManager(devManager), 
 				m_stateManager(0), m_nativeState(0), m_caps(0), m_cachedRenderTarget(0), m_defaultEffect(0)
 			{
 
 			}
-			GL1RenderDevice::~GL1RenderDevice()
+			GL3RenderDevice::~GL3RenderDevice()
 			{
 				//m_defaultRT->Release();
 				//m_defaultRT = 0;
@@ -141,32 +134,29 @@ namespace Apoc3D
 
 
 
-			void GL1RenderDevice::Initialize()
+			void GL3RenderDevice::Initialize()
 			{
 				glEnable(GL_TEXTURE_2D);
 				glEnable(GL_TEXTURE_1D);
-
-				if (GLEW_EXT_texture3D)
-					glEnable(GL_TEXTURE_3D);
-				if (GLEW_EXT_texture_cube_map)
-					glEnable(GL_TEXTURE_CUBE_MAP);
-
-				//glDisable(GL_LIGHTING);
-
+				glEnable(GL_TEXTURE_3D);
+				glEnable(GL_TEXTURE_CUBE_MAP);
+				//GL_EXT_texture_compression_s3tc
+				
+				
 				LogManager::getSingleton().Write(LOG_Graphics, 
-					L"[GL1]Initializing OpenGL 1.x Render Device. ", 
+					L"[GL3]Initializing OpenGL 3.1 Render Device. ", 
 					LOGLVL_Infomation);
 
-				m_nativeState = new NativeGL1StateManager(this);
-				m_stateManager = new GL1RenderStateManager(this, m_nativeState);
+				m_nativeState = new NativeGL3StateManager(this);
+				m_stateManager = new GL3RenderStateManager(this, m_nativeState);
 				m_renderStates = m_stateManager;
-				m_objectFactory = new GL1ObjectFactory(this);
+				m_objectFactory = new GL3ObjectFactory(this);
 
 
-				m_caps = new GL1Capabilities(this);
+				m_caps = new GL3Capabilities(this);
 
-				m_cachedRenderTarget = new GL1RenderTarget*[m_caps->GetMRTCount()];
-				memset(m_cachedRenderTarget, 0, sizeof(GL1RenderTarget*) * m_caps->GetMRTCount());
+				m_cachedRenderTarget = new GL3RenderTarget*[m_caps->GetMRTCount()];
+				memset(m_cachedRenderTarget, 0, sizeof(GL3RenderTarget*) * m_caps->GetMRTCount());
 
 				//dev->GetRenderTarget(0, &m_defaultRT);
 				//dev->GetDepthStencilSurface(&m_defaultDS);
@@ -176,17 +166,17 @@ namespace Apoc3D
 				//m_instancingData = new D3D9InstancingData(this);
 			}
 			
-			void GL1RenderDevice::BeginFrame()
+			void GL3RenderDevice::BeginFrame()
 			{
 				RenderDevice::BeginFrame();
 				//getDevice()->BeginScene();
 			}
-			void GL1RenderDevice::EndFrame()
+			void GL3RenderDevice::EndFrame()
 			{
 				//getDevice()->EndScene();
 			}
 
-			void GL1RenderDevice::Clear(ClearFlags flags, uint color, float depth, int stencil)
+			void GL3RenderDevice::Clear(ClearFlags flags, uint color, float depth, int stencil)
 			{
 				GLbitfield field = 0;
 				
@@ -271,7 +261,7 @@ namespace Apoc3D
 				}
 			}
 
-			void GL1RenderDevice::SetRenderTarget(int index, RenderTarget* rt)
+			void GL3RenderDevice::SetRenderTarget(int index, RenderTarget* rt)
 			{
 				//D3DDevice* dev = getDevice();
 				//if (rt)
@@ -314,18 +304,13 @@ namespace Apoc3D
 				//}
 			}
 
-			RenderTarget* GL1RenderDevice::GetRenderTarget(int index)
+			RenderTarget* GL3RenderDevice::GetRenderTarget(int index)
 			{
 				return m_cachedRenderTarget[index];
 			}
 
-			void GL1RenderDevice::BindVertexShader(Shader* shader)
+			void GL3RenderDevice::BindVertexShader(Shader* shader)
 			{
-				if (GLEW_ARB_vertex_program)
-				{
-					//glDisable(GL_VERTEX_PROGRAM_ARB);
-				}
-
 				//if (shader)
 				//{
 				//	D3D9VertexShader* vs = static_cast<D3D9VertexShader*>(shader);
@@ -336,13 +321,8 @@ namespace Apoc3D
 				//	getDevice()->SetVertexShader(0);
 				//}
 			}
-			void GL1RenderDevice::BindPixelShader(Shader* shader)
+			void GL3RenderDevice::BindPixelShader(Shader* shader)
 			{
-
-				if (GLEW_ARB_fragment_program)
-				{
-					//glDisable(GL_FRAGMENT_PROGRAM_ARB);
-				}
 				//glBindProgramARB(GL_VERTEX_PROGRAM_ARB, );
 
 				//if (shader)
@@ -356,7 +336,7 @@ namespace Apoc3D
 				//}
 			}
 
-			void GL1RenderDevice::Render(Material* mtrl, const RenderOperation* op, int count, int passSelID)
+			void GL3RenderDevice::Render(Material* mtrl, const RenderOperation* op, int count, int passSelID)
 			{
 				if (!op || count == 0)
 					return;
@@ -461,7 +441,7 @@ namespace Apoc3D
 				fx->End();
 			}
 
-			Viewport GL1RenderDevice::getViewport()
+			Viewport GL3RenderDevice::getViewport()
 			{
 				GLint viewport[4];
 				glGetIntegerv(GL_VIEWPORT, viewport);
@@ -469,22 +449,22 @@ namespace Apoc3D
 				Viewport vp(viewport[0], viewport[1], viewport[2], viewport[3], 0, 1);
 				return vp;
 			}
-			void GL1RenderDevice::setViewport(const Viewport& vp)
+			void GL3RenderDevice::setViewport(const Viewport& vp)
 			{
 				glViewport(vp.X, vp.Y, vp.Width, vp.Height);
 			}
-			Capabilities* const GL1RenderDevice::getCapabilities() const
+			Capabilities* const GL3RenderDevice::getCapabilities() const
 			{
 				return m_caps; 
 			}
-			PixelFormat GL1RenderDevice::GetDefaultRTFormat()
+			PixelFormat GL3RenderDevice::GetDefaultRTFormat()
 			{
 				D3DSURFACE_DESC desc;
 				m_defaultDS->GetDesc(&desc);
 
 				return D3D9Utils::ConvertBackPixelFormat(desc.Format);
 			}
-			DepthFormat GL1RenderDevice::GetDefaultDepthStencilFormat()
+			DepthFormat GL3RenderDevice::GetDefaultDepthStencilFormat()
 			{
 				D3DSURFACE_DESC desc;
 				m_defaultDS->GetDesc(&desc);
@@ -533,7 +513,7 @@ namespace Apoc3D
 					}
 				}
 			}
-			bool GL1Capabilities::SupportsRenderTarget(uint multisampleCount, PixelFormat pixFormat, DepthFormat depthFormat)
+			bool GL3Capabilities::SupportsRenderTarget(uint multisampleCount, PixelFormat pixFormat, DepthFormat depthFormat)
 			{
 				//GraphicsDeviceManager* devMgr = m_device->getGraphicsDeviceManager();
 				//IDirect3D9* d3d9 = devMgr->getDirect3D();
@@ -597,7 +577,7 @@ namespace Apoc3D
 				//}
 			}
 
-			bool GL1Capabilities::SupportsPixelShader(int majorVer, int minorVer)
+			bool GL3Capabilities::SupportsPixelShader(int majorVer, int minorVer)
 			{
 				int ma, mi;
 				getGlslVersion(&ma, &mi);
@@ -633,20 +613,16 @@ namespace Apoc3D
 				return false;
 			}
 
-			bool GL1Capabilities::SupportsVertexShader(int majorVer, int minorVer)
+			bool GL3Capabilities::SupportsVertexShader(int majorVer, int minorVer)
 			{
 				return SupportsPixelShader(majorVer, minorVer);
 			}
 
-			int GL1Capabilities::GetMRTCount()
+			int GL3Capabilities::GetMRTCount()
 			{
-				if (GLEW_ARB_draw_buffers)
-				{
-					GLint maxbuffers;
-					glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxbuffers);
-					return maxbuffers;
-				}
-				return 1;
+				GLint maxbuffers;
+				glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxbuffers);
+				return maxbuffers;
 			}
 		}
 	}

@@ -1,31 +1,25 @@
-/*
------------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+#pragma once
 
-Copyright (c) 2009+ Tao Xin
+/* -----------------------------------------------------------------------
+ * This source file is part of Apoc3D Framework
+ *
+ * Copyright (c) 2011-2019 Tao Xin
+ *
+ * This content of this file is subject to the terms of the Mozilla Public
+ * License v2.0. If a copy of the MPL was not distributed with this file,
+ * you can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * WITHOUT WARRANTY OF ANY KIND; either express or implied. See the
+ * Mozilla Public License for more details.
+ *
+ * ------------------------------------------------------------------------
+ */
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+#ifndef GL3SPRITE_H
+#define GL3SPRITE_H
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
-Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/gpl.txt.
-
------------------------------------------------------------------------------
-*/
-
-#ifndef GL1SPRITE_H
-#define GL1SPRITE_H
-
-#include "GL1Common.h"
+#include "GL3Common.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
 
@@ -36,13 +30,13 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GL3RenderSystem
 		{
-			class GL1Sprite : public Sprite
+			class GL3Sprite : public Sprite
 			{
 			public:
-				GL1Sprite(GL1RenderDevice* device);
-				~GL1Sprite();
+				GL3Sprite(GL3RenderDevice* device);
+				~GL3Sprite();
 
 				virtual void Begin(SpriteSettings settings);
 				virtual void End();
@@ -61,7 +55,7 @@ namespace Apoc3D
 
 				virtual void SetTransform(const Matrix& matrix);
 			private:
-				GL1RenderDevice* m_gl1device;
+				GL3RenderDevice* m_gldevice;
 				bool m_vboSupported;
 
 				bool m_alphaEnabled;

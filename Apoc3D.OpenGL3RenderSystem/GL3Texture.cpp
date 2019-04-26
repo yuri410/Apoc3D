@@ -1,30 +1,22 @@
-/*
------------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+/* -----------------------------------------------------------------------
+ * This source file is part of Apoc3D Framework
+ * 
+ * Copyright (c) 2009-2018 Tao Xin
+ * 
+ * This content of this file is subject to the terms of the Mozilla Public 
+ * License v2.0. If a copy of the MPL was not distributed with this file, 
+ * you can obtain one at http://mozilla.org/MPL/2.0/.
+ * 
+ * This program is distributed in the hope that it will be useful, 
+ * WITHOUT WARRANTY OF ANY KIND; either express or implied. See the 
+ * Mozilla Public License for more details.
+ * 
+ * ------------------------------------------------------------------------
+ */
 
-Copyright (c) 2009+ Tao Xin
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
-Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/gpl.txt.
-
------------------------------------------------------------------------------
-*/
-
-#include "GL1Texture.h"
-#include "GL1RenderDevice.h"
-#include "GL1Utils.h"
+#include "GL3Texture.h"
+#include "GL3RenderDevice.h"
+#include "GL3Utils.h"
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Math/Box.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
@@ -44,7 +36,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GL3RenderSystem
 		{
 			/**
 			  You are probably looking for glGetTexImage
@@ -108,7 +100,7 @@ namespace Apoc3D
 			//}
 			
 
-			GL1Texture::GL1Texture(GL1RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed)
+			GL3Texture::GL3Texture(GL3RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed)
 				: Texture(device, rl, usage, managed), 
 				m_renderDevice(device)
 			{
@@ -117,7 +109,7 @@ namespace Apoc3D
 					load();
 				}
 			}
-			GL1Texture::GL1Texture(GL1RenderDevice* device, int32 width, int32 height, int32 depth, int32 level, 
+			GL3Texture::GL3Texture(GL3RenderDevice* device, int32 width, int32 height, int32 depth, int32 level, 
 				PixelFormat format, TextureUsage usage)
 				: Texture(device, width, height, depth, level, format, usage),
 				m_renderDevice(device)
@@ -125,19 +117,19 @@ namespace Apoc3D
 				InitializeEmptyGLTexture(width, height, depth, level, format);
 			}
 
-			GL1Texture::GL1Texture(GL1RenderDevice* device, int32 length, int32 level, PixelFormat format, TextureUsage usage)
+			GL3Texture::GL1Texture(GL3RenderDevice* device, int32 length, int32 level, PixelFormat format, TextureUsage usage)
 				: Texture(device, length, level, usage, format),
 				m_renderDevice(device)
 			{
 				InitializeEmptyGLTexture(length, length, 1, level, format);
 			}
-			GL1Texture::~GL1Texture()
+			GL3Texture::~GL3Texture()
 			{
 
 
 			}
 
-			DataRectangle GL1Texture::lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect)
+			DataRectangle GL3Texture::lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect)
 			{
 				assert(m_tex2D);
 				D3DLOCKED_RECT rrect;
@@ -152,7 +144,7 @@ namespace Apoc3D
 				DataRectangle result(rrect.Pitch, rrect.pBits, rect.Width, rect.Height, getFormat());
 				return result;
 			}
-			DataBox GL1Texture::lock(int32 surface, LockMode mode, const Box& box)
+			DataBox GL3Texture::lock(int32 surface, LockMode mode, const Box& box)
 			{
 				assert(m_tex3D);
 				D3DLOCKED_BOX rbox;
@@ -164,7 +156,7 @@ namespace Apoc3D
 				DataBox result(box.getWidth(), box.getHeight(), box.getDepth(), rbox.RowPitch, rbox.SlicePitch, rbox.pBits, getFormat());
 				return result;
 			}
-			DataRectangle GL1Texture::lock(int32 surface, CubeMapFace cubemapFace, LockMode mode, const Apoc3D::Math::Rectangle& rect)
+			DataRectangle GL3Texture::lock(int32 surface, CubeMapFace cubemapFace, LockMode mode, const Apoc3D::Math::Rectangle& rect)
 			{
 				assert(m_cube);			
 				D3DLOCKED_RECT rrect;
@@ -181,7 +173,7 @@ namespace Apoc3D
 				DataRectangle result(rrect.Pitch, rrect.pBits, rect.Width, rect.Height, getFormat());
 				return result;
 			}
-			void GL1Texture::unlock(int32 surface)
+			void GL3Texture::unlock(int32 surface)
 			{
 				TextureType type = getType();
 				if (type == TT_Texture3D)
@@ -197,13 +189,13 @@ namespace Apoc3D
 					m_cube->UnlockRect(m_lockedCubeFace, surface);
 				}
 			}
-			void GL1Texture::unlock(CubeMapFace cubemapFace, int32 surface)
+			void GL3Texture::unlock(CubeMapFace cubemapFace, int32 surface)
 			{
 				m_cube->UnlockRect(D3D9Utils::ConvertCubeMapFace(cubemapFace), surface);
 			}
 
 
-			void GL1Texture::load()
+			void GL3Texture::load()
 			{
 				TextureData data;
 				data.Load(getResourceLocation());
@@ -357,13 +349,13 @@ namespace Apoc3D
 
 				switch (data.Type)
 				{
-				case (int)TT_Texture1D:
+				case TextureType::Texture1D:
 					{
 						//glBindTexture()
 						//glTexImage1D();
 						break;
 					}
-				case (int)TT_Texture2D:
+				case TextureType::Texture2D:
 					{
 						
 						DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
@@ -376,7 +368,7 @@ namespace Apoc3D
 						setData(data, m_tex2D);
 					}					
 					break;
-				case (int)TT_CubeTexture:
+				case TextureType::CubeTexture:
 					{
 						DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
 						
@@ -389,7 +381,7 @@ namespace Apoc3D
 					}
 					
 					break;
-				case (int)TT_Texture3D:
+				case TextureType::Texture3D:
 					{
 						DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
 
@@ -408,7 +400,8 @@ namespace Apoc3D
 					delete[] data.Levels[i].ContentData;
 				}
 			}
-			void GL1Texture::unload()
+
+			void GL3Texture::unload()
 			{
 				if (m_tex2D)
 				{
@@ -428,7 +421,7 @@ namespace Apoc3D
 			}
 
 
-			void GL1Texture::Save(Stream* strm)
+			void GL3Texture::Save(Stream* strm)
 			{
 				Lock_Unloadable();
 				UseSync();
@@ -440,11 +433,11 @@ namespace Apoc3D
 				data.ContentSize = 0;
 				switch (data.Type)
 				{
-				case (int)TT_Texture1D:
-				case (int)TT_Texture2D:
+				case TextureType::Texture1D:
+				case TextureType::Texture2D:
 					getData(data, m_tex2D);
 					break;
-				case (int)TT_CubeTexture:
+				case TextureType::CubeTexture:
 					getData(data, m_cube);
 					break;
 				case (int)TT_Texture3D:
@@ -461,7 +454,8 @@ namespace Apoc3D
 					delete[] data.Levels[i].ContentData;
 				}
 			}
-			void GL1Texture::InitializeEmptyGLTexture(int32 width, int32 height, int32 depth, int32 level, PixelFormat format)
+
+			void GL3Texture::InitializeEmptyGLTexture(int32 width, int32 height, int32 depth, int32 level, PixelFormat format)
 			{
 
 				GLenum target = GLUtils::GetTextureTarget(getType());
@@ -479,7 +473,10 @@ namespace Apoc3D
 					glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
 				}
 
-				GLenum glFmt = GLUtils::ConvertPixelFormat(format);
+				//GLenum glFmt = GLUtils::ConvertPixelFormat(format);
+				GLenum glInternalFormat;
+				GLenum glFormat, glType;
+				GLUtils::ConvertPixelFormat(format, glFormat, glType, glInternalFormat);
 
 				if (PixelFormatUtils::IsCompressed(format))
 				{
@@ -496,25 +493,25 @@ namespace Apoc3D
 						int levelSize = PixelFormatUtils::GetMemorySize(width, height, depth, format);
 						switch(getType())
 						{
-						case TT_Texture1D:
-							glCompressedTexImage1DARB(GL_TEXTURE_1D, i, glFmt, 
+						case TextureType::Texture1D:
+							glCompressedTexImage1D(GL_TEXTURE_1D, i, glInternalFormat,
 								width,
 								0, levelSize, tmpdata);
 							break;
-						case TT_Texture2D:
-							glCompressedTexImage2DARB(GL_TEXTURE_2D, i, glFmt,
+						case TextureType::Texture2D:
+							glCompressedTexImage2D(GL_TEXTURE_2D, i, glInternalFormat,
 								width, height, 
 								0, levelSize, tmpdata);
 							break;
-						case TT_Texture3D:
-							glCompressedTexImage3DARB(GL_TEXTURE_3D, i, glFmt,
+						case TextureType::Texture3D:
+							glCompressedTexImage3D(GL_TEXTURE_3D, i, glInternalFormat,
 								width, height, depth, 
 								0, levelSize, tmpdata);
 							break;
-						case TT_CubeTexture:
+						case TextureType::CubeTexture:
 							// do every cube map face
 							for(int j=0; j<6; j++)
-								glCompressedTexImage2DARB(GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, i, glFmt,
+								glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, i, glInternalFormat,
 								width, height, 
 								0, levelSize, tmpdata);
 
@@ -537,28 +534,30 @@ namespace Apoc3D
 						// data is not provided
 						switch(getType())
 						{
-						case TT_Texture1D:
-							glTexImage1D(GL_TEXTURE_1D, i, format,
+						case TextureType::Texture1D:
+							glTexImage1D(GL_TEXTURE_1D, i, glInternalFormat,
 								width, 
-								0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
+								0, glFormat, glType, 0);
 							break;
-						case TT_Texture2D:
+
+						case TextureType::Texture2D:
 							glTexImage2D(GL_TEXTURE_2D, i, format,
 								width, height,
-								0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+								0, glFormat, glType, 0);
 							break;
-						case TT_Texture3D:
+
+						case TextureType::Texture3D:
 							glTexImage3D(GL_TEXTURE_3D, i, format,
 								width, height, depth, 
-								0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+								0, glFormat, glType, 0);
 							break;
-						case TT_CubeTexture:
+
+						case TextureType::CubeTexture:
 							// do every cube map face
 							for(int j=0; j<6; j++)
 								glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, i, format,
 								width, height, 
-								0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+								0, glFormat, glType, 0);
 
 							break;
 						}

@@ -30,8 +30,6 @@ namespace Apoc3D
 		namespace GL3RenderSystem
 		{
 			GraphicsDeviceManager::GraphicsDeviceManager(Game* game)
-				: m_currentSetting(0), m_ignoreSizeChanges(false), m_doNotStoreBufferSize(false), m_renderingOccluded(false),
-				m_deviceCreated(false), m_arbFSAAFormat(0)
 			{
 				assert(game);
 
@@ -233,109 +231,6 @@ namespace Apoc3D
 				UnregisterClass(L"OpenGLTesting", hInstance);
 
 				return TRUE;														// Return True
-			}
-
-			bool InitMultisample(HWND hWnd,PIXELFORMATDESCRIPTOR pfd, int& arbMultisampleFormat)
-			{
-				if (!WGLEW_ARB_multisample)
-				{
-					return false;
-				}
-				if (!WGLEW_ARB_pixel_format)
-				{
-					return false;
-				}
-
-
-				bool arbMultisampleSupported = false;
-				//int arbMultisampleFormat    = 0;
-
-				// Get Our Current Device Context. We Need This In Order To Ask The OpenGL Window What Attributes We Have
-				HDC hDC = GetDC(hWnd);
-
-				int pixelFormat;
-				bool valid;
-				UINT numFormats;
-				float fAttributes[] = {0,0};
-
-				// These Attributes Are The Bits We Want To Test For In Our Sample
-				// Everything Is Pretty Standard, The Only One We Want To
-				// Really Focus On Is The SAMPLE BUFFERS ARB And WGL SAMPLES
-				// These Two Are Going To Do The Main Testing For Whether Or Not
-				// We Support Multisampling On This Hardware
-				int iAttributes[] = { WGL_DRAW_TO_WINDOW_ARB,GL_TRUE,
-					WGL_SUPPORT_OPENGL_ARB,GL_TRUE,
-					WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB,
-					WGL_COLOR_BITS_ARB,24,
-					WGL_ALPHA_BITS_ARB,8,
-					WGL_DEPTH_BITS_ARB,16,
-					WGL_STENCIL_BITS_ARB,0,
-					WGL_DOUBLE_BUFFER_ARB,GL_TRUE,
-					WGL_SAMPLE_BUFFERS_ARB,GL_TRUE,
-					WGL_SAMPLES_ARB, 4 ,                        // Check For 4x Multisampling
-					0,0};
-
-				// First We Check To See If We Can Get A Pixel Format For 4 Samples
-				valid = wglChoosePixelFormatARB(hDC,iAttributes,fAttributes,1,&pixelFormat,&numFormats);
-
-				// if We Returned True, And Our Format Count Is Greater Than 1
-				if (valid && numFormats >= 1)
-				{
-					arbMultisampleSupported = true;
-					arbMultisampleFormat    = pixelFormat; 
-					return arbMultisampleSupported;
-				}
-
-				// Our Pixel Format With 4 Samples Failed, Test For 2 Samples
-				iAttributes[19] = 2;
-				valid = wglChoosePixelFormatARB(hDC,iAttributes,fAttributes,1,&pixelFormat,&numFormats);
-				if (valid && numFormats >= 1)
-				{
-					arbMultisampleSupported = true;
-					arbMultisampleFormat    = pixelFormat;  
-
-					return arbMultisampleSupported;
-				}
-
-				// Return The Valid Format
-				return  arbMultisampleSupported;
-			}
-
-			void GraphicsDeviceManager::PreTest()
-			{
-				PIXELFORMATDESCRIPTOR pfd =				// pfd Tells Windows How We Want Things To Be
-				{
-					sizeof(PIXELFORMATDESCRIPTOR),				// Size Of This Pixel Format Descriptor
-					1,											// Version Number
-					PFD_DRAW_TO_WINDOW |						// Format Must Support Window
-					PFD_SUPPORT_OPENGL |						// Format Must Support OpenGL
-					PFD_DOUBLEBUFFER,							// Must Support Double Buffering
-					PFD_TYPE_RGBA,								// Request An RGBA Format
-					24,	// Select Our Color Depth
-					0, 0, 0, 0, 0, 0,							// Color Bits Ignored. TODO: specify them
-					0,											// No Alpha Buffer
-					0,											// Shift Bit Ignored
-					0,											// No Accumulation Buffer
-					0, 0, 0, 0,									// Accumulation Bits Ignored
-					24,	//  Z-Buffer (Depth Buffer)  
-					8,	// Stencil Buffer
-					0,											// No Auxiliary Buffer
-					PFD_MAIN_PLANE,								// Main Drawing Layer
-					0,											// Reserved
-					0, 0, 0										// Layer Masks Ignored
-				};
-
-				int arbformat = 0;
-				HWND dhwnd;
-				HDC dhdc;
-				HGLRC dhrc;
-				CreateDummyWindowGL(dhwnd, dhdc, dhrc, pfd);
-
-				if (InitMultisample(dhwnd, pfd, arbformat))
-				{
-					DestroyDummyWindowGL(dhwnd,dhdc, dhrc);
-					m_arbFSAAFormat = arbformat;
-				}
 			}
 
 			void GraphicsDeviceManager::InitializeDevice(const RenderParameters &settings)

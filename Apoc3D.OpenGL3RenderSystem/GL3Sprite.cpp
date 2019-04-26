@@ -1,59 +1,52 @@
-/*
------------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+/* -----------------------------------------------------------------------
+ * This source file is part of Apoc3D Framework
+ * 
+ * Copyright (c) 2009-2018 Tao Xin
+ * 
+ * This content of this file is subject to the terms of the Mozilla Public 
+ * License v2.0. If a copy of the MPL was not distributed with this file, 
+ * you can obtain one at http://mozilla.org/MPL/2.0/.
+ * 
+ * This program is distributed in the hope that it will be useful, 
+ * WITHOUT WARRANTY OF ANY KIND; either express or implied. See the 
+ * Mozilla Public License for more details.
+ * 
+ * ------------------------------------------------------------------------
+ */
 
-Copyright (c) 2009+ Tao Xin
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
-Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/gpl.txt.
-
------------------------------------------------------------------------------
-*/
-#include "GL1Sprite.h"
-#include "GL1RenderDevice.h"
-#include "GL1Texture.h"
-#include "GL1RenderStateManager.h"
+#include "GL3Sprite.h"
+#include "GL3RenderDevice.h"
+#include "GL3Texture.h"
+#include "GL3RenderStateManager.h"
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GL3RenderSystem
 		{
-			GL1Sprite::GL1Sprite(GL1RenderDevice* device)
-				: Sprite(device), m_gl1device(device), m_alphaEnabled(false),
+			GL3Sprite::GL3Sprite(GL3RenderDevice* device)
+				: Sprite(device), m_gldevice(device), m_alphaEnabled(false),
 				m_vboSupported(false)
 			{
 
 			}
-			GL1Sprite::~GL1Sprite()
+			GL3Sprite::~GL3Sprite()
 			{
 
 			}
-			void GL1Sprite::Begin(SpriteSettings settings)
+			void GL3Sprite::Begin(SpriteSettings settings)
 			{
 				m_alphaEnabled = (settings & Sprite::SPR_AlphaBlended) == Sprite::SPR_AlphaBlended;
 
 				// disable all shaders
-				m_gl1device->BindPixelShader(0);
-				m_gl1device->BindVertexShader(0);
+				m_gldevice->BindPixelShader(0);
+				m_gldevice->BindVertexShader(0);
 				
 				
 				if (m_alphaEnabled)
 				{
-					NativeGL1StateManager* mgr = m_gl1device->getNativeState();
+					NativeGL3StateManager* mgr = m_gldevice->getNativeState();
 
 					// back up the current blending settings
 					// cant use glPushAttribe because the state manager can not keep up the change
@@ -90,12 +83,12 @@ namespace Apoc3D
 				glLoadIdentity();
 
 			}
-			void GL1Sprite::End()
+			void GL3Sprite::End()
 			{
 				if (m_alphaEnabled)
 				{
 					// restore blending states
-					NativeGL1StateManager* mgr = m_gl1device->getNativeState();
+					NativeGL3StateManager* mgr = m_gldevice->getNativeState();
 
 					mgr->SetAlphaBlend(m_oldAlphaBlendEnabled, m_oldBlendFunc, m_oldSrcBlend, m_oldDstBlend, m_oldBlendConst);
 					mgr->SetSeparateAlphaBlend(m_oldSepAlphaBlendEnabled, m_oldSepBlendFunc, m_oldSepSrcBlend, m_oldSepDstBlend);
@@ -113,7 +106,7 @@ namespace Apoc3D
 
 			// the transformation is done by OpenGL. 
 
-			void GL1Sprite::Draw(Texture* texture, Vector2 pos, uint color)
+			void GL3Sprite::Draw(Texture* texture, Vector2 pos, uint color)
 			{
 				if (m_vboSupported)
 				{
@@ -138,7 +131,7 @@ namespace Apoc3D
 					glEnd();
 				}
 			}
-			void GL1Sprite::Draw(Texture* texture, const Point& pos, uint color)
+			void GL3Sprite::Draw(Texture* texture, const Point& pos, uint color)
 			{
 				if (m_vboSupported)
 				{
@@ -163,7 +156,7 @@ namespace Apoc3D
 					glEnd();
 				}
 			}
-			void GL1Sprite::Draw(Texture* texture, const PointF& pos, uint color)
+			void GL3Sprite::Draw(Texture* texture, const PointF& pos, uint color)
 			{
 				if (m_vboSupported)
 				{
@@ -188,11 +181,11 @@ namespace Apoc3D
 					glEnd();
 				}
 			}
-			void GL1Sprite::Draw(Texture* texture, int x, int y, uint color)
+			void GL3Sprite::Draw(Texture* texture, int x, int y, uint color)
 			{
 				Draw(texture, Point(x,y), color);
 			}
-			void GL1Sprite::Draw(Texture* texture, 
+			void GL3Sprite::Draw(Texture* texture, 
 				const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)
 			{
 				
@@ -293,13 +286,13 @@ namespace Apoc3D
 				}
 			}
 
-			void GL1Sprite::Flush()
+			void GL3Sprite::Flush()
 			{
 				// When using VBO, draws the quads in buffer then clears it
 
 			}
 
-			void GL1Sprite::SetTransform(const Matrix& matrix)
+			void GL3Sprite::SetTransform(const Matrix& matrix)
 			{
 				if (m_vboSupported)
 					Flush();

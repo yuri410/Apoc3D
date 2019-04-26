@@ -36,7 +36,7 @@ namespace Apoc3D
 			protected:
 				virtual RenderView* create(const RenderParameters &pm);
 			public:
-				void NotifyWindowClosed(GL1RenderWindow* wnd);
+				void NotifyWindowClosed(GL3RenderWindow* wnd);
 				
 
 				GL3DeviceContext();
@@ -47,7 +47,7 @@ namespace Apoc3D
 
 			private:
 
-				GL1RenderWindow* m_window;
+				GL3RenderWindow* m_window;
 			};
 		}
 	}

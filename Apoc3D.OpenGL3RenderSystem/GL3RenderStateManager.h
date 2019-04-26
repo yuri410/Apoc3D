@@ -1,30 +1,25 @@
-/*
------------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+#pragma once
 
-Copyright (c) 2009+ Tao Xin
+/* -----------------------------------------------------------------------
+ * This source file is part of Apoc3D Framework
+ *
+ * Copyright (c) 2011-2019 Tao Xin
+ *
+ * This content of this file is subject to the terms of the Mozilla Public
+ * License v2.0. If a copy of the MPL was not distributed with this file,
+ * you can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * WITHOUT WARRANTY OF ANY KIND; either express or implied. See the
+ * Mozilla Public License for more details.
+ *
+ * ------------------------------------------------------------------------
+ */
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+#ifndef GL3RENDERSTATEMANAGER_H
+#define GL3RENDERSTATEMANAGER_H
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
-Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/gpl.txt.
-
------------------------------------------------------------------------------
-*/
-#ifndef GL1RENDERSTATEMANAGER_H
-#define GL1RENDERSTATEMANAGER_H
-
-#include "GL1Common.h"
+#include "GL3Common.h"
 #include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
 
 using namespace Apoc3D::Graphics;
@@ -34,67 +29,14 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GL3RenderSystem
 		{
 
-			class NativeGL1StateManager
+			class NativeGL3StateManager
 			{
-			private:
-				GL1RenderDevice* m_device;
-
-				bool m_cachedAlphaTestEnable;
-				CompareFunction m_cachedAlphaTestFunction;
-				uint32 m_cachedAlphaReference;
-
-				bool m_cachedAlphaBlendEnable;
-				BlendFunction m_cachedAlphaBlendFunction;
-				Blend m_cachedAlphaSourceBlend;
-				Blend m_cachedAlphaDestBlend;
-				uint32 m_cachedAlphaBlendFactor;
-
-				bool m_cachedSepAlphaBlendEnable;
-				BlendFunction m_cachedSepAlphaBlendFunction;
-				Blend m_cachedSepAlphaSourceBlend;
-				Blend m_cachedSepAlphaDestBlend;
-				//uint32 m_cachedSepAlphaBlendFactor;
-
-				float m_cachedDepthBias;
-				float m_cachedSlopeScaleDepthBias;
-				CompareFunction m_cachedDepthBufferFunction;
-				bool m_cachedDepthBufferWriteEnabled;
-				bool m_cachedDepthBufferEnabled;
-
-				CullMode m_cachedCullMode;
-				FillMode m_cachedFillMode;
-
-				float m_cachedPointSize;
-				float m_cachedPointSizeMax;
-				float m_cachedPointSizeMin;
-				bool m_cachedPointSpriteEnabled;
-
-				bool m_cachedStencilEnabled;
-				StencilOperation m_cachedStencilFail;
-				StencilOperation m_cachedStencilPass;
-				StencilOperation m_cachedStencilDepthFail;
-				uint32 m_cachedRefrenceStencil;
-				CompareFunction m_cachedStencilFunction;
-				uint32 m_cachedStencilMask;
-				uint32 m_cachedStencilWriteMask;
-
-				bool m_cachedTwoSidedStencilMode;
-
-				StencilOperation m_cachedCounterClockwiseStencilFail;
-				StencilOperation m_cachedCounterClockwiseStencilPass;
-				StencilOperation m_cachedCounterClockwiseStencilDepthBufferFail;
-
-				CompareFunction m_cachedCounterClockwiseStencilFunction;
-
-
-				void InitializeDefaultState();
-
 			public:
-				NativeGL1StateManager(GL1RenderDevice* device);
-				~NativeGL1StateManager();
+				NativeGL3StateManager(GL3RenderDevice* device);
+				~NativeGL3StateManager();
 
 				void SetAlphaTestParameters(bool enable, uint32 reference);
 				void SetAlphaTestParameters(bool enable, CompareFunction func, uint32 reference);
@@ -179,20 +121,75 @@ namespace Apoc3D
 
 				CompareFunction getCounterClockwiseStencilFunction() { return m_cachedCounterClockwiseStencilFunction; }
 
+			private:
+				void InitializeDefaultState();
+
+				GL3RenderDevice* m_device;
+
+				bool m_cachedAlphaTestEnable;
+				CompareFunction m_cachedAlphaTestFunction;
+				uint32 m_cachedAlphaReference;
+
+				bool m_cachedAlphaBlendEnable;
+				BlendFunction m_cachedAlphaBlendFunction;
+				Blend m_cachedAlphaSourceBlend;
+				Blend m_cachedAlphaDestBlend;
+				uint32 m_cachedAlphaBlendFactor;
+
+				bool m_cachedSepAlphaBlendEnable;
+				BlendFunction m_cachedSepAlphaBlendFunction;
+				Blend m_cachedSepAlphaSourceBlend;
+				Blend m_cachedSepAlphaDestBlend;
+				//uint32 m_cachedSepAlphaBlendFactor;
+
+				float m_cachedDepthBias;
+				float m_cachedSlopeScaleDepthBias;
+				CompareFunction m_cachedDepthBufferFunction;
+				bool m_cachedDepthBufferWriteEnabled;
+				bool m_cachedDepthBufferEnabled;
+
+				CullMode m_cachedCullMode;
+				FillMode m_cachedFillMode;
+
+				float m_cachedPointSize;
+				float m_cachedPointSizeMax;
+				float m_cachedPointSizeMin;
+				bool m_cachedPointSpriteEnabled;
+
+				bool m_cachedStencilEnabled;
+				StencilOperation m_cachedStencilFail;
+				StencilOperation m_cachedStencilPass;
+				StencilOperation m_cachedStencilDepthFail;
+				uint32 m_cachedRefrenceStencil;
+				CompareFunction m_cachedStencilFunction;
+				uint32 m_cachedStencilMask;
+				uint32 m_cachedStencilWriteMask;
+
+				bool m_cachedTwoSidedStencilMode;
+
+				StencilOperation m_cachedCounterClockwiseStencilFail;
+				StencilOperation m_cachedCounterClockwiseStencilPass;
+				StencilOperation m_cachedCounterClockwiseStencilDepthBufferFail;
+
+				CompareFunction m_cachedCounterClockwiseStencilFunction;
+
+				ShaderSamplerState* m_pixelSamplers = nullptr;
+				ShaderSamplerState* m_vertexSamplers = nullptr;
+
+				ColorWriteMasks m_colorWriteMasks[4];
+
+				int32 m_textureSlotCount;
+				GL3Texture** m_textureSlots = nullptr;
 			};
 
 
-			class GL1RenderStateManager : public RenderStateManager
+			class GL3RenderStateManager final : public RenderStateManager
 			{
-			private:
-				GL1RenderDevice* m_device;
-
-				NativeGL1StateManager* m_stMgr;
 			public:
-				DWORD clipPlaneEnable;
+				//DWORD clipPlaneEnable;
 
-				GL1RenderStateManager(GL1RenderDevice* device, NativeGL1StateManager* nsmgr);
-				~GL1RenderStateManager();
+				GL3RenderStateManager(GL3RenderDevice* device, NativeGL3StateManager* nsmgr);
+				~GL3RenderStateManager();
 
 				virtual void SetAlphaTestParameters(bool enable, CompareFunction func, uint32 reference)
 				{
@@ -304,6 +301,11 @@ namespace Apoc3D
 				virtual bool getScissorTestEnabled();
 				virtual Apoc3D::Math::Rectangle getScissorTestRect();
 				virtual void setScissorTest(bool enable, const Apoc3D::Math::Rectangle* rect);
+
+			private:
+				GL3RenderDevice* m_device;
+
+				NativeGL3StateManager* m_stMgr;
 			};
 		}
 	}

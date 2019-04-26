@@ -1,31 +1,25 @@
-/*
------------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+#pragma once
 
-Copyright (c) 2009+ Tao Xin
+/* -----------------------------------------------------------------------
+ * This source file is part of Apoc3D Framework
+ *
+ * Copyright (c) 2011-2019 Tao Xin
+ *
+ * This content of this file is subject to the terms of the Mozilla Public
+ * License v2.0. If a copy of the MPL was not distributed with this file,
+ * you can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * WITHOUT WARRANTY OF ANY KIND; either express or implied. See the
+ * Mozilla Public License for more details.
+ *
+ * ------------------------------------------------------------------------
+ */
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+#ifndef GL3OBJECTFACTORY_H
+#define GL3OBJECTFACTORY_H
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
-Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/gpl.txt.
-
------------------------------------------------------------------------------
-*/
-
-#ifndef GL1OBJECTFACTORY_H
-#define GL1OBJECTFACTORY_H
-
-#include "GL1Common.h"
+#include "GL3Common.h"
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
 #include "apoc3d/Collections/List.h"
@@ -37,17 +31,15 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GL3RenderSystem
 		{
 			/** The place for creating graphics objects under OpenGL.
 			 *  See ObjectFactory for general description.
 			 */
-			class GL1ObjectFactory : public ObjectFactory
+			class GL3ObjectFactory : public ObjectFactory
 			{
-			private:
-				GL1RenderDevice* m_device;
 			public:
-				GL1ObjectFactory(GL1RenderDevice* device);
+				GL3ObjectFactory(GL3RenderDevice* device);
 
 				virtual Texture* CreateTexture(ResourceLocation* rl, TextureUsage usage, bool managed);
 				virtual Texture* CreateTexture(int width, int height, int levelCount, TextureUsage usage, PixelFormat format);
@@ -58,7 +50,7 @@ namespace Apoc3D
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt);
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt);
 
-				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage);
+				virtual IndexBuffer* CreateIndexBuffer(IndexBufferFormat type, int count, BufferUsageFlags usage);
 				virtual VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage);
 
 				virtual VertexDeclaration* CreateVertexDeclaration(const List<VertexElement>& elements);
@@ -70,6 +62,10 @@ namespace Apoc3D
 				virtual Shader* CreatePixelShader(const byte* byteCode);
 
 				virtual Sprite* CreateSprite();
+
+			private:
+				GL3RenderDevice* m_device;
+
 			};
 		}
 	}

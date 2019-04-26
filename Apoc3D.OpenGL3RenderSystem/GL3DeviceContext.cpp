@@ -16,8 +16,8 @@
 
 #include "GL3DeviceContext.h"
 
-#include "GL1RenderDevice.h"
-#include "GL1RenderWindow.h"
+#include "GL3RenderDevice.h"
+#include "GL3RenderWindow.h"
 #include "apoc3d/Exception.h"
 
 #include "apoc3d/Utility/StringUtils.h"
@@ -52,7 +52,8 @@ namespace Apoc3D
 			{
 				if (m_window)
 				{
-					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Cannot create more render view when a render window has been created.");
+					return nullptr;
+					//throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Cannot create more render view when a render window has been created.");
 				}
 
 				if (!pm.IsFullForm)
@@ -68,8 +69,9 @@ namespace Apoc3D
 						return m_window;
 					}
 				}
+
 				// keep the compiler happy
-				return 0;
+				return nullptr;
 			}
 
 			RenderDevice* GL3DeviceContext::getRenderDevice()

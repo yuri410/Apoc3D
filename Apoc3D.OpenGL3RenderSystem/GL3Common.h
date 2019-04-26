@@ -28,6 +28,35 @@
 #include "apoc3d/Meta/EventDelegate.h"
 
 #pragma comment(lib, "Apoc3D.lib")
+#pragma comment(lib, "Apoc3D.Win32.lib")
+#pragma comment(lib, "OpenGL32.lib")
+
+
+/*
+
+GL_ARB_vertex_array_object
+GL_ARB_framebuffer_object
+If not this, you get very similar functionality from these:
+GL_EXT_framebuffer_object
+GL_EXT_framebuffer_blit
+GL_EXT_framebuffer_multisample
+GL_EXT_packed_depth_stencil.
+GL_ARB_map_buffer_range
+GL_ARB_copy_buffer
+GL_ARB_texture_rectangle
+GL_ARB_color_buffer_float
+GL_ARB_half_float_pixel
+GL_ARB_sync
+
+
+GL_ARB_texture_rg
+GL_ARB_texture_compression_rgtc
+GL_EXT_bindable_uniform (similar to Uniform Buffer Objects, but not as cleanly specified.)
+GL_EXT_draw_buffers2
+GL_EXT_geometry_shader4
+GL_EXT_gpu_shader4
+GL_EXT_framebuffer_sRGB
+*/
 
 namespace Apoc3D
 {
@@ -52,7 +81,7 @@ namespace Apoc3D
 			class GL3RenderStateManager;
 			class GL3RenderTarget;
 
-			class NativeGL1StateManager;
+			class NativeGL3StateManager;
 
 			class GL3Texture;
 			class GL3Sprite;

@@ -72,23 +72,18 @@ namespace Apoc3D
 				void ToggleFullScreen();
 				void ReleaseDevice();
 
-				/** The GraphicsDeviceManager needs to know some capabilities by
-				*  doing some experiments. Call this prior to the creation of any
-				*  window.
-				*/
-				void PreTest();
 			private:
-				RenderParameters* m_currentSetting;
+				RenderParameters* m_currentSetting = nullptr;
 
 				HDC m_hDC;
 				HGLRC m_hRC;
-				bool m_deviceCreated;
+				bool m_deviceCreated = false;
 				Game* m_game;
 
-				bool m_ignoreSizeChanges;
+				bool m_ignoreSizeChanges = false;
 
-				bool m_doNotStoreBufferSize;
-				bool m_renderingOccluded;
+				bool m_doNotStoreBufferSize = false;
+				bool m_renderingOccluded = false;
 
 				int32 m_fullscreenWindowWidth;
 				int32 m_fullscreenWindowHeight;
@@ -97,7 +92,6 @@ namespace Apoc3D
 				WINDOWPLACEMENT m_windowedPlacement;
 				int64 m_windowedStyle;
 
-				int m_arbFSAAFormat;
 				
 				void CreateDevice(const RenderParameters &settings, const DEVMODE* mode = 0);
 				void game_FrameStart(bool* cancel);

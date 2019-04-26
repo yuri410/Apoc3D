@@ -93,15 +93,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="GL3Utils.h" />
-    <ClInclude Include="GL1RenderStateManager.h" />
-    <ClInclude Include="GL1ObjectFactory.h" />
-    <ClInclude Include="GL1RenderDevice.h" />
-    <ClInclude Include="GL1Sprite.h" />
-    <ClInclude Include="GL1Texture.h" />
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="GL3RenderStateManager.h" />
+    <ClInclude Include="GL3ObjectFactory.h" />
+    <ClInclude Include="GL3RenderDevice.h" />
+    <ClInclude Include="GL3Sprite.h" />
+    <ClInclude Include="GL3Texture.h" />
     <ClInclude Include="gl\gl3w.h" />
     <ClInclude Include="GraphicsDeviceManager.h" />
-    <ClInclude Include="GL1RenderWindow.h" />
+    <ClInclude Include="GL3RenderWindow.h" />
     <ClInclude Include="GL3GraphicsAPIFactory.h" />
     <ClInclude Include="GL3DeviceContext.h" />
     <ClInclude Include="GL3Common.h" />
@@ -109,16 +108,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="GL1RenderStateManager.cpp" />
-    <ClCompile Include="GL1ObjectFactory.cpp" />
-    <ClCompile Include="GL1RenderDevice.cpp" />
-    <ClCompile Include="GL1Sprite.cpp" />
-    <ClCompile Include="GL1Texture.cpp" />
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GL3RenderStateManager.cpp" />
+    <ClCompile Include="GL3ObjectFactory.cpp" />
+    <ClCompile Include="GL3RenderDevice.cpp" />
+    <ClCompile Include="GL3Sprite.cpp" />
+    <ClCompile Include="GL3Texture.cpp" />
     <ClCompile Include="GL3Utils.cpp" />
     <ClCompile Include="gl\gl3w.c" />
     <ClCompile Include="GraphicsDeviceManager.cpp" />
-    <ClCompile Include="GL1RenderWindow.cpp" />
+    <ClCompile Include="GL3RenderWindow.cpp" />
     <ClCompile Include="GL3GraphicsAPIFactory.cpp" />
     <ClCompile Include="GL3DeviceContext.cpp" />
     <ClCompile Include="Plugin.cpp" />
