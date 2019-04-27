@@ -20,7 +20,6 @@
 #include "BinaryWriter.h"
 #include "apoc3d/Vfs/PathUtils.h"
 
-#include "apoc3d/Exception.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Graphics/Animation/AnimationData.h"
 #include "apoc3d/Core/Logging.h"

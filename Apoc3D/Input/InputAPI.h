@@ -66,9 +66,9 @@ namespace Apoc3D
 			InputAPIManager();
 			virtual ~InputAPIManager();
 		
-			void RegisterInputAPI(InputAPIFactory* fac);
-			void UnregisterInputAPI(const String& name);
-			void UnregisterInputAPI(InputAPIFactory* fac);
+			bool RegisterInputAPI(InputAPIFactory* fac);
+			bool UnregisterInputAPI(const String& name);
+			bool UnregisterInputAPI(InputAPIFactory* fac);
 
 			void InitializeInput(RenderWindow* window, const InputCreationParameters& params);
 			void FinalizeInput();

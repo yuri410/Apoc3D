@@ -51,8 +51,46 @@ namespace Apoc3D
 			return result;
 		}
 
-		RectangleF RectangleF::Intersect(const RectangleF& a, const RectangleF& b) { return IntersectRect(a, b); }
-		RectangleF RectangleF::Union(const RectangleF& a, const RectangleF& b) { return UnionRect(a, b); }
+		//////////////////////////////////////////////////////////////////////////
+
+		RectangleF RectangleF::GetCenterRegion(const PointF& sz) const
+		{
+			return{ getCenter() - sz / 2, sz };
+		}
+
+		RectangleF RectangleF::Offsetted(PointF ofs) const
+		{
+			RectangleF c = *this;
+			c.Offset(ofs);
+			return c;
+		}
+
+		RectangleF RectangleF::Offsetted(float x, float y) const
+		{
+			RectangleF c = *this;
+			c.Offset(x, y);
+			return c;
+		}
+
+		bool RectangleF::operator==(const RectangleF& other) const
+		{
+			return (X == other.X) && (Y == other.Y) && (Width == other.Width) && (Height == other.Height);
+		}
+		
+		bool RectangleF::operator!=(const RectangleF& other) const
+		{
+			return !(*this == other);
+		}
+
+		RectangleF RectangleF::Intersect(const RectangleF& a, const RectangleF& b)
+		{
+			return IntersectRect(a, b);
+		}
+
+		RectangleF RectangleF::Union(const RectangleF& a, const RectangleF& b)
+		{
+			return UnionRect(a, b);
+		}
 
 		RectangleF RectangleF::Lerp(const RectangleF& r1, const RectangleF& r2, float amount)
 		{
@@ -62,10 +100,41 @@ namespace Apoc3D
 				Math::Lerp(r1.Height, r2.Height, amount) };
 		}
 
+		//////////////////////////////////////////////////////////////////////////
 
-		Rectangle Rectangle::Intersect(const Rectangle& a, const Rectangle& b) { return IntersectRect(a, b); }
-		Rectangle Rectangle::Union(const Rectangle& a, const Rectangle& b) { return UnionRect(a, b); }
+		Rectangle Rectangle::GetCenterRegion(const Point& sz) const
+		{
+			return{ getCenter() - sz / 2, sz };
+		}
 
+		Rectangle Rectangle::Offsetted(Point ofs) const
+		{
+			Rectangle c = *this;
+			c.Offset(ofs);
+			return c;
+		}
+
+		Rectangle Rectangle::Offsetted(int32 x, int32 y) const
+		{
+			Rectangle c = *this;
+			c.Offset(x, y);
+			return c;
+		}
+
+		Rectangle::operator RectangleF() const
+		{
+			return RectangleF(static_cast<float>(X), static_cast<float>(Y), static_cast<float>(Width), static_cast<float>(Height));
+		}
+
+		bool Rectangle::operator==(const Rectangle& other) const
+		{
+			return (X == other.X) && (Y == other.Y) && (Width == other.Width) && (Height == other.Height);
+		}
+
+		bool Rectangle::operator!=(const Rectangle& other) const 
+		{
+			return !(*this == other); 
+		}
 
 		void Rectangle::SplitVert(int32 ypos, Rectangle& top, Rectangle& bottom)
 		{
@@ -128,5 +197,14 @@ namespace Apoc3D
 			result[2] = { X, Y + Height - bottom, Width, bottom };
 		}
 
+		Rectangle Rectangle::Intersect(const Rectangle& a, const Rectangle& b)
+		{
+			return IntersectRect(a, b);
+		}
+
+		Rectangle Rectangle::Union(const Rectangle& a, const Rectangle& b)
+		{
+			return UnionRect(a, b);
+		}
 	}
 }

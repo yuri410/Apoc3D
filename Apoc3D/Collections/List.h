@@ -20,7 +20,6 @@
  */
 
 #include "CollectionsCommon.h"
-#include "apoc3d/Exception.h"
 
 namespace Apoc3D
 {
@@ -190,7 +189,9 @@ namespace Apoc3D
 			void RemoveChecked(const T& item)
 			{
 				if (!Remove(item))
-					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Removing failed.");
+				{
+					AP_EXCEPTION(ErrorID::InvalidOperation, L"Removing failed.");
+				}
 			}
 			void RemoveAt(int32 index)
 			{

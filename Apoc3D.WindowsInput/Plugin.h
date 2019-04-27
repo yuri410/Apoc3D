@@ -37,10 +37,10 @@ namespace Apoc3D
 				WinInputPlugin();
 				~WinInputPlugin();
 
-				virtual void Load();
-				virtual void Unload();
+				virtual bool Load() override;
+				virtual bool Unload() override;
 
-				virtual String GetName() { return L"Windows Input System"; }
+				virtual String GetName() override { return L"Windows Input System"; }
 
 			private:
 				class Win32InputFactory* m_factory;

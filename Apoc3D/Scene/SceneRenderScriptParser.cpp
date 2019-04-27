@@ -19,7 +19,6 @@
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Collections/Stack.h"
-#include "apoc3d/Exception.h"
 #include "apoc3d/Graphics/PixelFormat.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
@@ -173,7 +172,8 @@ namespace Apoc3D
 				}
 				if (op1 == -1 || op2 == -1)
 				{
-					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"operator error!");
+					AP_EXCEPTION(ErrorID::InvalidOperation, L"operator error!");
+					return '=';
 					//cout << "operator   error!" << endl;
 					//exit(1);
 				}

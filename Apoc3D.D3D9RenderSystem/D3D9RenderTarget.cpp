@@ -21,8 +21,6 @@
 #include "D3D9Utils.h"
 #include "GraphicsDeviceManager.h"
 
-#include "apoc3d/Exception.h"
-
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Math/MathCommon.h"
@@ -76,14 +74,18 @@ namespace Apoc3D
 					if (aamode == nullptr)
 					{
 						D3D9Utils::logRTFailure(getColorFormat(), DEPFMT_Count, getMultisampleMode());
-						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
+						AP_EXCEPTION(ErrorID::NotSupported, L"");
+						return;
 					}
 
 					DWORD qualityCount;
 					HRESULT hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
 						sets->AdapterOrdinal, sets->DeviceType, D3D9Utils::ConvertPixelFormat(getColorFormat()), sets->PresentParameters.Windowed, aamode->SampleType, &qualityCount);
 					if (hr != S_OK || qualityCount == 0)
-						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
+					{
+						AP_EXCEPTION(ErrorID::NotSupported, L"");
+						return;
+					}
 
 					DWORD selectedQuality = Math::Min((uint32)aamode->SampleQuality, qualityCount - 1);
 

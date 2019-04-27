@@ -18,7 +18,6 @@
 #include "Win32Mouse.h"
 #include "Win32Keyboard.h"
 
-#include "apoc3d/Exception.h"
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Core/Logging.h"

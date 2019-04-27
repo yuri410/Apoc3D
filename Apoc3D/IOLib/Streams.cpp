@@ -15,7 +15,6 @@
  */
 
 #include "Streams.h"
-#include "apoc3d/Exception.h"
 #include "apoc3d/Math/Math.h"
 
 #ifdef USE_WIN32_FILE
@@ -123,7 +122,7 @@ namespace Apoc3D
 		}
 		void FileStream::Write(const char* src, int64 count)
 		{
-			throw AP_EXCEPTION(ExceptID::NotSupported, L"Can't write");
+			AP_EXCEPTION(ErrorID::NotSupported, L"Can't write");
 		}
 
 		void FileStream::Seek(int64 offset, SeekMode mode)
@@ -246,7 +245,8 @@ namespace Apoc3D
 
 		int64 FileOutStream::Read(char* dest, int64 count)
 		{
-			throw AP_EXCEPTION(ExceptID::NotSupported, L"Can't read");
+			AP_EXCEPTION(ErrorID::NotSupported, L"Can't read");
+			return 0;
 		}
 		void FileOutStream::Write(const char* src, int64 count)
 		{
@@ -307,7 +307,8 @@ namespace Apoc3D
 		{
 			if (m_position + count > m_length)
 			{
-				throwEndofStreamException();
+				EndofStreamError();
+				return;
 			}
 			
 			memcpy(m_data + m_position, src, static_cast<size_t>(count));			
@@ -328,9 +329,9 @@ namespace Apoc3D
 				m_position = m_length;
 		}
 
-		void MemoryStream::throwEndofStreamException()
+		void MemoryStream::EndofStreamError()
 		{
-			throw AP_EXCEPTION(ExceptID::EndOfStream, L"");
+			AP_EXCEPTION(ErrorID::EndOfStream, L"MemoryStream");
 		}
 
 		/************************************************************************/

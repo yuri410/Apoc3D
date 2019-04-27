@@ -323,7 +323,6 @@
     <ClInclude Include="Core\ResourceManager.h" />
     <ClInclude Include="Core\Streaming\GenerationTable.h" />
     <ClInclude Include="Engine.h" />
-    <ClInclude Include="Exception.h" />
     <ClInclude Include="Input\NullInput.h" />
     <ClInclude Include="Meta\EventDelegate.h" />
     <ClInclude Include="ApocExportSettings.h" />
@@ -472,9 +471,9 @@
     <ClInclude Include="Vfs\VFSCommon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ApocError.cpp" />
     <ClCompile Include="Core\GameTime.cpp" />
     <ClCompile Include="Core\Pool.cpp" />
-    <ClCompile Include="Exception.cpp" />
     <ClCompile Include="Collections\CollectionsCommon.cpp" />
     <ClCompile Include="ApocCommon.cpp" />
     <ClCompile Include="Config\ConfigurationSection.cpp" />

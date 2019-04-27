@@ -39,10 +39,10 @@ namespace Apoc3D
 				D3D9RSPlugin();
 				~D3D9RSPlugin();
 
-				virtual void Load();
-				virtual void Unload();
+				virtual bool Load() override;
+				virtual bool Unload() override;
 
-				virtual String GetName() { return L"Direct3D9 Render System"; }
+				virtual String GetName() override { return L"Direct3D9 Render System"; }
 
 			private:
 				class D3D9GraphicsAPIFactory* m_factory;

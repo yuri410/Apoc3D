@@ -16,7 +16,6 @@
 
 #include "InputAPI.h"
 
-#include "apoc3d/Exception.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "Mouse.h"
 #include "Keyboard.h"
@@ -39,12 +38,14 @@ namespace Apoc3D
 			m_factories.DeleteValuesAndClear();
 		}
 
-		void InputAPIManager::RegisterInputAPI(InputAPIFactory* fac)
+		bool InputAPIManager::RegisterInputAPI(InputAPIFactory* fac)
 		{
 			if (m_factories.Contains(fac->getName()))
 			{
-				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Input API Already registered");
+				AP_EXCEPTION(ErrorID::InvalidOperation, L"Input API Already registered");
+				return false;
 			}
+
 			const List<PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
 
 			for (int32 i = 0; i < plats.getCount(); i++)
@@ -63,8 +64,9 @@ namespace Apoc3D
 				const Entry ent = { fac, plats[i].Score };
 				facList->Add(ent);
 			}
+			return true;
 		}
-		void InputAPIManager::UnregisterInputAPI(const String& name)
+		bool InputAPIManager::UnregisterInputAPI(const String& name)
 		{
 			bool passed = false;
 
@@ -82,10 +84,11 @@ namespace Apoc3D
 
 			if (!passed)
 			{
-				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Input API not registered");
+				AP_EXCEPTION(ErrorID::InvalidOperation, L"Input API not registered");
 			}
+			return passed;
 		}
-		void InputAPIManager::UnregisterInputAPI(InputAPIFactory* fac)
+		bool InputAPIManager::UnregisterInputAPI(InputAPIFactory* fac)
 		{
 			bool passed = false;
 
@@ -111,8 +114,9 @@ namespace Apoc3D
 			}
 			if (!passed)
 			{
-				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Input API not registered");
+				AP_EXCEPTION(ErrorID::InvalidOperation, L"Input API not registered");
 			}
+			return passed;
 		}
 
 		void InputAPIManager::InitializeInput(RenderWindow* window, const InputCreationParameters& params)
@@ -148,9 +152,9 @@ namespace Apoc3D
 						m_keyboard = CreateKeyboard();
 					}
 				}
-				else throw AP_EXCEPTION(ExceptID::NotSupported, L"Platform not supported");
+				else AP_EXCEPTION(ErrorID::NotSupported, L"Platform not supported");
 			}
-			else throw AP_EXCEPTION(ExceptID::NotSupported, L"Platform not supported");
+			else AP_EXCEPTION(ErrorID::NotSupported, L"Platform not supported");
 		}
 		void InputAPIManager::FinalizeInput()
 		{

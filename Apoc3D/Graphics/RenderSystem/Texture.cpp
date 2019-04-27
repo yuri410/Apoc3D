@@ -23,7 +23,6 @@
 #include "apoc3d/IOLib/TextureData.h"
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Math/Box.h"
-#include "apoc3d/Exception.h"
 #include "apoc3d/VFS/ResourceLocation.h"
 #include "apoc3d/Library/squish.h"
 
@@ -139,9 +138,16 @@ namespace Apoc3D
 							return res;
 						}
 					}
-					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is not volume.");
+					else
+					{
+						AP_EXCEPTION(ErrorID::InvalidOperation, L"Texture is not volume.");
+					}
 				}
-				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is already locked.");
+				else
+				{
+					AP_EXCEPTION(ErrorID::InvalidOperation, L"Texture is already locked.");
+				}
+				return DataBox(0, 0, 0, 0, 0, 0, FMT_Unknown);
 			}
 
 			DataRectangle Texture::Lock(int surface, LockMode mode)
@@ -166,7 +172,11 @@ namespace Apoc3D
 						}
 					}
 				}
-				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is already locked.");
+				else
+				{
+					AP_EXCEPTION(ErrorID::InvalidOperation, L"Texture is already locked.");
+				}
+				return DataRectangle(0, 0, 0, 0, FMT_Unknown);
 			}
 
 			DataRectangle Texture::Lock(int surface, LockMode mode, CubeMapFace cubemapFace)
@@ -191,7 +201,11 @@ namespace Apoc3D
 						}
 					}
 				}
-				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is already locked.");
+				else
+				{
+					AP_EXCEPTION(ErrorID::InvalidOperation, L"Texture is already locked.");
+				}
+				return DataRectangle(0, 0, 0, 0, FMT_Unknown);
 			}
 
 			void Texture::Unlock(int surface)
@@ -203,7 +217,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is not locked.");
+					AP_EXCEPTION(ErrorID::InvalidOperation, L"Texture is not locked.");
 				}
 				
 			}
@@ -216,7 +230,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is not locked.");
+					AP_EXCEPTION(ErrorID::InvalidOperation, L"Texture is not locked.");
 				}
 			}
 			
@@ -250,7 +264,6 @@ namespace Apoc3D
 					squish::u8 block[16] = { 0 };
 
 					int32 blockSize = 0;
-
 					int squishFlags = 0;
 
 					switch (m_format)
@@ -268,20 +281,23 @@ namespace Apoc3D
 							blockSize = 16;
 							break;
 						default:
-							throw AP_EXCEPTION(ExceptID::NotSupported, L"Format not supported for filling.");
+							AP_EXCEPTION(ErrorID::NotSupported, L"Format not supported for filling.");
 					}
 
-					squish::Compress(colorInBlock, block, squishFlags);
-
-					// iterate through 2d array of blocks
-					for (int y = 0; y < dr.getHeight(); y += 4)
+					if (blockSize)
 					{
-						char* writeLine = dst + dr.getPitch() * y;
+						squish::Compress(colorInBlock, block, squishFlags);
 
-						for (int x = 0; x < dr.getWidth(); x += 4)
+						// iterate through 2d array of blocks
+						for (int y = 0; y < dr.getHeight(); y += 4)
 						{
-							memcpy(writeLine, block, blockSize);
-							writeLine += blockSize;
+							char* writeLine = dst + dr.getPitch() * y;
+
+							for (int x = 0; x < dr.getWidth(); x += 4)
+							{
+								memcpy(writeLine, block, blockSize);
+								writeLine += blockSize;
+							}
 						}
 					}
 				}
@@ -360,7 +376,7 @@ namespace Apoc3D
 						case Apoc3D::Graphics::FMT_B4G4R4A4:
 							break;
 						default:
-							throw AP_EXCEPTION(ExceptID::NotSupported, L"Format not supported for filling.");
+							AP_EXCEPTION(ErrorID::NotSupported, L"Format not supported for filling.");
 					}
 				}
 				

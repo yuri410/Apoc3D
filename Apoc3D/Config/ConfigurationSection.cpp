@@ -18,7 +18,6 @@
 
 #include "ConfigurationManager.h"
 
-#include "apoc3d/Exception.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Math/Vector.h"
@@ -395,18 +394,9 @@ namespace Apoc3D
 		}
 		void ConfigurationSection::AddAttributeString(const String& name, const String& value)
 		{
-			try
+			if (!m_attributes.TryAdd(name, value))
 			{
-				m_attributes.Add(name, value);
-			}
-			catch (Exception& e)
-			{
-				switch (e.getType())
-				{
-				case ExceptID::Duplicate:
-					LogManager::getSingleton().Write(LOG_System,  L"Attribute with name '" + name + L"' already exists. ", LOGLVL_Warning);
-					break;
-				}
+				LogManager::getSingleton().Write(LOG_System, L"Attribute with name '" + name + L"' already exists. ", LOGLVL_Warning);
 			}
 		}
 
@@ -704,7 +694,8 @@ namespace Apoc3D
 				String ss = val.substr(0, pos);
 				return StringUtils::ParseSingle(ss) / 100.0f;
 			}
-			throw AP_EXCEPTION(ExceptID::FormatException, val);
+			AP_EXCEPTION(ErrorID::FormatException, val);
+			return 0;
 		}
 		String PercentageToString(const float& v)
 		{
@@ -735,7 +726,8 @@ namespace Apoc3D
 
 				return CV_PackColor(r, g, b, a);
 			}
-			throw AP_EXCEPTION(ExceptID::FormatException, L"Wrong number of channels: " + str);
+			AP_EXCEPTION(ErrorID::FormatException, L"Wrong number of channels: " + str);
+			return 0;
 		}
 		String ColorValueToString(ColorValue v)
 		{

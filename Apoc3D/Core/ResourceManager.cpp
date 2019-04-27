@@ -21,8 +21,6 @@
 #include "Streaming/AsyncProcessor.h"
 #include "Streaming/GenerationTable.h"
 
-#include "apoc3d/Exception.h"
-
 namespace Apoc3D
 {
 	//SINGLETON_DECL(Apoc3D::Core::ResourceManager);
@@ -210,7 +208,7 @@ namespace Apoc3D
 		{
 			if (!m_asyncProc)
 			{
-				throw AP_EXCEPTION(ExceptID::NotSupported, L"Async processing not enabled");
+				AP_EXCEPTION(ErrorID::NotSupported, L"Async processing not enabled");
 			}
 		}
 	}

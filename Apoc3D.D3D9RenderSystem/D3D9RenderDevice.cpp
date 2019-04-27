@@ -32,8 +32,6 @@
 #include "VolatileResource.h"
 #include "RawSettings.h"
 
-#include "apoc3d/Exception.h"
-
 #include "apoc3d/Graphics/Camera.h"
 #include "apoc3d/Graphics/Material.h"
 #include "apoc3d/Graphics/GeometryData.h"

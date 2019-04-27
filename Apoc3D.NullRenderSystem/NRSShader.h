@@ -27,7 +27,6 @@
 #include "apoc3d/Math/Quaternion.h"
 
 #include "apoc3d/Graphics/RenderSystem/Shader.h"
-#include "apoc3d/Exception.h"
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
@@ -105,7 +104,7 @@ namespace Apoc3D
 				void SetValue(const String& paramName, const int32* value, int32 count) override { }
 
 			protected:
-				static void ThrowKeyNotFoundEx(const String& name);
+				static void KeyNotFoundError(const String& name);
 
 				NRSRenderDevice* m_device;
 

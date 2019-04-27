@@ -20,7 +20,6 @@
 #include "TaggedData.h"
 #include "IOUtils.h"
 
-#include "apoc3d/Exception.h"
 #include "apoc3d/Math/Ray.h"
 #include "apoc3d/Math/BoundingBox.h"
 #include "apoc3d/Math/BoundingSphere.h"
@@ -58,7 +57,7 @@ namespace Apoc3D
 			int64 result = m_baseStream->Read(&m_buffer[0], len); 
 			if (len != result)
 			{
-				throwEndofStreamException();
+				EndofStreamError();
 			}
 		}
 
@@ -244,7 +243,8 @@ namespace Apoc3D
 			int r = m_baseStream->ReadByte();
 			if (r == -1)
 			{
-				 throwEndofStreamException();
+				 EndofStreamError();
+				 return 0;
 			}
 			return reinterpret_cast<const char&>(r);
 		}
@@ -617,9 +617,9 @@ namespace Apoc3D
 		}
 
 
-		void BinaryReader::throwEndofStreamException()
+		void BinaryReader::EndofStreamError()
 		{
-			throw AP_EXCEPTION(ExceptID::EndOfStream, L"");
+			AP_EXCEPTION(ErrorID::EndOfStream, L"BinaryReader");
 		}
 	}
 }

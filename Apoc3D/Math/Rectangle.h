@@ -153,21 +153,18 @@ namespace Apoc3D
 			RectangleF(float x, float y, float width, float height)
 				: RectBase(x, y, width, height) { }
 
-			RectangleF GetCenterRegion(const PointF& sz) const
-			{
-				return{ getCenter() - sz / 2, sz };
-			}
+			RectangleF GetCenterRegion(const PointF& sz) const;
+
+			RectangleF Offsetted(PointF ofs) const;
+			RectangleF Offsetted(float x, float y) const;
+
+			bool operator==(const RectangleF& other) const;
+			bool operator!=(const RectangleF& other) const;
 
 			static RectangleF Intersect(const RectangleF& a, const RectangleF& b);
 			static RectangleF Union(const RectangleF& a, const RectangleF& b);
 
 			static RectangleF Lerp(const RectangleF& r1, const RectangleF& r2, float amount);
-
-			bool operator==(const RectangleF& other) const
-			{
-				return (X  == other.X) && (Y == other.Y) && (Width == other.Width) && (Height == other.Height);	
-			}
-			bool operator!=(const RectangleF& other) const { return !(*this == other); }
 
 			const static RectangleF Empty;
 		};
@@ -183,12 +180,9 @@ namespace Apoc3D
 			Rectangle(int x, int y, int width, int height)
 				: RectBase(x, y, width, height) { }
 
-
-			Rectangle GetCenterRegion(const Point& sz) const
-			{
-				return{ getCenter() - sz / 2, sz };
-			}
-
+			Rectangle GetCenterRegion(const Point& sz) const;
+			Rectangle Offsetted(Point ofs) const;
+			Rectangle Offsetted(int32 x, int32 y) const;
 
 			void SplitVert(int32 ypos, Rectangle& top, Rectangle& bottom);
 			void SplitHorizontal(int32 xpos, Rectangle& left, Rectangle& right);
@@ -199,6 +193,10 @@ namespace Apoc3D
 			void DivideTo3RegionsX(int32 left, int32 right, Rectangle(&result)[3]) const;
 			void DivideTo3RegionsY(int32 top, int32 bottom, Rectangle(&result)[3]) const;
 
+			operator RectangleF() const;
+
+			bool operator==(const Rectangle& other) const;
+			bool operator!=(const Rectangle& other) const;
 
 			/** Creates a Rectangle defining the area where one rectangle overlaps another rectangle. */
 			static Rectangle Intersect(const Rectangle &a, const Rectangle &b);
@@ -206,17 +204,6 @@ namespace Apoc3D
 			/** Creates a new Rectangle that exactly contains two other rectangles. */
 			static Rectangle Union(const Rectangle &a, const Rectangle &b);
 
-
-			operator RectangleF() const
-			{
-				return RectangleF(static_cast<float>(X), static_cast<float>(Y), static_cast<float>(Width), static_cast<float>(Height)); 
-			} 
-
-			bool operator==(const Rectangle& other) const
-			{
-				return (X == other.X) && (Y == other.Y) && (Width == other.Width) && (Height == other.Height);	
-			}
-			bool operator!=(const Rectangle& other) const { return !(*this == other); }
 
 			const static Rectangle Empty;
 		};

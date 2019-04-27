@@ -21,7 +21,6 @@
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Math/Box.h"
 #include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/Exception.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/Vfs/PathUtils.h"

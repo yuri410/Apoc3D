@@ -20,8 +20,6 @@
 #include "NRSTexture.h"
 #include "NRSRenderDevice.h"
 
-#include "apoc3d/Exception.h"
-
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Math/MathCommon.h"

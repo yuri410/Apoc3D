@@ -109,7 +109,8 @@ namespace Apoc3D
 					m_isLocked = true;
 					return res;
 				}
-				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"RenderTarget is already locked.");
+				AP_EXCEPTION(ErrorID::InvalidOperation, L"RenderTarget is already locked.");
+				return DataRectangle(0, 0, 0, 0, FMT_Unknown);
 			}
 			DataRectangle RenderTarget::Lock(LockMode mode)
 			{
@@ -125,7 +126,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"RenderTarget is not locked.");
+					AP_EXCEPTION(ErrorID::InvalidOperation, L"RenderTarget is not locked.");
 				}
 			}
 

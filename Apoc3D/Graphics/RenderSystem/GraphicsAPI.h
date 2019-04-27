@@ -44,9 +44,9 @@ namespace Apoc3D
 			
 				virtual ~GraphicsAPIManager();
 
-				void RegisterGraphicsAPI(GraphicsAPIFactory* fac);
-				void UnregisterGraphicsAPI(const String& name);
-				void UnregisterGraphicsAPI(GraphicsAPIFactory* fac);
+				bool RegisterGraphicsAPI(GraphicsAPIFactory* fac);
+				bool UnregisterGraphicsAPI(const String& name);
+				bool UnregisterGraphicsAPI(GraphicsAPIFactory* fac);
 				
 				DeviceContext* CreateDeviceContext();
 

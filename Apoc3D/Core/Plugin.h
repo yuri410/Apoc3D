@@ -39,8 +39,8 @@ namespace Apoc3D
 		public:
 			virtual ~Plugin() { }
 
-			virtual void Load() = 0;
-			virtual void Unload() = 0;
+			virtual bool Load() = 0;
+			virtual bool Unload() = 0;
 
 			virtual String GetName() = 0;
 		};

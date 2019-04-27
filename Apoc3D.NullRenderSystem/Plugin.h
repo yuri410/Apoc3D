@@ -39,10 +39,10 @@ namespace Apoc3D
 				NRSPlugin();
 				~NRSPlugin();
 
-				virtual void Load();
-				virtual void Unload();
+				virtual bool Load() override;
+				virtual bool Unload() override;
 
-				virtual String GetName() { return L"Null Render System"; }
+				virtual String GetName() override { return L"Null Render System"; }
 
 			private:
 				class NRSGraphicsAPIFactory* m_factory;

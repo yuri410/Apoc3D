@@ -16,7 +16,6 @@
 
 #include "ConstantTable.h"
 
-#include "apoc3d/Exception.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/IOLib/BinaryWriter.h"
@@ -32,12 +31,6 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			void ConstantTable::ThrowKeyNotFoundEx(const String& name)
-			{
-				throw AP_EXCEPTION(ExceptID::KeyNotFound, name);
-			}
-			
-
 			ConstantTable::ConstantTable(const DWORD* bytes)
 			{
 				// http://msdn.microsoft.com/en-us/library/ff552891.aspx
@@ -79,7 +72,6 @@ namespace Apoc3D
 				}
 			}
 
-
 			void ConstantTable::ReadShaderComment(char* data, int32 size)
 			{
 				MemoryStream ms(data, size);
@@ -92,8 +84,6 @@ namespace Apoc3D
 			{
 
 			}
-
-
 
 			void ConstantTable::Read(BinaryReader* br)
 			{
@@ -125,7 +115,7 @@ namespace Apoc3D
 					sc.StructMembers = br->ReadUInt16();
 					sc.SizeInBytes = br->ReadUInt32();
 
-
+					
 					m_table.Add(sc.Name, sc);
 				}
 			}
@@ -153,6 +143,7 @@ namespace Apoc3D
 					bw->WriteUInt32(sc.SizeInBytes);
 				}
 			}
+
 		}
 	}
 }

@@ -180,8 +180,8 @@ namespace APBuild
 		case IL_DXT5:
 			return FMT_DXT5;
 		}
-		throw AP_EXCEPTION(ExceptID::NotSupported, L"ConvertFormat");
-		//return FMT_Unknown;
+		AP_EXCEPTION(ErrorID::NotSupported, L"ConvertFormat");
+		return FMT_Unknown;
 	}
 	int ConvertFilter(TextureFilterType flt)
 	{
@@ -191,7 +191,8 @@ namespace APBuild
 			case TextureFilterType::Box: return ILU_SCALE_BOX;
 			case TextureFilterType::BSpline: return ILU_SCALE_BSPLINE;
 		}
-		throw AP_EXCEPTION(ExceptID::NotSupported, L"Not supported filter type");
+		AP_EXCEPTION(ErrorID::NotSupported, L"Not supported filter type");
+		return ILU_NEAREST;
 	}
 	void BuildByDevIL(const TextureBuildConfig& config)
 	{

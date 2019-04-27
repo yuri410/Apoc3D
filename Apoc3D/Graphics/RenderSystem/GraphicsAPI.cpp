@@ -16,7 +16,6 @@
 
 #include "GraphicsAPI.h"
 
-#include "apoc3d/Exception.h"
 #include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D;
@@ -35,11 +34,12 @@ namespace Apoc3D
 				m_factories.DeleteValuesAndClear();
 			}
 
-			void GraphicsAPIManager::RegisterGraphicsAPI(GraphicsAPIFactory* fac)
+			bool GraphicsAPIManager::RegisterGraphicsAPI(GraphicsAPIFactory* fac)
 			{
 				if (m_factories.Contains(fac->getName()))
 				{
-					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"The Graphics API " + fac->getName() + L" is already registered");
+					AP_EXCEPTION(ErrorID::InvalidOperation, L"The Graphics API " + fac->getName() + L" is already registered");
+					return false;
 				}
 
 				for (const PlatformAPISupport& p : fac->getDescription().SupportedPlatforms)
@@ -58,8 +58,9 @@ namespace Apoc3D
 					const Entry ent = { fac, p.Score };
 					facList->Add(ent);
 				}
+				return true;
 			}
-			void GraphicsAPIManager::UnregisterGraphicsAPI(const String& name)
+			bool GraphicsAPIManager::UnregisterGraphicsAPI(const String& name)
 			{
 				bool passed = false;
 
@@ -76,10 +77,11 @@ namespace Apoc3D
 				}
 				if (!passed)
 				{
-					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"The graphics API " + name + L" is not registered");
+					AP_EXCEPTION(ErrorID::InvalidOperation, L"The graphics API " + name + L" is not registered");
 				}
+				return passed;
 			}
-			void GraphicsAPIManager::UnregisterGraphicsAPI(GraphicsAPIFactory* fac)
+			bool GraphicsAPIManager::UnregisterGraphicsAPI(GraphicsAPIFactory* fac)
 			{
 				bool passed = false;
 
@@ -104,8 +106,9 @@ namespace Apoc3D
 				}
 				if (!passed)
 				{
-					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Graphics API not registered");
+					AP_EXCEPTION(ErrorID::InvalidOperation, L"Graphics API not registered");
 				}
+				return passed;
 			}
 
 
@@ -115,7 +118,6 @@ namespace Apoc3D
 			{
 				const String OSName = APOC3D_PLATFORM_NAME;
 				
-
 				APIList* list;
 				if (m_factories.TryGetValue(OSName, list))
 				{
@@ -134,9 +136,9 @@ namespace Apoc3D
 						}
 						return list->operator[](bestIdx).Factory->CreateDeviceContext();
 					}
-					throw AP_EXCEPTION(ExceptID::NotSupported, L"Platform not supported");
 				}
-				throw AP_EXCEPTION(ExceptID::NotSupported, L"Platform not supported");
+				AP_EXCEPTION(ErrorID::NotSupported, L"Platform not supported");
+				return nullptr;
 			}
 		}
 	}

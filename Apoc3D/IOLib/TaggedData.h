@@ -455,7 +455,7 @@ namespace Apoc3D
 
 			const Entry* FindEntry(const KeyType& name) const { return m_positions.TryGetValue(name); }
 
-			NO_INLINE static void throwKeynotFoundException(const KeyType& key);
+			NO_INLINE static void KeynotFoundError(const KeyType& key);
 
 			bool m_endianIndependent;
 			bool m_suspendStreamRelease = false;

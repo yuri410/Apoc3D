@@ -16,7 +16,6 @@
 
 #include "Sprite.h"
 
-#include "apoc3d/Exception.h"
 #include "apoc3d/Math/MathCommon.h"
 #include "apoc3d/Graphics/EffectSystem/Effect.h"
 #include "apoc3d/Graphics/EffectSystem/EffectManager.h"
@@ -223,7 +222,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"The sprite is not begun with SPR_UsePostTransformStack.");
+					AP_EXCEPTION(ErrorID::InvalidOperation, L"The sprite is not begun with SPR_UsePostTransformStack.");
 				}
 			}
 

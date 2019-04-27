@@ -194,7 +194,7 @@ namespace Apoc3D
 			char* getDataPointer() const { return m_data; }
 
 		private:
-			NO_INLINE static void throwEndofStreamException();
+			NO_INLINE static void EndofStreamError();
 
 			int64 m_length = 0;
 			char* m_data = nullptr;

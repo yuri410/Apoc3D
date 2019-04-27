@@ -90,9 +90,12 @@ namespace Apoc3D
 		{
 			if (value.Usage.empty())
 			{
-				throw AP_EXCEPTION(ExceptID::Argument, L"usage can not be empty");
+				AP_EXCEPTION(ErrorID::Argument, L"usage can not be empty");
 			}
-			m_customParametrs.Add(value.Usage, value);
+			else
+			{
+				m_customParametrs.Add(value.Usage, value);
+			}
 		}
 
 		void Material::LoadEffect(int32 index)

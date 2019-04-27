@@ -50,13 +50,13 @@ namespace Apoc3D
 				m_factory = nullptr;
 			}
 
-			void D3D9RSPlugin::Load()
+			bool D3D9RSPlugin::Load()
 			{
-				GraphicsAPIManager::getSingleton().RegisterGraphicsAPI(m_factory);
+				return GraphicsAPIManager::getSingleton().RegisterGraphicsAPI(m_factory);
 			}
-			void D3D9RSPlugin::Unload()
+			bool D3D9RSPlugin::Unload()
 			{
-				GraphicsAPIManager::getSingleton().UnregisterGraphicsAPI(m_factory);
+				return GraphicsAPIManager::getSingleton().UnregisterGraphicsAPI(m_factory);
 			}
 
 		}

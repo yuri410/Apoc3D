@@ -17,7 +17,6 @@
 #include "PluginManager.h"
 
 #include "Plugin.h"
-#include "apoc3d/Exception.h"
 #include "apoc3d/Platform/Library.h"
 #include "apoc3d/Config/ConfigurationManager.h"
 #include "apoc3d/Config/Configuration.h"
@@ -51,7 +50,8 @@ namespace Apoc3D
 			{
 				return plg;
 			}
-			throw AP_EXCEPTION(ExceptID::KeyNotFound, name);
+			AP_EXCEPTION(ErrorID::KeyNotFound, name);
+			return nullptr;
 		}
 
 		void PluginManager::OnPluginLoad(const Plugin* plg, int32 index, int32 count)
@@ -71,42 +71,36 @@ namespace Apoc3D
 
 		void PluginManager::LoadPlugin(const String& name)
 		{
-			Library* lib = nullptr;
-			Plugin* plugin = nullptr;
-			try
+			LogManager::getSingleton().Write(LOG_System, L"Loading plugin" + name, LOGLVL_Infomation);
+
+			Library* lib = new Library(name);
+			lib->Load();
+
+			void* ptr = lib->getSymbolAddress(L"Apoc3DGetPlugin");
+			if (ptr == nullptr)
 			{
-				LogManager::getSingleton().Write(LOG_System, L"Loading plugin" + name, LOGLVL_Infomation);
+				String msg = L"Entry point 'Apoc3DGetPlugin' not found on ";
+				msg.append(name);
+				msg.append(L" . Cannot load");
+				LogManager::getSingleton().Write(LOG_System, L"Unable to load" + name + L".\n " + msg, LOGLVL_Infomation);
+				
+				lib->Unload();
+				delete lib;
+				OnPluginError(0);
+				return;
+			}
 
-				lib = new Library(name);
-				lib->Load();
-
-				void* ptr = lib->getSymbolAddress(L"Apoc3DGetPlugin");
-				if (ptr == nullptr)
-				{
-					String msg = L"Entry point 'Apoc3DGetPlugin' not found on ";
-					msg.append(name);
-					msg.append(L" . Cannot load");
-					LogManager::getSingleton().Write(LOG_System, L"Unable to load" + name + L".\n " + msg, LOGLVL_Infomation);
-					
-					lib->Unload();
-					delete lib;
-					OnPluginError(0);
-					return;
-				}
-
-				plugin = ((LIB_GET_PLUGIN)ptr)();
-				plugin->Load();
-
+			Plugin* plugin = ((LIB_GET_PLUGIN)ptr)();
+			if (plugin->Load())
+			{
 				m_libraries.Add(lib);
 				m_plugins.Add(name, plugin);
 			}
-			catch (const Exception& e)
+			else
 			{
-				(void)e;
 				OnPluginError(plugin);
-
 				delete lib;
-			}
+			}	
 		}
 
 		void PluginManager::LoadPlugins(const List<Plugin*>& plugins)
@@ -114,19 +108,12 @@ namespace Apoc3D
 			for (int i = 0; i < plugins.getCount(); i++)
 			{
 				Plugin* plugin = plugins[i];
-				try
-				{
-					LogManager::getSingleton().Write(LOG_System, L"Loading plugin " + plugin->GetName(), LOGLVL_Infomation);
+				
+				LogManager::getSingleton().Write(LOG_System, L"Loading plugin " + plugin->GetName(), LOGLVL_Infomation);
 
-					plugin->Load();
+				plugin->Load();
 
-					m_plugins.Add(plugin->GetName(), plugin);
-				}
-				catch (const Exception& e)
-				{
-					(void)e;
-					OnPluginError(plugin);
-				}
+				m_plugins.Add(plugin->GetName(), plugin);
 			}
 		}
 		void PluginManager::LoadPlugins(const List<String>& plugins)
@@ -150,24 +137,13 @@ namespace Apoc3D
 		{
 			for (Plugin* plg : m_plugins.getValueAccessor())
 			{
-				try
+				if (!plg->Unload())
 				{
-					plg->Unload();
-				}
-				catch (const Exception& ex)
-				{
-					(void)ex;
 					OnPluginError(plg);
 				}
 			}
 			m_plugins.Clear();
-
-			for (int32 i=0;i<m_libraries.getCount();i++)
-			{
-				m_libraries[i]->Unload();
-				delete m_libraries[i];
-			}
-			m_libraries.Clear();
+			m_libraries.DeleteAndClear();
 		}
 
 	}

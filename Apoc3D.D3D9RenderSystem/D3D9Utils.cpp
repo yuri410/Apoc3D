@@ -15,7 +15,6 @@
  */
 
 #include "D3D9Utils.h"
-#include "apoc3d/Exception.h"
 #include "apoc3d/Graphics/RenderSystem/RenderTarget.h"
 #include "apoc3d/Core/Logging.h"
 
@@ -119,7 +118,8 @@ namespace Apoc3D
 					case D3DFMT_A8R3G3B2:
 						return FMT_Unknown;
 				}
-				throw AP_EXCEPTION(ExceptID::NotSupported, L"ConvertBackPixelFormat");
+				AP_EXCEPTION(ErrorID::NotSupported, L"ConvertBackPixelFormat");
+				return FMT_Unknown;
 			}
 			DepthFormat D3D9Utils::ConvertBackDepthFormat(DWORD format)
 			{
@@ -135,7 +135,8 @@ namespace Apoc3D
 					case D3DFMT_D32:			return DEPFMT_Depth32;
 					case D3DFMT_D32_LOCKABLE:	return DEPFMT_Depth32Lockable;
 				}
-				throw AP_EXCEPTION(ExceptID::NotSupported, L"ConvertBackDepthFormat");
+				AP_EXCEPTION(ErrorID::NotSupported, L"ConvertBackDepthFormat");
+				return DEPFMT_Depth16;
 			}
 
 			TextureUsage ConvertBackTextureUsage(DWORD usage)
@@ -284,7 +285,8 @@ namespace Apoc3D
 					case D3DDECLTYPE_FLOAT16_2:	return VEF_HalfVector2;
 					case D3DDECLTYPE_FLOAT16_4:	return VEF_HalfVector4;
 				}
-				throw AP_EXCEPTION(ExceptID::NotSupported, L"ConvertBackVertexElementFormat");
+				AP_EXCEPTION(ErrorID::NotSupported, L"ConvertBackVertexElementFormat");
+				return VEF_Vector4;
 			}
 			VertexElementUsage D3D9Utils::ConvertBackVertexElementUsage(D3DDECLUSAGE usage)
 			{
@@ -305,7 +307,8 @@ namespace Apoc3D
 					case D3DDECLUSAGE_DEPTH:		return VEU_Depth;
 					case D3DDECLUSAGE_SAMPLE:		return VEU_Sample;
 				}
-				throw AP_EXCEPTION(ExceptID::NotSupported, L"ConvertBackVertexElementUsage");
+				AP_EXCEPTION(ErrorID::NotSupported, L"ConvertBackVertexElementUsage");
+				return VEU_Position;
 			}
 
 			D3DDECLUSAGE D3D9Utils::ConvertVertexElementUsage(VertexElementUsage usage) { return veuTable[static_cast<int>(usage)]; }

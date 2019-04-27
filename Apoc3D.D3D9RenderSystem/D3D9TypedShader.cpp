@@ -20,7 +20,6 @@
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/Exception.h"
 #include "apoc3d/Utility/StringUtils.h"
 
 #include "ConstantTable.h"
@@ -49,13 +48,15 @@ namespace Apoc3D
 
 			void D3D9PixelShader::SetTexture(const String &paramName, Texture* tex)
 			{
-				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				SetTexture(cons.SamplerIndex, tex);
+				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
+				if (sc)
+					SetTexture(sc->SamplerIndex, tex);
 			}
 			void D3D9PixelShader::SetSamplerState(const String &paramName, const ShaderSamplerState &state)
 			{
-				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				SetSamplerState(cons.SamplerIndex, state);
+				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
+				if (sc)
+					SetSamplerState(sc->SamplerIndex, state);
 			}
 
 
@@ -92,13 +93,15 @@ namespace Apoc3D
 
 			void D3D9VertexShader::SetTexture(const String &paramName, Texture* tex)
 			{
-				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				SetTexture(cons.SamplerIndex, tex);
+				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
+				if (sc)
+					SetTexture(sc->SamplerIndex, tex);
 			}
 			void D3D9VertexShader::SetSamplerState(const String &paramName, const ShaderSamplerState &state)
 			{
-				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				SetSamplerState(cons.SamplerIndex, state);
+				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
+				if (sc)
+					SetSamplerState(sc->SamplerIndex, state);
 			}
 		}
 	}

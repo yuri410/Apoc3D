@@ -50,13 +50,13 @@ namespace Apoc3D
 				m_factory = nullptr;
 			}
 
-			void WinInputPlugin::Load()
+			bool WinInputPlugin::Load()
 			{
-				InputAPIManager::getSingleton().RegisterInputAPI(m_factory);
+				return InputAPIManager::getSingleton().RegisterInputAPI(m_factory);
 			}
-			void WinInputPlugin::Unload()
+			bool WinInputPlugin::Unload()
 			{
-				InputAPIManager::getSingleton().UnregisterInputAPI(m_factory);
+				return InputAPIManager::getSingleton().UnregisterInputAPI(m_factory);
 			}
 
 		}

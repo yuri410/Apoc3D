@@ -20,8 +20,6 @@
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Math/Math.h"
 
-#include "apoc3d/Exception.h"
-
 using namespace Apoc3D;
 using namespace Apoc3D::Utility;
 
@@ -494,15 +492,16 @@ namespace Apoc3D
 			{
 				if (ParentAdapterInfo->DisplayModes.getCount() == 0)
 				{
-					throw AP_EXCEPTION(ExceptID::NotSupported, L"No device modes available");
+					AP_EXCEPTION(ErrorID::NotSupported, L"No device modes available");
+					return Point(optimalWidth, optimalHeight);
 				}
-
-				Point result;
 
 				if (Windowed)
 				{
 					return Point(optimalWidth, optimalHeight);
 				}
+
+				Point result;
 
 				int bestRanking = 100000;
 				int ranking;
@@ -583,7 +582,9 @@ namespace Apoc3D
 
 				if (bestCombo == nullptr)
 				{
-					throw AP_EXCEPTION(ExceptID::NotSupported, L"Can not create Direct3D9 Device. No compatible Direct3D9 devices found.");
+					AP_EXCEPTION(ErrorID::NotSupported, L"Can not create Direct3D9 Device. No compatible Direct3D9 devices found.");
+					result = raw;
+					return;
 				}
 				BuildValidSettings(bestCombo, raw, result);
 			}

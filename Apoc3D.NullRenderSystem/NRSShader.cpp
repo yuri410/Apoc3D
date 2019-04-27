@@ -51,21 +51,25 @@ namespace Apoc3D
 
 			int32 NRSShader::GetParamIndex(const String& paramName)
 			{
-				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (!cons.RegisterCount)
+				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
+				if (sc && sc->RegisterCount)
 				{
-					ThrowKeyNotFoundEx(paramName);
+					return sc->RegisterIndex;
 				}
-				return cons.RegisterIndex;
+				KeyNotFoundError(paramName);
+				return 0;
 			}
 			int32 NRSShader::GetSamplerIndex(const String& paramName)
 			{
-				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				return cons.SamplerIndex;
+				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
+				if (sc)
+					return sc->SamplerIndex;
+				KeyNotFoundError(paramName);
+				return 0;
 			}
 			bool NRSShader::TryGetParamIndex(const String& paramName, int32& result)
 			{
-				const ShaderConstant* sc = m_constantTable->tryGetConstant(paramName);
+				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
 				if (sc && !sc->IsSampler)
 				{
 					result = sc->RegisterIndex;
@@ -75,7 +79,7 @@ namespace Apoc3D
 			}
 			bool NRSShader::TryGetSamplerIndex(const String& paramName, int32& result)
 			{
-				const ShaderConstant* sc = m_constantTable->tryGetConstant(paramName);
+				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
 				if (sc && sc->IsSampler)
 				{
 					result = sc->SamplerIndex;
@@ -84,7 +88,7 @@ namespace Apoc3D
 				return false;
 			}
 
-			void NRSShader::ThrowKeyNotFoundEx(const String& name)
+			void NRSShader::KeyNotFoundError(const String& name)
 			{
 				Apoc3D::Core::ApocLog(LOG_Graphics, L"Shader parameter " + name + L" not found.", LOGLVL_Warning);
 			}
@@ -103,13 +107,19 @@ namespace Apoc3D
 
 			void NRSVertexShader::SetTexture(const String &paramName, Texture* tex)
 			{
-				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				SetTexture(cons.SamplerIndex, tex);
+				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
+				if (sc)
+					SetTexture(sc->SamplerIndex, tex);
+				else
+					KeyNotFoundError(paramName);
 			}
 			void NRSVertexShader::SetSamplerState(const String &paramName, const ShaderSamplerState &state)
 			{
-				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				SetSamplerState(cons.SamplerIndex, state);
+				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
+				if (sc)
+					SetSamplerState(sc->SamplerIndex, state);
+				else
+					KeyNotFoundError(paramName);
 			}
 
 			//////////////////////////////////////////////////////////////////////////
@@ -125,13 +135,19 @@ namespace Apoc3D
 
 			void NRSPixelShader::SetTexture(const String &paramName, Texture* tex)
 			{
-				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				SetTexture(cons.SamplerIndex, tex);
+				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
+				if (sc)
+					SetTexture(sc->SamplerIndex, tex);
+				else
+					KeyNotFoundError(paramName);
 			}
 			void NRSPixelShader::SetSamplerState(const String &paramName, const ShaderSamplerState &state)
 			{
-				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				SetSamplerState(cons.SamplerIndex, state);
+				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
+				if (sc)
+					SetSamplerState(sc->SamplerIndex, state);
+				else
+					KeyNotFoundError(paramName);
 			}
 
 		}

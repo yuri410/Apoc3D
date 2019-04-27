@@ -133,21 +133,6 @@ namespace Apoc3D
 		return (byte)str[1];
 	};
 
-	//template <typename X, typename Y, int32 N1, int32 N2>
-	//void CopyArray(X(&dst)[N1], const Y(&src)[N2]) 
-	//{
-	//	static_assert(std::is_trivially_copyable<X>::value && std::is_trivially_copyable<Y>::value, "Type not suitable"); 
-	//	static_assert(N1 * sizeof(X) == N2 * sizeof(Y), "Array size mismatch");
-	//	memcpy(dst, src, sizeof(X)*N1); 
-	//}
-
-	//template <typename X, typename Y, int32 N>
-	//void FillArray(X(&dst)[N], const Y* dataPtr)
-	//{
-	//	static_assert(std::is_trivially_copyable<X>::value, "Type not suitable");
-	//	memcpy(dst, dataPtr, sizeof(X)*N);
-	//}
-
 	template <typename X, typename Y, int32 N1, int32 N2>
 	typename std::enable_if<std::is_trivially_copyable<X>::value && std::is_trivially_copyable<Y>::value, void>::type
 		CopyArray(X(&dst)[N1], const Y(&src)[N2])
@@ -183,6 +168,23 @@ namespace Apoc3D
 			dst[i] = dataPtr[i];
 	}
 
+	enum struct ErrorID
+	{
+		Default,
+		InvalidOperation,
+		InvalidData,
+		NotSupported,
+		KeyNotFound,
+		FormatException,
+		EndOfStream,
+		FileNotFound,
+		Argument,
+		Duplicate,
+		ScriptCompileError
+	};
+
+	NO_INLINE void Assert(const wchar_t * message, const wchar_t * file, unsigned line);
+	NO_INLINE void Error(ErrorID eid, const String& message, const wchar_t * file, unsigned line);
 
 	void DebugBreak();
 
@@ -526,5 +528,14 @@ namespace Apoc3D
 
 	}
 };
+
+
+#if _DEBUG
+#define AP_ASSERT(exp) { if (!(exp)) { Apoc3D::Assert(_CRT_WIDE_(#exp), _CRT_WIDE(__FILE__), (unsigned)(__LINE__)); } }
+#else
+#define AP_ASSERT(x) 
+#endif
+
+#define AP_EXCEPTION(type, msg) { Apoc3D::Error(type, msg, _CRT_WIDE(__FILE__), (unsigned)(__LINE__)); }
 
 #endif

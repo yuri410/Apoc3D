@@ -2,6 +2,8 @@
 #ifndef APOC3D_PIXELFORMAT_H
 #define APOC3D_PIXELFORMAT_H
 
+#include "Apoc3D/ApocCommon.h"
+
 /* -----------------------------------------------------------------------
  * This source file is part of Apoc3D Framework
  * 
@@ -17,8 +19,6 @@
  * 
  * ------------------------------------------------------------------------
  */
-
-#include "apoc3d/Exception.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 

@@ -101,9 +101,11 @@ namespace Apoc3D
 
 			/** Ask the BinaryWriter not to delete the base stream upon release */
 			void SuspendStreamRelease() { m_shouldDeleteStream = false; }
+		
 		private:
-			inline void FillBuffer(int32 len);
-			NO_INLINE static void throwEndofStreamException();
+			void FillBuffer(int32 len);
+
+			NO_INLINE static void EndofStreamError();
 
 			template <typename T, typename ET>
 			void FillString(T& str, int32 len);

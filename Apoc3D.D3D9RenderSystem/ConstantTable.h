@@ -94,8 +94,7 @@ namespace Apoc3D
 				ConstantTable(const DWORD* bytes);
 				virtual ~ConstantTable();
 
-				inline const ShaderConstant& getConstant(const String& name) const;
-				inline const ShaderConstant* tryGetConstant(const String& name) const { return m_table.TryGetValue(name); }
+				const ShaderConstant* getConstant(const String& name) const { return m_table.TryGetValue(name); }
 
 				void Read(BinaryReader* br);
 				void Write(BinaryWriter* bw);
@@ -109,20 +108,8 @@ namespace Apoc3D
 
 				HashMap<String, ShaderConstant> m_table;
 
-				NO_INLINE static void ThrowKeyNotFoundEx(const String& name);
 			};
 
-			const ShaderConstant& ConstantTable::getConstant(const String& name) const
-			{
-				ShaderConstant* sc = m_table.TryGetValue(name);
-				
-				if (sc)
-				{
-					return *sc;
-				}
-				ThrowKeyNotFoundEx(name);
-				throw; // keep the compiler happy
-			}
 
 		}
 	}

@@ -19,7 +19,6 @@
 #include "BinaryWriter.h"
 #include "Streams.h"
 
-#include "apoc3d/Exception.h"
 #include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Config/ConfigurationManager.h"
 #include "apoc3d/Math/Matrix.h"
@@ -262,7 +261,8 @@ namespace Apoc3D
 			const Entry* ent = FindEntry(name);
 			if (!ent)
 			{
-				throwKeynotFoundException(name);
+				KeynotFoundError(name);
+				return 0;
 			}
 
 			return ent->Offset;
@@ -332,8 +332,8 @@ namespace Apoc3D
 			const Entry* ent = FindEntry(name);
 			if (ent)
 				return new BinaryReader(new VirtualStream(m_stream, ent->Offset, ent->Size), true);
-			throwKeynotFoundException(name);
-			return nullptr; // keep the compiler happy
+			KeynotFoundError(name);
+			return nullptr;
 		}
 
 
@@ -382,8 +382,8 @@ namespace Apoc3D
 			const Entry* ent = FindEntry(name);
 			if (ent)
 				return new VirtualStream(m_stream, ent->Offset, ent->Size);
-			throwKeynotFoundException(name);
-			return nullptr; // keep the compiler happy
+			KeynotFoundError(name);
+			return nullptr;
 		}
 
 
@@ -1846,9 +1846,9 @@ namespace Apoc3D
 			}
 		}
 
-		void TaggedDataReader::throwKeynotFoundException(const KeyType& name)
+		void TaggedDataReader::KeynotFoundError(const KeyType& name)
 		{
-			throw AP_EXCEPTION(ExceptID::KeyNotFound, StringUtils::UTF8toUTF16(name.getString()));
+			AP_EXCEPTION(ErrorID::KeyNotFound, StringUtils::UTF8toUTF16(name.getString()));
 		}
 
 

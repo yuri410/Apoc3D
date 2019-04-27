@@ -1,10 +1,11 @@
 #include "MatrixStack.h"
-#include "apoc3d/Exception.h"
 
 namespace Apoc3D
 {
 	namespace Math
 	{
+		static Matrix UndefinedMatrix = Matrix::Identity;
+
 		MatrixStack::MatrixStack(int reserve)
 			: m_stack(reserve) { }
 
@@ -56,7 +57,9 @@ namespace Apoc3D
 			{
 				return m_stack.Peek();
 			}
-			throw AP_EXCEPTION(ExceptID::InvalidOperation, L"The stack is empty.");
+
+			AP_EXCEPTION(ErrorID::InvalidOperation, L"The stack is empty.");
+			return UndefinedMatrix;
 		}
 
 		const Matrix& MatrixStack::Peek() const
@@ -65,7 +68,8 @@ namespace Apoc3D
 			{
 				return m_stack.Peek();
 			}
-			throw AP_EXCEPTION(ExceptID::InvalidOperation, L"The stack is empty.");
+			AP_EXCEPTION(ErrorID::InvalidOperation, L"The stack is empty.");
+			return UndefinedMatrix;
 		}
 
 		int MatrixStack::getCount() const { return m_stack.getCount(); }

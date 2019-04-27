@@ -45,6 +45,8 @@ namespace Apoc3D
 				bool isCompressed() const;
 				void* getDataPointer() const { return m_pointer; }
 				
+				bool isValid() const { return m_pointer != nullptr; }
+
 				/**
 				 *  Return whether this buffer is laid out consecutive in memory (ie the pitches
 				 *  are equal to the dimensions)
@@ -73,6 +75,8 @@ namespace Apoc3D
 				int32 getDepth() const { return m_depth; }
 
 				bool isCompressed() const;
+
+				bool isValid() const { return m_pointer != nullptr; }
 
 				/** 
 				 *  Return whether this buffer is laid out consecutive in memory (ie the pitches

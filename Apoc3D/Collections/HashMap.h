@@ -20,7 +20,6 @@
  */
 
 #include "CollectionsCommon.h"
-#include "apoc3d/Exception.h"
 
 namespace Apoc3D
 {
@@ -232,8 +231,8 @@ namespace Apoc3D
 				return -1;
 			}
 
-			template <typename TT, typename ... ADDT>
-			void InsertEntry(bool noDuplicationCheck, TT&& item, ADDT&& ... additionals)
+			template <bool NoCheck=false, bool NoError=false, typename TT, typename ... ADDT>
+			bool InsertEntry(TT&& item, ADDT&& ... additionals)
 			{
 				if (m_buckets == nullptr)
 				{
@@ -243,9 +242,12 @@ namespace Apoc3D
 				int32 hash = ComparerType::GetHashCode(std::forward<TT>(item)) & PositiveMask;
 				int32 index = hash % m_bucketsLength;
 
-				if (!noDuplicationCheck && FindEntry(std::forward<TT>(item), hash, index) != -1)
-					throw AP_EXCEPTION(ExceptID::Duplicate, Utils::ToString(item));
-
+				if (!NoCheck && FindEntry(std::forward<TT>(item), hash, index) != -1)
+				{
+					if (!NoError)
+						AP_EXCEPTION(ErrorID::Duplicate, Utils::ToString(item));
+					return false;
+				}
 				
 				int32 pos = m_emptySlot;
 				if (pos >= 0)
@@ -267,6 +269,20 @@ namespace Apoc3D
 				m_entries[pos].next = m_buckets[index];
 
 				m_buckets[index] = pos;
+				return true;
+			}
+
+			template <typename TT, typename ... ADDT>
+			bool InsertEntryNoError(TT&& item, ADDT&& ... additionals)
+			{
+				return InsertEntry<false, true>(std::forward<TT>(item), std::forward<ADDT>(additionals)...);
+			}
+
+			// Only for use with pre-checked.
+			template <typename TT, typename ... ADDT>
+			bool InsertEntryNoCheck(TT&& item, ADDT&& ... additionals)
+			{
+				return InsertEntry<true, false>(std::forward<TT>(item), std::forward<ADDT>(additionals)...);
 			}
 
 			template <void (*additionalAction)(E&)>
@@ -444,10 +460,12 @@ namespace Apoc3D
 
 			~HashMap() { }
 
-			void Add(const T& item, const S& value) { InsertEntry(false, item, value); }
-			void Add(const T& item, S&& value) { InsertEntry(false, item, std::move(value)); }
-			void Add(T&& item, const S& value) { InsertEntry(false, std::move(item), value); }
-			void Add(T&& item, S&& value) { InsertEntry(false, std::move(item), std::move(value)); }
+			bool TryAdd(const T& item, const S& value) { return InsertEntryNoError(item, value); }
+
+			bool Add(const T& item, const S& value) { return InsertEntry(item, value); }
+			bool Add(const T& item, S&& value) { return InsertEntry(item, std::move(value)); }
+			bool Add(T&& item, const S& value) { return InsertEntry(std::move(item), value); }
+			bool Add(T&& item, S&& value) { return InsertEntry(std::move(item), std::move(value)); }
 
 			void AddOrReplace(const T& item, const S& value)
 			{
@@ -458,7 +476,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					InsertEntry(true, item, value);
+					InsertEntryNoCheck(item, value);
 				}
 			}
 
@@ -471,7 +489,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					InsertEntry(true, item, std::move(value));
+					InsertEntryNoCheck(item, std::move(value));
 				}
 			}
 
@@ -483,7 +501,9 @@ namespace Apoc3D
 				{
 					return m_entries[index].getValue();
 				}
-				throw AP_EXCEPTION(ExceptID::KeyNotFound, Utils::ToString(key));
+				
+				AP_EXCEPTION(ErrorID::KeyNotFound, Utils::ToString(key));
+				return m_entries[0].getValue();
 			}
 
 			bool TryGetValue(const T& key, S& value) const
@@ -625,8 +645,8 @@ namespace Apoc3D
 
 			~HashSet() { }
 
-			void Add(const T& item) { InsertEntry(false, item); }
-			void Add(T&& item) { InsertEntry(false, std::move(item)); }
+			bool Add(const T& item) { return InsertEntry(item); }
+			bool Add(T&& item) { return InsertEntry(std::move(item)); }
 
 			void FillItems(List<T>& list) const
 			{

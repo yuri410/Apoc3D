@@ -74,9 +74,16 @@ namespace Apoc3D
 					fmt->Load(rl, result);
 					return result;
 				}
-				throw AP_EXCEPTION(ExceptID::NotSupported, ext + L" files are not supported");
+				else
+				{
+					AP_EXCEPTION(ErrorID::NotSupported, ext + L" files are not supported");
+				}
 			}
-			throw AP_EXCEPTION(ExceptID::Argument, L"Either a FileLocation or a ConfigurationFormat is required.");
+			else
+			{
+				AP_EXCEPTION(ErrorID::Argument, L"Either a FileLocation or a ConfigurationFormat is required.");
+			}
+			return nullptr;
 		}
 		
 		Configuration* ConfigurationManager::getConfiguration(const String& name) const

@@ -17,7 +17,6 @@
 
 #include "ConstantTable.h"
 
-#include "apoc3d/Exception.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/IOLib/BinaryWriter.h"
@@ -129,12 +128,6 @@ namespace Apoc3D
 	{
 		namespace NullRenderSystem
 		{
-			void ConstantTable::ThrowKeyNotFoundEx(const String& name)
-			{
-				throw AP_EXCEPTION(ExceptID::KeyNotFound, name);
-			}
-			
-
 			ConstantTable::ConstantTable(const byte* bytes)
 			{
 				// http://msdn.microsoft.com/en-us/library/ff552891.aspx
