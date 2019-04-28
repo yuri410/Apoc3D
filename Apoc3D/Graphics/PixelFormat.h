@@ -106,6 +106,7 @@ namespace Apoc3D
 			/** Gets the num of bytes per pixel of a given format */
 			APAPI int GetBPP(PixelFormat fmt);
 			APAPI int GetBPP(DepthFormat fmt);
+			APAPI int GetDepthBitDepth(DepthFormat fmt);
 			APAPI int GetStencilBitDepth(DepthFormat fmt);
 
 			APAPI int GetChannelCount(PixelFormat fmt);

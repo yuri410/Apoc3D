@@ -45,7 +45,7 @@ namespace Apoc3D
 
 				virtual void ChangeRenderParameters(const RenderParameters& params);
 
-				virtual void Present(const GameTime* time);
+				virtual void Present() override;
 
 			private:
 				NRSRenderDevice* m_device;
@@ -60,6 +60,7 @@ namespace Apoc3D
 				~NRSRenderWindow();
 
 				virtual void ChangeRenderParameters(const RenderParameters& params) override;
+				virtual void Present() override;
 
 				virtual void Exit() override;
 				virtual void Run() override;
@@ -76,8 +77,6 @@ namespace Apoc3D
 				virtual bool getIsActive() const { return m_active; }
 
 				virtual void SetVisible(bool v) override;
-				virtual void SetupTimeStepMode(TimeStepMode type, float refFrameTime) override;
-				virtual TimeStepMode GetCurrentTimeStepMode() override;
 
 				void NRS_Initialize();
 				void NRS_Finalize();
@@ -88,10 +87,6 @@ namespace Apoc3D
 
 				const String& getHardwareName() const { return m_hardwareName; }
 				GameWindow* getWindow() const { return m_gameWindow; }
-
-
-				CancellableEventHandler eventFrameStart;
-				EventHandler eventFrameEnd;
 
 			private:
 
@@ -123,30 +118,16 @@ namespace Apoc3D
 				void NRS_Update(const GameTime* time);
 				void NRS_UpdateConstrainedVarTimeStep(const GameTime* time);
 
-				
-				bool NRS_OnFrameStart();
-				void NRS_OnFrameEnd();
-
-				
-
 				NRSDeviceContext* m_dc;
 				String m_hardwareName;
 
 				GameWindow* m_gameWindow;
 				GameClock* m_gameClock;
 
-				TimeStepMode m_timeStepMode = TimeStepMode::FixedStep;
-
 				int32 m_maxSkipFrameCount = 10;
 				int32 m_slowRenderFrameHits = 0;
 
-				// fixed time step states
-				float m_accumulatedDt_fixedStep = 0;
-
-				float m_referenceElapsedTime = 1.0f / 60.0f;
-
 				bool m_active = true;
-
 			};
 		}
 	}

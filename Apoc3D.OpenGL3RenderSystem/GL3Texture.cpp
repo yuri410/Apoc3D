@@ -117,7 +117,7 @@ namespace Apoc3D
 				InitializeEmptyGLTexture(width, height, depth, level, format);
 			}
 
-			GL3Texture::GL1Texture(GL3RenderDevice* device, int32 length, int32 level, PixelFormat format, TextureUsage usage)
+			GL3Texture::GL3Texture(GL3RenderDevice* device, int32 length, int32 level, PixelFormat format, TextureUsage usage)
 				: Texture(device, length, level, usage, format),
 				m_renderDevice(device)
 			{
@@ -176,11 +176,11 @@ namespace Apoc3D
 			void GL3Texture::unlock(int32 surface)
 			{
 				TextureType type = getType();
-				if (type == TT_Texture3D)
+				if (type == TextureType::Texture3D)
 				{
 					m_tex3D->UnlockBox(surface);
 				}
-				else if (type != TT_CubeTexture)
+				else if (type != TextureType::CubeTexture)
 				{
 					m_tex2D->UnlockRect(surface);
 				}
@@ -440,7 +440,7 @@ namespace Apoc3D
 				case TextureType::CubeTexture:
 					getData(data, m_cube);
 					break;
-				case (int)TT_Texture3D:
+				case TextureType::Texture3D:
 					getData(data, m_tex3D);
 					break;
 				}
@@ -461,17 +461,12 @@ namespace Apoc3D
 				GLenum target = GLUtils::GetTextureTarget(getType());
 				glGenTextures(1, &m_textureID);
 				glBindTexture(target, m_textureID);
-				if (GLEW_VERSION_1_2)
-					glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, level);
+				glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, level);
 
 				glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-				if (GLEW_VERSION_1_2)
-				{
-					glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
-					glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
-				}
+				glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 				//GLenum glFmt = GLUtils::ConvertPixelFormat(format);
 				GLenum glInternalFormat;

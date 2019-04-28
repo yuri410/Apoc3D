@@ -29,7 +29,7 @@
 
 #pragma comment(lib, "Apoc3D.lib")
 #pragma comment(lib, "Apoc3D.Win32.lib")
-#pragma comment(lib, "OpenGL32.lib")
+//#pragma comment(lib, "OpenGL32.lib")
 
 
 /*
@@ -60,14 +60,10 @@ GL_EXT_framebuffer_sRGB
 
 namespace Apoc3D
 {
-	typedef EventDelegate<bool*> CancellableEventHandler;
-	typedef EventDelegate<> EventHandler;
-
 	namespace Graphics
 	{
 		namespace GL3RenderSystem
 		{
-			class Game;
 			class GraphicsDeviceManager;
 
 			class GL3RenderView;

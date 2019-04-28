@@ -18,7 +18,7 @@
 #include "D3D9RenderWindow.h"
 #include "Enumeration.h"
 
-#include "apoc3d.Win32/GameWindow.h"
+#include "apoc3d.Win32/Win32Window.h"
 #include "apoc3d/Core/Logging.h"
 
 using namespace Apoc3D::Core;
@@ -34,8 +34,6 @@ namespace Apoc3D
 			{
 				assert(game);
 
-				m_game->eventFrameStart.Bind(this, &GraphicsDeviceManager::game_FrameStart);
-				m_game->eventFrameEnd.Bind(this, &GraphicsDeviceManager::game_FrameEnd);
 				m_game->getWindow()->eventUserResized.Bind(this, &GraphicsDeviceManager::Window_UserResized);
 				m_game->getWindow()->eventMonitorChanged.Bind(this, &GraphicsDeviceManager::Window_MonitorChanged);
 
@@ -44,8 +42,6 @@ namespace Apoc3D
 
 			GraphicsDeviceManager::~GraphicsDeviceManager()
 			{
-				m_game->eventFrameStart.Unbind(this, &GraphicsDeviceManager::game_FrameStart);
-				m_game->eventFrameEnd.Unbind(this, &GraphicsDeviceManager::game_FrameEnd);
 				m_game->getWindow()->eventUserResized.Unbind(this, &GraphicsDeviceManager::Window_UserResized);
 				m_game->getWindow()->eventMonitorChanged.Unbind(this, &GraphicsDeviceManager::Window_MonitorChanged);
 
@@ -130,10 +126,10 @@ namespace Apoc3D
 				return -1;
 			}
 
-			void GraphicsDeviceManager::game_FrameStart(bool* cancel)
+			bool GraphicsDeviceManager::FrameStart()
 			{
 				if (!m_device)
-					return;
+					return true;
 
 				if (m_deviceLost)
 					Sleep(50);
@@ -143,8 +139,7 @@ namespace Apoc3D
 					HRESULT hr = m_device->TestCooperativeLevel();
 					if (hr == D3DERR_DEVICELOST)
 					{
-						*cancel = true;
-						return;
+						return true;
 					}
 
 					//if (m_currentSetting->Windowed)
@@ -165,13 +160,13 @@ namespace Apoc3D
 					hr = ResetDevice();
 					if (hr != D3D_OK)
 					{
-						*cancel = true;
-						return;
+						return true;
 					}
 					m_deviceLost = false;
 				}
+				return false;
 			}
-			void GraphicsDeviceManager::game_FrameEnd()
+			void GraphicsDeviceManager::FrameEnd()
 			{
 				HRESULT hr = m_device->Present(NULL, NULL, NULL, NULL);
 				if (hr == D3DERR_DEVICELOST)
@@ -179,6 +174,7 @@ namespace Apoc3D
 					m_deviceLost = true;
 				}
 			}
+
 			void GraphicsDeviceManager::Window_UserResized()
 			{
 				// TBD
@@ -315,7 +311,7 @@ namespace Apoc3D
 					settings.PresentParameters.BackBufferHeight == 0)
 					keepCurrentWindowSize = true;
 
-				GameWindow* wnd = m_game->getWindow();
+				Win32Window* wnd = m_game->getWindow();
 
 				// handle the window state in Direct3D9 (it will be handled for us in DXGI)
 

@@ -19,6 +19,8 @@
 #include "apoc3d/Graphics/RenderSystem/GraphicsAPI.h"
 #include "GL3GraphicsAPIFactory.h"
 
+#include "GL/wgl.h"
+
 using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
@@ -30,16 +32,21 @@ namespace Apoc3D
 			GL3RSPlugin::GL3RSPlugin()
 				: m_factory()
 			{
-				gl3wInit();
+				m_glInitialized = (gl3wInit() == GL3W_OK && wglInit());
 			}
 
-			void GL3RSPlugin::Load()
+			bool GL3RSPlugin::Load()
 			{
-				GraphicsAPIManager::getSingleton().RegisterGraphicsAPI(&m_factory);
+				if (!m_glInitialized)
+					return false;
+
+				return GraphicsAPIManager::getSingleton().RegisterGraphicsAPI(&m_factory);
 			}
-			void GL3RSPlugin::Unload()
+			bool GL3RSPlugin::Unload()
 			{
-				GraphicsAPIManager::getSingleton().UnregisterGraphicsAPI(&m_factory);
+				if (!m_glInitialized)
+					return false;
+				return GraphicsAPIManager::getSingleton().UnregisterGraphicsAPI(&m_factory);
 			}
 
 		}

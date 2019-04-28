@@ -23,8 +23,8 @@ namespace Apoc3D
 		PLUGINAPI extern HWND MainWindowHandle;
 		PLUGINAPI extern int32 MainWindowMouseWheel;
 
-		class GameClock;
-		class GameWindow;
+		class Win32Clock;
+		class Win32Window;
 
 	}
 }

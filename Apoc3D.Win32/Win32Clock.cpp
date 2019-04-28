@@ -1,4 +1,4 @@
-#include "GameClock.h"
+#include "Win32Clock.h"
 
 namespace Apoc3D
 {
@@ -23,7 +23,7 @@ namespace Apoc3D
 
 		//////////////////////////////////////////////////////////////////////////
 
-		void GameClock::Reset()
+		void Win32Clock::Reset()
 		{
 			m_baseCounter = 0;
 			m_lastCounter = 0;
@@ -37,7 +37,7 @@ namespace Apoc3D
 			m_frequency = GetFrequency();
 		}
 
-		void GameClock::Step()
+		void Win32Clock::Step()
 		{
 			uint64 counter = GetCounter();
 
@@ -73,7 +73,7 @@ namespace Apoc3D
 			m_lastCounter = counter;
 		}
 
-		bool GameClock::CounterToTimeSpan(uint64 counter, uint64 base, double* result) const
+		bool Win32Clock::CounterToTimeSpan(uint64 counter, uint64 base, double* result) const
 		{
 			// this checks overflow
 			if (base > counter)

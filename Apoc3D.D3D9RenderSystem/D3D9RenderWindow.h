@@ -23,6 +23,7 @@
 
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
 #include "apoc3d/Graphics/RenderSystem/RenderWindowHandler.h"
+#include "apoc3d.Win32/Win32RenderWindow.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -41,7 +42,7 @@ namespace Apoc3D
 
 				virtual void ChangeRenderParameters(const RenderParameters& params);
 
-				virtual void Present(const GameTime* time);
+				virtual void Present() override;
 
 			private:
 				D3D9RenderViewSet* m_viewSet;
@@ -51,31 +52,14 @@ namespace Apoc3D
 
 			};
 
-			class D3D9RenderWindow final : public RenderWindow
+			class D3D9RenderWindow final : public Win32RenderWindow
 			{
 			public:
 				D3D9RenderWindow(D3D9RenderDevice* device, D3D9DeviceContext* dc, const RenderParameters& pm);
 				~D3D9RenderWindow();
 
-				virtual void ChangeRenderParameters(const RenderParameters& params) override;
-
-				virtual void Exit() override;
 				virtual void Run() override;
-
-				virtual void Minimize() override;
-				virtual void Restore() override;
-				virtual void Maximize() override;
-
-				virtual String getTitle() override;
-				virtual void setTitle(const String& name) override;
-
-				virtual Size getClientSize() override;
-
-				virtual bool getIsActive() const { return m_active; }
-
-				virtual void SetVisible(bool v) override;
-				virtual void SetupTimeStepMode(TimeStepMode type, float refFrameTime) override;
-				virtual TimeStepMode GetCurrentTimeStepMode() override;
+				virtual void Present() override;
 
 				void D3D9_Initialize(bool isDeviceReset);
 				void D3D9_Finalize(bool isDeviceReset);
@@ -86,79 +70,35 @@ namespace Apoc3D
 				void D3D9_LoadContent();
 				void D3D9_UnloadContent();
 
-
 				const String& getHardwareName() const { return m_hardwareName; }
-				GameWindow* getWindow() const { return m_gameWindow; }
-
-
-				CancellableEventHandler eventFrameStart;
-				EventHandler eventFrameEnd;
 
 			private:
 
-				/** When derived, this method should be overridden to initialize the graphics device,
-				*  with the specific parameters and settings provided.
-				*  As GraphicsDeviceManager has creates the device, Game::LoadContent and Game::Initialize
-				*  will be called.
-				*/
+				/** initialize the graphics device,
+				 *  with the specific parameters and settings provided.
+				 *  As GraphicsDeviceManager has creates the device, Game::LoadContent and Game::Initialize
+				 *  will be called.
+				 */
 				void D3D9_Create(const RenderParameters& params);
 
 				/** This method will ask the GraphicsDeviceManager to release resources. And
-				*  will cause the Game::UnloadContent to be called.
-				*/
+				 *  will cause the Game::UnloadContent to be called.
+				 */
 				void D3D9_Release();
 
-				/** Enters the main loop. */
-				void D3D9_MainLoop();
-
-				/** Run one frame, which includes one render and X updates  */
-				void D3D9_Tick();
-
-				void D3D9_DrawFrame(const GameTime* time);
-
-				/** This should be overridden to draw a frame */
-				void D3D9_Render(const GameTime* time);
-				/** This should be overridden to allow the game to run logic such as updating the world,
-				*  checking for collisions, gathering input, playing audio and etc.
-				*/
-				void D3D9_Update(const GameTime* time);
-				void D3D9_UpdateConstrainedVarTimeStep(const GameTime* time);
-
-				
 				bool D3D9_OnFrameStart();
 				void D3D9_OnFrameEnd();
 
+				void OnRenderFrame(const GameTime* time) override;
+
+				bool IsDeviceReady() override;
+				void ExecuteChangeDevice() override;
 				
-				void Window_ApplicationActivated();
-				void Window_ApplicationDeactivated();
-				void Window_Suspend();
-				void Window_Resume();
-				void Window_Paint();
-
-				void ExecuteChangeDevice();
-
 				D3D9DeviceContext* m_dc;
 				String m_hardwareName;
 
 				GraphicsDeviceManager* m_graphicsDeviceManager;
-				GameWindow* m_gameWindow;
-				GameClock* m_gameClock;
-
-				TimeStepMode m_timeStepMode = TimeStepMode::FixedStep;
-
-				int32 m_maxSkipFrameCount = 10;
-				int32 m_slowRenderFrameHits = 0;
-
-				// fixed time step states
-				float m_accumulatedDt_fixedStep = 0;
-
-
-
-				float m_referenceElapsedTime = 1.0f / 60.0f;
-
-				
-				bool m_active = false;
-				bool m_hasPendingDeviceChange = false;
+			
 			};
 		}
 	}

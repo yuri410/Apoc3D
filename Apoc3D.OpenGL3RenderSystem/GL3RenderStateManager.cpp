@@ -39,18 +39,18 @@ namespace Apoc3D
 			{
 				m_cachedCullMode = mode;
 
-				switch( mode )
+				switch (mode)
 				{
-				case CULL_None:
-					glDisable( GL_CULL_FACE );
-					return;
-				default:
-				case CULL_Clockwise:
-					glCullFace( GL_BACK );
-					break;
-				case CULL_CounterClockwise:
-					glCullFace( GL_FRONT );
-					break;
+					case CullMode::None:
+						glDisable(GL_CULL_FACE);
+						return;
+					default:
+					case CullMode::Clockwise:
+						glCullFace(GL_BACK);
+						break;
+					case CullMode::CounterClockwise:
+						glCullFace(GL_FRONT);
+						break;
 				}
 
 				glEnable( GL_CULL_FACE );
@@ -63,9 +63,9 @@ namespace Apoc3D
 				GLenum pm = 0;
 				switch (mode)
 				{
-					case FILL_Point: pm = GL_POINT; break;
-					case FILL_Solid: pm = GL_FILL; break;
-					case FILL_WireFrame: pm = GL_LINE; break;
+					case FillMode::Point: pm = GL_POINT; break;
+					case FillMode::Solid: pm = GL_FILL; break;
+					case FillMode::WireFrame: pm = GL_LINE; break;
 				}
 
 				glPolygonMode(GL_FRONT_AND_BACK, pm);
@@ -121,11 +121,7 @@ namespace Apoc3D
 					glDisable(GL_BLEND);
 
 				glBlendFunc(GLUtils::ConvertBlend(srcBlend), GLUtils::ConvertBlend(dstBlend));
-
-				if (GLEW_ARB_imaging || GLEW_VERSION_1_3)
-				{
-					glBlendEquation(GLUtils::ConvertBlendFunction(func));
-				}
+				glBlendEquation(GLUtils::ConvertBlendFunction(func));
 			}
 			void NativeGL3StateManager::SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint32 factor)
 			{
@@ -142,12 +138,8 @@ namespace Apoc3D
 
 				glBlendFunc(GLUtils::ConvertBlend(srcBlend), GLUtils::ConvertBlend(dstBlend));
 
-				if (GLEW_ARB_imaging)
-				{
-					glBlendEquation(GLUtils::ConvertBlendFunction(func));
-					glBlendColor(CV_GetColorR(factor) / 255.0f, CV_GetColorG(factor) / 255.0f, CV_GetColorB(factor) / 255.0f, CV_GetColorA(factor) / 255.0f);
-				}
-
+				glBlendEquation(GLUtils::ConvertBlendFunction(func));
+				glBlendColor(CV_GetColorR(factor) / 255.0f, CV_GetColorG(factor) / 255.0f, CV_GetColorB(factor) / 255.0f, CV_GetColorA(factor) / 255.0f);
 			}
 
 			void NativeGL3StateManager::setAlphaBlendEnable(bool enable)
@@ -162,10 +154,8 @@ namespace Apoc3D
 			void NativeGL3StateManager::setAlphaBlendOperation(BlendFunction func)
 			{
 				m_cachedAlphaBlendFunction = func;
-				if (GLEW_ARB_imaging)
-				{
-					glBlendEquation(GLUtils::ConvertBlendFunction(func));
-				}
+				
+				glBlendEquation(GLUtils::ConvertBlendFunction(func));
 			}
 			void NativeGL3StateManager::setAlphaSourceBlend(Blend srcBlend)
 			{
@@ -188,34 +178,31 @@ namespace Apoc3D
 				m_cachedSepAlphaSourceBlend = srcBlend;
 				m_cachedSepAlphaDestBlend = dstBlend;
 
-				if (GLEW_ARB_imaging || GLEW_VERSION_1_3)
+				
+				if (enable)
 				{
+					glBlendEquationSeparate(GLUtils::ConvertBlendFunction(m_cachedAlphaBlendFunction), 
+						GLUtils::ConvertBlendFunction(func));
 
-					if (enable)
-					{
-						glBlendEquationSeparate(GLUtils::ConvertBlendFunction(m_cachedAlphaBlendFunction), 
-							GLUtils::ConvertBlendFunction(func));
+					glBlendFuncSeparate(GLUtils::ConvertBlend(m_cachedAlphaSourceBlend), 
+						GLUtils::ConvertBlend(m_cachedAlphaDestBlend),
+						GLUtils::ConvertBlend(srcBlend),
+						GLUtils::ConvertBlend(dstBlend));
 
-						glBlendFuncSeparate(GLUtils::ConvertBlend(m_cachedAlphaSourceBlend), 
-							GLUtils::ConvertBlend(m_cachedAlphaDestBlend),
-							GLUtils::ConvertBlend(srcBlend),
-							GLUtils::ConvertBlend(dstBlend));
+				}
+				else
+				{
+					glBlendEquationSeparate(GLUtils::ConvertBlendFunction(func), 
+						GLUtils::ConvertBlendFunction(func));
 
-					}
-					else
-					{
-						glBlendEquationSeparate(GLUtils::ConvertBlendFunction(func), 
-							GLUtils::ConvertBlendFunction(func));
+					// OpenGL has these values, when not using separate blending.
+					// "The initial value is GL_ONE" for src alpha.
+					// "The initial value is GL_ZERO" for dst alpha.
 
-						// OpenGL has these values, when not using separate blending.
-						// "The initial value is GL_ONE" for src alpha.
-						// "The initial value is GL_ZERO" for dst alpha.
-
-						glBlendFuncSeparate(GLUtils::ConvertBlend(m_cachedAlphaSourceBlend), 
-							GLUtils::ConvertBlend(m_cachedAlphaDestBlend),
-							GL_ONE,
-							GL_ZERO);
-					}
+					glBlendFuncSeparate(GLUtils::ConvertBlend(m_cachedAlphaSourceBlend), 
+						GLUtils::ConvertBlend(m_cachedAlphaDestBlend),
+						GL_ONE,
+						GL_ZERO);
 				}
 			}
 
@@ -277,23 +264,10 @@ namespace Apoc3D
 
 				glPointSize(size);
 
-				if (GLEW_VERSION_1_4)
-				{
-					glPointParameterf(GL_POINT_SIZE_MIN, minSize);
-					glPointParameterf(GL_POINT_SIZE_MAX, maxSize);
-				} 
-				else if (GLEW_ARB_point_parameters)
-				{
-					glPointParameterfARB(GL_POINT_SIZE_MIN, minSize);
-					glPointParameterfARB(GL_POINT_SIZE_MAX, maxSize);
-				} 
-				else if (GLEW_EXT_point_parameters)
-				{
-					glPointParameterfEXT(GL_POINT_SIZE_MIN, minSize);
-					glPointParameterfEXT(GL_POINT_SIZE_MAX, maxSize);
-				}
-
-				if (GLEW_VERSION_2_0 ||	GLEW_ARB_point_sprite)
+				glPointParameterf(GL_POINT_SIZE_MIN, minSize);
+				glPointParameterf(GL_POINT_SIZE_MAX, maxSize);
+				
+				
 				{
 					if (pointSprite)
 					{
@@ -306,8 +280,7 @@ namespace Apoc3D
 
 					// Manually set up tex coord generation for point sprite
 					GLint maxTexCoords = 1;
-					if (GLEW_VERSION_1_3 || 
-						GLEW_ARB_multitexture)
+
 					{
 						GLint units;
 						glGetIntegerv( GL_MAX_TEXTURE_UNITS, &units );
@@ -320,8 +293,6 @@ namespace Apoc3D
 						glActiveTextureARB(GL_TEXTURE0);
 					}
 				}
-				
-
 			}
 			void NativeGL3StateManager::SetStencil(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, 
 				uint32 ref, CompareFunction func, uint32 mask, uint32 writemask)
@@ -334,9 +305,6 @@ namespace Apoc3D
 				m_cachedStencilFunction = func;
 				m_cachedStencilMask = mask;
 				m_cachedStencilWriteMask = writemask;
-				
-				if (GLEW_EXT_stencil_two_side)
-					glDisable(GL_STENCIL_TEST_TWO_SIDE_EXT);
 				
 				glStencilMask(mask);
 				glStencilFunc(GLUtils::ConvertCompare(func), ref, mask);
@@ -355,27 +323,12 @@ namespace Apoc3D
 				m_cachedCounterClockwiseStencilFunction = func;
 
 				// Front is the 2nd side
-				if(GLEW_VERSION_2_0) 
-				{
-					glStencilMaskSeparate(GL_FRONT, m_cachedStencilMask);
-					glStencilFuncSeparate(GL_FRONT, GLUtils::ConvertCompare(func), m_cachedRefrenceStencil, m_cachedStencilMask);
-					glStencilOpSeparate(GL_FRONT, 
-						GLUtils::ConvertStencilOperation(fail, true),
-						GLUtils::ConvertStencilOperation(depthFail, true), 
-						GLUtils::ConvertStencilOperation(pass, true));
-				}
-				else if (GLEW_EXT_stencil_two_side)
-				{
-					glEnable(GL_STENCIL_TEST_TWO_SIDE_EXT);
-
-					glActiveStencilFaceEXT(GL_FRONT);
-					glStencilMask(m_cachedStencilMask);
-					glStencilFunc(GLUtils::ConvertCompare(func), m_cachedRefrenceStencil, m_cachedStencilMask);
-					glStencilOp(
-						GLUtils::ConvertStencilOperation(fail, true),
-						GLUtils::ConvertStencilOperation(depthFail, true), 
-						GLUtils::ConvertStencilOperation(pass, true));
-				}
+				glStencilMaskSeparate(GL_FRONT, m_cachedStencilMask);
+				glStencilFuncSeparate(GL_FRONT, GLUtils::ConvertCompare(func), m_cachedRefrenceStencil, m_cachedStencilMask);
+				glStencilOpSeparate(GL_FRONT, 
+					GLUtils::ConvertStencilOperation(fail, true),
+					GLUtils::ConvertStencilOperation(depthFail, true), 
+					GLUtils::ConvertStencilOperation(pass, true));
 			}
 
 
@@ -400,7 +353,7 @@ namespace Apoc3D
 
 			
 			GL3RenderStateManager::GL3RenderStateManager(GL3RenderDevice* device, NativeGL3StateManager* nsmgr)
-				: RenderStateManager(device), m_device(device), clipPlaneEnable(0), m_stMgr(nsmgr)
+				: RenderStateManager(device), m_device(device), m_stMgr(nsmgr)
 			{
 			}
 			GL3RenderStateManager::~GL3RenderStateManager()

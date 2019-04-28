@@ -27,13 +27,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameClock.cpp" />
-    <ClCompile Include="GameWindow.cpp" />
+    <ClCompile Include="Win32Clock.cpp" />
+    <ClCompile Include="Win32RenderWindow.cpp" />
+    <ClCompile Include="Win32Window.cpp" />
     <ClCompile Include="Win32Common.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameClock.h" />
-    <ClInclude Include="GameWindow.h" />
+    <ClInclude Include="Win32Clock.h" />
+    <ClInclude Include="Win32RenderWindow.h" />
+    <ClInclude Include="Win32Window.h" />
     <ClInclude Include="Win32Common.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

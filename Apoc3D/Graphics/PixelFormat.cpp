@@ -161,6 +161,29 @@ namespace Apoc3D
 		}
 		int PixelFormatUtils::GetBPP(PixelFormat fmt) { return FormatSizeTable.pfSizeTable[(int)fmt]; }
 		int PixelFormatUtils::GetBPP(DepthFormat fmt) { return FormatSizeTable.dfSizeTable[(int)fmt]; }
+		int PixelFormatUtils::GetDepthBitDepth(DepthFormat fmt)
+		{
+			switch (fmt)
+			{
+				case DEPFMT_Depth15Stencil1:
+					return 15;
+				case DEPFMT_Depth16:
+				case DEPFMT_Depth16Lockable:
+					return 16;
+				case DEPFMT_Depth24X8:
+				case DEPFMT_Depth24Stencil4:
+				case DEPFMT_Depth24Stencil8:
+				case DEPFMT_Depth24Stencil8Single:
+					return 24;
+				case DEPFMT_Depth32:
+				case DEPFMT_Depth32Lockable:
+				case DEPFMT_Depth32Single:
+					return 32;
+				case DEPFMT_Count: // tracker
+					return 0;
+			}
+			return 0;
+		}
 		int PixelFormatUtils::GetStencilBitDepth(DepthFormat fmt)
 		{
 			switch (fmt)
@@ -173,7 +196,8 @@ namespace Apoc3D
 				return 8;
 			case DEPFMT_Depth24Stencil8Single:
 				return 8;
-
+			case DEPFMT_Count: // tracker
+				return 0;
 			}
 			return 0;
 		}

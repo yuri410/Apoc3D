@@ -41,10 +41,13 @@ namespace Apoc3D
 				GL3GraphicsAPIFactory m_factory;
 			public:
 				GL3RSPlugin();
-				virtual void Load();
-				virtual void Unload();
+				virtual bool Load() override;
+				virtual bool Unload() override;
 
-				virtual String GetName() { return L"OpenGL 3.1 Render System"; }
+				virtual String GetName() override { return L"OpenGL 3.1 Render System"; }
+
+			private:
+				bool m_glInitialized = false;
 			};
 		}
 	}

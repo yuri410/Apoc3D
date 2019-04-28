@@ -35,8 +35,8 @@ namespace Apoc3D
 			public:
 				const RenderParameters* getCurrentSetting() const { return m_currentSetting; }
 
-				GraphicsDeviceManager(Game* game);
-				~GraphicsDeviceManager(void);
+				GraphicsDeviceManager(GL3RenderWindow* game);
+				~GraphicsDeviceManager();
 
 
 				/* Ensures that the device is properly initialized and ready to render.
@@ -72,18 +72,16 @@ namespace Apoc3D
 				void ToggleFullScreen();
 				void ReleaseDevice();
 
+				void Present();
 			private:
 				RenderParameters* m_currentSetting = nullptr;
 
 				HDC m_hDC;
 				HGLRC m_hRC;
 				bool m_deviceCreated = false;
-				Game* m_game;
+				GL3RenderWindow* m_game;
 
 				bool m_ignoreSizeChanges = false;
-
-				bool m_doNotStoreBufferSize = false;
-				bool m_renderingOccluded = false;
 
 				int32 m_fullscreenWindowWidth;
 				int32 m_fullscreenWindowHeight;
@@ -91,15 +89,12 @@ namespace Apoc3D
 				int32 m_windowedWindowHeight;
 				WINDOWPLACEMENT m_windowedPlacement;
 				int64 m_windowedStyle;
-
 				
-				void CreateDevice(const RenderParameters &settings, const DEVMODE* mode = 0);
-				void game_FrameStart(bool* cancel);
-				void game_FrameEnd();
+				void CreateDevice(const RenderParameters &settings, const DEVMODE* mode = nullptr);
+
 				void Window_UserResized();
 
-
-				void ChangeResolution(const DEVMODE& mode);
+				void ChangeResolution(const DEVMODE* mode);
 				void InitializeDevice(const RenderParameters &settings);
 			
 

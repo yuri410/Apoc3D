@@ -73,6 +73,9 @@ namespace Apoc3D
 				void ToggleFullScreen();
 				void ReleaseDevice(bool isDeviceReset);
 
+				bool FrameStart();
+				void FrameEnd();
+
 				D3DDevice* getDevice() const { return m_device; }
 				IDirect3D9* getDirect3D() const { return m_direct3D9; }
 
@@ -82,8 +85,6 @@ namespace Apoc3D
 				void CreateDevice(const RawSettings &settings);
 				void ChangeDevice(const RawSettings& settings);
 
-				void game_FrameStart(bool* cancel);
-				void game_FrameEnd();
 				void Window_UserResized();
 				void Window_MonitorChanged();
 

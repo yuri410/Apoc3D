@@ -29,11 +29,11 @@ namespace Apoc3D
 	namespace Win32
 	{
 		/* Implements a specialized window for games and rendering. */
-		class GameWindow
+		class Win32Window
 		{
 		public:
-			GameWindow(const String& name, const String& wndTitle);
-			~GameWindow();
+			Win32Window(const String& name, const String& wndTitle);
+			~Win32Window();
 
 			/** Creates a win32 window using the given parameters. */
 			void Load(int32 width, int32 height, bool fixed);
@@ -66,21 +66,20 @@ namespace Apoc3D
 			EventHandler eventMonitorChanged;
 			CancellableEventHandler eventScreensaver;
 
-		protected:
-			virtual void OnUserResized();
-			virtual void OnSuspend();
-			virtual void OnApplicationActivated();
-			virtual void OnApplicationDeactivated();
-			virtual void OnSystemSuspend();
-			virtual void OnSystemResume();
-			virtual void OnScreensaver(bool * cancel);
-			virtual void OnResume();
-			virtual void OnPaint();
-
-			virtual void OnMonitorChanged();
-
 		private:
-			static GameWindow* ms_Window;
+			void OnUserResized();
+			void OnSuspend();
+			void OnApplicationActivated();
+			void OnApplicationDeactivated();
+			void OnSystemSuspend();
+			void OnSystemResume();
+			void OnScreensaver(bool * cancel);
+			void OnResume();
+			void OnPaint();
+
+			void OnMonitorChanged();
+
+			static Win32Window* ms_Window;
 
 			BOOL InitInstance(HINSTANCE hInstance, int32 width, int32 height, bool fixed, const String& wndClass, const String& wndTitle);
 

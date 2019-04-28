@@ -20,13 +20,14 @@
 #define GL3RENDERWINDOW_H
 
 #include "GL3Common.h"
+#include "GL3RenderDevice.h"
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
 #include "apoc3d/Graphics/RenderSystem/RenderWindowHandler.h"
-#include "Game.h"
-#include "GL3RenderDevice.h"
+#include "apoc3d.Win32/Win32RenderWindow.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Win32;
 
 namespace Apoc3D
 {
@@ -42,7 +43,7 @@ namespace Apoc3D
 
 				virtual void ChangeRenderParameters(const RenderParameters& params);
 
-				virtual void Present(const GameTime* const time);
+				virtual void Present() override;
 
 			private:
 				GL3RenderDevice* m_device;
@@ -51,88 +52,38 @@ namespace Apoc3D
 			};
 
 
-			class GL3RenderWindow final : public RenderWindow
+			class GL3RenderWindow final : public Win32RenderWindow
 			{
-			private:
-				class GLGame : public Game
-				{
-				private:
-					GL3RenderWindow* m_window;
-
-				public:
-					GLGame(GL3RenderWindow* wnd, GL3DeviceContext* devCont)
-						: Game(devCont, L"Apoc3D Engine - OpenGL 3.1"), m_window(wnd)
-					{
-					}
-					virtual void Create();
-
-					virtual void Release() 
-					{
-						Game::Release();
-						m_window->OnFinalize();
-					}
-					virtual void Initialize()
-					{
-						if (!((GL3RenderDevice*)m_window->getRenderDevice())->isInitialized())
-						{
-							m_window->getRenderDevice()->Initialize();
-							m_window->OnInitialize();
-						}
-					}
-					virtual void LoadContent()
-					{
-						m_window->OnLoad();
-					}
-					virtual void UnloadContent()
-					{
-						m_window->OnUnload();
-					}
-					virtual void Render(const GameTime* const time)
-					{
-						m_window->OnDraw(time);
-					}
-					virtual void Update(const GameTime* const time)
-					{
-						m_window->OnUpdate(time);
-					}
-					virtual bool OnFrameStart()
-					{
-						if (Game::OnFrameStart())
-						{
-							m_window->OnFrameStart();
-							return true;
-						}
-						return false;
-					}
-					virtual void OnFrameEnd()
-					{
-						m_window->OnFrameEnd();
-						Game::OnFrameEnd();
-					}
-				};
 			public:
-
-				virtual void ChangeRenderParameters(const RenderParameters& params);
 
 				GL3RenderWindow(GL3RenderDevice* device, GL3DeviceContext* dc, const RenderParameters& pm);
 				~GL3RenderWindow();
 
-				virtual void Exit();
-				virtual void Run();
+				virtual void Present() override;
 
-				virtual String getTitle();
-				virtual void setTitle(const String& name);
+				virtual void Run() override;
 
-				virtual Size getClientSize();
+				void GL_Initialize();
+				void GL_Finalize();
+
+				void GL_LoadContent();
+				void GL_UnloadContent();
 
 			private:
-				GL3DeviceContext* m_dc;
-				GLGame* m_game;
 
-				void setDevice(RenderDevice* device)
-				{
-					m_renderDevice = device;
-				}
+				void GL_Create(const RenderParameters& params);
+
+				void GL_Release();
+
+				void OnDrawFrame(const GameTime* time) override;
+
+				bool IsDeviceReady() override;
+				void ExecuteChangeDevice() override;
+
+				GL3DeviceContext* m_dc;
+				
+				GraphicsDeviceManager* m_graphicsDeviceManager;
+
 			};
 		}
 	}

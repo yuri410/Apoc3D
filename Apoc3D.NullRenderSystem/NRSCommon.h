@@ -55,9 +55,6 @@ namespace Apoc3D
 			class NRSVertexBuffer;
 			class NRSIndexBuffer;
 
-			typedef EventDelegate<bool*> CancellableEventHandler;
-			typedef EventDelegate<> EventHandler;
-
 		}
 	}
 }

@@ -15,11 +15,13 @@
  */
 
 #include "GraphicsDeviceManager.h"
-#include "Game.h"
+#include "GL3RenderWindow.h"
 
+#include "apoc3d.Win32/Win32Window.h"
 #include "apoc3d/Core/Logging.h"
 
 #include "GL3DeviceContext.h"
+#include "GL/wgl.h"
 
 using namespace Apoc3D::Core;
 
@@ -29,25 +31,23 @@ namespace Apoc3D
 	{
 		namespace GL3RenderSystem
 		{
-			GraphicsDeviceManager::GraphicsDeviceManager(Game* game)
+			GraphicsDeviceManager::GraphicsDeviceManager(GL3RenderWindow* game)
+				: m_game(game)
 			{
 				assert(game);
 
-				m_game = game;
+				m_game->getWindow()->eventUserResized.Bind(this, &GraphicsDeviceManager::Window_UserResized);
 
-				m_game->eventFrameStart.Bind(this, &GraphicsDeviceManager::game_FrameStart);
-				m_game->eventFrameEnd.Bind(this, &GraphicsDeviceManager::game_FrameEnd);
-				m_game->getWindow()->eventUserResized()->Bind(this, &GraphicsDeviceManager::Window_UserResized);
+				m_windowedStyle = GetWindowLong(m_game->getWindow()->getHandle(), GWL_STYLE);
 			}
 
 			GraphicsDeviceManager::~GraphicsDeviceManager(void)
 			{
+				m_game->getWindow()->eventUserResized.Unbind(this, &GraphicsDeviceManager::Window_UserResized);
+
 				if (m_currentSetting)
 					delete m_currentSetting;
 			}
-
-
-
 
 			void GraphicsDeviceManager::ReleaseDevice()
 			{
@@ -56,7 +56,7 @@ namespace Apoc3D
 
 				if (m_game)
 				{
-					m_game->UnloadContent();
+					m_game->GL_UnloadContent();
 				}
 
 				wglMakeCurrent(NULL,NULL);
@@ -71,25 +71,17 @@ namespace Apoc3D
 				m_hRC = NULL;
 			}
 
-
-
-			void GraphicsDeviceManager::game_FrameStart(bool* cancel)
+			void GraphicsDeviceManager::Present()
 			{
-				if (!m_deviceCreated)
-					return;
+				if (wglGetCurrentContext() != m_hRC)
+					wglMakeCurrent(m_hDC, m_hRC);
 
-				if (!m_game->getIsActive())
-					Sleep(50);
-
-			}
-			void GraphicsDeviceManager::game_FrameEnd()
-			{
 				SwapBuffers(m_hDC);
 			}
 			void GraphicsDeviceManager::Window_UserResized()
 			{
 				// TBD
-				if (m_ignoreSizeChanges || !EnsureDevice()) // || (m_currentSetting->Windowed)
+				if (m_ignoreSizeChanges || !m_deviceCreated)
 					return;
 
 				RenderParameters newSettings = *m_currentSetting;
@@ -108,185 +100,96 @@ namespace Apoc3D
 				}
 			}
 
-			LRESULT CALLBACK DummyWindowProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-			{
-				return DefWindowProc (hWnd, uMsg, wParam, lParam);
-			}
-
-			BOOL CreateDummyWindowGL(HWND &hWnd, HDC& hdc, HGLRC& hrc, const PIXELFORMATDESCRIPTOR& pfd)									// This Code Creates Our OpenGL Window
-			{
-				GLuint PixelFormat;													// Will Hold The Selected Pixel Format
-
-
-				HINSTANCE hInstance = GetModuleHandle(0);
-				WNDCLASSEX wcex;
-
-				wcex.cbSize = sizeof(WNDCLASSEX);
-
-				wcex.style			= CS_HREDRAW | CS_VREDRAW;
-				wcex.lpfnWndProc	= DummyWindowProc;
-				wcex.cbClsExtra		= 0;
-				wcex.cbWndExtra		= 0;
-				wcex.hInstance		= hInstance;
-				wcex.hIcon			= 0;
-				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-				wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
-				wcex.lpszMenuName	= 0;
-				wcex.lpszClassName	= L"OpenGLTesting";
-				wcex.hIconSm		= 0;
-
-				RegisterClassEx(&wcex);
-
-
-				// Create The OpenGL Window
-				hWnd = CreateWindow(L"OpenGLTesting", L"OpenGLTesting", WS_OVERLAPPEDWINDOW,
-					0, 0, 400, 400, NULL, NULL, hInstance, NULL);
-
-				if (hWnd == 0)												// Was Window Creation A Success?
-				{
-					return FALSE;													// If Not Return False
-				}
-
-				hdc = GetDC (hWnd);									// Grab A Device Context For This Window
-				if (hdc == 0)												// Did We Get A Device Context?
-				{
-					// Failed
-					DestroyWindow (hWnd);									// Destroy The Window
-					hWnd = 0;												// Zero The Window Handle
-					return FALSE;													// Return False
-				}
-
-
-				PixelFormat = ChoosePixelFormat (hdc, &pfd);				// Find A Compatible Pixel Format
-				if (PixelFormat == 0)												// Did We Find A Compatible Format?
-				{
-					// Failed
-					ReleaseDC (hWnd, hdc);							// Release Our Device Context
-					hdc = 0;												// Zero The Device Context
-					DestroyWindow (hWnd);									// Destroy The Window
-					hWnd = 0;												// Zero The Window Handle
-					return FALSE;													// Return False
-				}
-
-
-				if (SetPixelFormat (hdc, PixelFormat, &pfd) == FALSE)		// Try To Set The Pixel Format
-				{
-					// Failed
-					ReleaseDC (hWnd, hdc);							// Release Our Device Context
-					hdc = 0;												// Zero The Device Context
-					DestroyWindow (hWnd);									// Destroy The Window
-					hWnd = 0;												// Zero The Window Handle
-					return FALSE;													// Return False
-				}
-
-				hrc = wglCreateContext (hdc);						// Try To Get A Rendering Context
-				if (hrc == 0)												// Did We Get A Rendering Context?
-				{
-					// Failed
-					ReleaseDC (hWnd, hdc);							// Release Our Device Context
-					hrc = 0;												// Zero The Device Context
-					DestroyWindow (hWnd);									// Destroy The Window
-					hWnd = 0;												// Zero The Window Handle
-					return FALSE;													// Return False
-				}
-
-				// Make The Rendering Context Our Current Rendering Context
-				if (wglMakeCurrent (hdc, hrc) == FALSE)
-				{
-					// Failed
-					wglDeleteContext (hrc);									// Delete The Rendering Context
-					hrc = 0;												// Zero The Rendering Context
-					ReleaseDC (hWnd, hdc);							// Release Our Device Context
-					hdc = 0;												// Zero The Device Context
-					DestroyWindow (hWnd);									// Destroy The Window
-					hWnd = 0;												// Zero The Window Handle
-					return FALSE;													// Return False
-				}
-
-				return TRUE;														// Window Creating Was A Success
-				// Initialization Will Be Done In WM_CREATE
-			}
-
-			BOOL DestroyDummyWindowGL(HWND &hWnd, HDC& hdc, HGLRC& hrc)								// Destroy The OpenGL Window & Release Resources
-			{
-				if (hWnd != 0)												// Does The Window Have A Handle?
-				{	
-					if (hdc != 0)											// Does The Window Have A Device Context?
-					{
-						wglMakeCurrent (hdc, 0);							// Set The Current Active Rendering Context To Zero
-						if (hrc != 0)										// Does The Window Have A Rendering Context?
-						{
-							wglDeleteContext (hrc);							// Release The Rendering Context
-							hrc = 0;										// Zero The Rendering Context
-
-						}
-						ReleaseDC (hWnd, hdc);						// Release The Device Context
-						hdc = 0;											// Zero The Device Context
-					}
-					DestroyWindow (hWnd);									// Destroy The Window
-					hWnd = 0;												// Zero The Window Handle
-				}
-
-				HINSTANCE hInstance = GetModuleHandle(0);
-				UnregisterClass(L"OpenGLTesting", hInstance);
-
-				return TRUE;														// Return True
-			}
-
 			void GraphicsDeviceManager::InitializeDevice(const RenderParameters &settings)
 			{
-				HWND sss = m_game->getWindow()->getHandle();
+				int colorBitDepth = PixelFormatUtils::GetBPP(settings.ColorBufferFormat) * 8;
+				int depthBitDepth = PixelFormatUtils::GetDepthBitDepth(settings.DepthBufferFormat);
+				int stencilBitDepth = PixelFormatUtils::GetStencilBitDepth(settings.DepthBufferFormat);
 
-				m_hDC = GetDC(sss);
-
-				PIXELFORMATDESCRIPTOR pfd =				// pfd Tells Windows How We Want Things To Be
+				PIXELFORMATDESCRIPTOR pfd =
 				{
-					sizeof(PIXELFORMATDESCRIPTOR),				// Size Of This Pixel Format Descriptor
-					1,											// Version Number
-					PFD_DRAW_TO_WINDOW |						// Format Must Support Window
-					PFD_SUPPORT_OPENGL |						// Format Must Support OpenGL
-					PFD_DOUBLEBUFFER,							// Must Support Double Buffering
-					PFD_TYPE_RGBA,								// Request An RGBA Format
-					PixelFormatUtils::GetBPP(settings.ColorBufferFormat)*8,	// Select Our Color Depth
-					0, 0, 0, 0, 0, 0,							// Color Bits Ignored. TODO: specify them
-					0,											// No Alpha Buffer
-					0,											// Shift Bit Ignored
-					0,											// No Accumulation Buffer
-					0, 0, 0, 0,									// Accumulation Bits Ignored
-					PixelFormatUtils::GetBPP(settings.DepthBufferFormat)*8,	//  Z-Buffer (Depth Buffer)  
-					PixelFormatUtils::GetStencilDepth(settings.DepthBufferFormat),	// Stencil Buffer
-					0,											// No Auxiliary Buffer
-					PFD_MAIN_PLANE,								// Main Drawing Layer
-					0,											// Reserved
-					0, 0, 0										// Layer Masks Ignored
+					sizeof(PIXELFORMATDESCRIPTOR), 1,
+					PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
+					PFD_TYPE_RGBA, (BYTE)colorBitDepth,
+					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+					(BYTE)depthBitDepth, (BYTE)stencilBitDepth,
+					0, PFD_MAIN_PLANE, 0, 0, 0, 0
 				};
 
+				// Create temp window and context
+				HWND tempHwnd = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, 0, 0, 1, 1, NULL, NULL, GetModuleHandle(NULL), NULL);
+				HDC  tempHdc = GetDC(tempHwnd);
+				SetPixelFormat(tempHdc, ChoosePixelFormat(tempHdc, &pfd), &pfd);
 
-				int pixFmt;
+				HGLRC tempHrc = wglCreateContext(tempHdc);
+				wglMakeCurrent(tempHdc, tempHrc);
 
-				if (settings.FSAASampleCount == 0 || m_arbFSAAFormat == 0)
+				int major = 0;
+				int minor = 0;
+				glGetIntegerv(GL_MAJOR_VERSION, &major);
+				glGetIntegerv(GL_MINOR_VERSION, &minor);
+				
+				if (major < 3 || (major == 3 && minor < 1))
 				{
-					ChoosePixelFormat(m_hDC, &pfd);
-				}
-				else
-				{
-					pixFmt = m_arbFSAAFormat;
+					AP_EXCEPTION(ErrorID::NotSupported, L"OpenGL 3.1 not supported.");
+					return;
 				}
 
-				SetPixelFormat(m_hDC, pixFmt, &pfd);
-				m_hRC = wglCreateContext(m_hDC);
+				// Choose final pixel format
+				const int pixelAttribs[] =
+				{
+					WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+					WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+					WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
+					WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB,
+					WGL_COLOR_BITS_ARB, colorBitDepth,
+					WGL_DEPTH_BITS_ARB, depthBitDepth,
+					WGL_STENCIL_BITS_ARB, stencilBitDepth,
+					WGL_SAMPLE_BUFFERS_ARB, settings.FSAASampleCount > 1 ? GL_TRUE : GL_FALSE,
+					WGL_SAMPLES_ARB, settings.FSAASampleCount > 1 ? (int)settings.FSAASampleCount : 0,
+					0
+				};
+
+				m_hDC = GetDC(m_game->getWindow()->getHandle());
+
+				int pixelFormat;
+				uint formatCount;
+				wglChoosePixelFormatARB(m_hDC, pixelAttribs, NULL, 1, &pixelFormat, &formatCount);
+				if (formatCount == 0)
+				{
+					AP_EXCEPTION(ErrorID::NotSupported, L"RenderParams not supported.");
+					return;
+				}
+				SetPixelFormat(m_hDC, pixelFormat, &pfd);
+
+				// Create OpenGL 3.1 context		
+				int ctxAttribs[] =
+				{
+					WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
+					WGL_CONTEXT_MINOR_VERSION_ARB, 1,
+					WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+					0
+				};
+
+				m_hRC = wglCreateContextAttribsARB(m_hDC, NULL, ctxAttribs);
+				
+				// Clean up
+				wglMakeCurrent(m_hDC, NULL);
+				wglDeleteContext(tempHrc);
 				wglMakeCurrent(m_hDC, m_hRC);
+				
+				ReleaseDC(tempHwnd, tempHdc);
+				DestroyWindow(tempHwnd);
 
-				if (settings.FSAASampleCount > 0)
+				if (settings.FSAASampleCount > 1)
 				{
-					glEnable(GL_MULTISAMPLE_ARB);
+					glEnable(GL_MULTISAMPLE);
 				}
-
 
 				m_deviceCreated = true;
 
-				m_game->Initialize();
-				m_game->LoadContent();
+				m_game->GL_Initialize();
+				m_game->GL_LoadContent();
 			}
 			void GraphicsDeviceManager::CreateDevice(const RenderParameters& settings, const DEVMODE* mode)
 			{
@@ -296,12 +199,11 @@ namespace Apoc3D
 				m_ignoreSizeChanges = true;
 
 				bool keepCurrentWindowSize = false;
-				if (settings.BackBufferWidth == 0 &&
+				if (settings.BackBufferWidth == 0 ||
 					settings.BackBufferHeight == 0)
 					keepCurrentWindowSize = true;
 
-				Win32GameWindow* wnd = m_game->getWindow();
-
+				Win32Window* wnd = m_game->getWindow();
 
 				// check if we are going to windowed or fullscreen mode
 				if (settings.IsWindowed)
@@ -360,46 +262,23 @@ namespace Apoc3D
 					}
 				}
 
-				// check if the device can be reset, or if we need to completely recreate it
-				bool canReset = true;
-				if (oldSettings && oldSettings->FSAASampleCount != settings.FSAASampleCount)
-				{
-					canReset = false;
-				}
 				if (!m_deviceCreated)
-					canReset = false;
-
-				if (!canReset)
 				{
-					ReleaseDevice();
-					//LogManager::getSingleton().Write(LOG_Graphics, 
-					//		L"[GL1]Recreating Device. ", 
-					//		LOGLVL_Default);
-
-					if (!settings.IsWindowed)
-					{
-						assert(mode);
-						ChangeResolution(*mode);
-					}
+					ChangeResolution(mode);
 
 					InitializeDevice(settings);
 				}
 				else
 				{
-					if (!settings.IsWindowed)
-					{
-						assert(mode);
-						ChangeResolution(*mode);
-					}
+					ChangeResolution(mode);
 				}
 				
-				if (WGLEW_EXT_swap_control)
+				if (wglSwapIntervalEXT)
 				{
 					wglSwapIntervalEXT(settings.EnableVSync ? 1 : 0);
 				}
 
 				glViewport(0,0, settings.BackBufferWidth,settings.BackBufferHeight);
-
 
 
 				// check if we changed from fullscreen to windowed mode
@@ -495,7 +374,7 @@ namespace Apoc3D
 							newSettings.BackBufferWidth = 0;
 							newSettings.BackBufferHeight = 0;
 
-							CreateDevice(newSettings);
+							CreateDevice(newSettings, mode);
 						}
 					}
 				}
@@ -541,14 +420,14 @@ namespace Apoc3D
 						//  - Width and Height
 						//  - Frequency
 						//  - etc.
-
+						
 						int bpp = PixelFormatUtils::GetBPP(settings.ColorBufferFormat);
 						if (bpp * 8 != (int)dm.dmBitsPerPel)
 						{
 							continue;
 						}
 
-						float score = abs(settings.BackBufferWidth- (int)dm.dmPelsWidth) + abs((int)dm.dmPelsHeight-settings.BackBufferHeight);
+						float score = abs(settings.BackBufferWidth - (int)dm.dmPelsWidth) + abs((int)dm.dmPelsHeight - settings.BackBufferHeight);
 						if (score > bestModeScore)
 						{
 							bestModeScore = score;
@@ -559,7 +438,6 @@ namespace Apoc3D
 					validSettings.BackBufferWidth = (int)dmode.dmPelsWidth;
 					validSettings.BackBufferHeight = (int)dmode.dmPelsHeight;
 				}
-
 
 				CreateDevice(validSettings, &dmode);
 
@@ -579,8 +457,6 @@ namespace Apoc3D
 			}
 			void GraphicsDeviceManager::ToggleFullScreen()
 			{
-				assert(EnsureDevice());
-
 				RenderParameters newSettings = *m_currentSetting;
 				newSettings.IsWindowed = !newSettings.IsWindowed;
 
@@ -592,9 +468,30 @@ namespace Apoc3D
 
 				ChangeDevice(newSettings);
 			}
-			void GraphicsDeviceManager::ChangeResolution(const DEVMODE& mode)
+			void GraphicsDeviceManager::ChangeResolution(const DEVMODE* mode)
 			{
+				Win32Window* wnd = m_game->getWindow();
+				HWND hwnd = wnd->getHandle();
 
+				long style = GetWindowLong(hwnd, GWL_STYLE);
+				long styleEx = GetWindowLong(hwnd, GWL_EXSTYLE);
+
+				if (mode)
+				{
+					ChangeDisplaySettings((DEVMODE*)mode, CDS_FULLSCREEN);
+
+					SetWindowLong(hwnd, GWL_STYLE, style | WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+					SetWindowLong(hwnd, GWL_EXSTYLE, styleEx | WS_EX_APPWINDOW);
+
+					SetWindowPos(hwnd, HWND_TOP, 0, 0, mode->dmPelsWidth, mode->dmPelsHeight, SWP_FRAMECHANGED);
+				}
+				else
+				{
+					SetWindowLong(hwnd, GWL_STYLE, style & ~(WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS));
+					SetWindowLong(hwnd, GWL_EXSTYLE, styleEx & ~(WS_EX_APPWINDOW));
+
+					ChangeDisplaySettings(NULL, 0);
+				}
 			}
 		}
 	}

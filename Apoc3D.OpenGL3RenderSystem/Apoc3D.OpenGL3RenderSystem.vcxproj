@@ -99,6 +99,7 @@
     <ClInclude Include="GL3Sprite.h" />
     <ClInclude Include="GL3Texture.h" />
     <ClInclude Include="gl\gl3w.h" />
+    <ClInclude Include="gl\wgl.h" />
     <ClInclude Include="GraphicsDeviceManager.h" />
     <ClInclude Include="GL3RenderWindow.h" />
     <ClInclude Include="GL3GraphicsAPIFactory.h" />
@@ -115,6 +116,7 @@
     <ClCompile Include="GL3Texture.cpp" />
     <ClCompile Include="GL3Utils.cpp" />
     <ClCompile Include="gl\gl3w.c" />
+    <ClCompile Include="gl\wgl.cpp" />
     <ClCompile Include="GraphicsDeviceManager.cpp" />
     <ClCompile Include="GL3RenderWindow.cpp" />
     <ClCompile Include="GL3GraphicsAPIFactory.cpp" />

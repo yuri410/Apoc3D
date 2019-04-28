@@ -47,7 +47,7 @@ namespace Apoc3D
 			void NRSRenderView::ChangeRenderParameters(const RenderParameters& params)
 			{
 			}
-			void NRSRenderView::Present(const GameTime* time)
+			void NRSRenderView::Present()
 			{
 			}
 
@@ -78,6 +78,10 @@ namespace Apoc3D
 				RenderWindow::ChangeRenderParameters(params);
 			}
 
+			void NRSRenderWindow::Present()
+			{
+
+			}
 
 			void NRSRenderWindow::Exit()
 			{
@@ -104,18 +108,12 @@ namespace Apoc3D
 			void NRSRenderWindow::setTitle(const String& name) { m_gameWindow->setWindowTitle(name); }
 
 			Size NRSRenderWindow::getClientSize() { return m_gameWindow->getCurrentSize(); }
-
+			
 			void NRSRenderWindow::SetVisible(bool v)
 			{
 				m_gameWindow->SetVisible(v);
 				m_visisble = v;
 			}
-			void NRSRenderWindow::SetupTimeStepMode(TimeStepMode type, float refFrameTime)
-			{
-				m_referenceElapsedTime = refFrameTime;
-				m_timeStepMode = type;
-			}
-			TimeStepMode NRSRenderWindow::GetCurrentTimeStepMode() { return m_timeStepMode; }
 
 			void NRSRenderWindow::Minimize()
 			{
@@ -177,7 +175,7 @@ namespace Apoc3D
 			}
 			void NRSRenderWindow::NRS_Finalize()
 			{
-					OnFinalize();
+				OnFinalize();
 			}
 
 			void NRSRenderWindow::NRS_LoadContent() { OnLoad(); }
@@ -303,32 +301,15 @@ namespace Apoc3D
 
 			void NRSRenderWindow::NRS_DrawFrame(const GameTime* time)
 			{
-				if (!NRS_OnFrameStart())
-				{
-					NRS_Render(time);
-					NRS_OnFrameEnd();
-				}
+				OnFrameStart();
+				NRS_Render(time);
+				OnFrameEnd();
 			}
 
 			void NRSRenderWindow::NRS_Render(const GameTime* time) { OnDraw(time); }
 			void NRSRenderWindow::NRS_Update(const GameTime* time) { OnUpdate(time); }
 			void NRSRenderWindow::NRS_UpdateConstrainedVarTimeStep(const GameTime* time) { OnUpdateConstrainedVarTimeStep(time); }
 
-
-			bool NRSRenderWindow::NRS_OnFrameStart()
-			{
-				bool re = false;
-				eventFrameStart.Invoke(&re);
-				if (!re)
-					OnFrameStart();
-				return re;
-			}
-			void NRSRenderWindow::NRS_OnFrameEnd()
-			{
-				OnFrameEnd();
-
-				eventFrameEnd.Invoke();
-			}
 		}
 	}
 }

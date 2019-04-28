@@ -55,7 +55,7 @@ namespace Apoc3D
 			public:
 				virtual ~RenderView(){}
 
-				virtual void Present(const GameTime* time);
+				virtual void Present() = 0;
 				/**
 				 *  Change the device settings. 
 				 *  This may cause the device to be reseted/recreated depending on how big the change is.
@@ -77,12 +77,14 @@ namespace Apoc3D
 					: m_presentParams(pm), m_renderDevice(rd), m_renderTarget(rt), m_deviceContext(dc)
 				{
 				}
+
 				RenderView(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm)
 					: m_presentParams(pm), m_renderDevice(rd), m_deviceContext(dc)
 				{
 
 				}
 
+				void UpdateFpsCounter(const GameTime* time);
 			private:
 				RenderTarget* m_renderTarget = nullptr;
 				RenderParameters m_presentParams;
@@ -122,20 +124,18 @@ namespace Apoc3D
 				virtual String getTitle() = 0;
 				virtual void setTitle(const String& name) = 0;
 
-				virtual void SetupTimeStepMode(TimeStepMode type, float refFrameTime = 1.0f / 60.0f) = 0;
-				virtual TimeStepMode GetCurrentTimeStepMode() = 0;
-
 				virtual void SetVisible(bool v) = 0;
-
-
-				void setInactiveSleepTime(int32 ms) { m_inactiveSleepTime = ms; }
-				int32 getInactiveSleepTime() const { return m_inactiveSleepTime; }
 
 				/** Represents if the window is activated. */
 				virtual bool getIsActive() const = 0;
 
-				bool getVisisble() const { return m_visisble; }
+				void SetupTimeStepMode(TimeStepMode type, float refFrameTime);
+				TimeStepMode GetCurrentTimeStepMode();
 
+				void setInactiveSleepTime(int32 ms) { m_inactiveSleepTime = ms; }
+				int32 getInactiveSleepTime() const { return m_inactiveSleepTime; }
+
+				bool getVisisble() const { return m_visisble; }
 				bool getIsExiting() const { return m_isExiting; }
 
 				void setEventHandler(RenderWindowHandler* handler) { m_evtHandler = handler; }
@@ -148,24 +148,30 @@ namespace Apoc3D
 				RenderWindow(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm)
 					: RenderView(dc, rd, pm) { }
 				
-				void OnFrameStart();
-				void OnFrameEnd();
-
 				void OnInitialize();
 				void OnFinalize();
 				void OnLoad();
 				void OnUnload();
 				void OnUpdate(const GameTime* time);
 				void OnUpdateConstrainedVarTimeStep(const GameTime* time);
+
 				void OnDraw(const GameTime* time);
+				void OnFrameStart();
+				void OnFrameEnd();
 
 				RenderWindowHandler* m_evtHandler = nullptr;
-				bool m_isExiting = false;
 
+				bool m_isExiting = false;
 				bool m_visisble = true;
 
 				int32 m_inactiveSleepTime = 20;
 
+				TimeStepMode m_timeStepMode = TimeStepMode::FixedStep;
+
+				// fixed time step states
+				float m_accumulatedDt_fixedStep = 0;
+
+				float m_referenceElapsedTime = 1.0f / 60.0f;
 			};
 
 		}

@@ -73,32 +73,47 @@ namespace Apoc3D
 				Step(time->getElapsedRealTime()); 
 			}
 
-			void RenderView::Present(const GameTime* time)
+			void RenderView::UpdateFpsCounter(const GameTime* time)
 			{
 				m_fpsCounter.Step(time); 
 			}
+
+			//////////////////////////////////////////////////////////////////////////
 
 			RenderWindow::~RenderWindow()
 			{
 				delete m_evtHandler;
 			}
+
+			void RenderWindow::SetupTimeStepMode(TimeStepMode type, float refFrameTime)
+			{
+				m_referenceElapsedTime = refFrameTime;
+				m_timeStepMode = type;
+			}
+
+			TimeStepMode RenderWindow::GetCurrentTimeStepMode() 
+			{
+				return m_timeStepMode; 
+			}
+
 			void RenderWindow::OnInitialize()
 			{
 				if (m_evtHandler)
 					m_evtHandler->Initialize();
 			}
+
 			void RenderWindow::OnFinalize()
 			{
 				if (m_evtHandler)
 					m_evtHandler->Finalize();
 			}
 
-
 			void RenderWindow::OnLoad()
 			{
 				if (m_evtHandler)
 					m_evtHandler->Load();
 			}
+
 			void RenderWindow::OnUnload()
 			{
 				if (m_evtHandler)
@@ -108,8 +123,8 @@ namespace Apoc3D
 			void RenderWindow::OnDraw(const GameTime* time)
 			{
 				if (m_evtHandler)
-					m_evtHandler->Draw(time);
-				Present(time); 
+					m_evtHandler->Draw(time); 
+				UpdateFpsCounter(time);
 			}
 			void RenderWindow::OnUpdate(const GameTime* time)		
 			{
@@ -130,6 +145,7 @@ namespace Apoc3D
 			{
 				if (m_evtHandler)
 					m_evtHandler->OnFrameEnd();
+				Present();
 			}
 		}
 	}

@@ -25,11 +25,11 @@ namespace Apoc3D
 	namespace Win32
 	{
 		/** A clock used to measure time with good accuracy */
-		class GameClock
+		class Win32Clock
 		{
 		public:
-			GameClock() { Reset(); }
-			~GameClock() { }
+			Win32Clock() { Reset(); }
+			~Win32Clock() { }
 
 			void Reset();
 
