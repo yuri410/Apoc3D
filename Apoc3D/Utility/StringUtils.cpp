@@ -40,8 +40,27 @@ namespace Apoc3D
 		String StringUtils::toPlatformWideString(const nstring& str) { return Platform::GetPlatformWideString(str.c_str()); }
 		String StringUtils::toPlatformWideString(const char* str) { return Platform::GetPlatformWideString(str); }
 
-		nstring StringUtils::toASCIINarrowString(const String& str) { return nstring(str.begin(), str.end()); }
-		String StringUtils::toASCIIWideString(const nstring& str) { return String(str.begin(), str.end()); }
+		nstring StringUtils::toASCIINarrowString(const String& str)
+		{
+			nstring result;
+			result.reserve(str.size());
+			
+			for (wchar_t c : str)
+				result.push_back((char)c);
+
+			return result;
+		}
+
+		String StringUtils::toASCIIWideString(const nstring& str)
+		{
+			String result;
+			result.reserve(str.size());
+
+			for (char c : str)
+				result.push_back(c);
+
+			return result;
+		}
 
 
 		String StringUtils::UTF8toUTF16(const nstring& utf8)
@@ -528,7 +547,7 @@ namespace Apoc3D
 			NumType ParseChecked(const CharType* str)
 			{
 #if _DEBUG
-				bool hasError;
+				bool hasError = false;
 				NumType r = Parser(str, &hasError);
 				assert(!hasError);
 				return r;

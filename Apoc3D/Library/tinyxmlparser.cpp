@@ -27,6 +27,7 @@ distribution.
 
 #include <ctype.h>
 #include <stddef.h>
+#include <istream>
 
 #include "tinyxml.h"
 

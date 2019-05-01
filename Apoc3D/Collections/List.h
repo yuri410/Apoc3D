@@ -630,7 +630,7 @@ namespace Apoc3D
 
 				Utils::CopyToNew(m_elements, another.m_elements, m_count);
 			}
-			List(List&& other)
+			List(List&& other) noexcept
 				: ListBase(other.m_elements, other.m_count), m_length(other.m_length)
 			{
 				other.m_elements = nullptr;

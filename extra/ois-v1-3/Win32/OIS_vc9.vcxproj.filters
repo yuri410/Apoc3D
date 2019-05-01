@@ -185,7 +185,4 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="OIS.rc" />
-  </ItemGroup>
 </Project>

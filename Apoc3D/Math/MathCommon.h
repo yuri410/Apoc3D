@@ -84,7 +84,7 @@ namespace Apoc3D
 		inline float Frac(float value)
 		{
 			assert(value >= 0);
-			return value - floor(value);
+			return value - floorf(value);
 		}
 		inline double Frac(double value)
 		{

@@ -1,8 +1,8 @@
 #include "FbxConverter.h"
+#include "BuildSystem.h"
+#include "BuildConfig.h"
 
 #ifndef DISABLE_FBX
-#include "BuildConfig.h"
-#include "BuildSystem.h"
 
 #include "MeshBuild.h"
 

@@ -20,6 +20,7 @@
 
 #include "apoc3d/ApocCommon.h"
 #include "apoc3d/Utility/Hash.h"
+#include <ios>
 
 namespace Apoc3D
 {

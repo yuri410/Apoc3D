@@ -20,7 +20,9 @@
 
 #include "apoc3d/ApocCommon.h"
 
+#if APOC3D_MATH_IMPL == APOC3D_SSE
 #include "sse_functions.h"
+#endif
 
 #define EPSILON 0.00001f
 #define _CATMULLROM(value1, value2, value3, value4, amount, squared, cubed) \

@@ -120,7 +120,6 @@
 #include "apoc3d/Math/RandomUtils.h"
 #include "apoc3d/Math/Ray.h"
 #include "apoc3d/Math/Rectangle.h"
-#include "apoc3d/Math/sse_functions.h"
 #include "apoc3d/Math/Vector.h"
 #include "apoc3d/Math/Viewport.h"
 
