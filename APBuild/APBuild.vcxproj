@@ -99,31 +99,43 @@
     <LinkIncremental>true</LinkIncremental>
     <IntDir>$(SolutionDir)objs\x86\$(ProjectName)_$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)$(Configuration)_x86\</OutDir>
+    <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)$(Configuration)_x64\</OutDir>
     <IntDir>$(SolutionDir)objs\x64\$(ProjectName)_$(Configuration)\</IntDir>
+    <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(SolutionDir)objs\x86\$(ProjectName)_$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)$(Configuration)_x86\</OutDir>
+    <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(Configuration)_x64\</OutDir>
     <IntDir>$(SolutionDir)objs\x64\$(ProjectName)_$(Configuration)\</IntDir>
+    <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(SolutionDir)objs\x86\$(ProjectName)_$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)$(Configuration)_x86\</OutDir>
+    <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Static|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(Configuration)_x64\</OutDir>
     <IntDir>$(SolutionDir)objs\x64\$(ProjectName)_$(Configuration)\</IntDir>
+    <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

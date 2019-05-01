@@ -381,7 +381,6 @@
     <ClInclude Include="Math\OctreeBox.h" />
     <ClInclude Include="Math\PerlinNoise.h" />
     <ClInclude Include="Math\RandomUtils.h" />
-    <ClInclude Include="Math\sse_functions.h" />
     <ClInclude Include="Platform\API.h" />
     <ClInclude Include="Platform\Thread.h" />
     <ClInclude Include="Input\FrameInputData.h" />
@@ -545,7 +544,6 @@
     <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\RandomUtils.cpp" />
     <ClCompile Include="Math\Rectangle.cpp" />
-    <ClCompile Include="Math\sse_functions.cpp" />
     <ClCompile Include="Platform\API.cpp" />
     <ClCompile Include="Platform\Thread.cpp" />
     <ClCompile Include="Input\FrameInputData.cpp" />

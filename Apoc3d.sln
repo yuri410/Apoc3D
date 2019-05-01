@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3d", "Apoc3D\Apoc3d.vcxproj", "{DB9F1707-9349-4171-B670-CC5AC4EE4170}"
 EndProject
@@ -10,6 +10,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E38C5C50-5DA2-4675-B6A6-01FDE0512B9A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.D3D9RenderSystem", "Apoc3D.D3D9RenderSystem\Apoc3D_D3D9RenderSystem.vcxproj", "{54915473-0627-4A72-9939-2588588FF585}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F8C9BF05-D441-4D98-BAC9-7284E963C383} = {F8C9BF05-D441-4D98-BAC9-7284E963C383}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FrameworkTest", "Tests\FrameworkTest\FrameworkTest.vcxproj", "{6195F83F-DE75-44EC-A53B-265FE3711FA1}"
 EndProject
@@ -58,6 +61,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.NullRenderSystem", "Apoc3D.NullRenderSystem\Apoc3D_NullRenderSystem.vcxproj", "{1476E25C-AE89-45D2-9F76-9929F6C8263F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.OpenGL3RenderSystem", "Apoc3D.OpenGL3RenderSystem\Apoc3D.OpenGL3RenderSystem.vcxproj", "{4ECF9A4B-40A2-458D-BCDB-B48440527408}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F8C9BF05-D441-4D98-BAC9-7284E963C383} = {F8C9BF05-D441-4D98-BAC9-7284E963C383}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -306,5 +312,8 @@ Global
 		{348E1F98-7F78-476E-8507-E667BB56FD0B} = {45ED24E8-AA1C-445A-B295-DDF16DDB16B8}
 		{0BA36C1A-725E-4A71-9AEA-3453AE7F012F} = {967EA61A-D303-411C-9D65-6CB72489F5CE}
 		{007D67B8-EF36-4A3D-8916-C812324AA97A} = {967EA61A-D303-411C-9D65-6CB72489F5CE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1CAE3363-952F-4572-BDA1-FD27EF1666D0}
 	EndGlobalSection
 EndGlobal

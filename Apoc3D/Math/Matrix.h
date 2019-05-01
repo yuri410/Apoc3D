@@ -19,6 +19,7 @@
  */
 
 #include "Vector.h"
+#include <xmmintrin.h>
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 #define _mm_ror_ps(vec,i)	\
