@@ -23,6 +23,29 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
+			VertexElement::VertexElement()
+			{
+
+			}
+
+			VertexElement::VertexElement(int offset, VertexElementFormat type, VertexElementUsage semantic)
+				: m_offset(offset), m_type(type), m_semantic(semantic), m_index(0)
+			{
+			}
+
+			VertexElement::VertexElement(int offset, VertexElementFormat type, VertexElementUsage semantic, int index)
+				: m_offset(offset), m_type(type), m_semantic(semantic), m_index(index)
+			{
+			}
+
+			bool VertexElement::operator==(const VertexElement& another) const
+			{
+				return m_index == another.m_index &&
+					m_offset == another.m_offset &&
+					m_semantic == another.m_semantic &&
+					m_type == another.m_type;
+			}
+
 			VertexElement* VertexElement::FindElementBySemantic(const List<VertexElement>& elem, VertexElementUsage semantic)
 			{
 				for (int i=0;i<elem.getCount();i++)

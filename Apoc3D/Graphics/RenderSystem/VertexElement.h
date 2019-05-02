@@ -31,17 +31,9 @@ namespace Apoc3D
 			class APAPI VertexElement
 			{
 			public:
-				
-				VertexElement() { }
-				VertexElement(int offset, VertexElementFormat type, VertexElementUsage semantic)		
-					: m_offset(offset), m_type(type), m_semantic(semantic), m_index(0)
-				{
-				}
-
-				VertexElement(int offset, VertexElementFormat type, VertexElementUsage semantic, int index)
-					: m_offset(offset), m_type(type), m_semantic(semantic), m_index(index)
-				{
-				}
+				VertexElement();
+				VertexElement(int offset, VertexElementFormat type, VertexElementUsage semantic);
+				VertexElement(int offset, VertexElementFormat type, VertexElementUsage semantic, int index);
 
 				/** Gets the offset in the buffer that this element starts at. */
 				int getOffset() const { return m_offset; }
@@ -57,15 +49,8 @@ namespace Apoc3D
 				int getSize() const { return GetTypeSize(m_type); }
 
 
-				bool operator ==(const VertexElement& another)
-				{
-					return m_index == another.m_index &&
-						m_offset == another.m_offset &&
-						m_semantic == another.m_semantic &&
-						m_type == another.m_type;
-				}
-
-				bool operator !=(const VertexElement& another) { return !(this->operator ==(another)); }
+				bool operator ==(const VertexElement& another) const;
+				bool operator !=(const VertexElement& another) const { return !(this->operator ==(another)); }
 
 
 				static VertexElement* FindElementBySemantic(const List<VertexElement>& elem, VertexElementUsage semantic);

@@ -49,6 +49,8 @@ namespace Apoc3D
 		PointF::PointF(const Vector2& v)
 			: X(v.X), Y(v.Y) { }
 
+		Vector2::Vector2() { }
+
 		Vector2::Vector2(const PointF& p)
 			: X(p.X), Y(p.Y) { }
 
@@ -80,6 +82,7 @@ namespace Apoc3D
 			return result;
 		}
 
+		Vector3::Vector3() { }
 
 		void Vector3::Parse(const String& str, bool loosy)
 		{
@@ -145,7 +148,8 @@ namespace Apoc3D
 			return Vector3(x, y, z);
 		}
 
-
+		Vector4::Vector4() { }
+		
 		void Vector4::Parse(const String& str, bool loosy)
 		{
 			if (loosy)

@@ -48,7 +48,7 @@ namespace Apoc3D
 			float Z;	/** The Z component of the vector. */
 			float W;	/** The W component of the vector. */
 
-			Vector4() { }
+			Vector4();
 
 			Vector4(const float (&ptr)[4])
 				: X(ptr[0]), Y(ptr[1]), Z(ptr[2]), W(ptr[3]) { }
@@ -355,7 +355,7 @@ namespace Apoc3D
 			float X;	/** the X component of the vector */
 			float Y;	/** the Y component of the vector */
 
-			Vector2() { }
+			Vector2();
 
 			Vector2(float x, float y)
 				: X(x), Y(y) { }
@@ -609,7 +609,7 @@ namespace Apoc3D
 			float Y;
 			float Z;
 
-			Vector3() { }
+			Vector3();
 			Vector3(const float (&ptr)[3])
 				: X(ptr[0]), Y(ptr[1]), Z(ptr[2]) { }
 			
