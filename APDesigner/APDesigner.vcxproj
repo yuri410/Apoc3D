@@ -137,7 +137,6 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
-      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <PrecompiledHeaderFile>APDPCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>APDPCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -161,7 +160,6 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
-      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <PrecompiledHeaderFile>APDPCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>APDPCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -185,7 +183,6 @@
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <PrecompiledHeaderFile>APDPCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>APDPCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -210,7 +207,6 @@
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <PrecompiledHeaderFile>APDPCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>APDPCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -236,7 +232,6 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
-      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <PrecompiledHeaderFile>APDPCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>APDPCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -263,7 +258,6 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
-      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <PrecompiledHeaderFile>APDPCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>APDPCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>

@@ -345,7 +345,7 @@ namespace Apoc3DEx
 
 			for (int32 i=0;i<h;i++)
 			{
-				for (int32 j=0;j<j;j++)
+				for (int32 j=0;j<w;j++)
 				{
 					setPassable(j,i, true);
 					setFieldWeight(j,i, 1.0f);
