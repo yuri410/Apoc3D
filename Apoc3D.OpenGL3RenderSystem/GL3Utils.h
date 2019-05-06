@@ -40,6 +40,10 @@ namespace Apoc3D
 				static GLenum ConvertBlendFunction(BlendFunction dv);
 				static GLenum ConvertStencilOperation(StencilOperation so);
 				static GLenum ConvertStencilOperation(StencilOperation so, bool invert);
+
+				static bool CheckError(const wchar_t* file, unsigned line);
+				static bool CheckFramebufferError(const wchar_t* file, unsigned line);
+
 			private:
 			//	static GLUtils s_initlaizer;
 			//	static D3DPRIMITIVETYPE ptTable[PT_Count];
@@ -158,5 +162,13 @@ namespace Apoc3D
 		}
 	}
 }
+
+#if _DEBUG
+	#define GL_CHECK { Apoc3D::Graphics::GL3RenderSystem::GLUtils::CheckError(_CRT_WIDE(__FILE__), (unsigned)(__LINE__)); }
+	#define GL_CHECKFB { Apoc3D::Graphics::GL3RenderSystem::GLUtils::CheckFramebufferError(_CRT_WIDE(__FILE__), (unsigned)(__LINE__)); }
+#else
+	#define GL_CHECK
+	#define GL_CHECKFB
+#endif
 
 #endif

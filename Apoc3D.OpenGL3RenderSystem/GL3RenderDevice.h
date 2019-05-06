@@ -40,23 +40,9 @@ namespace Apoc3D
 			class GL3RenderDevice : public RenderDevice
 			{
 			public:
-
-				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_devManager; } 
-
-
-				
-				bool isInitialized() const { return !!m_stateManager; }
-
-
-
 				GL3RenderDevice(GraphicsDeviceManager* devManager);
 				~GL3RenderDevice();
 				
-				void OnDeviceReset();
-				void OnDeviceLost();
-
-
-
 				virtual void Initialize();
 				
 				virtual void BeginFrame();
@@ -82,6 +68,9 @@ namespace Apoc3D
 
 				virtual Capabilities* const getCapabilities() const;
 
+				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_devManager; } 
+
+				bool isInitialized() const { return !!m_stateManager; }
 
 				NativeGL3StateManager* getNativeState() const { return m_nativeState; }
 			private:
@@ -94,11 +83,7 @@ namespace Apoc3D
 
 				GL3RenderTarget** m_cachedRenderTarget;
 
-				//IDirect3DSurface9* m_defaultRT;
-				//IDirect3DSurface9* m_defaultDS;
-
 				GL3Capabilities* m_caps;
-
 			};
 
 			class GL3Capabilities : public Capabilities

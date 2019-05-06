@@ -63,8 +63,6 @@ namespace Apoc3D
 				return GL_KEEP;
 			}
 
-			
-
 			bool GLUtils::ConvertPixelFormat(PixelFormat fmt, GLenum& format, GLenum& type, GLenum& internalFormat)
 			{
 				switch (fmt)
@@ -280,6 +278,61 @@ namespace Apoc3D
 				return true;
 			}
 
+			bool GLUtils::CheckError(const wchar_t* file, unsigned line)
+			{
+				int err = glGetError();
+
+				if (err != GL_NO_ERROR)
+				{
+					const wchar_t* errString = L"UNKNOWN";
+
+					switch (err)
+					{
+					case GL_INVALID_ENUM:					errString = L"GL_INVALID_ENUM"; break;
+					case GL_INVALID_VALUE:					errString = L"GL_INVALID_VALUE"; break;
+					case GL_INVALID_OPERATION:				errString = L"GL_INVALID_OPERATION"; break;
+					case GL_INVALID_FRAMEBUFFER_OPERATION:	errString = L"GL_INVALID_FRAMEBUFFER_OPERATION"; break;
+					case GL_OUT_OF_MEMORY:					errString = L"GL_OUT_OF_MEMORY"; break;
+					}
+
+					String msg = L"OpenGL Error: ";
+					msg += errString;
+					Apoc3D::Error(ErrorID::Default, msg, file, line);
+
+					return false;
+				}
+				return true;
+			}
+
+			bool GLUtils::CheckFramebufferError(const wchar_t* file, unsigned line)
+			{
+				GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
+				if (status != GL_FRAMEBUFFER_COMPLETE)
+				{
+					const wchar_t* errString = L"GL_FRAMEBUFFER_UNDEFINED";
+
+					switch (status)
+					{
+					case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:			errString = L"GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT"; break;
+					case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:	errString = L"GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT"; break;
+					case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:			errString = L"GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER"; break;
+					case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:			errString = L"GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER"; break;
+					case GL_FRAMEBUFFER_UNSUPPORTED:					errString = L"GL_FRAMEBUFFER_UNSUPPORTED"; break;
+					case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:			errString = L"GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE"; break;
+					case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:		errString = L"GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS"; break;
+					}
+
+					String msg = L"OpenGL Error: ";
+					msg += errString;
+					Apoc3D::Error(ErrorID::Default, msg, file, line);
+
+					return false;
+				}
+				return true;
+			}
+
+
 			void GLUtils::InitCompareFunctionTable()
 			{
 				comfunTable[(int)CompareFunction::Never] = GL_NEVER;
@@ -314,6 +367,7 @@ namespace Apoc3D
 				blendopTable[(int)BlendFunction::Min] = GL_MIN;
 				blendopTable[(int)BlendFunction::Max] = GL_MAX;
 			}
+
 		}
 	}
 }

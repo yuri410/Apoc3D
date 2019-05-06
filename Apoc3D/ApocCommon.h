@@ -105,7 +105,7 @@ namespace Apoc3D
 	typedef std::u32string String32;
 
 	//template <typename T, int32 N>
-	//int32 countof(T(&)[N]) { return N; }
+	//constexpr int32 countof(T const (&)[N]) noexcept { return N; }
 	
 	template <typename T, int N> const char(&__countof(T(&)[N]))[N];
 #define countof(arr) static_cast<int32>(sizeof(__countof(arr)))
