@@ -185,6 +185,7 @@ namespace Apoc3D
 
 	NO_INLINE void Assert(const wchar_t * message, const wchar_t * file, unsigned line);
 	NO_INLINE void Error(ErrorID eid, const String& message, const wchar_t * file, unsigned line);
+	NO_INLINE void Error(ErrorID eid, const std::string& message, const wchar_t* file, unsigned line);
 
 	void DebugBreak();
 
