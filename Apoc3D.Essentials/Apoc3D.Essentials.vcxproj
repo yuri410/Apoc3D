@@ -28,14 +28,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AI\VolumePathFinder.h" />
+    <ClInclude Include="App.h" />
     <ClInclude Include="EssentialCommon.h" />
-    <ClInclude Include="Game.h" />
     <ClInclude Include="AI\PathFinder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AI\PathFinder.cpp" />
     <ClCompile Include="AI\VolumePathFinder.cpp" />
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="App.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Apoc3D\Apoc3d.vcxproj">
