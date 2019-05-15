@@ -112,7 +112,7 @@ namespace Apoc3D
 			m_size.Y = m_visisbleItems * getItemHeight();
 		}
 
-		void ListBox::Update(const GameTime* time)
+		void ListBox::Update(const AppTime* time)
 		{
 			if (m_selectedIndex >= m_items.getCount())
 				m_selectedIndex = -1;
@@ -353,7 +353,7 @@ namespace Apoc3D
 		}
 
 
-		void TreeView::Update(const GameTime* time)
+		void TreeView::Update(const AppTime* time)
 		{
 			UpdateScrollBarsGeneric(getArea(), time);
 			UpdateHScrollbar();
@@ -653,7 +653,7 @@ namespace Apoc3D
 			m_headerHeight = m_rowHeight = m_fontRef->getLineHeightInt();
 		}
 
-		void ListView::Update(const GameTime* time)
+		void ListView::Update(const AppTime* time)
 		{
 			UpdateScrollBarsGeneric(getArea(), time);
 

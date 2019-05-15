@@ -403,7 +403,7 @@ namespace APDesigner
 
 	}
 
-	void TextureViewer::Update(const GameTime* time)
+	void TextureViewer::Update(const AppTime* time)
 	{
 		m_pictureBox->setSize(getDocumentForm()->getSize() - m_pictureBox->Position * 2);
 

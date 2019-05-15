@@ -15,7 +15,7 @@
  */
 
 #include "Camera.h"
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 
 
 namespace Apoc3D
@@ -116,7 +116,7 @@ namespace Apoc3D
 		{
 		}
 
-		void FreeCamera::Update(const GameTime* time)
+		void FreeCamera::Update(const AppTime* time)
 		{
 			float dt = time->ElapsedTime;
 
@@ -303,7 +303,7 @@ namespace Apoc3D
 			m_lootAt = m_chasePosition + lookAtOfsT;
 		}
 
-		void ChaseCamera::Update(const GameTime* time)
+		void ChaseCamera::Update(const AppTime* time)
 		{
 			UpdateWorldPositions();
 

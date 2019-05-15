@@ -84,7 +84,7 @@ namespace APDesigner
 
 		m_graphRender = m_renderTarget->GetColorTexture();
 	}
-	void ShaderNetDocument::Update(const GameTime* time)
+	void ShaderNetDocument::Update(const AppTime* time)
 	{
 		if (m_stateGraph)
 		{

@@ -22,7 +22,7 @@
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
 #include "apoc3d/Graphics/RenderSystem/Texture.h"
 #include "StyleSkin.h"
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 #include "Form.h"
 
 using namespace Apoc3D::Utility;
@@ -175,7 +175,7 @@ namespace Apoc3D
 			return false;
 		}
 
-		void MenuBar::Update(const GameTime* time)
+		void MenuBar::Update(const AppTime* time)
 		{
 			CheckSelection();
 			m_helper.Update(time);
@@ -589,7 +589,7 @@ namespace Apoc3D
 
 		}
 
-		void SubMenu::Update(const GameTime* time)
+		void SubMenu::Update(const AppTime* time)
 		{
 			if (m_hoverIndex != -1)
 				CheckSelection();

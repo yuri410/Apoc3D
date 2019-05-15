@@ -57,7 +57,7 @@ namespace Apoc3D
 				void UnloadAllEffects();
 
 				
-				void Update(const GameTime* time);
+				void Update(const AppTime* time);
 
 				void FillEffects(List<Effect*>& list);
 

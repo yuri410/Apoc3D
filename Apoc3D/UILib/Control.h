@@ -41,7 +41,7 @@ namespace Apoc3D
 		class APAPI MultiClickChecker
 		{
 		public:
-			void Update(const GameTime* time, Input::Mouse* mouse = nullptr);
+			void Update(const AppTime* time, Input::Mouse* mouse = nullptr);
 			bool Check(Input::Mouse* mouse = nullptr, int32 clickCount = 2);
 
 		private:
@@ -67,7 +67,7 @@ namespace Apoc3D
 
 			virtual ~Control();
 
-			virtual void Update(const GameTime* time) { }
+			virtual void Update(const AppTime* time) { }
 			virtual void Draw(Sprite* sprite) = 0;
 			virtual void DrawOverlay(Sprite* sprite) { }
 			
@@ -159,7 +159,7 @@ namespace Apoc3D
 			void InitScrollbars(const ScrollBarVisualSettings& hss, const ScrollBarVisualSettings& vss);
 
 			void UpdateScrollBarsLength(const Apoc3D::Math::Rectangle& area);
-			void UpdateScrollBarsGeneric(const Apoc3D::Math::Rectangle& area, const GameTime* time);
+			void UpdateScrollBarsGeneric(const Apoc3D::Math::Rectangle& area, const AppTime* time);
 			void DrawScrollBars(Sprite* sprite);
 
 			bool shouldHScrollVisible() const;
@@ -175,7 +175,7 @@ namespace Apoc3D
 		class APAPI ControlCollection : public List<Control*>
 		{
 		public:
-			void Update(const GameTime* time);
+			void Update(const AppTime* time);
 			void Draw(Sprite* sprite);
 
 			void SetElementsBaseOffset(Point bo);
@@ -208,7 +208,7 @@ namespace Apoc3D
 			ControlContainer(const StyleSkin* skin);
 			virtual ~ControlContainer();
 
-			virtual void Update(const GameTime* time) override;
+			virtual void Update(const AppTime* time) override;
 			virtual void Draw(Sprite* sprite) override;
 
 			ControlCollection& getControls() { return m_controls; }

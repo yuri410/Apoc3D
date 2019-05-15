@@ -46,7 +46,7 @@ namespace Apoc3D
 			NullMouse() { }
 			~NullMouse() { }
 
-			void Update(const GameTime* time) override { }
+			void Update(const AppTime* time) override { }
 		};
 
 		class NullKeyboard : public Keyboard
@@ -55,7 +55,7 @@ namespace Apoc3D
 			NullKeyboard() { }
 			~NullKeyboard() { }
 
-			void Update(const GameTime* time) override { }
+			void Update(const AppTime* time) override { }
 
 		};
 

@@ -343,7 +343,7 @@ namespace APDesigner
 		m_currentVisisbleNodes.Clear();
 	}
 
-	void ShaderGraph::Update(const GameTime* time)
+	void ShaderGraph::Update(const AppTime* time)
 	{
 		if (m_isProcessingLayout)
 		{
@@ -366,7 +366,7 @@ namespace APDesigner
 				// when the maximum kinetic energy is low, the time step can be
 				// scaled up to increase simulation speed, getting the result
 				// in a fewer time
-				GameTime time2 = *time;
+				AppTime time2 = *time;
 				time2.ElapsedTime *= 3 * m_adaptiveTimeScale;
 
 				// TECH_Fuzzy first calculated the center of mass of the entire graph.

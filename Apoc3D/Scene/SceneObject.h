@@ -51,7 +51,7 @@ namespace Apoc3D
 
 			virtual void PrepareVisibleObjects(const Camera* const camera, int32 level, BatchData* data) { }
 
-			virtual void Update(const GameTime* time) = 0;
+			virtual void Update(const AppTime* time) = 0;
 
 			virtual void OnAddedToScene(SceneManager* sceneMgr) { }
 			virtual void OnRemovedFromScene(SceneManager* sceneMgr) { }
@@ -111,7 +111,7 @@ namespace Apoc3D
 
 			virtual RenderOperationBuffer* GetRenderOperation(int lod);
 
-			virtual void Update(const GameTime* time);
+			virtual void Update(const AppTime* time);
 
 		protected:
 			Entity()

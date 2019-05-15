@@ -108,15 +108,15 @@ namespace Apoc3D
 				/** Run one frame, which includes one render and X updates  */
 				void NRS_Tick();
 
-				void NRS_DrawFrame(const GameTime* time);
+				void NRS_DrawFrame(const AppTime* time);
 
 				/** This should be overridden to draw a frame */
-				void NRS_Render(const GameTime* time);
+				void NRS_Render(const AppTime* time);
 				/** This should be overridden to allow the game to run logic such as updating the world,
 				*  checking for collisions, gathering input, playing audio and etc.
 				*/
-				void NRS_Update(const GameTime* time);
-				void NRS_UpdateConstrainedVarTimeStep(const GameTime* time);
+				void NRS_Update(const AppTime* time);
+				void NRS_UpdateConstrainedVarTimeStep(const AppTime* time);
 
 				NRSDeviceContext* m_dc;
 				String m_hardwareName;

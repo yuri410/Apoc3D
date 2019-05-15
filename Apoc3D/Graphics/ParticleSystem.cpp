@@ -16,7 +16,7 @@
 
 #include "ParticleSystem.h"
 
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 #include "apoc3d/Core/ResourceHandle.h"
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Math/RandomUtils.h"

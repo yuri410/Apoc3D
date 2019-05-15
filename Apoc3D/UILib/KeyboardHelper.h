@@ -50,7 +50,7 @@ namespace Apoc3D
 		public:
 			KeyboardHelper() { }
 
-			void Update(const GameTime* time);
+			void Update(const AppTime* time);
 
 			bool isShiftDown() const { return m_shiftDown; }
 
@@ -76,7 +76,7 @@ namespace Apoc3D
 			TextEditState(bool multiline, const Point& cursorPos = Point::Zero);
 			~TextEditState();
 
-			void Update(const GameTime* time);
+			void Update(const AppTime* time);
 
 			void Add(const String& text);
 			void SetText(const String& text, bool keepCursor);

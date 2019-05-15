@@ -66,7 +66,7 @@ namespace Apoc3D
 			bool IsRightPressedState() const { return m_btnState[2]; }			/** Check if the right button is currently being pressing */
 			bool IsRightReleasedState() const { return !m_btnState[2]; }		/** Check if the right button is not currently being pressing */
 
-			virtual void Update(const GameTime* time) = 0;
+			virtual void Update(const AppTime* time) = 0;
 
 			void Serialize(Apoc3D::IO::BinaryWriter& bw);
 			void Deserialize(Apoc3D::IO::BinaryReader& br);

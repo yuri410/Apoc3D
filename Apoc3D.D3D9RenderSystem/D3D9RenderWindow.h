@@ -89,7 +89,7 @@ namespace Apoc3D
 				bool D3D9_OnFrameStart();
 				void D3D9_OnFrameEnd();
 
-				void OnRenderFrame(const GameTime* time) override;
+				void OnRenderFrame(const AppTime* time) override;
 
 				bool IsDeviceReady() override;
 				void ExecuteChangeDevice() override;

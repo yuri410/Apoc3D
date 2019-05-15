@@ -35,7 +35,7 @@ namespace SampleTerrain
 		~GameCamera();
 
 
-		virtual void Update(const GameTime* time);
+		virtual void Update(const AppTime* time);
 
 		void Sprint();
 		void Jump();

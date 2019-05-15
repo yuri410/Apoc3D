@@ -37,7 +37,7 @@ namespace Apoc3D
 			public:
 				FPSCounter() { }
 
-				void Step(const GameTime* time);
+				void Step(const AppTime* time);
 				void Step(float dt);
 
 				float getFPS() const { return m_fps; }
@@ -84,7 +84,7 @@ namespace Apoc3D
 
 				}
 
-				void UpdateFpsCounter(const GameTime* time);
+				void UpdateFpsCounter(const AppTime* time);
 			private:
 				RenderTarget* m_renderTarget = nullptr;
 				RenderParameters m_presentParams;
@@ -152,10 +152,10 @@ namespace Apoc3D
 				void OnFinalize();
 				void OnLoad();
 				void OnUnload();
-				void OnUpdate(const GameTime* time);
-				void OnUpdateConstrainedVarTimeStep(const GameTime* time);
+				void OnUpdate(const AppTime* time);
+				void OnUpdateConstrainedVarTimeStep(const AppTime* time);
 
-				void OnDraw(const GameTime* time);
+				void OnDraw(const AppTime* time);
 				void OnFrameStart();
 				void OnFrameEnd();
 

@@ -42,7 +42,7 @@ namespace Apoc3D
 				virtual ~Effect();
 
 
-				virtual void Update(const GameTime* time) { }
+				virtual void Update(const AppTime* time) { }
 
 				/**
 				 *  Begins a effect.
@@ -160,7 +160,7 @@ namespace Apoc3D
 				void SetParameterTextureByName(const String& name, ResourceHandle<Texture>* value);
 				void SetParameterTextureByName(const String& name, Texture* value);
 
-				virtual void Update(const GameTime* time);
+				virtual void Update(const AppTime* time);
 
 				RenderDevice* getDevice() const { return m_device; }
 			protected:

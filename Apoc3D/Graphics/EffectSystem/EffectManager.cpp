@@ -135,7 +135,7 @@ namespace Apoc3D
 				m_fxTable.DeleteValuesAndClear();
 			}
 
-			void EffectManager::Update(const GameTime* time)
+			void EffectManager::Update(const AppTime* time)
 			{
 				for (Effect* fx : m_fxTable.getValueAccessor())
 				{

@@ -43,7 +43,7 @@ namespace APDesigner
 		Document::Initialize(device);
 
 	}
-	void UIDocument::Update(const GameTime* time)
+	void UIDocument::Update(const AppTime* time)
 	{
 		Document::Update(time);
 

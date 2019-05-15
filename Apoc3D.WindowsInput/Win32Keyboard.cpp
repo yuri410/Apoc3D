@@ -15,7 +15,7 @@
  */
 
 #include "Win32Keyboard.h"
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Utility/StringUtils.h"
 
@@ -38,7 +38,7 @@ namespace Apoc3D
 				m_inpMgr->destroyInputObject(m_keyboard);
 			}
 
-			void Win32Keyboard::Update(const GameTime* time)
+			void Win32Keyboard::Update(const AppTime* time)
 			{
 				m_lastKeyState = m_keyState;
 

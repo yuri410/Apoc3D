@@ -252,7 +252,7 @@ namespace Apoc3D
 		}
 
 
-		void Button::Update(const GameTime* time)
+		void Button::Update(const AppTime* time)
 		{
 			Control::Update(time);
 
@@ -593,7 +593,7 @@ namespace Apoc3D
 
 		}
 
-		void ButtonRow::Update(const GameTime* time)
+		void ButtonRow::Update(const AppTime* time)
 		{
 			m_hoverIndex = -1;
 
@@ -745,7 +745,7 @@ namespace Apoc3D
 			sprite->Draw(m_graphic, dstRect, srcRect, CV_White);
 		}
 
-		void ButtonGroupTextured::Update(const GameTime* time)
+		void ButtonGroupTextured::Update(const AppTime* time)
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
@@ -844,7 +844,7 @@ namespace Apoc3D
 				btn->Draw(sprite);
 		}
 
-		void ButtonGroup::Update(const GameTime* time)
+		void ButtonGroup::Update(const AppTime* time)
 		{
 			Control::Update(time);
 
@@ -866,7 +866,7 @@ namespace Apoc3D
 		{
 
 		}
-		void RadioButton::Update(const GameTime* time)
+		void RadioButton::Update(const AppTime* time)
 		{
 
 		}

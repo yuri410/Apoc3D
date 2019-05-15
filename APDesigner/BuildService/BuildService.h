@@ -24,7 +24,7 @@ namespace APDesigner
 		void AddBuild(Project* project, const String& stampFile);
 		void Execute();
 
-		bool MainThreadUpdate(const GameTime* time, BuildResult* result);
+		bool MainThreadUpdate(const AppTime* time, BuildResult* result);
 
 		bool PopLastResult(String& res);
 

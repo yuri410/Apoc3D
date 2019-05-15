@@ -177,7 +177,7 @@ namespace APDesigner
 
 	}
 
-	void ShaderAtomDocument::Update(const GameTime* time)
+	void ShaderAtomDocument::Update(const AppTime* time)
 	{
 		Document::Update(time);
 	}

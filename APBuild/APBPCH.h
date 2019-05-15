@@ -28,7 +28,7 @@
 #include "apoc3d/Core/BackgroundWorker.h"
 #include "apoc3d/Core/CommandInterpreter.h"
 #include "apoc3d/Core/CoreCommon.h"
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Core/Plugin.h"
 #include "apoc3d/Core/PluginManager.h"

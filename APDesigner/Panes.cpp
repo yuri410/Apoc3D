@@ -128,7 +128,7 @@ namespace APDesigner
 		m_pane->Show();
 	}
 
-	void ToolsPane::Update(const GameTime* time)
+	void ToolsPane::Update(const AppTime* time)
 	{
 		
 		if (m_mainWindow->getCurrentDocument())
@@ -307,7 +307,7 @@ namespace APDesigner
 		m_form->Show();
 	}
 
-	void ResourcePane::Update(const GameTime* time)
+	void ResourcePane::Update(const AppTime* time)
 	{
 		m_form->Position.X = 0;
 		m_form->Position.Y = m_mainWindow->getMenuBar()->getHeight();

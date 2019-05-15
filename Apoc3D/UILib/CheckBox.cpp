@@ -105,7 +105,7 @@ namespace Apoc3D
 			UpdateSize();
 		}
 
-		void CheckBox::Update(const GameTime* time)
+		void CheckBox::Update(const AppTime* time)
 		{
 			return UpdateEvents_StandardButton(m_mouseHover, m_mouseDown, getAbsoluteArea(),
 				&CheckBox::OnMouseHover, &CheckBox::OnMouseOut, &CheckBox::OnPress, &CheckBox::OnRelease);
@@ -280,7 +280,7 @@ namespace Apoc3D
 				m_size.Y += sz.Y;
 			}
 		}
-		void CheckboxGroup::Update(const GameTime* time)
+		void CheckboxGroup::Update(const AppTime* time)
 		{
 			for (CheckBox* chb : m_checkbox)
 			{

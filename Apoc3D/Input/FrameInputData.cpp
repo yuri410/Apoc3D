@@ -24,7 +24,7 @@
 #include "apoc3d/IOLib/BinaryWriter.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/Core/Logging.h"
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 #include "apoc3d/Utility/Hash.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Library/lz4hc.h"
@@ -335,7 +335,7 @@ namespace Apoc3D
 			delete m_outputStream;
 		}
 
-		void InputRecorder::Update(const GameTime* time)
+		void InputRecorder::Update(const AppTime* time)
 		{
 			if (!Enabled)
 				return;
@@ -412,7 +412,7 @@ namespace Apoc3D
 		{
 			delete m_inputStream;
 		}
-		void InputPlayer::Update(const GameTime* time, GameTime& newTime)
+		void InputPlayer::Update(const AppTime* time, AppTime& newTime)
 		{
 			if (!Enabled)
 				return;

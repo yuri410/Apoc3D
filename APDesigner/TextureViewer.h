@@ -55,7 +55,7 @@ namespace APDesigner
 		virtual void SaveRes();
 		virtual bool IsReadOnly() { return true; };
 
-		virtual void Update(const GameTime* time);
+		virtual void Update(const AppTime* time);
 	private:
 		void PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void BtnZoomIn_Pressed(Button* ctrl);

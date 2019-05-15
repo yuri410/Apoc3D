@@ -236,7 +236,7 @@ namespace Apoc3D
 		class ResourceHandle;
 
 		class ResourceManager;
-		struct GameTime;
+		struct AppTime;
 		
 		template<typename T>
 		class BackgroundSequencialWorker;

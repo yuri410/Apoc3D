@@ -37,7 +37,7 @@ namespace Apoc3D
 
 			virtual void ExecuteChangeDevice() = 0;
 			virtual bool IsDeviceReady() = 0;
-			virtual void OnRenderFrame(const GameTime* time) = 0;
+			virtual void OnRenderFrame(const AppTime* time) = 0;
 
 			void MainLoop();
 			void Tick();

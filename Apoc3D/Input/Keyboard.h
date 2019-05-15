@@ -193,7 +193,7 @@ namespace Apoc3D
 			bool WasPressing(KeyboardKeyCode code) const { return m_lastKeyState[code]; }
 
 			/** Update keyboard state */
-			virtual void Update(const GameTime* time) = 0;
+			virtual void Update(const AppTime* time) = 0;
 
 			void Serialize(Apoc3D::IO::BinaryWriter& bw);
 			void Deserialize(Apoc3D::IO::BinaryReader& br);

@@ -34,7 +34,7 @@ namespace APDesigner
 		virtual bool IsReadOnly() { return false; };
 
 		virtual void Initialize(RenderDevice* device);
-		virtual void Update(const GameTime* time);
+		virtual void Update(const AppTime* time);
 		virtual void Render();
 
 	private:
@@ -153,7 +153,7 @@ namespace APDesigner
 		~ColorField();
 
 		virtual void Draw(Sprite* sprite);
-		virtual void Update(const GameTime* time);
+		virtual void Update(const AppTime* time);
 
 		void SetValue(const Color4& color);
 		ColorValue GetValue() const { return m_color; }

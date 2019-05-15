@@ -207,13 +207,13 @@ namespace SampleAtmosphere
 
 		Game::Unload();
 	}
-	void AtmosphereDemo::Update(const GameTime* time)
+	void AtmosphereDemo::Update(const AppTime* time)
 	{
 		Game::Update(time);
 
 		UpdateCamera(time);
 	}
-	void AtmosphereDemo::Draw(const GameTime* time)
+	void AtmosphereDemo::Draw(const AppTime* time)
 	{
 		m_device->BeginFrame();
 
@@ -256,7 +256,7 @@ namespace SampleAtmosphere
 	void AtmosphereDemo::OnFrameStart() { }
 	void AtmosphereDemo::OnFrameEnd() { }
 
-	void AtmosphereDemo::UpdateCamera(const GameTime* time)
+	void AtmosphereDemo::UpdateCamera(const AppTime* time)
 	{
 		if (SystemUI::TopMostForm == nullptr)
 		{

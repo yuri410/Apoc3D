@@ -392,7 +392,7 @@ namespace Apoc3D
 			APAPI void ScheduleBringFront(ControlContainer* cc);
 				 
 			APAPI void Draw();
-			APAPI void Update(const Core::GameTime* time);
+			APAPI void Update(const Core::AppTime* time);
 
 			APAPI Point ClampFormMovementOffset(Form* frm, const Point& vec);
 			APAPI Texture* GetWhitePixel();

@@ -15,7 +15,7 @@
  */
 
 #include "Win32Mouse.h"
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 #include "apoc3d.Win32/Win32Common.h"
 
 namespace Apoc3D
@@ -47,7 +47,7 @@ namespace Apoc3D
 				m_instance = 0;
 			}
 
-			void OldSchoolMouse::Update(const GameTime* time)
+			void OldSchoolMouse::Update(const AppTime* time)
 			{
 				POINT pt = { 0,0 };
 				GetCursorPos(&pt);
@@ -122,7 +122,7 @@ namespace Apoc3D
 				m_inpMgr->destroyInputObject(m_mouse);
 			}
 
-			void Win32Mouse::Update(const GameTime* time)
+			void Win32Mouse::Update(const AppTime* time)
 			{
 				memcpy(m_lastBtnState, m_btnState, sizeof(m_btnState));
 				m_lastPosition = m_currentPos;

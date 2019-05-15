@@ -598,7 +598,7 @@ namespace APDesigner
 		}
 		m_passViewSelect->setSelectedIndex(0);
 	}
-	void ModelDocument::Update(const GameTime* time)
+	void ModelDocument::Update(const AppTime* time)
 	{
 		m_scene.Update(time);
 		m_camera->Update(time);

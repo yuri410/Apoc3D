@@ -33,8 +33,8 @@ namespace dip
 
 		virtual void Load();
 		virtual void Unload();
-		virtual void Update(const GameTime* time);
-		virtual void Draw(const GameTime* time);
+		virtual void Update(const AppTime* time);
+		virtual void Draw(const AppTime* time);
 
 		virtual void OnFrameStart();
 		virtual void OnFrameEnd();

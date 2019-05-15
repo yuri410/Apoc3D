@@ -1,7 +1,7 @@
 
 #include "Game.h"
 
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 #include "apoc3d/Core/ResourceManager.h"
 #include "apoc3d/Config/XmlConfigurationFormat.h"
 
@@ -31,7 +31,7 @@ using namespace Apoc3D::VFS;
 
 namespace Apoc3DEx
 {
-	Game::Game(RenderWindow* wnd)
+	App::App(RenderWindow* wnd)
 		: m_window(wnd)
 	{
 		m_inputCreationParam.UseKeyboard = true;
@@ -39,39 +39,39 @@ namespace Apoc3DEx
 		m_inputCreationParam.PreferredGamepadCount = 0;
 	}
 
-	Game::~Game()
+	App::~App()
 	{
 		
 	}
 
-	void Game::Exit()
+	void App::Exit()
 	{
 		m_window->Exit();
 	}
 
-	void Game::OnFrameStart()
+	void App::OnFrameStart()
 	{
 
 	}
-	void Game::OnFrameEnd()
+	void App::OnFrameEnd()
 	{
 
 	}
-	void Game::Draw(const GameTime* time)
+	void App::Draw(const AppTime* time)
 	{
 		SystemUI::Draw();
 	}
-	void Game::Initialize()
+	void App::Initialize()
 	{
 		m_device = m_window->getRenderDevice();
 		
 		InputAPIManager::getSingleton().InitializeInput(m_window, m_inputCreationParam);
 	}
-	void Game::Finalize()
+	void App::Finalize()
 	{
 		InputAPIManager::getSingleton().FinalizeInput();
 	}
-	void Game::Load()
+	void App::Load()
 	{
 		{
 			FileLocateRule rule;
@@ -86,14 +86,14 @@ namespace Apoc3DEx
 		m_console = new Console(m_device, m_UIskin, Point(600,100), Point(400,400));
 	}
 
-	void Game::Unload()
+	void App::Unload()
 	{
 		SystemUI::Finalize();
 		delete m_UIskin;
 		delete m_console;
 	}
 
-	void Game::Update(const GameTime* time)
+	void App::Update(const AppTime* time)
 	{
 		if (m_player && m_player->isFinished())
 		{
@@ -117,10 +117,10 @@ namespace Apoc3DEx
 
 		SystemUI::Update(time);
 
-		ResourceManager::PerformAllPostSync(time->getElapsedRealTime());
+		ResourceManager::PerformAllPostSync(time->ElapsedRealTime);
 	}
 
-	const GameTime* Game::GetRecordCorrectedTime(const GameTime* time)
+	const AppTime* App::GetRecordCorrectedTime(const AppTime* time)
 	{
 		if (m_player)
 		{

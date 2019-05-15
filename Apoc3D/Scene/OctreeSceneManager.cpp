@@ -21,7 +21,7 @@
 #include "apoc3d/Graphics/RenderOperation.h"
 #include "apoc3d/Graphics/Material.h"
 #include "apoc3d/Graphics/GeometryData.h"
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 #include "apoc3d/Graphics/Camera.h"
 #include "apoc3d/Math/Frustum.h"
 #include "apoc3d/Math/Ray.h"
@@ -362,7 +362,7 @@ namespace Apoc3D
 			return result;
 		}
 
-		void OctreeSceneManager::Update(const GameTime* time)
+		void OctreeSceneManager::Update(const AppTime* time)
 		{
 			const List<SceneObject*>& objects = getAllObjects();
 			for (int32 i = 0;i<objects.getCount();i++)

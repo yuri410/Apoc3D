@@ -32,7 +32,7 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(PictureBox, Control);
 		public:
-			typedef EventDelegate<PictureBox*, const GameTime*> InteractiveUpdateEventHandler;
+			typedef EventDelegate<PictureBox*, const AppTime*> InteractiveUpdateEventHandler;
 
 			PictureBox(const Point& position, int border);
 			PictureBox(const Point& position, int border, Texture* texture);
@@ -41,7 +41,7 @@ namespace Apoc3D
 
 			virtual ~PictureBox();
 
-			virtual void Update(const GameTime* time);
+			virtual void Update(const AppTime* time);
 			virtual void Draw(Sprite* sprite);
 
 			void setSize(const Point& sz) { m_size = sz; }

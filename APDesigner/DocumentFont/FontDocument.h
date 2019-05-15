@@ -18,7 +18,7 @@ namespace APDesigner
 		virtual bool IsReadOnly() { return false; };
 
 		virtual void Initialize(RenderDevice* device);
-		virtual void Update(const GameTime* time);
+		virtual void Update(const AppTime* time);
 		virtual void Render();
 
 	private:

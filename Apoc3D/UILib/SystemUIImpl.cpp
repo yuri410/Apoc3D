@@ -14,7 +14,7 @@
 #include "apoc3d/Vfs/FileSystem.h"
 #include "apoc3d/Input/Mouse.h"
 #include "apoc3d/Input/InputAPI.h"
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Input;
@@ -273,7 +273,7 @@ namespace Apoc3D
 			m_sprite->End();
 		}
 
-		void SystemUIImpl::Update(const GameTime* time)
+		void SystemUIImpl::Update(const AppTime* time)
 		{
 			InteractingForm = nullptr;
 

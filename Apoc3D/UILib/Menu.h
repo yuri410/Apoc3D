@@ -85,7 +85,7 @@ namespace Apoc3D
 			void Add(MenuItem* item, SubMenu* submenu);
 			void Add(const MenuItemSetupInfo& info, const StyleSkin* skin, ControlContainer* owner);
 
-			virtual void Update(const GameTime* time) override;
+			virtual void Update(const AppTime* time) override;
 			virtual void Draw(Sprite* sprite) override;
 
 			void Close();
@@ -171,7 +171,7 @@ namespace Apoc3D
 
 			void Clear();
 
-			virtual void Update(const GameTime* time) override;
+			virtual void Update(const AppTime* time) override;
 			virtual void Draw(Sprite* sprite) override;
 
 			void Open(const Point& position);

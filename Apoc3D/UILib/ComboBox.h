@@ -45,7 +45,7 @@ namespace Apoc3D
 			ComboBox(const StyleSkin* skin, const Point& position, int width, const List<String>& items, int32 listItemCount = 8);
 			virtual ~ComboBox();
 
-			virtual void Update(const GameTime* time) override;
+			virtual void Update(const AppTime* time) override;
 			virtual void Draw(Sprite* sprite) override;
 			virtual void DrawOverlay(Sprite* sprite) override;
 			virtual bool IsOverriding() override;

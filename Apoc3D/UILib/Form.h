@@ -82,7 +82,7 @@ namespace Apoc3D
 			virtual void Maximize();
 			virtual void Restore();
 
-			virtual void Update(const GameTime* time) override;
+			virtual void Update(const AppTime* time) override;
 			virtual void Draw(Sprite* sprite) override;
 
 			int32 GetTitleBarHeight() const;
@@ -135,7 +135,7 @@ namespace Apoc3D
 			void UpdateFocus();
 			void UpdateStateAnimation();
 			void CheckDragging();
-			void CheckClick(const GameTime* time);
+			void CheckClick(const AppTime* time);
 			void CheckResize();
 			void ToggleWindowState();
 

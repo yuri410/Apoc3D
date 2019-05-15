@@ -16,7 +16,7 @@
 
 #include "KeyboardHelper.h"
 
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 #include "apoc3d/Input/InputAPI.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Math/Math.h"
@@ -62,7 +62,7 @@ namespace Apoc3D
 			KEY_BACK, KEY_DELETE
 		};
 
-		void KeyboardHelper::Update(const GameTime* time)
+		void KeyboardHelper::Update(const AppTime* time)
 		{
 			Keyboard* kb = InputAPIManager::getSingleton().getKeyboard();
 			if (kb)
@@ -254,7 +254,7 @@ namespace Apoc3D
 			m_keyboard.eventKeyPaste.Unbind(this, &TextEditState::Keyboard_OnPaste);
 		}
 
-		void TextEditState::Update(const GameTime* time)
+		void TextEditState::Update(const AppTime* time)
 		{
 			m_keyboard.Update(time);
 		}

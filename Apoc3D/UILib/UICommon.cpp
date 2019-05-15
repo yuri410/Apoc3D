@@ -522,7 +522,7 @@ namespace Apoc3D
 		void SystemUI::ScheduleBringFront(ControlContainer* cc) { sysUI.ScheduleBringFront(cc); }
 
 		void SystemUI::Draw() { sysUI.Draw(); }
-		void SystemUI::Update(const GameTime* time) { sysUI.Update(time); }
+		void SystemUI::Update(const AppTime* time) { sysUI.Update(time); }
 
 		Point SystemUI::ClampFormMovementOffset(Form* frm, const Point& vec) { return sysUI.ClampFormMovementOffset(frm, vec); }
 		Texture* SystemUI::GetWhitePixel() { return sysUI.getWhitePixel(); }

@@ -16,7 +16,7 @@
 
 #include "Effect.h"
 
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Core/Resource.h"
 #include "apoc3d/Core/ResourceHandle.h"
@@ -204,7 +204,7 @@ namespace Apoc3D
 			}
 
 
-			void AutomaticEffect::Update(const GameTime* time)
+			void AutomaticEffect::Update(const AppTime* time)
 			{
 				float t = m_lastTime + time->ElapsedTime;
 				m_unifiedTime += t - m_lastTime;

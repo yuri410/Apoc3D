@@ -69,7 +69,7 @@ namespace SampleFont
 
 		Game::Unload();
 	}
-	void FontDemo::Update(const GameTime* time)
+	void FontDemo::Update(const AppTime* time)
 	{
 		Game::Update(time);
 
@@ -103,7 +103,7 @@ namespace SampleFont
 		
 
 	}
-	void FontDemo::UpdateConstrainedVarTimeStep(const GameTime* time)
+	void FontDemo::UpdateConstrainedVarTimeStep(const AppTime* time)
 	{
 		float d = m_testDirection*0.1f;
 		m_test += time->ElapsedTime * d;
@@ -113,7 +113,7 @@ namespace SampleFont
 			m_testDirection = 1;
 
 	}
-	void FontDemo::Draw(const GameTime* time)
+	void FontDemo::Draw(const AppTime* time)
 	{
 		m_device->BeginFrame();
 		m_device->Clear(CLEAR_ColorBuffer, 0, 1, 0);

@@ -17,7 +17,7 @@
 #include "RenderWindow.h"
 
 #include "RenderWindowHandler.h"
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 
 namespace Apoc3D
 {
@@ -68,12 +68,12 @@ namespace Apoc3D
 				}
 			}
 
-			void FPSCounter::Step(const GameTime* time)
+			void FPSCounter::Step(const AppTime* time)
 			{
 				Step(time->getElapsedRealTime()); 
 			}
 
-			void RenderView::UpdateFpsCounter(const GameTime* time)
+			void RenderView::UpdateFpsCounter(const AppTime* time)
 			{
 				m_fpsCounter.Step(time); 
 			}
@@ -120,18 +120,18 @@ namespace Apoc3D
 					m_evtHandler->Unload();
 			}
 
-			void RenderWindow::OnDraw(const GameTime* time)
+			void RenderWindow::OnDraw(const AppTime* time)
 			{
 				if (m_evtHandler)
 					m_evtHandler->Draw(time); 
 				UpdateFpsCounter(time);
 			}
-			void RenderWindow::OnUpdate(const GameTime* time)		
+			void RenderWindow::OnUpdate(const AppTime* time)		
 			{
 				if (m_evtHandler)
 					m_evtHandler->Update(time);
 			}
-			void RenderWindow::OnUpdateConstrainedVarTimeStep(const GameTime* time)
+			void RenderWindow::OnUpdateConstrainedVarTimeStep(const AppTime* time)
 			{
 				if (m_evtHandler)
 					m_evtHandler->UpdateConstrainedVarTimeStep(time);

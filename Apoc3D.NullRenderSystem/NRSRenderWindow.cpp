@@ -21,7 +21,7 @@
 #include "NRSObjects.h"
 #include "NRSPlatform.h"
 
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
 #include "apoc3d/Utility/StringUtils.h"
@@ -240,7 +240,7 @@ namespace Apoc3D
 
 					for (int32 i = 0; i < numUpdatesNeeded; i++)
 					{
-						GameTime gt(m_referenceElapsedTime, iterationFullDt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
+						AppTime gt(m_referenceElapsedTime, iterationFullDt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
 						NRS_Update(&gt);
 					}
 
@@ -258,12 +258,12 @@ namespace Apoc3D
 
 						for (int32 i = 0; i < numUpdatesNeeded; i++)
 						{
-							GameTime gt(dtPerIteration, dt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
+							AppTime gt(dtPerIteration, dt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
 							NRS_UpdateConstrainedVarTimeStep(&gt);
 						}
 					}
 
-					GameTime gt(iterationFullDt, dt, m_accumulatedDt_fixedStep, 1, fps, renderingSlow);
+					AppTime gt(iterationFullDt, dt, m_accumulatedDt_fixedStep, 1, fps, renderingSlow);
 					NRS_DrawFrame(&gt);
 				}
 				else if (m_timeStepMode == TimeStepMode::Constrained)
@@ -282,33 +282,33 @@ namespace Apoc3D
 
 						for (int32 i = 0; i < numUpdatesNeeded; i++)
 						{
-							GameTime gt(dtPerIteration, dt / numUpdatesNeeded, 0, numUpdatesNeeded, fps, renderingSlow);
+							AppTime gt(dtPerIteration, dt / numUpdatesNeeded, 0, numUpdatesNeeded, fps, renderingSlow);
 							NRS_Update(&gt);
 						}
 					}
 
-					GameTime gt(dt, dt, 0, 1, fps, renderingSlow);
+					AppTime gt(dt, dt, 0, 1, fps, renderingSlow);
 					NRS_DrawFrame(&gt);
 				}
 				else
 				{
-					GameTime gt(dt, fps);
+					AppTime gt(dt, fps);
 
 					NRS_Update(&gt);
 					NRS_DrawFrame(&gt);
 				}
 			}
 
-			void NRSRenderWindow::NRS_DrawFrame(const GameTime* time)
+			void NRSRenderWindow::NRS_DrawFrame(const AppTime* time)
 			{
 				OnFrameStart();
 				NRS_Render(time);
 				OnFrameEnd();
 			}
 
-			void NRSRenderWindow::NRS_Render(const GameTime* time) { OnDraw(time); }
-			void NRSRenderWindow::NRS_Update(const GameTime* time) { OnUpdate(time); }
-			void NRSRenderWindow::NRS_UpdateConstrainedVarTimeStep(const GameTime* time) { OnUpdateConstrainedVarTimeStep(time); }
+			void NRSRenderWindow::NRS_Render(const AppTime* time) { OnDraw(time); }
+			void NRSRenderWindow::NRS_Update(const AppTime* time) { OnUpdate(time); }
+			void NRSRenderWindow::NRS_UpdateConstrainedVarTimeStep(const AppTime* time) { OnUpdateConstrainedVarTimeStep(time); }
 
 		}
 	}

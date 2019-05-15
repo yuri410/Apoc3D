@@ -26,7 +26,7 @@ namespace Apoc3D
 			void ScheduleBringFront(ControlContainer* cc);
 
 			void Draw();
-			void Update(const GameTime* time);
+			void Update(const AppTime* time);
 
 			Point ClampFormMovementOffset(Form* frm, const Point& vec);
 

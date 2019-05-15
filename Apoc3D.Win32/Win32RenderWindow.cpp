@@ -1,7 +1,7 @@
 #include "Win32RenderWindow.h"
 #include "Win32Window.h"
 #include "Win32Clock.h"
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 
 namespace Apoc3D
 {
@@ -158,7 +158,7 @@ namespace Apoc3D
 				{
 					if (IsDeviceReady())
 					{
-						GameTime gt(m_referenceElapsedTime, iterationFullDt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
+						AppTime gt(m_referenceElapsedTime, iterationFullDt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
 						OnUpdate(&gt);
 					}
 				}
@@ -179,13 +179,13 @@ namespace Apoc3D
 					{
 						if (IsDeviceReady())
 						{
-							GameTime gt(dtPerIteration, dt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
+							AppTime gt(dtPerIteration, dt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
 							OnUpdateConstrainedVarTimeStep(&gt);
 						}
 					}
 				}
 
-				GameTime gt(iterationFullDt, dt, m_accumulatedDt_fixedStep, 1, fps, renderingSlow);
+				AppTime gt(iterationFullDt, dt, m_accumulatedDt_fixedStep, 1, fps, renderingSlow);
 				OnRenderFrame(&gt);
 			}
 			else if (m_timeStepMode == TimeStepMode::Constrained)
@@ -206,18 +206,18 @@ namespace Apoc3D
 					{
 						if (IsDeviceReady())
 						{
-							GameTime gt(dtPerIteration, dt / numUpdatesNeeded, 0, numUpdatesNeeded, fps, renderingSlow);
+							AppTime gt(dtPerIteration, dt / numUpdatesNeeded, 0, numUpdatesNeeded, fps, renderingSlow);
 							OnUpdate(&gt);
 						}
 					}
 				}
 
-				GameTime gt(dt, dt, 0, 1, fps, renderingSlow);
+				AppTime gt(dt, dt, 0, 1, fps, renderingSlow);
 				OnRenderFrame(&gt);
 			}
 			else
 			{
-				GameTime gt(dt, fps);
+				AppTime gt(dt, fps);
 
 				if (IsDeviceReady())
 				{

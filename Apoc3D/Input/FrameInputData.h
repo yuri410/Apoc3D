@@ -21,7 +21,7 @@
 #include "apoc3d/ApocCommon.h"
 #include "apoc3d/Collections/Queue.h"
 #include "apoc3d/Meta/EventDelegate.h"
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::IO;
@@ -38,7 +38,7 @@ namespace Apoc3D
 			{
 				uint32 Index;
 
-				Core::GameTime Time;
+				Core::AppTime Time;
 
 				byte MouseStateSize;
 				char MouseState[128];
@@ -92,7 +92,7 @@ namespace Apoc3D
 			InputPlayer(const String& file, const String& clientVersion);
 			~InputPlayer();
 
-			void Update(const GameTime* time, GameTime& newTime);
+			void Update(const AppTime* time, AppTime& newTime);
 
 			bool isFinished() const;
 
@@ -112,7 +112,7 @@ namespace Apoc3D
 			InputRecorder(uint64 machineID, const String& clientVersion, bool isLiveStream);
 			~InputRecorder();
 
-			void Update(const GameTime* time);
+			void Update(const AppTime* time);
 
 			bool Enabled = true;
 			EventDelegate<const FrameInputData&, const char*, int64> eventStreamData;

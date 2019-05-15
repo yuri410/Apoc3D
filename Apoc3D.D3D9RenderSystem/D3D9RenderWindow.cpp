@@ -26,7 +26,7 @@
 #include "apoc3d.Win32/Win32Window.h"
 #include "apoc3d.Win32/Win32Clock.h"
 
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
 #include "apoc3d/Utility/StringUtils.h"
@@ -167,7 +167,7 @@ namespace Apoc3D
 					device->OnDeviceReset();
 			}
 
-			void D3D9RenderWindow::OnRenderFrame(const GameTime* time)
+			void D3D9RenderWindow::OnRenderFrame(const AppTime* time)
 			{
 				if (!m_gameWindow->getIsMinimized())
 				{

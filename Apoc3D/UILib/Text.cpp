@@ -1,7 +1,7 @@
 #include "Text.h"
 #include "FontManager.h"
 
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 #include "apoc3d/Input/InputAPI.h"
 #include "apoc3d/Input/Mouse.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
@@ -265,7 +265,7 @@ namespace Apoc3D
 			}
 		}
 
-		void Label::Update(const GameTime* time)
+		void Label::Update(const AppTime* time)
 		{
 			UpdateEvents_StandardButton(m_mouseHover, m_mouseDown, getAbsoluteArea(),
 				&Label::OnMouseHover, &Label::OnMouseOut, &Label::OnPress, &Label::OnRelease);
@@ -669,7 +669,7 @@ namespace Apoc3D
 			}
 		}
 
-		void TextBox::Update(const GameTime* time)
+		void TextBox::Update(const AppTime* time)
 		{
 			Apoc3D::Math::Rectangle textArea = GetTextArea();
 			m_visibleLines = (int)ceilf((float)textArea.Height / m_fontRef->getLineHeightInt());
@@ -749,7 +749,7 @@ namespace Apoc3D
 
 			m_clickChecker.Update(time, mouse);
 		}
-		void TextBox::UpdateScrollbars(const GameTime* time)
+		void TextBox::UpdateScrollbars(const AppTime* time)
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 

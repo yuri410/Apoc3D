@@ -14,7 +14,7 @@
  * ------------------------------------------------------------------------
  */
 
-#include "GameTime.h"
+#include "AppTime.h"
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/IOLib/BinaryWriter.h"
 
@@ -24,21 +24,21 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		GameTime::GameTime() { }
-		GameTime::~GameTime() { }
+		AppTime::AppTime() { }
+		AppTime::~AppTime() { }
 
-		GameTime::GameTime(float elapsedRTime, float fps)
+		AppTime::AppTime(float elapsedRTime, float fps)
 			: ElapsedTime(elapsedRTime), ElapsedRealTime(elapsedRTime), FPS(fps) 
 		{ }
 
-		GameTime::GameTime(float elapsedTime, float elapsedRTime, float elapsedTimeSubstep, int32 iteractionCount, float fps, bool isRenderingSlow)
+		AppTime::AppTime(float elapsedTime, float elapsedRTime, float elapsedTimeSubstep, int32 iteractionCount, float fps, bool isRenderingSlow)
 			: ElapsedTime(elapsedTime), ElapsedTimeSubstep(elapsedTimeSubstep),
 			ElapsedRealTime(elapsedRTime), IterationCount(iteractionCount),
 			FPS(fps), IsRenderingSlow(isRenderingSlow) 
 		{ }
 
 
-		void GameTime::Write(BinaryWriter* bw)
+		void AppTime::Write(BinaryWriter* bw)
 		{
 			bw->WriteSingle(ElapsedTime);
 			bw->WriteSingle(ElapsedRealTime);
@@ -48,7 +48,7 @@ namespace Apoc3D
 			bw->WriteBoolean(IsRenderingSlow);
 		}
 
-		void GameTime::Read(BinaryReader* br)
+		void AppTime::Read(BinaryReader* br)
 		{
 			ElapsedTime = br->ReadSingle();
 			ElapsedRealTime = br->ReadSingle();

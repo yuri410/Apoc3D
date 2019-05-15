@@ -11,8 +11,8 @@ namespace dip
 			: m_name(name) { }
 		virtual ~SubDemo() { }
 
-		virtual void Update(const GameTime* time) { }
-		virtual void Draw(const GameTime* time, Sprite* spr) { }
+		virtual void Update(const AppTime* time) { }
+		virtual void Draw(const AppTime* time, Sprite* spr) { }
 		virtual void Show() = 0;
 
 		const String& getName() const { return m_name; }

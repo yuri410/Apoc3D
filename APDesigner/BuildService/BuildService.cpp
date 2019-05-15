@@ -94,7 +94,7 @@ namespace APDesigner
 	}
 
 
-	bool BuildInterface::MainThreadUpdate(const GameTime* time, BuildResult* result)
+	bool BuildInterface::MainThreadUpdate(const AppTime* time, BuildResult* result)
 	{
 		bool justEnded = false;
 

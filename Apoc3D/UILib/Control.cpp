@@ -25,7 +25,7 @@
 #include "List.h"
 #include "Bar.h"
 
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 
 #include "apoc3d/Input/Mouse.h"
 #include "apoc3d/Input/InputAPI.h"
@@ -34,7 +34,7 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		void MultiClickChecker::Update(const GameTime* time, Input::Mouse* mouse)
+		void MultiClickChecker::Update(const AppTime* time, Input::Mouse* mouse)
 		{
 			m_timeSinceLastClick += time->getElapsedTime();
 			
@@ -293,7 +293,7 @@ namespace Apoc3D
 			if (m_hscrollbar->GetLength() != hs.Length)
 				m_hscrollbar->SetLength(hs.Length);
 		}
-		void ScrollableControl::UpdateScrollBarsGeneric(const Apoc3D::Math::Rectangle& area, const GameTime* time)
+		void ScrollableControl::UpdateScrollBarsGeneric(const Apoc3D::Math::Rectangle& area, const AppTime* time)
 		{
 			UpdateScrollBarsLength(area);
 
@@ -381,7 +381,7 @@ namespace Apoc3D
 			}
 		}
 
-		void ControlCollection::Update(const GameTime* time)
+		void ControlCollection::Update(const AppTime* time)
 		{
 			Control* overridingControl = nullptr;
 			for (int32 i = 0; i < m_count; i++)
@@ -495,7 +495,7 @@ namespace Apoc3D
 			}
 		}
 
-		void ControlContainer::Update(const GameTime* time)
+		void ControlContainer::Update(const AppTime* time)
 		{
 			m_controls.SetElementsBaseOffset(GetAbsolutePosition());
 			

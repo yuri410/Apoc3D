@@ -73,7 +73,7 @@ namespace Apoc3D
 			void InitializeInput(RenderWindow* window, const InputCreationParameters& params);
 			void FinalizeInput();
 
-			void Update(const GameTime* time);
+			void Update(const AppTime* time);
 
 			Mouse* getMouse() const { return m_mouse; }
 			Keyboard* getKeyboard() const { return m_keyboard; }

@@ -34,7 +34,7 @@ namespace Apoc3D
 			RequiresNodeUpdate = true;
 		}
 
-		void Entity::Update(const GameTime* time)
+		void Entity::Update(const AppTime* time)
 		{
 			if (m_models[0])
 			{

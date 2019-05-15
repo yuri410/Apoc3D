@@ -80,7 +80,7 @@ namespace APDesigner
 
 		Document::Initialize(device);
 	}
-	void FontDocument::Update(const GameTime* time)
+	void FontDocument::Update(const AppTime* time)
 	{
 		Document::Update(time);
 

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef APOC3D_GAMETIME_H
-#define APOC3D_GAMETIME_H
+#ifndef APOC3D_APPTIME_H
+#define APOC3D_APPTIME_H
 
 /* -----------------------------------------------------------------------
  * This source file is part of Apoc3D Framework
@@ -24,19 +24,13 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		/** Contains the current timing state of the game. */
-		struct APAPI GameTime
+		/** Contains the current timing state of the aplication. */
+		struct APAPI AppTime
 		{
-			GameTime();
-			GameTime(float elapsedRTime, float fps);
-			GameTime(float elapsedTime, float elapsedRTime, float elapsedTimeSubstep, int32 iteractionCount, float fps, bool isRenderingSlow);
-			~GameTime();
-
-			float getElapsedTime() const { return ElapsedTime; }
-
-			float getElapsedRealTime() const { return ElapsedRealTime; }
-
-			float getFPS() const { return FPS; }
+			AppTime();
+			AppTime(float elapsedRTime, float fps);
+			AppTime(float elapsedTime, float elapsedRTime, float elapsedTimeSubstep, int32 iteractionCount, float fps, bool isRenderingSlow);
+			~AppTime();
 
 			/**
 			 * The elapsed game time since last update, in seconds.

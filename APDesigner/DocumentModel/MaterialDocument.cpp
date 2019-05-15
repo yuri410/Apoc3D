@@ -340,7 +340,7 @@ namespace APDesigner
 
 
 	}
-	void MaterialDocument::Update(const GameTime* time)
+	void MaterialDocument::Update(const AppTime* time)
 	{
 		m_scene.Update(time);
 		m_camera->Update(time);
@@ -617,7 +617,7 @@ namespace APDesigner
 		m_pbAmbient->Draw(sprite);
 		m_btnAmbient->Draw(sprite);
 	}
-	void ColorField::Update(const GameTime* time)
+	void ColorField::Update(const AppTime* time)
 	{
 		m_lblAmbient->Position = Position;
 		m_pbAmbient->Position = Position + Point(100, 0);

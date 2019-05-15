@@ -88,7 +88,7 @@ namespace Apoc3D
 			
 			void Turn(float dx, float dy);
 
-			void Update(const GameTime* time);
+			void Update(const AppTime* time);
 			void UpdateTransform();
 
 			void setPosition(const Vector3& p)
@@ -142,7 +142,7 @@ namespace Apoc3D
 			void Reset();
 
 			/** Update the camera's motion simulation and the view */
-			virtual void Update(const GameTime* time);
+			virtual void Update(const AppTime* time);
 
 			void ForceUpdateMatrix() { UpdateMatrices(); }
 

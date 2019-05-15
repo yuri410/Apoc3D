@@ -107,7 +107,7 @@ namespace Apoc3D
 		}
 
 
-		void ComboBox::Update(const GameTime* time)
+		void ComboBox::Update(const AppTime* time)
 		{
 			SetControlBasicStates({ m_textbox, m_button, m_listBox });
 

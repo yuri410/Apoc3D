@@ -33,7 +33,7 @@
 #include "apoc3d/Graphics/RenderOperation.h"
 #include "apoc3d/Graphics/Material.h"
 #include "apoc3d/Graphics/GeometryData.h"
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 
 #include "apoc3d/Vfs/FileSystem.h"
 #include "apoc3d/Vfs/FileLocateRule.h"

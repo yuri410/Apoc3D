@@ -26,7 +26,7 @@ namespace APDesigner
 		m_docForm->Show();
 	}
 
-	void Document::Update(const GameTime* time)
+	void Document::Update(const AppTime* time)
 	{
 		if (!m_activated)
 		{

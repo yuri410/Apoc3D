@@ -83,7 +83,7 @@ namespace APDesigner
 		}
 	}
 
-	void QuadTreeNode::Update(const GameTime* time)
+	void QuadTreeNode::Update(const AppTime* time)
 	{
 		if (m_isDirty)
 		{

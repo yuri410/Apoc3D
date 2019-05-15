@@ -36,7 +36,7 @@ namespace SampleTerrain
 	{
 	}
 
-	void GameCamera::Update(const GameTime* time)
+	void GameCamera::Update(const AppTime* time)
 	{
 		float gravity = 50;
 

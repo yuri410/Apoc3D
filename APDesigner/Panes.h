@@ -28,7 +28,7 @@ namespace APDesigner
 
 		void Initialize(RenderDevice* device);
 
-		void Update(const GameTime* time);
+		void Update(const AppTime* time);
 
 		Form* getPane() const { return m_pane; }
 	private:
@@ -72,7 +72,7 @@ namespace APDesigner
 
 		void Initialize(RenderDevice* device);
 
-		void Update(const GameTime* time);
+		void Update(const AppTime* time);
 
 		void UpdateToNewProject(Project* prj);
 
@@ -166,6 +166,6 @@ namespace APDesigner
 	//	PropertyPane(MainWindow* window);
 
 	//	void Initialize(RenderDevice* device);
-	//	void Update(const GameTime* time);
+	//	void Update(const AppTime* time);
 	//};
 }

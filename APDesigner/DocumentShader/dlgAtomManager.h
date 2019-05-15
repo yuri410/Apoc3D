@@ -30,7 +30,7 @@ namespace APDesigner
 
 		void Initialize(RenderDevice* device);
 
-		void Update(const GameTime* time);
+		void Update(const AppTime* time);
 
 		void UpdateToNewProject(Project* prj);
 

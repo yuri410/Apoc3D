@@ -137,7 +137,7 @@ namespace Apoc3D
 			m_decrButton->Draw(sprite);
 			m_incrButton->Draw(sprite);
 		}
-		void ScrollBar::Update(const GameTime* time)
+		void ScrollBar::Update(const AppTime* time)
 		{
 			m_isMouseHovering = false;
 
@@ -421,7 +421,7 @@ namespace Apoc3D
 				TextSettings.Draw(sprite, m_fontRef, Text, dstRect, Enabled);
 			}
 		}
-		void ProgressBar::Update(const GameTime* time)
+		void ProgressBar::Update(const AppTime* time)
 		{
 
 		}
@@ -535,7 +535,7 @@ namespace Apoc3D
 
 			g->Draw(sprite, handleArea);
 		}
-		void SliderBar::Update(const GameTime* time)
+		void SliderBar::Update(const AppTime* time)
 		{
 			m_isMouseHovering = false;
 

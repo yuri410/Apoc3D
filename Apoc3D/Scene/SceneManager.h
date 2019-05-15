@@ -63,7 +63,7 @@ namespace Apoc3D
 
 			virtual void PrepareVisibleObjects(Camera* camera, BatchData* batchData) = 0;
 
-			virtual void Update(const GameTime* time);
+			virtual void Update(const AppTime* time);
 
 			virtual SceneObject* FindObject(const Ray& ray, IObjectFilter* filter) = 0;
 

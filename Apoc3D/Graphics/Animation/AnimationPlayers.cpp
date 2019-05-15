@@ -15,7 +15,7 @@
  */
 
 #include "AnimationPlayers.h"
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 
 using namespace Apoc3D::Collections;
 
@@ -56,7 +56,7 @@ namespace Apoc3D
 				}
 			}
 
-			void ModelAnimationPlayerBase::Update(const GameTime* time)
+			void ModelAnimationPlayerBase::Update(const AppTime* time)
 			{
 				if (!m_currentClipValue)
 					return;
@@ -201,7 +201,7 @@ namespace Apoc3D
 			}
 
 
-			void MaterialAnimationPlayer::Update(const GameTime* gameTime)
+			void MaterialAnimationPlayer::Update(const AppTime* gameTime)
 			{
 				if (!m_currentClipValue)
 					return;

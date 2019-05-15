@@ -73,7 +73,7 @@ namespace Apoc3D
 				}
 
 				/** Called during the update loop to move the animation forward */
-				virtual void Update(const GameTime* time);
+				virtual void Update(const AppTime* time);
 
 				virtual void GetTransform(int boneID, Matrix& result) = 0;
 				
@@ -339,7 +339,7 @@ namespace Apoc3D
 				/** Will resume playback of the current clip */
 				void ResumeClip() { m_paused = false; }
 
-				virtual void Update(const GameTime* gameTime);
+				virtual void Update(const AppTime* gameTime);
 
 				const MaterialAnimationClip* getCurrentClip() const { return m_currentClipValue; }		/** Gets the clip currently being decoded. */
 

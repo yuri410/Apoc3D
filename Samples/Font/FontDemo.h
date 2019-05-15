@@ -33,13 +33,13 @@ namespace SampleFont
 		/** Allows the game to run logic such as updating the world,
 		 *  checking for collisions, gathering input, playing audio and etc.
 		 */
-		virtual void Update(const GameTime* time);
+		virtual void Update(const AppTime* time);
 
-		virtual void UpdateConstrainedVarTimeStep(const GameTime* time);
+		virtual void UpdateConstrainedVarTimeStep(const AppTime* time);
 
 		/** This is called when the game should draw a frame.
 		*/
-		virtual void Draw(const GameTime* time);
+		virtual void Draw(const AppTime* time);
 
 		/** This is called before drawing a new frame.
 		*/

@@ -29,7 +29,7 @@
 #include "apoc3d/Vfs/FileSystem.h"
 #include "apoc3d/Input/Mouse.h"
 #include "apoc3d/Input/InputAPI.h"
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Input;
@@ -283,7 +283,7 @@ namespace Apoc3D
 			Restore();
 		}
 
-		void Form::Update(const GameTime* time)
+		void Form::Update(const AppTime* time)
 		{
 			if (!Visible)
 				return;
@@ -529,7 +529,7 @@ namespace Apoc3D
 			// snapping?
 		}
 
-		void Form::CheckClick(const GameTime* time)
+		void Form::CheckClick(const AppTime* time)
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			Apoc3D::Math::Rectangle dragArea = GetDragArea();

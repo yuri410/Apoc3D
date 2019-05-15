@@ -19,7 +19,7 @@
 
 #include "EssentialCommon.h"
 
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 #include "apoc3d/Graphics/RenderSystem/RenderWindowHandler.h"
 #include "apoc3d/Input/InputAPI.h"
 
@@ -37,11 +37,11 @@ namespace Apoc3DEx
 	 *  all handled in this class.
 	 *
 	 */
-	class APEXAPI Game : public RenderWindowHandler
+	class APEXAPI App : public RenderWindowHandler
 	{
 	public:
-		Game(RenderWindow* wnd);
-		virtual ~Game();
+		App(RenderWindow* wnd);
+		virtual ~App();
 
 		/** This is the place to load or initialize something before any other 
 		 *  events being handled. Remember to call this if overrided.
@@ -64,11 +64,11 @@ namespace Apoc3DEx
 		/** Allows the game to run logic such as updating the world,
 		 *  checking for collisions, gathering input, playing audio and etc.
 		 */
-		virtual void Update(const GameTime* time);
+		virtual void Update(const AppTime* time);
 
 		/** This is called when the game should draw a frame.
 		*/
-		virtual void Draw(const GameTime* time);
+		virtual void Draw(const AppTime* time);
 
 		/** This is called before drawing a new frame.
 		*/
@@ -89,7 +89,7 @@ namespace Apoc3DEx
 		Console* getConsole() const { return m_console; }
 
 	protected:
-		const GameTime* GetRecordCorrectedTime(const GameTime* time);
+		const AppTime* GetRecordCorrectedTime(const AppTime* time);
 
 		RenderWindow* m_window;
 		RenderDevice* m_device = nullptr;
@@ -99,7 +99,7 @@ namespace Apoc3DEx
 
 		Input::InputPlayer* m_player = nullptr;
 		Input::InputRecorder* m_recorder = nullptr;
-		GameTime m_correctedFrameTime;
+		AppTime m_correctedFrameTime;
 
 		InputCreationParameters m_inputCreationParam;
 	};

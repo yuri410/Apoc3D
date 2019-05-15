@@ -84,7 +84,7 @@ namespace APDesigner
 		UpdateAtomListView();
 	}
 
-	void AtomManagerDialog::Update(const GameTime* time)
+	void AtomManagerDialog::Update(const AppTime* time)
 	{
 
 	}
