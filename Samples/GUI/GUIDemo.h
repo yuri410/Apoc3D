@@ -6,7 +6,7 @@
 
 namespace Sample_GUI
 {
-    class GUIDemo : public App
+    class GUIDemo : public Application
 	{
 	public:
 		static const int DMCount = 8;

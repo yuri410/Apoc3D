@@ -57,13 +57,14 @@ namespace Apoc3D
 					for (int j=0;j<count;j++)
 					{
 						Resource* res;
-						m_genLock.lock();
-						count = m_generationList.getCount();
-						if (j<count)
-							res = m_generationList[j];
-						else
-							break;
-						m_genLock.unlock();
+						{
+							std::lock_guard<std::mutex> lock(m_genLock);
+							count = m_generationList.getCount();
+							if (j < count)
+								res = m_generationList[j];
+							else
+								break;
+						}
 
 						if (res->m_generation->IsGenerationOutOfTime((float)timeStart/CLOCKS_PER_SEC))
 						{

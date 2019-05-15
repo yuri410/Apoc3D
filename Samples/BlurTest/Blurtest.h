@@ -6,7 +6,7 @@
 
 namespace Sample_GUI
 {
-    class BlurTest : public App
+    class BlurTest : public Application
 	{
 	public:
 		static const int DMCount = 8;

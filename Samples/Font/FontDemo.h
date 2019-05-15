@@ -6,7 +6,7 @@
 
 namespace SampleFont
 {
-	class FontDemo : public App
+	class FontDemo : public Application
 	{
 	public:
 		FontDemo(RenderWindow* wnd);

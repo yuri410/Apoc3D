@@ -5,7 +5,7 @@
 
 namespace SampleAtmosphere
 {
-	class AtmosphereDemo : public App
+	class AtmosphereDemo : public Application
 	{
 	public:
 		AtmosphereDemo(RenderWindow* wnd);

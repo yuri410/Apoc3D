@@ -8,7 +8,7 @@
 namespace SampleTerrain
 {
 	TerrainDemo::TerrainDemo(RenderWindow* wnd)
-		: App(wnd), m_allowTakingDownTrees(true), m_isMoving(false), m_isLoading(true), m_sceneContentLoaded(2),
+		: Application(wnd), m_allowTakingDownTrees(true), m_isMoving(false), m_isLoading(true), m_sceneContentLoaded(2),
 		m_zeroOpFrameCounter(0), m_helpShowState(0)
 	{
 		memset(m_terrainBlocks, 0, sizeof(m_terrainBlocks));
@@ -22,18 +22,18 @@ namespace SampleTerrain
 	void TerrainDemo::Initialize()
 	{
 		m_window->setTitle(L"Terrain Demo");
-		App::Initialize();
+		Application::Initialize();
 
 		m_sprite = m_device->getObjectFactory()->CreateSprite();
 	}
 	void TerrainDemo::Finalize()
 	{
-		App::Finalize();
+		Application::Finalize();
 	}
 
 	void TerrainDemo::Load()
 	{
-		App::Load();
+		Application::Load();
 
 		{
 			// This will change the default FileLocateRule 'Textures' to our own one, which
@@ -182,11 +182,11 @@ namespace SampleTerrain
 		TerrainMeshManager::getSingleton().Shutdown();
 		TerrainMeshManager::getSingleton().FinalizeResources();
 		TerrainMeshManager::Finalize();
-		App::Unload();
+		Application::Unload();
 	}
 	void TerrainDemo::Update(const AppTime* time)
 	{
-		App::Update(time);
+		Application::Update(time);
 
 		// pushing trees. Camera's world coord is converted to chunk space.
 		// Once the chunk is found, it will be notified to do the work on trees.
@@ -244,7 +244,7 @@ namespace SampleTerrain
 
 		m_sceneRenderer->RenderScene(m_scene);
 
-		App::Draw(time);
+		Application::Draw(time);
 		
 		m_sprite->Begin((Sprite::SpriteSettings)(Sprite::SPR_AlphaBlended | Sprite::SPR_RestoreState));
 		DrawUI(m_sprite);

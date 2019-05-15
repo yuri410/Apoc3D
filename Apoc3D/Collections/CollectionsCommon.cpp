@@ -73,6 +73,16 @@ namespace Apoc3D
 
 		//////////////////////////////////////////////////////////////////////////
 
+		const std::hash<std::thread::id> EqualityComparer<std::thread::id>::m_threadIDHasher;
+
+		bool EqualityComparer<std::thread::id>::Equals(const std::thread::id& x, const std::thread::id& y) { return x == y; }
+		int32 EqualityComparer<std::thread::id>::GetHashCode(const std::thread::id& obj)
+		{
+			uint64 h = m_threadIDHasher(obj);;
+			return (int32)(h ^ (h >> 32));
+		}
+
+		//////////////////////////////////////////////////////////////////////////
 
 		bool NStringEqualityComparerNoCase::Equals(const std::string& x, const std::string& y) { return StringUtils::EqualsNoCase(x,y); }
 		int32 NStringEqualityComparerNoCase::GetHashCode(const std::string& obj)

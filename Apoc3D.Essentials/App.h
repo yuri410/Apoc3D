@@ -35,11 +35,11 @@ namespace Apoc3D
 	 *  all handled in this class.
 	 *
 	 */
-	class APEXAPI App : public RenderWindowHandler
+	class APEXAPI Application : public RenderWindowHandler
 	{
 	public:
-		App(RenderWindow* wnd);
-		virtual ~App();
+		Application(RenderWindow* wnd);
+		virtual ~Application();
 
 		/** This is the place to load or initialize something before any other 
 		 *  events being handled. Remember to call this if overrided.

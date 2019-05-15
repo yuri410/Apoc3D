@@ -22,7 +22,7 @@
 
 namespace dip
 {
-    class DIP1 : public App
+    class DIP1 : public Application
 	{
 	public:
 		DIP1(RenderWindow* wnd);

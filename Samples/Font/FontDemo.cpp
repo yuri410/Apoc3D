@@ -10,7 +10,7 @@ namespace SampleFont
 		L"ta czcionka obsługuje wiele języków.";
 
 	FontDemo::FontDemo(RenderWindow* wnd)
-		: App(wnd), m_currentPressure(5)
+		: Application(wnd), m_currentPressure(5)
 	{
 		//wnd->SetupFixedFrameTime(false);
 	}
@@ -23,18 +23,18 @@ namespace SampleFont
 	void FontDemo::Initialize()
 	{
 		m_window->setTitle(L"Font Demo");
-		App::Initialize();
+		Application::Initialize();
 
 		m_sprite = m_device->getObjectFactory()->CreateSprite();
 	}
 	void FontDemo::Finalize()
 	{
-		App::Finalize();
+		Application::Finalize();
 	}
 
 	void FontDemo::Load()
 	{
-		App::Load();
+		Application::Load();
 
 		{
 			FileLocation fl = FileSystem::getSingleton().Locate(L"uming14.fnt", FileLocateRule::Default);
@@ -67,11 +67,11 @@ namespace SampleFont
 	{
 		delete m_sprite;
 
-		App::Unload();
+		Application::Unload();
 	}
 	void FontDemo::Update(const AppTime* time)
 	{
-		App::Update(time);
+		Application::Update(time);
 
 		Keyboard* kb = InputAPIManager::getSingleton().getKeyboard();
 
@@ -193,7 +193,7 @@ namespace SampleFont
 
 		m_sprite->End();
 
-		App::Draw(time);
+		Application::Draw(time);
 
 		m_device->EndFrame();
 	}

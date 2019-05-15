@@ -31,7 +31,7 @@ using namespace Apoc3D::VFS;
 
 namespace Apoc3D
 {
-	App::App(RenderWindow* wnd)
+	Application::Application(RenderWindow* wnd)
 		: m_window(wnd)
 	{
 		m_inputCreationParam.UseKeyboard = true;
@@ -39,39 +39,39 @@ namespace Apoc3D
 		m_inputCreationParam.PreferredGamepadCount = 0;
 	}
 
-	App::~App()
+	Application::~Application()
 	{
 		
 	}
 
-	void App::Exit()
+	void Application::Exit()
 	{
 		m_window->Exit();
 	}
 
-	void App::OnFrameStart()
+	void Application::OnFrameStart()
 	{
 
 	}
-	void App::OnFrameEnd()
+	void Application::OnFrameEnd()
 	{
 
 	}
-	void App::Draw(const AppTime* time)
+	void Application::Draw(const AppTime* time)
 	{
 		SystemUI::Draw();
 	}
-	void App::Initialize()
+	void Application::Initialize()
 	{
 		m_device = m_window->getRenderDevice();
 		
 		InputAPIManager::getSingleton().InitializeInput(m_window, m_inputCreationParam);
 	}
-	void App::Finalize()
+	void Application::Finalize()
 	{
 		InputAPIManager::getSingleton().FinalizeInput();
 	}
-	void App::Load()
+	void Application::Load()
 	{
 		{
 			FileLocateRule rule;
@@ -86,14 +86,14 @@ namespace Apoc3D
 		m_console = new Console(m_device, m_UIskin, Point(600,100), Point(400,400));
 	}
 
-	void App::Unload()
+	void Application::Unload()
 	{
 		SystemUI::Finalize();
 		delete m_UIskin;
 		delete m_console;
 	}
 
-	void App::Update(const AppTime* time)
+	void Application::Update(const AppTime* time)
 	{
 		if (m_player && m_player->isFinished())
 		{
@@ -120,7 +120,7 @@ namespace Apoc3D
 		ResourceManager::PerformAllPostSync(time->ElapsedRealTime);
 	}
 
-	const AppTime* App::GetRecordCorrectedTime(const AppTime* time)
+	const AppTime* Application::GetRecordCorrectedTime(const AppTime* time)
 	{
 		if (m_player)
 		{

@@ -10,7 +10,7 @@ namespace SampleAtmosphere
 	};
 
 	AtmosphereDemo::AtmosphereDemo(RenderWindow* wnd)
-		: App(wnd)
+		: Application(wnd)
 	{
 	}
 
@@ -22,18 +22,18 @@ namespace SampleAtmosphere
 	void AtmosphereDemo::Initialize()
 	{
 		m_window->setTitle(L"Atmosphere Demo");
-		App::Initialize();
+		Application::Initialize();
 
 		m_sprite = m_device->getObjectFactory()->CreateSprite();
 	}
 	void AtmosphereDemo::Finalize()
 	{
-		App::Finalize();
+		Application::Finalize();
 	}
 
 	void AtmosphereDemo::Load()
 	{
-		App::Load();
+		Application::Load();
 
 		m_console->Minimize();
 
@@ -205,11 +205,11 @@ namespace SampleAtmosphere
 		
 		delete m_sprite;
 
-		App::Unload();
+		Application::Unload();
 	}
 	void AtmosphereDemo::Update(const AppTime* time)
 	{
-		App::Update(time);
+		Application::Update(time);
 
 		UpdateCamera(time);
 	}
@@ -245,7 +245,7 @@ namespace SampleAtmosphere
 		}
 
 
-		App::Draw(time);
+		Application::Draw(time);
 		
 		m_device->EndFrame();
 

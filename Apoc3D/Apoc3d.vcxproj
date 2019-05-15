@@ -336,7 +336,6 @@
     <ClInclude Include="Graphics\Animation\AnimationTypes.h" />
     <ClInclude Include="Graphics\BatchModelBuilder.h" />
     <ClInclude Include="Graphics\Camera.h" />
-    <ClInclude Include="Core\CoreCommon.h" />
     <ClInclude Include="core\resource.h" />
     <ClInclude Include="core\streaming\asyncprocessor.h" />
     <ClInclude Include="Graphics\LockData.h" />

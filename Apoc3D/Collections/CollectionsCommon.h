@@ -154,6 +154,14 @@ namespace Apoc3D
 			static bool Equals(const Apoc3D::Math::Color4& x, const Apoc3D::Math::Color4& y);
 			static int32 GetHashCode(const Apoc3D::Math::Color4& obj);
 		};
+		template <>
+		struct APAPI EqualityComparer<std::thread::id>
+		{
+			static bool Equals(const std::thread::id& x, const std::thread::id& y);
+			static int32 GetHashCode(const std::thread::id& obj);
+
+			static const std::hash<std::thread::id> m_threadIDHasher;
+		};
 
 
 
