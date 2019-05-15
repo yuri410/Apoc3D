@@ -22,7 +22,6 @@
 #include "apoc3d/ApocCommon.h"
 #include "apoc3d/Collections/Queue.h"
 #include "apoc3d/Platform/Thread.h"
-#include "apoc3d/Library/tinythread.h"
 #include "apoc3d/Utility/StringUtils.h"
 
 #include <atomic>
@@ -87,7 +86,7 @@ namespace Apoc3D
 
 				for (int32 i = 0; i < threadCount; i++)
 				{
-					tthread::thread* th = new tthread::thread(BackgroundMainStatic, &m_threadData[i]);
+					std::thread* th = new std::thread(BackgroundMainStatic, &m_threadData[i]);
 					Apoc3D::Platform::SetThreadName(th, threadCount == 1 ? name : (name + L"_" + Apoc3D::Utility::StringUtils::IntToString(i)));
 					m_threads.Add(th);
 				}
@@ -99,7 +98,7 @@ namespace Apoc3D
 					m_terminating = true;
 					m_queueEmptyWait.notify_all();
 
-					for (tthread::thread* th : m_threads)
+					for (std::thread* th : m_threads)
 					{
 						if (th->joinable())
 							th->join();
@@ -183,8 +182,8 @@ namespace Apoc3D
 			struct ThreadData
 			{
 				BackgroundWorker* m_owner;
-				std::atomic<bool> m_isRunning;
-				std::atomic<bool> m_isIdle;
+				std::atomic_bool  m_isRunning;
+				std::atomic_bool  m_isIdle;
 			};
 
 			static void BackgroundMainStatic(void* data) 
@@ -207,21 +206,23 @@ namespace Apoc3D
 						break;
 					}
 
-					m_queueMutex.lock();
 					volatile bool hasTask = false;
 					T task;
-					if (m_taskQueue.getCount() == 0)
 					{
-						td->m_isIdle = true;
-						m_queueEmptyWait.wait(m_queueMutex);
-						td->m_isIdle = false;
+						std::unique_lock<std::mutex> lock(m_queueMutex);
+
+						if (m_taskQueue.getCount() == 0)
+						{
+							td->m_isIdle = true;
+							m_queueEmptyWait.wait(lock); // allow spurious wait up. will be checked again
+							td->m_isIdle = false;
+						}
+						else
+						{
+							task = m_taskQueue.Dequeue();
+							hasTask = true;
+						}
 					}
-					else
-					{
-						task = m_taskQueue.Dequeue();
-						hasTask = true;
-					}
-					m_queueMutex.unlock();
 
 					if (m_terminating)
 						break;
@@ -235,11 +236,11 @@ namespace Apoc3D
 				BackgroundMainEnding();
 			}
 
-			tthread::condition_variable m_queueEmptyWait;
-			tthread::mutex m_queueMutex;
+			std::condition_variable m_queueEmptyWait;
+			std::mutex m_queueMutex;
 			Apoc3D::Collections::Queue<T> m_taskQueue;
 
-			Apoc3D::Collections::List<tthread::thread*> m_threads;
+			Apoc3D::Collections::List<std::thread*> m_threads;
 			Apoc3D::Collections::List<ThreadData> m_threadData;
 
 			std::atomic<bool> m_terminating = true;

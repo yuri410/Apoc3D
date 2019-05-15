@@ -20,7 +20,6 @@
 
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Collections/List.h"
-#include "apoc3d/Library/tinythread.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
@@ -90,7 +89,7 @@ namespace Apoc3D
 		private:
 			struct ArchiveKey
 			{
-				uint64 threadID;
+				std::thread::id threadID;
 				String filePath;
 			};
 
@@ -98,6 +97,8 @@ namespace Apoc3D
 			{
 				static bool Equals(const ArchiveKey& x, const ArchiveKey& y);
 				static int64 GetHashCode(const ArchiveKey& obj);
+
+				static const std::hash<std::thread::id> m_threadIDHasher;
 			};
 
 			typedef HashMap<ArchiveKey, Archive*, ArchiveKeyEqualityComparer> PackTable;
@@ -121,7 +122,7 @@ namespace Apoc3D
 			Archive* CreateArchive(const FileLocation& fl);
 			Archive* CreateArchive(const String& file);
 
-			tthread::mutex m_openedPackMutex;
+			std::mutex m_openedPackMutex;
 			PackTable m_openedPack;
 
 			PackFactoryTable m_factories;

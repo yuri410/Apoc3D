@@ -209,7 +209,7 @@ namespace Apoc3D
 				{
 					if (m_timerStarted)
 					{
-						m_pressingTime += time->getElapsedTime();
+						m_pressingTime += time->ElapsedTime;
 						if (m_pressingTime > 15 * 25 * 0.001f)
 						{
 							m_pressingTime -= 0.1f;

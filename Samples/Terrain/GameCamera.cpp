@@ -50,7 +50,7 @@ namespace SampleTerrain
 		float target = groundHeight * Terrain::HeightScale + 5;
 
 		// check by comparing acceleration
-		if ((m_position.Y-target)/time->getElapsedTime()>gravity)
+		if ((m_position.Y-target)/time->ElapsedTime>gravity)
 		{
 			m_isOnGround = false;
 		}
@@ -58,7 +58,7 @@ namespace SampleTerrain
 		// apply gravity when not on ground or jumping
 		if ((m_position.Y>= target && !m_isOnGround) || m_velocity.Y>0)
 		{
-			m_velocity.Y -= time->getElapsedTime() * gravity;
+			m_velocity.Y -= time->ElapsedTime * gravity;
 			//m_fallSpeed += time->getElapsedTime() * gravity;
 			//m_height -= m_fallSpeed * time->getElapsedTime();
 		}
@@ -100,7 +100,7 @@ namespace SampleTerrain
 				if (vLen > 0.05f)
 				{
 					if (m_isOnGround)
-						vLen -= time->getElapsedTime() * 1.5f;
+						vLen -= time->ElapsedTime * 1.5f;
 
 					hozV.NormalizeInPlace();
 					hozV = Vector2::Multiply(hozV, vLen);
@@ -120,7 +120,7 @@ namespace SampleTerrain
 
 			
 
-			Vector3 dp = v * time->getElapsedTime();
+			Vector3 dp = v * time->ElapsedTime;
 			m_position += dp;
 			m_velChange = Vector3::Zero;
 		}

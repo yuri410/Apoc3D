@@ -18,7 +18,6 @@
 #include "apoc3d/Platform/Thread.h"
 #include "GenerationTable.h"
 #include "apoc3d/Core/Resource.h"
-#include "apoc3d/Library/tinythread.h"
 
 #include <chrono>
 
@@ -36,8 +35,8 @@ namespace Apoc3D
 			{
 				if (isThreaded)
 				{
-					m_queueMutex = new tthread::mutex();
-					m_processThread = new tthread::thread(&AsyncProcessor::ThreadEntry, this);
+					m_queueMutex = new std::mutex();
+					m_processThread = new std::thread(&AsyncProcessor::ThreadEntry, this);
 					SetThreadName(m_processThread, name);
 				}
 			}

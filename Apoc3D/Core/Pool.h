@@ -21,7 +21,6 @@
 
 #include "apoc3d/ApocCommon.h"
 #include "apoc3d/Collections/Queue.h"
-#include "apoc3d/Library/tinythread.h"
 
 using namespace Apoc3D::Collections;
 
@@ -42,7 +41,7 @@ namespace Apoc3D
 			void EnsureReserve(bool noLock, int32 amount);
 
 			int32 m_instanceSize;
-			tthread::mutex m_poolLock;
+			std::mutex m_poolLock;
 			Queue<void*> m_pool;
 		};
 

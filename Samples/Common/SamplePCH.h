@@ -5,7 +5,6 @@
 #include "apoc3d/Engine.h"
 
 #include "apoc3d/Library/tinyxml.h"
-#include "apoc3d/Library/tinythread.h"
 #include "apoc3d/Library/lz4.h"
 #include "apoc3d/Library/lz4hc.h"
 
@@ -165,7 +164,7 @@
 #include "apoc3d/Vfs/VFSCommon.h"
 
 #include "Apoc3D.Essentials/EssentialCommon.h"
-#include "Apoc3D.Essentials/Game.h"
+#include "Apoc3D.Essentials/App.h"
 #include "Apoc3D.Essentials/AI/PathFinder.h"
 
 #ifndef APOC3D_DYNLIB
@@ -187,4 +186,4 @@ using namespace Apoc3D::UI;
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::VFS;
 
-using namespace Apoc3DEx::AI;
+using namespace Apoc3D::AI;

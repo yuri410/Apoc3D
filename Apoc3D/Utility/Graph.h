@@ -218,19 +218,19 @@ namespace Apoc3D
 
 
 
-			tthread::mutex m_layoutCommandLock;
+			std::mutex m_layoutCommandLock;
 			Technique m_technique = TECH_Quad;
 			Queue<LayoutCommand> m_commandQueue;
 			
-			tthread::thread* m_layoutThread;
+			std::thread* m_layoutThread;
 			List<PhysicsWorker*> m_physicsWorkers;
 
-			tthread::mutex m_intersectingNodesLock;
+			std::mutex m_intersectingNodesLock;
 			List<GraphNodeInfo>* m_intersectingNodes = new List<GraphNodeInfo>();
 			List<GraphNodeInfo>* m_intersectingNodes2 = new List<GraphNodeInfo>();
 
 
-			tthread::mutex m_visibleNodesLock;
+			std::mutex m_visibleNodesLock;
 			List<GraphNodeInfo>* m_currentVisisbleNodes = new List<GraphNodeInfo>();
 			List<GraphNodeInfo>* m_currentVisisbleNodes2 = new List<GraphNodeInfo>();
 

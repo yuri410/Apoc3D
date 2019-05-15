@@ -29,7 +29,6 @@
 #include "apoc3d/Input/InputAPI.h"
 #include "apoc3d/Input/Mouse.h"
 #include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/Library/tinythread.h"
 
 #include <ctime>
 
@@ -43,8 +42,6 @@ namespace Apoc3D
 		Console::Console(RenderDevice* device,StyleSkin* skin,const Point& position, const Point& size)
 			: m_skin(skin), m_needsUpdateLineInfo(false), m_contendLineCount(0), m_currentSelectedPreviousCommands(-1)
 		{
-			m_logLock = new tthread::mutex();
-
 			m_form = new Form(skin, device, FBS_Sizable, L"Console");
 			m_form->Position = position;
 			m_form->setSize(size);
@@ -104,7 +101,6 @@ namespace Apoc3D
 			delete m_pictureBox;
 			delete m_submit;
 			delete m_inputText;
-			delete m_logLock;
 			delete m_scrollBar;
 		}
 
@@ -121,7 +117,7 @@ namespace Apoc3D
 			m_scrollBar->Position = m_pictureBox->Position + Point(m_pictureBox->getWidth() - m_scrollBar->getWidth(), 0);
 			m_scrollBar->SetLength(m_pictureBox->getHeight());
 
-			m_logLock->lock();
+			m_logLock.lock();
 			while (m_queuedNewLogs.getCount() > 0)
 			{
 				LogEntry e = m_queuedNewLogs.Dequeue();
@@ -135,7 +131,7 @@ namespace Apoc3D
 					m_logs.PopFront();
 				}
 			}
-			m_logLock->unlock();
+			m_logLock.unlock();
 
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
@@ -309,9 +305,9 @@ namespace Apoc3D
 
 		void Console::Log_New(LogEntry e)
 		{
-			m_logLock->lock();
+			m_logLock.lock();
 			m_queuedNewLogs.Enqueue(e);
-			m_logLock->unlock();
+			m_logLock.unlock();
 		}
 
 		void Console::Form_Resized(Control* ctrl)

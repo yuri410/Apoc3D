@@ -117,8 +117,8 @@ namespace Apoc3D
 
 				Queue<ResourceOperation> m_opQueue;
 				GenerationTable* m_genTable = nullptr;
-				tthread::thread* m_processThread = nullptr;
-				tthread::mutex* m_queueMutex = nullptr;
+				std::thread* m_processThread = nullptr;
+				std::mutex* m_queueMutex = nullptr;
 
 				Queue<ResourceOperation> m_postSyncQueue;
 

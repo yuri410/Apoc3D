@@ -6,7 +6,7 @@
 
 namespace SampleFont
 {
-	class FontDemo : public Apoc3DEx::Game
+	class FontDemo : public App
 	{
 	public:
 		FontDemo(RenderWindow* wnd);

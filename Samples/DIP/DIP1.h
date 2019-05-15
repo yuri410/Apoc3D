@@ -22,7 +22,7 @@
 
 namespace dip
 {
-    class DIP1 : public Apoc3DEx::Game
+    class DIP1 : public App
 	{
 	public:
 		DIP1(RenderWindow* wnd);

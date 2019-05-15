@@ -70,7 +70,7 @@ namespace Apoc3D
 
 			void FPSCounter::Step(const AppTime* time)
 			{
-				Step(time->getElapsedRealTime()); 
+				Step(time->ElapsedRealTime); 
 			}
 
 			void RenderView::UpdateFpsCounter(const AppTime* time)

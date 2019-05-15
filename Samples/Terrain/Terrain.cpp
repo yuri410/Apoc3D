@@ -179,11 +179,11 @@ namespace SampleTerrain
 				{
 					if (m_trees[i].IsFastFalling)
 					{
-						m_trees[i].FallState += time->getElapsedTime() * 9;
+						m_trees[i].FallState += time->ElapsedTime * 9;
 					}
 					else
 					{
-						m_trees[i].FallState += time->getElapsedTime() * 3;
+						m_trees[i].FallState += time->ElapsedTime * 3;
 					}
 
 				}

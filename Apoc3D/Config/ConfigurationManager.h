@@ -21,7 +21,6 @@
 #include "apoc3d/ApocCommon.h"
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Collections/Queue.h"
-#include "apoc3d/Library/tinythread.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;

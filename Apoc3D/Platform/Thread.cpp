@@ -37,7 +37,6 @@ typedef struct tagTHREADNAME_INFO
 #include <pthread.h>
 #endif
 #include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/Library/tinythread.h"
 
 using namespace Apoc3D::Utility;
 
@@ -102,11 +101,11 @@ namespace Apoc3D
 #endif
 #endif
 		
-		void SetThreadName( tthread::thread* th, const String& name)
+		void SetThreadName( std::thread* th, const String& name)
 		{
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 #if _DEBUG
-			const tthread::thread::native_handle_type handle = th->native_handle();
+			const HANDLE handle = th->native_handle();
 			SetThreadNameInternal(GetThreadId(handle), StringUtils::toPlatformNarrowString(name).c_str());
 #endif
 #endif

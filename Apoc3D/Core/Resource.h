@@ -205,7 +205,7 @@ namespace Apoc3D
 				const GenerationTable* m_table;
 				Queue<float> m_timeQueue;
 
-				tthread::mutex* m_queueLock;
+				std::mutex m_queueLock;
 			};
 
 
@@ -219,7 +219,7 @@ namespace Apoc3D
 
 			volatile ResourceState m_state = ResourceState::Unloaded;
 
-			tthread::mutex* m_lock = nullptr;
+			std::mutex* m_lock = nullptr;
 
 			bool m_unloadableLock = false;
 			bool m_requiresPostSync = false;

@@ -17,7 +17,6 @@
 #include "Resource.h"
 #include "ResourceManager.h"
 #include "Streaming/GenerationTable.h"
-#include "apoc3d/Library/tinythread.h"
 
 #include <ctime>
 
@@ -39,7 +38,7 @@ namespace Apoc3D
 				{
 					m_generation = new GenerationCalculator(manager->m_generationTable);
 
-					m_lock = new tthread::mutex();
+					m_lock = new std::mutex();
 				}
 			}
 			
@@ -313,29 +312,28 @@ namespace Apoc3D
 		Resource::GenerationCalculator::GenerationCalculator(const GenerationTable* table)
 			: m_table(table), Generation(GenerationTable::MaxGeneration - 1)
 		{
-			m_queueLock = new tthread::mutex();
+			
 		}
 		Resource::GenerationCalculator::~GenerationCalculator()
 		{
-			delete m_queueLock;
-			m_queueLock = nullptr;
+			
 		}
 
 		void Resource::GenerationCalculator::Use(Resource* resource)
 		{
 			clock_t t = clock();
 
-			m_queueLock->lock();
+			m_queueLock.lock();
 			m_timeQueue.Enqueue((float)t / CLOCKS_PER_SEC);
 			while (m_timeQueue.getCount()>5)
 				m_timeQueue.Dequeue();
-			m_queueLock->unlock();
+			m_queueLock.unlock();
 		}
 		void Resource::GenerationCalculator::UpdateGeneration(float time)
 		{
 			float result = -9999999;
 
-			m_queueLock->lock();
+			m_queueLock.lock();
 
 			if (m_timeQueue.getCount())
 			{
@@ -346,7 +344,7 @@ namespace Apoc3D
 				}
 				result /= (float)m_timeQueue.getCount();
 			}
-			m_queueLock->unlock();
+			m_queueLock.unlock();
 
 			//clock_t t = clock();
 
@@ -380,11 +378,11 @@ namespace Apoc3D
 		{
 			volatile bool notEmpty;
 			volatile float topVal = 0;
-			m_queueLock->lock();
+			m_queueLock.lock();
 			notEmpty = !!m_timeQueue.getCount();
 			if (notEmpty)
 				topVal = m_timeQueue.Tail();
-			m_queueLock->unlock();
+			m_queueLock.unlock();
 
 			if (notEmpty)
 			{

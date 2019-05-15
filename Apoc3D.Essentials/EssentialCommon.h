@@ -19,8 +19,6 @@
 
 #include "apoc3d/ApocCommon.h"
 
-#include <queue>
-
 #ifndef APOC3D_DYNLIB
 #	define APEXAPI
 #else
@@ -33,7 +31,7 @@
 
 #pragma comment (lib, "Apoc3d.lib")
 
-namespace Apoc3DEx
+namespace Apoc3D
 {
 	namespace AI
 	{

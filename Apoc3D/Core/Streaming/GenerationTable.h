@@ -83,7 +83,7 @@ namespace Apoc3D
 				ResourceManager* m_manager;
 
 				bool m_isShutdown;
-				tthread::mutex* m_genLock;
+				std::mutex m_genLock;
 
 				bool CanUnload(Resource* res) const;
 			};

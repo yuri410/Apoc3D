@@ -5,7 +5,7 @@
 
 namespace SampleAtmosphere
 {
-	class AtmosphereDemo : public Apoc3DEx::Game
+	class AtmosphereDemo : public App
 	{
 	public:
 		AtmosphereDemo(RenderWindow* wnd);

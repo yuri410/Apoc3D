@@ -17,7 +17,7 @@
 #include "PathFinder.h"
 #include "apoc3d/Math/Math.h"
 
-namespace Apoc3DEx
+namespace Apoc3D
 {
 	namespace AI
 	{

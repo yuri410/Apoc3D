@@ -406,7 +406,7 @@ namespace APDesigner
 						Vector2 d = Vector2::Subtract(m_centerOfMass, nde->getPosition());
 						float dist = Vector2::Length(d);
 						if (dist<1) dist = 1.0f/dist;
-						d = Vector2::Multiply(d, -time2.getElapsedTime() * (totalMass*nde->getMass())/(dist*dist*dist));
+						d = Vector2::Multiply(d, -time2.ElapsedTime * (totalMass*nde->getMass())/(dist*dist*dist));
 						
 						m_nodes[i]->ApplyImpulse(d);
 					}

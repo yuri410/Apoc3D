@@ -10,7 +10,7 @@ namespace SampleFont
 		L"ta czcionka obsługuje wiele języków.";
 
 	FontDemo::FontDemo(RenderWindow* wnd)
-		: Game(wnd), m_currentPressure(5)
+		: App(wnd), m_currentPressure(5)
 	{
 		//wnd->SetupFixedFrameTime(false);
 	}
@@ -23,18 +23,18 @@ namespace SampleFont
 	void FontDemo::Initialize()
 	{
 		m_window->setTitle(L"Font Demo");
-		Game::Initialize();
+		App::Initialize();
 
 		m_sprite = m_device->getObjectFactory()->CreateSprite();
 	}
 	void FontDemo::Finalize()
 	{
-		Game::Finalize();
+		App::Finalize();
 	}
 
 	void FontDemo::Load()
 	{
-		Game::Load();
+		App::Load();
 
 		{
 			FileLocation fl = FileSystem::getSingleton().Locate(L"uming14.fnt", FileLocateRule::Default);
@@ -67,11 +67,11 @@ namespace SampleFont
 	{
 		delete m_sprite;
 
-		Game::Unload();
+		App::Unload();
 	}
 	void FontDemo::Update(const AppTime* time)
 	{
-		Game::Update(time);
+		App::Update(time);
 
 		Keyboard* kb = InputAPIManager::getSingleton().getKeyboard();
 
@@ -92,11 +92,11 @@ namespace SampleFont
 		if (m_lengthDissolveProgress > 200)
 			m_lengthDissolveProgress = 0;
 
-		m_allDissolveProgress += time->getElapsedTime();
+		m_allDissolveProgress += time->ElapsedTime;
 		if (m_allDissolveProgress > 2)
 			m_allDissolveProgress = 0;
 
-		m_wordDissolveProgress += time->getElapsedTime() * 5;
+		m_wordDissolveProgress += time->ElapsedTime * 5;
 		if (m_wordDissolveProgress > 5)
 			m_wordDissolveProgress = 0;
 
@@ -163,7 +163,7 @@ namespace SampleFont
 
 
 		Font* english = FontManager::getSingleton().getFont(L"english");
-		english->DrawString(m_sprite, L"FPS: " + StringUtils::SingleToString(time->getFPS(), StrFmt::fp<2>::val), Point(0, areaSize.Height - 50), CV_White);
+		english->DrawString(m_sprite, L"FPS: " + StringUtils::SingleToString(time->FPS, StrFmt::fp<2>::val), Point(0, areaSize.Height - 50), CV_White);
 
 		int32 disCurLen = Math::Round(m_lengthDissolveProgress);
 
@@ -193,7 +193,7 @@ namespace SampleFont
 
 		m_sprite->End();
 
-		Game::Draw(time);
+		App::Draw(time);
 
 		m_device->EndFrame();
 	}

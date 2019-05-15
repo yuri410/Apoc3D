@@ -22,7 +22,7 @@ namespace SampleTerrain
 	 *  multiplying CellLength and the number of vertices on the edge -1.
 	 *
 	 */
-	class TerrainDemo : public Apoc3DEx::Game
+	class TerrainDemo : public App
 	{
 	public:
 		TerrainDemo(RenderWindow* wnd);

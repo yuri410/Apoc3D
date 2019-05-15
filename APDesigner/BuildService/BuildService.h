@@ -40,19 +40,19 @@ namespace APDesigner
 		void Thread_Main();
 		static void ThreadEntry(void* arg);
 		
-		tthread::thread* m_processThread;
+		std::thread* m_processThread;
 
-		tthread::mutex m_resultLock;
+		std::mutex m_resultLock;
 		Queue<String> m_lastResult;
 		bool m_hasLastError;
 
-		tthread::mutex m_taskLock;
+		std::mutex m_taskLock;
 		Queue<Configuration*> m_taskList;
 
-		tthread::mutex m_flagLock;
+		std::mutex m_flagLock;
 		volatile bool m_finished;
 		
-		tthread::mutex m_processLock;
+		std::mutex m_processLock;
 
 
 		String m_buildWarningMessages;

@@ -85,7 +85,7 @@ namespace APDesigner
 		m_isBuildPending = true;
 
 		m_processLock.lock();
-		m_processThread = new tthread::thread(&BuildInterface::ThreadEntry, this);
+		m_processThread = new std::thread(&BuildInterface::ThreadEntry, this);
 		Apoc3D::Platform::SetThreadName(m_processThread, L"Apoc3D Designer Build Service");
 
 		LogManager::getSingleton().Write(LOG_System, L"Build Started", LOGLVL_Default);

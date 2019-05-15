@@ -4,7 +4,6 @@
 
 #include "apoc3d/Math/RandomUtils.h"
 #include "apoc3d/Math/Math.h"
-#include "apoc3d/Library/tinythread.h"
 #include "apoc3d/Platform/Thread.h"
 #include "apoc3d/Utility/StringUtils.h"
 
@@ -47,7 +46,7 @@ namespace Apoc3D
 				m_physicsWorkers.Add(new PhysicsWorker(i));
 			}
 
-			m_layoutThread = new tthread::thread(&GraphLayout::LayoutThreadEntry, this);
+			m_layoutThread = new std::thread(&GraphLayout::LayoutThreadEntry, this);
 			Platform::SetThreadName(m_layoutThread, L"Layout");
 		}
 
@@ -55,7 +54,7 @@ namespace Apoc3D
 		{
 			m_isShuttingDown = true;
 			m_layoutThread->join();
-			delete m_layoutThread;
+			DELETE_AND_NULL(m_layoutThread);
 
 			m_physicsWorkers.DeleteAndClear();
 
@@ -379,12 +378,12 @@ namespace Apoc3D
 
 		List<GraphNodeInfo> GraphLayout::getVisibleNodes()
 		{
-			tthread::lock_guard<tthread::mutex> locker(m_visibleNodesLock);
+			std::lock_guard<std::mutex> locker(m_visibleNodesLock);
 			return *m_currentVisisbleNodes;
 		}
 		List<GraphNodeInfo> GraphLayout::getIntersectingNodes()
 		{
-			tthread::lock_guard<tthread::mutex> locker(m_intersectingNodesLock);
+			std::lock_guard<std::mutex> locker(m_intersectingNodesLock);
 			return *m_intersectingNodes;
 		}
 

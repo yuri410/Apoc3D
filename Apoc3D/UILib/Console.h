@@ -97,7 +97,7 @@ namespace Apoc3D
 			} m_entryInfo[MaxLogEntries];
 
 
-			tthread::mutex* m_logLock;
+			std::mutex m_logLock;
 
 		};
 	}

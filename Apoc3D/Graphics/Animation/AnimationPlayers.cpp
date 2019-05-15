@@ -64,7 +64,7 @@ namespace Apoc3D
 				if (m_paused)
 					return;
 
-				float t = time->getElapsedTime();
+				float t = time->ElapsedTime;
 
 				// Adjust for the rate
 				if (m_playbackRate != 1.0f)
@@ -201,7 +201,7 @@ namespace Apoc3D
 			}
 
 
-			void MaterialAnimationPlayer::Update(const AppTime* gameTime)
+			void MaterialAnimationPlayer::Update(const AppTime* time)
 			{
 				if (!m_currentClipValue)
 					return;
@@ -209,7 +209,7 @@ namespace Apoc3D
 				if (m_paused)
 					return;
 
-				float t = gameTime->getElapsedTime();
+				float t = time->ElapsedTime;
 
 				// Adjust for the rate
 				if (m_playbackRate != 1.0f)

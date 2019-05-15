@@ -23,7 +23,6 @@
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Collections/CollectionsCommon.h"
-#include "apoc3d/Library/tinythread.h"
 
 #include <ctime>
 #include <iostream>
@@ -49,8 +48,6 @@ namespace Apoc3D
 
 		LogManager::LogManager()
 		{
-			m_lock = new tthread::mutex();
-
 			for (size_t i = 0; i < LOG_Count; i++)
 			{
 				m_logs[i] = new LogSet(static_cast<LogType>(i));
@@ -63,9 +60,6 @@ namespace Apoc3D
 				delete m_logs[i];
 				m_logs[i] = nullptr;
 			}
-
-			delete m_lock;
-			m_lock = nullptr;
 		}
 
 		void LogManager::Write(LogType type, const String& message, LogMessageLevel level)
@@ -75,7 +69,7 @@ namespace Apoc3D
 
 			if (ret)
 			{
-				m_lock->lock();
+				m_lock.lock();
 
 				const LogEntry& lastest = *m_logs[(int32)type]->LastEntry();
 
@@ -97,7 +91,7 @@ namespace Apoc3D
 					std::wcout << ( msg );
 				}
 
-				m_lock->unlock();
+				m_lock.unlock();
 			}
 
 		}
@@ -144,19 +138,18 @@ namespace Apoc3D
 		LogSet::LogSet(LogType type)
 			: m_type(type)
 		{
-			m_lock = new tthread::mutex();
+			
 		}
 
 		LogSet::~LogSet()
 		{
-			delete m_lock;
-			m_lock = nullptr;
+			
 		}
 
 		bool LogSet::Write(const String& message, LogMessageLevel level, bool checkDuplicate)
 		{
 			bool result = false;
-			m_lock->lock();
+			m_lock.lock();
 
 			bool discard = false;
 			if (checkDuplicate && m_entries.getCount())
@@ -179,15 +172,15 @@ namespace Apoc3D
 				result = true;
 			}
 
-			m_lock->unlock();
+			m_lock.unlock();
 			return result;
 		}
 
 		int32 LogSet::getCount()
 		{
-			m_lock->lock();
+			m_lock.lock();
 			int result = m_entries.getCount();
-			m_lock->unlock();
+			m_lock.unlock();
 			return result;
 		}
 

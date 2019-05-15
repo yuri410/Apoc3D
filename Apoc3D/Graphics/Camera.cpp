@@ -311,8 +311,8 @@ namespace Apoc3D
 			Vector3 force = stretch * (-m_stiffness);
 			force -= m_velocity * m_damping;
 
-			m_velocity += force * (time->getElapsedTime() / m_mass );
-			m_position += m_velocity * time->getElapsedTime();
+			m_velocity += force * (time->ElapsedTime / m_mass );
+			m_position += m_velocity * time->ElapsedTime;
 
 			UpdateMatrices();
 		}

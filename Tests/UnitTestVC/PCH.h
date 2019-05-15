@@ -34,7 +34,7 @@
 #include "apoc3d/Core/BackgroundWorker.h"
 #include "apoc3d/Core/CommandInterpreter.h"
 #include "apoc3d/Core/CoreCommon.h"
-#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/AppTime.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Core/Plugin.h"
 #include "apoc3d/Core/PluginManager.h"
@@ -168,7 +168,7 @@
 #include "apoc3d/Vfs/VFSCommon.h"
 
 #include "Apoc3D.Essentials/EssentialCommon.h"
-#include "Apoc3D.Essentials/Game.h"
+#include "Apoc3D.Essentials/App.h"
 #include "Apoc3D.Essentials/AI/PathFinder.h"
 
 

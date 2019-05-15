@@ -29,7 +29,7 @@
 using namespace Apoc3D::Graphics::EffectSystem;
 using namespace Apoc3D::VFS;
 
-namespace Apoc3DEx
+namespace Apoc3D
 {
 	App::App(RenderWindow* wnd)
 		: m_window(wnd)

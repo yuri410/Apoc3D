@@ -6,7 +6,7 @@
 
 namespace Sample_GUI
 {
-    class BlurTest : public Apoc3DEx::Game
+    class BlurTest : public App
 	{
 	public:
 		static const int DMCount = 8;

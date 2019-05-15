@@ -33,7 +33,7 @@ namespace Apoc3D
 		/**
 		 *  This is only useful when debugging in windows. Works with Visual Studio.
 		 */
-		APAPI void SetThreadName(tthread::thread* th, const String& name);
+		APAPI void SetThreadName(std::thread* th, const String& name);
 	}
 }
 

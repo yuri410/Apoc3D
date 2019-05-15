@@ -54,6 +54,7 @@
 #include <cstdint>
 #include <type_traits>
 #include <initializer_list>
+#include <mutex>
 
 #include "Library/FastDelegate.h"
 #include "Meta/FunctorReference.h"
@@ -93,7 +94,7 @@ typedef uint64 ulong;
 
 // Forward Declarations
 
-namespace tthread
+namespace std
 {
 	class thread;
 	class mutex;
@@ -102,6 +103,9 @@ namespace tthread
 namespace Apoc3D
 {
 	typedef std::wstring String;
+
+	typedef std::string String8;
+	typedef std::u16string String16;
 	typedef std::u32string String32;
 
 	//template <typename T, int32 N>

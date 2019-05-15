@@ -22,11 +22,6 @@
 
 using namespace Apoc3D::Collections;
 
-namespace tthread
-{
-	class mutex;
-}
-
 namespace Apoc3D
 {
 	namespace Core
@@ -97,7 +92,7 @@ namespace Apoc3D
 		private:
 			LogSet* m_logs[LOG_Count];
 
-			tthread::mutex* m_lock;
+			std::mutex m_lock;
 		};
 
 		inline void ApocLog(LogType type, const String& message, LogMessageLevel level = LOGLVL_Infomation);
@@ -134,7 +129,7 @@ namespace Apoc3D
 			LogType m_type;
 			LinkedList<LogEntry> m_entries;
 
-			tthread::mutex* m_lock;
+			std::mutex m_lock;
 		};
 
 	}

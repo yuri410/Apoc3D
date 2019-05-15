@@ -47,7 +47,7 @@ namespace APDesigner
 
 	void GraphNode::UpdatePhysicsSimulation(const AppTime* time)
 	{
-		float dt = time->getElapsedTime();
+		float dt = time->ElapsedTime;
 
 		// spring force from adjacent nodes
 		for (int i=0;i<m_neighbour.getCount();i++)

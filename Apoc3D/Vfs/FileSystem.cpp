@@ -24,8 +24,6 @@
 
 #include "apoc3d/Utility/StringUtils.h"
 
-#include "apoc3d/Library/tinythread.h"
-
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -320,7 +318,7 @@ namespace Apoc3D
 
 			ArchiveKey ak;
 			ak.filePath = filePath;
-			ak.threadID = tthread::this_thread::get_id().hash();
+			ak.threadID = std::this_thread::get_id();
 			
 			m_openedPackMutex.lock();
 			Archive* pack;
@@ -338,7 +336,7 @@ namespace Apoc3D
 		{
 			ArchiveKey ak;
 			ak.filePath = filePath;
-			ak.threadID = tthread::this_thread::get_id().hash();
+			ak.threadID = std::this_thread::get_id();
 
 			m_openedPackMutex.lock();
 
@@ -375,13 +373,15 @@ namespace Apoc3D
 		}
 
 
+		const std::hash<std::thread::id> FileSystem::ArchiveKeyEqualityComparer::m_threadIDHasher;
+
 		bool FileSystem::ArchiveKeyEqualityComparer::Equals(const FileSystem::ArchiveKey& x, const FileSystem::ArchiveKey& y) 
 		{
 			return x.threadID == y.threadID && x.filePath == y.filePath; 
 		}
 		int64 FileSystem::ArchiveKeyEqualityComparer::GetHashCode(const FileSystem::ArchiveKey& obj) 
 		{
-			return StringUtils::GetHashCode(obj.filePath) ^ obj.threadID;
+			return StringUtils::GetHashCode(obj.filePath) ^ m_threadIDHasher(obj.threadID);
 		}
 
 	}

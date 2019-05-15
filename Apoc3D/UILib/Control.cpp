@@ -36,7 +36,7 @@ namespace Apoc3D
 	{
 		void MultiClickChecker::Update(const AppTime* time, Input::Mouse* mouse)
 		{
-			m_timeSinceLastClick += time->getElapsedTime();
+			m_timeSinceLastClick += time->ElapsedTime;
 			
 			if (m_clickCount > 0 && m_timeSinceLastClick >= SystemUI::DoubleClickInterval)
 				m_clickCount = 0;

@@ -370,7 +370,6 @@
     <ClInclude Include="Library\lz4.h" />
     <ClInclude Include="Library\lz4hc.h" />
     <ClInclude Include="Library\squish.h" />
-    <ClInclude Include="Library\tinythread.h" />
     <ClInclude Include="Library\tinyxml.h" />
     <ClInclude Include="Math\Box.h" />
     <ClInclude Include="Math\ColorValue.h" />
@@ -531,7 +530,6 @@
     <ClCompile Include="Library\lz4.c" />
     <ClCompile Include="Library\lz4hc.c" />
     <ClCompile Include="Library\squish.cpp" />
-    <ClCompile Include="Library\tinythread.cpp" />
     <ClCompile Include="Library\tinyxml.cpp" />
     <ClCompile Include="Library\tinyxmlerror.cpp" />
     <ClCompile Include="Library\tinyxmlparser.cpp" />

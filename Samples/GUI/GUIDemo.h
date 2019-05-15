@@ -6,7 +6,7 @@
 
 namespace Sample_GUI
 {
-    class GUIDemo : public Apoc3DEx::Game
+    class GUIDemo : public App
 	{
 	public:
 		static const int DMCount = 8;

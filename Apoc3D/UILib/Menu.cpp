@@ -608,7 +608,7 @@ namespace Apoc3D
 
 			if (m_timerStarted)
 			{
-				m_timerCount -= time->getElapsedTime();
+				m_timerCount -= time->ElapsedTime;
 				if (m_timerCount<0)
 				{
 					if (m_hoverIndex != -1 && m_items[m_hoverIndex]->getSubMenu() &&

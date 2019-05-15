@@ -14,8 +14,8 @@
  * ------------------------------------------------------------------------
  */
 
-#ifndef APOC3DEX_GAME_H
-#define APOC3DEX_GAME_H
+#ifndef APOC3DES_GAME_H
+#define APOC3DES_GAME_H
 
 #include "EssentialCommon.h"
 
@@ -23,14 +23,12 @@
 #include "apoc3d/Graphics/RenderSystem/RenderWindowHandler.h"
 #include "apoc3d/Input/InputAPI.h"
 
-
-using namespace Apoc3D;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::UI;
 using namespace Apoc3D::Input;
 
-namespace Apoc3DEx
+namespace Apoc3D
 {
 	/** A class as a framework, which looks similar to XNA's, but with the whole engine's support.
 	 *  This class is the event handler for all messages from render window. The game's drawing, updating in the main loop and initialization are

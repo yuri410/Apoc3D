@@ -739,7 +739,7 @@ namespace Apoc3D
 
 			if (m_timerStarted)
 			{
-				m_timer -= time->getElapsedTime();
+				m_timer -= time->ElapsedTime;
 				if (m_timer < 0)
 				{
 					m_timer = 0.5f;
