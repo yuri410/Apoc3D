@@ -381,13 +381,18 @@ namespace APBuild
 
 				std::string glslCode = generator.GetResult();
 
-				int newShaderCodeSize = LZ4_compressBound((int)glslCode.size());
-				char* newShaderCode = new char[newShaderCodeSize];
-				newShaderCodeSize = LZ4_compressHC2(glslCode.c_str(), newShaderCode, (int)glslCode.size(), 16);
+				int   codeLength = (int)glslCode.size();
+				int   compressedSize = LZ4_compressBound(codeLength);
+				char* compressedData = new char[compressedSize + sizeof(int)*2];
 
-				FillEffectProfileCodeData(profData, (const char*)newShaderCode, newShaderCodeSize, type);
+				compressedSize = LZ4_compressHC2(glslCode.c_str(), compressedData + sizeof(int)*2, codeLength, 16);
 
-				delete[] newShaderCode;
+				i32tomb_le(compressedSize, compressedData);
+				i32tomb_le(codeLength, compressedData + sizeof(int));
+
+				FillEffectProfileCodeData(profData, (const char*)compressedData, compressedSize, type);
+
+				delete[] compressedData;
 
 				return true;
 			}

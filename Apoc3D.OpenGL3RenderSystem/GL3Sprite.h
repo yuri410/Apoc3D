@@ -41,36 +41,34 @@ namespace Apoc3D
 				virtual void Begin(SpriteSettings settings);
 				virtual void End();
 
-				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle &rect, uint color)
-				{
-					Draw(texture, rect, 0, color);
-				}
-				virtual void Draw(Texture* texture, Vector2 pos, uint color);
-				virtual void Draw(Texture* texture, const PointF& pos, uint color);
-				virtual void Draw(Texture* texture, const Point& pos, uint color);
-				virtual void Draw(Texture* texture, int x, int y, uint color);
-				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color);
-
 				virtual void Flush();
 
-				virtual void SetTransform(const Matrix& matrix);
 			private:
 				GL3RenderDevice* m_gldevice;
-				bool m_vboSupported;
 
-				bool m_alphaEnabled;
+				void SetUVExtendedState(bool isExtended);
 
-				bool m_oldAlphaBlendEnabled;
-				BlendFunction m_oldBlendFunc;
-				Blend m_oldSrcBlend;
-				Blend m_oldDstBlend;
-				uint m_oldBlendConst;
+				void SetRenderState();
+				void RestoreRenderState();
 
+				struct
+				{
+					bool oldAlphaBlendEnable;
+					BlendFunction oldBlendFunc;
+					Blend oldSrcBlend;
+					Blend oldDstBlend;
+					uint oldBlendFactor;
+					bool oldDepthEnabled;
+					CullMode oldCull;
+				} m_storedState;
 
-				bool m_oldSepAlphaBlendEnabled;
-				Blend m_oldSepSrcBlend;
-				Blend m_oldSepDstBlend;
-				BlendFunction m_oldSepBlendFunc;
+				GL3VertexDeclaration* m_vtxDecl;
+				GL3VertexDeclaration* m_vtxDeclShadable;
+				GL3VertexBuffer* m_quadBuffer;
+				GL3IndexBuffer* m_quadIndices;
+
+				GL3RenderDevice* m_device;
+
 			};
 		}
 	}

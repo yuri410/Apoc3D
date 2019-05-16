@@ -92,6 +92,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="GL3Buffers.h" />
+    <ClInclude Include="GL3Shader.h" />
     <ClInclude Include="GL3Utils.h" />
     <ClInclude Include="GL3RenderStateManager.h" />
     <ClInclude Include="GL3ObjectFactory.h" />
@@ -105,17 +107,21 @@
     <ClInclude Include="GL3GraphicsAPIFactory.h" />
     <ClInclude Include="GL3DeviceContext.h" />
     <ClInclude Include="GL3Common.h" />
+    <ClInclude Include="gl\GLProgram.h" />
     <ClInclude Include="Plugin.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="GL3Buffers.cpp" />
     <ClCompile Include="GL3RenderStateManager.cpp" />
     <ClCompile Include="GL3ObjectFactory.cpp" />
     <ClCompile Include="GL3RenderDevice.cpp" />
+    <ClCompile Include="GL3Shader.cpp" />
     <ClCompile Include="GL3Sprite.cpp" />
     <ClCompile Include="GL3Texture.cpp" />
     <ClCompile Include="GL3Utils.cpp" />
     <ClCompile Include="gl\gl3w.c" />
+    <ClCompile Include="gl\GLProgram.cpp" />
     <ClCompile Include="gl\wgl.cpp" />
     <ClCompile Include="GraphicsDeviceManager.cpp" />
     <ClCompile Include="GL3RenderWindow.cpp" />

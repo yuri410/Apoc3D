@@ -17,6 +17,7 @@
 #include "GL3ObjectFactory.h"
 #include "GL3RenderDevice.h"
 #include "GL3Texture.h"
+#include "GL3Buffers.h"
 #include "GL3Sprite.h"
 
 namespace Apoc3D
@@ -62,11 +63,11 @@ namespace Apoc3D
 
 			IndexBuffer* GL3ObjectFactory::CreateIndexBuffer(IndexBufferFormat type, int count, BufferUsageFlags usage)
 			{
-				return nullptr;
+				return new GL3IndexBuffer(m_device, type, count*(type == IndexBufferFormat::Bit16 ? sizeof(ushort) : sizeof(uint)), usage);
 			}
 			VertexBuffer* GL3ObjectFactory::CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage)
 			{
-				return nullptr;
+				return new GL3VertexBuffer(m_device, vertexCount, vtxDecl->GetVertexSize(), usage);
 			}
 
 			VertexDeclaration* GL3ObjectFactory::CreateVertexDeclaration(const List<VertexElement>& elements)

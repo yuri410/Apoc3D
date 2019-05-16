@@ -230,7 +230,7 @@
         <Standard Type="effect" Source="VS:apoc_system\effects\standardnh.vs | PS:apoc_system\effects\standardnh.ps"
                   ParamList="apoc_system\effects\standardnh.xml"
                   DestinationFile="apoc_system\effects\standard.afx"
-                  EntryPoints="ALL:main" Targets="sm_2_0">
+                  EntryPoints="ALL:main" Targets="sm_2_0|glsl_1_5">
         </Standard>
       </effects>
     </system>

@@ -31,7 +31,6 @@ namespace Apoc3D
 	{
 		namespace GL3RenderSystem
 		{
-
 			class NativeGL3StateManager
 			{
 			public:

@@ -40,10 +40,9 @@ namespace Apoc3D
 				GL3Texture(GL3RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed);
 				GL3Texture(GL3RenderDevice* device, int32 width, int32 height, int32 depth, int32 level, 
 					PixelFormat format, TextureUsage usage);
-
 				GL3Texture(GL3RenderDevice* device, int32 length, int32 level, PixelFormat format, TextureUsage usage);
-
 				~GL3Texture();
+
 				virtual void Save(Stream* strm);
 
 				virtual DataRectangle lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect);
@@ -57,18 +56,22 @@ namespace Apoc3D
 				virtual void load();
 				virtual void unload();
 
-				void setInternalTexID(GLuint id) { m_textureID = id; }
+				//void setInternalTexID(GLuint id) { m_textureID = id; }
 				GLuint getInternalTexID() const { return m_textureID; }
 
 			private:
 
-				void InitializeEmptyGLTexture(int32 width, int32 height, int32 depth, int32 level, PixelFormat format);
+				void InitializeGLTexture(int32 width, int32 height, int32 depth, int32 level, PixelFormat format);
 
 				GL3RenderDevice* m_renderDevice;
-				GLuint m_textureID;
+				GLuint m_textureID = 0;
+				GLuint m_mapPBO = 0;
+
+				GLenum m_target;
+
 
 				GLenum m_lockedCubemapFace;
-				char* m_lockBuffer;
+				
 			};
 		}
 	}

@@ -114,24 +114,34 @@ namespace Apoc3D
 				: Texture(device, width, height, depth, level, format, usage),
 				m_renderDevice(device)
 			{
-				InitializeEmptyGLTexture(width, height, depth, level, format);
+				InitializeGLTexture(width, height, depth, level, format);
 			}
 
 			GL3Texture::GL3Texture(GL3RenderDevice* device, int32 length, int32 level, PixelFormat format, TextureUsage usage)
 				: Texture(device, length, level, usage, format),
 				m_renderDevice(device)
 			{
-				InitializeEmptyGLTexture(length, length, 1, level, format);
+				InitializeGLTexture(length, length, 1, level, format);
 			}
 			GL3Texture::~GL3Texture()
 			{
-
-
+				if (m_textureID)
+				{
+					glDeleteTextures(1, &m_textureID);
+					m_textureID = 0;
+				}
 			}
 
 			DataRectangle GL3Texture::lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect)
 			{
 				assert(m_tex2D);
+
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_mapPBO);
+
+				//void* dataPtr = glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+				void* dataPtr = glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, , , GL_WRITE_ONLY);
+
+				
 				D3DLOCKED_RECT rrect;
 				RECT rect0;
 				rect0.left = rect.X;
@@ -176,22 +186,37 @@ namespace Apoc3D
 			void GL3Texture::unlock(int32 surface)
 			{
 				TextureType type = getType();
+
+				glBindTexture(target, m_textureID);
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_mapPBO);
+				glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
 				if (type == TextureType::Texture3D)
 				{
-					m_tex3D->UnlockBox(surface);
+					//m_tex3D->UnlockBox(surface);
 				}
 				else if (type != TextureType::CubeTexture)
 				{
-					m_tex2D->UnlockRect(surface);
+					//m_tex2D->UnlockRect(surface);
 				}
 				else
 				{
-					m_cube->UnlockRect(m_lockedCubeFace, surface);
+					//m_cube->UnlockRect(m_lockedCubeFace, surface);
 				}
+				glTexSubImage2D(target, surface, , , , , , , nullptr);
+
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
 			}
 			void GL3Texture::unlock(CubeMapFace cubemapFace, int32 surface)
 			{
-				m_cube->UnlockRect(D3D9Utils::ConvertCubeMapFace(cubemapFace), surface);
+				glBindTexture(target, m_textureID);
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_mapPBO);
+				glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+
+				glTexSubImage2D(target, surface, , , , , , , nullptr);
+				//m_cube->UnlockRect(D3D9Utils::ConvertCubeMapFace(cubemapFace), surface);
+				
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 			}
 
 
@@ -403,20 +428,10 @@ namespace Apoc3D
 
 			void GL3Texture::unload()
 			{
-				if (m_tex2D)
+				if (m_textureID)
 				{
-					m_tex2D->Release();
-					m_tex2D = 0;
-				}
-				if (m_tex3D)
-				{
-					m_tex3D->Release();
-					m_tex3D = 0;
-				}
-				if (m_cube)
-				{
-					m_cube->Release();
-					m_cube = 0;
+					glDeleteTextures(1, &m_textureID);
+					m_textureID = 0;
 				}
 			}
 
@@ -455,30 +470,31 @@ namespace Apoc3D
 				}
 			}
 
-			void GL3Texture::InitializeEmptyGLTexture(int32 width, int32 height, int32 depth, int32 level, PixelFormat format)
+			void GL3Texture::InitializeGLTexture(int32 width, int32 height, int32 depth, int32 level, PixelFormat format)
 			{
-
 				GLenum target = GLUtils::GetTextureTarget(getType());
 				glGenTextures(1, &m_textureID);
 				glBindTexture(target, m_textureID);
-				glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, level);
 
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, level - 1);
 				glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 				glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
 				glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-				//GLenum glFmt = GLUtils::ConvertPixelFormat(format);
 				GLenum glInternalFormat;
 				GLenum glFormat, glType;
 				GLUtils::ConvertPixelFormat(format, glFormat, glType, glInternalFormat);
 
+				// TODO: For textures, upload data directly.
+				// So PBO can use pre-allocated textures later.
+				// https://community.khronos.org/t/pbo-performances-compressed-textures/54618
+
 				if (PixelFormatUtils::IsCompressed(format))
 				{
 					int rootLevelSize = PixelFormatUtils::GetMemorySize(width, height, depth, format);
-					char* tmpdata = new char[rootLevelSize];
-					memset(tmpdata, 0, rootLevelSize);
-
+					char* tmpdata = new char[rootLevelSize]();
+					
 					// fill all the levels with zero buffer
 					// glCompressedTexImage do not allow 0 pointer as data
 
@@ -525,8 +541,6 @@ namespace Apoc3D
 					// All levels are generated in this loop
 					for(int i=0; i<level; i++)
 					{
-						// use GL_RGBA, GL_UNSIGNED_BYTE to fill format and type, as 
-						// data is not provided
 						switch(getType())
 						{
 						case TextureType::Texture1D:
@@ -558,6 +572,11 @@ namespace Apoc3D
 						}
 					}
 				}
+
+				int level0Size = PixelFormatUtils::GetMemorySize(width, height, depth, format);
+				glGenBuffers(1, &m_mapPBO);
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_mapPBO);
+				glBufferData(GL_PIXEL_UNPACK_BUFFER, level0Size, NULL, usage == TU_Dynamic ? GL_DYNAMIC_DRAW : GL_STREAM_DRAW);
 
 			}
 		}
