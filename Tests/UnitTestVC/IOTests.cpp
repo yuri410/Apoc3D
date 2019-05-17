@@ -1,3 +1,4 @@
+#include "TestCommon.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -23,21 +24,21 @@ namespace UnitTestVC
 			char buf[8];
 
 			i16_mb_le(i16, buf);
-			Assert::AreEqual(mb_i16_le(buf), i16);
+			Assert::AreEqual(i16, mb_i16_le(buf));
 
-			i16_mb_be(u16, buf);
-			Assert::AreEqual(mb_u16_be(buf), u16);
+			u16_mb_be(u16, buf);
+			Assert::AreEqual(u16, mb_u16_be(buf));
 
 			i32_mb_le(i32, buf);
-			Assert::AreEqual(mb_i32_le(buf), i32);
+			Assert::AreEqual(i32, mb_i32_le(buf));
 
-			i32_mb_be(u32, buf);
-			Assert::AreEqual(mb_u32_be(buf), u32);
+			u32_mb_be(u32, buf);
+			Assert::AreEqual(u32, mb_u32_be(buf));
 
-			i32_mb_le(i64, buf);
-			Assert::AreEqual(mb_i64_le(buf), i64);
+			i64_mb_le(i64, buf);
+			Assert::AreEqual(i64, mb_i64_le(buf));
 
-			i32_mb_be(u64, buf);
+			u64_mb_be(u64, buf);
 			Assert::AreEqual(mb_u64_be(buf), u64);
 
 			f32_mb_le(f32, buf);
