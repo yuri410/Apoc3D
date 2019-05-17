@@ -28,180 +28,207 @@ inline bool isPlatformLittleEndian()
 	return (const char&)number == 1;
 }
 
-
 /** Little-endian, used in file reading */
-inline uint16 cui16_le(const char* const src);
-inline uint32 cui32_le(const char* const src);
-inline uint64 cui64_le(const char* const src);
-inline int16 ci16_le(const char* const src);
-inline int32 ci32_le(const char* const src);	
-inline int64 ci64_le(const char* const src);
-inline float cr32_le(const char* const src);
-inline double cr64_le(const char* const src);
-
-/** Convert from memory, endian dependent */
-inline uint16 cui16_dep(const char* const src);
-inline uint32 cui32_dep(const char* const src);
-inline uint64 cui64_dep(const char* const src);
-inline int16 ci16_dep(const char* const src);
-inline int32 ci32_dep(const char* const src);	
-inline int64 ci64_dep(const char* const src);
-inline float cr32_dep(const char* const src);
-inline double cr64_dep(const char* const src);
+inline uint16 mb_u16_le(const char* src);
+inline uint32 mb_u32_le(const char* src);
+inline uint64 mb_u64_le(const char* src);
+inline int16  mb_i16_le(const char* src);
+inline int32  mb_i32_le(const char* src);
+inline int64  mb_i64_le(const char* src);
+inline float  mb_f32_le(const char* src);
+inline double mb_f64_le(const char* src);
 
 /** Convert to Little-endian multi bytes */
-inline void i16tomb_le(int16 v, char* dest);
-inline void i32tomb_le(int32 v, char* dest);
-inline void i64tomb_le(int64 v, char* dest);
-inline void ui16tomb_le(uint16 v, char* dest);
-inline void ui32tomb_le(uint32 v, char* dest);
-inline void ui64tomb_le(uint64 v, char* dest);
-inline void r32tomb_le(float v, char* dest);
-inline void r64tomb_le(double v, char* dest);
+inline void u16_mb_le(uint16 v, char* dest);
+inline void u32_mb_le(uint32 v, char* dest);
+inline void u64_mb_le(uint64 v, char* dest);
+inline void i16_mb_le(int16 v, char* dest);
+inline void i32_mb_le(int32 v, char* dest);
+inline void i64_mb_le(int64 v, char* dest);
+inline void f32_mb_le(float v, char* dest);
+inline void f64_mb_le(double v, char* dest);
+
+
+/** Big-endian */
+inline uint16 mb_u16_be(const char* src);
+inline uint32 mb_u32_be(const char* src);
+inline uint64 mb_u64_be(const char* src);
+inline int16  mb_i16_be(const char* src);
+inline int32  mb_i32_be(const char* src);
+inline int64  mb_i64_be(const char* src);
+inline float  mb_f32_be(const char* src);
+inline double mb_f64_be(const char* src);
+
+/** Convert to Big-endian multi bytes */
+inline void u16_mb_be(uint16 v, char* dest);
+inline void u32_mb_be(uint32 v, char* dest);
+inline void u64_mb_be(uint64 v, char* dest);
+inline void i16_mb_be(int16 v, char* dest);
+inline void i32_mb_be(int32 v, char* dest);
+inline void i64_mb_be(int64 v, char* dest);
+inline void f32_mb_be(float v, char* dest);
+inline void f64_mb_be(double v, char* dest);
+
 
 /** Convert to multi bytes, the result is endian dependent */
-inline void i16tomb_dep(int16 v, char* dest);
-inline void i32tomb_dep(int32 v, char* dest);
-inline void i64tomb_dep(int64 v, char* dest);
-inline void ui16tomb_dep(uint16 v, char* dest);
-inline void ui32tomb_dep(uint32 v, char* dest);
-inline void ui64tomb_dep(uint64 v, char* dest);
-inline void r32tomb_dep(float v, char* dest);
-inline void r64tomb_dep(double v, char* dest);
-
-inline uint16 cui16_dep(const char* const src) { return *reinterpret_cast<const uint16*>(src); }
-inline uint32 cui32_dep(const char* const src) { return *reinterpret_cast<const uint32*>(src); }
-inline uint64 cui64_dep(const char* const src) { return *reinterpret_cast<const uint64*>(src); }
-inline int16 ci16_dep(const char* const src) { return *reinterpret_cast<const int16*>(src); }
-inline int32 ci32_dep(const char* const src) { return *reinterpret_cast<const int32*>(src); }
-inline int64 ci64_dep(const char* const src) { return *reinterpret_cast<const int64*>(src); }
-inline float cr32_dep(const char* const src)  { return *reinterpret_cast<const float*>(src); }
-inline double cr64_dep(const char* const src) { return *reinterpret_cast<const double*>(src); }
+inline void u16_mb_dep(uint16 v, char* dest){ reinterpret_cast<uint16&>(dest[0]) = v; }
+inline void u32_mb_dep(uint32 v, char* dest){ reinterpret_cast<uint32&>(dest[0]) = v; }
+inline void u64_mb_dep(uint64 v, char* dest){ reinterpret_cast<uint64&>(dest[0]) = v; }
+inline void i16_mb_dep(int16 v, char* dest)	{ reinterpret_cast<int16&>(dest[0]) = v; }
+inline void i32_mb_dep(int32 v, char* dest)	{ reinterpret_cast<int32&>(dest[0]) = v; }
+inline void i64_mb_dep(int64 v, char* dest)	{ reinterpret_cast<int64&>(dest[0]) = v; }
+inline void f32_mb_dep(float v, char* dest)	{ reinterpret_cast<float&>(dest[0]) = v; }
+inline void f64_mb_dep(double v, char* dest){ reinterpret_cast<double&>(dest[0]) = v; }
 
 
-inline uint16 cui16_le(const char* const src)
+/** Convert from memory, endian dependent */
+inline uint16 mb_u16_dep(const char* src)	{ return *reinterpret_cast<const uint16*>(src); }
+inline uint32 mb_u32_dep(const char* src)	{ return *reinterpret_cast<const uint32*>(src); }
+inline uint64 mb_u64_dep(const char* src)	{ return *reinterpret_cast<const uint64*>(src); }
+inline int16  mb_i16_dep(const char* src)	{ return *reinterpret_cast<const int16*>(src); }
+inline int32  mb_i32_dep(const char* src)	{ return *reinterpret_cast<const int32*>(src); }
+inline int64  mb_i64_dep(const char* src)	{ return *reinterpret_cast<const int64*>(src); }
+inline float  mb_f32_dep(const char* src)	{ return *reinterpret_cast<const float*>(src); }
+inline double mb_f64_dep(const char* src)	{ return *reinterpret_cast<const double*>(src); }
+
+//////////////////////////////////////////////////////////////////////////
+
+template <typename UT>
+UT mb_ut_le(const byte* src)
 {
-#ifndef BIG_ENDIAN
-	return *reinterpret_cast<const uint16*>(src);
-#else
-	const byte* const src2 = reinterpret_cast<const byte*>(src);
-	return (src2[1] << 8) | src2[0];
-#endif
-}
-inline uint32 cui32_le(const char* const src)
-{
-#ifndef BIG_ENDIAN
-	return *reinterpret_cast<const uint32*>(src);
-#else
-	const byte* const src2 = reinterpret_cast<const byte*>(src);
-	return (src2[3] << 24) | (src2[2] << 16) | (src2[1] << 8) | src2[0];
-#endif
-}
-inline uint64 cui64_le(const char* const src)
-{
-#ifndef BIG_ENDIAN
-	return *reinterpret_cast<const uint64*>(src);
-#else
-	const byte* const src2 = reinterpret_cast<const byte*>(src);
-	return ((uint64)src2[7] << 56) | ((uint64)src2[6] << 48) | ((uint64)src2[5] << 40) | ((uint64)src2[4] << 32) |
-		((uint64)src2[3] << 24) | ((uint64)src2[2] << 16) | ((uint64)src2[1] << 8) | (uint64)src2[0];
-#endif
+	UT ret = 0;
+	for (int i = 0; i < sizeof(UT); i++)
+	{
+		ret |= (UT)src[i] << (i * 8);
+	}
+	return ret;
 }
 
-inline int16 ci16_le(const char* const src) { return (int16)cui16_le(src); }
-inline int32 ci32_le(const char* const src) { return (int32)cui32_le(src); }
-inline int64 ci64_le(const char* const src) { return (int64)cui64_le(src); }
-
-inline float cr32_le(const char* const src) 
+template <typename FT, typename UT>
+FT mb_ft_le(const byte* src)
 {
-#ifndef BIG_ENDIAN
-	return *reinterpret_cast<const float*>(src);
-#else
-	uint32 r = cui32_le(src);
-	return reinterpret_cast<const float&>(r);		
-#endif
+	static_assert(sizeof(FT) == sizeof(UT), "UT and FT must match in size");
+	UT ret = mb_ut_le<UT>(src);
+	return reinterpret_cast<const FT&>(ret);
 }
-inline double cr64_le(const char* const src) 
+
+template <typename UT>
+void ut_mb_le(UT v, char* dest)
 {
-#ifndef BIG_ENDIAN
-	return *reinterpret_cast<const double*>(src); 
-#else
-	uint64 r = cui64_le(src);
-	return reinterpret_cast<const double&>(r);
-#endif
+	for (int i = 0; i < sizeof(UT); i++)
+	{
+		dest[i] = (char)((v >> (i * 8)) & 0xff);
+	}
 }
 
 
-inline void ui16tomb_le(uint16 v, char* dest)
+template <typename UT>
+UT mb_ut_be(const byte* src)
 {
-#ifndef BIG_ENDIAN
-	reinterpret_cast<uint16&>(dest[0]) = v;
-#else
-	byte* dest2 = reinterpret_cast<byte*>(dest);
-
-	dest2[0] = 0xff & (v >> 8);
-	dest2[1] = 0xff & v;
-#endif
-}
-inline void ui32tomb_le(uint32 v, char* dest)
-{
-#ifndef BIG_ENDIAN
-	reinterpret_cast<uint32&>(dest[0]) = v;
-#else
-	byte* dest2 = reinterpret_cast<byte*>(dest);
-
-	dest2[0] = 0xff & (v >> 24);
-	dest2[1] = 0xff & (v >> 16);
-	dest2[2] = 0xff & (v >> 8);
-	dest2[3] = 0xff & (v);
-#endif
-}
-inline void ui64tomb_le(uint64 v, char* dest)
-{
-#ifndef BIG_ENDIAN
-	reinterpret_cast<uint64&>(dest[0]) = v;
-#else
-	byte* dest2 = reinterpret_cast<byte*>(dest);
-
-	dest2[0] = 0xff & (v >> 56);
-	dest2[1] = 0xff & (v >> 48);
-	dest2[2] = 0xff & (v >> 40);
-	dest2[3] = 0xff & (v >> 32);
-	dest2[4] = 0xff & (v >> 24);
-	dest2[5] = 0xff & (v >> 16);
-	dest2[6] = 0xff & (v >> 8);
-	dest2[7] = 0xff & (v);
-#endif
+	UT ret = 0;
+	for (int i = 0; i < sizeof(UT); i++)
+	{
+		ret |= (UT)src[i] << ((sizeof(UT) - i - 1) * 8);
+	}
+	return ret;
 }
 
-inline void i16tomb_le(int16 v, char* dest) { ui16tomb_le(reinterpret_cast<uint16&>(v), dest); }
-inline void i32tomb_le(int32 v, char* dest) { ui32tomb_le(reinterpret_cast<uint32&>(v), dest); }
-inline void i64tomb_le(int64 v, char* dest) { ui64tomb_le(reinterpret_cast<uint64&>(v), dest); }
-
-inline void r32tomb_le(float v, char* dest)
+template <typename FT, typename UT>
+FT mb_ft_be(const byte* src)
 {
-#ifndef BIG_ENDIAN
-	reinterpret_cast<float&>(dest[0]) = v;
-#else
-	ui32tomb_le(reinterpret_cast<const uint32&>(v), dest);
-#endif
-}
-inline void r64tomb_le(double v, char* dest)
-{
-#ifndef BIG_ENDIAN
-	reinterpret_cast<double&>(dest[0]) = v;
-#else
-	ui64tomb_le(reinterpret_cast<const uint64&>(v), dest);
-#endif
+	static_assert(sizeof(FT) == sizeof(UT), "UT and FT must match in size");
+	UT ret = mb_ut_be<UT>(src);
+	return reinterpret_cast<const FT&>(ret);
 }
 
-inline void i16tomb_dep(int16 v, char* dest) { reinterpret_cast<int16&>(dest[0]) = v; }
-inline void i32tomb_dep(int32 v, char* dest) { reinterpret_cast<int32&>(dest[0]) = v; }
-inline void i64tomb_dep(int64 v, char* dest) { reinterpret_cast<int64&>(dest[0]) = v; }
-inline void ui16tomb_dep(uint16 v, char* dest) { reinterpret_cast<uint16&>(dest[0]) = v; }
-inline void ui32tomb_dep(uint32 v, char* dest) { reinterpret_cast<uint32&>(dest[0]) = v; }
-inline void ui64tomb_dep(uint64 v, char* dest) { reinterpret_cast<uint64&>(dest[0]) = v; }
-inline void r32tomb_dep(float v, char* dest)  { reinterpret_cast<float&>(dest[0]) = v; }
-inline void r64tomb_dep(double v, char* dest) { reinterpret_cast<double&>(dest[0]) = v; }
+template <typename UT>
+void ut_mb_be(UT v, char* dest)
+{
+	for (int i = 0; i < sizeof(UT); i++)
+	{
+		dest[i] = (char)((v >> ((sizeof(UT) - i - 1) * 8)) & 0xff);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+#ifdef BIG_ENDIAN
+
+
+inline uint16 mb_u16_le(const char* src) { return mb_ut_le<uint16>((const byte*)src); }
+inline uint32 mb_u32_le(const char* src) { return mb_ut_le<uint32>((const byte*)src);}
+inline uint64 mb_u64_le(const char* src) { return mb_ut_le<uint64>((const byte*)src); }
+inline float  mb_f32_le(const char* src) { return mb_ft_le<float, uint32>((const byte*)src); }
+inline double mb_f64_le(const char* src) { return mb_ft_le<double, uint64>((const byte*)src); }
+
+inline void u16_mb_le(uint16 v, char* dest) { ut_mb_le(v, dest); }
+inline void u32_mb_le(uint32 v, char* dest) { ut_mb_le(v, dest); }
+inline void u64_mb_le(uint64 v, char* dest) { ut_mb_le(v, dest); }
+inline void f32_mb_le(float v, char* dest)  { ut_mb_le(reinterpret_cast<const uint32&>(v), dest); }
+inline void f64_mb_le(double v, char* dest) { ut_mb_le(reinterpret_cast<const uint64&>(v), dest); }
+
+#else
+
+inline uint16 mb_u16_le(const char* src) { return *reinterpret_cast<const uint16*>(src); }
+inline uint32 mb_u32_le(const char* src) { return *reinterpret_cast<const uint32*>(src); }
+inline uint64 mb_u64_le(const char* src) { return *reinterpret_cast<const uint64*>(src); }
+inline float  mb_f32_le(const char* src) { return *reinterpret_cast<const float*>(src); }
+inline double mb_f64_le(const char* src) { return *reinterpret_cast<const double*>(src); }
+
+inline void u16_mb_le(uint16 v, char* dest) { reinterpret_cast<uint16&>(dest[0]) = v; }
+inline void u32_mb_le(uint32 v, char* dest) { reinterpret_cast<uint32&>(dest[0]) = v; }
+inline void u64_mb_le(uint64 v, char* dest) { reinterpret_cast<uint64&>(dest[0]) = v; }
+inline void f32_mb_le(float v, char* dest)  { reinterpret_cast<float&>(dest[0]) = v; }
+inline void f64_mb_le(double v, char* dest) { reinterpret_cast<double&>(dest[0]) = v; }
+
+#endif
+
+inline int16 mb_i16_le(const char* src) { return (int16)mb_u16_le(src); }
+inline int32 mb_i32_le(const char* src) { return (int32)mb_u32_le(src); }
+inline int64 mb_i64_le(const char* src) { return (int64)mb_u64_le(src); }
+
+inline void i16_mb_le(int16 v, char* dest) { u16_mb_le(reinterpret_cast<uint16&>(v), dest); }
+inline void i32_mb_le(int32 v, char* dest) { u32_mb_le(reinterpret_cast<uint32&>(v), dest); }
+inline void i64_mb_le(int64 v, char* dest) { u64_mb_le(reinterpret_cast<uint64&>(v), dest); }
+
+//////////////////////////////////////////////////////////////////////////
+
+#ifdef BIG_ENDIAN
+
+inline uint16 mb_u16_be(const char* src) { return *reinterpret_cast<const uint16*>(src); }
+inline uint32 mb_u32_be(const char* src) { return *reinterpret_cast<const uint32*>(src); }
+inline uint64 mb_u64_be(const char* src) { return *reinterpret_cast<const uint64*>(src); }
+inline float  mb_f32_be(const char* src) { return *reinterpret_cast<const float*>(src); }
+inline double mb_f64_be(const char* src) { return *reinterpret_cast<const uint64*>(src); }
+
+inline void u16_mb_be(uint16 v, char* dest) { reinterpret_cast<uint16&>(dest[0]) = v; }
+inline void u32_mb_be(uint32 v, char* dest) { reinterpret_cast<uint32&>(dest[0]) = v; }
+inline void u64_mb_be(uint64 v, char* dest) { reinterpret_cast<uint64&>(dest[0]) = v; }
+inline void f32_mb_be(float v, char* dest)  { reinterpret_cast<float&>(dest[0]) = v; }
+inline void f64_mb_be(double v, char* dest) { reinterpret_cast<double&>(dest[0]) = v; }
+
+#else
+
+inline uint16 mb_u16_be(const char* src) { return mb_ut_be<uint16>((const byte*)src); }
+inline uint32 mb_u32_be(const char* src) { return mb_ut_be<uint32>((const byte*)src); }
+inline uint64 mb_u64_be(const char* src) { return mb_ut_be<uint64>((const byte*)src); }
+inline float  mb_f32_be(const char* src) { return mb_ft_be<float, uint32>((const byte*)src); }
+inline double mb_f64_be(const char* src) { return mb_ft_be<double, uint64>((const byte*)src); }
+
+inline void u16_mb_be(uint16 v, char* dest) { ut_mb_be(v, dest); }
+inline void u32_mb_be(uint32 v, char* dest) { ut_mb_be(v, dest); }
+inline void u64_mb_be(uint64 v, char* dest) { ut_mb_be(v, dest); }
+inline void f32_mb_be(float v, char* dest)  { ut_mb_be(reinterpret_cast<const uint32&>(v), dest); }
+inline void f64_mb_be(double v, char* dest) { ut_mb_be(reinterpret_cast<const uint64&>(v), dest); }
+
+#endif
+
+inline int16  mb_i16_be(const char* src) { return (int16)mb_u16_be(src); }
+inline int32  mb_i32_be(const char* src) { return (int32)mb_u32_be(src); }
+inline int64  mb_i64_be(const char* src) { return (int64)mb_u64_be(src); }
+
+inline void i16_mb_be(int16 v, char* dest) { u16_mb_be(reinterpret_cast<uint16&>(v), dest); }
+inline void i32_mb_be(int32 v, char* dest) { u32_mb_be(reinterpret_cast<uint32&>(v), dest); }
+inline void i64_mb_be(int64 v, char* dest) { u64_mb_be(reinterpret_cast<uint64&>(v), dest); }
 
 #endif

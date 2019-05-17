@@ -387,8 +387,8 @@ namespace APBuild
 
 				compressedSize = LZ4_compressHC2(glslCode.c_str(), compressedData + sizeof(int)*2, codeLength, 16);
 
-				i32tomb_le(compressedSize, compressedData);
-				i32tomb_le(codeLength, compressedData + sizeof(int));
+				i32_mb_le(compressedSize, compressedData);
+				i32_mb_le(codeLength, compressedData + sizeof(int));
 
 				FillEffectProfileCodeData(profData, (const char*)compressedData, compressedSize, type);
 

@@ -225,7 +225,7 @@ namespace Apoc3D
 							for (size_t i = 0; i < text.size(); i++)
 							{
 								char buf[sizeof(char16_t)];
-								ui16tomb_le(text[i], buf);
+								u16_mb_le(text[i], buf);
 								dest.Write(buf, sizeof(char16_t));
 							}
 						}
@@ -244,7 +244,7 @@ namespace Apoc3D
 							for (size_t i = 0; i < utf32Str.size(); i++)
 							{
 								char buf[sizeof(char32_t)];
-								ui32tomb_le(text[i], buf);
+								u32_mb_le(text[i], buf);
 								dest.Write(buf, sizeof(char32_t));
 							}
 						}

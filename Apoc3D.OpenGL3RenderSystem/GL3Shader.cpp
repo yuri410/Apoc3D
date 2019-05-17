@@ -132,6 +132,11 @@ namespace Apoc3D
 				Apoc3D::Core::ApocLog(LOG_Graphics, L"Shader parameter " + name + L" not found.", LOGLVL_Warning);
 			}
 
+			void GL3Shader::NotifyLinkage(void* platformData)
+			{
+
+			}
+
 			//////////////////////////////////////////////////////////////////////////
 
 			GL3VertexShader::GL3VertexShader(GL3RenderDevice* device, const byte* byteCode)

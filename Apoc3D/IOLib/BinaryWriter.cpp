@@ -66,12 +66,12 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_endianIndependent)
 			{
-				r64tomb_dep(value, buffer);
+				f64_mb_dep(value, buffer);
 			}
 			else
 #endif
 			{
-				r64tomb_le(value, buffer);				
+				f64_mb_le(value, buffer);				
 			}
 			m_baseStream->Write(buffer, sizeof(double));
 		}
@@ -81,12 +81,12 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_endianIndependent)
 			{
-				r32tomb_dep(value, buffer);
+				f32_mb_dep(value, buffer);
 			}
 			else
 #endif
 			{
-				r32tomb_le(value, buffer);				
+				f32_mb_le(value, buffer);				
 			}
 			m_baseStream->Write(buffer, sizeof(float));
 		}
@@ -142,12 +142,12 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_endianIndependent)
 			{
-				i16tomb_dep(value, buffer);
+				i16_mb_dep(value, buffer);
 			}
 			else
 #endif
 			{
-				i16tomb_le(value, buffer);				
+				i16_mb_le(value, buffer);				
 			}
 			m_baseStream->Write(buffer, sizeof(int16));
 		}
@@ -157,12 +157,12 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_endianIndependent)
 			{
-				i32tomb_dep(value, buffer);
+				i32_mb_dep(value, buffer);
 			}
 			else
 #endif
 			{
-				i32tomb_le(value, buffer);				
+				i32_mb_le(value, buffer);				
 			}
 			m_baseStream->Write(buffer, sizeof(int32));
 		}
@@ -172,12 +172,12 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_endianIndependent)
 			{
-				i64tomb_dep(value, buffer);
+				i64_mb_dep(value, buffer);
 			}
 			else
 #endif
 			{
-				i64tomb_le(value, buffer);				
+				i64_mb_le(value, buffer);				
 			}
 			m_baseStream->Write(buffer, sizeof(int64));
 		}
@@ -187,12 +187,12 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_endianIndependent)
 			{
-				ui16tomb_dep(value, buffer);
+				u16_mb_dep(value, buffer);
 			}
 			else
 #endif
 			{
-				ui16tomb_le(value, buffer);				
+				u16_mb_le(value, buffer);				
 			}
 			m_baseStream->Write(buffer, sizeof(uint16));
 		}
@@ -202,12 +202,12 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_endianIndependent)
 			{
-				ui32tomb_dep(value, buffer);
+				u32_mb_dep(value, buffer);
 			}
 			else
 #endif
 			{
-				ui32tomb_le(value, buffer);				
+				u32_mb_le(value, buffer);				
 			}
 			m_baseStream->Write(buffer, sizeof(uint32));
 		}
@@ -217,12 +217,12 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_endianIndependent)
 			{
-				ui64tomb_dep(value, buffer);
+				u64_mb_dep(value, buffer);
 			}
 			else
 #endif
 			{
-				ui64tomb_le(value, buffer);				
+				u64_mb_le(value, buffer);				
 			}
 			m_baseStream->Write(buffer, sizeof(uint64));
 		}
@@ -355,14 +355,14 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_endianIndependent)
 			{
-				r32tomb_dep(vec.X, writeBuffer);
-				r32tomb_dep(vec.Y, writeBuffer + sizeof(float));
+				f32_mb_dep(vec.X, writeBuffer);
+				f32_mb_dep(vec.Y, writeBuffer + sizeof(float));
 			}
 			else
 #endif
 			{
-				r32tomb_le(vec.X, writeBuffer);
-				r32tomb_le(vec.Y, writeBuffer + sizeof(float));
+				f32_mb_le(vec.X, writeBuffer);
+				f32_mb_le(vec.Y, writeBuffer + sizeof(float));
 			}
 			m_baseStream->Write(writeBuffer, sizeof(float)*2);
 		}
@@ -372,16 +372,16 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_endianIndependent)
 			{
-				r32tomb_dep(vec.X, writeBuffer);
-				r32tomb_dep(vec.Y, writeBuffer + sizeof(float));
-				r32tomb_dep(vec.Z, writeBuffer + sizeof(float) * 2);
+				f32_mb_dep(vec.X, writeBuffer);
+				f32_mb_dep(vec.Y, writeBuffer + sizeof(float));
+				f32_mb_dep(vec.Z, writeBuffer + sizeof(float) * 2);
 			}
 			else
 #endif
 			{
-				r32tomb_le(vec.X, writeBuffer);
-				r32tomb_le(vec.Y, writeBuffer + sizeof(float));
-				r32tomb_le(vec.Z, writeBuffer + sizeof(float) * 2);
+				f32_mb_le(vec.X, writeBuffer);
+				f32_mb_le(vec.Y, writeBuffer + sizeof(float));
+				f32_mb_le(vec.Z, writeBuffer + sizeof(float) * 2);
 			}
 			m_baseStream->Write(writeBuffer, sizeof(float)*3);
 		}
@@ -391,18 +391,18 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_endianIndependent)
 			{
-				r32tomb_dep(vec.X, writeBuffer);
-				r32tomb_dep(vec.Y, writeBuffer + sizeof(float));
-				r32tomb_dep(vec.Z, writeBuffer + sizeof(float) * 2);
-				r32tomb_dep(vec.W, writeBuffer + sizeof(float) * 3);
+				f32_mb_dep(vec.X, writeBuffer);
+				f32_mb_dep(vec.Y, writeBuffer + sizeof(float));
+				f32_mb_dep(vec.Z, writeBuffer + sizeof(float) * 2);
+				f32_mb_dep(vec.W, writeBuffer + sizeof(float) * 3);
 			}
 			else
 #endif
 			{
-				r32tomb_le(vec.X, writeBuffer);
-				r32tomb_le(vec.Y, writeBuffer + sizeof(float));
-				r32tomb_le(vec.Z, writeBuffer + sizeof(float) * 2);
-				r32tomb_le(vec.W, writeBuffer + sizeof(float) * 3);
+				f32_mb_le(vec.X, writeBuffer);
+				f32_mb_le(vec.Y, writeBuffer + sizeof(float));
+				f32_mb_le(vec.Z, writeBuffer + sizeof(float) * 2);
+				f32_mb_le(vec.W, writeBuffer + sizeof(float) * 3);
 			}
 			m_baseStream->Write(writeBuffer, sizeof(float)*4);
 		}

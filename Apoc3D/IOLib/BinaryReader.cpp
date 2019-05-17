@@ -72,10 +72,10 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				return cr64_dep(m_buffer);
+				return mb_f64_dep(m_buffer);
 			}
 #endif
-			return cr64_le(m_buffer);
+			return mb_f64_le(m_buffer);
 		}
 		float BinaryReader::ReadSingle()
 		{
@@ -83,10 +83,10 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				return cr32_dep(m_buffer);
+				return mb_f32_dep(m_buffer);
 			}
 #endif
-			return cr32_le(m_buffer);
+			return mb_f32_le(m_buffer);
 		}
 
 		template <typename T, typename ET>
@@ -136,10 +136,10 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				return ci16_dep(data);
+				return mb_i16_dep(data);
 			}
 #endif
-			return ci16_le(data);
+			return mb_i16_le(data);
 		}
 
 		String BinaryReader::ReadString()
@@ -182,10 +182,10 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				return ci32_dep(m_buffer);
+				return mb_i32_dep(m_buffer);
 			}
 #endif
-			return ci32_le(m_buffer);
+			return mb_i32_le(m_buffer);
 		}
 		int64 BinaryReader::ReadInt64() 
 		{
@@ -193,10 +193,10 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				return ci64_dep(m_buffer);
+				return mb_i64_dep(m_buffer);
 			}
 #endif
-			return ci64_le(m_buffer);
+			return mb_i64_le(m_buffer);
 		}
 
 		uint16 BinaryReader::ReadUInt16() 
@@ -205,10 +205,10 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				return cui16_dep(m_buffer);
+				return mb_u16_dep(m_buffer);
 			}
 #endif
-			return cui16_le(m_buffer);
+			return mb_u16_le(m_buffer);
 		}
 		uint32 BinaryReader::ReadUInt32() 
 		{
@@ -216,10 +216,10 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				return cui32_dep(m_buffer);
+				return mb_u32_dep(m_buffer);
 			}
 #endif
-			return cui32_le(m_buffer);
+			return mb_u32_le(m_buffer);
 		}
 		uint64 BinaryReader::ReadUInt64() 
 		{
@@ -227,10 +227,10 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				return cui64_dep(m_buffer);
+				return mb_u64_dep(m_buffer);
 			}
 #endif
-			return cui64_le(m_buffer);
+			return mb_u64_le(m_buffer);
 		}
 
 
@@ -255,52 +255,52 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				matrix.M11 = cr32_dep(&m_buffer[0]);
-				matrix.M12 = cr32_dep(&m_buffer[sizeof(float)]);
-				matrix.M13 = cr32_dep(&m_buffer[sizeof(float)*2]);
-				matrix.M14 = cr32_dep(&m_buffer[sizeof(float)*3]);
-				matrix.M21 = cr32_dep(&m_buffer[sizeof(float)*4]);
-				matrix.M22 = cr32_dep(&m_buffer[sizeof(float)*5]);
-				matrix.M23 = cr32_dep(&m_buffer[sizeof(float)*6]);
-				matrix.M24 = cr32_dep(&m_buffer[sizeof(float)*7]);
+				matrix.M11 = mb_f32_dep(&m_buffer[0]);
+				matrix.M12 = mb_f32_dep(&m_buffer[sizeof(float)]);
+				matrix.M13 = mb_f32_dep(&m_buffer[sizeof(float)*2]);
+				matrix.M14 = mb_f32_dep(&m_buffer[sizeof(float)*3]);
+				matrix.M21 = mb_f32_dep(&m_buffer[sizeof(float)*4]);
+				matrix.M22 = mb_f32_dep(&m_buffer[sizeof(float)*5]);
+				matrix.M23 = mb_f32_dep(&m_buffer[sizeof(float)*6]);
+				matrix.M24 = mb_f32_dep(&m_buffer[sizeof(float)*7]);
 			}
 			else
 #endif
 			{
-				matrix.M11 = cr32_le(&m_buffer[0]);
-				matrix.M12 = cr32_le(&m_buffer[sizeof(float)]);
-				matrix.M13 = cr32_le(&m_buffer[sizeof(float)*2]);
-				matrix.M14 = cr32_le(&m_buffer[sizeof(float)*3]);
-				matrix.M21 = cr32_le(&m_buffer[sizeof(float)*4]);
-				matrix.M22 = cr32_le(&m_buffer[sizeof(float)*5]);
-				matrix.M23 = cr32_le(&m_buffer[sizeof(float)*6]);
-				matrix.M24 = cr32_le(&m_buffer[sizeof(float)*7]);
+				matrix.M11 = mb_f32_le(&m_buffer[0]);
+				matrix.M12 = mb_f32_le(&m_buffer[sizeof(float)]);
+				matrix.M13 = mb_f32_le(&m_buffer[sizeof(float)*2]);
+				matrix.M14 = mb_f32_le(&m_buffer[sizeof(float)*3]);
+				matrix.M21 = mb_f32_le(&m_buffer[sizeof(float)*4]);
+				matrix.M22 = mb_f32_le(&m_buffer[sizeof(float)*5]);
+				matrix.M23 = mb_f32_le(&m_buffer[sizeof(float)*6]);
+				matrix.M24 = mb_f32_le(&m_buffer[sizeof(float)*7]);
 			}
 			
 			FillBuffer(sizeof(float)*8);
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				matrix.M31 = cr32_dep(&m_buffer[0]);
-				matrix.M32 = cr32_dep(&m_buffer[sizeof(float)]);
-				matrix.M33 = cr32_dep(&m_buffer[sizeof(float)*2]);
-				matrix.M34 = cr32_dep(&m_buffer[sizeof(float)*3]);
-				matrix.M41 = cr32_dep(&m_buffer[sizeof(float)*4]);
-				matrix.M42 = cr32_dep(&m_buffer[sizeof(float)*5]);
-				matrix.M43 = cr32_dep(&m_buffer[sizeof(float)*6]);
-				matrix.M44 = cr32_dep(&m_buffer[sizeof(float)*7]);
+				matrix.M31 = mb_f32_dep(&m_buffer[0]);
+				matrix.M32 = mb_f32_dep(&m_buffer[sizeof(float)]);
+				matrix.M33 = mb_f32_dep(&m_buffer[sizeof(float)*2]);
+				matrix.M34 = mb_f32_dep(&m_buffer[sizeof(float)*3]);
+				matrix.M41 = mb_f32_dep(&m_buffer[sizeof(float)*4]);
+				matrix.M42 = mb_f32_dep(&m_buffer[sizeof(float)*5]);
+				matrix.M43 = mb_f32_dep(&m_buffer[sizeof(float)*6]);
+				matrix.M44 = mb_f32_dep(&m_buffer[sizeof(float)*7]);
 			}
 			else
 #endif
 			{
-				matrix.M31 = cr32_le(&m_buffer[0]);
-				matrix.M32 = cr32_le(&m_buffer[sizeof(float)]);
-				matrix.M33 = cr32_le(&m_buffer[sizeof(float)*2]);
-				matrix.M34 = cr32_le(&m_buffer[sizeof(float)*3]);
-				matrix.M41 = cr32_le(&m_buffer[sizeof(float)*4]);
-				matrix.M42 = cr32_le(&m_buffer[sizeof(float)*5]);
-				matrix.M43 = cr32_le(&m_buffer[sizeof(float)*6]);
-				matrix.M44 = cr32_le(&m_buffer[sizeof(float)*7]);
+				matrix.M31 = mb_f32_le(&m_buffer[0]);
+				matrix.M32 = mb_f32_le(&m_buffer[sizeof(float)]);
+				matrix.M33 = mb_f32_le(&m_buffer[sizeof(float)*2]);
+				matrix.M34 = mb_f32_le(&m_buffer[sizeof(float)*3]);
+				matrix.M41 = mb_f32_le(&m_buffer[sizeof(float)*4]);
+				matrix.M42 = mb_f32_le(&m_buffer[sizeof(float)*5]);
+				matrix.M43 = mb_f32_le(&m_buffer[sizeof(float)*6]);
+				matrix.M44 = mb_f32_le(&m_buffer[sizeof(float)*7]);
 			}
 		}
 
@@ -310,14 +310,14 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				vec.X = cr32_dep(&m_buffer[0]);
-				vec.Y = cr32_dep(&m_buffer[sizeof(float)]);
+				vec.X = mb_f32_dep(&m_buffer[0]);
+				vec.Y = mb_f32_dep(&m_buffer[sizeof(float)]);
 			}
 			else
 #endif
 			{
-				vec.X = cr32_le(&m_buffer[0]);
-				vec.Y = cr32_le(&m_buffer[sizeof(float)]);
+				vec.X = mb_f32_le(&m_buffer[0]);
+				vec.Y = mb_f32_le(&m_buffer[sizeof(float)]);
 			}
 		}
 		void BinaryReader::ReadVector3(Vector3& vec)
@@ -326,16 +326,16 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				vec.X = cr32_dep(&m_buffer[0]);
-				vec.Y = cr32_dep(&m_buffer[sizeof(float)]);
-				vec.Z = cr32_dep(&m_buffer[sizeof(float)*2]);
+				vec.X = mb_f32_dep(&m_buffer[0]);
+				vec.Y = mb_f32_dep(&m_buffer[sizeof(float)]);
+				vec.Z = mb_f32_dep(&m_buffer[sizeof(float)*2]);
 			}
 			else
 #endif
 			{
-				vec.X = cr32_le(&m_buffer[0]);
-				vec.Y = cr32_le(&m_buffer[sizeof(float)]);
-				vec.Z = cr32_le(&m_buffer[sizeof(float)*2]);
+				vec.X = mb_f32_le(&m_buffer[0]);
+				vec.Y = mb_f32_le(&m_buffer[sizeof(float)]);
+				vec.Z = mb_f32_le(&m_buffer[sizeof(float)*2]);
 			}
 
 		}
@@ -345,18 +345,18 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				vec.X = cr32_dep(&m_buffer[0]);
-				vec.Y = cr32_dep(&m_buffer[sizeof(float)]);
-				vec.Z = cr32_dep(&m_buffer[sizeof(float)*2]);
-				vec.W = cr32_dep(&m_buffer[sizeof(float)*3]);
+				vec.X = mb_f32_dep(&m_buffer[0]);
+				vec.Y = mb_f32_dep(&m_buffer[sizeof(float)]);
+				vec.Z = mb_f32_dep(&m_buffer[sizeof(float)*2]);
+				vec.W = mb_f32_dep(&m_buffer[sizeof(float)*3]);
 			}
 			else
 #endif
 			{
-				vec.X = cr32_le(&m_buffer[0]);
-				vec.Y = cr32_le(&m_buffer[sizeof(float)]);
-				vec.Z = cr32_le(&m_buffer[sizeof(float)*2]);
-				vec.W = cr32_le(&m_buffer[sizeof(float)*3]);
+				vec.X = mb_f32_le(&m_buffer[0]);
+				vec.Y = mb_f32_le(&m_buffer[sizeof(float)]);
+				vec.Z = mb_f32_le(&m_buffer[sizeof(float)*2]);
+				vec.W = mb_f32_le(&m_buffer[sizeof(float)*3]);
 			}
 		}
 
@@ -366,18 +366,18 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				color.Red = cr32_dep(&m_buffer[0]);
-				color.Green = cr32_dep(&m_buffer[sizeof(float)]);
-				color.Blue = cr32_dep(&m_buffer[sizeof(float)*2]);
-				color.Alpha = cr32_dep(&m_buffer[sizeof(float)*3]);
+				color.Red = mb_f32_dep(&m_buffer[0]);
+				color.Green = mb_f32_dep(&m_buffer[sizeof(float)]);
+				color.Blue = mb_f32_dep(&m_buffer[sizeof(float)*2]);
+				color.Alpha = mb_f32_dep(&m_buffer[sizeof(float)*3]);
 			}
 			else
 #endif
 			{
-				color.Red = cr32_le(&m_buffer[0]);
-				color.Green = cr32_le(&m_buffer[sizeof(float)]);
-				color.Blue = cr32_le(&m_buffer[sizeof(float)*2]);
-				color.Alpha = cr32_le(&m_buffer[sizeof(float)*3]);
+				color.Red = mb_f32_le(&m_buffer[0]);
+				color.Green = mb_f32_le(&m_buffer[sizeof(float)]);
+				color.Blue = mb_f32_le(&m_buffer[sizeof(float)*2]);
+				color.Alpha = mb_f32_le(&m_buffer[sizeof(float)*3]);
 			}
 		}
 		void BinaryReader::ReadPlane(Plane& plane)
@@ -386,18 +386,18 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				plane.X = cr32_dep(&m_buffer[0]);
-				plane.Y = cr32_dep(&m_buffer[sizeof(float)]);
-				plane.Z = cr32_dep(&m_buffer[sizeof(float)*2]);
-				plane.D = cr32_dep(&m_buffer[sizeof(float)*3]);
+				plane.X = mb_f32_dep(&m_buffer[0]);
+				plane.Y = mb_f32_dep(&m_buffer[sizeof(float)]);
+				plane.Z = mb_f32_dep(&m_buffer[sizeof(float)*2]);
+				plane.D = mb_f32_dep(&m_buffer[sizeof(float)*3]);
 			}
 			else
 #endif
 			{
-				plane.X = cr32_le(&m_buffer[0]);
-				plane.Y = cr32_le(&m_buffer[sizeof(float)]);
-				plane.Z = cr32_le(&m_buffer[sizeof(float)*2]);
-				plane.D = cr32_le(&m_buffer[sizeof(float)*3]);
+				plane.X = mb_f32_le(&m_buffer[0]);
+				plane.Y = mb_f32_le(&m_buffer[sizeof(float)]);
+				plane.Z = mb_f32_le(&m_buffer[sizeof(float)*2]);
+				plane.D = mb_f32_le(&m_buffer[sizeof(float)*3]);
 			}
 		}
 		void BinaryReader::ReadQuaternion(Quaternion& quat)
@@ -406,18 +406,18 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				quat.X = cr32_dep(&m_buffer[0]);
-				quat.Y = cr32_dep(&m_buffer[sizeof(float)]);
-				quat.Z = cr32_dep(&m_buffer[sizeof(float)*2]);
-				quat.W = cr32_dep(&m_buffer[sizeof(float)*3]);
+				quat.X = mb_f32_dep(&m_buffer[0]);
+				quat.Y = mb_f32_dep(&m_buffer[sizeof(float)]);
+				quat.Z = mb_f32_dep(&m_buffer[sizeof(float)*2]);
+				quat.W = mb_f32_dep(&m_buffer[sizeof(float)*3]);
 			}
 			else
 #endif
 			{
-				quat.X = cr32_le(&m_buffer[0]);
-				quat.Y = cr32_le(&m_buffer[sizeof(float)]);
-				quat.Z = cr32_le(&m_buffer[sizeof(float)*2]);
-				quat.W = cr32_le(&m_buffer[sizeof(float)*3]);
+				quat.X = mb_f32_le(&m_buffer[0]);
+				quat.Y = mb_f32_le(&m_buffer[sizeof(float)]);
+				quat.Z = mb_f32_le(&m_buffer[sizeof(float)*2]);
+				quat.W = mb_f32_le(&m_buffer[sizeof(float)*3]);
 			}
 		}
 		void BinaryReader::ReadPoint(Point& point)
@@ -426,14 +426,14 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				point.X = ci32_dep(&m_buffer[0]);
-				point.Y = ci32_dep(&m_buffer[sizeof(int32)]);
+				point.X = mb_i32_dep(&m_buffer[0]);
+				point.Y = mb_i32_dep(&m_buffer[sizeof(int32)]);
 			}
 			else
 #endif
 			{
-				point.X = ci32_le(&m_buffer[0]);
-				point.Y = ci32_le(&m_buffer[sizeof(int32)]);
+				point.X = mb_i32_le(&m_buffer[0]);
+				point.Y = mb_i32_le(&m_buffer[sizeof(int32)]);
 			}
 		}
 		void BinaryReader::ReadSize(Size& size)
@@ -442,14 +442,14 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				size.Width = ci32_dep(&m_buffer[0]);
-				size.Height = ci32_dep(&m_buffer[sizeof(int32)]);
+				size.Width = mb_i32_dep(&m_buffer[0]);
+				size.Height = mb_i32_dep(&m_buffer[sizeof(int32)]);
 			}
 			else
 #endif
 			{
-				size.Width = ci32_le(&m_buffer[0]);
-				size.Height = ci32_le(&m_buffer[sizeof(int32)]);
+				size.Width = mb_i32_le(&m_buffer[0]);
+				size.Height = mb_i32_le(&m_buffer[sizeof(int32)]);
 			}
 		}
 		void BinaryReader::ReadRectangle(Rectangle& rect)
@@ -458,18 +458,18 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				rect.X = ci32_dep(&m_buffer[0]);
-				rect.Y = ci32_dep(&m_buffer[sizeof(int32)]);
-				rect.Width = ci32_dep(&m_buffer[sizeof(int32)*2]);
-				rect.Height = ci32_dep(&m_buffer[sizeof(int32)*3]);
+				rect.X = mb_i32_dep(&m_buffer[0]);
+				rect.Y = mb_i32_dep(&m_buffer[sizeof(int32)]);
+				rect.Width = mb_i32_dep(&m_buffer[sizeof(int32)*2]);
+				rect.Height = mb_i32_dep(&m_buffer[sizeof(int32)*3]);
 			}
 			else
 #endif
 			{
-				rect.X = ci32_le(&m_buffer[0]);
-				rect.Y = ci32_le(&m_buffer[sizeof(int32)]);
-				rect.Width = ci32_le(&m_buffer[sizeof(int32)*2]);
-				rect.Height = ci32_le(&m_buffer[sizeof(int32)*3]);
+				rect.X = mb_i32_le(&m_buffer[0]);
+				rect.Y = mb_i32_le(&m_buffer[sizeof(int32)]);
+				rect.Width = mb_i32_le(&m_buffer[sizeof(int32)*2]);
+				rect.Height = mb_i32_le(&m_buffer[sizeof(int32)*3]);
 			}
 		}
 		void BinaryReader::ReadRectangleF(RectangleF& rect)
@@ -478,18 +478,18 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				rect.X = cr32_dep(&m_buffer[0]);
-				rect.Y = cr32_dep(&m_buffer[sizeof(float)]);
-				rect.Width = cr32_dep(&m_buffer[sizeof(float)*2]);
-				rect.Height = cr32_dep(&m_buffer[sizeof(float)*3]);
+				rect.X = mb_f32_dep(&m_buffer[0]);
+				rect.Y = mb_f32_dep(&m_buffer[sizeof(float)]);
+				rect.Width = mb_f32_dep(&m_buffer[sizeof(float)*2]);
+				rect.Height = mb_f32_dep(&m_buffer[sizeof(float)*3]);
 			}
 			else
 #endif
 			{
-				rect.X = cr32_le(&m_buffer[0]);
-				rect.Y = cr32_le(&m_buffer[sizeof(float)]);
-				rect.Width = cr32_le(&m_buffer[sizeof(float)*2]);
-				rect.Height = cr32_le(&m_buffer[sizeof(float)*3]);
+				rect.X = mb_f32_le(&m_buffer[0]);
+				rect.Y = mb_f32_le(&m_buffer[sizeof(float)]);
+				rect.Width = mb_f32_le(&m_buffer[sizeof(float)*2]);
+				rect.Height = mb_f32_le(&m_buffer[sizeof(float)*3]);
 			}			
 		}
 		void BinaryReader::ReadRay(Ray& ray)
@@ -498,25 +498,25 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				float x = cr32_dep(&m_buffer[0]);
-				float y = cr32_dep(&m_buffer[sizeof(float)]);
-				float z = cr32_dep(&m_buffer[sizeof(float)*2]);
+				float x = mb_f32_dep(&m_buffer[0]);
+				float y = mb_f32_dep(&m_buffer[sizeof(float)]);
+				float z = mb_f32_dep(&m_buffer[sizeof(float)*2]);
 				ray.Position = Vector3(x,y,z);
-				x = cr32_dep(&m_buffer[0]);
-				y = cr32_dep(&m_buffer[sizeof(float)]);
-				z = cr32_dep(&m_buffer[sizeof(float)*2]);
+				x = mb_f32_dep(&m_buffer[0]);
+				y = mb_f32_dep(&m_buffer[sizeof(float)]);
+				z = mb_f32_dep(&m_buffer[sizeof(float)*2]);
 				ray.Direction = Vector3(x,y,z);
 			}
 			else
 #endif
 			{
-				float x = cr32_le(&m_buffer[0]);
-				float y = cr32_le(&m_buffer[sizeof(float)]);
-				float z = cr32_le(&m_buffer[sizeof(float)*2]);
+				float x = mb_f32_le(&m_buffer[0]);
+				float y = mb_f32_le(&m_buffer[sizeof(float)]);
+				float z = mb_f32_le(&m_buffer[sizeof(float)*2]);
 				ray.Position = Vector3(x,y,z);
-				x = cr32_le(&m_buffer[0]);
-				y = cr32_le(&m_buffer[sizeof(float)]);
-				z = cr32_le(&m_buffer[sizeof(float)*2]);
+				x = mb_f32_le(&m_buffer[0]);
+				y = mb_f32_le(&m_buffer[sizeof(float)]);
+				z = mb_f32_le(&m_buffer[sizeof(float)*2]);
 				ray.Direction = Vector3(x,y,z);
 
 			}
@@ -528,25 +528,25 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				float x = cr32_dep(&m_buffer[0]);
-				float y = cr32_dep(&m_buffer[sizeof(float)]);
-				float z = cr32_dep(&m_buffer[sizeof(float)*2]);
+				float x = mb_f32_dep(&m_buffer[0]);
+				float y = mb_f32_dep(&m_buffer[sizeof(float)]);
+				float z = mb_f32_dep(&m_buffer[sizeof(float)*2]);
 				box.Minimum = Vector3Utils::LDVector(x,y,z);
-				x = cr32_dep(&m_buffer[sizeof(float)*3]);
-				y = cr32_dep(&m_buffer[sizeof(float)*4]);
-				z = cr32_dep(&m_buffer[sizeof(float)*5]);
+				x = mb_f32_dep(&m_buffer[sizeof(float)*3]);
+				y = mb_f32_dep(&m_buffer[sizeof(float)*4]);
+				z = mb_f32_dep(&m_buffer[sizeof(float)*5]);
 				box.Maximum = Vector3Utils::LDVector(x,y,z);
 			}
 			else
 #endif
 			{
-				float x = cr32_le(&m_buffer[0]);
-				float y = cr32_le(&m_buffer[sizeof(float)]);
-				float z = cr32_le(&m_buffer[sizeof(float)*2]);
+				float x = mb_f32_le(&m_buffer[0]);
+				float y = mb_f32_le(&m_buffer[sizeof(float)]);
+				float z = mb_f32_le(&m_buffer[sizeof(float)*2]);
 				box.Minimum = Vector3(x,y,z);
-				x = cr32_le(&m_buffer[sizeof(float)*3]);
-				y = cr32_le(&m_buffer[sizeof(float)*4]);
-				z = cr32_le(&m_buffer[sizeof(float)*5]);
+				x = mb_f32_le(&m_buffer[sizeof(float)*3]);
+				y = mb_f32_le(&m_buffer[sizeof(float)*4]);
+				z = mb_f32_le(&m_buffer[sizeof(float)*5]);
 				box.Maximum = Vector3(x,y,z);
 			}
 		}
@@ -556,20 +556,20 @@ namespace Apoc3D
 #ifdef BIG_ENDIAN
 			if (!m_isEndianIndependent)
 			{
-				float x = cr32_dep(&m_buffer[0]);
-				float y = cr32_dep(&m_buffer[sizeof(float)]);
-				float z = cr32_dep(&m_buffer[sizeof(float)*2]);
+				float x = mb_f32_dep(&m_buffer[0]);
+				float y = mb_f32_dep(&m_buffer[sizeof(float)]);
+				float z = mb_f32_dep(&m_buffer[sizeof(float)*2]);
 				sphere.Center = Vector3(x,y,z);
-				sphere.Radius = cr32_dep(&m_buffer[sizeof(float)*3]);
+				sphere.Radius = mb_f32_dep(&m_buffer[sizeof(float)*3]);
 			}
 			else
 #endif
 			{
-				float x = cr32_le(&m_buffer[0]);
-				float y = cr32_le(&m_buffer[sizeof(float)]);
-				float z = cr32_le(&m_buffer[sizeof(float)*2]);
+				float x = mb_f32_le(&m_buffer[0]);
+				float y = mb_f32_le(&m_buffer[sizeof(float)]);
+				float z = mb_f32_le(&m_buffer[sizeof(float)*2]);
 				sphere.Center = Vector3(x,y,z);
-				sphere.Radius = cr32_le(&m_buffer[sizeof(float)*3]);
+				sphere.Radius = mb_f32_le(&m_buffer[sizeof(float)*3]);
 			}
 		}
 

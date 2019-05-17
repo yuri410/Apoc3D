@@ -119,6 +119,8 @@ namespace Apoc3D
 
 				virtual ~Shader() {}
 
+				virtual void NotifyLinkage(void* platformData);
+
 				virtual ShaderType getType() const = 0;
 			protected:
 				Shader(RenderDevice* rd);

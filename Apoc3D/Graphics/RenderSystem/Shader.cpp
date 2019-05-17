@@ -33,6 +33,10 @@ namespace Apoc3D
 			{
 				
 			}
+			void Shader::NotifyLinkage(void* platformData)
+			{
+
+			}
 
 			void ShaderSamplerState::Parse(const ConfigurationSection* sect)
 			{	

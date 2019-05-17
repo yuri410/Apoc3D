@@ -102,6 +102,8 @@ namespace Apoc3D
 				void SetValue(const String& paramName, const float* value, int32 count) override { }
 				void SetValue(const String& paramName, const int32* value, int32 count) override { }
 
+				void NotifyLinkage(void* platformData) override;
+
 			protected:
 				static void KeyNotFoundError(const String& name);
 
