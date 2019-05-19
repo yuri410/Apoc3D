@@ -100,6 +100,11 @@ namespace Apoc3D
 
 		bool isNull() const { return m_invoker == nullptr && m_rawFunction == nullptr; }
 
+		explicit operator bool() const noexcept { return m_invoker || m_rawFunction; }
+		
+		bool operator==(std::nullptr_t) const noexcept { return isNull(); }
+		bool operator!=(std::nullptr_t) const noexcept { return !isNull(); }
+
 	private:
 		struct Dummy {};
 
