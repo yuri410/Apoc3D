@@ -26,8 +26,23 @@ namespace Apoc3D
 	template <class Ret, class ...Args>
 	class FunctorReference < Ret(Args...) >
 	{
-		using InvokerType = Ret(*)(void*, Args&&...);
+		using InvokerType = Ret(*)(void*, Args&& ...);
+
 		using RawFunctionType = Ret(*)(Args...);
+
+		template <class C>
+		struct MemberFunctorType
+		{
+			C* m_obj;
+			Ret(C::* m_func)(Args...);
+		};
+
+		template <class C>
+		struct MemberFunctorConstType
+		{
+			const C* m_obj;
+			Ret(C::* m_func)(Args...) const;
+		};
 
 	public:
 		FunctorReference() { }
@@ -37,35 +52,42 @@ namespace Apoc3D
 		template <typename F>
 		FunctorReference(const F& lambda)
 		{
+			m_invoker = &InvokerCT_ConstMember< F, & F::operator() >;
 			m_instance = const_cast<F*>(&lambda);
-			m_invoker = &Invoker_ConstMethod<F, &F::operator()> ;
 		}
 
 		template <typename F> // prevent const in T
-		FunctorReference(typename std::enable_if<std::is_const<F>::value, F>::type& lambda)
+		FunctorReference(typename std::enable_if<!std::is_const<F>::value, F>::type& lambda)
 		{
+			m_invoker = &InvokerCT_Member< F, & F::operator() >;
 			m_instance = const_cast<F*>(&lambda);
-			m_invoker = &Invoker_Method < F, &F::operator() > ;
-		} 
-
-		FunctorReference(RawFunctionType functionPtr)
-			: m_rawFunction(functionPtr) { }
-
-
-		template <class ClassType, Ret(ClassType::*method_ptr)(Args...)>
-		FunctorReference& Bind(ClassType* ct)
-		{
-			m_instance = const_cast<ClassType*>(ct);
-			m_invoker = &Invoker_Method<ClassType, method_ptr>;
-			return *this;
 		}
 
-		template <class ClassType, Ret(ClassType::*method_ptr)(Args...) const>
-		FunctorReference& Bind(const ClassType* ct)
+		FunctorReference(RawFunctionType functionPtr)
 		{
-			m_instance = const_cast<ClassType*>(ct);
-			m_invoker = &Invoker_ConstMethod<ClassType, method_ptr> ;
-			return *this;
+			m_rawFunction = functionPtr;
+		}
+
+		template <class ClassType>
+		FunctorReference(ClassType* ct, Ret(ClassType::* func)(Args...))
+		{
+			static_assert(std::is_trivial<MemberFunctorType<ClassType>>::value, "");
+			static_assert(sizeof(m_mbrFunctor) == sizeof(MemberFunctorType<ClassType>), "");
+
+			m_invoker = &Invoker_Member< MemberFunctorType<ClassType> >;
+			*reinterpret_cast<MemberFunctorType<ClassType>*>(m_mbrFunctor) = { ct, func };
+			m_instance = m_mbrFunctor;
+		}
+
+		template <class ClassType>
+		FunctorReference(const ClassType* ct, Ret(ClassType::* func)(Args...) const)
+		{
+			static_assert(std::is_trivial<MemberFunctorConstType<ClassType>>::value, "");
+			static_assert(sizeof(m_mbrFunctor) == sizeof(MemberFunctorConstType<ClassType>), "");
+
+			m_invoker = &Invoker_Member< MemberFunctorConstType<ClassType> >;
+			*reinterpret_cast<MemberFunctorConstType<ClassType>*>(m_mbrFunctor) = { ct, func };
+			m_instance = m_mbrFunctor;
 		}
 
 		Ret operator()(Args... args) const
@@ -76,23 +98,41 @@ namespace Apoc3D
 			return m_invoker(m_instance, std::forward<Args>(args)...);
 		}
 
-		bool isNull() const { return m_instance == nullptr && m_rawFunction == nullptr; }
+		bool isNull() const { return m_invoker == nullptr && m_rawFunction == nullptr; }
+
 	private:
+		struct Dummy {};
+
+		InvokerType m_invoker = nullptr;
 		RawFunctionType m_rawFunction = nullptr;
+
 		void* m_instance = nullptr;
-		InvokerType m_invoker = 0;
+		char  m_mbrFunctor[sizeof(MemberFunctorType<Dummy>)];
 
-		template <class ClassType, Ret(ClassType::*method_ptr)(Args...)>
-		static Ret Invoker_Method(void* object_ptr, Args&&... args)
+		template <class ClassType, Ret(ClassType::* func)(Args...)>
+		static Ret InvokerCT_Member(void* instance, Args&& ... args)
 		{
-			return (static_cast<ClassType*>(object_ptr)->*method_ptr)(std::forward<Args>(args)...);
+			return (static_cast<ClassType*>(instance)->*func)(std::forward<Args>(args)...);
 		}
 
-		template <class ClassType, Ret(ClassType::*method_ptr)(Args...) const>
-		static Ret Invoker_ConstMethod(void* object_ptr, Args&&... args)
+		template <class ClassType, Ret(ClassType::* func)(Args...) const>
+		static Ret InvokerCT_ConstMember(void* instance, Args&& ... args)
 		{
-			return (static_cast<const ClassType*>(object_ptr)->*method_ptr)(std::forward<Args>(args)...);
+			return (static_cast<const ClassType*>(instance)->*func)(std::forward<Args>(args)...);
 		}
+
+		template <typename FunctorType>
+		static Ret Invoker_Member(void* instance, Args&& ... args)
+		{
+			return (static_cast<FunctorType*>(instance)->m_obj->*
+					static_cast<FunctorType*>(instance)->m_func)(std::forward<Args>(args)...);
+		}
+
+		//static Ret Invoker_Function(void* instance, Args&& ... args)
+		//{
+		//	return static_cast<RawFunctionType>(instance)(std::forward<Args>(args)...);
+		//}
+
 	};
 
 }
