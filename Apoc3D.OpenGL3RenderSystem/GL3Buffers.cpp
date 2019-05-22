@@ -31,31 +31,33 @@ namespace Apoc3D
 			{
 				glGenBuffers(1, &m_bufferID);
 				glBindBuffer(GL_ARRAY_BUFFER, m_bufferID);
-				glBufferData(GL_ARRAY_BUFFER, vertexCount * vertexSize, nullptr, m_isDynamic ? GL_DYNAMIC_DRAW : GL_STREAM_DRAW);
+				glBufferData(GL_ARRAY_BUFFER, vertexCount * vertexSize, nullptr, m_isDynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 			}
+
 			GL3VertexBuffer::~GL3VertexBuffer()
 			{
 				if (m_bufferID)
 				{
-					glDeleteBuffers(1, m_bufferID);
+					glDeleteBuffers(1, &m_bufferID);
 					m_bufferID = 0;
 				}
 			}
+
 			void* GL3VertexBuffer::lock(int offset, int size, LockMode mode)
 			{
-				GLbitfield access;
-				todo;
+				GLbitfield access = GLUtils::ConvertLockMode(mode);
+
 				glBindBuffer(GL_ARRAY_BUFFER, m_bufferID);
 				return glMapBufferRange(GL_ARRAY_BUFFER, offset, size, access);
 			}
+
 			void GL3VertexBuffer::unlock()
 			{
 				glBindBuffer(GL_ARRAY_BUFFER, m_bufferID);
 				glUnmapBuffer(GL_ARRAY_BUFFER);
 			}
 
-
-
+			//////////////////////////////////////////////////////////////////////////
 
 			GL3IndexBuffer::GL3IndexBuffer(GL3RenderDevice* device, IndexBufferFormat type, int32 size, BufferUsageFlags usage)
 				: IndexBuffer(type, size, usage)
@@ -64,7 +66,7 @@ namespace Apoc3D
 			{
 				glGenBuffers(1, &m_bufferID);
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_bufferID);
-				glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * getIndexElementSize(), nullptr, m_isDynamic ? GL_DYNAMIC_DRAW : GL_STREAM_DRAW);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * getIndexElementSize(), nullptr, m_isDynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 			}
 
 			GL3IndexBuffer::~GL3IndexBuffer()
@@ -78,16 +80,38 @@ namespace Apoc3D
 
 			void* GL3IndexBuffer::lock(int offset, int size, LockMode mode)
 			{
-				GLbitfield access;
-				todo;
+				GLbitfield access = GLUtils::ConvertLockMode(mode);
+
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_bufferID);
 				return glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, offset, size, access);
 			}
+
 			void GL3IndexBuffer::unlock()
 			{
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_bufferID);
 				glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 			}
+
+			//////////////////////////////////////////////////////////////////////////
+
+			GL3DepthBuffer::GL3DepthBuffer(int width, int height, DepthFormat fmt)
+			{
+				todo;
+
+				glGenRenderbuffers(1, &m_buf);
+				glBindRenderbuffer(GL_RENDERBUFFER, m_buf);
+				glRenderbufferStorage(GL_RENDERBUFFER, , width, height );
+			}
+
+			GL3DepthBuffer::~GL3DepthBuffer()
+			{
+				if (m_buf)
+				{
+					glDeleteRenderbuffers(1, &m_buf);
+					m_buf = 0;
+				}
+			}
+
 
 		}
 	}

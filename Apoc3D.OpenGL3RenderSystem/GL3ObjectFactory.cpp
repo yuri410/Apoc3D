@@ -19,6 +19,7 @@
 #include "GL3Texture.h"
 #include "GL3Buffers.h"
 #include "GL3Sprite.h"
+#include "GL3Shader.h"
 
 namespace Apoc3D
 {
@@ -77,20 +78,20 @@ namespace Apoc3D
 
 			Shader* GL3ObjectFactory::CreateVertexShader(const ResourceLocation* resLoc)
 			{
-				return nullptr;
+				return GL3VertexShader(m_device, *resLoc);
 			}
 			Shader* GL3ObjectFactory::CreatePixelShader(const ResourceLocation* resLoc)
 			{
-				return nullptr;
+				return GL3PixelShader(m_device, *resLoc);
 			}
 
 			Shader* GL3ObjectFactory::CreateVertexShader(const byte* byteCode)
 			{
-				return nullptr;
+				return GL3VertexShader(m_device, byteCode);
 			}
 			Shader* GL3ObjectFactory::CreatePixelShader(const byte* byteCode)
 			{
-				return nullptr;
+				return GL3PixelShader(m_device, byteCode);
 			}
 
 			Sprite* GL3ObjectFactory::CreateSprite()

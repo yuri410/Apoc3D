@@ -20,6 +20,7 @@
 #define GL3SHADER_H
 
 #include "GL3Common.h"
+
 #include "apoc3d/Math/Math.h"
 #include "apoc3d/Math/Plane.h"
 #include "apoc3d/Math/Matrix.h"
@@ -102,8 +103,9 @@ namespace Apoc3D
 				void SetValue(const String& paramName, const float* value, int32 count) override { }
 				void SetValue(const String& paramName, const int32* value, int32 count) override { }
 
-				void NotifyLinkage(void* platformData) override;
+				void NotifyLinkage(const List<Shader*>& shaders) override;
 
+				GLuint getGLShaderID() const { return m_shaderID; }
 			protected:
 				static void KeyNotFoundError(const String& name);
 
@@ -112,7 +114,7 @@ namespace Apoc3D
 				GL3RenderDevice* m_device;
 				GLuint m_shaderID = 0;
 
-				ConstantTable* m_constantTable;
+				GLProgram* m_prog = nullptr;
 			};
 
 

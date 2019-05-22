@@ -33,7 +33,8 @@ namespace Apoc3D
 			{
 				
 			}
-			void Shader::NotifyLinkage(void* platformData)
+
+			void Shader::NotifyLinkage(const List<Shader*>& shaders)
 			{
 
 			}

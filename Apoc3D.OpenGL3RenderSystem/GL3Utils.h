@@ -101,7 +101,7 @@ namespace Apoc3D
 					return GL_TEXTURE_1D; 
 				}
 
-
+				static GLbitfield ConvertLockMode(LockMode mode);
 
 
 			//	static PixelFormat GetD3DTextureFormat(D3DTexture3D* tex);

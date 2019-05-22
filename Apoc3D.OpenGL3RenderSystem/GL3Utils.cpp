@@ -278,6 +278,18 @@ namespace Apoc3D
 				return true;
 			}
 
+			GLbitfield GLUtils::ConvertLockMode(LockMode mode)
+			{
+				GLbitfield r = GL_MAP_WRITE_BIT;
+				if (mode & LOCK_Discard)
+					r |= GL_MAP_INVALIDATE_RANGE_BIT;
+				if (mode & LOCK_NoOverwrite)
+					r |= GL_MAP_UNSYNCHRONIZED_BIT;
+				if (mode & LOCK_ReadOnly)
+					r |= GL_MAP_READ_BIT;
+				return r;
+			}
+
 			bool GLUtils::CheckError(const wchar_t* file, unsigned line)
 			{
 				int err = glGetError();

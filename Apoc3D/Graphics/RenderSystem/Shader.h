@@ -119,7 +119,7 @@ namespace Apoc3D
 
 				virtual ~Shader() {}
 
-				virtual void NotifyLinkage(void* platformData);
+				virtual void NotifyLinkage(const List<Shader*>& shaders);
 
 				virtual ShaderType getType() const = 0;
 			protected:

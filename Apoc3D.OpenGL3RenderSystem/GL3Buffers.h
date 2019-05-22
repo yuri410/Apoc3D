@@ -17,7 +17,7 @@
 #ifndef GL3VERTEXBUFFER_H
 #define GL3VERTEXBUFFER_H
 
-#include "../GL3Common.h"
+#include "GL3Common.h"
 
 #include "apoc3d/Graphics/RenderSystem/HardwareBuffer.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
@@ -31,8 +31,8 @@ namespace Apoc3D
 	{
 		namespace GL3RenderSystem
 		{
-			// vertex attribute buffer
-			class GL3VertexBuffer : public VertexBuffer, public VolatileResource
+			// Aka. vertex attribute buffer
+			class GL3VertexBuffer : public VertexBuffer
 			{
 			public:
 				GL3VertexBuffer(GL3RenderDevice* device, int32 vertexCount, int32 vertexSize, BufferUsageFlags usage);
@@ -49,8 +49,8 @@ namespace Apoc3D
 
 			};
 
-			// Vertex array indices
-			class GL3IndexBuffer : public IndexBuffer, public VolatileResource
+			// Aka. vertex element array
+			class GL3IndexBuffer : public IndexBuffer
 			{
 			public:
 				GL3IndexBuffer(GL3RenderDevice* device, IndexBufferFormat type, int32 size, BufferUsageFlags usage);
@@ -67,6 +67,16 @@ namespace Apoc3D
 				bool m_isDynamic = false;
 			};
 
+
+			class GL3DepthBuffer
+			{
+			public:
+				GL3DepthBuffer(int width, int height, DepthFormat fmt);
+				~GL3DepthBuffer();
+
+			private:
+				GLuint m_buf;
+			};
 		}
 	}
 }

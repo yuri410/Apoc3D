@@ -10,19 +10,14 @@ namespace Apoc3D
 	{
 		namespace GL3RenderSystem
 		{
-			class GLProgram
+			class GLVertexArray
 			{
 			public:
-				GLProgram();
-				~GLProgram();
+				GLVertexArray();
+				~GLVertexArray();
 
-				void Link(const List<Shader*>& shaders);
-
-				void IncrRefCount();
-				bool DecrRefCount();
 			private:
-				GLuint m_prog;
-				int32 m_refCount = 1;
+				GLuint m_vao;
 			};
 		}
 	}

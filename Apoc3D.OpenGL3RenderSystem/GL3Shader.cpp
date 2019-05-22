@@ -19,6 +19,7 @@
 #include "GL3RenderStateManager.h"
 #include "GL3RenderDevice.h"
 #include "GL3Texture.h"
+#include "GL/GLProgram.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Library/lz4.h"
 #include "Apoc3D/IOLib/IOUtils.h"
@@ -33,7 +34,6 @@ namespace Apoc3D
 				: Shader(device), m_device(device)
 			{
 				CompileShader(shaderType, byteCode);
-				m_constantTable = new ConstantTable(byteCode);
 			}
 			GL3Shader::GL3Shader(GL3RenderDevice* device, GLenum shaderType, const ResourceLocation& rl)
 				: Shader(device), m_device(device)
@@ -45,19 +45,21 @@ namespace Apoc3D
 
 				CompileShader(shaderType, (byte*)buffer);
 
-				m_constantTable = new ConstantTable(reinterpret_cast<const byte*>(buffer));
-
 				delete[] buffer;
 			}
 			GL3Shader::~GL3Shader()
 			{
-				delete m_constantTable;
+				if (m_prog && m_prog->DecrRefCount())
+				{
+					delete m_prog;
+				}
+				m_prog = nullptr;
 			}
 
 			void GL3Shader::CompileShader(GLenum shaderType, const byte* byteCode)
 			{
-				int32 dataLength = ci32_le((const char*)byteCode);
-				int32 sourceLength = ci32_le((const char*)byteCode + sizeof(int));
+				int32 dataLength = mb_i32_le((const char*)byteCode);
+				int32 sourceLength = mb_i32_le((const char*)byteCode + sizeof(int));
 				const GLchar* sourceCode = new GLchar[sourceLength + 1]();
 
 				int32 ret = LZ4_decompress_safe((const char*)byteCode + sizeof(int)*2, (char*)sourceCode, dataLength, sourceLength);
@@ -132,9 +134,35 @@ namespace Apoc3D
 				Apoc3D::Core::ApocLog(LOG_Graphics, L"Shader parameter " + name + L" not found.", LOGLVL_Warning);
 			}
 
-			void GL3Shader::NotifyLinkage(void* platformData)
+			void GL3Shader::NotifyLinkage(const List<Shader*>& shaders)
 			{
+				int otherShaderCount = 0;
+				for (Shader* s : shaders)
+				{
+					GL3Shader* gs = static_cast<GL3Shader*>(s);
 
+					if (gs != this)
+					{
+						otherShaderCount++;
+					}
+					if (gs->m_prog)
+					{
+						otherShaderCount = 0;
+					}
+				}
+
+				if (otherShaderCount > 0)
+				{
+					GLProgram* prog = new GLProgram();
+					prog->Link(shaders);
+
+					for (Shader* s : shaders)
+					{
+						GL3Shader* gs = static_cast<GL3Shader*>(s);
+						gs->m_prog = prog;
+						prog->IncrRefCount();
+					}
+				}
 			}
 
 			//////////////////////////////////////////////////////////////////////////

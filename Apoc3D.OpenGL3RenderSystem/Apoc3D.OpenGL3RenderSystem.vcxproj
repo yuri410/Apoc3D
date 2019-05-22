@@ -101,6 +101,9 @@
     <ClInclude Include="GL3Sprite.h" />
     <ClInclude Include="GL3Texture.h" />
     <ClInclude Include="gl\gl3w.h" />
+    <ClInclude Include="gl\GLFramebuffer.h" />
+    <ClInclude Include="gl\GLSamplerState.h" />
+    <ClInclude Include="gl\GLVertexArray.h" />
     <ClInclude Include="gl\wgl.h" />
     <ClInclude Include="GraphicsDeviceManager.h" />
     <ClInclude Include="GL3RenderWindow.h" />
@@ -121,7 +124,10 @@
     <ClCompile Include="GL3Texture.cpp" />
     <ClCompile Include="GL3Utils.cpp" />
     <ClCompile Include="gl\gl3w.c" />
+    <ClCompile Include="gl\GLFramebuffer.cpp" />
     <ClCompile Include="gl\GLProgram.cpp" />
+    <ClCompile Include="gl\GLSamplerState.cpp" />
+    <ClCompile Include="gl\GLVertexArray.cpp" />
     <ClCompile Include="gl\wgl.cpp" />
     <ClCompile Include="GraphicsDeviceManager.cpp" />
     <ClCompile Include="GL3RenderWindow.cpp" />
