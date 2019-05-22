@@ -16,7 +16,7 @@ namespace Apoc3D
 				GLProgram();
 				~GLProgram();
 
-				void Link(const List<Shader*>& shaders);
+				void Link(const List<GLuint>& shaders);
 
 				void IncrRefCount();
 				bool DecrRefCount();

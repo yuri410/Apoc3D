@@ -136,31 +136,57 @@ namespace Apoc3D
 
 			void GL3Shader::NotifyLinkage(const List<Shader*>& shaders)
 			{
-				int otherShaderCount = 0;
+				GLProgram* prog = nullptr;
+
+				int linkedShaderCount = 0;
+				int unlinkedShaderCount = 0;
 				for (Shader* s : shaders)
 				{
 					GL3Shader* gs = static_cast<GL3Shader*>(s);
 
-					if (gs != this)
+					if (gs == this)
 					{
-						otherShaderCount++;
+						continue;
 					}
+
 					if (gs->m_prog)
 					{
-						otherShaderCount = 0;
+						linkedShaderCount++;
+						prog = gs->m_prog;
+					}
+					else
+					{
+						unlinkedShaderCount++;
 					}
 				}
 
-				if (otherShaderCount > 0)
+				assert(unlinkedShaderCount + linkedShaderCount + 1 == shaders.getCount());
+
+				if (linkedShaderCount == 0)
 				{
-					GLProgram* prog = new GLProgram();
-					prog->Link(shaders);
+					List<GLuint> shaderIDs(shaders.getCount());
+					for (Shader* s : shaders)
+					{
+						GL3Shader* gs = static_cast<GL3Shader*>(s);
+						shaderIDs.Add(gs->m_shaderID);
+					}
+
+					prog = new GLProgram();
+					prog->Link(shaderIDs);
 
 					for (Shader* s : shaders)
 					{
 						GL3Shader* gs = static_cast<GL3Shader*>(s);
 						gs->m_prog = prog;
 						prog->IncrRefCount();
+					}
+				}
+				else
+				{
+					for (Shader* s : shaders)
+					{
+						GL3Shader* gs = static_cast<GL3Shader*>(s);
+						gs->m_prog = prog;
 					}
 				}
 			}

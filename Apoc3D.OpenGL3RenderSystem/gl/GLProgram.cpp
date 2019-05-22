@@ -21,13 +21,11 @@ namespace Apoc3D
 				}
 			}
 
-			void GLProgram::Link(const List<Shader*>& shaders)
+			void GLProgram::Link(const List<GLuint>& shaders)
 			{
-				for (Shader* s : shaders)
+				for (GLuint s : shaders)
 				{
-					GL3Shader* gs = static_cast<GL3Shader*>(s);
-
-					glAttachShader(m_prog, gs->getGLShaderID());
+					glAttachShader(m_prog, s);
 				}
 
 				glLinkProgram(m_prog);
