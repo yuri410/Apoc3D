@@ -92,11 +92,8 @@ namespace Apoc3D
 
 			int32 GL3Shader::GetParamIndex(const String& paramName)
 			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc && sc->RegisterCount)
-				{
-					return sc->RegisterIndex;
-				}
+				const GLProgramVariable* sc = m_prog->getUniform(paramName);
+				if (sc) return sc->m_location; 
 				KeyNotFoundError(paramName);
 				return 0;
 			}
@@ -110,10 +107,10 @@ namespace Apoc3D
 			}
 			bool GL3Shader::TryGetParamIndex(const String& paramName, int32& result)
 			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc && !sc->IsSampler)
+				const GLProgramVariable* sc = m_prog->getUniform(paramName);
+				if (sc)
 				{
-					result = sc->RegisterIndex;
+					result = sc->m_location;
 					return true;
 				}
 				return false;
