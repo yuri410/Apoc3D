@@ -56,8 +56,7 @@ namespace Apoc3D
 				virtual void load();
 				virtual void unload();
 
-				//void setInternalTexID(GLuint id) { m_textureID = id; }
-				GLuint getInternalTexID() const { return m_textureID; }
+				GLuint getGLTexID() const { return m_textureID; }
 
 			private:
 

@@ -54,6 +54,12 @@ namespace Apoc3D
 					delete m_prog;
 				}
 				m_prog = nullptr;
+
+				if (m_shaderID)
+				{
+					glDeleteShader(m_shaderID);
+					m_shaderID = 0;
+				}
 			}
 
 			void GL3Shader::CompileShader(GLenum shaderType, const byte* byteCode)
@@ -88,39 +94,37 @@ namespace Apoc3D
 				}
 			}
 
-			// TODO: attributes and uniforms are only available after program linking
-
 			int32 GL3Shader::GetParamIndex(const String& paramName)
 			{
-				const GLProgramVariable* sc = m_prog->getUniform(paramName);
-				if (sc) return sc->m_location; 
+				const GLProgramVariable* pv = m_prog->getUniform(paramName);
+				if (pv) return pv->m_location;
 				KeyNotFoundError(paramName);
 				return 0;
 			}
 			int32 GL3Shader::GetSamplerIndex(const String& paramName)
 			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					return sc->SamplerIndex;
+				const GLProgramVariable* pv = m_prog->getUniform(paramName);
+				if (pv)
+					return pv->m_textureSlotID;
 				KeyNotFoundError(paramName);
 				return 0;
 			}
 			bool GL3Shader::TryGetParamIndex(const String& paramName, int32& result)
 			{
-				const GLProgramVariable* sc = m_prog->getUniform(paramName);
-				if (sc)
+				const GLProgramVariable* pv = m_prog->getUniform(paramName);
+				if (pv)
 				{
-					result = sc->m_location;
+					result = pv->m_location;
 					return true;
 				}
 				return false;
 			}
 			bool GL3Shader::TryGetSamplerIndex(const String& paramName, int32& result)
 			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc && sc->IsSampler)
+				const GLProgramVariable* pv = m_prog->getUniform(paramName);
+				if (pv && pv->m_isSampler)
 				{
-					result = sc->SamplerIndex;
+					result = pv->m_textureSlotID;
 					return true;
 				}
 				return false;
@@ -188,6 +192,32 @@ namespace Apoc3D
 				}
 			}
 
+			void GL3Shader::SetTexture(int slotIdx, Texture* tex)
+			{
+				m_device->getNativeState()->SetTexture(slotIdx, static_cast<GL3Texture*>(tex));
+			}
+			void GL3Shader::SetSamplerState(int slotIdx, const ShaderSamplerState& state)
+			{
+				m_device->getNativeState()->SetSampler(slotIdx, state);
+			}
+
+			void GL3Shader::SetTexture(const String& paramName, Texture* tex)
+			{
+				const GLProgramVariable* pv = m_prog->getUniform(paramName);
+				if (pv)
+					SetTexture(pv->m_textureSlotID, tex);
+				else
+					KeyNotFoundError(paramName);
+			}
+			void GL3Shader::SetSamplerState(const String& paramName, const ShaderSamplerState& state)
+			{
+				const GLProgramVariable* pv = m_prog->getUniform(paramName);
+				if (pv)
+					SetSamplerState(pv->m_textureSlotID, state);
+				else
+					KeyNotFoundError(paramName);
+			}
+
 			//////////////////////////////////////////////////////////////////////////
 
 			GL3VertexShader::GL3VertexShader(GL3RenderDevice* device, const byte* byteCode)
@@ -201,38 +231,7 @@ namespace Apoc3D
 			}
 			GL3VertexShader::~GL3VertexShader()
 			{
-				if (m_shaderID)
-				{
-					glDeleteShader(m_shaderID);
-					m_shaderID = 0;
-				}
-			}
-
-			void GL3VertexShader::SetTexture(int samIndex, Texture* tex)
-			{
-
-			}
-			void GL3VertexShader::SetSamplerState(int samIndex, const ShaderSamplerState &state)
-			{
-				m_device->getNativeStateManager()->SetVertexSampler(samIndex, state);
-
-			}
-
-			void GL3VertexShader::SetTexture(const String &paramName, Texture* tex)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetTexture(sc->SamplerIndex, tex);
-				else
-					KeyNotFoundError(paramName);
-			}
-			void GL3VertexShader::SetSamplerState(const String &paramName, const ShaderSamplerState &state)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetSamplerState(sc->SamplerIndex, state);
-				else
-					KeyNotFoundError(paramName);
+				
 			}
 
 			//////////////////////////////////////////////////////////////////////////
@@ -248,37 +247,7 @@ namespace Apoc3D
 			}
 			GL3PixelShader::~GL3PixelShader()
 			{
-				if (m_shaderID)
-				{
-					glDeleteShader(m_shaderID);
-					m_shaderID = 0;
-				}
-			}
-
-			void GL3PixelShader::SetTexture(int samIndex, Texture* tex)
-			{
-				m_device->getNativeStateManager()->SetTexture(samIndex, static_cast<NRSTexture*>(tex));
-			}
-			void GL3PixelShader::SetSamplerState(int samIndex, const ShaderSamplerState &state)
-			{
-				m_device->getNativeStateManager()->SetPixelSampler(samIndex, state);
-			}
-
-			void GL3PixelShader::SetTexture(const String &paramName, Texture* tex)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetTexture(sc->SamplerIndex, tex);
-				else
-					KeyNotFoundError(paramName);
-			}
-			void GL3PixelShader::SetSamplerState(const String &paramName, const ShaderSamplerState &state)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetSamplerState(sc->SamplerIndex, state);
-				else
-					KeyNotFoundError(paramName);
+				
 			}
 
 		}

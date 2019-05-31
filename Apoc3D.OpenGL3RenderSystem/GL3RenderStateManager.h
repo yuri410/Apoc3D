@@ -37,8 +37,6 @@ namespace Apoc3D
 				NativeGL3StateManager(GL3RenderDevice* device);
 				~NativeGL3StateManager();
 
-				void SetAlphaTestParameters(bool enable, uint32 reference);
-				void SetAlphaTestParameters(bool enable, CompareFunction func, uint32 reference);
 				void SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend);
 				void SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint32 factor);
 				void SetSeparateAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend);
@@ -49,13 +47,6 @@ namespace Apoc3D
 				void SetStencilTwoSide(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, CompareFunction func);
 				void SetCullMode(CullMode mode);
 				void SetFillMode(FillMode mode);
-
-				/************************************************************************/
-				/* Alpha Test                                                           */
-				/************************************************************************/
-				bool getAlphaTestEnable() { return m_cachedAlphaTestEnable; }
-				CompareFunction getAlphaTestFunction() { return m_cachedAlphaTestFunction; }
-				uint32 getAlphaReference() { return m_cachedAlphaReference; }
 
 				/************************************************************************/
 				/* Alpha Blend                                                          */
@@ -120,8 +111,27 @@ namespace Apoc3D
 
 				CompareFunction getCounterClockwiseStencilFunction() { return m_cachedCounterClockwiseStencilFunction; }
 
+				/************************************************************************/
+				/* Color Write                                                          */
+				/************************************************************************/
+				ColorWriteMasks GetColorWriteMasks(int32 rtIndex);
+				void SetColorWriteMasks(int32 rtIndex, ColorWriteMasks masks);
+
+				/************************************************************************/
+				/* Samplers                                                             */
+				/************************************************************************/
+				const ShaderSamplerState& getSampler(int32 slotIdx) const;
+				void SetSampler(int32 slotIdx, const ShaderSamplerState& sampler);
+
+				int32 getTextureSlotCount() const { return m_textureSlotCount; }
+				GL3Texture* getTexture(int32 slotIdx) const { assert(slotIdx >= 0 && slotIdx < m_textureSlotCount); return m_textureSlots[slotIdx]; }
+				void SetTexture(int32 slotIdx, GL3Texture* tex);
+
+				void Reset() { InitializeDefaultState(); }
+
 			private:
 				void InitializeDefaultState();
+				void SetSampler(int32 slotIdx, ShaderSamplerState& curState, const ShaderSamplerState& state);
 
 				GL3RenderDevice* m_device;
 
@@ -172,13 +182,12 @@ namespace Apoc3D
 
 				CompareFunction m_cachedCounterClockwiseStencilFunction;
 
-				ShaderSamplerState* m_pixelSamplers = nullptr;
-				ShaderSamplerState* m_vertexSamplers = nullptr;
-
 				ColorWriteMasks m_colorWriteMasks[4];
 
 				int32 m_textureSlotCount;
 				GL3Texture** m_textureSlots = nullptr;
+				GLSampler* m_textureSlotSamplers = nullptr;
+				ShaderSamplerState* m_cachedSamplerStates = nullptr;
 			};
 
 
@@ -192,7 +201,7 @@ namespace Apoc3D
 
 				virtual void SetAlphaTestParameters(bool enable, CompareFunction func, uint32 reference)
 				{
-					m_stMgr->SetAlphaTestParameters(enable, func, reference);
+					//m_stMgr->SetAlphaTestParameters(enable, func, reference);
 				}
 				virtual void SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint32 factor)
 				{
@@ -226,13 +235,6 @@ namespace Apoc3D
 				{
 					m_stMgr->SetFillMode(mode);
 				}
-
-				/************************************************************************/
-				/* Alpha Test                                                           */
-				/************************************************************************/
-				virtual bool getAlphaTestEnable() { return m_stMgr->getAlphaTestEnable(); }
-				virtual CompareFunction getAlphaTestFunction() { return m_stMgr->getAlphaTestFunction(); }
-				virtual uint32 getAlphaReference() { return m_stMgr->getAlphaReference(); }
 
 				/************************************************************************/
 				/* Alpha Blend                                                          */

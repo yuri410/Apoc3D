@@ -134,7 +134,7 @@ namespace Apoc3D
 
 			DataRectangle GL3Texture::lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect)
 			{
-				assert(m_tex2D);
+				assert(m_textureID && getType() == TextureType::Texture2D);
 
 				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_mapPBO);
 
@@ -156,7 +156,7 @@ namespace Apoc3D
 			}
 			DataBox GL3Texture::lock(int32 surface, LockMode mode, const Box& box)
 			{
-				assert(m_tex3D);
+				assert(m_textureID && getType() == TextureType::Texture3D);
 				D3DLOCKED_BOX rbox;
 				D3DBOX box0;
 
@@ -168,7 +168,7 @@ namespace Apoc3D
 			}
 			DataRectangle GL3Texture::lock(int32 surface, CubeMapFace cubemapFace, LockMode mode, const Apoc3D::Math::Rectangle& rect)
 			{
-				assert(m_cube);			
+				assert(m_textureID && getType() == TextureType::CubeTexture);
 				D3DLOCKED_RECT rrect;
 				RECT rect0;
 				rect0.left = rect.X;
@@ -472,15 +472,15 @@ namespace Apoc3D
 
 			void GL3Texture::InitializeGLTexture(int32 width, int32 height, int32 depth, int32 level, PixelFormat format)
 			{
-				GLenum target = GLUtils::GetTextureTarget(getType());
+				m_target = GLUtils::GetTextureTarget(getType());
 				glGenTextures(1, &m_textureID);
-				glBindTexture(target, m_textureID);
+				glBindTexture(m_target, m_textureID);
 
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, level - 1);
-				glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-				glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
-				glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				glTexParameteri(m_target, GL_TEXTURE_MAX_LEVEL, level - 1);
+				glTexParameteri(m_target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(m_target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glTexParameteri(m_target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTexParameteri(m_target, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 				GLenum glInternalFormat;
 				GLenum glFormat, glType;
@@ -576,7 +576,7 @@ namespace Apoc3D
 				int level0Size = PixelFormatUtils::GetMemorySize(width, height, depth, format);
 				glGenBuffers(1, &m_mapPBO);
 				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_mapPBO);
-				glBufferData(GL_PIXEL_UNPACK_BUFFER, level0Size, NULL, usage == TU_Dynamic ? GL_DYNAMIC_DRAW : GL_STREAM_DRAW);
+				glBufferData(GL_PIXEL_UNPACK_BUFFER, level0Size, NULL, getUsage() == TU_Dynamic ? GL_DYNAMIC_DRAW : GL_STREAM_DRAW);
 
 			}
 		}

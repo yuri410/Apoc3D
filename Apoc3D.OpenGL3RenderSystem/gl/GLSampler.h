@@ -37,8 +37,9 @@ namespace Apoc3D
 				GLint GetMaxMip();
 
 			private:
-				GLuint m_sampler;
-				GLuint m_unit = 0;
+				GLuint	m_sampler;
+				GLuint	m_unit = 0;
+				bool	m_bound = false;
 			};
 		}
 	}

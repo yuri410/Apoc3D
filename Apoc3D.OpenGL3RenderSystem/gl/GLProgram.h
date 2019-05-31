@@ -16,6 +16,13 @@ namespace Apoc3D
 				GLuint m_location;
 				GLint  m_size;
 				GLenum m_type;
+
+				GLuint m_textureSlotID = 0;
+				bool   m_isSampler = false;
+				bool   m_isTexture = false;
+
+				bool IsTextureType() const;
+				bool IsSamplerType() const;
 			};
 
 			class GLProgram

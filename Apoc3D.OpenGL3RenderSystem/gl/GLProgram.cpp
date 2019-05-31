@@ -9,6 +9,91 @@ namespace Apoc3D
 	{
 		namespace GL3RenderSystem
 		{
+			bool GLProgramVariable::IsTextureType() const
+			{
+				switch (m_type)
+				{
+					case GL_IMAGE_1D: 
+					case GL_IMAGE_2D: 
+					case GL_IMAGE_3D: 
+					case GL_IMAGE_2D_RECT: 
+					case GL_IMAGE_CUBE: 
+					case GL_IMAGE_BUFFER: 
+					case GL_IMAGE_1D_ARRAY: 
+					case GL_IMAGE_2D_ARRAY: 
+					case GL_IMAGE_2D_MULTISAMPLE: 
+					case GL_IMAGE_2D_MULTISAMPLE_ARRAY: 
+					case GL_INT_IMAGE_1D: 
+					case GL_INT_IMAGE_2D: 
+					case GL_INT_IMAGE_3D: 
+					case GL_INT_IMAGE_2D_RECT: 
+					case GL_INT_IMAGE_CUBE: 
+					case GL_INT_IMAGE_BUFFER: 
+					case GL_INT_IMAGE_1D_ARRAY: 
+					case GL_INT_IMAGE_2D_ARRAY: 
+					case GL_INT_IMAGE_2D_MULTISAMPLE: 
+					case GL_INT_IMAGE_2D_MULTISAMPLE_ARRAY: 
+					case GL_UNSIGNED_INT_IMAGE_1D: 
+					case GL_UNSIGNED_INT_IMAGE_2D: 
+					case GL_UNSIGNED_INT_IMAGE_3D: 
+					case GL_UNSIGNED_INT_IMAGE_2D_RECT: 
+					case GL_UNSIGNED_INT_IMAGE_CUBE: 
+					case GL_UNSIGNED_INT_IMAGE_BUFFER: 
+					case GL_UNSIGNED_INT_IMAGE_1D_ARRAY: 
+					case GL_UNSIGNED_INT_IMAGE_2D_ARRAY: 
+					case GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE:
+					case GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY:
+						return true;
+				}
+				return false;
+			}
+			
+			bool GLProgramVariable::IsSamplerType() const
+			{
+				switch (m_type)
+				{
+					case GL_SAMPLER_1D:
+					case GL_SAMPLER_2D:
+					case GL_SAMPLER_3D:
+					case GL_SAMPLER_CUBE:
+					case GL_SAMPLER_1D_SHADOW:
+					case GL_SAMPLER_2D_SHADOW:
+					case GL_SAMPLER_1D_ARRAY:
+					case GL_SAMPLER_2D_ARRAY:
+					case GL_SAMPLER_1D_ARRAY_SHADOW:
+					case GL_SAMPLER_2D_ARRAY_SHADOW:
+					case GL_SAMPLER_2D_MULTISAMPLE:
+					case GL_SAMPLER_2D_MULTISAMPLE_ARRAY:
+					case GL_SAMPLER_CUBE_SHADOW:
+					case GL_SAMPLER_BUFFER:
+					case GL_SAMPLER_2D_RECT:
+					case GL_SAMPLER_2D_RECT_SHADOW:
+					case GL_INT_SAMPLER_1D:
+					case GL_INT_SAMPLER_2D:
+					case GL_INT_SAMPLER_3D:
+					case GL_INT_SAMPLER_CUBE:
+					case GL_INT_SAMPLER_1D_ARRAY:
+					case GL_INT_SAMPLER_2D_ARRAY:
+					case GL_INT_SAMPLER_2D_MULTISAMPLE:
+					case GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY:
+					case GL_INT_SAMPLER_BUFFER:
+					case GL_INT_SAMPLER_2D_RECT:
+					case GL_UNSIGNED_INT_SAMPLER_1D:
+					case GL_UNSIGNED_INT_SAMPLER_2D:
+					case GL_UNSIGNED_INT_SAMPLER_3D:
+					case GL_UNSIGNED_INT_SAMPLER_CUBE:
+					case GL_UNSIGNED_INT_SAMPLER_1D_ARRAY:
+					case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY:
+					case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE:
+					case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY:
+					case GL_UNSIGNED_INT_SAMPLER_BUFFER:
+					case GL_UNSIGNED_INT_SAMPLER_2D_RECT:
+						return true;
+				}
+				return false;
+			}
+
+
 			GLProgram::GLProgram()
 			{
 				m_prog = glCreateProgram();
@@ -53,6 +138,18 @@ namespace Apoc3D
 				{
 					RetireveVariables(true);
 					RetireveVariables(false);
+
+					GLuint slotId = 0;
+					for (GLProgramVariable& var : m_uniformTable.getValueAccessor())
+					{
+						var.m_isSampler = var.IsSamplerType();
+						var.m_isTexture = var.IsTextureType();
+
+						if (var.m_isSampler || var.m_isTexture)
+						{
+							var.m_textureSlotID = slotId++;
+						}
+					}
 				}
 			}
 

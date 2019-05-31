@@ -20,6 +20,11 @@ namespace Apoc3D
 
 			GLSampler::~GLSampler()
 			{
+				if (m_bound)
+				{
+					glBindSampler(m_unit, 0);
+				}
+
 				if (m_sampler)
 				{
 					glDeleteSamplers(1, &m_sampler);
@@ -30,6 +35,7 @@ namespace Apoc3D
 			void GLSampler::Bind(GLuint unit)
 			{
 				m_unit = unit;
+				m_bound = true;
 				glBindSampler(unit, m_sampler);
 			}
 

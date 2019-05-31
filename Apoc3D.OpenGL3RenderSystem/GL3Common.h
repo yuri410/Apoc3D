@@ -81,7 +81,12 @@ namespace Apoc3D
 
 			class GL3Texture;
 			class GL3Sprite;
+			class GL3VertexDeclaration;
 			
+
+			class GLSampler;
+			class GLVertexArray;
+			class GLProgram;
 		}
 	}
 }

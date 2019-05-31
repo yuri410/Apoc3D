@@ -20,6 +20,7 @@
 #include "GL3Buffers.h"
 #include "GL3Sprite.h"
 #include "GL3Shader.h"
+#include "GL3VertexDeclaration.h"
 
 namespace Apoc3D
 {
@@ -73,7 +74,7 @@ namespace Apoc3D
 
 			VertexDeclaration* GL3ObjectFactory::CreateVertexDeclaration(const List<VertexElement>& elements)
 			{
-				return nullptr;
+				return new GL3VertexDeclaration(elements);
 			}
 
 			Shader* GL3ObjectFactory::CreateVertexShader(const ResourceLocation* resLoc)

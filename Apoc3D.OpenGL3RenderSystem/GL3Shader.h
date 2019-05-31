@@ -55,6 +55,12 @@ namespace Apoc3D
 				bool TryGetParamIndex(const String& paramName, int32& result) override;
 				bool TryGetSamplerIndex(const String& paramName, int32& result) override;
 
+				void SetTexture(int samIndex, Texture* tex) override;
+				void SetSamplerState(int samIndex, const ShaderSamplerState& state);
+
+				void SetTexture(const String& paramName, Texture* tex);
+				void SetSamplerState(const String& paramName, const ShaderSamplerState& state);
+
 
 				void SetVector2(int32 reg, const Vector2& value) override { }
 				void SetVector3(int32 reg, const Vector3& value) override { }
@@ -125,12 +131,6 @@ namespace Apoc3D
 				GL3PixelShader(GL3RenderDevice* device, const ResourceLocation& rl);
 				~GL3PixelShader();
 
-				virtual void SetTexture(int samIndex, Texture* tex);
-				virtual void SetSamplerState(int samIndex, const ShaderSamplerState &state);
-
-				virtual void SetTexture(const String& paramName, Texture* tex);
-				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState &state);
-
 				virtual ShaderType getType() const { return ShaderType::Pixel; }
 			};
 
@@ -140,12 +140,6 @@ namespace Apoc3D
 				GL3VertexShader(GL3RenderDevice* device, const byte* byteCode);
 				GL3VertexShader(GL3RenderDevice* device, const ResourceLocation& rl);
 				~GL3VertexShader();
-
-				virtual void SetTexture(int samIndex, Texture* tex);
-				virtual void SetSamplerState(int samIndex, const ShaderSamplerState &state);
-
-				virtual void SetTexture(const String& paramName, Texture* tex);
-				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState& state);
 
 				virtual ShaderType getType() const { return ShaderType::Vertex; }
 			};

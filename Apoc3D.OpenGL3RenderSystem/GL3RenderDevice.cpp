@@ -26,8 +26,6 @@
 
 #include "GL3Sprite.h"
 
-#include "apoc3d/Exception.h"
-
 #include "apoc3d/Graphics/Camera.h"
 #include "apoc3d/Graphics/Material.h"
 #include "apoc3d/Graphics/GeometryData.h"
