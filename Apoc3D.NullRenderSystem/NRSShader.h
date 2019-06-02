@@ -47,7 +47,6 @@ namespace Apoc3D
 			{
 			public:
 				NRSShader(NRSRenderDevice* device, const byte* byteCode);
-				NRSShader(NRSRenderDevice* device, const ResourceLocation& rl);
 				virtual ~NRSShader();
 
 				int GetParamIndex(const String& paramName) override;
@@ -117,8 +116,6 @@ namespace Apoc3D
 			public:
 				NRSPixelShader(NRSRenderDevice* device, const byte* byteCode)
 					: NRSShader(device, byteCode) { }
-				NRSPixelShader(NRSRenderDevice* device, const ResourceLocation& rl)
-					: NRSShader(device, rl) { }
 				~NRSPixelShader() { }
 
 				virtual void SetTexture(int samIndex, Texture* tex);
@@ -135,8 +132,6 @@ namespace Apoc3D
 			public:
 				NRSVertexShader(NRSRenderDevice* device, const byte* byteCode)
 					: NRSShader(device, byteCode) { }
-				NRSVertexShader(NRSRenderDevice* device, const ResourceLocation& rl)
-					: NRSShader(device, rl) { }
 				~NRSVertexShader() { }
 
 				virtual void SetTexture(int samIndex, Texture* tex);

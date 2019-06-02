@@ -83,16 +83,7 @@ namespace Apoc3D
 			{
 				return new D3D9VertexDeclaration(m_device, elements);
 			}
-
-			Shader* D3D9ObjectFactory::CreateVertexShader(const ResourceLocation& resLoc)
-			{
-				return new D3D9VertexShader(m_device, resLoc);
-			}
-			Shader* D3D9ObjectFactory::CreatePixelShader(const ResourceLocation& resLoc)
-			{
-				return new D3D9PixelShader(m_device, resLoc);
-			}
-
+			
 			Shader* D3D9ObjectFactory::CreateVertexShader(const byte* byteCode)
 			{
 				return new D3D9VertexShader(m_device, byteCode);

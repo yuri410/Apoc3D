@@ -21,6 +21,7 @@
 #include "apoc3d/Math/Vector.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics;

@@ -93,6 +93,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="GL3Buffers.h" />
+    <ClInclude Include="GL3RenderTarget.h" />
     <ClInclude Include="GL3Shader.h" />
     <ClInclude Include="GL3Utils.h" />
     <ClInclude Include="GL3RenderStateManager.h" />
@@ -120,6 +121,7 @@
     <ClCompile Include="GL3RenderStateManager.cpp" />
     <ClCompile Include="GL3ObjectFactory.cpp" />
     <ClCompile Include="GL3RenderDevice.cpp" />
+    <ClCompile Include="GL3RenderTarget.cpp" />
     <ClCompile Include="GL3Shader.cpp" />
     <ClCompile Include="GL3Sprite.cpp" />
     <ClCompile Include="GL3Texture.cpp" />

@@ -49,14 +49,10 @@ namespace Apoc3D
 
 				CubemapRenderTarget* CreateCubemapRenderTarget(int32 length, PixelFormat clrFmt) override;
 
-
 				IndexBuffer* CreateIndexBuffer(IndexBufferFormat type, int32 count, BufferUsageFlags usage) override;
 				VertexBuffer* CreateVertexBuffer(int32 vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage) override;
 
 				VertexDeclaration* CreateVertexDeclaration(const List<VertexElement> &elements) override;
-
-				Shader* CreateVertexShader(const ResourceLocation& resLoc) override;
-				Shader* CreatePixelShader(const ResourceLocation& resLoc) override;
 
 				Shader* CreateVertexShader(const byte* byteCode) override;
 				Shader* CreatePixelShader(const byte* byteCode) override;

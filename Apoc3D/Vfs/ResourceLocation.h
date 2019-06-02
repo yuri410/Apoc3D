@@ -44,6 +44,9 @@ namespace Apoc3D
 
 			virtual ResourceLocation* Clone() const = 0;
 
+			ResourceLocation& operator=(const FileLocation&) = delete;
+
+			char* ReadAllToAllocatedBuffer() const;
 
 			int64 getSize() const { return m_size; }
 			
@@ -52,14 +55,15 @@ namespace Apoc3D
 			uint64 GetHashCode() const;
 
 		protected:
+
 			ResourceLocation(const String& name, int64 size)
-				: m_name(name), m_size(size)
+				: m_name(name)
+				, m_size(size)
 			{ }
 
 			int64 m_size;
 
 		private:
-			ResourceLocation& operator=(const FileLocation& rhs) = delete;
 
 			String m_name;
 		};

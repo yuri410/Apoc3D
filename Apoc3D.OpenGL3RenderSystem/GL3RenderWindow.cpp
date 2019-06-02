@@ -99,7 +99,7 @@ namespace Apoc3D
 			void GL3RenderWindow::GL_LoadContent()   { OnLoad(); }
 			void GL3RenderWindow::GL_UnloadContent() { OnUnload(); }
 
-			void GL3RenderWindow::OnDrawFrame(const AppTime* time)
+			void GL3RenderWindow::OnRenderFrame(const AppTime* time)
 			{
 				if (!m_gameWindow->getIsMinimized() && m_graphicsDeviceManager->EnsureDevice())
 				{

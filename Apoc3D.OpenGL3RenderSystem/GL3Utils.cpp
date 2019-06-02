@@ -22,21 +22,79 @@ namespace Apoc3D
 	{
 		namespace GL3RenderSystem
 		{
-			// pre-calculated fast type cast tables=
-			GLenum GLUtils::blendTable[(int)Blend::Count];
-			GLenum GLUtils::comfunTable[(int)CompareFunction::Count];
-			GLenum GLUtils::blendopTable[(int)BlendFunction::Count];
+			// pre-calculated fast type cast tables
+			static GLenum blendTable[(int)Blend::Count];
+			static GLenum comfunTable[(int)CompareFunction::Count];
+			static GLenum blendopTable[(int)BlendFunction::Count];
+			static GLenum taTable[(int)TextureAddressMode::Count];
+			static GLenum cubeTable[CUBE_Count];
+			static GLenum ptTable[(int)PrimitiveType::Count];
 
-			/************************************************************************/
-			/*                                                                      */
-			/************************************************************************/
-
-			GLUtils::GLUtils()
+			struct FieldInitilizer
 			{
-				InitCompareFunctionTable();
-				InitBlendTable();
-				InitBlendOperationTable();
+				FieldInitilizer();
+			private:
+				void InitCompareFunctionTable();
+				void InitBlendTable();
+				void InitBlendOperationTable();
+				void InitTextureAddressTable();
+				void InitCubeTable();
+				void InitPrimitiveTypeTable();
+
+			} static s_initializer;
+
+			//////////////////////////////////////////////////////////////////////////
+
+			GLenum GLUtils::ConvertCompare(CompareFunction cmp)
+			{
+				return comfunTable[static_cast<int>(cmp)]; 
 			}
+
+			GLenum GLUtils::ConvertBlend(Blend dv)
+			{
+				return blendTable[static_cast<int>(dv)]; 
+			}
+
+			GLenum GLUtils::ConvertBlendFunction(BlendFunction fun)
+			{
+				return blendopTable[static_cast<int>(fun)]; 
+			}
+
+			GLenum GLUtils::ConvertTextureAddress(TextureAddressMode ta) 
+			{
+				return taTable[static_cast<int>(ta)]; 
+			}
+
+			GLenum GLUtils::ConvertCubemapFace(CubeMapFace cubeface)
+			{
+				return cubeTable[cubeface];
+			}
+
+			GLenum GLUtils::ConvertPrimitiveType(PrimitiveType pt)
+			{
+				return ptTable[static_cast<int>(pt)];
+			}
+
+			GLenum GLUtils::ConvertIndexBufferFormat(IndexBufferFormat ibf)
+			{
+				return ibf == IndexBufferFormat::Bit16 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
+			}
+
+			/*
+			GLint GLUtils::CalculatePrimitiveCount(PrimitiveType pt, GLint indexCount)
+			{
+				switch (pt)
+				{
+					case PrimitiveType::PointList: return indexCount;
+					case PrimitiveType::LineList:  return indexCount / 2;
+					case PrimitiveType::LineStrip: return indexCount > 1 ? (indexCount - 1) : 0;
+					case PrimitiveType::TriangleList:	return indexCount / 3;
+					case PrimitiveType::TriangleStrip:
+					case PrimitiveType::TriangleFan:	return indexCount > 2 ? (indexCount - 2) : 0;
+				}
+				return 0;
+			}
+			*/
 
 			GLenum GLUtils::ConvertStencilOperation(StencilOperation so, bool invert)
 			{
@@ -278,6 +336,52 @@ namespace Apoc3D
 				return true;
 			}
 
+			bool GLUtils::ConvertDepthFormat(DepthFormat fmt, GLenum& format, GLenum& type, GLenum& internalFormat)
+			{
+				switch (fmt)
+				{
+					case DEPFMT_Depth16:
+					case DEPFMT_Depth16Lockable:
+						format = GL_DEPTH_COMPONENT;
+						internalFormat = GL_DEPTH_COMPONENT16;
+						type = GL_UNSIGNED_SHORT;
+						break;
+					case DEPFMT_Depth24X8:
+						format = GL_DEPTH_COMPONENT;
+						internalFormat = GL_DEPTH_COMPONENT24;
+						type = GL_UNSIGNED_INT;
+						break;
+					case DEPFMT_Depth24Stencil8:
+						format = GL_DEPTH_STENCIL;
+						internalFormat = GL_DEPTH24_STENCIL8;
+						type = GL_UNSIGNED_INT_24_8;
+						break;
+					case DEPFMT_Depth32:
+					case DEPFMT_Depth32Lockable:
+					case DEPFMT_Depth32Single:
+						format = GL_DEPTH_COMPONENT;
+						internalFormat = GL_DEPTH_COMPONENT32F;
+						type = GL_FLOAT;
+						break;
+					default:
+						return false;
+				}
+				return true;
+			}
+
+			GLenum GLUtils::GetTextureTarget(TextureType type)
+			{
+				switch (type)
+				{
+					case TextureType::Texture1D: return GL_TEXTURE_1D;
+					case TextureType::Texture2D: return GL_TEXTURE_2D;
+					case TextureType::Texture3D: return GL_TEXTURE_3D;
+					case TextureType::CubeTexture: return GL_TEXTURE_CUBE_MAP;
+				}
+				// keep the compiler happy
+				return GL_TEXTURE_1D;
+			}
+
 			GLbitfield GLUtils::ConvertLockMode(LockMode mode)
 			{
 				GLbitfield r = GL_MAP_WRITE_BIT;
@@ -289,6 +393,84 @@ namespace Apoc3D
 					r |= GL_MAP_READ_BIT;
 				return r;
 			}
+
+			bool GLUtils::ConvertVertexElementFormat(VertexElementFormat vef, GLenum& elementType, GLuint& elementCount, GLboolean& normalized)
+			{
+				normalized = GL_FALSE;
+
+				switch (vef)
+				{
+					case VEF_Single:
+						elementType = GL_FLOAT;
+						elementCount = 1;
+						break;
+					case VEF_Vector2:
+						elementType = GL_FLOAT;
+						elementCount = 2;
+						break;
+					case VEF_Vector3:
+						elementType = GL_FLOAT;
+						elementCount = 3;
+						break;
+					case VEF_Vector4:
+						elementType = GL_FLOAT;
+						elementCount = 4;
+						break;
+					case VEF_Color:
+						elementCount = GL_BGRA;
+						elementType = GL_UNSIGNED_BYTE;
+						normalized = GL_TRUE;
+						break;
+					case VEF_Byte4:
+						elementType = GL_UNSIGNED_BYTE;
+						elementCount = 4;
+						break;
+					case VEF_Short2:
+						elementType = GL_SHORT;
+						elementCount = 2;
+						break;
+					case VEF_Short4:
+						elementType = GL_SHORT;
+						elementCount = 4;
+						break;
+					case VEF_NormalizedByte4:
+						elementType = GL_UNSIGNED_BYTE;
+						elementCount = 4;
+						normalized = GL_TRUE;
+						break;
+					case VEF_NormalizedShort2:
+						elementType = GL_SHORT;
+						elementCount = 2;
+						normalized = GL_TRUE;
+						break;
+					case VEF_NormalizedShort4:
+						elementType = GL_SHORT;
+						elementCount = 4;
+						normalized = GL_TRUE;
+						break;
+					case VEF_UInt101010:
+						elementType = GL_UNSIGNED_INT_2_10_10_10_REV;
+						elementCount = 1;
+						break;
+					case VEF_Normalized101010:
+						elementType = GL_UNSIGNED_INT_2_10_10_10_REV;
+						elementCount = 1;
+						normalized = GL_TRUE;
+						break;
+					case VEF_HalfVector2:
+						elementType = GL_HALF_FLOAT;
+						elementCount = 2;
+						break;
+					case VEF_HalfVector4:
+						elementType = GL_HALF_FLOAT;
+						elementCount = 4;
+						break;
+				}
+				return false;
+			}
+		
+
+			//////////////////////////////////////////////////////////////////////////
 
 			bool GLUtils::CheckError(const wchar_t* file, unsigned line)
 			{
@@ -344,8 +526,9 @@ namespace Apoc3D
 				return true;
 			}
 
+			//////////////////////////////////////////////////////////////////////////
 
-			void GLUtils::InitCompareFunctionTable()
+			void FieldInitilizer::InitCompareFunctionTable()
 			{
 				comfunTable[(int)CompareFunction::Never] = GL_NEVER;
 				comfunTable[(int)CompareFunction::Less] = GL_LESS;
@@ -356,7 +539,8 @@ namespace Apoc3D
 				comfunTable[(int)CompareFunction::GreaterEqual] = GL_GEQUAL;
 				comfunTable[(int)CompareFunction::Always] = GL_ALWAYS;
 			}
-			void GLUtils::InitBlendTable()
+
+			void FieldInitilizer::InitBlendTable()
 			{
 				blendTable[(int)Blend::Zero] = GL_ZERO;
 				blendTable[(int)Blend::One] = GL_ONE;
@@ -371,13 +555,54 @@ namespace Apoc3D
 				blendTable[(int)Blend::SourceAlphaSaturation] = GL_SRC_ALPHA_SATURATE;
 				blendTable[(int)Blend::BlendFactor] = GL_CONSTANT_COLOR;
 			}
-			void GLUtils::InitBlendOperationTable()
+
+			void FieldInitilizer::InitBlendOperationTable()
 			{
 				blendopTable[(int)BlendFunction::Add] = GL_FUNC_ADD;
 				blendopTable[(int)BlendFunction::Subtract] = GL_FUNC_SUBTRACT;
 				blendopTable[(int)BlendFunction::ReverseSubtract] = GL_FUNC_REVERSE_SUBTRACT;
 				blendopTable[(int)BlendFunction::Min] = GL_MIN;
 				blendopTable[(int)BlendFunction::Max] = GL_MAX;
+			}
+
+			void FieldInitilizer::InitTextureAddressTable()
+			{
+				taTable[(int)TextureAddressMode::Border] = GL_CLAMP_TO_EDGE;
+				taTable[(int)TextureAddressMode::Clamp] = GL_CLAMP_TO_EDGE;
+				taTable[(int)TextureAddressMode::Mirror] = GL_MIRRORED_REPEAT;
+				taTable[(int)TextureAddressMode::MirrorOnce] = GL_MIRROR_CLAMP_TO_EDGE;
+				taTable[(int)TextureAddressMode::Wrap] = GL_REPEAT;
+			}
+
+			void FieldInitilizer::InitCubeTable()
+			{
+				cubeTable[CUBE_PositiveX] = GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+				cubeTable[CUBE_NegativeX] = GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+				cubeTable[CUBE_PositiveY] = GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+				cubeTable[CUBE_NegativeY] = GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+				cubeTable[CUBE_PositiveZ] = GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+				cubeTable[CUBE_NegativeZ] = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+			}
+
+			void FieldInitilizer::InitPrimitiveTypeTable()
+			{
+				ptTable[(int)PrimitiveType::PointList] = GL_POINTS;
+				ptTable[(int)PrimitiveType::LineList] = GL_LINES;
+				ptTable[(int)PrimitiveType::LineStrip] = GL_LINE_STRIP;
+				ptTable[(int)PrimitiveType::TriangleList] = GL_TRIANGLES;
+				ptTable[(int)PrimitiveType::TriangleStrip] = GL_TRIANGLE_STRIP;
+				ptTable[(int)PrimitiveType::TriangleFan] = GL_TRIANGLE_FAN;
+			}
+
+
+			FieldInitilizer::FieldInitilizer()
+			{
+				InitCompareFunctionTable();
+				InitBlendTable();
+				InitBlendOperationTable();
+				InitTextureAddressTable();
+				InitCubeTable();
+				InitPrimitiveTypeTable();
 			}
 
 		}

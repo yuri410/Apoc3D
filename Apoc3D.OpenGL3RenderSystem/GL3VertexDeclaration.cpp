@@ -1,4 +1,9 @@
 #include "GL3VertexDeclaration.h"
+#include "GL3Buffers.h"
+#include "GL3Utils.h"
+
+#include "GL/GLProgram.h"
+#include "GL/GLVertexArray.h"
 
 namespace Apoc3D
 {
@@ -17,6 +22,46 @@ namespace Apoc3D
 
 			}
 
+			void GL3VertexDeclaration::Bind(GLProgram* prog, GL3VertexBuffer* vb)
+			{
+				vb->Bind();
+				
+				MappingKey k;
+				k.m_prog = prog->getGLProgID();
+				k.m_vbo = vb->getGLBufferID();
+
+				GLVertexArray* vao = m_cachedVaos.TryGetValue(k);
+				if (vao == nullptr)
+				{
+					GLVertexArray newVAO;
+
+					for (const GLProgramVariable& att : prog->getAttributes())
+					{
+						const VertexElement* foundElem = nullptr;
+						for (const VertexElement& ve : m_elements)
+						{
+							
+						}
+
+						GLenum elementType;
+						GLuint elementCount;
+						GLboolean normalized;
+
+						if (foundElem && GLUtils::ConvertVertexElementFormat(foundElem->getType(), elementType, elementCount, normalized))
+						{
+							newVAO.BindAttribute(k.m_vbo, att.m_location,
+												 elementCount, elementType, normalized,
+												 foundElem->getSize(), foundElem->getOffset() );
+						}
+					}
+
+					m_cachedVaos.Add(k, std::move(newVAO));
+
+					vao = &m_cachedVaos[k];
+				}
+
+				vao->Bind();
+			}
 		}
 	}
 }

@@ -56,28 +56,20 @@ namespace Apoc3D
 			virtual void setPosition(int64 offset) = 0;
 			virtual int64 getPosition() = 0;
 
-			bool isEndofStream() { return getPosition() >= getLength(); }
-
 			virtual int64 Read(char* dest, int64 count) = 0;
 			
 			virtual void Write(const char* src, int64 count) = 0;
-
-			void WriteByte(byte value) { Write(reinterpret_cast<const char*>(&value), 1); }
-
 
 			virtual void Seek(int64 offset, SeekMode mode) = 0;
 
 			virtual void Flush() = 0;
 
-			int ReadByte()
-			{
-				char buffer;
-				if (Read(&buffer, 1) == 0)
-				{
-					return -1;
-				}
-				return reinterpret_cast<const byte&>(buffer);
-			}
+			int ReadByte();
+			void WriteByte(byte value);
+
+			char* ReadAllToAllocatedBuffer();
+
+			bool isEndofStream() { return getPosition() >= getLength(); }
 
 		};
 

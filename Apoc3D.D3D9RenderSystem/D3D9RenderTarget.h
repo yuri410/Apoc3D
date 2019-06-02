@@ -91,6 +91,8 @@ namespace Apoc3D
 			{
 				RTTI_DERIVED(D3D9CubemapRenderTarget, CubemapRenderTarget);
 			public:
+
+				// Cube face virtual render target
 				class RefRenderTarget : public RenderTarget
 				{
 					RTTI_DERIVED(RefRenderTarget, RenderTarget);

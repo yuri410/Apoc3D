@@ -16,6 +16,7 @@
 
 #include "GL3Buffers.h"
 #include "GL3Utils.h"
+#include "GL3RenderDevice.h"
 
 namespace Apoc3D
 {
@@ -41,6 +42,11 @@ namespace Apoc3D
 					glDeleteBuffers(1, &m_bufferID);
 					m_bufferID = 0;
 				}
+			}
+
+			void GL3VertexBuffer::Bind()
+			{
+				glBindBuffer(GL_ARRAY_BUFFER, m_bufferID);
 			}
 
 			void* GL3VertexBuffer::lock(int offset, int size, LockMode mode)
@@ -78,6 +84,11 @@ namespace Apoc3D
 				}
 			}
 
+			void GL3IndexBuffer::Bind()
+			{
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_bufferID);
+			}
+
 			void* GL3IndexBuffer::lock(int offset, int size, LockMode mode)
 			{
 				GLbitfield access = GLUtils::ConvertLockMode(mode);
@@ -94,16 +105,19 @@ namespace Apoc3D
 
 			//////////////////////////////////////////////////////////////////////////
 
-			GL3DepthBuffer::GL3DepthBuffer(int width, int height, DepthFormat fmt)
+			GL3DepthStencilBuffer::GL3DepthStencilBuffer(GL3RenderDevice* device, int32 width, int32 height, DepthFormat fmt)
+				: DepthStencilBuffer(device, width, height, fmt)
 			{
-				todo;
+				GLenum type, format, internalFormat = GL_DEPTH_COMPONENT16;
+				bool r = GLUtils::ConvertDepthFormat(fmt, format, type, internalFormat);
+				assert(r);
 
 				glGenRenderbuffers(1, &m_buf);
 				glBindRenderbuffer(GL_RENDERBUFFER, m_buf);
-				glRenderbufferStorage(GL_RENDERBUFFER, , width, height );
+				glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height );
 			}
 
-			GL3DepthBuffer::~GL3DepthBuffer()
+			GL3DepthStencilBuffer::~GL3DepthStencilBuffer()
 			{
 				if (m_buf)
 				{

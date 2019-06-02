@@ -72,7 +72,7 @@ namespace Apoc3D
 				}
 			}
 
-
+			/*
 			Shader* Effect::LoadVertexShader(RenderDevice* rs, const ResourceLocation& vs)
 			{
 				ObjectFactory* objFac = rs->getObjectFactory();
@@ -82,7 +82,7 @@ namespace Apoc3D
 			{
 				ObjectFactory* objFac = rs->getObjectFactory();
 				return objFac->CreatePixelShader(ps);
-			}
+			}*/
 
 			/************************************************************************/
 			/*  AutomaticEffect                                                     */
@@ -164,6 +164,8 @@ namespace Apoc3D
 				m_vertexShader = objFac->CreateVertexShader(reinterpret_cast<const byte*>(profileSelected->VSCode));
 				m_pixelShader = objFac->CreatePixelShader(reinterpret_cast<const byte*>(profileSelected->PSCode));
 				
+				m_vertexShader->NotifyLinkage({ m_vertexShader, m_pixelShader });
+
 				bool hasShaderIssues = false;
 
 				m_parametersSrc = profileSelected->Parameters;
@@ -815,6 +817,8 @@ namespace Apoc3D
 				ObjectFactory* objFac = device->getObjectFactory();
 				m_vertexShader = objFac->CreateVertexShader(reinterpret_cast<const byte*>(profileSelected->VSCode));
 				m_pixelShader = objFac->CreatePixelShader(reinterpret_cast<const byte*>(profileSelected->PSCode));
+
+				m_vertexShader->NotifyLinkage({ m_vertexShader, m_pixelShader });
 			}
 
 			CustomShaderEffect::~CustomShaderEffect()

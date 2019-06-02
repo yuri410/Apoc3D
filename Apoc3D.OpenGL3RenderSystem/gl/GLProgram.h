@@ -1,7 +1,9 @@
 #pragma once
 
 #include "../GL3Common.h"
+#include "Apoc3D/Collections/HashMap.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
@@ -25,15 +27,25 @@ namespace Apoc3D
 				bool IsSamplerType() const;
 			};
 
-			class GLProgram
+			class GLProgram final
 			{
 			public:
 				GLProgram();
 				~GLProgram();
 
+				GLProgram(GLProgram&& o);
+				GLProgram& operator=(GLProgram&& o);
+
+				GLProgram(const GLProgram&) = delete;
+				GLProgram& operator=(const GLProgram&) = delete;
+				
+				void Bind();
 				void Link(const List<GLuint>& shaders);
 
 				const GLProgramVariable* getUniform(const String& name) const { return m_uniformTable.TryGetValue(name); }
+				const List<GLProgramVariable>& getAttributes() const { return m_attributes; }
+
+				GLuint getGLProgID() const { return m_prog; }
 
 				void IncrRefCount();
 				bool DecrRefCount();
@@ -46,7 +58,7 @@ namespace Apoc3D
 				int32 m_refCount = 1;
 
 				HashMap<String, GLProgramVariable> m_uniformTable;
-
+				List<GLProgramVariable> m_attributes;
 			};
 		}
 	}

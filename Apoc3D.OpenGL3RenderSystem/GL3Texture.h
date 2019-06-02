@@ -18,9 +18,10 @@
 #define GL3TEXTURE_H
 
 #include "GL3Common.h"
-#include "apoc3d/Graphics/RenderSystem/Texture.h"
-#include "apoc3d/Graphics/GraphicsCommon.h"
-
+#include "Apoc3D/Graphics/RenderSystem/Texture.h"
+#include "Apoc3D/Graphics/GraphicsCommon.h"
+#include "Apoc3D/Math/Rectangle.h"
+#include "Apoc3D/Math/Box.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -37,40 +38,48 @@ namespace Apoc3D
 			class GL3Texture : public Apoc3D::Graphics::RenderSystem::Texture
 			{
 			public:
-				GL3Texture(GL3RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed);
+				GL3Texture(GL3RenderDevice* device, const ResourceLocation& rl, TextureUsage usage, bool managed);
 				GL3Texture(GL3RenderDevice* device, int32 width, int32 height, int32 depth, int32 level, 
 					PixelFormat format, TextureUsage usage);
 				GL3Texture(GL3RenderDevice* device, int32 length, int32 level, PixelFormat format, TextureUsage usage);
 				~GL3Texture();
 
-				virtual void Save(Stream* strm);
+				virtual void Save(Stream& strm) override;
 
-				virtual DataRectangle lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect);
-				virtual DataBox lock(int32 surface, LockMode mode, const Box& box);
-				virtual DataRectangle lock(int32 surface, CubeMapFace cubemapFace, LockMode mode, 
-					const Apoc3D::Math::Rectangle& rect);
+				virtual DataRectangle lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect) override;
+				virtual DataBox lock(int32 surface, LockMode mode, const Box& box) override;
+				virtual DataRectangle lock(int32 surface, CubeMapFace cubemapFace, LockMode mode,
+					const Apoc3D::Math::Rectangle& rect) override;
 
-				virtual void unlock(int32 surface);
-				virtual void unlock(CubeMapFace cubemapFace, int32 surface);
+				virtual void unlock(int32 surface) override;
+				virtual void unlock(CubeMapFace cubemapFace, int32 surface) override;
 
-				virtual void load();
-				virtual void unload();
+				virtual void load() override;
+				virtual void unload() override;
 
 				GLuint getGLTexID() const { return m_textureID; }
+				GLenum getGLTexTarget() const { return m_glTarget; }
 
 			private:
 
-				void InitializeGLTexture(int32 width, int32 height, int32 depth, int32 level, PixelFormat format);
+				void InitializeGLTexture(const TextureData* td);
+				void LoadTexture(const ResourceLocation* rl);
 
 				GL3RenderDevice* m_renderDevice;
 				GLuint m_textureID = 0;
 				GLuint m_mapPBO = 0;
 
-				GLenum m_target;
+				GLenum m_glFormat;
+				GLenum m_glTarget;
+				GLenum m_glType;
 
+				GLint* m_levelOffsets = nullptr;
 
+				GLint  m_lockedPboOffset;
 				GLenum m_lockedCubemapFace;
-				
+				GLint  m_lockedLevel;
+				Apoc3D::Math::Rectangle m_lockedRect;
+				Apoc3D::Math::Box m_lockedBox;
 			};
 		}
 	}

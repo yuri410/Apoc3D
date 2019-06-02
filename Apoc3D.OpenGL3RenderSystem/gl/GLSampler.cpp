@@ -32,6 +32,25 @@ namespace Apoc3D
 				}
 			}
 
+			GLSampler::GLSampler(GLSampler&& o)
+				: m_sampler(o.m_sampler)
+				, m_unit(o.m_unit)
+				, m_bound(o.m_bound)
+			{ 
+				o.m_bound = false;
+				o.m_sampler = 0;
+			}
+
+			GLSampler& GLSampler::operator=(GLSampler&& o)
+			{
+				if (this != &o) 
+				{
+					this->~GLSampler();
+					new (this)GLSampler(std::move(o));
+				}
+				return *this;
+			}
+
 			void GLSampler::Bind(GLuint unit)
 			{
 				m_unit = unit;
@@ -68,7 +87,7 @@ namespace Apoc3D
 
 			void GLSampler::SetBorderColor(const GLfloat(&color)[4])
 			{
-				glSamplerParameterfv(m_unit, GL_TEXTURE_LOD_BIAS, color);
+				glSamplerParameterfv(m_unit, GL_TEXTURE_BORDER_COLOR, color);
 			}
 
 			void GLSampler::SetMipmapBias(GLint bias)

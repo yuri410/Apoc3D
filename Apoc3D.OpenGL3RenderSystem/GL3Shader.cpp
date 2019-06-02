@@ -35,18 +35,6 @@ namespace Apoc3D
 			{
 				CompileShader(shaderType, byteCode);
 			}
-			GL3Shader::GL3Shader(GL3RenderDevice* device, GLenum shaderType, const ResourceLocation& rl)
-				: Shader(device), m_device(device)
-			{
-				BinaryReader br(rl);
-				int64 len = br.getBaseStream()->getLength();
-				char* buffer = new char[(uint)len];
-				br.ReadBytes(buffer, len);
-
-				CompileShader(shaderType, (byte*)buffer);
-
-				delete[] buffer;
-			}
 			GL3Shader::~GL3Shader()
 			{
 				if (m_prog && m_prog->DecrRefCount())
@@ -224,11 +212,6 @@ namespace Apoc3D
 				: GL3Shader(device, GL_VERTEX_SHADER, byteCode)
 			{
 			}
-			GL3VertexShader::GL3VertexShader(GL3RenderDevice* device, const ResourceLocation& rl)
-				: GL3Shader(device, GL_VERTEX_SHADER, rl)
-			{
-
-			}
 			GL3VertexShader::~GL3VertexShader()
 			{
 				
@@ -239,11 +222,6 @@ namespace Apoc3D
 			GL3PixelShader::GL3PixelShader(GL3RenderDevice* device, const byte* byteCode)
 				: GL3Shader(device, GL_FRAGMENT_SHADER, byteCode)
 			{
-			}
-			GL3PixelShader::GL3PixelShader(GL3RenderDevice* device, const ResourceLocation& rl)
-				: GL3Shader(device, GL_FRAGMENT_SHADER, rl)
-			{
-
 			}
 			GL3PixelShader::~GL3PixelShader()
 			{

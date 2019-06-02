@@ -27,27 +27,29 @@ namespace Apoc3D
 		class Box
 		{
 		public:
-			int32 Left;
-			int32 Top;
-			int32 Right;
+			int32 Left = 0;
+			int32 Top = 0;
+			int32 Right = 0;
 
-			int32 Bottom;
-			int32 Front;
-			int32 Back;
+			int32 Bottom = 0;
+			int32 Front = 0;
+			int32 Back = 0;
 
 			int32 getWidth() const { return Right - Left; }
 			int32 getHeight() const { return Bottom - Top; }
 			int32 getDepth() const { return Back - Front; }
 
+			Box() { }
+
 			Box(int32 top, int32 left, int32 front, int32 width, int32 height, int32 depth)
-				: Top(top), Left(left), Front(front),
-				Bottom(top + height), Right(left + width), Back(front + depth)
-			{
-
-			}
+				: Top(top)
+				, Left(left)
+				, Front(front)
+				, Bottom(top + height)
+				, Right(left + width)
+				, Back(front + depth)
+			{ }
 		};
-
-
 	}
 }
 #endif

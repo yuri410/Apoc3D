@@ -37,8 +37,6 @@ namespace Apoc3D
 
 				D3D9PixelShader(D3D9RenderDevice* device, const byte* byteCode)
 					: D3D9Shader(device, byteCode) { }
-				D3D9PixelShader(D3D9RenderDevice* device, const ResourceLocation& rl)
-					: D3D9Shader(device, rl) { }
 				~D3D9PixelShader() { }
 
 				virtual void SetTexture(int samIndex, Texture* tex);
@@ -61,8 +59,6 @@ namespace Apoc3D
 
 				D3D9VertexShader(D3D9RenderDevice* device, const byte* byteCode)
 					: D3D9Shader(device, byteCode) { }
-				D3D9VertexShader(D3D9RenderDevice* device, const ResourceLocation& rl)
-					: D3D9Shader(device, rl) { }
 				~D3D9VertexShader() { }
 
 				virtual void SetTexture(int samIndex, Texture* tex);

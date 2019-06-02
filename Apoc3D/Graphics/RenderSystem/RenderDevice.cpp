@@ -22,6 +22,7 @@
 #include "apoc3d/Graphics/RenderSystem/InstancingData.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Math/Point.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
 
 using namespace Apoc3D::Graphics::EffectSystem;
 using namespace Apoc3D::Utility;
@@ -196,6 +197,20 @@ namespace Apoc3D
 				return CreateDepthStencilBuffer(width, height, depFmt, L"");
 			}
 
+			Shader* ObjectFactory::CreateVertexShader(const ResourceLocation& resLoc)
+			{
+				char* codeBuffer = resLoc.ReadAllToAllocatedBuffer();
+				Shader* result = CreateVertexShader((byte*)codeBuffer);
+				delete[] codeBuffer;
+				return result;
+			}
+			Shader* ObjectFactory::CreatePixelShader(const ResourceLocation& resLoc)
+			{
+				char* codeBuffer = resLoc.ReadAllToAllocatedBuffer();
+				Shader* result = CreatePixelShader((byte*)codeBuffer);
+				delete[] codeBuffer;
+				return result;
+			}
 		}
 	}
 }

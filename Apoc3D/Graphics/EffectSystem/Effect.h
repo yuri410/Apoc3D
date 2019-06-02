@@ -87,8 +87,8 @@ namespace Apoc3D
 				virtual int begin() = 0;
 				virtual void end() = 0;
 
-				static Shader* LoadVertexShader(RenderDevice* rs, const ResourceLocation& vs);
-				static Shader* LoadPixelShader(RenderDevice* rs, const ResourceLocation& ps);
+				//static Shader* LoadVertexShader(RenderDevice* rs, const ResourceLocation& vs);
+				//static Shader* LoadPixelShader(RenderDevice* rs, const ResourceLocation& ps);
 
 				String m_name;
 				bool m_isUnsupported = false;

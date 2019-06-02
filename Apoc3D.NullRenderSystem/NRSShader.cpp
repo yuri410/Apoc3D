@@ -32,18 +32,7 @@ namespace Apoc3D
 			{
 				m_constantTable = new ConstantTable(byteCode);
 			}
-			NRSShader::NRSShader(NRSRenderDevice* device, const ResourceLocation& rl)
-				: Shader(device), m_device(device)
-			{
-				BinaryReader br(rl);
-				int64 len = br.getBaseStream()->getLength();
-				char* buffer = new char[static_cast<uint>(len)];
-				br.ReadBytes(buffer, len);
 
-				m_constantTable = new ConstantTable(reinterpret_cast<const byte*>(buffer));
-
-				delete[] buffer;
-			}
 			NRSShader::~NRSShader()
 			{
 				delete m_constantTable;

@@ -669,7 +669,7 @@ namespace Apoc3D
 				}
 				return *this;
 			}
-			List& operator=(List&& rhs)
+			List& operator=(List&& rhs) noexcept
 			{
 				if (this != &rhs)
 				{

@@ -29,6 +29,14 @@ namespace Apoc3D
 {	
 	namespace VFS
 	{
+		char* ResourceLocation::ReadAllToAllocatedBuffer() const
+		{
+			Stream* strm = GetReadStream();
+			char* result = strm->ReadAllToAllocatedBuffer();
+			delete strm;
+			return result;
+		}
+
 		uint64 ResourceLocation::GetHashCode() const
 		{
 			return StringUtils::GetHashCode(m_name);

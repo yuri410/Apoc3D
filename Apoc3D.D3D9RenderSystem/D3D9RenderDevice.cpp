@@ -611,7 +611,7 @@ namespace Apoc3D
 
 				getDevice()->SetViewport(&dvp);
 			}
-			Capabilities* const D3D9RenderDevice::getCapabilities() const
+			Capabilities* D3D9RenderDevice::getCapabilities() const
 			{
 				return m_caps; 
 			}

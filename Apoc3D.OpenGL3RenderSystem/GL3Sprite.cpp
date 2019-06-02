@@ -18,6 +18,11 @@
 #include "GL3RenderDevice.h"
 #include "GL3Texture.h"
 #include "GL3RenderStateManager.h"
+#include "GL3VertexDeclaration.h"
+#include "GL3Buffers.h"
+#include "GL3Utils.h"
+//#include "Apoc3D/Graphics/RenderSystem/HardwareBuffer.h"
+
 
 namespace Apoc3D
 {
@@ -36,7 +41,7 @@ namespace Apoc3D
 						VertexElement(20, VEF_Vector2, VEU_TextureCoordinate, 0)
 					};
 
-					m_vtxDecl = new GL3VertexDeclaration(device, elements);
+					m_vtxDecl = new GL3VertexDeclaration( elements);
 				}
 				{
 					const List<VertexElement> elements =
@@ -46,7 +51,7 @@ namespace Apoc3D
 						VertexElement(20, VEF_Vector2, VEU_TextureCoordinate, 0)
 					};
 
-					m_vtxDeclShadable = new GL3VertexDeclaration(device, elements);
+					m_vtxDeclShadable = new GL3VertexDeclaration( elements);
 				}
 
 				m_quadBuffer = new GL3VertexBuffer(device, (MaxDeferredDraws * 4), m_vtxDecl->GetVertexSize(), (BufferUsageFlags)(BU_Dynamic | BU_WriteOnly));
@@ -112,7 +117,7 @@ namespace Apoc3D
 
 				m_quadBuffer->Unlock();
 
-				NativeGL3StateManager* mgr = m_device->getNativeStateManager();
+				NativeGL3StateManager* mgr = m_device->getNativeState();
 
 				Texture* currentTexture = m_deferredDraws[0].Tex;
 				int32 lastIndex = 0;
@@ -160,9 +165,10 @@ namespace Apoc3D
 						int32 startVertex = lastIndex * 4;
 						int32 dpCount = i - lastIndex; // not including i
 
-						int32 vtxCount = dpCount * 4;
+						//int32 vtxCount = dpCount * 4;
 
-						m_rawDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, startVertex, vtxCount, startIndex, dpCount * 2);
+						glDrawElements(GL_TRIANGLES, dpCount*2, GLUtils::ConvertIndexBufferFormat(m_quadIndices->getIndexType()), nullptr);
+
 						m_batchCount++;
 
 						lastIndex = i;
@@ -170,7 +176,7 @@ namespace Apoc3D
 						if (i != m_deferredDraws.getCount())
 						{
 							if (textureChanged)
-								mgr->SetTexture(0, static_cast<D3D9Texture*>(currentTexture));
+								mgr->SetTexture(0, static_cast<GL3Texture*>(currentTexture));
 
 							if (uvModeChanged)
 								SetUVExtendedState(currentUVExtend);
@@ -183,7 +189,7 @@ namespace Apoc3D
 
 			void GL3Sprite::SetRenderState()
 			{
-				NativeGL3StateManager* mgr = m_device->getNativeStateManager();
+				NativeGL3StateManager* mgr = m_device->getNativeState();
 
 				if ((getSettings() & SPR_RestoreState) == SPR_RestoreState)
 				{
@@ -204,16 +210,21 @@ namespace Apoc3D
 					if ((getSettings() & SPR_AlphaBlended) == SPR_AlphaBlended)
 						mgr->SetAlphaBlend(true, BlendFunction::Add, Blend::SourceAlpha, Blend::InverseSourceAlpha, m_storedState.oldBlendFactor);
 
-					m_rawDevice->SetStreamSource(0, m_quadBuffer->getD3DBuffer(), 0, sizeof(QuadVertex));
-					m_rawDevice->SetIndices(m_quadIndices->getD3DBuffer());
+					//m_quadBuffer->Bind();
+
+					//m_rawDevice->SetStreamSource(0, m_quadBuffer->getD3DBuffer(), 0, sizeof(QuadVertex));
+					//m_rawDevice->SetIndices(m_quadIndices->getD3DBuffer());
+
+					m_quadIndices->Bind();
 
 					if (getSettings() & SPR_AllowShading)
 					{
-						m_rawDevice->SetVertexDeclaration(m_vtxDeclShadable->getD3DDecl());
+						m_vtxDeclShadable->Bind(nullptr, m_quadBuffer);
+						//m_rawDevice->SetVertexDeclaration(m_vtxDeclShadable->getD3DDecl());
 					}
 					else
 					{
-						ShaderSamplerState state = mgr->getPixelSampler(0);
+						ShaderSamplerState state = mgr->getSampler(0);
 						state.MinFilter = TextureFilter::Linear;
 						state.MagFilter = TextureFilter::Linear;
 						state.MipFilter = TextureFilter::None;
@@ -222,17 +233,17 @@ namespace Apoc3D
 						state.MaxMipLevel = 0;
 						state.MipMapLODBias = 0;
 
-						mgr->SetPixelSampler(0, state);
+						mgr->SetSampler(0, state);
 
+						//m_rawDevice->SetVertexDeclaration(m_vtxDecl->getD3DDecl());
+						m_vtxDecl->Bind(nullptr, m_quadBuffer);
 
-						m_rawDevice->SetVertexDeclaration(m_vtxDecl->getD3DDecl());
+						//m_device->BindVertexShader(nullptr);
+						//m_device->BindPixelShader(nullptr);
 
-						m_device->BindVertexShader(nullptr);
-						m_device->BindPixelShader(nullptr);
-
-						m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-						m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-						m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+						//m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+						//m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+						//m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 					}
 					//m_rawDevice->SetTexture(0,0);
 				}
@@ -243,7 +254,7 @@ namespace Apoc3D
 			{
 				if ((getSettings() & SPR_RestoreState) == SPR_RestoreState)
 				{
-					NativeGL3StateManager* mgr = m_device->getNativeStateManager();
+					NativeGL3StateManager* mgr = m_device->getNativeState();
 
 					if ((getSettings() & SPR_AlphaBlended) == SPR_AlphaBlended)
 						mgr->SetAlphaBlend(m_storedState.oldAlphaBlendEnable, m_storedState.oldBlendFunc, m_storedState.oldSrcBlend, m_storedState.oldDstBlend, m_storedState.oldBlendFactor);
@@ -256,21 +267,21 @@ namespace Apoc3D
 
 			void GL3Sprite::SetUVExtendedState(bool isExtended)
 			{
-				NativeGL3StateManager* mgr = m_device->getNativeStateManager();
+				NativeGL3StateManager* mgr = m_device->getNativeState();
+				ShaderSamplerState state = mgr->getSampler(0);
+
 				if (isExtended)
 				{
-					ShaderSamplerState state = mgr->getPixelSampler(0);
 					state.AddressU = TextureAddressMode::Wrap;
 					state.AddressV = TextureAddressMode::Wrap;
-					mgr->SetPixelSampler(0, state);
 				}
 				else
 				{
-					ShaderSamplerState state = mgr->getPixelSampler(0);
 					state.AddressU = TextureAddressMode::Clamp;
 					state.AddressV = TextureAddressMode::Clamp;
-					mgr->SetPixelSampler(0, state);
 				}
+
+				mgr->SetSampler(0, state);
 			}
 
 

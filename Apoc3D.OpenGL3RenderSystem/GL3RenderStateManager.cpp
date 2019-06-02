@@ -90,20 +90,10 @@ namespace Apoc3D
 			}
 			void NativeGL3StateManager::SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint32 factor)
 			{
-				m_cachedAlphaBlendEnable = enable;
-				m_cachedAlphaBlendFunction = func;
-				m_cachedAlphaSourceBlend = srcBlend;
-				m_cachedAlphaDestBlend = dstBlend;
+				SetAlphaBlend(enable, func, srcBlend, dstBlend);
+
 				m_cachedAlphaBlendFactor = factor;
 
-				if (enable)
-					glEnable(GL_BLEND);
-				else
-					glDisable(GL_BLEND);
-
-				glBlendFunc(GLUtils::ConvertBlend(srcBlend), GLUtils::ConvertBlend(dstBlend));
-
-				glBlendEquation(GLUtils::ConvertBlendFunction(func));
 				glBlendColor(CV_GetColorR(factor) / 255.0f, CV_GetColorG(factor) / 255.0f, CV_GetColorB(factor) / 255.0f, CV_GetColorA(factor) / 255.0f);
 			}
 
@@ -188,21 +178,11 @@ namespace Apoc3D
 			}
 			void NativeGL3StateManager::SetDepth(bool enable, bool writeEnable, float bias, float slopebias, CompareFunction compare)
 			{
-				m_cachedDepthBufferEnabled = enable;
-				m_cachedDepthBufferWriteEnabled = writeEnable;
+				SetDepth(enable, writeEnable);
+
 				m_cachedDepthBias = bias;
 				m_cachedSlopeScaleDepthBias = slopebias;
 				m_cachedDepthBufferFunction = compare;
-
-				if (enable)
-					glEnable(GL_DEPTH_TEST);
-				else
-					glDisable(GL_DEPTH_TEST);
-
-				if (writeEnable)
-					glDepthMask(GL_TRUE);
-				else
-					glDepthMask(GL_FALSE);
 
 				if (bias != 0 || slopebias != 0)
 				{
@@ -228,36 +208,34 @@ namespace Apoc3D
 				m_cachedPointSpriteEnabled = pointSprite;
 
 				glPointSize(size);
-
+				/*
 				glPointParameterf(GL_POINT_SIZE_MIN, minSize);
 				glPointParameterf(GL_POINT_SIZE_MAX, maxSize);
 				
 				
+				if (pointSprite)
 				{
-					if (pointSprite)
-					{
-						glEnable(GL_POINT_SPRITE);
-					}
-					else
-					{
-						glDisable(GL_POINT_SPRITE);
-					}
-
-					// Manually set up tex coord generation for point sprite
-					GLint maxTexCoords = 1;
-
-					{
-						GLint units;
-						glGetIntegerv( GL_MAX_TEXTURE_UNITS, &units );
-
-						for (int i=0;i<units;i++)
-						{
-							glActiveTexture(GL_TEXTURE0 + i);
-							glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, pointSprite ? GL_TRUE : GL_FALSE);
-						}
-						glActiveTexture(GL_TEXTURE0);
-					}
+					glEnable(GL_POINT_SPRITE);
 				}
+				else
+				{
+					glDisable(GL_POINT_SPRITE);
+				}
+
+				// Manually set up tex coord generation for point sprite
+				GLint maxTexCoords = 1;
+
+				{
+					GLint units;
+					glGetIntegerv(GL_MAX_TEXTURE_UNITS, &units);
+
+					for (int i = 0; i < units; i++)
+					{
+						glActiveTexture(GL_TEXTURE0 + i);
+						glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, pointSprite ? GL_TRUE : GL_FALSE);
+					}
+					glActiveTexture(GL_TEXTURE0);
+				}*/
 			}
 			void NativeGL3StateManager::SetStencil(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, 
 				uint32 ref, CompareFunction func, uint32 mask, uint32 writemask)
@@ -274,9 +252,9 @@ namespace Apoc3D
 				glStencilMask(mask);
 				glStencilFunc(GLUtils::ConvertCompare(func), ref, mask);
 				glStencilOp(
-					GLUtils::ConvertStencilOperation(fail),
-					GLUtils::ConvertStencilOperation(depthFail), 
-					GLUtils::ConvertStencilOperation(pass));
+					GLUtils::ConvertStencilOperation(fail, false),
+					GLUtils::ConvertStencilOperation(depthFail, false),
+					GLUtils::ConvertStencilOperation(pass, false));
 
 			}
 			void NativeGL3StateManager::SetStencilTwoSide(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, CompareFunction func)
@@ -345,67 +323,90 @@ namespace Apoc3D
 				if (state.AddressU != curState.AddressU)
 				{
 					curState.AddressU = state.AddressU;
-					//dev->SetSamplerState(samplerIndex, D3DSAMP_ADDRESSU, D3D9Utils::ConvertTextureAddress(state.AddressU));
-
-					m_textureSlotSamplers[slotIdx].SetAddressModeS();
+					m_textureSlotSamplers[slotIdx].SetAddressModeS(GLUtils::ConvertTextureAddress(state.AddressU));
 				}
 
 				if (curState.AddressV != state.AddressV)
 				{
 					curState.AddressV = state.AddressV;
-					//dev->SetSamplerState(samplerIndex, D3DSAMP_ADDRESSV, D3D9Utils::ConvertTextureAddress(state.AddressV));
-					m_textureSlotSamplers[slotIdx].SetAddressModeT();
+					m_textureSlotSamplers[slotIdx].SetAddressModeT(GLUtils::ConvertTextureAddress(state.AddressV));
 				}
 
 				if (curState.AddressW != state.AddressW)
 				{
 					curState.AddressW = state.AddressW;
-					//dev->SetSamplerState(samplerIndex, D3DSAMP_ADDRESSW, D3D9Utils::ConvertTextureAddress(state.AddressW));
-					m_textureSlotSamplers[slotIdx].SetAddressModeR();
+					m_textureSlotSamplers[slotIdx].SetAddressModeR(GLUtils::ConvertTextureAddress(state.AddressW));
 				}
 
 				if (curState.BorderColor != state.BorderColor)
 				{
 					curState.BorderColor = state.BorderColor;
-					//dev->SetSamplerState(samplerIndex, D3DSAMP_BORDERCOLOR, state.BorderColor);
-					m_textureSlotSamplers[slotIdx].SetBorderColor();
+					
+					Color4 borderColor(state.BorderColor);
+					GLfloat borderColorArr[4] = { borderColor.Red, borderColor.Green, borderColor.Blue, borderColor.Alpha };
+					
+					m_textureSlotSamplers[slotIdx].SetBorderColor(borderColorArr);
 				}
 
 				if (curState.MagFilter != state.MagFilter)
 				{
 					curState.MagFilter = state.MagFilter;
-					//dev->SetSamplerState(samplerIndex, D3DSAMP_MAGFILTER, D3D9Utils::ConvertTextureFilter(state.MagFilter));
+
+					GLenum filter = GL_NEAREST;
+					if (state.MagFilter == TextureFilter::Linear)
+						filter = GL_LINEAR;
+
+					m_textureSlotSamplers[slotIdx].SetMagFilter(filter);
 				}
 
-				if (curState.MinFilter != state.MinFilter)
+				if (curState.MinFilter != state.MinFilter || curState.MipFilter != state.MipFilter)
 				{
 					curState.MinFilter = state.MinFilter;
-					dev->SetSamplerState(samplerIndex, D3DSAMP_MINFILTER, D3D9Utils::ConvertTextureFilter(state.MinFilter));
-				}
-
-				if (curState.MipFilter != state.MipFilter)
-				{
 					curState.MipFilter = state.MipFilter;
-					dev->SetSamplerState(samplerIndex, D3DSAMP_MIPFILTER, D3D9Utils::ConvertTextureFilter(state.MipFilter));
+
+					GLenum filter;
+					if (state.MipFilter == TextureFilter::None)
+					{
+						if (state.MinFilter == TextureFilter::Point)
+							filter = GL_NEAREST;
+						else
+							filter = GL_LINEAR;
+					}
+					else if (state.MipFilter == TextureFilter::Point)
+					{
+						if (state.MinFilter == TextureFilter::Point)
+							filter = GL_NEAREST_MIPMAP_NEAREST;
+						else
+							filter = GL_LINEAR_MIPMAP_NEAREST;
+					}
+					else
+					{
+						if (state.MinFilter == TextureFilter::Point)
+							filter = GL_NEAREST_MIPMAP_LINEAR;
+						else
+							filter = GL_LINEAR_MIPMAP_LINEAR;
+					}
+
+					m_textureSlotSamplers[slotIdx].SetMinFilter(filter);
 				}
 
 				int maxAnis = Math::Max(state.MaxAnisotropy, 1);
 				if (curState.MaxAnisotropy != maxAnis)
 				{
 					curState.MaxAnisotropy = maxAnis;
-					dev->SetSamplerState(samplerIndex, D3DSAMP_MAXANISOTROPY, maxAnis);
+
 				}
 
 				if (curState.MaxMipLevel != state.MaxMipLevel)
 				{
 					curState.MaxMipLevel = state.MaxMipLevel;
-					dev->SetSamplerState(samplerIndex, D3DSAMP_MAXMIPLEVEL, state.MaxMipLevel);
+					m_textureSlotSamplers[slotIdx].SetMaxMip(state.MaxMipLevel);
 				}
 
 				if (curState.MipMapLODBias != state.MipMapLODBias)
 				{
 					curState.MipMapLODBias = state.MipMapLODBias;
-					dev->SetSamplerState(samplerIndex, D3DSAMP_MIPMAPLODBIAS, state.MipMapLODBias);
+					m_textureSlotSamplers[slotIdx].SetMipmapBias(state.MipMapLODBias);
 				}
 			}
 
@@ -424,7 +425,21 @@ namespace Apoc3D
 							textureId = tex->getGLTexID();
 						}
 					}
-					glBindTexture(GL_TEXTURE0 + i, textureId);
+
+					if (tex && textureId)
+					{
+						glActiveTexture(GL_TEXTURE0 + i);
+						glBindTexture(tex->getGLTexTarget(), textureId);
+					}
+					else
+					{
+						glActiveTexture(GL_TEXTURE0 + i);
+						glBindTexture(GL_TEXTURE_1D, 0);
+						glBindTexture(GL_TEXTURE_2D, 0);
+						glBindTexture(GL_TEXTURE_3D, 0);
+						glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+					}
+					
 					m_textureSlots[i] = tex;
 				}
 			}
@@ -482,10 +497,18 @@ namespace Apoc3D
 					sss.MinFilter = TextureFilter::Point;
 					sss.MipFilter = TextureFilter::None;
 					sss.MipMapLODBias = 0;
-					sss.MaxMipLevel = 0;
+					sss.MaxMipLevel = 1000;
 					sss.MaxAnisotropy = 1;
 
-					SetSampler(i, sss);
+					GLfloat borderColor[4] = { 0 };
+					m_textureSlotSamplers[i].SetAddressModeS(GL_REPEAT);
+					m_textureSlotSamplers[i].SetAddressModeT(GL_REPEAT);
+					m_textureSlotSamplers[i].SetAddressModeR(GL_REPEAT);
+					m_textureSlotSamplers[i].SetBorderColor(borderColor);
+					m_textureSlotSamplers[i].SetMinFilter(GL_NEAREST);
+					m_textureSlotSamplers[i].SetMagFilter(GL_NEAREST);
+					m_textureSlotSamplers[i].SetMaxMip(1000);
+					m_textureSlotSamplers[i].SetMipmapBias(0);
 				}
 			}
 
@@ -546,6 +569,15 @@ namespace Apoc3D
 				}
 			}
 
+			ColorWriteMasks GL3RenderStateManager::getColorWriteMasks(uint32 rtIndex)
+			{
+				return m_stMgr->GetColorWriteMasks(rtIndex);
+			}
+
+			void GL3RenderStateManager::setColorWriteMasks(uint32 rtIndex, ColorWriteMasks masks)
+			{
+				m_stMgr->SetColorWriteMasks(rtIndex, masks);
+			}
 		}
 	}
 }

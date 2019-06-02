@@ -41,27 +41,24 @@ namespace Apoc3D
 			public:
 				GL3ObjectFactory(GL3RenderDevice* device);
 
-				virtual Texture* CreateTexture(ResourceLocation* rl, TextureUsage usage, bool managed);
-				virtual Texture* CreateTexture(int width, int height, int levelCount, TextureUsage usage, PixelFormat format);
-				virtual Texture* CreateTexture(int width, int height, int depth, int levelCount, TextureUsage usage, PixelFormat format);
-				virtual Texture* CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format);
+				Texture* CreateTexture(const ResourceLocation& rl, TextureUsage usage, bool managed) override;
+				Texture* CreateTexture(int width, int height, int levelCount, TextureUsage usage, PixelFormat format) override;
+				Texture* CreateTexture(int width, int height, int depth, int levelCount, TextureUsage usage, PixelFormat format) override;
+				Texture* CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format) override;
 
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt, uint sampleCount);
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt);
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt);
+				RenderTarget* CreateRenderTarget(int32 width, int32 height, PixelFormat clrFmt, const String& multisampleMode) override;
+				DepthStencilBuffer* CreateDepthStencilBuffer(int32 width, int32 height, DepthFormat depFmt, const String& multisampleMode) override;
+				CubemapRenderTarget* CreateCubemapRenderTarget(int32 length, PixelFormat clrFmt) override;
 
-				virtual IndexBuffer* CreateIndexBuffer(IndexBufferFormat type, int count, BufferUsageFlags usage);
-				virtual VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage);
+				IndexBuffer* CreateIndexBuffer(IndexBufferFormat type, int count, BufferUsageFlags usage) override;
+				VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage) override;
 
-				virtual VertexDeclaration* CreateVertexDeclaration(const List<VertexElement>& elements);
+				VertexDeclaration* CreateVertexDeclaration(const List<VertexElement>& elements) override;
 
-				virtual Shader* CreateVertexShader(const ResourceLocation* resLoc);
-				virtual Shader* CreatePixelShader(const ResourceLocation* resLoc);
+				Shader* CreateVertexShader(const byte* byteCode) override;
+				Shader* CreatePixelShader(const byte* byteCode) override;
 
-				virtual Shader* CreateVertexShader(const byte* byteCode);
-				virtual Shader* CreatePixelShader(const byte* byteCode);
-
-				virtual Sprite* CreateSprite();
+				Sprite* CreateSprite() override;
 
 			private:
 				GL3RenderDevice* m_device;

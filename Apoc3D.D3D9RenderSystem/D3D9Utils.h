@@ -76,13 +76,11 @@ namespace Apoc3D
 				PLUGINAPI D3DFORMAT ConvertPixelFormat(PixelFormat format);
 				D3DFORMAT ConvertDepthFormat(DepthFormat format);
 
-				D3DTEXTUREFILTERTYPE ConvertTextureFilter(TextureFilter filter);
-
 				DWORD ConvertTextureUsage(TextureUsage usage);
 				D3DCUBEMAP_FACES ConvertCubeMapFace(CubeMapFace face);
 
 				D3DTEXTUREADDRESS ConvertTextureAddress(TextureAddressMode ta);
-			
+				D3DTEXTUREFILTERTYPE ConvertTextureFilter(TextureFilter filter);
 
 
 				int32 GetD3DTextureWidth(D3DTexture2D* tex);

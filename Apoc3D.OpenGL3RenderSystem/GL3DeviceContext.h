@@ -34,14 +34,18 @@ namespace Apoc3D
 			class GL3DeviceContext : public DeviceContext
 			{
 			protected:
-				virtual RenderView* create(const RenderParameters &pm);
+				RenderView* create(const RenderParameters &pm) override;
 
 			public:
 				
 				GL3DeviceContext();
 				~GL3DeviceContext();
 
-				virtual RenderDevice* getRenderDevice();
+				RenderDevice* getRenderDevice() override;
+
+				List<RenderDisplayMode> GetSupportedDisplayModes() override;
+				
+				String GetHardwareName() override;
 
 				void NotifyWindowClosed(GL3RenderWindow* wnd);
 

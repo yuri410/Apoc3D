@@ -20,6 +20,7 @@
 #include "GL3Common.h"
 
 #include "apoc3d/Graphics/RenderSystem/HardwareBuffer.h"
+#include "apoc3d/Graphics/RenderSystem/RenderTarget.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Graphics;
@@ -38,9 +39,14 @@ namespace Apoc3D
 				GL3VertexBuffer(GL3RenderDevice* device, int32 vertexCount, int32 vertexSize, BufferUsageFlags usage);
 				~GL3VertexBuffer();
 
+				void Bind();
+
+				GLuint getGLBufferID() const { return m_bufferID; }
+
 			protected:
 				virtual void* lock(int offset, int size, LockMode mode) override;
 				virtual void unlock() override;
+
 			private:
 				GL3RenderDevice* m_device;
 				
@@ -56,6 +62,8 @@ namespace Apoc3D
 				GL3IndexBuffer(GL3RenderDevice* device, IndexBufferFormat type, int32 size, BufferUsageFlags usage);
 				~GL3IndexBuffer();
 
+				void Bind();
+
 			protected:
 				virtual void* lock(int offset, int size, LockMode mode) override;
 				virtual void unlock() override;
@@ -68,11 +76,11 @@ namespace Apoc3D
 			};
 
 
-			class GL3DepthBuffer
+			class GL3DepthStencilBuffer : public DepthStencilBuffer
 			{
 			public:
-				GL3DepthBuffer(int width, int height, DepthFormat fmt);
-				~GL3DepthBuffer();
+				GL3DepthStencilBuffer(GL3RenderDevice* device, int32 width, int32 height, DepthFormat fmt);
+				~GL3DepthStencilBuffer();
 
 			private:
 				GLuint m_buf;

@@ -10,11 +10,17 @@ namespace Apoc3D
 	{
 		namespace GL3RenderSystem
 		{
-			class GLSampler
+			class GLSampler final
 			{
 			public:
 				GLSampler();
 				~GLSampler();
+
+				GLSampler(GLSampler&& o);
+				GLSampler& operator=(GLSampler&& o);
+
+				GLSampler(const GLSampler&) = delete;
+				GLSampler& operator=(const GLSampler&) = delete;
 
 				void Bind(GLuint unit);
 

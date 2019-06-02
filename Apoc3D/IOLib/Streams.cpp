@@ -27,6 +27,29 @@ namespace Apoc3D
 {
 	namespace IO
 	{
+		int Stream::ReadByte()
+		{
+			char buffer;
+			if (Read(&buffer, 1) == 0)
+			{
+				return -1;
+			}
+			return reinterpret_cast<const byte&>(buffer);
+		}
+
+		void Stream::WriteByte(byte value) 
+		{
+			Write(reinterpret_cast<const char*>(&value), 1); 
+		}
+
+		char* Stream::ReadAllToAllocatedBuffer()
+		{
+			int64 len = getLength();
+			char* buffer = new char[(size_t)len];
+			Read(buffer, len);
+			return buffer;
+		}
+
 		/************************************************************************/
 		/*  FileStream                                                          */
 		/************************************************************************/

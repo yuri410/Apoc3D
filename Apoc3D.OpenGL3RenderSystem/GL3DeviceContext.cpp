@@ -62,7 +62,7 @@ namespace Apoc3D
 				{
 					if (!m_window)
 					{
-						m_window = new GL3RenderWindow(0, this, pm);
+						m_window = new GL3RenderWindow(nullptr, this, pm);
 
 						return m_window;
 					}
@@ -77,6 +77,16 @@ namespace Apoc3D
 				if (m_window)
 					return m_window->getRenderDevice();
 				return 0;
+			}
+
+			String GL3DeviceContext::GetHardwareName()
+			{
+				return L"";
+			}
+
+			List<RenderDisplayMode> GL3DeviceContext::GetSupportedDisplayModes()
+			{
+				return {};
 			}
 		}
 	}

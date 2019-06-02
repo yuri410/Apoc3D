@@ -108,6 +108,29 @@ namespace Apoc3D
 				}
 			}
 
+			GLProgram::GLProgram(GLProgram&& o)
+				: m_prog(o.m_prog)
+				, m_uniformTable(std::move(o.m_uniformTable))
+				, m_refCount(o.m_refCount)
+			{
+				o.m_prog = 0;
+			}
+
+			GLProgram& GLProgram::operator=(GLProgram&& o)
+			{
+				if (this != &o)
+				{
+					this->~GLProgram();
+					new (this)GLProgram(std::move(o));
+				}
+				return *this;
+			}
+
+			void GLProgram::Bind()
+			{
+				glUseProgram(m_prog);
+			}
+
 			void GLProgram::Link(const List<GLuint>& shaders)
 			{
 				for (GLuint s : shaders)
@@ -174,17 +197,24 @@ namespace Apoc3D
 					{
 						varName[varNameLength] = 0;
 
-						glGetUniformLocation(m_prog, varName);
+						GLuint loc;
+						if (uniform)
+							loc = glGetUniformLocation(m_prog, varName);
+						else
+							loc = glGetAttribLocation(m_prog, varName);
 
 						GLProgramVariable var;
 						var.m_name = StringUtils::UTF8toUTF16(varName);
 						var.m_type = varType;
 						var.m_size = varSize;
-						var.m_location = glGetUniformLocation(m_prog, varName);
+						var.m_location = loc;
 
 						if (var.m_location != -1)
 						{
-							m_uniformTable.Add(var.m_name, var);
+							if (uniform)
+								m_uniformTable.Add(var.m_name, var);
+							else
+								m_attributes.Add(var);
 						}
 					}
 				}

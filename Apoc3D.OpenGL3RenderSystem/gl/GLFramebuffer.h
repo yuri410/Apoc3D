@@ -10,7 +10,22 @@ namespace Apoc3D
 	{
 		namespace GL3RenderSystem
 		{
+			class GLFramebuffer final
+			{
+			public:
+				GLFramebuffer(const List<GLuint>& colorTargets, GLuint depthTarget);
+				~GLFramebuffer();
 
+				GLFramebuffer(GLFramebuffer&& o);
+				GLFramebuffer& operator=(GLFramebuffer&& o);
+
+				GLFramebuffer(const GLFramebuffer&) = delete;
+				GLFramebuffer& operator=(const GLFramebuffer&) = delete;
+
+			private:
+				GLuint m_fbo;
+				
+			};
 		}
 	}
 }

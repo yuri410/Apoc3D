@@ -22,9 +22,14 @@
 #include "GL3Texture.h"
 #include "GL3RenderStateManager.h"
 #include "GL3ObjectFactory.h"
-//#include "GL1InstancingData.h"
-
+#include "GL3RenderTarget.h"
+#include "GL3Buffers.h"
 #include "GL3Sprite.h"
+#include "GL3Shader.h"
+#include "GL3VertexDeclaration.h"
+
+#include "GL/GLProgram.h"
+#include "GL/GLFramebuffer.h"
 
 #include "apoc3d/Graphics/Camera.h"
 #include "apoc3d/Graphics/Material.h"
@@ -86,9 +91,6 @@ namespace Apoc3D
 			protected:
 				virtual int begin()
 				{
-					//IDirect3DDevice9* dev = m_device->getDevice();
-					//dev->SetVertexShader(0);
-					//dev->SetPixelShader(0);
 					return 1;
 				}
 				virtual void end()
@@ -100,24 +102,18 @@ namespace Apoc3D
 			};
 
 			GL3RenderDevice::GL3RenderDevice(GraphicsDeviceManager* devManager)
-				: RenderDevice(L"OpenGL 3.1 RenderSystem"), m_devManager(devManager), 
-				m_stateManager(0), m_nativeState(0), m_caps(0), m_cachedRenderTarget(0), m_defaultEffect(0)
+				: RenderDevice(L"OpenGL 3.1 RenderSystem")
+				, m_devManager(devManager)
 			{
 
 			}
 			GL3RenderDevice::~GL3RenderDevice()
 			{
-				//m_defaultRT->Release();
-				//m_defaultRT = 0;
-
-				//m_defaultDS->Release();
-				//m_defaultDS = 0;
-
 				if (m_caps)
 					delete m_caps;
 
-				if (m_cachedRenderTarget)
-					delete[] m_cachedRenderTarget;
+				if (m_renderTargets)
+					delete[] m_renderTargets;
 				if (m_nativeState)
 					delete m_nativeState;
 				if (m_stateManager)
@@ -134,13 +130,6 @@ namespace Apoc3D
 
 			void GL3RenderDevice::Initialize()
 			{
-				glEnable(GL_TEXTURE_2D);
-				glEnable(GL_TEXTURE_1D);
-				glEnable(GL_TEXTURE_3D);
-				glEnable(GL_TEXTURE_CUBE_MAP);
-				//GL_EXT_texture_compression_s3tc
-				
-				
 				LogManager::getSingleton().Write(LOG_Graphics, 
 					L"[GL3]Initializing OpenGL 3.1 Render Device. ", 
 					LOGLVL_Infomation);
@@ -150,11 +139,9 @@ namespace Apoc3D
 				m_renderStates = m_stateManager;
 				m_objectFactory = new GL3ObjectFactory(this);
 
-
 				m_caps = new GL3Capabilities(this);
 
-				m_cachedRenderTarget = new GL3RenderTarget*[m_caps->GetMRTCount()];
-				memset(m_cachedRenderTarget, 0, sizeof(GL3RenderTarget*) * m_caps->GetMRTCount());
+				m_renderTargets = new GL3RenderTarget*[m_caps->GetMRTCount()]();
 
 				//dev->GetRenderTarget(0, &m_defaultRT);
 				//dev->GetDepthStencilSurface(&m_defaultDS);
@@ -167,11 +154,11 @@ namespace Apoc3D
 			void GL3RenderDevice::BeginFrame()
 			{
 				RenderDevice::BeginFrame();
-				//getDevice()->BeginScene();
+				
 			}
 			void GL3RenderDevice::EndFrame()
 			{
-				//getDevice()->EndScene();
+				
 			}
 
 			void GL3RenderDevice::Clear(ClearFlags flags, uint color, float depth, int stencil)
@@ -197,7 +184,7 @@ namespace Apoc3D
 					// Enable buffer for writing if it isn't
 					if (!m_nativeState->getDepthBufferWriteEnabled())
 					{
-						glDepthMask( GL_TRUE );
+						glDepthMask(GL_TRUE);
 					}
 
 					glClearDepth(depth);
@@ -259,79 +246,57 @@ namespace Apoc3D
 				}
 			}
 
-			void GL3RenderDevice::SetRenderTarget(int index, RenderTarget* rt)
+			void GL3RenderDevice::SetRenderTarget(int32 index, RenderTarget* rt)
 			{
-				//D3DDevice* dev = getDevice();
-				//if (rt)
-				//{
-				//	D3D9RenderTarget* oldRt = m_cachedRenderTarget[index];
+				GL3RenderTarget* grt = static_cast<GL3RenderTarget*>(rt);
 
-				//	D3D9RenderTarget* drt = static_cast<D3D9RenderTarget*>(rt);
-				//	
-				//	dev->SetRenderTarget(index, drt->getColorSurface());
-				//	if (drt->getDepthSurface())
-				//	{
-				//		if (index)
-				//		{
-				//			throw Apoc3DException::createException(EX_InvalidOperation, L"Render targets with a depth buffer can only be set at index 0.");
-				//		}
-				//		dev->SetDepthStencilSurface(drt->getDepthSurface());
-				//	}
-
-				//	m_cachedRenderTarget[index] = drt;
-
-				//	if (oldRt && oldRt != drt)
-				//	{
-				//		m_cachedRenderTarget[index]->Resolve();
-				//	}
-				//}
-				//else 
-				//{
-				//	if (index == 0)
-				//	{
-				//		dev->SetRenderTarget(0, m_defaultRT);
-				//		dev->SetDepthStencilSurface(m_defaultDS);
-
-				//		m_cachedRenderTarget[0] = 0;
-				//	}
-				//	else
-				//	{
-				//		dev->SetRenderTarget(index, 0);
-				//		m_cachedRenderTarget[index] = 0;
-				//	}
-				//}
+				if (m_renderTargets[index] != grt)
+				{
+					m_renderTargets[index] = grt;
+					m_renderTargetDirty = true;
+				}
 			}
 
-			RenderTarget* GL3RenderDevice::GetRenderTarget(int index)
+			RenderTarget* GL3RenderDevice::GetRenderTarget(int32 index)
 			{
-				return m_cachedRenderTarget[index];
+				return m_renderTargets[index];
+			}
+
+			void GL3RenderDevice::SetDepthStencilBuffer(DepthStencilBuffer* buf)
+			{
+				GL3DepthStencilBuffer* gdsb = static_cast<GL3DepthStencilBuffer*>(buf);
+
+				if (m_depthStencilBuffer != gdsb)
+				{
+					m_depthStencilBuffer = gdsb;
+					m_renderTargetDirty = true;
+				}
+			}
+
+			DepthStencilBuffer* GL3RenderDevice::GetDepthStencilBuffer()
+			{
+				return m_depthStencilBuffer;
 			}
 
 			void GL3RenderDevice::BindVertexShader(Shader* shader)
 			{
-				//if (shader)
-				//{
-				//	D3D9VertexShader* vs = static_cast<D3D9VertexShader*>(shader);
-				//	getDevice()->SetVertexShader(vs->getD3DVS());
-				//}
-				//else
-				//{
-				//	getDevice()->SetVertexShader(0);
-				//}
+				GL3Shader* gs = static_cast<GL3Shader*>(shader);
+				
+				if (m_currentVertexShader != gs)
+				{
+					m_currentVertexShader = gs;
+					m_shaderDirty = true;
+				}
 			}
 			void GL3RenderDevice::BindPixelShader(Shader* shader)
 			{
-				//glBindProgramARB(GL_VERTEX_PROGRAM_ARB, );
+				GL3Shader* gs = static_cast<GL3Shader*>(shader);
 
-				//if (shader)
-				//{
-				//	D3D9PixelShader* ps = static_cast<D3D9PixelShader*>(shader);
-				//	getDevice()->SetPixelShader(ps->getD3DPS());
-				//}
-				//else
-				//{
-				//	getDevice()->SetPixelShader(0);
-				//}
+				if (m_currentPixelShader != gs)
+				{
+					m_currentPixelShader = gs;
+					m_shaderDirty = true;
+				}
 			}
 
 			void GL3RenderDevice::Render(Material* mtrl, const RenderOperation* op, int count, int passSelID)
@@ -339,16 +304,17 @@ namespace Apoc3D
 				if (!op || count == 0)
 					return;
 
-				// glEnable
-				// glBindProgramARB
+				if (HasBatchReportRequest)
+					RenderDevice::Render(mtrl, op, count, passSelID);
 
-				Effect* fx = mtrl->getPassEffect(passSelID);
+				Effect* fx = mtrl->GetPassEffect(passSelID);
 				if (!fx)
 				{
-					fx = m_defaultEffect;
 					return;
 				}
-				
+
+				PostBindRenderTargets();
+
 				if (m_nativeState->getAlphaBlendEnable() != mtrl->IsBlendTransparent)
 				{
 					m_nativeState->setAlphaBlendEnable(mtrl->IsBlendTransparent);
@@ -372,31 +338,71 @@ namespace Apoc3D
 				}
 
 
-
-				if (m_nativeState->getAlphaTestEnable() != mtrl->AlphaTestEnabled ||
-					m_nativeState->getAlphaReference() != mtrl->AlphaReference)
-				{
-					m_nativeState->SetAlphaTestParameters(mtrl->AlphaTestEnabled, 
-						mtrl->AlphaReference);
-				}
-
 				if (m_nativeState->getDepthBufferEnabled() != mtrl->DepthTestEnabled ||
 					m_nativeState->getDepthBufferWriteEnabled() != mtrl->DepthWriteEnabled)
 				{
-					m_nativeState->SetDepth(mtrl->DepthTestEnabled,
-						mtrl->DepthWriteEnabled);
+					m_nativeState->SetDepth(mtrl->DepthTestEnabled, mtrl->DepthWriteEnabled);
 				}
+
+				for (uint32 i = 0; i < 4; i++)
+				{
+					ColorWriteMasks masks = mtrl->GetTargetWriteMask(i);
+					if (m_nativeState->GetColorWriteMasks(i) != masks)
+						m_nativeState->SetColorWriteMasks(i, masks);
+				}
+
+
 				int passCount = fx->Begin();
 				for (int p = 0; p < passCount; p++)
 				{
 					fx->BeginPass(p);
 
-					for (int j=0;j<count;j++)
+					if (fx->SupportsInstancing())
+					{
+						// here the input render operation list is guaranteed to have the same geometry data,
+						// instancing drawing is done here once the effect supports it
+
+						const RenderOperation& fristROP = op[0];
+						const GeometryData* firstGM = fristROP.GeometryData;
+
+						m_primitiveCount += firstGM->PrimitiveCount * count;
+						m_vertexCount += firstGM->VertexCount * count;
+
+						if (firstGM->usesIndex())
+						{
+							const GeometryData* gm = firstGM;
+
+							GLProgram* fxProg = PostBindShaders();
+
+							GL3IndexBuffer* ib = static_cast<GL3IndexBuffer*>(gm->IndexBuffer);
+							GL3VertexBuffer* vb = static_cast<GL3VertexBuffer*>(gm->VertexBuffer);
+							GL3VertexDeclaration* vdecl = static_cast<GL3VertexDeclaration*>(gm->VertexDecl);
+
+							vdecl->Bind(fxProg, vb);
+							ib->Bind();
+
+							GLenum idxType = GLUtils::ConvertIndexBufferFormat(ib->getIndexType());
+							GLenum primitiveType = GLUtils::ConvertPrimitiveType(gm->PrimitiveType);
+
+							const int InstancingBatchSize = 50;
+							for (int currentIndex = 0; currentIndex < count; currentIndex += InstancingBatchSize)
+							{
+								const uint32 actualCount = Math::Min(InstancingBatchSize, count - currentIndex);
+
+								fx->Setup(mtrl, op + currentIndex, actualCount);
+
+								glDrawElementsInstancedBaseVertex(primitiveType, gm->PrimitiveCount, idxType, nullptr, actualCount, gm->BaseVertex);
+
+								m_batchCount++;
+							}
+						}
+					}
+					for (int j = 0; j < count; j++)
 					{
 						const RenderOperation& rop = op[j];
 						const GeometryData* gm = rop.GeometryData;
-							
-						if (!gm->VertexCount || !gm->PrimitiveCount)
+
+						if (gm->VertexCount == 0 || gm->PrimitiveCount == 0)
 						{
 							fx->EndPass();
 							break;
@@ -409,31 +415,29 @@ namespace Apoc3D
 						// setup effect
 						fx->Setup(mtrl, &rop, 1);
 
-						//D3D9VertexBuffer* dvb = static_cast<D3D9VertexBuffer*>(gm->VertexBuffer);
-						//getDevice()->SetStreamSource(0, dvb->getD3DBuffer(), 0, gm->VertexSize);
+						GLenum primitiveType = GLUtils::ConvertPrimitiveType(gm->PrimitiveType);
 
-						//getDevice()->SetVertexDeclaration(static_cast<D3D9VertexDeclaration*>(gm->VertexDecl)->getD3DDecl());
+						GLProgram* fxProg = PostBindShaders();
 
-						//if (gm->usesIndex())
-						//{
-						//	D3D9IndexBuffer* dib = static_cast<D3D9IndexBuffer*>(gm->IndexBuffer);
-						//	getDevice()->SetIndices(dib->getD3DBuffer());
+						GL3VertexBuffer* vb = static_cast<GL3VertexBuffer*>(gm->VertexBuffer);
+						GL3VertexDeclaration* vdecl = static_cast<GL3VertexDeclaration*>(gm->VertexDecl);
 
-						//	getDevice()->DrawIndexedPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType), 
-						//		gm->BaseVertex, 0,
-						//		gm->VertexCount, 0, 
-						//		gm->PrimitiveCount);
-						//}
-						//else
-						//{
-						//	getDevice()->SetIndices(0);
+						vdecl->Bind(fxProg, vb);
 
-						//	getDevice()->DrawPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType),
-						//		0, gm->PrimitiveCount);
-						//}
+						if (gm->usesIndex())
+						{
+							GL3IndexBuffer* ib = static_cast<GL3IndexBuffer*>(gm->IndexBuffer);
+							GLenum idxType = GLUtils::ConvertIndexBufferFormat(ib->getIndexType());
+
+							ib->Bind();
+
+							glDrawElementsBaseVertex(primitiveType, gm->PrimitiveCount, idxType, nullptr, gm->BaseVertex);
+						}
+						else
+						{
+							glDrawArrays(primitiveType, gm->BaseVertex, gm->VertexCount);
+						}
 					}
-
-				
 					fx->EndPass();
 				}
 				fx->End();
@@ -451,67 +455,109 @@ namespace Apoc3D
 			{
 				glViewport(vp.X, vp.Y, vp.Width, vp.Height);
 			}
-			Capabilities* const GL3RenderDevice::getCapabilities() const
+			Capabilities* GL3RenderDevice::getCapabilities() const
 			{
 				return m_caps; 
 			}
+			uint32 GL3RenderDevice::GetAvailableVideoRamInMB()
+			{
+				return 0;
+			}
 			PixelFormat GL3RenderDevice::GetDefaultRTFormat()
 			{
-				D3DSURFACE_DESC desc;
-				m_defaultDS->GetDesc(&desc);
-
-				return D3D9Utils::ConvertBackPixelFormat(desc.Format);
+				return FMT_A8R8G8B8;
 			}
 			DepthFormat GL3RenderDevice::GetDefaultDepthStencilFormat()
 			{
-				D3DSURFACE_DESC desc;
-				m_defaultDS->GetDesc(&desc);
+				return DEPFMT_Depth24Stencil8;
+			}
 
-				return D3D9Utils::ConvertBackDepthFormat(desc.Format);
+			GLProgram* GL3RenderDevice::PostBindShaders()
+			{
+				// flush deferred pipeline states
+				GLProgram* fxProg = nullptr;
+
+				if (m_shaderDirty)
+				{
+					m_shaderDirty = false;
+
+					if (m_currentVertexShader && m_currentPixelShader)
+					{
+						assert(m_currentVertexShader->getGLProgram() == m_currentPixelShader->getGLProgram());
+					}
+				}
+
+				if (m_currentVertexShader && m_currentPixelShader)
+				{
+					fxProg = m_currentVertexShader->getGLProgram();;
+				}
+
+				if (fxProg)
+					fxProg->Bind();
+
+				return fxProg;
+			}
+
+			void GL3RenderDevice::PostBindRenderTargets()
+			{
+				
 			}
 
 			/************************************************************************/
-			/*                                                                      */
+			/* GL3Capabilities                                                      */
 			/************************************************************************/
 
-			void getGlVersion(int *major, int *minor)
+			GL3Capabilities::GL3Capabilities(GL3RenderDevice* device)
+				: m_device(device)
 			{
-				const char *verstr = (const char *) glGetString(GL_VERSION);
-				if ((verstr == NULL) || (sscanf(verstr,"%d.%d", major, minor) != 2))
+				glGetIntegerv(GL_MAJOR_VERSION, &m_majorGlVer);
+				glGetIntegerv(GL_MINOR_VERSION, &m_minorGlVer);
+
+				m_majorGlslVer = m_minorGlslVer = 0;
+				if (m_majorGlVer == 1)
 				{
-					*major = *minor = 0;
-					fprintf(stderr, "Invalid GL_VERSION format!!!\n");
+					m_majorGlslVer = 1;
+					m_minorGlslVer = 0;
+				}
+				if (m_majorGlVer == 2)
+				{
+					if (m_minorGlVer == 0)
+					{
+						m_majorGlslVer = 1;
+						m_minorGlslVer = 1;
+					}
+					else
+					{
+						m_majorGlslVer = 1;
+						m_minorGlslVer = 2;
+					}
+				}
+				else if (m_majorGlVer == 3 && m_minorGlVer < 3)
+				{
+					if (m_minorGlVer == 0)
+					{
+						m_majorGlslVer = 1;
+						m_minorGlslVer = 3;
+					}
+					else if (m_minorGlVer == 1)
+					{
+						m_majorGlslVer = 1;
+						m_minorGlslVer = 4;
+					}
+					else if (m_minorGlVer == 2)
+					{
+						m_majorGlslVer = 1;
+						m_minorGlslVer = 5;
+					}
+				}
+				else
+				{
+					m_majorGlslVer = m_majorGlVer;
+					m_minorGlslVer = m_minorGlVer;
 				}
 			}
 
-			void getGlslVersion(int *major, int *minor)
-			{
-				int gl_major, gl_minor;
-				getGlVersion(&gl_major, &gl_minor);
-				*major = *minor = 0;
-				if(gl_major == 1)
-				{
-					if (GLEW_ARB_shading_language_100)
-					{
-						*major = 1;
-						*minor = 0;
-					}
-				}
-				else if (gl_major >= 2)
-				{
-					/* GL v2.0 and greater must parse the version string */
-					const char *verstr =
-						(const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
-					if((verstr == NULL) ||
-						(sscanf(verstr, "%d.%d", major, minor) != 2))
-					{
-						*major = *minor = 0;
-						fprintf(stderr,
-							"Invalid GL_SHADING_LANGUAGE_VERSION format!!!\n");
-					}
-				}
-			}
-			bool GL3Capabilities::SupportsRenderTarget(uint multisampleCount, PixelFormat pixFormat, DepthFormat depthFormat)
+			bool GL3Capabilities::SupportsRenderTarget(const String& multisampleMode, PixelFormat pixFormat, DepthFormat depthFormat)
 			{
 				//GraphicsDeviceManager* devMgr = m_device->getGraphicsDeviceManager();
 				//IDirect3D9* d3d9 = devMgr->getDirect3D();
@@ -573,35 +619,33 @@ namespace Apoc3D
 				//	}
 				//	
 				//}
+				return true;
 			}
 
-			bool GL3Capabilities::SupportsPixelShader(int majorVer, int minorVer)
+			bool GL3Capabilities::SupportsPixelShader(const char* implType, int majorVer, int minorVer)
 			{
-				int ma, mi;
-				getGlslVersion(&ma, &mi);
-
-				switch (ma)
+				switch (m_majorGlslVer)
 				{
-				case 1:
+					case 1:
 					{
-						if (mi >= 4)
+						if (m_minorGlslVer >= 4)
 							return majorVer <= 3; // GLSL 1.5 == SM3.0 at least
-						else if (mi <= 3)
+						else if (m_minorGlslVer <= 3)
 							return majorVer <= 2;
-						
+
 					}
 					break;
-				case 3:
+					case 3:
 					{
-						if (mi >= 3)
+						if (m_minorGlslVer >= 3)
 							return majorVer <= 4; // GLSL 3.3 = SM4.0, minorVer ignored
 						else
 							return majorVer <= 3;
 					}
 					break;
-				case 4:
+					case 4:
 					{
-						if (mi >= 1)
+						if (m_minorGlslVer >= 1)
 							return majorVer <= 5; // GLSL 4.1 = SM5.0, minorVer ignored
 						else
 							return majorVer <= 4;
@@ -611,9 +655,19 @@ namespace Apoc3D
 				return false;
 			}
 
-			bool GL3Capabilities::SupportsVertexShader(int majorVer, int minorVer)
+			void GL3Capabilities::EnumerateRenderTargetMultisampleModes(PixelFormat pixFormat, DepthFormat depthFormat, Apoc3D::Collections::List<String>& modes)
 			{
-				return SupportsPixelShader(majorVer, minorVer);
+
+			}
+
+			const String* GL3Capabilities::FindClosesetMultisampleMode(uint32 sampleCount, PixelFormat pixFormat, DepthFormat depthFormat)
+			{
+				return nullptr;
+			}
+
+			bool GL3Capabilities::SupportsVertexShader(const char* implType, int majorVer, int minorVer)
+			{
+				return SupportsPixelShader(implType, majorVer, minorVer);
 			}
 
 			int GL3Capabilities::GetMRTCount()
@@ -621,6 +675,16 @@ namespace Apoc3D
 				GLint maxbuffers;
 				glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxbuffers);
 				return maxbuffers;
+			}
+
+			bool GL3Capabilities::SupportsMRTDifferentBits()
+			{
+				return true;
+			}
+
+			bool GL3Capabilities::SupportsMRTWriteMasks()
+			{
+				return true;
 			}
 		}
 	}

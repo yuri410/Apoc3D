@@ -199,109 +199,131 @@ namespace Apoc3D
 				GL3RenderStateManager(GL3RenderDevice* device, NativeGL3StateManager* nsmgr);
 				~GL3RenderStateManager();
 
-				virtual void SetAlphaTestParameters(bool enable, CompareFunction func, uint32 reference)
+				void SetAlphaTestParameters(bool enable, CompareFunction func, uint32 reference) override
 				{
 					//m_stMgr->SetAlphaTestParameters(enable, func, reference);
 				}
-				virtual void SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint32 factor)
+				void SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint32 factor) override
 				{
 					m_stMgr->SetAlphaBlend(enable, func, srcBlend, dstBlend, factor);
 				}
-				virtual void SetSeparateAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend)
+				void SetSeparateAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend) override
 				{
 					m_stMgr->SetSeparateAlphaBlend(enable, func, srcBlend, dstBlend);
 				}
-				virtual void SetDepth(bool enable, bool writeEnable, float bias, float slopebias, CompareFunction compare)
+				void SetDepth(bool enable, bool writeEnable, float bias, float slopebias, CompareFunction compare) override
 				{
 					m_stMgr->SetDepth(enable, writeEnable, bias, slopebias, compare);
 				}
-				virtual void SetPointParameters(float size, float maxSize, float minSize, bool pointSprite)
+				void SetPointParameters(float size, float maxSize, float minSize, bool pointSprite) override
 				{
 					m_stMgr->SetPointParameters(size, maxSize, minSize, pointSprite);
 				}
-				virtual void SetStencil(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, uint32 ref, CompareFunction func, uint32 mask, uint32 writemask)
+				void SetStencil(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, uint32 ref, CompareFunction func, uint32 mask, uint32 writemask) override
 				{
 					m_stMgr->SetStencil(enabled, fail, depthFail, pass, ref, func, mask, writemask);
 				}
-				virtual void SetStencilTwoSide(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, CompareFunction func)
+				void SetStencilTwoSide(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, CompareFunction func) override
 				{
 					m_stMgr->SetStencilTwoSide(enabled, fail, depthFail, pass, func);
 				}
-				virtual void SetCullMode(CullMode mode)
+				void SetCullMode(CullMode mode) override
 				{
 					m_stMgr->SetCullMode(mode);
 				}
-				virtual void SetFillMode(FillMode mode)
+				void SetFillMode(FillMode mode) override
 				{
 					m_stMgr->SetFillMode(mode);
 				}
 
 				/************************************************************************/
+				/* Alpha Test                                                           */
+				/************************************************************************/
+				bool getAlphaTestEnable() override { return false; }
+				CompareFunction getAlphaTestFunction() override { return CompareFunction::Always; }
+				uint32 getAlphaReference() override { return 0; }
+
+				/************************************************************************/
 				/* Alpha Blend                                                          */
 				/************************************************************************/
-				virtual bool getAlphaBlendEnable() { return m_stMgr->getAlphaBlendEnable(); }
-				virtual BlendFunction getAlphaBlendOperation() { return m_stMgr->getAlphaBlendOperation(); }
-				virtual Blend getAlphaSourceBlend() { return m_stMgr->getAlphaSourceBlend(); }
-				virtual Blend getAlphaDestinationBlend() { return m_stMgr->getAlphaDestinationBlend(); }
-				virtual uint32 getAlphaBlendFactor() { return m_stMgr->getAlphaBlendFactor(); }
+				bool getAlphaBlendEnable() override { return m_stMgr->getAlphaBlendEnable(); }
+				BlendFunction getAlphaBlendOperation() override { return m_stMgr->getAlphaBlendOperation(); }
+				Blend getAlphaSourceBlend() override { return m_stMgr->getAlphaSourceBlend(); }
+				Blend getAlphaDestinationBlend() override { return m_stMgr->getAlphaDestinationBlend(); }
+				uint32 getAlphaBlendFactor() override { return m_stMgr->getAlphaBlendFactor(); }
 
-				virtual bool getSeparateAlphaBlendEnable() { return m_stMgr->getSeparateAlphaBlendEnable(); }
-				virtual BlendFunction getSeparateAlphaBlendOperation() { return m_stMgr->getSeparateAlphaBlendOperation(); } 
-				virtual Blend getSeparateAlphaSourceBlend() { return m_stMgr->getSeparateAlphaSourceBlend(); }
-				virtual Blend getSeparateAlphaDestinationBlend() { return m_stMgr->getSeparateAlphaDestinationBlend(); }
+				bool getSeparateAlphaBlendEnable() override { return m_stMgr->getSeparateAlphaBlendEnable(); }
+				BlendFunction getSeparateAlphaBlendOperation() override { return m_stMgr->getSeparateAlphaBlendOperation(); }
+				Blend getSeparateAlphaSourceBlend() override { return m_stMgr->getSeparateAlphaSourceBlend(); }
+				Blend getSeparateAlphaDestinationBlend() override { return m_stMgr->getSeparateAlphaDestinationBlend(); }
 				//virtual uint32 getSeparateAlphaBlendFactor() { return m_cachedSepAlphaBlendFactor; }
 
 				/************************************************************************/
 				/* Depth                                                                */
 				/************************************************************************/
-				virtual float getDepthBias() { return m_stMgr->getDepthBias(); }
-				virtual float getSlopeScaleDepthBias() { return m_stMgr->getSlopeScaleDepthBias(); }
-				virtual CompareFunction getDepthBufferFunction() { return m_stMgr->getDepthBufferFunction(); }
-				virtual bool getDepthBufferWriteEnabled() { return m_stMgr->getDepthBufferWriteEnabled(); }
-				virtual bool getDepthBufferEnabled() { return m_stMgr->getDepthBufferEnabled(); }
+				float getDepthBias() override { return m_stMgr->getDepthBias(); }
+				float getSlopeScaleDepthBias() override { return m_stMgr->getSlopeScaleDepthBias(); }
+				CompareFunction getDepthBufferFunction() override { return m_stMgr->getDepthBufferFunction(); }
+				bool getDepthBufferWriteEnabled() override { return m_stMgr->getDepthBufferWriteEnabled(); }
+				bool getDepthBufferEnabled() override { return m_stMgr->getDepthBufferEnabled(); }
 
 				/************************************************************************/
 				/* Common                                                               */
 				/************************************************************************/
-				virtual CullMode getCullMode() { return m_stMgr->getCullMode(); }
-				virtual FillMode getFillMode() { return m_stMgr->getFillMode(); }
+				CullMode getCullMode() override { return m_stMgr->getCullMode(); }
+				FillMode getFillMode() override { return m_stMgr->getFillMode(); }
 
 				/************************************************************************/
 				/* Point                                                                */
 				/************************************************************************/
-				virtual float getPointSize() { return m_stMgr->getPointSize(); }
-				virtual float getPointSizeMax() { return m_stMgr->getPointSizeMax(); }
-				virtual float getPointSizeMin() { return m_stMgr->getPointSizeMin(); }
-				virtual bool getPointSpriteEnabled() { return m_stMgr->getPointSpriteEnabled(); }
+				float getPointSize() override { return m_stMgr->getPointSize(); }
+				float getPointSizeMax() override { return m_stMgr->getPointSizeMax(); }
+				float getPointSizeMin() override { return m_stMgr->getPointSizeMin(); }
+				bool getPointSpriteEnabled() override { return m_stMgr->getPointSpriteEnabled(); }
 
 				/************************************************************************/
 				/* Stencil                                                              */
 				/************************************************************************/
-				virtual bool getStencilEnabled() { return m_stMgr->getStencilEnabled(); }
-				virtual StencilOperation getStencilFail() { return m_stMgr->getStencilFail(); }
-				virtual StencilOperation getStencilPass() { return m_stMgr->getStencilPass(); }
-				virtual StencilOperation getStencilDepthFail() { return m_stMgr->getStencilDepthFail(); }
-				virtual uint32 getStencilRefrence() { return m_stMgr->getStencilRefrence(); }
-				virtual CompareFunction getStencilFunction() { return m_stMgr->getStencilFunction(); }
-				virtual uint32 getStencilMask() { return m_stMgr->getStencilMask(); }
-				virtual uint32 getStencilWriteMask() { return m_stMgr->getStencilWriteMask(); }
+				bool getStencilEnabled() override { return m_stMgr->getStencilEnabled(); }
+				StencilOperation getStencilFail() override { return m_stMgr->getStencilFail(); }
+				StencilOperation getStencilPass() override { return m_stMgr->getStencilPass(); }
+				StencilOperation getStencilDepthFail() override { return m_stMgr->getStencilDepthFail(); }
+				uint32 getStencilRefrence() override { return m_stMgr->getStencilRefrence(); }
+				CompareFunction getStencilFunction() override { return m_stMgr->getStencilFunction(); }
+				uint32 getStencilMask() override { return m_stMgr->getStencilMask(); }
+				uint32 getStencilWriteMask() override { return m_stMgr->getStencilWriteMask(); }
 
-				virtual bool getTwoSidedStencilMode() { return m_stMgr->getTwoSidedStencilMode(); }
+				bool getTwoSidedStencilMode() override { return m_stMgr->getTwoSidedStencilMode(); }
 				
-				virtual StencilOperation getCounterClockwiseStencilFail() { return m_stMgr->getCounterClockwiseStencilFail(); }
-				virtual StencilOperation getCounterClockwiseStencilPass() { return m_stMgr->getCounterClockwiseStencilPass(); }
-				virtual StencilOperation getCounterClockwiseStencilDepthBufferFail() { return m_stMgr->getCounterClockwiseStencilDepthBufferFail(); }
+				StencilOperation getCounterClockwiseStencilFail() override { return m_stMgr->getCounterClockwiseStencilFail(); }
+				StencilOperation getCounterClockwiseStencilPass() override { return m_stMgr->getCounterClockwiseStencilPass(); }
+				StencilOperation getCounterClockwiseStencilDepthBufferFail() override { return m_stMgr->getCounterClockwiseStencilDepthBufferFail(); }
 
-				virtual CompareFunction getCounterClockwiseStencilFunction()
-				{ return m_stMgr->getCounterClockwiseStencilFunction(); }
+				CompareFunction getCounterClockwiseStencilFunction() override { return m_stMgr->getCounterClockwiseStencilFunction(); }
 				
 				/************************************************************************/
 				/* Scissor Test                                                         */
 				/************************************************************************/
 
-				virtual bool getScissorTestEnabled();
-				virtual Apoc3D::Math::Rectangle getScissorTestRect();
-				virtual void setScissorTest(bool enable, const Apoc3D::Math::Rectangle* rect);
+				bool getScissorTestEnabled() override;
+				Apoc3D::Math::Rectangle getScissorTestRect() override;
+				void setScissorTest(bool enable, const Apoc3D::Math::Rectangle* rect) override;
+
+				/************************************************************************/
+				/* Color Write                                                          */
+				/************************************************************************/
+				ColorWriteMasks getColorWriteMasks(uint32 rtIndex) override;
+				void setColorWriteMasks(uint32 rtIndex, ColorWriteMasks masks) override;
+
+				/************************************************************************/
+				/* Samplers                                                             */
+				/************************************************************************/
+
+				void SetVertexSampler(int32 samplerIndex, const ShaderSamplerState& sampler) override { m_stMgr->SetSampler(samplerIndex, sampler); }
+				void SetPixelSampler(int32 samplerIndex, const ShaderSamplerState& sampler) override { m_stMgr->SetSampler(samplerIndex, sampler); }
+
+				const ShaderSamplerState& getPixelSampler(int32 samplerIndex) const override { return m_stMgr->getSampler(samplerIndex); }
+				const ShaderSamplerState& getVertexSampler(int32 samplerIndex) const override { return m_stMgr->getSampler(samplerIndex); }
 
 			private:
 				GL3RenderDevice* m_device;

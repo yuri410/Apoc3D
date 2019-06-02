@@ -76,9 +76,6 @@ namespace Apoc3D
 				return new NRSVertexDeclaration(m_device, elements);
 			}
 
-			Shader* NRSObjectFactory::CreateVertexShader(const ResourceLocation& resLoc) { return new NRSVertexShader(m_device, resLoc); }
-			Shader* NRSObjectFactory::CreatePixelShader(const ResourceLocation& resLoc)  { return new NRSPixelShader(m_device, resLoc); }
-
 			Shader* NRSObjectFactory::CreateVertexShader(const byte* byteCode) { return new NRSVertexShader(m_device, byteCode); }
 			Shader* NRSObjectFactory::CreatePixelShader(const byte* byteCode)  { return new NRSPixelShader(m_device, byteCode); }
 

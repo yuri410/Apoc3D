@@ -76,17 +76,22 @@ namespace Apoc3D
 			class GL3Capabilities;
 			class GL3RenderStateManager;
 			class GL3RenderTarget;
+			class GL3DepthStencilBuffer;
 
 			class NativeGL3StateManager;
 
 			class GL3Texture;
 			class GL3Sprite;
 			class GL3VertexDeclaration;
-			
+			class GL3Shader;
+
+			class GL3VertexBuffer;
+			class GL3IndexBuffer;
 
 			class GLSampler;
 			class GLVertexArray;
 			class GLProgram;
+			class GLFramebuffer;
 		}
 	}
 }

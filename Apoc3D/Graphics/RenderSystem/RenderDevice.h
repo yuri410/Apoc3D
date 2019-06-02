@@ -46,7 +46,7 @@ namespace Apoc3D
 
 				virtual ~RenderDevice() { }
 
-				virtual Capabilities* const getCapabilities() const = 0;
+				virtual Capabilities* getCapabilities() const = 0;
 				
 				/** Gets the color pixel format of default render target. */
 				virtual PixelFormat GetDefaultRTFormat() = 0;
@@ -251,8 +251,8 @@ namespace Apoc3D
 				virtual Shader* CreateVertexShader(const byte* byteCode) = 0;
 				virtual Shader* CreatePixelShader(const byte* byteCode) = 0;
 
-				virtual Shader* CreateVertexShader(const ResourceLocation& resLoc) = 0;
-				virtual Shader* CreatePixelShader(const ResourceLocation& resLoc) = 0;
+				Shader* CreateVertexShader(const ResourceLocation& resLoc);
+				Shader* CreatePixelShader(const ResourceLocation& resLoc);
 
 
 				virtual Sprite* CreateSprite() = 0;

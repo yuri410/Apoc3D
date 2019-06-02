@@ -49,14 +49,15 @@ namespace Apoc3D
 				virtual void EndFrame();
 				virtual void Clear(ClearFlags flags, uint color, float depth, int stencil);
 
-				virtual void SetRenderTarget(int index, RenderTarget* rt);
+				virtual void SetRenderTarget(int32 index, RenderTarget* rt) override;
+				virtual RenderTarget* GetRenderTarget(int32 index) override;
 
-				virtual RenderTarget* GetRenderTarget(int index);
+				virtual void SetDepthStencilBuffer(DepthStencilBuffer* buf) override;
+				virtual DepthStencilBuffer* GetDepthStencilBuffer() override;
 
 				virtual PixelFormat GetDefaultRTFormat();
 				virtual DepthFormat GetDefaultDepthStencilFormat();
-				//virtual void SetTexture(int index, Texture* texture);
-				//virtual Texture* GetTexture(int index);
+
 
 				virtual void BindVertexShader(Shader* shader);
 				virtual void BindPixelShader(Shader* shader);
@@ -66,42 +67,84 @@ namespace Apoc3D
 				virtual Viewport getViewport();
 				virtual void setViewport(const Viewport& vp);
 
-				virtual Capabilities* const getCapabilities() const;
+				virtual Capabilities* getCapabilities() const;
+
+				virtual uint32 GetAvailableVideoRamInMB() override;
 
 				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_devManager; } 
 
 				bool isInitialized() const { return !!m_stateManager; }
 
 				NativeGL3StateManager* getNativeState() const { return m_nativeState; }
+
+				void NotifyDestruction(GL3Shader* shader);
+				void NotifyDestruction(GL3RenderTarget* rt);
+				void NotifyDestruction(GL3DepthStencilBuffer* dsb);
+
 			private:
-				friend class VolatileResource;
+				GLProgram* PostBindShaders();
+				void PostBindRenderTargets();
 
-				Effect* m_defaultEffect;
-				GraphicsDeviceManager* m_devManager;
-				GL3RenderStateManager* m_stateManager;
-				NativeGL3StateManager* m_nativeState;
+				Effect* m_defaultEffect = nullptr;
+				GraphicsDeviceManager* m_devManager = nullptr;
+				GL3RenderStateManager* m_stateManager = nullptr;
+				NativeGL3StateManager* m_nativeState = nullptr;
 
-				GL3RenderTarget** m_cachedRenderTarget;
+				GL3RenderTarget** m_renderTargets = nullptr;
+				GL3DepthStencilBuffer* m_depthStencilBuffer = nullptr;
+				
+				GL3Shader* m_currentVertexShader = nullptr;
+				GL3Shader* m_currentPixelShader = nullptr;
+				
+				bool m_shaderDirty = false;
+				bool m_renderTargetDirty = false;
 
-				GL3Capabilities* m_caps;
+				GL3Capabilities* m_caps = nullptr;
+
+			private:
+				struct RtKey
+				{
+				public:
+					RtKey(const RtKey&) = delete;
+					RtKey& operator=(const RtKey&) = delete;
+
+				private:
+					List<GLuint> m_colorBuffers;
+					GLuint m_depthStencilBuffer;
+				};
+
+				struct RtKeyComparer
+				{
+					static bool Equals(const RtKey& x, const RtKey& y);
+
+					static int32 GetHashCode(const RtKey& obj);
+				};
+
+				HashMap<RtKey, GLFramebuffer, RtKeyComparer> m_cachedFbo;
 			};
 
 			class GL3Capabilities : public Capabilities
 			{
 			public:
-				GL3Capabilities(GL3RenderDevice* device)
-					: m_device(device)
-				{
+				GL3Capabilities(GL3RenderDevice* device);
 
-				}
+				bool SupportsRenderTarget(const String& multisampleMode, PixelFormat pixFormat, DepthFormat depthFormat) override;
+				bool SupportsPixelShader(const char* implType, int majorVer, int minorVer) override;
+				bool SupportsVertexShader(const char* implType, int majorVer, int minorVer) override;
 
-				virtual bool SupportsRenderTarget(uint multisampleCount, PixelFormat pixFormat, DepthFormat depthFormat);
-				virtual bool SupportsPixelShader(int majorVer, int minorVer);
-				virtual bool SupportsVertexShader(int majorVer, int minorVer);
+				void EnumerateRenderTargetMultisampleModes(PixelFormat pixFormat, DepthFormat depthFormat, Apoc3D::Collections::List<String>& modes) override;
+				const String* FindClosesetMultisampleMode(uint32 sampleCount, PixelFormat pixFormat, DepthFormat depthFormat) override;
 
-				virtual int GetMRTCount();
+				int32 GetMRTCount() override;
+				bool SupportsMRTDifferentBits() override;
+				bool SupportsMRTWriteMasks() override;
+
 			private:
 				GL3RenderDevice* m_device;
+				GLint m_majorGlVer;
+				GLint m_minorGlVer;
+				GLint m_majorGlslVer;
+				GLint m_minorGlslVer;
 			};
 		}
 	}

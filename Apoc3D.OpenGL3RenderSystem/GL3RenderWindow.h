@@ -75,7 +75,7 @@ namespace Apoc3D
 
 				void GL_Release();
 
-				void OnDrawFrame(const AppTime* time) override;
+				void OnRenderFrame(const AppTime* time) override;
 
 				bool IsDeviceReady() override;
 				void ExecuteChangeDevice() override;

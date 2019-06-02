@@ -47,7 +47,6 @@ namespace Apoc3D
 			{
 			public:
 				GL3Shader(GL3RenderDevice* device, GLenum shaderType, const byte* byteCode);
-				GL3Shader(GL3RenderDevice* device, GLenum shaderType, const ResourceLocation& rl);
 				virtual ~GL3Shader();
 
 				int GetParamIndex(const String& paramName) override;
@@ -112,6 +111,7 @@ namespace Apoc3D
 				void NotifyLinkage(const List<Shader*>& shaders) override;
 
 				GLuint getGLShaderID() const { return m_shaderID; }
+				GLProgram* getGLProgram() const { return m_prog; }
 			protected:
 				static void KeyNotFoundError(const String& name);
 
@@ -128,7 +128,6 @@ namespace Apoc3D
 			{
 			public:
 				GL3PixelShader(GL3RenderDevice* device, const byte* byteCode);
-				GL3PixelShader(GL3RenderDevice* device, const ResourceLocation& rl);
 				~GL3PixelShader();
 
 				virtual ShaderType getType() const { return ShaderType::Pixel; }
@@ -138,7 +137,6 @@ namespace Apoc3D
 			{
 			public:
 				GL3VertexShader(GL3RenderDevice* device, const byte* byteCode);
-				GL3VertexShader(GL3RenderDevice* device, const ResourceLocation& rl);
 				~GL3VertexShader();
 
 				virtual ShaderType getType() const { return ShaderType::Vertex; }

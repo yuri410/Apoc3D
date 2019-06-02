@@ -69,7 +69,7 @@ namespace Apoc3D
 				virtual Viewport getViewport() override;
 				virtual void setViewport(const Viewport& vp) override;
 
-				virtual Capabilities* const getCapabilities() const override;
+				virtual Capabilities* getCapabilities() const override;
 
 				virtual uint32 GetAvailableVideoRamInMB() override;
 

@@ -21,6 +21,7 @@
 #include "GL3Sprite.h"
 #include "GL3Shader.h"
 #include "GL3VertexDeclaration.h"
+#include "GL3RenderTarget.h"
 
 namespace Apoc3D
 {
@@ -33,7 +34,7 @@ namespace Apoc3D
 			{
 
 			}
-			Texture* GL3ObjectFactory::CreateTexture(ResourceLocation* rl, TextureUsage usage, bool managed)
+			Texture* GL3ObjectFactory::CreateTexture(const ResourceLocation& rl, TextureUsage usage, bool managed)
 			{
 				return new GL3Texture(m_device, rl, usage, managed);
 			}
@@ -50,15 +51,18 @@ namespace Apoc3D
 				return new GL3Texture(m_device, length, levelCount, format, usage);
 			}
 
-			RenderTarget* GL3ObjectFactory::CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt, uint sampleCount)
+
+			RenderTarget* GL3ObjectFactory::CreateRenderTarget(int32 width, int32 height, PixelFormat clrFmt, const String& multisampleMode)
 			{
-				return nullptr;
+				return new GL3RenderTarget(m_device, width, height, clrFmt, multisampleMode);
 			}
-			RenderTarget* GL3ObjectFactory::CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt)
+			
+			DepthStencilBuffer* GL3ObjectFactory::CreateDepthStencilBuffer(int32 width, int32 height, DepthFormat depFmt, const String& multisampleMode)
 			{
-				return nullptr;
+				return new GL3DepthStencilBuffer(m_device, width, height, depFmt);
 			}
-			RenderTarget* GL3ObjectFactory::CreateRenderTarget(int width, int height, PixelFormat clrFmt)
+
+			CubemapRenderTarget* GL3ObjectFactory::CreateCubemapRenderTarget(int32 length, PixelFormat clrFmt)
 			{
 				return nullptr;
 			}
@@ -67,6 +71,7 @@ namespace Apoc3D
 			{
 				return new GL3IndexBuffer(m_device, type, count*(type == IndexBufferFormat::Bit16 ? sizeof(ushort) : sizeof(uint)), usage);
 			}
+
 			VertexBuffer* GL3ObjectFactory::CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage)
 			{
 				return new GL3VertexBuffer(m_device, vertexCount, vtxDecl->GetVertexSize(), usage);
@@ -77,22 +82,13 @@ namespace Apoc3D
 				return new GL3VertexDeclaration(elements);
 			}
 
-			Shader* GL3ObjectFactory::CreateVertexShader(const ResourceLocation* resLoc)
-			{
-				return GL3VertexShader(m_device, *resLoc);
-			}
-			Shader* GL3ObjectFactory::CreatePixelShader(const ResourceLocation* resLoc)
-			{
-				return GL3PixelShader(m_device, *resLoc);
-			}
-
 			Shader* GL3ObjectFactory::CreateVertexShader(const byte* byteCode)
 			{
-				return GL3VertexShader(m_device, byteCode);
+				return new GL3VertexShader(m_device, byteCode);
 			}
 			Shader* GL3ObjectFactory::CreatePixelShader(const byte* byteCode)
 			{
-				return GL3PixelShader(m_device, byteCode);
+				return new GL3PixelShader(m_device, byteCode);
 			}
 
 			Sprite* GL3ObjectFactory::CreateSprite()

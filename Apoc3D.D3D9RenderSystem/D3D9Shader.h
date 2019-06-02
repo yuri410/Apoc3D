@@ -140,23 +140,6 @@ namespace Apoc3D
 
 				m_constantTable = new ConstantTable(reinterpret_cast<const DWORD*>(byteCode));
 			}
-			GST ShaderTT::D3D9Shader(D3D9RenderDevice* device, const ResourceLocation& rl)
-				: Shader(device), m_device(device)
-			{
-				BinaryReader br(rl);
-				int64 len = br.getBaseStream()->getLength();
-				char* buffer = new char[static_cast<uint>(len)];
-				br.ReadBytes(buffer, len);
-
-
-				D3DDevice* dev = m_device->getDevice();
-				HRESULT hr = (dev->*CreateShader)(reinterpret_cast<const DWORD*>(buffer), &m_shader);
-				assert(SUCCEEDED(hr));
-
-				m_constantTable = new ConstantTable(reinterpret_cast<const DWORD*>(buffer));
-
-				delete[] buffer;
-			}
 			GST ShaderTT::~D3D9Shader()
 			{
 				m_shader->Release();
