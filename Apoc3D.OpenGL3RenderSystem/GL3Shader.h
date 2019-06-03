@@ -60,60 +60,67 @@ namespace Apoc3D
 				void SetTexture(const String& paramName, Texture* tex);
 				void SetSamplerState(const String& paramName, const ShaderSamplerState& state);
 
+				void SetVector2(int32 loc, const Vector2& value) override;
+				void SetVector3(int32 loc, const Vector3& value) override;
+				void SetVector4(int32 loc, const Vector4& value) override;
+				void SetValue(int32 loc, const Quaternion& value) override;
+				void SetValue(int32 loc, const Matrix& value) override;
+				void SetValue(int32 loc, const Color4& value) override;
+				void SetValue(int32 loc, const Plane& value) override;
 
-				void SetVector2(int32 reg, const Vector2& value) override { }
-				void SetVector3(int32 reg, const Vector3& value) override { }
-				void SetVector4(int32 reg, const Vector4& value) override { }
-				void SetValue(int32 reg, const Quaternion& value) override { }
-				void SetValue(int32 reg, const Matrix& value) override { }
-				void SetValue(int32 reg, const Color4& value) override { }
-				void SetValue(int32 reg, const Plane& value) override { }
+				void SetVector2(int32 loc, const Vector2* value, int32 count) override;
+				void SetVector3(int32 loc, const Vector3* value, int32 count) override;
+				void SetVector4(int32 loc, const Vector4* value, int32 count) override;
+				void SetValue(int32 loc, const Quaternion* value, int32 count) override;
+				void SetValue(int32 loc, const Matrix* value, int32 count) override;
+				void SetValue(int32 loc, const Color4* value, int32 count) override;
+				void SetValue(int32 loc, const Plane* value, int32 count) override;
+				void SetMatrix4x3(int32 loc, const Matrix* value, int32 count) override;
 
-				void SetVector2(int32 reg, const Vector2* value, int32 count) override { }
-				void SetVector3(int32 reg, const Vector3* value, int32 count) override { }
-				void SetVector4(int32 reg, const Vector4* value, int32 count) override { }
-				void SetValue(int32 reg, const Quaternion* value, int32 count) override { }
-				void SetValue(int32 reg, const Matrix* value, int32 count) override { }
-				void SetValue(int32 reg, const Color4* value, int32 count) override { }
-				void SetValue(int32 reg, const Plane* value, int32 count) override { }
-				void SetMatrix4x3(int32 reg, const Matrix* value, int32 count) override { }
+				void SetValue(int32 loc, bool value) override;
+				void SetValue(int32 loc, float value) override;
+				void SetValue(int32 loc, int32 value) override;
+				void SetValue(int32 loc, const bool* value, int32 count) override;
+				void SetValue(int32 loc, const float* value, int32 count) override;
+				void SetValue(int32 loc, const int32* value, int32 count) override;
 
-				void SetValue(int32 reg, bool value) override { }
-				void SetValue(int32 reg, float value) override { }
-				void SetValue(int32 reg, int32 value) override { }
-				void SetValue(int32 reg, const bool* value, int32 count) override { }
-				void SetValue(int32 reg, const float* value, int32 count) override { }
-				void SetValue(int32 reg, const int32* value, int32 count) override { }
+				void SetVector2(const String& paramName, const Vector2& value) override;
+				void SetVector3(const String& paramName, const Vector3& value) override;
+				void SetVector4(const String& paramName, const Vector4& value) override;
+				void SetValue(const String& paramName, const Quaternion& value) override;
+				void SetValue(const String& paramName, const Matrix& value) override;
+				void SetValue(const String& paramName, const Color4& value) override;
+				void SetValue(const String& paramName, const Plane& value) override;
 
-				void SetVector2(const String& paramName, const Vector2& value) override { }
-				void SetVector3(const String& paramName, const Vector3& value) override { }
-				void SetVector4(const String& paramName, const Vector4& value) override { }
-				void SetValue(const String& paramName, const Quaternion& value) override { }
-				void SetValue(const String& paramName, const Matrix& value) override { }
-				void SetValue(const String& paramName, const Color4& value) override { }
-				void SetValue(const String& paramName, const Plane& value) override { }
+				void SetVector2(const String& paramName, const Vector2* value, int32 count) override;
+				void SetVector3(const String& paramName, const Vector3* value, int32 count) override;
+				void SetVector4(const String& paramName, const Vector4* value, int32 count) override;
+				void SetValue(const String& paramName, const Quaternion* value, int32 count) override;
+				void SetValue(const String& paramName, const Matrix* value, int32 count) override;
+				void SetValue(const String& paramName, const Plane* value, int32 count) override;
+				void SetValue(const String& paramName, const Color4* value, int32 count) override;
 
-				void SetVector2(const String& paramName, const Vector2* value, int32 count) override { }
-				void SetVector3(const String& paramName, const Vector3* value, int32 count) override { }
-				void SetVector4(const String& paramName, const Vector4* value, int32 count) override { }
-				void SetValue(const String& paramName, const Quaternion* value, int32 count) override { }
-				void SetValue(const String& paramName, const Matrix* value, int32 count) override { }
-				void SetValue(const String& paramName, const Plane* value, int32 count) override { }
-				void SetValue(const String& paramName, const Color4* value, int32 count) override { }
-
-				void SetValue(const String& paramName, bool value) override { }
-				void SetValue(const String& paramName, float value) override { }
-				void SetValue(const String& paramName, int32 value) override { }
-				void SetValue(const String& paramName, const bool* value, int32 count) override { }
-				void SetValue(const String& paramName, const float* value, int32 count) override { }
-				void SetValue(const String& paramName, const int32* value, int32 count) override { }
+				void SetValue(const String& paramName, bool value) override;
+				void SetValue(const String& paramName, float value) override;
+				void SetValue(const String& paramName, int32 value) override;
+				void SetValue(const String& paramName, const bool* value, int32 count) override;
+				void SetValue(const String& paramName, const float* value, int32 count) override;
+				void SetValue(const String& paramName, const int32* value, int32 count) override;
 
 				void NotifyLinkage(const List<Shader*>& shaders) override;
 
 				GLuint getGLShaderID() const { return m_shaderID; }
 				GLProgram* getGLProgram() const { return m_prog; }
+
 			protected:
+
 				static void KeyNotFoundError(const String& name);
+
+				template <typename T>
+				void SetValueGeneric(const String& paramName, const T& value);
+
+				template <typename T>
+				void SetValueGeneric(const String& paramName, const T* value, int32 count);
 
 				void CompileShader(GLenum shaderType, const byte* byteCode);
 
@@ -122,6 +129,26 @@ namespace Apoc3D
 
 				GLProgram* m_prog = nullptr;
 			};
+
+			template <typename T>
+			void GL3Shader::SetValueGeneric(const String& paramName, const T& value)
+			{
+				const GLProgramVariable* gv = m_prog->getUniform(paramName);
+				if (gv)
+					SetValue(gv->m_location, value);
+				else
+					KeyNotFoundError(paramName);
+			}
+
+			template <typename T>
+			void GL3Shader::SetValueGeneric(const String& paramName, const T* value, int32 count)
+			{
+				const GLProgramVariable* gv = m_prog->getUniform(paramName);
+				if (gv)
+					SetValue(gv->m_location, value, count);
+				else
+					KeyNotFoundError(paramName);
+			}
 
 			class GL3VertexShader : public GL3Shader
 			{

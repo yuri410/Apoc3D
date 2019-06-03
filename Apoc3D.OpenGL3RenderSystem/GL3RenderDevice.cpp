@@ -378,7 +378,8 @@ namespace Apoc3D
 							GL3VertexDeclaration* vdecl = static_cast<GL3VertexDeclaration*>(gm->VertexDecl);
 
 							vdecl->Bind(fxProg, vb);
-							ib->Bind();
+
+							glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib->getGLBufferID());
 
 							GLenum idxType = GLUtils::ConvertIndexBufferFormat(ib->getIndexType());
 							GLenum primitiveType = GLUtils::ConvertPrimitiveType(gm->PrimitiveType);
@@ -389,8 +390,9 @@ namespace Apoc3D
 								const uint32 actualCount = Math::Min(InstancingBatchSize, count - currentIndex);
 
 								fx->Setup(mtrl, op + currentIndex, actualCount);
-
-								glDrawElementsInstancedBaseVertex(primitiveType, gm->PrimitiveCount, idxType, nullptr, actualCount, gm->BaseVertex);
+								
+								int32 indexOffset = gm->StartIndex * gm->IndexBuffer->getIndexElementSize();
+								glDrawElementsInstancedBaseVertex(primitiveType, gm->PrimitiveCount, idxType, (const GLvoid*)indexOffset, actualCount, gm->BaseVertex);
 
 								m_batchCount++;
 							}
@@ -413,13 +415,12 @@ namespace Apoc3D
 							m_vertexCount += gm->VertexCount;
 							m_batchCount++;
 
+							GLProgram* fxProg = PostBindShaders();
+
 							// setup effect
 							fx->Setup(mtrl, &rop, 1);
 
 							GLenum primitiveType = GLUtils::ConvertPrimitiveType(gm->PrimitiveType);
-
-							// flush deferred pipeline states
-							GLProgram* fxProg = PostBindShaders();
 
 							GL3VertexBuffer* vb = static_cast<GL3VertexBuffer*>(gm->VertexBuffer);
 							GL3VertexDeclaration* vdecl = static_cast<GL3VertexDeclaration*>(gm->VertexDecl);
@@ -431,12 +432,15 @@ namespace Apoc3D
 								GL3IndexBuffer* ib = static_cast<GL3IndexBuffer*>(gm->IndexBuffer);
 								GLenum idxType = GLUtils::ConvertIndexBufferFormat(ib->getIndexType());
 
-								ib->Bind();
+								glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib->getGLBufferID());
 
-								glDrawElementsBaseVertex(primitiveType, gm->PrimitiveCount, idxType, nullptr, gm->BaseVertex);
+								int32 indexOffset = gm->StartIndex * gm->IndexBuffer->getIndexElementSize();
+								glDrawElementsBaseVertex(primitiveType, gm->PrimitiveCount, idxType, (const GLvoid*)indexOffset, gm->BaseVertex);
 							}
 							else
 							{
+								glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 								glDrawArrays(primitiveType, gm->BaseVertex, gm->VertexCount);
 							}
 						}
@@ -492,6 +496,11 @@ namespace Apoc3D
 				}
 
 				glUseProgram(fxProg ? fxProg->getGLProgID() : 0);
+
+				if (fxProg)
+				{
+					fxProg->BindSamplerSlots();
+				}
 
 				return fxProg;
 			}

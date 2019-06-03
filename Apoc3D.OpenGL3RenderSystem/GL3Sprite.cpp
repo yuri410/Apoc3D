@@ -33,16 +33,12 @@ namespace Apoc3D
 			GL3Sprite::GL3Sprite(GL3RenderDevice* device)
 				: Sprite(device), m_gldevice(device)
 			{
+				m_vtxDecl = new GL3VertexDeclaration(
 				{
-					const List<VertexElement> elements =
-					{
-						VertexElement(0, VEF_Vector4, VEU_Position),
-						VertexElement(16, VEF_Color, VEU_Color),
-						VertexElement(20, VEF_Vector2, VEU_TextureCoordinate, 0)
-					};
-
-					m_vtxDecl = new GL3VertexDeclaration( elements);
-				}
+					VertexElement(0, VEF_Vector4, VEU_Position),
+					VertexElement(16, VEF_Color, VEU_Color),
+					VertexElement(20, VEF_Vector2, VEU_TextureCoordinate, 0)
+				});
 				
 				m_quadBuffer = new GL3VertexBuffer(device, (MaxDeferredDraws * 4), m_vtxDecl->GetVertexSize(), (BufferUsageFlags)(BU_Dynamic | BU_WriteOnly));
 				m_quadIndices = new GL3IndexBuffer(device, IndexBufferFormat::Bit16, sizeof(uint16) * MaxDeferredDraws * 6, BU_WriteOnly);
@@ -151,12 +147,12 @@ namespace Apoc3D
 					if (textureChanged || uvModeChanged)
 					{
 						int32 startIndex = lastIndex * 6;
-						int32 startVertex = lastIndex * 4;
-						int32 dpCount = i - lastIndex; // not including i
+						//int32 startVertex = lastIndex * 4;
+						int32 quadCount = i - lastIndex; // not including i
 
-						//int32 vtxCount = dpCount * 4;
+						int32 indexOffset = startIndex * m_quadIndices->getIndexElementSize();
 
-						glDrawElements(GL_TRIANGLES, dpCount*2, GLUtils::ConvertIndexBufferFormat(m_quadIndices->getIndexType()), nullptr);
+						glDrawElements(GL_TRIANGLES, quadCount*2, GLUtils::ConvertIndexBufferFormat(m_quadIndices->getIndexType()), (const GLvoid*)indexOffset);
 
 						m_batchCount++;
 
@@ -199,37 +195,24 @@ namespace Apoc3D
 					if ((getSettings() & SPR_AlphaBlended) == SPR_AlphaBlended)
 						mgr->SetAlphaBlend(true, BlendFunction::Add, Blend::SourceAlpha, Blend::InverseSourceAlpha, m_storedState.oldBlendFactor);
 
-					//m_quadBuffer->Bind();
+					ShaderSamplerState state = mgr->getSampler(0);
+					state.MinFilter = TextureFilter::Linear;
+					state.MagFilter = TextureFilter::Linear;
+					state.MipFilter = TextureFilter::None;
+					state.AddressU = TextureAddressMode::Clamp;
+					state.AddressV = TextureAddressMode::Clamp;
+					state.MaxMipLevel = 0;
+					state.MipMapLODBias = 0;
+					mgr->SetSampler(0, state);
 
-					//m_rawDevice->SetStreamSource(0, m_quadBuffer->getD3DBuffer(), 0, sizeof(QuadVertex));
-					//m_rawDevice->SetIndices(m_quadIndices->getD3DBuffer());
+					m_device->PostBindRenderTargets();
 
-					m_quadIndices->Bind();
+					GLProgram* fxProg = m_device->PostBindShaders();
 
-						ShaderSamplerState state = mgr->getSampler(0);
-						state.MinFilter = TextureFilter::Linear;
-						state.MagFilter = TextureFilter::Linear;
-						state.MipFilter = TextureFilter::None;
-						state.AddressU = TextureAddressMode::Clamp;
-						state.AddressV = TextureAddressMode::Clamp;
-						state.MaxMipLevel = 0;
-						state.MipMapLODBias = 0;
+					m_vtxDecl->Bind(fxProg, m_quadBuffer);
 
-						mgr->SetSampler(0, state);
-
-						//m_rawDevice->SetVertexDeclaration(m_vtxDecl->getD3DDecl());
-						m_vtxDecl->Bind(nullptr, m_quadBuffer);
-
-						//m_device->BindVertexShader(nullptr);
-						//m_device->BindPixelShader(nullptr);
-
-						//m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-						//m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-						//m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-					//m_rawDevice->SetTexture(0,0);
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_quadIndices->getGLBufferID());
 				}
-
-				//mgr->SetAlphaBlend(false, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, oldBlendFactor);
 			}
 			void GL3Sprite::RestoreRenderState()
 			{

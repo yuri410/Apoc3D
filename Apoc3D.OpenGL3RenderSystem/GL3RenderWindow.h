@@ -69,6 +69,8 @@ namespace Apoc3D
 				void GL_LoadContent();
 				void GL_UnloadContent();
 
+				const String& GetHardwareName() const;
+
 			private:
 
 				void GL_Create(const RenderParameters& params);
@@ -81,7 +83,7 @@ namespace Apoc3D
 				void ExecuteChangeDevice() override;
 
 				GL3DeviceContext* m_dc;
-				
+
 				GraphicsDeviceManager* m_graphicsDeviceManager;
 
 			};

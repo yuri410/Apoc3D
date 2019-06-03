@@ -44,7 +44,9 @@ namespace Apoc3D
 				GLenum ConvertCubemapFace(CubeMapFace cubeface);
 
 				GLenum ConvertPrimitiveType(PrimitiveType pt);
-				
+				GLint  CalculatePrimitiveIndexCount(PrimitiveType pt, GLint primitiveCount);
+				GLint  CalculatePrimitiveCount(PrimitiveType pt, GLint indexCount);
+
 				GLenum ConvertIndexBufferFormat(IndexBufferFormat ibf);
 
 				/** Converts PixelFormat to "GLenum format, GLenum type, GLenum internalFormat" */

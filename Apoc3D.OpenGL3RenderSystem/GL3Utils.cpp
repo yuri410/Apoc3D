@@ -76,12 +76,19 @@ namespace Apoc3D
 				return ptTable[static_cast<int>(pt)];
 			}
 
-			GLenum GLUtils::ConvertIndexBufferFormat(IndexBufferFormat ibf)
+			GLint GLUtils::CalculatePrimitiveIndexCount(PrimitiveType pt, GLint primitiveCount)
 			{
-				return ibf == IndexBufferFormat::Bit16 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
+				switch (pt)
+				{
+					case PrimitiveType::PointList: return primitiveCount;
+					case PrimitiveType::LineList:  return primitiveCount * 2;
+					case PrimitiveType::LineStrip: return indexCount > 1 ? (indexCount - 1) : 0;
+					case PrimitiveType::TriangleList:	return primitiveCount * 3;
+					case PrimitiveType::TriangleStrip:
+					case PrimitiveType::TriangleFan:	return indexCount > 2 ? (indexCount - 2) : 0;
+				}
+				return 0;
 			}
-
-			/*
 			GLint GLUtils::CalculatePrimitiveCount(PrimitiveType pt, GLint indexCount)
 			{
 				switch (pt)
@@ -95,7 +102,11 @@ namespace Apoc3D
 				}
 				return 0;
 			}
-			*/
+
+			GLenum GLUtils::ConvertIndexBufferFormat(IndexBufferFormat ibf)
+			{
+				return ibf == IndexBufferFormat::Bit16 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
+			}
 
 			GLenum GLUtils::ConvertStencilOperation(StencilOperation so, bool invert)
 			{

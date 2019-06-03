@@ -72,18 +72,19 @@ namespace Apoc3D
 				virtual uint32 GetAvailableVideoRamInMB() override;
 
 				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_devManager; } 
+				NativeGL3StateManager* getNativeState() const { return m_nativeState; }
 
 				bool isInitialized() const { return !!m_stateManager; }
-
-				NativeGL3StateManager* getNativeState() const { return m_nativeState; }
 
 				void NotifyDestruction(GL3Shader* shader);
 				void NotifyDestruction(GL3RenderTarget* rt);
 				void NotifyDestruction(GL3DepthStencilBuffer* dsb);
 
-			private:
+				// flush deferred pipeline states
 				GLProgram* PostBindShaders();
 				void PostBindRenderTargets();
+
+			private:
 
 				Effect* m_defaultEffect = nullptr;
 				GraphicsDeviceManager* m_devManager = nullptr;

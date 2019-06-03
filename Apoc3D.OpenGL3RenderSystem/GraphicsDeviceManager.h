@@ -73,13 +73,17 @@ namespace Apoc3D
 				void ReleaseDevice();
 
 				void Present();
+
+				const String& GetHardwareName() const { return m_hardwareName; }
+
 			private:
 				RenderParameters* m_currentSetting = nullptr;
 
 				HDC m_hDC;
 				HGLRC m_hRC;
-				bool m_deviceCreated = false;
 				GL3RenderWindow* m_game;
+
+				bool m_deviceCreated = false;
 
 				bool m_ignoreSizeChanges = false;
 
@@ -90,6 +94,8 @@ namespace Apoc3D
 				WINDOWPLACEMENT m_windowedPlacement;
 				int64 m_windowedStyle;
 				
+				String m_hardwareName;
+
 				void CreateDevice(const RenderParameters &settings, const DEVMODE* mode = nullptr);
 
 				void Window_UserResized();

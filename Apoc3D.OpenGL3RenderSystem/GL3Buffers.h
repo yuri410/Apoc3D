@@ -62,7 +62,7 @@ namespace Apoc3D
 				GL3IndexBuffer(GL3RenderDevice* device, IndexBufferFormat type, int32 size, BufferUsageFlags usage);
 				~GL3IndexBuffer();
 
-				void Bind();
+				GLuint getGLBufferID() const { return m_bufferID; }
 
 			protected:
 				virtual void* lock(int offset, int size, LockMode mode) override;

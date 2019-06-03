@@ -215,6 +215,15 @@ namespace Apoc3D
 				}
 			}
 
+			void GLProgram::BindSamplerSlots()
+			{
+				for (const GLProgramVariable& var : m_uniformTable.getValueAccessor())
+				{
+					if (var.m_isSampler)
+						glUniform1i(var.m_location, var.m_textureSlotID);
+				}
+			}
+
 			void GLProgram::IncrRefCount()
 			{
 				m_refCount++;

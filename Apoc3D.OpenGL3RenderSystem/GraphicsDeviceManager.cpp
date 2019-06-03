@@ -19,11 +19,13 @@
 
 #include "apoc3d.Win32/Win32Window.h"
 #include "apoc3d/Core/Logging.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 #include "GL3DeviceContext.h"
 #include "GL/wgl.h"
 
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -184,6 +186,12 @@ namespace Apoc3D
 				if (settings.FSAASampleCount > 1)
 				{
 					glEnable(GL_MULTISAMPLE);
+				}
+
+				const GLubyte* gpuName = glGetString(GL_RENDERER);
+				if (gpuName)
+				{
+					m_hardwareName = StringUtils::UTF8toUTF16((const char*)gpuName);
 				}
 
 				m_deviceCreated = true;

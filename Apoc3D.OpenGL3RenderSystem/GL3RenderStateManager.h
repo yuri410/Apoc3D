@@ -194,8 +194,6 @@ namespace Apoc3D
 			class GL3RenderStateManager final : public RenderStateManager
 			{
 			public:
-				//DWORD clipPlaneEnable;
-
 				GL3RenderStateManager(GL3RenderDevice* device, NativeGL3StateManager* nsmgr);
 				~GL3RenderStateManager();
 

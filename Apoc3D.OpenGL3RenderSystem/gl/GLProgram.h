@@ -41,6 +41,8 @@ namespace Apoc3D
 				
 				void Link(const List<GLuint>& shaders);
 
+				void BindSamplerSlots();
+
 				const GLProgramVariable* getUniform(const String& name) const { return m_uniformTable.TryGetValue(name); }
 				const List<GLProgramVariable>& getAttributes() const { return m_attributes; }
 

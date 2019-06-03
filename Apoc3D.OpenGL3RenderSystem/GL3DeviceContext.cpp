@@ -81,6 +81,10 @@ namespace Apoc3D
 
 			String GL3DeviceContext::GetHardwareName()
 			{
+				if (m_window)
+				{
+					return m_window->GetHardwareName();
+				}
 				return L"";
 			}
 

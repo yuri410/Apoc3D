@@ -388,7 +388,6 @@ namespace Apoc3D
 				Effect* fx = mtrl->GetPassEffect(passSelID);
 				if (!fx)
 				{
-					fx = m_defaultEffect;
 					return;
 				}
 
