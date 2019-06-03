@@ -25,6 +25,7 @@
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -57,40 +58,13 @@ namespace Apoc3D
 
 				bool ConvertVertexElementFormat(VertexElementFormat vef, GLenum& elementType, GLuint& elementCount, GLboolean& normalized);
 				
-				bool CheckError(const wchar_t* file, unsigned line);
-				bool CheckFramebufferError(const wchar_t* file, unsigned line);
+				bool CheckError(const char* file, unsigned line);
+				bool CheckFramebufferError(const char* file, unsigned line);
+
+				extern const TypeDualConverter<VertexElementUsage> VertexElementUsageConverter;
 			}
 
-			//	static D3DDECLUSAGE veuTable[VEU_Count];
-
-			//private:
-			//	static void InitVertexElementUsage();
-			//	static void InitFillTable();
-			//	static void InitCullTable();
-
-			//	static BufferUsageFlags GetBufferUsage(DWORD usage);
-			//	static PixelFormat ConvertBackPixelFormat(DWORD format);
-			//	static DepthFormat ConvertBackDepthFormat(DWORD format);
-
 			//	static D3DMULTISAMPLE_TYPE ConvertMultisample(uint32 sampleCount);
-			//	static uint32 ConvertBackMultiSample(D3DMULTISAMPLE_TYPE type);
-
-			//	static DWORD ConvertBufferUsage(BufferUsageFlags usage);
-
-			//	static D3DDECLUSAGE ConvertVertexElementUsage(VertexElementUsage usage);
-
-			//	static D3DFILLMODE ConvertFillMode(FillMode mode);
-
-			//	static D3DCULL ConvertCullMode(CullMode mode);
-
-			//	static D3DCMPFUNC ConvertCompare(CompareFunction fun);
-
-			//	static D3DBLENDOP ConvertBlendFunction(BlendFunction fun);
-
-			//	static D3DSTENCILOP ConvertStencilOperation(StencilOperation op);
-
-			//	static D3DFORMAT ConvertPixelFormat(PixelFormat format);
-			//	static D3DFORMAT ConvertDepthFormat(DepthFormat format);
 
 		}
 	}

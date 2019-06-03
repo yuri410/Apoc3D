@@ -40,7 +40,12 @@ namespace Apoc3D
 						const VertexElement* foundElem = nullptr;
 						for (const VertexElement& ve : m_elements)
 						{
-							
+							// attributes are identified with names
+							if (StringUtils::EqualsNoCase(att.m_name, GLUtils::VertexElementUsageConverter[ve.getUsage()]))
+							{
+								foundElem = &ve;
+								break;
+							}
 						}
 
 						GLenum elementType;

@@ -24,8 +24,9 @@ namespace Apoc3D
 				~GL3RenderTarget();
 
 				virtual Texture* GetColorTexture() override;
-
 				virtual void PrecacheLockedData() override;
+
+				GLuint GetGLTextureID() const;
 
 			private:
 				DataRectangle lock(LockMode mode, const Apoc3D::Math::Rectangle& rect) override;

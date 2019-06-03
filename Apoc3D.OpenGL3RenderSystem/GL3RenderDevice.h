@@ -90,11 +90,12 @@ namespace Apoc3D
 				GL3RenderStateManager* m_stateManager = nullptr;
 				NativeGL3StateManager* m_nativeState = nullptr;
 
+				int32 m_maxRenderTargets = 0;
 				GL3RenderTarget** m_renderTargets = nullptr;
 				GL3DepthStencilBuffer* m_depthStencilBuffer = nullptr;
 				
-				GL3Shader* m_currentVertexShader = nullptr;
-				GL3Shader* m_currentPixelShader = nullptr;
+				GL3Shader* m_vertexShader = nullptr;
+				GL3Shader* m_pixelShader = nullptr;
 				
 				bool m_shaderDirty = false;
 				bool m_renderTargetDirty = false;
@@ -105,12 +106,13 @@ namespace Apoc3D
 				struct RtKey
 				{
 				public:
+					RtKey() { }
+
 					RtKey(const RtKey&) = delete;
 					RtKey& operator=(const RtKey&) = delete;
 
-				private:
 					List<GLuint> m_colorBuffers;
-					GLuint m_depthStencilBuffer;
+					GLuint m_depthStencilBuffer = 0;
 				};
 
 				struct RtKeyComparer

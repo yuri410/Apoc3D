@@ -1,4 +1,5 @@
 #include "GLFramebuffer.h"
+#include "../GL3Utils.h"
 
 namespace Apoc3D
 {
@@ -18,13 +19,10 @@ namespace Apoc3D
 
 				if (depthTarget)
 				{
-					glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthTarget, 0);
+					glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthTarget);
 				}
 
-				if (glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-				{
-
-				}
+				GLUtils::CheckFramebufferError(__FILE__, __LINE__);
 			}
 
 			GLFramebuffer::~GLFramebuffer()
@@ -36,12 +34,12 @@ namespace Apoc3D
 				}
 			}
 
-
 			GLFramebuffer::GLFramebuffer(GLFramebuffer&& o)
 				: m_fbo(o.m_fbo)
 			{
 				o.m_fbo = 0;
 			}
+
 			GLFramebuffer& GLFramebuffer::operator=(GLFramebuffer&& o)
 			{
 				if (this != &o)
@@ -52,6 +50,10 @@ namespace Apoc3D
 				return *this;
 			}
 
+			void GLFramebuffer::Bind()
+			{
+				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+			}
 		}
 	}
 }

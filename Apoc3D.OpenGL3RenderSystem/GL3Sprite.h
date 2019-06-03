@@ -63,7 +63,6 @@ namespace Apoc3D
 				} m_storedState;
 
 				GL3VertexDeclaration* m_vtxDecl;
-				GL3VertexDeclaration* m_vtxDeclShadable;
 				GL3VertexBuffer* m_quadBuffer;
 				GL3IndexBuffer* m_quadIndices;
 

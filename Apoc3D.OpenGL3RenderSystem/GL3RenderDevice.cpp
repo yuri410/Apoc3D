@@ -141,10 +141,8 @@ namespace Apoc3D
 
 				m_caps = new GL3Capabilities(this);
 
-				m_renderTargets = new GL3RenderTarget*[m_caps->GetMRTCount()]();
-
-				//dev->GetRenderTarget(0, &m_defaultRT);
-				//dev->GetDepthStencilSurface(&m_defaultDS);
+				m_maxRenderTargets = m_caps->GetMRTCount();
+				m_renderTargets = new GL3RenderTarget*[m_maxRenderTargets]();
 
 				m_defaultEffect = new BasicEffect(this);
 
@@ -154,7 +152,8 @@ namespace Apoc3D
 			void GL3RenderDevice::BeginFrame()
 			{
 				RenderDevice::BeginFrame();
-				
+				m_shaderDirty = true;
+				m_renderTargetDirty = true;
 			}
 			void GL3RenderDevice::EndFrame()
 			{
@@ -282,9 +281,9 @@ namespace Apoc3D
 			{
 				GL3Shader* gs = static_cast<GL3Shader*>(shader);
 				
-				if (m_currentVertexShader != gs)
+				if (m_vertexShader != gs)
 				{
-					m_currentVertexShader = gs;
+					m_vertexShader = gs;
 					m_shaderDirty = true;
 				}
 			}
@@ -292,9 +291,9 @@ namespace Apoc3D
 			{
 				GL3Shader* gs = static_cast<GL3Shader*>(shader);
 
-				if (m_currentPixelShader != gs)
+				if (m_pixelShader != gs)
 				{
-					m_currentPixelShader = gs;
+					m_pixelShader = gs;
 					m_shaderDirty = true;
 				}
 			}
@@ -397,45 +396,49 @@ namespace Apoc3D
 							}
 						}
 					}
-					for (int j = 0; j < count; j++)
+					else
 					{
-						const RenderOperation& rop = op[j];
-						const GeometryData* gm = rop.GeometryData;
-
-						if (gm->VertexCount == 0 || gm->PrimitiveCount == 0)
+						for (int j = 0; j < count; j++)
 						{
-							fx->EndPass();
-							break;
-						}
+							const RenderOperation& rop = op[j];
+							const GeometryData* gm = rop.GeometryData;
 
-						m_primitiveCount += gm->PrimitiveCount;
-						m_vertexCount += gm->VertexCount;
-						m_batchCount++;
+							if (gm->VertexCount == 0 || gm->PrimitiveCount == 0)
+							{
+								fx->EndPass();
+								break;
+							}
 
-						// setup effect
-						fx->Setup(mtrl, &rop, 1);
+							m_primitiveCount += gm->PrimitiveCount;
+							m_vertexCount += gm->VertexCount;
+							m_batchCount++;
 
-						GLenum primitiveType = GLUtils::ConvertPrimitiveType(gm->PrimitiveType);
+							// setup effect
+							fx->Setup(mtrl, &rop, 1);
 
-						GLProgram* fxProg = PostBindShaders();
+							GLenum primitiveType = GLUtils::ConvertPrimitiveType(gm->PrimitiveType);
 
-						GL3VertexBuffer* vb = static_cast<GL3VertexBuffer*>(gm->VertexBuffer);
-						GL3VertexDeclaration* vdecl = static_cast<GL3VertexDeclaration*>(gm->VertexDecl);
+							// flush deferred pipeline states
+							GLProgram* fxProg = PostBindShaders();
 
-						vdecl->Bind(fxProg, vb);
+							GL3VertexBuffer* vb = static_cast<GL3VertexBuffer*>(gm->VertexBuffer);
+							GL3VertexDeclaration* vdecl = static_cast<GL3VertexDeclaration*>(gm->VertexDecl);
 
-						if (gm->usesIndex())
-						{
-							GL3IndexBuffer* ib = static_cast<GL3IndexBuffer*>(gm->IndexBuffer);
-							GLenum idxType = GLUtils::ConvertIndexBufferFormat(ib->getIndexType());
+							vdecl->Bind(fxProg, vb);
 
-							ib->Bind();
+							if (gm->usesIndex())
+							{
+								GL3IndexBuffer* ib = static_cast<GL3IndexBuffer*>(gm->IndexBuffer);
+								GLenum idxType = GLUtils::ConvertIndexBufferFormat(ib->getIndexType());
 
-							glDrawElementsBaseVertex(primitiveType, gm->PrimitiveCount, idxType, nullptr, gm->BaseVertex);
-						}
-						else
-						{
-							glDrawArrays(primitiveType, gm->BaseVertex, gm->VertexCount);
+								ib->Bind();
+
+								glDrawElementsBaseVertex(primitiveType, gm->PrimitiveCount, idxType, nullptr, gm->BaseVertex);
+							}
+							else
+							{
+								glDrawArrays(primitiveType, gm->BaseVertex, gm->VertexCount);
+							}
 						}
 					}
 					fx->EndPass();
@@ -474,33 +477,92 @@ namespace Apoc3D
 
 			GLProgram* GL3RenderDevice::PostBindShaders()
 			{
-				// flush deferred pipeline states
 				GLProgram* fxProg = nullptr;
 
-				if (m_shaderDirty)
-				{
-					m_shaderDirty = false;
+				if (!m_shaderDirty)
+					return false;
 
-					if (m_currentVertexShader && m_currentPixelShader)
-					{
-						assert(m_currentVertexShader->getGLProgram() == m_currentPixelShader->getGLProgram());
-					}
+				m_shaderDirty = false;
+
+				if (m_vertexShader && m_pixelShader)
+				{
+					assert(m_vertexShader->getGLProgram() == m_pixelShader->getGLProgram());
+				
+					fxProg = m_vertexShader->getGLProgram();;
 				}
 
-				if (m_currentVertexShader && m_currentPixelShader)
-				{
-					fxProg = m_currentVertexShader->getGLProgram();;
-				}
-
-				if (fxProg)
-					fxProg->Bind();
+				glUseProgram(fxProg ? fxProg->getGLProgID() : 0);
 
 				return fxProg;
 			}
 
 			void GL3RenderDevice::PostBindRenderTargets()
 			{
+				if (!m_renderTargetDirty)
+					return;
 				
+				m_renderTargetDirty = false;
+
+				RtKey k;
+				
+				int32 cbCount = 0;
+				for (int32 i = m_maxRenderTargets - 1; i >= 0; i--)
+				{
+					if (m_renderTargets[i])
+					{
+						cbCount = i + 1;
+						break;
+					}
+				}
+				
+				for (int32 i = 0; i < cbCount; i++)
+				{
+					GLuint bufId = m_renderTargets[i] ? m_renderTargets[i]->GetGLTextureID() : 0;
+
+					k.m_colorBuffers.Add(bufId);
+				}
+
+				k.m_depthStencilBuffer = m_depthStencilBuffer ? m_depthStencilBuffer->getGLBufferID() : 0 ;
+
+				if (cbCount == 0 && k.m_depthStencilBuffer == 0)
+				{
+					glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+				}
+				else
+				{
+					GLFramebuffer* fbo = m_cachedFbo.TryGetValue(k);
+					if (fbo == nullptr)
+					{
+						GLFramebuffer newFbo(k.m_colorBuffers, k.m_depthStencilBuffer);
+						m_cachedFbo.Add(k, std::move(newFbo));
+
+						fbo = &m_cachedFbo[k];
+					}
+
+					glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo->getGLFboID());
+				}
+			}
+
+			bool GL3RenderDevice::RtKeyComparer::Equals(const RtKey& x, const RtKey& y)
+			{
+				if (x.m_depthStencilBuffer != y.m_depthStencilBuffer ||
+					x.m_colorBuffers.getCount() != y.m_colorBuffers.getCount())
+					return false;
+
+				for (int32 i = 0; i < x.m_colorBuffers.getCount(); i++)
+				{
+					if (x.m_colorBuffers[i] != y.m_colorBuffers[i])
+						return false;
+				}
+				return true;
+			}
+
+			int32 GL3RenderDevice::RtKeyComparer::GetHashCode(const RtKey& obj)
+			{
+				FNVHash32 hasher;
+				hasher.Accumulate(obj.m_colorBuffers.getElements(), obj.m_colorBuffers.getCount() * sizeof(GLuint));
+				hasher.Accumulate(&obj.m_depthStencilBuffer, sizeof(obj.m_depthStencilBuffer));
+				return hasher.getResult();
 			}
 
 			/************************************************************************/

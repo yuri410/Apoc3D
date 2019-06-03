@@ -126,11 +126,6 @@ namespace Apoc3D
 				return *this;
 			}
 
-			void GLProgram::Bind()
-			{
-				glUseProgram(m_prog);
-			}
-
 			void GLProgram::Link(const List<GLuint>& shaders)
 			{
 				for (GLuint s : shaders)

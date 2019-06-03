@@ -29,6 +29,14 @@ namespace Apoc3D
 
 			}
 
+			GLuint GL3RenderTarget::GetGLTextureID() const
+			{
+				if (m_colorBuffer)
+					return m_colorBuffer->getGLTexID();
+				return 0;
+			}
+
+
 			DataRectangle GL3RenderTarget::lock(LockMode mode, const Apoc3D::Math::Rectangle& rect)
 			{
 				return m_colorBuffer->Lock(0, mode, rect);

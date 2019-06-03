@@ -36,24 +36,14 @@ namespace Apoc3D
 				{
 					const List<VertexElement> elements =
 					{
-						VertexElement(0, VEF_Vector4, VEU_PositionTransformed),
+						VertexElement(0, VEF_Vector4, VEU_Position),
 						VertexElement(16, VEF_Color, VEU_Color),
 						VertexElement(20, VEF_Vector2, VEU_TextureCoordinate, 0)
 					};
 
 					m_vtxDecl = new GL3VertexDeclaration( elements);
 				}
-				{
-					const List<VertexElement> elements =
-					{
-						VertexElement(0, VEF_Vector4, VEU_Position),
-						VertexElement(16, VEF_Color, VEU_Color),
-						VertexElement(20, VEF_Vector2, VEU_TextureCoordinate, 0)
-					};
-
-					m_vtxDeclShadable = new GL3VertexDeclaration( elements);
-				}
-
+				
 				m_quadBuffer = new GL3VertexBuffer(device, (MaxDeferredDraws * 4), m_vtxDecl->GetVertexSize(), (BufferUsageFlags)(BU_Dynamic | BU_WriteOnly));
 				m_quadIndices = new GL3IndexBuffer(device, IndexBufferFormat::Bit16, sizeof(uint16) * MaxDeferredDraws * 6, BU_WriteOnly);
 
@@ -81,7 +71,6 @@ namespace Apoc3D
 			GL3Sprite::~GL3Sprite()
 			{
 				delete m_vtxDecl;
-				delete m_vtxDeclShadable;
 				delete m_quadBuffer;
 				delete m_quadIndices;
 			}
@@ -217,13 +206,6 @@ namespace Apoc3D
 
 					m_quadIndices->Bind();
 
-					if (getSettings() & SPR_AllowShading)
-					{
-						m_vtxDeclShadable->Bind(nullptr, m_quadBuffer);
-						//m_rawDevice->SetVertexDeclaration(m_vtxDeclShadable->getD3DDecl());
-					}
-					else
-					{
 						ShaderSamplerState state = mgr->getSampler(0);
 						state.MinFilter = TextureFilter::Linear;
 						state.MagFilter = TextureFilter::Linear;
@@ -244,7 +226,6 @@ namespace Apoc3D
 						//m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 						//m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 						//m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-					}
 					//m_rawDevice->SetTexture(0,0);
 				}
 

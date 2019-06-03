@@ -140,8 +140,14 @@ namespace Apoc3D
 		BlockingMessage(message, location, false);
 	}
 
+	void Error(ErrorID eid, const std::string& message, const char* file, unsigned line)
+	{
+		Error(eid, StringUtils::toPlatformWideString(message), StringUtils::toPlatformWideString(file).c_str(), line);
+	}
+
 	void Error(ErrorID eid, const std::string& message, const wchar_t* file, unsigned line)
 	{
 		Error(eid, StringUtils::toPlatformWideString(message), file, line);
 	}
+
 }

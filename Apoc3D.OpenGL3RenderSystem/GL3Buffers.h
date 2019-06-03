@@ -82,6 +82,7 @@ namespace Apoc3D
 				GL3DepthStencilBuffer(GL3RenderDevice* device, int32 width, int32 height, DepthFormat fmt);
 				~GL3DepthStencilBuffer();
 
+				GLuint getGLBufferID() const { return m_buf; }
 			private:
 				GLuint m_buf;
 			};

@@ -22,6 +22,8 @@ namespace Apoc3D
 				GLFramebuffer(const GLFramebuffer&) = delete;
 				GLFramebuffer& operator=(const GLFramebuffer&) = delete;
 
+				GLuint getGLFboID() const { return m_fbo; }
+
 			private:
 				GLuint m_fbo;
 				

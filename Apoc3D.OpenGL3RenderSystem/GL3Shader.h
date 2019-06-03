@@ -123,16 +123,6 @@ namespace Apoc3D
 				GLProgram* m_prog = nullptr;
 			};
 
-
-			class GL3PixelShader : public GL3Shader
-			{
-			public:
-				GL3PixelShader(GL3RenderDevice* device, const byte* byteCode);
-				~GL3PixelShader();
-
-				virtual ShaderType getType() const { return ShaderType::Pixel; }
-			};
-
 			class GL3VertexShader : public GL3Shader
 			{
 			public:
@@ -140,6 +130,16 @@ namespace Apoc3D
 				~GL3VertexShader();
 
 				virtual ShaderType getType() const { return ShaderType::Vertex; }
+			};
+
+			// Aka. Fragment shader
+			class GL3PixelShader : public GL3Shader
+			{
+			public:
+				GL3PixelShader(GL3RenderDevice* device, const byte* byteCode);
+				~GL3PixelShader();
+
+				virtual ShaderType getType() const { return ShaderType::Pixel; }
 			};
 
 		}

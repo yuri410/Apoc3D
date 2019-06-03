@@ -15,6 +15,7 @@
  */
 
 #include "GL3Utils.h"
+#include "Apoc3D/Utility/TypeConverter.h"
 
 namespace Apoc3D
 {
@@ -472,24 +473,24 @@ namespace Apoc3D
 
 			//////////////////////////////////////////////////////////////////////////
 
-			bool GLUtils::CheckError(const wchar_t* file, unsigned line)
+			bool GLUtils::CheckError(const char* file, unsigned line)
 			{
 				int err = glGetError();
 
 				if (err != GL_NO_ERROR)
 				{
-					const wchar_t* errString = L"UNKNOWN";
+					const char* errString = "UNKNOWN";
 
 					switch (err)
 					{
-					case GL_INVALID_ENUM:					errString = L"GL_INVALID_ENUM"; break;
-					case GL_INVALID_VALUE:					errString = L"GL_INVALID_VALUE"; break;
-					case GL_INVALID_OPERATION:				errString = L"GL_INVALID_OPERATION"; break;
-					case GL_INVALID_FRAMEBUFFER_OPERATION:	errString = L"GL_INVALID_FRAMEBUFFER_OPERATION"; break;
-					case GL_OUT_OF_MEMORY:					errString = L"GL_OUT_OF_MEMORY"; break;
+					case GL_INVALID_ENUM:					errString = "GL_INVALID_ENUM"; break;
+					case GL_INVALID_VALUE:					errString = "GL_INVALID_VALUE"; break;
+					case GL_INVALID_OPERATION:				errString = "GL_INVALID_OPERATION"; break;
+					case GL_INVALID_FRAMEBUFFER_OPERATION:	errString = "GL_INVALID_FRAMEBUFFER_OPERATION"; break;
+					case GL_OUT_OF_MEMORY:					errString = "GL_OUT_OF_MEMORY"; break;
 					}
 
-					String msg = L"OpenGL Error: ";
+					std::string msg = "OpenGL Error: ";
 					msg += errString;
 					Apoc3D::Error(ErrorID::Default, msg, file, line);
 
@@ -498,33 +499,51 @@ namespace Apoc3D
 				return true;
 			}
 
-			bool GLUtils::CheckFramebufferError(const wchar_t* file, unsigned line)
+			bool GLUtils::CheckFramebufferError(const char* file, unsigned line)
 			{
 				GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
 				if (status != GL_FRAMEBUFFER_COMPLETE)
 				{
-					const wchar_t* errString = L"GL_FRAMEBUFFER_UNDEFINED";
+					const char* errString = "GL_FRAMEBUFFER_UNDEFINED";
 
 					switch (status)
 					{
-					case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:			errString = L"GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT"; break;
-					case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:	errString = L"GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT"; break;
-					case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:			errString = L"GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER"; break;
-					case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:			errString = L"GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER"; break;
-					case GL_FRAMEBUFFER_UNSUPPORTED:					errString = L"GL_FRAMEBUFFER_UNSUPPORTED"; break;
-					case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:			errString = L"GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE"; break;
-					case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:		errString = L"GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS"; break;
+					case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:			errString = "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT"; break;
+					case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:	errString = "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT"; break;
+					case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:			errString = "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER"; break;
+					case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:			errString = "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER"; break;
+					case GL_FRAMEBUFFER_UNSUPPORTED:					errString = "GL_FRAMEBUFFER_UNSUPPORTED"; break;
+					case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:			errString = "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE"; break;
+					case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:		errString = "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS"; break;
 					}
 
-					String msg = L"OpenGL Error: ";
+					std::string msg = "OpenGL Error: ";
 					msg += errString;
 					Apoc3D::Error(ErrorID::Default, msg, file, line);
-
+					
 					return false;
 				}
 				return true;
 			}
+
+			const TypeDualConverter<VertexElementUsage> GLUtils::VertexElementUsageConverter =
+			{
+				{ VEU_Position,				L"a_Position" },
+				{ VEU_BlendWeight,			L"a_BlendWeight" },
+				{ VEU_BlendIndices,			L"a_BlendIndices" },
+				{ VEU_Normal,				L"a_Normal" },
+				{ VEU_PointSize,			L"a_PointSize" },
+				{ VEU_TextureCoordinate,	L"a_TextureCoordinate" },
+				{ VEU_Tangent,				L"a_Tangent" },
+				{ VEU_Binormal,				L"a_Binormal" },
+				{ VEU_TessellateFactor,		L"a_TessellateFactor" },
+				{ VEU_PositionTransformed,	L"a_PositionTransformed" },
+				{ VEU_Color,				L"a_Color" },
+				{ VEU_Fog,					L"a_Fog" },
+				{ VEU_Depth,				L"a_Depth" },
+				{ VEU_Sample,				L"a_Sample" }
+			};
 
 			//////////////////////////////////////////////////////////////////////////
 

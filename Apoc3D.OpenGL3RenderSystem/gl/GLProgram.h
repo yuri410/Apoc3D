@@ -39,7 +39,6 @@ namespace Apoc3D
 				GLProgram(const GLProgram&) = delete;
 				GLProgram& operator=(const GLProgram&) = delete;
 				
-				void Bind();
 				void Link(const List<GLuint>& shaders);
 
 				const GLProgramVariable* getUniform(const String& name) const { return m_uniformTable.TryGetValue(name); }
