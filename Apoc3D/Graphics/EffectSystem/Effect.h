@@ -267,6 +267,8 @@ namespace Apoc3D
 				RTTI_DERIVED(CustomShaderEffect, Effect);
 			public:
 				CustomShaderEffect(RenderDevice* device, const ResourceLocation& rl);
+				CustomShaderEffect(RenderDevice* device, const String& name, const byte* vsCode, const byte* psCode);
+
 				virtual ~CustomShaderEffect();
 
 			protected:

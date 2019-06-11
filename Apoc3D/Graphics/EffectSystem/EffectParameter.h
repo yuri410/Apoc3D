@@ -217,9 +217,6 @@ namespace Apoc3D
 
 				ShaderType ProgramType = ShaderType::Vertex;
 
-				int32 RegisterIndex = -1;
-				
-				int32 SamplerIndex = -1;
 				ShaderSamplerState SamplerState;
 
 				String SamplerStateOverridenGroupName;

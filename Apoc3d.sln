@@ -293,8 +293,8 @@ Global
 		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_DynLib|Win32.ActiveCfg = Release_DynLib|Win32
 		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_DynLib|Win32.Build.0 = Release_DynLib|Win32
 		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_DynLib|x64.ActiveCfg = Release_DynLib|Win32
-		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|Win32.ActiveCfg = Release_DynLib|Win32
-		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|Win32.Build.0 = Release_DynLib|Win32
+		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|Win32.ActiveCfg = Release_Static|Win32
+		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|Win32.Build.0 = Release_Static|Win32
 		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|x64.ActiveCfg = Debug|Win32
 		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|x64.Build.0 = Debug|Win32
 	EndGlobalSection

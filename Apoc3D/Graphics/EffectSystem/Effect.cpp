@@ -821,6 +821,17 @@ namespace Apoc3D
 				m_vertexShader->NotifyLinkage({ m_vertexShader, m_pixelShader });
 			}
 
+			CustomShaderEffect::CustomShaderEffect(RenderDevice* device, const String& name, const EffectCode& code)
+			{
+				m_name = name;
+
+				ObjectFactory* objFac = device->getObjectFactory();
+				m_vertexShader = objFac->CreateVertexShader(code.m_vsCode);
+				m_pixelShader = objFac->CreatePixelShader(code.m_psCode);
+
+				m_vertexShader->NotifyLinkage({ m_vertexShader, m_pixelShader });
+			}
+
 			CustomShaderEffect::~CustomShaderEffect()
 			{
 				DELETE_AND_NULL(m_vertexShader);

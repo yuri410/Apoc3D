@@ -117,8 +117,11 @@ namespace Apoc3D
 				InstanceBlobIndex = br->ReadInt32();
 				ProgramType = static_cast<ShaderType>(br->ReadInt32());
 
-				RegisterIndex = br->ReadInt32();
-				SamplerIndex = br->ReadInt32();
+				if (version <= 2)
+				{
+					/*RegisterIndex =*/ br->ReadInt32();
+					/*SamplerIndex =*/ br->ReadInt32();
+				}
 
 				SamplerState.AddressU = static_cast<TextureAddressMode>(br->ReadUInt32());
 				SamplerState.AddressV = static_cast<TextureAddressMode>(br->ReadUInt32());
@@ -138,16 +141,13 @@ namespace Apoc3D
 			}
 			void EffectParameter::Write(BinaryWriter* bw)
 			{
-				bw->WriteInt32(2);
+				bw->WriteInt32(3);
 
 				bw->WriteString(Name);
 				bw->WriteString(EffectParameter::ToString(Usage));
 				bw->WriteString(CustomMaterialParamName);
 				bw->WriteInt32(InstanceBlobIndex);
 				bw->WriteInt32((int32)ProgramType);
-
-				bw->WriteInt32(RegisterIndex);
-				bw->WriteInt32(SamplerIndex);
 
 				bw->WriteUInt32((uint32)SamplerState.AddressU);
 				bw->WriteUInt32((uint32)SamplerState.AddressV);
