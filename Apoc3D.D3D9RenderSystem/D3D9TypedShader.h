@@ -42,9 +42,6 @@ namespace Apoc3D
 				virtual void SetTexture(int samIndex, Texture* tex);
 				virtual void SetSamplerState(int samIndex, const ShaderSamplerState &state);
 
-				virtual void SetTexture(const String& paramName, Texture* tex);
-				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState &state);
-
 				virtual ShaderType getType() const { return ShaderType::Pixel; }
 			};
 
@@ -63,9 +60,6 @@ namespace Apoc3D
 
 				virtual void SetTexture(int samIndex, Texture* tex);
 				virtual void SetSamplerState(int samIndex, const ShaderSamplerState &state);
-
-				virtual void SetTexture(const String& paramName, Texture* tex);
-				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState& state);
 
 				virtual ShaderType getType() const { return ShaderType::Vertex; }
 			};

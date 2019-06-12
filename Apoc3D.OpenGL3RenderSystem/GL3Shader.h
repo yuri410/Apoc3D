@@ -49,16 +49,11 @@ namespace Apoc3D
 				GL3Shader(GL3RenderDevice* device, GLenum shaderType, const byte* byteCode);
 				virtual ~GL3Shader();
 
-				int GetParamIndex(const String& paramName) override;
-				int GetSamplerIndex(const String& paramName) override;
 				bool TryGetParamIndex(const String& paramName, int32& result) override;
 				bool TryGetSamplerIndex(const String& paramName, int32& result) override;
 
 				void SetTexture(int samIndex, Texture* tex) override;
 				void SetSamplerState(int samIndex, const ShaderSamplerState& state) override;
-
-				void SetTexture(const String& paramName, Texture* tex) override;
-				void SetSamplerState(const String& paramName, const ShaderSamplerState& state) override;
 
 				void SetVector2(int32 loc, const Vector2& value) override;
 				void SetVector3(int32 loc, const Vector3& value) override;
@@ -84,29 +79,6 @@ namespace Apoc3D
 				void SetValue(int32 loc, const float* value, int32 count) override;
 				void SetValue(int32 loc, const int32* value, int32 count) override;
 
-				void SetVector2(const String& paramName, const Vector2& value) override;
-				void SetVector3(const String& paramName, const Vector3& value) override;
-				void SetVector4(const String& paramName, const Vector4& value) override;
-				void SetValue(const String& paramName, const Quaternion& value) override;
-				void SetValue(const String& paramName, const Matrix& value) override;
-				void SetValue(const String& paramName, const Color4& value) override;
-				void SetValue(const String& paramName, const Plane& value) override;
-
-				void SetVector2(const String& paramName, const Vector2* value, int32 count) override;
-				void SetVector3(const String& paramName, const Vector3* value, int32 count) override;
-				void SetVector4(const String& paramName, const Vector4* value, int32 count) override;
-				void SetValue(const String& paramName, const Quaternion* value, int32 count) override;
-				void SetValue(const String& paramName, const Matrix* value, int32 count) override;
-				void SetValue(const String& paramName, const Plane* value, int32 count) override;
-				void SetValue(const String& paramName, const Color4* value, int32 count) override;
-
-				void SetValue(const String& paramName, bool value) override;
-				void SetValue(const String& paramName, float value) override;
-				void SetValue(const String& paramName, int32 value) override;
-				void SetValue(const String& paramName, const bool* value, int32 count) override;
-				void SetValue(const String& paramName, const float* value, int32 count) override;
-				void SetValue(const String& paramName, const int32* value, int32 count) override;
-
 				void NotifyLinkage(const List<Shader*>& shaders) override;
 
 				GLuint getGLShaderID() const { return m_shaderID; }
@@ -116,12 +88,6 @@ namespace Apoc3D
 
 				static void KeyNotFoundError(const String& name);
 
-				template <typename T>
-				void SetValueGeneric(const String& paramName, const T& value);
-
-				template <typename T>
-				void SetValueGeneric(const String& paramName, const T* value, int32 count);
-
 				void CompileShader(GLenum shaderType, const byte* byteCode);
 
 				GL3RenderDevice* m_device;
@@ -129,26 +95,6 @@ namespace Apoc3D
 
 				GLProgram* m_prog = nullptr;
 			};
-
-			template <typename T>
-			void GL3Shader::SetValueGeneric(const String& paramName, const T& value)
-			{
-				const GLProgramVariable* gv = m_prog->getUniform(paramName);
-				if (gv)
-					SetValue(gv->m_location, value);
-				else
-					KeyNotFoundError(paramName);
-			}
-
-			template <typename T>
-			void GL3Shader::SetValueGeneric(const String& paramName, const T* value, int32 count)
-			{
-				const GLProgramVariable* gv = m_prog->getUniform(paramName);
-				if (gv)
-					SetValue(gv->m_location, value, count);
-				else
-					KeyNotFoundError(paramName);
-			}
 
 			class GL3VertexShader : public GL3Shader
 			{

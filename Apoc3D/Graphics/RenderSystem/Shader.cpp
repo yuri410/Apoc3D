@@ -18,6 +18,7 @@
 #include "apoc3d/Graphics/GraphicsCommon.h"
 #include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Core/Logging.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Utility;
@@ -39,6 +40,142 @@ namespace Apoc3D
 
 			}
 
+			int32 Shader::GetParamIndex(const String& paramName)
+			{
+				int32 idx;
+				if (TryGetParamIndex(paramName, idx))
+					return idx;
+				KeyNotFoundError(paramName);
+				return 0;
+			}
+
+			int32 Shader::GetSamplerIndex(const String& paramName)
+			{
+				int32 idx;
+				if (TryGetSamplerIndex(paramName, idx))
+					return idx;
+				KeyNotFoundError(paramName);
+				return 0;
+			}
+
+			void Shader::SetVector2(const String& paramName, const Vector2& value)
+			{
+				int32 idx;
+				if (TryGetParamIndex(paramName, idx))
+					SetVector2(idx, value);
+				else
+					KeyNotFoundError(paramName);
+			}
+
+			void Shader::SetVector3(const String& paramName, const Vector3& value)
+			{
+				int32 idx;
+				if (TryGetParamIndex(paramName, idx))
+					SetVector3(idx, value);
+				else
+					KeyNotFoundError(paramName);
+			}
+
+			void Shader::SetVector4(const String& paramName, const Vector4& value)
+			{
+				int32 idx;
+				if (TryGetParamIndex(paramName, idx))
+					SetVector4(idx, value);
+				else
+					KeyNotFoundError(paramName);
+			}
+
+			void Shader::SetValue(const String& paramName, const Quaternion& value) { SetValueGeneric(paramName, value); }
+			void Shader::SetValue(const String& paramName, const Matrix& value)		{ SetValueGeneric(paramName, value); }
+			void Shader::SetValue(const String& paramName, const Color4& value)		{ SetValueGeneric(paramName, value); }
+			void Shader::SetValue(const String& paramName, const Plane& value)		{ SetValueGeneric(paramName, value); }
+
+			void Shader::SetVector2(const String& paramName, const Vector2* value, int32 count)
+			{
+				int32 idx;
+				if (TryGetParamIndex(paramName, idx))
+					SetVector2(idx, value, count);
+				else
+					KeyNotFoundError(paramName);
+			}
+
+			void Shader::SetVector3(const String& paramName, const Vector3* value, int32 count)
+			{
+				int32 idx;
+				if (TryGetParamIndex(paramName, idx))
+					SetVector3(idx, value, count);
+				else
+					KeyNotFoundError(paramName);
+			}
+
+			void Shader::SetVector4(const String& paramName, const Vector4* value, int32 count)
+			{
+				int32 idx;
+				if (TryGetParamIndex(paramName, idx))
+					SetVector4(idx, value, count);
+				else
+					KeyNotFoundError(paramName);
+			}
+
+			void Shader::SetValue(const String& paramName, const Quaternion* value, int32 count){ SetValueGeneric(paramName, value, count); }
+			void Shader::SetValue(const String& paramName, const Matrix* value, int32 count)	{ SetValueGeneric(paramName, value, count); }
+			void Shader::SetValue(const String& paramName, const Plane* value, int32 count)		{ SetValueGeneric(paramName, value, count); }
+			void Shader::SetValue(const String& paramName, const Color4* value, int32 count)	{ SetValueGeneric(paramName, value, count); }
+
+			void Shader::SetValue(const String& paramName, bool value)  { SetValueGeneric(paramName, value); }
+			void Shader::SetValue(const String& paramName, float value) { SetValueGeneric(paramName, value); }
+			void Shader::SetValue(const String& paramName, int32 value) { SetValueGeneric(paramName, value); }
+
+			void Shader::SetValue(const String& paramName, const bool* value, int32 count)	{ SetValueGeneric(paramName, value, count); }
+			void Shader::SetValue(const String& paramName, const float* value, int32 count)	{ SetValueGeneric(paramName, value, count); }
+			void Shader::SetValue(const String& paramName, const int32* value, int32 count)	{ SetValueGeneric(paramName, value, count); }
+
+			void Shader::SetTexture(const String& paramName, Texture* tex)
+			{
+				int32 idx;
+				if (TryGetSamplerIndex(paramName, idx))
+					SetTexture(idx, tex);
+				else
+					KeyNotFoundError(paramName);
+			}
+
+			void Shader::SetSamplerState(const String& paramName, const ShaderSamplerState& state)
+			{
+				int32 idx;
+				if (TryGetSamplerIndex(paramName, idx))
+					SetSamplerState(idx, state);
+				else
+					KeyNotFoundError(paramName);
+			}
+
+
+			template <typename T>
+			void Shader::SetValueGeneric(const String& paramName, const T& value)
+			{
+				int32 idx;
+				if (TryGetParamIndex(paramName, idx))
+					SetValue(idx, value);
+				else
+					KeyNotFoundError(paramName);
+			}
+
+			template <typename T>
+			void Shader::SetValueGeneric(const String& paramName, const T* value, int32 count)
+			{
+				int32 idx;
+				if (TryGetParamIndex(paramName, idx))
+					SetValue(idx, value, count);
+				else
+					KeyNotFoundError(paramName);
+			}
+
+			void Shader::KeyNotFoundError(const String& name)
+			{
+				Apoc3D::Core::ApocLog(LOG_Graphics, L"Shader parameter " + name + L" not found.", LOGLVL_Warning);
+			}
+
+			//////////////////////////////////////////////////////////////////////////
+
 			void ShaderSamplerState::Parse(const ConfigurationSection* sect)
 			{	
 				sect->TryGetAttributeEnum(L"AddressU", AddressU, TextureAddressModeConverter);
@@ -57,6 +194,7 @@ namespace Apoc3D
 				sect->TryGetAttributeInt(L"MaxMipLevel", MaxMipLevel);
 				sect->TryGetAttributeInt(L"MipMapLODBias", MipMapLODBias);
 			}
+
 			void ShaderSamplerState::Save(ConfigurationSection* sect)
 			{
 				sect->AddAttributeString(L"AddressU", TextureAddressModeConverter.ToString(AddressU));
@@ -72,8 +210,6 @@ namespace Apoc3D
 				sect->AddAttributeString(L"MaxAnisotropy", StringUtils::IntToString(MaxAnisotropy));
 				sect->AddAttributeString(L"MaxMipLevel", StringUtils::IntToString(MaxMipLevel));
 				sect->AddAttributeString(L"MipMapLODBias", StringUtils::IntToString(MipMapLODBias));
-
-
 			}
 		}
 	}

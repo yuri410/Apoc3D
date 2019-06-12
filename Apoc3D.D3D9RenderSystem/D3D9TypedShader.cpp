@@ -46,19 +46,7 @@ namespace Apoc3D
 				m_device->getNativeStateManager()->SetPixelSampler(samIndex, state);
 			}
 
-			void D3D9PixelShader::SetTexture(const String &paramName, Texture* tex)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetTexture(sc->SamplerIndex, tex);
-			}
-			void D3D9PixelShader::SetSamplerState(const String &paramName, const ShaderSamplerState &state)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetSamplerState(sc->SamplerIndex, state);
-			}
-
+			//////////////////////////////////////////////////////////////////////////
 
 			void D3D9VertexShader::SetTexture(int samIndex, Texture* tex) 
 			{
@@ -88,20 +76,6 @@ namespace Apoc3D
 			void D3D9VertexShader::SetSamplerState(int samIndex, const ShaderSamplerState &state) 
 			{
 				m_device->getNativeStateManager()->SetVertexSampler(samIndex, state);
-
-			}
-
-			void D3D9VertexShader::SetTexture(const String &paramName, Texture* tex)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetTexture(sc->SamplerIndex, tex);
-			}
-			void D3D9VertexShader::SetSamplerState(const String &paramName, const ShaderSamplerState &state)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetSamplerState(sc->SamplerIndex, state);
 			}
 		}
 	}

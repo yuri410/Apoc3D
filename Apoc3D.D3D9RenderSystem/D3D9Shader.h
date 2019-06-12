@@ -64,11 +64,8 @@ namespace Apoc3D
 				D3D9Shader(D3D9RenderDevice* device, const ResourceLocation& rl);
 				virtual ~D3D9Shader();
 
-				int GetParamIndex(const String& paramName) override;
-				int GetSamplerIndex(const String& paramName) override;
 				bool TryGetParamIndex(const String& paramName, int& result) override;
 				bool TryGetSamplerIndex(const String& paramName, int& result) override;
-
 
 				void SetVector2(int32 reg, const Vector2& value) override;
 				void SetVector3(int32 reg, const Vector3& value) override;
@@ -94,34 +91,7 @@ namespace Apoc3D
 				void SetValue(int32 reg, const float* value, int32 count) override;
 				void SetValue(int32 reg, const int32* value, int32 count) override;
 
-				void SetVector2(const String& paramName, const Vector2& value) override;
-				void SetVector3(const String& paramName, const Vector3& value) override;
-				void SetVector4(const String& paramName, const Vector4& value) override;
-				void SetValue(const String& paramName, const Quaternion& value) override;
-				void SetValue(const String& paramName, const Matrix& value) override;
-				void SetValue(const String& paramName, const Color4& value) override;
-				void SetValue(const String& paramName, const Plane& value) override;
-
-				void SetVector2(const String& paramName, const Vector2* value, int32 count) override;
-				void SetVector3(const String& paramName, const Vector3* value, int32 count) override;
-				void SetVector4(const String& paramName, const Vector4* value, int32 count) override;
-				void SetValue(const String& paramName, const Quaternion* value, int32 count) override;
-				void SetValue(const String& paramName, const Matrix* value, int32 count) override;
-				void SetValue(const String& paramName, const Plane* value, int32 count) override;
-				void SetValue(const String& paramName, const Color4* value, int32 count) override;
-
-				void SetValue(const String& paramName, bool value) override;
-				void SetValue(const String& paramName, float value) override;
-				void SetValue(const String& paramName, int32 value) override;
-				void SetValue(const String& paramName, const bool* value, int32 count) override;
-				void SetValue(const String& paramName, const float* value, int32 count) override;
-				void SetValue(const String& paramName, const int32* value, int32 count) override;
-
 			protected:
-				NO_INLINE static void KeyNotFoundError(const String& name)
-				{
-					AP_EXCEPTION(ErrorID::KeyNotFound, name);
-				}
 
 				D3D9RenderDevice* m_device;
 				APIShader* m_shader;
@@ -147,25 +117,6 @@ namespace Apoc3D
 			}
 
 
-
-			GST int32 ShaderTT::GetParamIndex(const String& paramName)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					return sc->RegisterIndex;
-
-				KeyNotFoundError(paramName);
-				return 0;
-			}
-			GST int32 ShaderTT::GetSamplerIndex(const String& paramName)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					return sc->SamplerIndex;
-
-				KeyNotFoundError(paramName);
-				return 0;
-			}
 			GST bool ShaderTT::TryGetParamIndex(const String& paramName, int32& result)
 			{
 				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
@@ -368,190 +319,6 @@ namespace Apoc3D
 				}
 			}
 			
-
-			
-			GST void ShaderTT::SetVector2(const String &paramName, const Vector2& value) 
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-				{
-					SharedFloatBuffer[0] = value.X;
-					SharedFloatBuffer[1] = value.Y;
-					SharedFloatBuffer[2] = SharedFloatBuffer[3] = 0;
-					(m_device->getDevice()->*SetConstantF)(sc->RegisterIndex, SharedFloatBuffer, 1);
-				}
-				else
-					KeyNotFoundError(paramName);
-			}
-			
-			GST void ShaderTT::SetVector3(const String &paramName, const Vector3& value) 
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-				{
-					SharedFloatBuffer[0] = value.X;
-					SharedFloatBuffer[1] = value.Y;
-					SharedFloatBuffer[2] = value.Z;
-					SharedFloatBuffer[3] = 0;
-					(m_device->getDevice()->*SetConstantF)(sc->RegisterIndex, SharedFloatBuffer, 1);
-				}
-				else
-					KeyNotFoundError(paramName);
-			}
-			
-			GST void ShaderTT::SetVector4(const String &paramName, const Vector4& value) 
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					(m_device->getDevice()->*SetConstantF)(sc->RegisterIndex, value, 1);
-				else
-					KeyNotFoundError(paramName);
-			}
-			
-			GST void ShaderTT::SetValue(const String &paramName, const Quaternion& value) 
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetValue(sc->RegisterIndex, value);
-				else
-					KeyNotFoundError(paramName);
-			}
-			
-			GST void ShaderTT::SetValue(const String &paramName, const Matrix& value) 
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetValue(sc->RegisterIndex, value);
-				else
-					KeyNotFoundError(paramName);
-			}
-			
-			GST void ShaderTT::SetValue(const String &paramName, const Color4& value) 
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetValue(sc->RegisterIndex, value);
-				else
-					KeyNotFoundError(paramName);
-			}
-			
-			GST void ShaderTT::SetValue(const String &paramName, const Plane& value)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetValue(sc->RegisterIndex, value);
-				else 
-					KeyNotFoundError(paramName);
-			}
-
-
-			
-			GST void ShaderTT::SetVector2(const String &paramName, const Vector2* value, int32 count)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetVector2(sc->RegisterIndex, value, count);
-				else
-					KeyNotFoundError(paramName);
-			}
-			
-			GST void ShaderTT::SetVector3(const String &paramName, const Vector3* value, int32 count)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetVector3(sc->RegisterIndex, value, count);
-				else
-					KeyNotFoundError(paramName);
-			}
-			GST void ShaderTT::SetVector4(const String &paramName, const Vector4* value, int32 count)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetVector4(sc->RegisterIndex, value, count);
-				else
-					KeyNotFoundError(paramName);
-			}
-			GST void ShaderTT::SetValue(const String &paramName, const Quaternion* value, int32 count)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetValue(sc->RegisterIndex, value, count);
-				else
-					KeyNotFoundError(paramName);
-			}
-			GST void ShaderTT::SetValue(const String &paramName, const Matrix* value, int32 count)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetValue(sc->RegisterIndex, value, count);
-				else
-					KeyNotFoundError(paramName);
-			}
-			GST void ShaderTT::SetValue(const String &paramName, const Plane* value, int32 count)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetValue(sc->RegisterIndex, value, count);
-				else
-					KeyNotFoundError(paramName);
-			}
-			GST void ShaderTT::SetValue(const String &paramName, const Color4* value, int32 count)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetValue(sc->RegisterIndex, value, count);
-				else
-					KeyNotFoundError(paramName);
-			}
-
-			GST void ShaderTT::SetValue(const String &paramName, bool value)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetValue(sc->RegisterIndex, value);
-				else
-					KeyNotFoundError(paramName);
-			}
-			GST void ShaderTT::SetValue(const String &paramName, float value)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetValue(sc->RegisterIndex, value);
-				else
-					KeyNotFoundError(paramName);
-			}
-			GST void ShaderTT::SetValue(const String &paramName, int32 value)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetValue(sc->RegisterIndex, value);
-				else
-					KeyNotFoundError(paramName);
-			}
-			GST void ShaderTT::SetValue(const String &paramName, const bool* value, int32 count)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetValue(sc->RegisterIndex, value, count);
-				else
-					KeyNotFoundError(paramName);
-			}
-			GST void ShaderTT::SetValue(const String &paramName, const float* value, int32 count)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetValue(sc->RegisterIndex, value, count);
-				else
-					KeyNotFoundError(paramName);
-			}
-			GST void ShaderTT::SetValue(const String &paramName, const int32* value, int32 count)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetValue(sc->RegisterIndex, value, count);
-				else
-					KeyNotFoundError(paramName);
-			}
 
 #undef ShaderTT
 #undef GST

@@ -112,6 +112,9 @@ namespace Apoc3D
 					RtKey(const RtKey&) = delete;
 					RtKey& operator=(const RtKey&) = delete;
 
+					RtKey(RtKey&&) = default;
+					RtKey& operator=(RtKey&&) = default;
+
 					List<GLuint> m_colorBuffers;
 					GLuint m_depthStencilBuffer = 0;
 				};
