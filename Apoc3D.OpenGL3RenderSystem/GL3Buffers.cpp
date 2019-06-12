@@ -83,12 +83,7 @@ namespace Apoc3D
 					m_bufferID = 0;
 				}
 			}
-
-			void GL3IndexBuffer::Bind()
-			{
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_bufferID);
-			}
-
+			
 			void* GL3IndexBuffer::lock(int offset, int size, LockMode mode)
 			{
 				GLbitfield access = GLUtils::ConvertLockMode(mode);

@@ -308,7 +308,7 @@ namespace Apoc3D
 			{
 				return 128;
 			}
-			Capabilities* const NRSRenderDevice::getCapabilities() const 
+			Capabilities* NRSRenderDevice::getCapabilities() const 
 			{
 				return m_caps; 
 			}

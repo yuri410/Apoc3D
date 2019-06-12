@@ -55,10 +55,10 @@ namespace Apoc3D
 				bool TryGetSamplerIndex(const String& paramName, int32& result) override;
 
 				void SetTexture(int samIndex, Texture* tex) override;
-				void SetSamplerState(int samIndex, const ShaderSamplerState& state);
+				void SetSamplerState(int samIndex, const ShaderSamplerState& state) override;
 
-				void SetTexture(const String& paramName, Texture* tex);
-				void SetSamplerState(const String& paramName, const ShaderSamplerState& state);
+				void SetTexture(const String& paramName, Texture* tex) override;
+				void SetSamplerState(const String& paramName, const ShaderSamplerState& state) override;
 
 				void SetVector2(int32 loc, const Vector2& value) override;
 				void SetVector3(int32 loc, const Vector3& value) override;

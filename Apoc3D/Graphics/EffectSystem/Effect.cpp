@@ -723,9 +723,10 @@ namespace Apoc3D
 
 			AutomaticEffect::ResolvedEffectParameter::ResolvedEffectParameter(RenderDevice* device, const String& effectName,
 				const EffectParameter* srcPtr, Shader* targetShader, bool& hasShaderIssues)
-				: RS_TargetShader(targetShader), Usage(srcPtr->Usage),
-				InstanceBlobIndex(srcPtr->InstanceBlobIndex), RegisterIndex(srcPtr->RegisterIndex),
-				SamplerIndex(srcPtr->SamplerIndex), ReferenceSource(srcPtr)
+				: RS_TargetShader(targetShader)
+				, Usage(srcPtr->Usage)
+				, InstanceBlobIndex(srcPtr->InstanceBlobIndex)
+				, ReferenceSource(srcPtr)
 			{
 				const EffectParameter& src = *srcPtr;
 
@@ -821,13 +822,13 @@ namespace Apoc3D
 				m_vertexShader->NotifyLinkage({ m_vertexShader, m_pixelShader });
 			}
 
-			CustomShaderEffect::CustomShaderEffect(RenderDevice* device, const String& name, const EffectCode& code)
+			CustomShaderEffect::CustomShaderEffect(RenderDevice* device, const String& name, const byte* vsCode, const byte* psCode)
 			{
 				m_name = name;
 
 				ObjectFactory* objFac = device->getObjectFactory();
-				m_vertexShader = objFac->CreateVertexShader(code.m_vsCode);
-				m_pixelShader = objFac->CreatePixelShader(code.m_psCode);
+				m_vertexShader = objFac->CreateVertexShader(vsCode);
+				m_pixelShader = objFac->CreatePixelShader(psCode);
 
 				m_vertexShader->NotifyLinkage({ m_vertexShader, m_pixelShader });
 			}

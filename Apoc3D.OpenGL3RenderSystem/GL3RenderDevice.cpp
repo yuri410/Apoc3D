@@ -539,16 +539,21 @@ namespace Apoc3D
 				}
 				else
 				{
-					GLFramebuffer* fbo = m_cachedFbo.TryGetValue(k);
-					if (fbo == nullptr)
+					GLuint fboID = 0;
+					if (GLFramebuffer * fbo = m_cachedFbo.TryGetValue(k))
+					{
+						fboID = fbo->getGLFboID();
+					}
+					else
 					{
 						GLFramebuffer newFbo(k.m_colorBuffers, k.m_depthStencilBuffer);
-						m_cachedFbo.Add(k, std::move(newFbo));
+						
+						fboID = newFbo.getGLFboID();
 
-						fbo = &m_cachedFbo[k];
+						m_cachedFbo.Add(std::move(k), std::move(newFbo));
 					}
 
-					glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo->getGLFboID());
+					glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID);
 				}
 			}
 

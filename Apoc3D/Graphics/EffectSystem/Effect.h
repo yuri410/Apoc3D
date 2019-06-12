@@ -183,7 +183,6 @@ namespace Apoc3D
 
 					int32 InstanceBlobIndex = -1;
 					int32 RegisterIndex = -1;
-
 					int32 SamplerIndex = -1;
 
 					ResourceHandle<Texture>* DefaultTexture = nullptr;

@@ -1,5 +1,4 @@
-#ifndef UT_TESTCOMMON_H
-#define UT_TESTCOMMON_H
+#pragma once
 
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
@@ -262,7 +261,7 @@ namespace Microsoft
 			template<> static std::wstring ToString<Point>(const Point& t) { return StringUtils::IntToString(t.X) + L", " + StringUtils::IntToString(t.Y); }
 
 			template<> static std::wstring ToString<uint16>(const uint16& t) { return StringUtils::UIntToString(t); }
-			template<> static std::wstring ToString<int64>(const int64& t) { return StringUtils::IntToString(t); }
+			//template<> static std::wstring ToString<int64>(const int64& t) { return StringUtils::IntToString(t); }
 
 
 			template<> static std::wstring ToString<TrivialString>(const TrivialString& t) { return t.c_str(); }
@@ -270,5 +269,3 @@ namespace Microsoft
 		}
 	}
 }
-
-#endif

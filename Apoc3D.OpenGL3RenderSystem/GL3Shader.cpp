@@ -33,8 +33,8 @@ namespace Apoc3D
 			const int g_SharedBufferSize = 1024;
 			const GLboolean g_TransposeMatrix = GL_FALSE;
 
-			GLfloat g_SharedFloatBuffer[SharedBufferSize];
-			GLint   g_SharedIntBuffer[SharedBufferSize];
+			GLfloat g_SharedFloatBuffer[g_SharedBufferSize];
+			GLint   g_SharedIntBuffer[g_SharedBufferSize];
 			
 
 			GL3Shader::GL3Shader(GL3RenderDevice* device, GLenum shaderType, const byte* byteCode)
@@ -230,7 +230,7 @@ namespace Apoc3D
 			void GL3Shader::SetValue(int32 loc, const Plane* value, int32 count)  { glUniform4fv(loc, count, (const GLfloat*)value); }
 			void GL3Shader::SetMatrix4x3(int32 loc, const Matrix* value, int32 count)
 			{
-				float floatCount = count * 12;
+				int32 floatCount = count * 12;
 
 				float* buf = (floatCount > g_SharedBufferSize) ? new float[floatCount] : g_SharedFloatBuffer;
 
@@ -298,9 +298,30 @@ namespace Apoc3D
 			void GL3Shader::SetValue(const String& paramName, const Color4& value)     { SetValueGeneric(paramName, value); }
 			void GL3Shader::SetValue(const String& paramName, const Plane& value)      { SetValueGeneric(paramName, value); }
 
-			void GL3Shader::SetVector2(const String& paramName, const Vector2* value, int32 count)  { SetValueGeneric(paramName, value, count); }
-			void GL3Shader::SetVector3(const String& paramName, const Vector3* value, int32 count)  { SetValueGeneric(paramName, value, count); }
-			void GL3Shader::SetVector4(const String& paramName, const Vector4* value, int32 count)  { SetValueGeneric(paramName, value, count); }
+			void GL3Shader::SetVector2(const String& paramName, const Vector2* value, int32 count)
+			{
+				const GLProgramVariable* gv = m_prog->getUniform(paramName);
+				if (gv)
+					SetVector2(paramName, value, count);
+				else
+					KeyNotFoundError(paramName);
+			}
+			void GL3Shader::SetVector3(const String& paramName, const Vector3* value, int32 count)
+			{
+				const GLProgramVariable* gv = m_prog->getUniform(paramName);
+				if (gv)
+					SetVector3(paramName, value, count);
+				else
+					KeyNotFoundError(paramName);
+			}
+			void GL3Shader::SetVector4(const String& paramName, const Vector4* value, int32 count)
+			{
+				const GLProgramVariable* gv = m_prog->getUniform(paramName);
+				if (gv)
+					SetVector4(paramName, value, count);
+				else
+					KeyNotFoundError(paramName);
+			}
 			void GL3Shader::SetValue(const String& paramName, const Quaternion* value, int32 count) { SetValueGeneric(paramName, value, count); }
 			void GL3Shader::SetValue(const String& paramName, const Matrix* value, int32 count)     { SetValueGeneric(paramName, value, count); }
 			void GL3Shader::SetValue(const String& paramName, const Plane* value, int32 count)      { SetValueGeneric(paramName, value, count); }

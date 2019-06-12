@@ -127,7 +127,7 @@ namespace Apoc3D
 
 			const String& GL3RenderWindow::GetHardwareName() const
 			{
-				return m_graphicsDeviceManager->getHardwareName();
+				return m_graphicsDeviceManager->GetHardwareName();
 			}
 		}
 	}

@@ -226,8 +226,8 @@ namespace APDesigner
 			else if (ep.Usage == EPUSAGE_CustomMaterialParam)
 				sect->AddAttributeString(L"BlobIndex", StringUtils::IntToString(ep.InstanceBlobIndex));
 
-			if (ep.RegisterIndex == 99)
-				ep.SamplerState.Save(sect);
+			//if (ep.RegisterIndex == 99)
+			ep.SamplerState.Save(sect);
 
 			if (ep.ProgramType == ShaderType::Vertex)
 				vs->AddSection(sect);
@@ -531,7 +531,7 @@ namespace APDesigner
 
 		if (chTemp->Checked)
 		{
-			p.RegisterIndex = 99;
+			//p.RegisterIndex = 99;
 			cbTemp = (isVS ? m_cbVsAddressU : m_cbPsAddressU);
 			if (cbTemp->getSelectedIndex() !=-1)
 				p.SamplerState.AddressU = TextureAddressModeConverter.Parse(cbTemp->getItems()[cbTemp->getSelectedIndex()]);

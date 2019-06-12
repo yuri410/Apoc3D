@@ -49,11 +49,6 @@ namespace Apoc3D
 				}
 				return *this;
 			}
-
-			void GLFramebuffer::Bind()
-			{
-				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-			}
 		}
 	}
 }

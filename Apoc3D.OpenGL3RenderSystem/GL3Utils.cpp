@@ -82,10 +82,10 @@ namespace Apoc3D
 				{
 					case PrimitiveType::PointList: return primitiveCount;
 					case PrimitiveType::LineList:  return primitiveCount * 2;
-					case PrimitiveType::LineStrip: return indexCount > 1 ? (indexCount - 1) : 0;
+					case PrimitiveType::LineStrip: return primitiveCount > 0 ? (primitiveCount + 1) : 0;
 					case PrimitiveType::TriangleList:	return primitiveCount * 3;
 					case PrimitiveType::TriangleStrip:
-					case PrimitiveType::TriangleFan:	return indexCount > 2 ? (indexCount - 2) : 0;
+					case PrimitiveType::TriangleFan:	return primitiveCount > 0 ? (primitiveCount + 2) : 0;
 				}
 				return 0;
 			}
