@@ -49,11 +49,8 @@ namespace Apoc3D
 				NRSShader(NRSRenderDevice* device, const byte* byteCode);
 				virtual ~NRSShader();
 
-				int GetParamIndex(const String& paramName) override;
-				int GetSamplerIndex(const String& paramName) override;
 				bool TryGetParamIndex(const String& paramName, int32& result) override;
 				bool TryGetSamplerIndex(const String& paramName, int32& result) override;
-
 
 				void SetVector2(int32 reg, const Vector2& value) override { }
 				void SetVector3(int32 reg, const Vector3& value) override { }
@@ -79,29 +76,6 @@ namespace Apoc3D
 				void SetValue(int32 reg, const float* value, int32 count) override { }
 				void SetValue(int32 reg, const int32* value, int32 count) override { }
 
-				void SetVector2(const String& paramName, const Vector2& value) override { }
-				void SetVector3(const String& paramName, const Vector3& value) override { }
-				void SetVector4(const String& paramName, const Vector4& value) override { }
-				void SetValue(const String& paramName, const Quaternion& value) override { }
-				void SetValue(const String& paramName, const Matrix& value) override { }
-				void SetValue(const String& paramName, const Color4& value) override { }
-				void SetValue(const String& paramName, const Plane& value) override { }
-
-				void SetVector2(const String& paramName, const Vector2* value, int32 count) override { }
-				void SetVector3(const String& paramName, const Vector3* value, int32 count) override { }
-				void SetVector4(const String& paramName, const Vector4* value, int32 count) override { }
-				void SetValue(const String& paramName, const Quaternion* value, int32 count) override { }
-				void SetValue(const String& paramName, const Matrix* value, int32 count) override { }
-				void SetValue(const String& paramName, const Plane* value, int32 count) override { }
-				void SetValue(const String& paramName, const Color4* value, int32 count) override { }
-
-				void SetValue(const String& paramName, bool value) override { }
-				void SetValue(const String& paramName, float value) override { }
-				void SetValue(const String& paramName, int32 value) override { }
-				void SetValue(const String& paramName, const bool* value, int32 count) override { }
-				void SetValue(const String& paramName, const float* value, int32 count) override { }
-				void SetValue(const String& paramName, const int32* value, int32 count) override { }
-
 			protected:
 				static void KeyNotFoundError(const String& name);
 
@@ -121,9 +95,6 @@ namespace Apoc3D
 				virtual void SetTexture(int samIndex, Texture* tex);
 				virtual void SetSamplerState(int samIndex, const ShaderSamplerState &state);
 
-				virtual void SetTexture(const String& paramName, Texture* tex);
-				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState &state);
-
 				virtual ShaderType getType() const { return ShaderType::Pixel; }
 			};
 
@@ -136,9 +107,6 @@ namespace Apoc3D
 
 				virtual void SetTexture(int samIndex, Texture* tex);
 				virtual void SetSamplerState(int samIndex, const ShaderSamplerState &state);
-
-				virtual void SetTexture(const String& paramName, Texture* tex);
-				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState& state);
 
 				virtual ShaderType getType() const { return ShaderType::Vertex; }
 			};

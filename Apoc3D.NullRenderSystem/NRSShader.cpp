@@ -38,24 +38,6 @@ namespace Apoc3D
 				delete m_constantTable;
 			}
 
-			int32 NRSShader::GetParamIndex(const String& paramName)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc && sc->RegisterCount)
-				{
-					return sc->RegisterIndex;
-				}
-				KeyNotFoundError(paramName);
-				return 0;
-			}
-			int32 NRSShader::GetSamplerIndex(const String& paramName)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					return sc->SamplerIndex;
-				KeyNotFoundError(paramName);
-				return 0;
-			}
 			bool NRSShader::TryGetParamIndex(const String& paramName, int32& result)
 			{
 				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
@@ -94,23 +76,6 @@ namespace Apoc3D
 
 			}
 
-			void NRSVertexShader::SetTexture(const String &paramName, Texture* tex)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetTexture(sc->SamplerIndex, tex);
-				else
-					KeyNotFoundError(paramName);
-			}
-			void NRSVertexShader::SetSamplerState(const String &paramName, const ShaderSamplerState &state)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetSamplerState(sc->SamplerIndex, state);
-				else
-					KeyNotFoundError(paramName);
-			}
-
 			//////////////////////////////////////////////////////////////////////////
 
 			void NRSPixelShader::SetTexture(int samIndex, Texture* tex)
@@ -120,23 +85,6 @@ namespace Apoc3D
 			void NRSPixelShader::SetSamplerState(int samIndex, const ShaderSamplerState &state)
 			{
 				m_device->getNativeStateManager()->SetPixelSampler(samIndex, state);
-			}
-
-			void NRSPixelShader::SetTexture(const String &paramName, Texture* tex)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetTexture(sc->SamplerIndex, tex);
-				else
-					KeyNotFoundError(paramName);
-			}
-			void NRSPixelShader::SetSamplerState(const String &paramName, const ShaderSamplerState &state)
-			{
-				const ShaderConstant* sc = m_constantTable->getConstant(paramName);
-				if (sc)
-					SetSamplerState(sc->SamplerIndex, state);
-				else
-					KeyNotFoundError(paramName);
 			}
 
 		}
