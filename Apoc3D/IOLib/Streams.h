@@ -299,6 +299,7 @@ namespace Apoc3D
 			virtual ~PipeOutStream();
 
 			void PopAll(char* dest);
+			void Clear();
 		};
 
 
