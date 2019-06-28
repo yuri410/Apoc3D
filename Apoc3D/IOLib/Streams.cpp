@@ -534,6 +534,13 @@ namespace Apoc3D
 				m_position = m_length;
 		}
 
+		void MemoryOutStream::Clear()
+		{
+			m_data.Clear();
+			m_length = 0;
+			m_position = 0;
+		}
+
 		/************************************************************************/
 		/* PipeStream                                                           */
 		/************************************************************************/
@@ -547,12 +554,7 @@ namespace Apoc3D
 				memcpy(dest, getDataPointer(), (size_t)getLength());
 			}
 
-			setPosition(0);
-		}
-
-		void PipeOutStream::Clear()
-		{
-			setPosition(0);
+			Clear();
 		}
 
 		/************************************************************************/

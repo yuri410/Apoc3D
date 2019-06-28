@@ -277,6 +277,8 @@ namespace Apoc3D
 			
 			virtual void Flush() override { }
 
+			void Clear();
+
 			const char* getDataPointer() const { return m_data.getElements(); }
 			char* getDataPointer() { return m_data.getElements(); }
 
@@ -299,7 +301,6 @@ namespace Apoc3D
 			virtual ~PipeOutStream();
 
 			void PopAll(char* dest);
-			void Clear();
 		};
 
 
