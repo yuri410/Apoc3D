@@ -98,6 +98,27 @@ namespace Apoc3D
 			return m_invoker(m_instance, std::forward<Args>(args)...);
 		}
 
+		FunctorReference(const FunctorReference& o)
+			: m_invoker(o.m_invoker)
+			, m_rawFunction(o.m_rawFunction)
+			, m_instance(o.isRuntimeMemberFunction() ? m_mbrFunctor : o.m_instance)
+		{
+			memcpy(m_mbrFunctor, o.m_mbrFunctor, sizeof(m_mbrFunctor));
+		}
+
+		FunctorReference& operator=(const FunctorReference& o)
+		{
+			if (this != &o)
+			{
+				m_invoker = o.m_invoker;
+				m_rawFunction = o.m_rawFunction;
+				m_instance = o.isRuntimeMemberFunction() ? m_mbrFunctor : o.m_instance;
+
+				memcpy(m_mbrFunctor, o.m_mbrFunctor, sizeof(m_mbrFunctor));
+			}
+			return *this;
+		}
+
 		bool isNull() const { return m_invoker == nullptr && m_rawFunction == nullptr; }
 
 		explicit operator bool() const noexcept { return m_invoker || m_rawFunction; }
@@ -107,6 +128,7 @@ namespace Apoc3D
 
 	private:
 		struct Dummy {};
+		bool isRuntimeMemberFunction() const { return m_instance == m_mbrFunctor; }
 
 		InvokerType m_invoker = nullptr;
 		RawFunctionType m_rawFunction = nullptr;
