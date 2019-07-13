@@ -414,7 +414,7 @@ namespace Apoc3D
 				friend class HashMap;
 			public:
 
-				KeyPairValue<const T&, S&> operator*() const
+				KeyValuePair<const T&, S&> operator*() const
 				{
 					assert(m_next > 0 && m_next <= m_dict->m_touchedSlots);
 					Entry& e = m_dict->m_entries[m_next - 1];

@@ -25,32 +25,23 @@ namespace Apoc3D
 {
 	namespace Collections
 	{
-
-		template<typename T>
-		void QuickSort(T* arr, int32 left, int32 right)
+		template <typename T>
+		struct Swapper
 		{
-			int32 i = left, j = right;
-			const T pivot = arr[(left + right) / 2];
-
-			while (i <= j)
+			void operator()(T& a, T& b)
 			{
-				while (arr[i] < pivot) i++;
-				while (arr[j] > pivot) j--;
-
-				if (i <= j)
-				{
-					std::swap(arr[i], arr[j]);
-
-					i++; j--;
-				}
+				T* tmp = new (m_buf)T(std::move(a));
+				a = std::move(b);
+				b = std::move(*tmp);
+				tmp->~T();
 			}
 
-			if (left < j) QuickSort(arr, left, j);
-			if (i < right) QuickSort(arr, i, right);
-		}
+		private:
+			char m_buf[sizeof(T)];
+		};
 
 		template<typename T, int32(*comparer)(const T& a, const T& b)>
-		void QuickSort(T* arr, int32 left, int32 right)
+		void QuickSort(T* arr, int32 left, int32 right, Swapper<T>& swp = Swapper<T>())
 		{
 			int32 i = left, j = right;
 			const T pivot = arr[(left + right) / 2];
@@ -62,18 +53,18 @@ namespace Apoc3D
 
 				if (i <= j)
 				{
-					std::swap(arr[i], arr[j]);
+					swp(arr[i], arr[j]);
 
 					i++; j--;
 				}
 			}
 
-			if (left < j) QuickSort<T, comparer>(arr, left, j);
-			if (i < right) QuickSort<T, comparer>(arr, i, right);
+			if (left < j) QuickSort<T, comparer>(arr, left, j, swp);
+			if (i < right) QuickSort<T, comparer>(arr, i, right, swp);
 		}
 
 		template<typename T, typename Func>
-		void QuickSort(T* arr, int32 left, int32 right, Func& comparer)
+		void QuickSort(T* arr, int32 left, int32 right, Func& comparer, Swapper<T>& swp = Swapper<T>())
 		{
 			int32 i = left, j = right;
 			const T pivot = arr[(left + right) / 2];
@@ -85,18 +76,18 @@ namespace Apoc3D
 
 				if (i <= j)
 				{
-					std::swap(arr[i], arr[j]);
+					swp(arr[i], arr[j]);
 
 					i++; j--;
 				}
 			}
 
-			if (left < j) QuickSort(arr, left, j, comparer);
-			if (i < right) QuickSort(arr, i, right, comparer);
+			if (left < j) QuickSort(arr, left, j, comparer, swp);
+			if (i < right) QuickSort(arr, i, right, comparer, swp);
 		}
 
 		template <typename T, typename SorterType, SorterType(*sorterCalc)(const T& a, const T& b)>
-		void QuickSortWithSorter(T* arr, int32 left, int32 right)
+		void QuickSortWithSorter(T* arr, int32 left, int32 right, Swapper<T>& swp = Swapper<T>())
 		{
 			int32 i = left, j = right;
 			SorterType pivot = sorterCalc(arr[(left + right) / 2]);
@@ -108,18 +99,18 @@ namespace Apoc3D
 
 				if (i <= j)
 				{
-					std::swap(arr[i], arr[j]);
+					swp(arr[i], arr[j]);
 
 					i++; j--;
 				}
 			}
 
-			if (left < j) QuickSortWithSorter<T, SorterType, sorterCalc>(arr, left, j);
-			if (i < right) QuickSortWithSorter<T, SorterType, sorterCalc>(arr, i, right);
+			if (left < j) QuickSortWithSorter<T, SorterType, sorterCalc>(arr, left, j, swp);
+			if (i < right) QuickSortWithSorter<T, SorterType, sorterCalc>(arr, i, right, swp);
 		}
 
 		template <typename T, typename SorterType, typename SorterCalc>
-		void QuickSortWithSorter(T* arr, int32 left, int32 right, SorterCalc& sorterCalc)
+		void QuickSortWithSorter(T* arr, int32 left, int32 right, SorterCalc& sorterCalc, Swapper<T>& swp = Swapper<T>())
 		{
 			int32 i = left, j = right;
 			SorterType pivot = sorterCalc(arr[(left + right) / 2]);
@@ -131,14 +122,14 @@ namespace Apoc3D
 
 				if (i <= j)
 				{
-					std::swap(arr[i], arr[j]);
+					swp(arr[i], arr[j]);
 
 					i++; j--;
 				}
 			}
 
-			if (left < j) QuickSortWithSorter<T, SorterType>(arr, left, j, sorterCalc);
-			if (i < right) QuickSortWithSorter<T, SorterType>(arr, i, right, sorterCalc);
+			if (left < j) QuickSortWithSorter<T, SorterType>(arr, left, j, sorterCalc, swp);
+			if (i < right) QuickSortWithSorter<T, SorterType>(arr, i, right, sorterCalc, swp);
 		}
 
 		template <typename T, typename ST>
@@ -359,7 +350,7 @@ namespace Apoc3D
 				CopyTo(dst, (T*)m_elements, count);
 			}
 
-			void Sort() { if (m_count > 0) QuickSort((T*)m_elements, 0, m_count - 1); }
+			void Sort() { Sort<OrderComparer>(); }
 
 			template <int32(*comparer)(const T&, const T&)>
 			void Sort() { if (m_count > 0) QuickSort<T, comparer>((T*)m_elements, 0, m_count - 1); }
@@ -414,7 +405,6 @@ namespace Apoc3D
 			
 			ST m_elements;
 			int32 m_count = 0;
-
 		};
 
 

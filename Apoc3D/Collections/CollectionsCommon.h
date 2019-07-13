@@ -190,22 +190,22 @@ namespace Apoc3D
 		// If T/S is a reference, and a ref to temporary rvalue object is passed in,
 		// watch out its life time. This issue exists for both lvalue and rvalue ctors.
 		template <typename T, typename S>
-		struct KeyPairValue
+		struct KeyValuePair
 		{
 			T Key;
 			S Value;
 
-			KeyPairValue() { }
-			KeyPairValue(const T& key, const S& value)
+			KeyValuePair() { }
+			KeyValuePair(const T& key, const S& value)
 				: Key(key), Value(value) { }
 
-			KeyPairValue(typename std::remove_reference<T>::type&& key, typename std::remove_reference<S>::type&& value)
+			KeyValuePair(typename std::remove_reference<T>::type&& key, typename std::remove_reference<S>::type&& value)
 				: Key(std::move(key)), Value(std::move(value)) { }
 
-			KeyPairValue(KeyPairValue&& other)
+			KeyValuePair(KeyValuePair&& other)
 				: Key(std::move(other.Key)), Value(std::move(other.Value)) { }
 
-			KeyPairValue& operator =(KeyPairValue&& other)
+			KeyValuePair& operator =(KeyValuePair&& other)
 			{
 				if (this != &other)
 				{
