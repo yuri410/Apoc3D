@@ -160,6 +160,11 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(MemoryStream, Stream);
 		public:
+			MemoryStream(const char* data, int64 length)
+				: m_data(const_cast<char*>(data))
+				, m_length(length)
+				, m_readonly(true) { }
+
 			MemoryStream(char* data, int64 length)
 				: m_data(data), m_length(length) { }
 
@@ -170,7 +175,7 @@ namespace Apoc3D
 			virtual bool IsWriteEndianIndependent() const override { return false; }
 
 			virtual bool CanRead() const override { return true; }
-			virtual bool CanWrite() const override { return true; }
+			virtual bool CanWrite() const override { return !m_readonly; }
 
 			virtual int64 getLength() const override { return m_length; }
 			virtual void setPosition(int64 offset) override { m_position = offset; }
@@ -183,14 +188,13 @@ namespace Apoc3D
 			
 			virtual void Flush() override { }
 
-			char* getDataPointer() const { return m_data; }
-
 		private:
 			NO_INLINE static void EndofStreamError();
 
 			int64 m_length = 0;
 			char* m_data = nullptr;
 			int64 m_position = 0;
+			bool m_readonly = false;
 		};
 
 		/** 

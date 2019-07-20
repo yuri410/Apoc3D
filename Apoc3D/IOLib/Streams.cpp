@@ -328,6 +328,9 @@ namespace Apoc3D
 
 		void MemoryStream::Write(const char* src, int64 count)
 		{
+			if (m_readonly)
+				return;
+
 			if (m_position + count > m_length)
 			{
 				EndofStreamError();
