@@ -79,7 +79,6 @@ namespace Apoc3D
 			pthread_mutex_unlock(&fakeMutex);*/
 		}
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-#if _DEBUG
 		void SetThreadNameInternal( DWORD dwThreadID, LPCSTR szThreadName)
 		{
 #if _MSC_VER > 1400
@@ -93,21 +92,18 @@ namespace Apoc3D
 			{
 				RaiseException( 0x406D1388, 0, sizeof(info)/sizeof(DWORD), (const ULONG_PTR*)&info );
 			}
-			__except(EXCEPTION_CONTINUE_EXECUTION)
+			__except(EXCEPTION_EXECUTE_HANDLER)
 			{
 			}
 #endif
 		}
 #endif
-#endif
 		
 		void SetThreadName( std::thread* th, const String& name)
 		{
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-#if _DEBUG
 			const HANDLE handle = th->native_handle();
 			SetThreadNameInternal(GetThreadId(handle), StringUtils::toPlatformNarrowString(name).c_str());
-#endif
 #endif
 		}
 	}
