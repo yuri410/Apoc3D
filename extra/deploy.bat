@@ -33,7 +33,7 @@ copy ois-v1-3\lib\OIS_static_mt.lib ..\lib\x86\OIS_static_mt.lib /Y
 copy ois-v1-3\lib64\OIS_static_d.lib ..\lib\x64dbg\OIS_static_d.lib /Y
 copy ois-v1-3\lib64\OIS_static_d.pdb ..\lib\x64dbg\OIS_static_d.pdb /Y
 copy ois-v1-3\lib64\OIS_static.lib ..\lib\x64\OIS_static.lib /Y
-copy ois-v1-3\lib64\OIS_static.lib ..\lib\x64\OIS_static.lib /Y
+copy ois-v1-3\lib64\OIS_static.pdb ..\lib\x64\OIS_static.pdb /Y
 copy ois-v1-3\lib64\OIS_static_mt.lib ..\lib\x64\OIS_static_mt.lib /Y
-copy ois-v1-3\lib64\OIS_static_mt.lib ..\lib\x64\OIS_static_mt.lib /Y
+copy ois-v1-3\lib64\OIS_static_mt.pdb ..\lib\x64\OIS_static_mt.pdb /Y
 
