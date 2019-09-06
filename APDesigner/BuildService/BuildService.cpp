@@ -130,6 +130,7 @@ namespace APDesigner
 
 				if (m_processThread)
 				{
+					m_processThread->join();
 					delete m_processThread;
 					m_processThread = nullptr;
 				}

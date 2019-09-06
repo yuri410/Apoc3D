@@ -637,8 +637,6 @@ namespace Apoc3D
 
 			if (m_state != FWS_Minimized)
 			{
-				sprite->Flush();
-
 				Apoc3D::Math::Rectangle rect= getAbsoluteArea();
 				if (rect.getBottom()>uiArea.getBottom())
 				{
@@ -648,30 +646,8 @@ namespace Apoc3D
 				{
 					rect.Width -= rect.getRight() - uiArea.getRight();
 				}
-				m_device->getRenderState()->setScissorTest(true, &rect);
 
-				bool hasOverridingControl = false;
-				int overlay = 0;
-				for (int i = 0; i < m_controls.getCount(); i++)
-				{
-					Control* ctl = m_controls[i];
-					if (ctl->IsOverriding())
-					{
-						overlay = i;
-						hasOverridingControl = true;
-					}
-					if (ctl->Visible)
-					{
-						ctl->Draw(sprite);
-					}
-				}
-
-				sprite->Flush();
-				m_device->getRenderState()->setScissorTest(false,0);
-				if (hasOverridingControl)
-				{
-					m_controls[overlay]->DrawOverlay(sprite);
-				}
+				m_controls.Draw(sprite, &rect);
 
 				if (MenuBar && MenuBar->Visible)
 					MenuBar->Draw(sprite);

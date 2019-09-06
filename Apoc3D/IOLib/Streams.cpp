@@ -82,6 +82,24 @@ namespace Apoc3D
 			m_in.exceptions(std::ios::goodbit);
 #endif	
 		}
+
+		FileStream::FileStream(FileStream&& o)
+#ifdef USE_WIN32_FILE
+			: m_file(o.m_file) 
+#else
+			: m_in(std::move(o.m_in))
+#endif
+			, m_length(o.m_length)
+			, m_sequentialCount(o.m_sequentialCount)
+			, m_endofStream(o.m_endofStream)
+		{
+			m_readBuffer = o.m_readBuffer;
+
+#ifdef USE_WIN32_FILE
+			o.m_file = INVALID_HANDLE_VALUE;
+#endif
+		}
+
 		FileStream::~FileStream()
 		{
 #ifdef USE_WIN32_FILE
@@ -259,6 +277,13 @@ namespace Apoc3D
 				mode |= ios::in;
 
 			m_out.open(filename.c_str(), mode);
+		}
+
+		FileOutStream::FileOutStream(FileOutStream& o)
+			: m_out(std::move(o.m_out))
+			, m_length(o.m_length)
+		{
+			memcpy(m_buffer, o.m_buffer, sizeof(m_buffer));
 		}
 
 		FileOutStream::~FileOutStream()

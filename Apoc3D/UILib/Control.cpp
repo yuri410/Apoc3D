@@ -425,11 +425,23 @@ namespace Apoc3D
 			}
 			m_deferredRemoval.Clear();
 		}
+
 		void ControlCollection::Draw(Sprite* sprite)
 		{
-			Control* overridingControl = nullptr;
+			Draw(sprite, nullptr);
+		}
 
-			for (int32 i = 0; i < m_count;i++)
+		void ControlCollection::Draw(Sprite* sprite, const Rectangle* scissorRegion)
+		{
+			char ssts_buf[sizeof(ScissorTestScope)];
+			ScissorTestScope* ssts = nullptr;
+			if (scissorRegion)
+			{
+				ssts = new (ssts_buf)ScissorTestScope(*scissorRegion, sprite);
+			}
+
+			Control* overridingControl = nullptr;
+			for (int32 i = 0; i < m_count; i++)
 			{
 				Control* ctrl = m_elements[i];
 				if (ctrl->IsOverriding())
@@ -440,6 +452,11 @@ namespace Apoc3D
 				{
 					ctrl->Draw(sprite);
 				}
+			}
+
+			if (ssts)
+			{
+				ssts->~ScissorTestScope();
 			}
 
 			if (overridingControl)

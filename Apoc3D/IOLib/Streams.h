@@ -81,6 +81,7 @@ namespace Apoc3D
 			static const int32 SequencialCountTrigger = 16;
 
 			FileStream(const String& filename);
+			FileStream(FileStream&& o);
 			virtual ~FileStream();
 
 			virtual bool IsReadEndianIndependent() const override { return true; }
@@ -129,6 +130,7 @@ namespace Apoc3D
 			RTTI_DERIVED(FileOutStream, Stream);
 		public:
 			FileOutStream(const String& filename, bool noTrunc = false);
+			FileOutStream(FileOutStream& o);
 			virtual ~FileOutStream();
 
 			virtual bool IsReadEndianIndependent() const override { return true; }
