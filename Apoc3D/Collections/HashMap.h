@@ -526,10 +526,10 @@ namespace Apoc3D
 				return nullptr;
 			}
 
-			template <typename = typename std::enable_if<std::is_pointer<S>::value && std::is_destructible<typename std::remove_pointer<S>::type>::value>::type>
+			template <typename = typename std::enable_if<std::is_pointer<S>::value>>
 			bool RemoveAndDelete(const T& item) { return RemoveGeneric<EntryValueDeleter>(item); }
 
-			template <typename = typename std::enable_if<std::is_pointer<S>::value && std::is_destructible<typename std::remove_pointer<S>::type>::value>::type>
+			template <typename = typename std::enable_if<std::is_pointer<S>::value>>
 			void DeleteValuesAndClear()
 			{
 				auto& c = *this;

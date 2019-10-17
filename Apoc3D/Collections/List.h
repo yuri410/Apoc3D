@@ -137,7 +137,7 @@ namespace Apoc3D
 		{
 		public:
 
-			template <typename = typename std::enable_if<std::is_pointer<T>::value && std::is_destructible<typename std::remove_pointer<T>::type>::value>::type>
+			template <typename = typename std::enable_if<std::is_pointer<T>::value>>
 			void DeleteAndClear()
 			{
 				T* elm = (T*)m_elements;

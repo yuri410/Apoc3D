@@ -359,7 +359,7 @@ namespace Apoc3D
 
 			void Clear() { QueueImpl::Clear(m_array, m_head, m_tail, m_count, m_arrLength); }
 
-			template <typename = typename std::enable_if<std::is_pointer<T>::value && std::is_destructible<typename std::remove_pointer<T>::type>::value>::type>
+			template <typename = typename std::enable_if<std::is_pointer<T>::value>>
 			void DeleteAndClear()
 			{
 				QueueImpl::DeletePointers(m_array, m_head, m_count, m_arrLength);
@@ -602,7 +602,7 @@ namespace Apoc3D
 
 			void Clear() { QueueImpl::Clear((T*)m_storage, m_head, m_tail, m_count, N); }
 
-			template <typename = typename std::enable_if<std::is_pointer<T>::value && std::is_destructible<typename std::remove_pointer<T>::type>::value>::type>
+			template <typename = typename std::enable_if<std::is_pointer<T>::value>>
 			void DeleteAndClear()
 			{
 				QueueImpl::DeletePointers((T*)m_storage, m_head, m_count, m_arrLength);

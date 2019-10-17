@@ -134,19 +134,19 @@ namespace Apoc3D
 				else if (encoding == TEC_UTF16LE || encoding == TEC_UTF16BE)
 				{
 					const wchar_t* utf16Text = reinterpret_cast<const wchar_t*>(rawData);
+					int32 utf16Len = length / 2;
 
 					if ((platformLittleEndian && encoding == TEC_UTF16LE) || (!platformLittleEndian && encoding == TEC_UTF16BE))
 					{
-						return String(utf16Text);
+						return String(utf16Text, utf16Len);
 					}
 
-					int32 utf16Len = length/2;
 					String result;
 					result.reserve(utf16Len+1);
 
 					for (int32 i=0;i<utf16Len;i++)
 					{
-						result.append(1,(wchar_t)_byteswap_ushort(utf16Text[i]));
+						result.append(1, (wchar_t)_byteswap_ushort(utf16Text[i]));
 					}
 					
 					return result;
@@ -166,7 +166,7 @@ namespace Apoc3D
 
 					for (int32 i=0;i<utf32Len;i++)
 					{
-						swapped.append(1,(char32_t)_byteswap_ulong(utf32Text[i]));
+						swapped.append(1, (char32_t)_byteswap_ulong(utf32Text[i]));
 					}
 
 					return StringUtils::UTF32toUTF16(swapped);
@@ -268,8 +268,7 @@ namespace Apoc3D
 				BinaryReader br(rl);
 
 				int32 length = (int32)br.getBaseStream()->getLength();
-				char* rawBytes = new char[length + 1];
-				rawBytes[length] = 0;
+				char* rawBytes = new char[length]();
 				br.ReadBytes(rawBytes, length);
 
 				String alltext = ConvertFromRawData(rawBytes, length, encoding, true);
