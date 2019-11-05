@@ -457,18 +457,22 @@ namespace Apoc3D
 					tex = MouseHoverGraphic.Graphic;
 				}
 
-				int32 colStyle = 0;
+				HorizontalBorderStyle colStyle = HBS_Both;
 				VerticalBorderStyle vertStyle = VBS_Both;
 				int32 idxInRow = i % m_countPerRow;
 				int32 rowIndex = i / m_countPerRow;
 
-				if (idxInRow == 0)
-					colStyle = -1;
-				else if (idxInRow == m_countPerRow - 1 || i == m_count - 1)
-					colStyle = 1;
+				if (m_countPerRow > 1)
+				{
+					if (idxInRow == 0)
+						colStyle = HBS_Left;
+					else if (idxInRow == m_countPerRow - 1 || i == m_count - 1)
+						colStyle = HBS_Right;
+					else
+						colStyle = HBS_None;
+				}
 
-
-				if (m_numRows >= 1)
+				if (m_numRows > 1)
 				{
 					if (rowIndex == 0)
 						vertStyle = VBS_Top;
@@ -503,7 +507,7 @@ namespace Apoc3D
 			}
 		}
 
-		void ButtonRow::DrawButton(Sprite* sprite, Texture* tex, int32 i, int32 colType, VerticalBorderStyle rowType, const Apoc3D::Math::Rectangle* btnSrcRect)
+		void ButtonRow::DrawButton(Sprite* sprite, Texture* tex, int32 i, HorizontalBorderStyle colType, VerticalBorderStyle rowType, const Apoc3D::Math::Rectangle* btnSrcRect)
 		{
 			uint32 subBox = R9_MiddleCenter;
 
@@ -511,7 +515,7 @@ namespace Apoc3D
 
 			switch (rowType)
 			{
-			case Apoc3D::UI::ButtonRow::VBS_Both:
+			case ButtonRow::VBS_Both:
 				subBox |= R9_TopCenter;
 				subBox |= R9_BottomCenter;
 
@@ -519,17 +523,17 @@ namespace Apoc3D
 				padding.Bottom = ButtonMargin.Bottom;
 
 				break;
-			case Apoc3D::UI::ButtonRow::VBS_Top:
+			case ButtonRow::VBS_Top:
 				subBox |= R9_TopCenter;
 				padding.Top = ButtonMargin.Top;
 				break;
-			case Apoc3D::UI::ButtonRow::VBS_Bottom:
+			case ButtonRow::VBS_Bottom:
 				subBox |= R9_BottomCenter;
 				padding.Bottom = ButtonMargin.Bottom;
 				break;
 			}
 
-			if (colType == -1)
+			if (colType == ButtonRow::HBS_Left || colType == ButtonRow::HBS_Both)
 			{
 				subBox |= R9_MiddleLeft;
 				padding.Left = ButtonMargin.Left;
@@ -539,7 +543,7 @@ namespace Apoc3D
 				if (subBox & R9_BottomCenter)
 					subBox |= R9_BottomLeft;
 			}
-			else if (colType == 1)
+			if (colType == ButtonRow::HBS_Right || colType == ButtonRow::HBS_Both)
 			{
 				subBox |= R9_MiddleRight;
 				padding.Right = ButtonMargin.Right;

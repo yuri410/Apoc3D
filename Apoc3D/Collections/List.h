@@ -335,6 +335,21 @@ namespace Apoc3D
 				return nullptr;
 			}
 
+			template <typename Func>
+			T* Find(Func f)
+			{
+				T* elm = (T*)m_elements;
+
+				for (int32 i = 0; i < m_count; i++)
+				{
+					if (f(std::cref(elm[i])))
+					{
+						return &elm[i];
+					}
+				}
+				return nullptr;
+			}
+
 			T* AllocateArrayCopy() const
 			{
 				T* result = new T[m_count];

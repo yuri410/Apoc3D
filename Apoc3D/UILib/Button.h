@@ -161,6 +161,13 @@ namespace Apoc3D
 			static ButtonEvent eventAnyRelease;
 
 		private:
+			enum HorizontalBorderStyle
+			{
+				HBS_Both,
+				HBS_Left,
+				HBS_Right,
+				HBS_None
+			};
 			enum VerticalBorderStyle
 			{
 				VBS_Both,
@@ -191,7 +198,7 @@ namespace Apoc3D
 
 			void UpdatePositions();
 
-			void DrawButton(Sprite* sprite, Texture* tex, int32 idx, int32 colType, VerticalBorderStyle rowType, const Apoc3D::Math::Rectangle* srcRect);
+			void DrawButton(Sprite* sprite, Texture* tex, int32 idx, HorizontalBorderStyle colType, VerticalBorderStyle rowType, const Apoc3D::Math::Rectangle* srcRect);
 
 			void DrawRegion9Subbox(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, ColorValue cv, Texture* texture, const Apoc3D::Math::Rectangle* srcRects, uint32 subRegionFlags);
 
