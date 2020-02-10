@@ -39,7 +39,7 @@ namespace Apoc3D
 		{ }
 
 		PictureBox::PictureBox(const Point& position, int border, Texture* texture)
-			: PictureBox(nullptr, position, border, nullptr)
+			: PictureBox(nullptr, position, border, texture)
 		{ }
 
 		PictureBox::PictureBox(const StyleSkin* skin, const Point& position, int border)

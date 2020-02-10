@@ -135,6 +135,25 @@ namespace Apoc3D
 				m_queueMutex.unlock();
 			}
 
+			void MoveToFront(FunctorReference<bool(const T&)> checker)
+			{
+				m_queueMutex.lock();
+
+				for (int32 i = 0; i < m_taskQueue.getCount(); i++)
+				{
+					if (checker(m_taskQueue[i]))
+					{
+						if (i > 0)
+						{
+							std::swap(m_taskQueue[i], m_taskQueue[0]);
+						}
+						break;
+					}
+				}
+
+				m_queueMutex.unlock();
+			}
+
 			void ClearTasks()
 			{
 				m_queueMutex.lock();
