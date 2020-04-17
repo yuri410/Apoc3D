@@ -165,6 +165,19 @@ namespace Apoc3D
 				return -1;
 			}
 
+			template <typename Func>
+			int32 IndexOf(Func f) const
+			{
+				const T* elm = (const T*)m_elements;
+
+				for (int32 i = 0; i < m_count; i++)
+				{
+					if (f(std::cref(elm[i])))
+						return i;
+				}
+				return -1;
+			}
+
 			bool Contains(const T& item) const { return IndexOf(item) != -1; }
 
 			bool Remove(const T& item)
@@ -328,9 +341,7 @@ namespace Apoc3D
 				for (int32 i = 0; i < m_count; i++)
 				{
 					if (f(std::cref(elm[i])))
-					{
 						return &elm[i];
-					}
 				}
 				return nullptr;
 			}
@@ -343,9 +354,7 @@ namespace Apoc3D
 				for (int32 i = 0; i < m_count; i++)
 				{
 					if (f(std::cref(elm[i])))
-					{
 						return &elm[i];
-					}
 				}
 				return nullptr;
 			}
