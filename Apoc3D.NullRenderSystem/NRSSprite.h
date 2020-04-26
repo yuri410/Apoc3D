@@ -44,7 +44,7 @@ namespace Apoc3D
 				virtual void Begin(SpriteSettings settings) override;
 				virtual void End() override;
 
-				virtual void Flush();
+				virtual void Submit(const SpriteDrawEntries& batch) override;
 
 			private:
 

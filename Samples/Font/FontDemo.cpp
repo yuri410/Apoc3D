@@ -118,7 +118,7 @@ namespace SampleFont
 		m_device->BeginFrame();
 		m_device->Clear(CLEAR_ColorBuffer, 0, 1, 0);
 
-		m_sprite->Begin((Sprite::SpriteSettings)(Sprite::SPR_AlphaBlended | Sprite::SPR_RestoreState));
+		m_sprite->Begin(Sprite::SPRMix_ManageStateAlphaBlended);
 		
 		Size areaSize = m_window->getClientSize();
 		Font* uming14 = FontManager::getSingleton().getFont(L"uming14");

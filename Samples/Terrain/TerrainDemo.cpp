@@ -246,7 +246,7 @@ namespace SampleTerrain
 
 		Application::Draw(time);
 		
-		m_sprite->Begin((Sprite::SpriteSettings)(Sprite::SPR_AlphaBlended | Sprite::SPR_RestoreState));
+		m_sprite->Begin(Sprite::SPRMix_ManageStateAlphaBlended);
 		DrawUI(m_sprite);
 
 

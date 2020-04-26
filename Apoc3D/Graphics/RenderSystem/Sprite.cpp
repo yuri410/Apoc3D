@@ -84,7 +84,7 @@ namespace
 		PointF cornerBases[CornerCount];
 
 		RoundedRectParameters(Texture* texture, const RectangleF& dstRect, const RectangleF* _srcRect,
-			float cornerRadius, int32 div, int32 minDiv = 1)
+							  float cornerRadius, int32 div, int32 minDiv = 1)
 		{
 			minDstEdge = Math::Min(dstRect.Width, dstRect.Height);
 			if (cornerRadius > minDstEdge) cornerRadius = minDstEdge;
@@ -127,14 +127,17 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
+
+			//////////////////////////////////////////////////////////////////////////
+
 			Sprite::Sprite(RenderDevice* rd)
 				: m_renderDevice(rd)
 				, m_transform(Matrix::Identity)
 				, m_stack(10)
-				, m_currentSettings((SpriteSettings)(SPR_ChangeState | SPR_AlphaBlended))
+				, m_currentSettings(SPRMix_ManageStateAlphaBlended)
 				, m_flushThreshold(128)
 			{
-				
+
 			}
 
 			Sprite::~Sprite()
@@ -148,12 +151,28 @@ namespace Apoc3D
 				assert(!m_began);
 				m_began = true;
 				m_currentSettings = settings;
+				m_batchCount = 0;
+
+				m_drawEntries.Clear();
 			}
 
 			void Sprite::End()
 			{
+				Flush();
+
 				assert(m_began);
 				m_began = false;
+			}
+
+			void Sprite::Flush()
+			{
+				if ((m_currentSettings & SPR_RecordBatch) == 0)
+				{
+					if (m_drawEntries.getCount() > 0)
+						Submit(m_drawEntries);
+
+					m_drawEntries.Clear();
+				}
 			}
 
 			//////////////////////////////////////////////////////////////////////////
@@ -499,7 +518,6 @@ namespace Apoc3D
 				}
 			}
 
-
 			//////////////////////////////////////////////////////////////////////////
 
 			void Sprite::DrawCircleGeneric(Texture* texture, const RectangleF& dstRect, const RectangleF* _srcRect, float lineWidth, float beginAngle, float endAngle, int32 div, uint color, bool uvExt)
@@ -604,7 +622,6 @@ namespace Apoc3D
 					EnqueueDrawEntry(de);
 				}
 			}
-
 
 			void Sprite::DrawRoundedRectGeneric(Texture* texture, const RectangleF& dstRect, const RectangleF* _srcRect, float width, float cornerRadius, int32 div, uint color)
 			{
@@ -786,12 +803,23 @@ namespace Apoc3D
 
 			}
 
+			//////////////////////////////////////////////////////////////////////////
+
+			void Sprite::DrawBatch(const SpriteDrawEntries& batch)
+			{
+				if (batch.getCount() > 0)
+				{
+					Flush();
+
+					Submit(batch);
+				}
+			}
 
 			//////////////////////////////////////////////////////////////////////////
 
 			const Matrix& Sprite::getTransform() const
 			{
-				if (m_currentSettings & SPR_UsePostTransformStack)
+				if (m_currentSettings & SPR_UseTransformStack)
 				{
 					if (m_stack.getCount())
 						return m_stack.Peek();
@@ -802,13 +830,13 @@ namespace Apoc3D
 
 			void Sprite::PopTransform()
 			{
-				if (m_currentSettings & SPR_UsePostTransformStack)
+				if (m_currentSettings & SPR_UseTransformStack)
 				{
 					m_stack.PopMatrix();
 				}
 				else
 				{
-					AP_EXCEPTION(ErrorID::InvalidOperation, L"The sprite is not begun with SPR_UsePostTransformStack.");
+					AP_EXCEPTION(ErrorID::InvalidOperation, L"The sprite is not begun with SPR_UseTransformStack.");
 				}
 			}
 
@@ -827,7 +855,7 @@ namespace Apoc3D
 
 			void Sprite::SetTransform(const Matrix& matrix)
 			{
-				if (m_currentSettings & SPR_UsePostTransformStack)
+				if (m_currentSettings & SPR_UseTransformStack)
 				{
 					m_stack.PushMatrix(matrix);
 				}
@@ -839,9 +867,9 @@ namespace Apoc3D
 
 			void Sprite::EnqueueDrawEntry(const DrawEntry& drawE)
 			{
-				m_drawsEntires.Add(drawE);
+				m_drawEntries.Add(drawE);
 
-				if (m_drawsEntires.getCount() > m_flushThreshold)
+				if (m_drawEntries.getCount() > m_flushThreshold)
 				{
 					Flush();
 				}
@@ -849,7 +877,7 @@ namespace Apoc3D
 
 			//////////////////////////////////////////////////////////////////////////
 
-			void Sprite::DrawEntry::FillNormalDraw(Texture* texture, const Matrix& baseTrans,
+			void SpriteDrawEntries::DrawEntry::FillNormalDraw(Texture* texture, const Matrix& baseTrans,
 				const PointF& tl_dp, const PointF& tr_dp, const PointF& bl_dp, const PointF& br_dp,
 				const PointF& tl_sp, const PointF& tr_sp, const PointF& bl_sp, const PointF& br_sp, uint color)
 			{
@@ -867,7 +895,7 @@ namespace Apoc3D
 				BR.TexCoord[0] = br_sp.X * invWidth; BR.TexCoord[1] = br_sp.Y * invHeight;
 			}
 
-			void Sprite::DrawEntry::FillNormalDraw(Texture* texture, const Matrix& baseTrans, float x, float y, uint color)
+			void SpriteDrawEntries::DrawEntry::FillNormalDraw(Texture* texture, const Matrix& baseTrans, float x, float y, uint color)
 			{
 				SetTexture(texture);
 
@@ -881,7 +909,7 @@ namespace Apoc3D
 			}
 
 			// Auto resizing to fit the target rectangle is implemented in this method.
-			void Sprite::DrawEntry::FillNormalDraw(Texture * texture, const Matrix & baseTrans, const RectangleF & dstRect, const RectangleF * srcRect, uint color)
+			void SpriteDrawEntries::DrawEntry::FillNormalDraw(Texture * texture, const Matrix & baseTrans, const RectangleF & dstRect, const RectangleF * srcRect, uint color)
 			{
 				SetTexture(texture);
 
@@ -897,11 +925,11 @@ namespace Apoc3D
 				SetSrcRect(texture, srcRect);
 			}
 
-			void Sprite::DrawEntry::SetTexture(Texture * tex)
+			void SpriteDrawEntries::DrawEntry::SetTexture(Texture * tex)
 			{
 				Tex = tex;
 			}
-			void Sprite::DrawEntry::SetPositions(const Matrix & baseTrans, const PointF & tl_dp, const PointF & tr_dp, const PointF & bl_dp, const PointF & br_dp)
+			void SpriteDrawEntries::DrawEntry::SetPositions(const Matrix & baseTrans, const PointF & tl_dp, const PointF & tr_dp, const PointF & bl_dp, const PointF & br_dp)
 			{
 				const Matrix& trans = baseTrans;
 
@@ -937,7 +965,7 @@ namespace Apoc3D
 				BR.Position[3] = 1;
 			}
 
-			void Sprite::DrawEntry::SetSrcRect(Texture * texture, const RectangleF * srcRect)
+			void SpriteDrawEntries::DrawEntry::SetSrcRect(Texture * texture, const RectangleF * srcRect)
 			{
 				if (srcRect)
 				{
@@ -958,12 +986,12 @@ namespace Apoc3D
 				}
 			}
 
-			void Sprite::DrawEntry::SetColors(uint color)
+			void SpriteDrawEntries::DrawEntry::SetColors(uint color)
 			{
 				TL.Diffuse = TR.Diffuse = BL.Diffuse = BR.Diffuse = color;
 			}
 
-			void Sprite::DrawEntry::SetColors(uint tlColor, uint trColor, uint blColor, uint brColor)
+			void SpriteDrawEntries::DrawEntry::SetColors(uint tlColor, uint trColor, uint blColor, uint brColor)
 			{
 				TL.Diffuse = tlColor;
 				TR.Diffuse = trColor;
@@ -971,7 +999,7 @@ namespace Apoc3D
 				BR.Diffuse = brColor;
 			}
 
-			void Sprite::DrawEntry::SetTextureCoords(const PointF & tl_sp, const PointF & tr_sp, const PointF & bl_sp, const PointF & br_sp)
+			void SpriteDrawEntries::DrawEntry::SetTextureCoords(const PointF & tl_sp, const PointF & tr_sp, const PointF & bl_sp, const PointF & br_sp)
 			{
 				TL.TexCoord[0] = tl_sp.X; TL.TexCoord[1] = tl_sp.Y;
 				TR.TexCoord[0] = tr_sp.X; TR.TexCoord[1] = tr_sp.Y;
@@ -979,7 +1007,7 @@ namespace Apoc3D
 				BR.TexCoord[0] = br_sp.X; BR.TexCoord[1] = br_sp.Y;
 			}
 
-			void Sprite::DrawEntry::ChangeUV(float uScale, float vScale, float uBias, float vBias)
+			void SpriteDrawEntries::DrawEntry::ChangeUV(float uScale, float vScale, float uBias, float vBias)
 			{
 				BL.TexCoord[0] *= uScale;
 				BR.TexCoord[0] *= uScale;
@@ -1003,7 +1031,7 @@ namespace Apoc3D
 
 				IsUVExtended = true;
 			}
-			void Sprite::DrawEntry::ChangeUV(const PointF & uvScale, const PointF & uvShift)
+			void SpriteDrawEntries::DrawEntry::ChangeUV(const PointF & uvScale, const PointF & uvShift)
 			{
 				ChangeUV(uvScale.X, uvScale.Y, uvShift.X, uvShift.Y);
 			}
@@ -1029,9 +1057,7 @@ namespace Apoc3D
 				if (m_sprite->isUsingStack())
 					m_sprite->PopTransform();
 				else
-				{
 					m_sprite->SetTransform(m_oldTransform);
-				}
 			}
 
 			//////////////////////////////////////////////////////////////////////////
@@ -1039,7 +1065,7 @@ namespace Apoc3D
 			SpriteBeginEndScope::SpriteBeginEndScope(Sprite* spr, Sprite::SpriteSettings settings)
 				: m_sprite(spr)
 				, m_oldBegan(spr->m_began)
-				, m_oldSettings((Sprite::SpriteSettings)(Sprite::SPR_AlphaBlended | Sprite::SPR_RestoreState))
+				, m_oldSettings(Sprite::SPRMix_ManageStateAlphaBlended)
 			{
 				if (spr->m_began)
 				{

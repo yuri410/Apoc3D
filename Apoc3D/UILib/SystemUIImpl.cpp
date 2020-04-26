@@ -203,8 +203,8 @@ namespace Apoc3D
 		void SystemUIImpl::Draw()
 		{
 			FontManager::getSingleton().StartFrame();
-
-			m_sprite->Begin((Sprite::SpriteSettings)(Sprite::SPR_AlphaBlended | Sprite::SPR_UsePostTransformStack | Sprite::SPR_RestoreState));
+			
+			m_sprite->Begin((Sprite::SpriteSettings)(Sprite::SPRMix_ManageStateAlphaBlended | Sprite::SPR_UseTransformStack));
 
 			// first background forms
 			for (int i = m_forms.getCount() - 1; i > -1; i--)

@@ -45,6 +45,64 @@ namespace Apoc3D
 				Bevel
 			};
 
+			class APAPI SpriteDrawEntries
+			{
+			public:
+
+				struct QuadVertex
+				{
+					float Position[4];
+					uint  Diffuse;
+					float TexCoord[2];
+				};
+
+				struct DrawEntry
+				{
+					Texture* Tex = nullptr;
+
+					QuadVertex TL;
+					QuadVertex TR;
+					QuadVertex BL;
+					QuadVertex BR;
+
+					bool IsUVExtended = false;
+
+					void FillNormalDraw(Texture* texture, const Matrix& baseTrans,
+										const PointF& tl_dp, const PointF& tr_dp, const PointF& bl_dp, const PointF& br_dp,
+										const PointF& tl_sp, const PointF& tr_sp, const PointF& bl_sp, const PointF& br_sp,
+										uint color);
+
+					void FillNormalDraw(Texture* texture, const Matrix& baseTrans, float x, float y, uint color);
+					void FillNormalDraw(Texture* texture, const Matrix& baseTrans, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color);
+
+
+					void SetTexture(Texture* tex);
+
+					void SetPositions(const Matrix& baseTrans, const PointF& tl_dp, const PointF& tr_dp, const PointF& bl_dp, const PointF& br_dp);
+
+					void SetSrcRect(Texture* texture, const Apoc3D::Math::RectangleF* srcRect);
+					void SetColors(uint color);
+					void SetColors(uint tlColor, uint trColor, uint blColor, uint brColor);
+
+					void SetTextureCoords(const PointF& tl_sp, const PointF& tr_sp, const PointF& bl_sp, const PointF& br_sp);
+
+					void ChangeUV(float uScale, float vScale, float uBias, float vBias);
+					void ChangeUV(const PointF& uvScale, const PointF& uvShift);
+				};
+
+				void Add(const DrawEntry& e) { m_drawsEntires.Add(e); }
+
+				void Clear() { m_drawsEntires.Clear(); }
+
+				int32 getCount() const { return m_drawsEntires.getCount(); }
+
+				template <int GroupSize>
+				GroupAccessor<DrawEntry, GroupSize> getGroupAccessor() const { return GroupAccessor<DrawEntry, GroupSize>(m_drawsEntires); }
+
+			private:
+				List<DrawEntry> m_drawsEntires;
+			};
+
 			/**
 			*  Sprite is a utility used to draw textured rectangles in viewport.
 			*
@@ -66,28 +124,32 @@ namespace Apoc3D
 				enum SpriteSettings
 				{
 					/** Modify render states, but not restore them  */
-					SPR_ChangeState = 1,  // 01
-					/** Keep render states unchanged */
-					SPR_KeepState = 2,	// 10
+					SPR_ChangeState = 1 << 0,
+					/** Store render states */
+					SPR_RestoreState = 1 << 1,
+
+					SPR_AlphaBlended = 1 << 2,
+					SPR_UseTransformStack = 1 << 3,
+
+					SPR_AllowShading = 1 << 4,
+
+					SPR_RecordBatch = 1 << 5,
+
 					/** Modify render states when Begin() and restore when calling End() */
-					SPR_RestoreState = 3,	// 11
-
-
-					SPR_AlphaBlended = 4,
-					SPR_UsePostTransformStack = 8,
-
-					SPR_AllowShading = 16,
-
-					SPRMix_RestoreStateAlphaBlended = SPR_AlphaBlended | SPR_RestoreState
+					SPRMix_ManageState = SPR_RestoreState | SPR_ChangeState,
+					SPRMix_ManageStateAlphaBlended = SPR_AlphaBlended | SPRMix_ManageState
 				};
-
 
 				virtual ~Sprite();
 
 				virtual void Begin(SpriteSettings settings);
 				virtual void End();
 
-				void ResetBatchCount() { m_batchCount = 0; }
+				virtual void Submit(const SpriteDrawEntries& batch) = 0;
+
+				void Flush();
+
+				//////////////////////////////////////////////////////////////////////////
 
 				void Draw(Texture* texture, int x, int y, uint color);
 				void Draw(Texture* texture, const Point& pos, uint color);
@@ -140,9 +202,9 @@ namespace Apoc3D
 				void DrawLine(Texture* texture, const PointF& start, const PointF& end, uint color,
 					float width, LineCapOptions caps, const PointF& uvScale = PointF(1, 1), const PointF& uvShift = PointF(0, 0));
 
-				//////////////////////////////////////////////////////////////////////////
+				void DrawBatch(const SpriteDrawEntries& batch);
 
-				virtual void Flush() = 0;
+				//////////////////////////////////////////////////////////////////////////
 
 				const Matrix& getTransform() const;
 
@@ -160,55 +222,20 @@ namespace Apoc3D
 				void PreMultiplyTransform(const Matrix& matrix);
 
 				/** Set current transform. If using matrix stack, pushes the matrix onto the stack as well. */
-				virtual void SetTransform(const Matrix& matrix);
+				void SetTransform(const Matrix& matrix);
+
+				const SpriteDrawEntries& getDrawEntries() { return m_drawEntries; }
 
 				RenderDevice* getRenderDevice() const { return m_renderDevice; }
-				bool isUsingStack() const { return !!(m_currentSettings & SPR_UsePostTransformStack); }
+				bool isUsingStack() const { return !!(m_currentSettings & SPR_UseTransformStack); }
 
 				int32 getBatchCount() const { return m_batchCount; }
 
 			protected:
 				static const int MaxDeferredDraws = 144;
 
-				struct QuadVertex
-				{
-					float Position[4];
-					uint Diffuse;
-					float TexCoord[2];
-				};
-				struct DrawEntry
-				{
-					Texture* Tex = nullptr;
-
-					QuadVertex TL;
-					QuadVertex TR;
-					QuadVertex BL;
-					QuadVertex BR;
-
-					bool IsUVExtended = false;
-
-					void FillNormalDraw(Texture* texture, const Matrix& baseTrans,
-						const PointF& tl_dp, const PointF& tr_dp, const PointF& bl_dp, const PointF& br_dp,
-						const PointF& tl_sp, const PointF& tr_sp, const PointF& bl_sp, const PointF& br_sp,
-						uint color);
-
-					void FillNormalDraw(Texture* texture, const Matrix& baseTrans, float x, float y, uint color);
-					void FillNormalDraw(Texture* texture, const Matrix& baseTrans, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color);
-
-
-					void SetTexture(Texture* tex);
-
-					void SetPositions(const Matrix& baseTrans, const PointF& tl_dp, const PointF& tr_dp, const PointF& bl_dp, const PointF& br_dp);
-
-					void SetSrcRect(Texture* texture, const Apoc3D::Math::RectangleF* srcRect);
-					void SetColors(uint color);
-					void SetColors(uint tlColor, uint trColor, uint blColor, uint brColor);
-
-					void SetTextureCoords(const PointF& tl_sp, const PointF& tr_sp, const PointF& bl_sp, const PointF& br_sp);
-
-					void ChangeUV(float uScale, float vScale, float uBias, float vBias);
-					void ChangeUV(const PointF& uvScale, const PointF& uvShift);
-				};
+				typedef SpriteDrawEntries::QuadVertex QuadVertex;
+				typedef SpriteDrawEntries::DrawEntry DrawEntry;
 
 				Sprite(RenderDevice* rd);
 
@@ -225,7 +252,6 @@ namespace Apoc3D
 
 				bool m_began = false;
 				int32 m_batchCount = 0;
-				List<DrawEntry> m_drawsEntires;
 
 			private:
 				RenderDevice* m_renderDevice;
@@ -234,6 +260,7 @@ namespace Apoc3D
 
 				SpriteSettings m_currentSettings;
 				int32 m_flushThreshold;
+				SpriteDrawEntries m_drawEntries;
 			};
 
 			class APAPI SpriteTransformScope

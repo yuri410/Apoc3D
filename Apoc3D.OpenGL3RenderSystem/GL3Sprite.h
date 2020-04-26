@@ -41,7 +41,7 @@ namespace Apoc3D
 				virtual void Begin(SpriteSettings settings);
 				virtual void End();
 
-				virtual void Flush();
+				virtual void Submit(const SpriteDrawEntries& batch);
 
 			private:
 				GL3RenderDevice* m_gldevice;

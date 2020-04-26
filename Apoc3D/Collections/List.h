@@ -1008,6 +1008,13 @@ namespace Apoc3D
 			T* end() { return m_end; }
 
 			bool isFullGroup() const { return m_end - m_begin == GroupSize; }
+			
+			int32 getCount() const { return (int32)(m_end - m_begin); }
+
+			T& operator [](int32 i) { return m_begin[i]; }
+			
+			const T& operator [](int32 i) const { return m_begin[i]; }
+
 		private:
 
 			T* m_begin = nullptr;

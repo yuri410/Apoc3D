@@ -100,14 +100,13 @@ namespace Apoc3D
 			{
 				Sprite::End();
 
-				Flush();
 				RestoreRenderState();
 			}
 			void D3D9Sprite::SetRenderState()
 			{
 				NativeD3DStateManager* mgr = m_device->getNativeStateManager();
 
-				if ((getSettings() & SPR_RestoreState) == SPR_RestoreState)
+				if (getSettings() & SPR_RestoreState)
 				{
 					m_storedState.oldAlphaBlendEnable = mgr->getAlphaBlendEnable();
 					m_storedState.oldBlendFunc = mgr->getAlphaBlendOperation();
@@ -123,7 +122,7 @@ namespace Apoc3D
 					mgr->SetDepth(false, mgr->getDepthBufferWriteEnabled());
 					mgr->SetCullMode(CullMode::None);
 
-					if ((getSettings() & SPR_AlphaBlended) == SPR_AlphaBlended)
+					if (getSettings() & SPR_AlphaBlended)
 						mgr->SetAlphaBlend(true, BlendFunction::Add, Blend::SourceAlpha, Blend::InverseSourceAlpha, m_storedState.oldBlendFactor);
 
 					m_rawDevice->SetStreamSource(0, m_quadBuffer->getD3DBuffer(), 0, sizeof(QuadVertex));
@@ -161,13 +160,14 @@ namespace Apoc3D
 
 				//mgr->SetAlphaBlend(false, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, oldBlendFactor);
 			}
+
 			void D3D9Sprite::RestoreRenderState()
 			{
-				if ((getSettings() & SPR_RestoreState) == SPR_RestoreState)
+				if (getSettings() & SPR_RestoreState)
 				{
 					NativeD3DStateManager* mgr = m_device->getNativeStateManager();
 
-					if ((getSettings() & SPR_AlphaBlended) == SPR_AlphaBlended)
+					if (getSettings() & SPR_AlphaBlended)
 						mgr->SetAlphaBlend(m_storedState.oldAlphaBlendEnable, m_storedState.oldBlendFunc, m_storedState.oldSrcBlend, m_storedState.oldDstBlend, m_storedState.oldBlendFactor);
 
 					mgr->SetDepth(m_storedState.oldDepthEnabled, mgr->getDepthBufferWriteEnabled());
@@ -175,92 +175,93 @@ namespace Apoc3D
 				}
 			}
 
-
-			void D3D9Sprite::Flush()
+			void D3D9Sprite::Submit(const SpriteDrawEntries& batch)
 			{
-				auto& m_deferredDraws = m_drawsEntires;
-
-				if (m_deferredDraws.getCount() == 0)
+				if (batch.getCount() == 0)
 					return;
 
-				char* vtxData = (char*)m_quadBuffer->Lock(0, m_deferredDraws.getCount() * 4 * sizeof(QuadVertex), LOCK_Discard);
-
-				for (int i = 0; i < m_deferredDraws.getCount(); i++)
+				for (auto& entries : batch.getGroupAccessor<MaxDeferredDraws>())
 				{
-					memcpy(vtxData, &m_deferredDraws[i].TL, sizeof(QuadVertex) * 4);
+					const int32 entryCount = entries.getCount();
 
-					vtxData += sizeof(QuadVertex) * 4;
-				}
+					char* vtxData = (char*)m_quadBuffer->Lock(0, entryCount * 4 * sizeof(QuadVertex), LOCK_Discard);
 
-				m_quadBuffer->Unlock();
-
-				NativeD3DStateManager* mgr = m_device->getNativeStateManager();
-
-				Texture* currentTexture = m_deferredDraws[0].Tex;
-				int32 lastIndex = 0;
-				bool currentUVExtend = m_deferredDraws[0].IsUVExtended;
-				
-				mgr->SetTexture(0, static_cast<D3D9Texture*>(currentTexture));
-				SetUVExtendedState(currentUVExtend);
-
-				for (int i = 0; i < m_deferredDraws.getCount() + 1; i++)
-				{
-					const DrawEntry* de;
-
-					if (i == m_deferredDraws.getCount())
+					for (int i = 0; i < entryCount; i++)
 					{
-						// last entry, make a dummy next DrawEntry to force state change
-						// then the previous entries will be drawn
-						static DrawEntry dummy;
-						dummy.Tex = nullptr;
-						dummy.IsUVExtended = !currentUVExtend;
-						de = &dummy;
-					}
-					else
-					{
-						de = &m_deferredDraws[i];
+						memcpy(vtxData, &entries[i].TL, sizeof(QuadVertex) * 4);
+
+						vtxData += sizeof(QuadVertex) * 4;
 					}
 
-					bool textureChanged = false;
-					bool uvModeChanged = false;
+					m_quadBuffer->Unlock();
 
-					if (de->Tex != currentTexture)
+
+					NativeD3DStateManager* mgr = m_device->getNativeStateManager();
+
+					Texture* currentTexture = entries[0].Tex;
+					int32 lastIndex = 0;
+					bool currentUVExtend = entries[0].IsUVExtended;
+
+					mgr->SetTexture(0, static_cast<D3D9Texture*>(currentTexture));
+					SetUVExtendedState(currentUVExtend);
+
+					for (int i = 0; i < entryCount + 1; i++)
 					{
-						currentTexture = de->Tex;
-						textureChanged = true;
-					}
+						const DrawEntry* de;
 
-					if (de->IsUVExtended != currentUVExtend)
-					{
-						currentUVExtend = de->IsUVExtended;
-						uvModeChanged = true;
-					}
-
-					if (textureChanged || uvModeChanged)
-					{
-						int32 startIndex = lastIndex * 6;
-						int32 startVertex = lastIndex * 4;
-						int32 dpCount = i - lastIndex; // not including i
-
-						int32 vtxCount = dpCount * 4;
-
-						m_rawDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, startVertex, vtxCount, startIndex, dpCount * 2);
-						m_batchCount++;
-
-						lastIndex = i;
-
-						if (i != m_deferredDraws.getCount())
+						if (i == entryCount)
 						{
-							if (textureChanged)
-								mgr->SetTexture(0, static_cast<D3D9Texture*>(currentTexture));
+							// last entry, make a dummy next DrawEntry to force state change
+							// then the previous entries will be drawn
+							static DrawEntry dummy;
+							dummy.Tex = nullptr;
+							dummy.IsUVExtended = !currentUVExtend;
+							de = &dummy;
+						}
+						else
+						{
+							de = &entries[i];
+						}
 
-							if (uvModeChanged)
-								SetUVExtendedState(currentUVExtend);
+						bool textureChanged = false;
+						bool uvModeChanged = false;
+
+						if (de->Tex != currentTexture)
+						{
+							currentTexture = de->Tex;
+							textureChanged = true;
+						}
+
+						if (de->IsUVExtended != currentUVExtend)
+						{
+							currentUVExtend = de->IsUVExtended;
+							uvModeChanged = true;
+						}
+
+						if (textureChanged || uvModeChanged)
+						{
+							int32 startIndex = lastIndex * 6;
+							int32 startVertex = lastIndex * 4;
+							int32 dpCount = i - lastIndex; // not including i
+
+							int32 vtxCount = dpCount * 4;
+
+							m_rawDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, startVertex, vtxCount, startIndex, dpCount * 2);
+							m_batchCount++;
+
+							lastIndex = i;
+
+							if (i != entryCount)
+							{
+								if (textureChanged)
+									mgr->SetTexture(0, static_cast<D3D9Texture*>(currentTexture));
+
+								if (uvModeChanged)
+									SetUVExtendedState(currentUVExtend);
+							}
 						}
 					}
 				}
-				
-				m_deferredDraws.Clear();
 			}
 
 			void D3D9Sprite::SetUVExtendedState(bool isExtended)
