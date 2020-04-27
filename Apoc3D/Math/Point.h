@@ -149,6 +149,61 @@ namespace Apoc3D
 			static const PointF Zero;
 		};
 
+		class APAPI PointD
+		{
+		public:
+			double X;
+			double Y;
+
+			PointD() : X(0), Y(0) { }
+			PointD(double x, double y) : X(x), Y(y) { }
+			PointD(const Point& p) : X((double)p.X), Y((double)p.Y) { }
+
+			bool operator==(const PointD& other) const { return (X == other.X) && (Y == other.Y); }
+			bool operator!=(const PointD& other) const { return !(*this == other); }
+
+			PointD operator+(const PointD& other) const { return PointD(X + other.X, Y + other.Y); }
+			PointD operator-(const PointD& other) const { return PointD(X - other.X, Y - other.Y); }
+			PointD operator-() const { return PointD(-X, -Y); }
+
+			PointD operator/(double v) const { return PointD(X / v, Y / v); }
+			PointD operator*(double v) const { return PointD(X * v, Y * v); }
+			PointD operator*(const PointD& other) const { return PointD(X * other.X, Y * other.Y); }
+
+			PointD& operator +=(const PointD& rhs)
+			{
+				X += rhs.X;
+				Y += rhs.Y;
+				return *this;
+			}
+			PointD& operator -=(const PointD& rhs)
+			{
+				X -= rhs.X;
+				Y -= rhs.Y;
+				return *this;
+			}
+
+			PointD& operator *=(double v)
+			{
+				X *= v; Y *= v;
+				return *this;
+			}
+			PointD& operator /=(double v)
+			{
+				X /= v; Y /= v;
+				return *this;
+			}
+
+			static double Distance(const PointD& a, const PointD& b)
+			{
+				double dx = b.X - a.X;
+				double dy = b.Y - a.Y;
+				return sqrt(dx * dx + dy * dy);
+			}
+
+			static const PointD Zero;
+		};
+
 	}
 }
 #endif

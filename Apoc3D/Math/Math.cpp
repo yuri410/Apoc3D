@@ -6,8 +6,10 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		const PointF PointF::Zero = PointF(0, 0);
 		const Point Point::Zero = Point(0, 0);
+		const PointF PointF::Zero = PointF(0, 0);
+		const PointD PointD::Zero = PointD(0, 0);
+
 		const Rectangle Rectangle::Empty = Rectangle(0, 0, 0, 0);
 		const RectangleF RectangleF::Empty = RectangleF(0, 0, 0, 0);
 
