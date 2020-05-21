@@ -49,7 +49,7 @@ namespace Apoc3D
 			virtual void Draw(Sprite* sprite) override;
 			virtual void DrawOverlay(Sprite* sprite) override;
 			virtual bool IsOverriding() override;
-			virtual Apoc3D::Math::Rectangle ComboBox::GetOverridingAbsoluteArea() override;
+			virtual Apoc3D::Math::Rectangle GetOverridingAbsoluteArea() override;
 
 			bool isMouseHover() const;
 			Apoc3D::Math::Rectangle getMouseHoverArea() const;

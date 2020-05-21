@@ -647,7 +647,7 @@ namespace Apoc3D
 					rect.Width -= rect.getRight() - uiArea.getRight();
 				}
 
-				m_controls.Draw(sprite, &rect);
+				m_controls.Draw(sprite, &rect, true);
 
 				if (MenuBar && MenuBar->Visible)
 					MenuBar->Draw(sprite);

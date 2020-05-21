@@ -177,7 +177,8 @@ namespace Apoc3D
 		public:
 			void Update(const AppTime* time);
 			void Draw(Sprite* sprite);
-			void Draw(Sprite* sprite, const Rectangle* scissorRegion);
+			void Draw(Sprite* sprite, const Rectangle* scissorRegion, bool includeOverrides);
+			void DrawOverlay(Sprite* sprite);
 
 			void SetElementsBaseOffset(Point bo);
 			void SetElementsInteractive(bool isInteractive);

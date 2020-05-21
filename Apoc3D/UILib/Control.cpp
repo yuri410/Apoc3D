@@ -428,10 +428,10 @@ namespace Apoc3D
 
 		void ControlCollection::Draw(Sprite* sprite)
 		{
-			Draw(sprite, nullptr);
+			Draw(sprite, nullptr, true);
 		}
-
-		void ControlCollection::Draw(Sprite* sprite, const Rectangle* scissorRegion)
+		
+		void ControlCollection::Draw(Sprite* sprite, const Rectangle* scissorRegion, bool includeOverrides)
 		{
 			char ssts_buf[sizeof(ScissorTestScope)];
 			ScissorTestScope* ssts = nullptr;
@@ -444,7 +444,7 @@ namespace Apoc3D
 			for (int32 i = 0; i < m_count; i++)
 			{
 				Control* ctrl = m_elements[i];
-				if (ctrl->IsOverriding())
+				if (includeOverrides && ctrl->IsOverriding())
 				{
 					overridingControl = ctrl;
 				}
@@ -462,6 +462,15 @@ namespace Apoc3D
 			if (overridingControl)
 			{
 				overridingControl->DrawOverlay(sprite);
+			}
+		}
+
+		void ControlCollection::DrawOverlay(Sprite* sprite)
+		{
+			Control* ctrl = FindOverridingControl();
+			if (ctrl)
+			{
+				ctrl->DrawOverlay(sprite);
 			}
 		}
 
