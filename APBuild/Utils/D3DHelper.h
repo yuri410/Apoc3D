@@ -3,8 +3,8 @@
 
 #include "APBCommon.h"
 
-#include <d3d9.h>
-#include <d3dx9.h>
+#include <dxsdk/d3d9.h>
+#include <dxsdk/d3dx9.h>
 
 namespace APBuild
 {

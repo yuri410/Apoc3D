@@ -1,6 +1,7 @@
 #include "MeshProcessing.h"
 
-#include <d3dx9.h>
+#include <dxsdk/d3d9.h>
+#include <dxsdk/d3dx9mesh.h>
 
 namespace APBuild
 {

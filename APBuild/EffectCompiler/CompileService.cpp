@@ -27,11 +27,11 @@
 #include "Library/hlslparser/HLSLParser.h"
 #include "Library/hlslparser/HLSLTree.h"
 
-#include <d3d9.h>
-#include <d3dx9.h>
-#include <d3d11.h>
-#include <d3dx11.h>
-#include <d3dcompiler.h>
+#include <dxsdk/d3d9.h>
+#include <dxsdk/d3dx9.h>
+#include <dxsdk/d3d11.h>
+#include <dxsdk/d3dx11.h>
+#include <dxsdk/d3dcompiler.h>
 
 namespace APBuild
 {

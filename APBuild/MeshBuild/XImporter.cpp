@@ -20,7 +20,7 @@
 #include "Utils/D3DHelper.h"
 #include "Utils/MeshProcessing.h"
 
-#include <d3dx9.h>
+#include <dxsdk/d3dx9.h>
 
 namespace APBuild
 {

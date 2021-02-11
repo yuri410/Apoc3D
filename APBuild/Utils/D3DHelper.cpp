@@ -16,14 +16,14 @@
 
 #include "D3DHelper.h"
 
-#pragma comment(lib, "d3d9.lib")
-#pragma comment(lib, "d3dx9.lib")
-#pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "dxsdk/d3d9.lib")
+#pragma comment(lib, "dxsdk/d3dx9.lib")
+#pragma comment(lib, "dxsdk/dxguid.lib")
 
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "d3dcompiler.lib")
-#pragma comment(lib, "d3dx11.lib")
-#pragma comment(lib, "dxerr.lib")
+#pragma comment(lib, "dxsdk/d3d11.lib")
+#pragma comment(lib, "dxsdk/d3dcompiler.lib")
+#pragma comment(lib, "dxsdk/d3dx11.lib")
+#pragma comment(lib, "dxsdk/dxerr.lib")
 
 namespace APBuild
 {
