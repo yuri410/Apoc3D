@@ -80,6 +80,7 @@ namespace Apoc3D
 			{
 				assert(m_textureID && (getType() == TextureType::Texture2D || getType() == TextureType::Texture1D));
 
+				glBindTexture(m_glTarget, m_textureID);
 				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_mapPBO);
 
 				GLbitfield access = GLUtils::ConvertLockMode(mode);
@@ -101,6 +102,7 @@ namespace Apoc3D
 			{
 				assert(m_textureID && getType() == TextureType::Texture3D);
 
+				glBindTexture(m_glTarget, m_textureID);
 				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_mapPBO);
 
 				GLbitfield access = GLUtils::ConvertLockMode(mode);
@@ -123,6 +125,7 @@ namespace Apoc3D
 			{
 				assert(m_textureID && getType() == TextureType::CubeTexture);
 
+				glBindTexture(m_glTarget, m_textureID);
 				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_mapPBO);
 
 				GLbitfield access = GLUtils::ConvertLockMode(mode);
@@ -296,12 +299,50 @@ namespace Apoc3D
 				const int32 levelCount = getLevelCount();
 				const PixelFormat format = getFormat();
 
-				assert(m_textureID);
-
 				m_glTarget = GLUtils::GetTextureTarget(getType());
+
+				m_levelOffsets = new GLint[levelCount]();
+
+				int32 totalSize = 0;
+				if (data)
+				{
+					for (int32 i = 0; i < levelCount; i++)
+					{
+						int32 levelSize = data->Levels[i].LevelSize;
+
+						totalSize += data->Levels[i].LevelSize;
+
+						for (int32 j = i + 1; j < levelCount; j++)
+							m_levelOffsets[j] += levelSize;
+					}
+				}
+				else
+				{
+					int32 width = getWidth();
+					int32 height = getHeight();
+					int32 depth = getDepth();
+
+					for (int32 i = 0; i < levelCount; i++)
+					{
+						int32 levelSize = PixelFormatUtils::GetMemorySize(width, height, depth, format);
+
+						totalSize += levelSize;
+
+						if (width > 1)	 width = width / 2;
+						if (height > 1)  height = height / 2;
+						if (depth > 1)	 depth = depth / 2;
+
+						for (int32 j = i + 1; j < levelCount; j++)
+							m_levelOffsets[j] += levelSize;
+					}
+				}
+
+				glGenBuffers(1, &m_mapPBO);
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_mapPBO);
+				glBufferData(GL_PIXEL_UNPACK_BUFFER, totalSize, nullptr, getUsage() == TU_Dynamic ? GL_DYNAMIC_DRAW : GL_STREAM_DRAW);
+
 				glGenTextures(1, &m_textureID);
 				glBindTexture(m_glTarget, m_textureID);
-				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
 				glTexParameteri(m_glTarget, GL_TEXTURE_MAX_LEVEL, levelCount - 1);
 				glTexParameteri(m_glTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -312,34 +353,30 @@ namespace Apoc3D
 				GLenum glInternalFormat;
 				GLUtils::ConvertPixelFormat(format, m_glFormat, m_glType, glInternalFormat);
 
+				if (data)
+				{
+					for (int32 i = 0; i < levelCount; i++)
+					{
+						TextureLevelData& lvl = data->Levels[i];
+
+						const char* levelData = lvl.ContentData;
+						int32 levelSize = lvl.LevelSize;
+
+						glBufferSubData(GL_PIXEL_UNPACK_BUFFER, m_levelOffsets[i], levelSize, levelData);
+					}
+				}
+
 				// For textures, upload data directly.
 				// So PBO can use pre-allocated textures later.
 				// https://community.khronos.org/t/pbo-performances-compressed-textures/54618
-
-				m_levelOffsets = new GLint[levelCount]();
-
-				if (PixelFormatUtils::IsCompressed(format))
 				{
-					char* levelData = nullptr;
-					if (data == nullptr)
+					int32 width = getWidth();
+					int32 height = getHeight();
+					int32 depth = getDepth();
+					int32 levelSize;
+
+					for (int32 i = 0; i < levelCount; i++)
 					{
-						levelData = new char[PixelFormatUtils::GetMemorySize(getWidth(), getHeight(), getDepth(), format)]();
-					}
-
-					int width = getWidth();
-					int height = getHeight();
-					int depth = getDepth();
-
-					// fill all the levels with zero buffer
-					// glCompressedTexImage do not allow 0 pointer as data
-
-					// All levels are generated in this loop
-					for (int i = 0; i < levelCount; i++)
-					{
-						int levelSize;
-						int faceSize = 0;
-						const char* levelData = nullptr;
-
 						if (data)
 						{
 							TextureLevelData& lvl = data->Levels[i];
@@ -347,138 +384,93 @@ namespace Apoc3D
 							width = lvl.Width;
 							height = lvl.Height;
 							depth = lvl.Depth;
-							levelData = lvl.ContentData;
 							levelSize = lvl.LevelSize;
-							faceSize = levelSize / 6;
 						}
 						else
 						{
 							levelSize = PixelFormatUtils::GetMemorySize(width, height, depth, format);
 						}
+						
+						int32 faceSize = levelSize / 6;
 
 						switch (getType())
 						{
 							case TextureType::Texture1D:
-								glCompressedTexImage1D(GL_TEXTURE_1D, i, glInternalFormat,
-													   width,
-													   0, levelSize, levelData);
+								if (PixelFormatUtils::IsCompressed(format))
+								{
+									glCompressedTexImage1D(GL_TEXTURE_1D, i, glInternalFormat,
+														   width,
+														   0, levelSize, (const GLvoid*)m_levelOffsets[i]);
+								}
+								else
+								{
+									glTexImage1D(GL_TEXTURE_1D, i, glInternalFormat,
+												 width,
+												 0, m_glFormat, m_glType, (const GLvoid*)m_levelOffsets[i]);
+								}
 								break;
+
 							case TextureType::Texture2D:
-								glCompressedTexImage2D(GL_TEXTURE_2D, i, glInternalFormat,
-													   width, height,
-													   0, levelSize, levelData);
+								if (PixelFormatUtils::IsCompressed(format))
+								{
+									glCompressedTexImage2D(GL_TEXTURE_2D, i, glInternalFormat,
+														   width, height,
+														   0, levelSize, (const GLvoid*)m_levelOffsets[i]);
+								}
+								else
+								{
+									glTexImage2D(GL_TEXTURE_2D, i, format,
+												 width, height,
+												 0, m_glFormat, m_glType, (const GLvoid*)m_levelOffsets[i]);
+								}
 								break;
+
 							case TextureType::Texture3D:
-								glCompressedTexImage3D(GL_TEXTURE_3D, i, glInternalFormat,
-													   width, height, depth,
-													   0, levelSize, levelData);
+								if (PixelFormatUtils::IsCompressed(format))
+								{
+									glTexImage3D(GL_TEXTURE_3D, i, format,
+												 width, height, depth,
+												 0, m_glFormat, m_glType, (const GLvoid*)m_levelOffsets[i]);
+								}
+								else
+								{
+									glCompressedTexImage3D(GL_TEXTURE_3D, i, glInternalFormat,
+														   width, height, depth,
+														   0, levelSize, (const GLvoid*)m_levelOffsets[i]);
+								}
 								break;
+
 							case TextureType::CubeTexture:
 								// do every cube map face
-								for (int j = 0; j < 6; j++)
+								for (int32 j = 0; j < 6; j++)
 								{
-									glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, i, glInternalFormat,
-														   width, height,
-														   0, levelSize, levelData + faceSize * j);
+									if (PixelFormatUtils::IsCompressed(format))
+									{
+										glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, i, glInternalFormat,
+															   width, height,
+															   0, levelSize, (const GLvoid*)(m_levelOffsets[i] + faceSize * j));
+									}
+									else
+									{
+										glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, i, format,
+													 width, height,
+													 0, m_glFormat, m_glType, (const GLvoid*)(m_levelOffsets[i] + faceSize * j));
+									}
 								}
 								break;
 						}
 
-						// the w/h/d will remain 1 if they are small enough
 						if (width > 1)	 width = width / 2;
 						if (height > 1)  height = height / 2;
 						if (depth > 1)	 depth = depth / 2;
-
-						for (int j = i+1; j < levelCount; j++)
-							m_levelOffsets[j] += levelSize;
-					}
-
-					if (levelData)
-						delete[] levelData;
-				}
-				else
-				{
-					int width = getWidth();
-					int height = getHeight();
-					int depth = getDepth();
-
-					// All levels are generated in this loop
-					for (int i = 0; i < levelCount; i++)
-					{
-						const char* levelData = nullptr;
-						int levelSize;
-						int faceSize = 0;
-
-						if (data)
-						{
-							TextureLevelData& lvl = data->Levels[i];
-
-							width = lvl.Width;
-							height = lvl.Height;
-							depth = lvl.Depth;
-							levelData = lvl.ContentData;
-							levelSize = lvl.LevelSize;
-							faceSize = lvl.LevelSize / 6;
-						}
-						else
-						{
-							levelSize = PixelFormatUtils::GetMemorySize(width, height, depth, format);
-						}
-
-						switch (getType())
-						{
-							case TextureType::Texture1D:
-								glTexImage1D(GL_TEXTURE_1D, i, glInternalFormat,
-											 width,
-											 0, m_glFormat, m_glType, levelData);
-								break;
-
-							case TextureType::Texture2D:
-								glTexImage2D(GL_TEXTURE_2D, i, format,
-											 width, height,
-											 0, m_glFormat, m_glType, levelData);
-								break;
-
-							case TextureType::Texture3D:
-								glTexImage3D(GL_TEXTURE_3D, i, format,
-											 width, height, depth,
-											 0, m_glFormat, m_glType, levelData);
-								break;
-
-							case TextureType::CubeTexture:
-								// do every cube map face
-								for (int j = 0; j < 6; j++)
-									glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, i, format,
-												 width, height,
-												 0, m_glFormat, m_glType, levelData + faceSize*j);
-
-								break;
-						}
-
-						if (width > 1)	 width = width / 2;
-						if (height > 1)  height = height / 2;
-						if (depth > 1)	 depth = depth / 2;
-
-						for (int j = i + 1; j < levelCount; j++)
-							m_levelOffsets[j] += levelSize;
 					}
 				}
-
+				// All levels are generated in this loop
+				
 				if (getUsage() & TU_AutoMipMap)
 				{
 					glGenerateMipmap(GL_TEXTURE_2D);
-				}
-
-				int32 totalSize = 0;
-				for (int i = 0; i < getLevelCount(); i++)
-				{
-					totalSize += m_levelOffsets[i];
-				}
-
-				glGenBuffers(1, &m_mapPBO);
-				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_mapPBO);
-				glBufferData(GL_PIXEL_UNPACK_BUFFER, totalSize, NULL, getUsage() == TU_Dynamic ? GL_DYNAMIC_DRAW : GL_STREAM_DRAW);
-
+				}				
 			}
 		}
 	}

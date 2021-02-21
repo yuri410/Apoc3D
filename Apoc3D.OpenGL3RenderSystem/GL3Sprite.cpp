@@ -21,8 +21,11 @@
 #include "GL3VertexDeclaration.h"
 #include "GL3Buffers.h"
 #include "GL3Utils.h"
-//#include "Apoc3D/Graphics/RenderSystem/HardwareBuffer.h"
+#include "GL3ObjectFactory.h"
+#include "GL3Shader.h"
+#include "Apoc3D/IOLib/IOUtils.h"
 
+//#include "Apoc3D/Graphics/RenderSystem/HardwareBuffer.h"
 
 namespace Apoc3D
 {
@@ -30,8 +33,18 @@ namespace Apoc3D
 	{
 		namespace GL3RenderSystem
 		{
+			char* CreateCodeBlob(const char* src)
+			{
+				int32 srcLen = (int32)strlen(src);
+				char* r = new char[srcLen + sizeof(int) * 2];
+				i32_mb_le(srcLen, r);
+				i32_mb_le(srcLen, r + sizeof(int));
+				memcpy(r + sizeof(int) * 2, src, srcLen);
+				return r;
+			}
+
 			GL3Sprite::GL3Sprite(GL3RenderDevice* device)
-				: Sprite(device), m_gldevice(device)
+				: Sprite(device), m_device(device)
 			{
 				m_vtxDecl = new GL3VertexDeclaration(
 				{
@@ -63,6 +76,22 @@ namespace Apoc3D
 				}
 
 				m_storedState.oldBlendFactor = 0;
+
+				GL3ObjectFactory* objFac = static_cast<GL3ObjectFactory*>(m_device->getObjectFactory());
+
+				const char* vsCode = "#version 150\nin vec2 a_Position; void main() { gl_Position = vec4( a_Position, 0.0, 1.0 ); }";
+				const char* psCode = "#version 150\nout vec4 outColor; void main() { outColor = vec4( 1.0, 0.0, 0.0, 1.0 ); }";
+
+				char* vsBlob = CreateCodeBlob(vsCode);
+				char* psBlob = CreateCodeBlob(psCode);
+
+				m_vertexShader = static_cast<GL3VertexShader*>(objFac->CreateVertexShader((const byte*)vsBlob));
+				m_pixelShader = static_cast<GL3PixelShader*>(objFac->CreatePixelShader((const byte*)psBlob));
+
+				delete[] vsBlob;
+				delete[] psBlob;
+
+				m_vertexShader->NotifyLinkage({ m_vertexShader, m_pixelShader });
 			}
 			GL3Sprite::~GL3Sprite()
 			{
@@ -209,8 +238,11 @@ namespace Apoc3D
 
 					m_device->PostBindRenderTargets();
 
-					GLProgram* fxProg = m_device->PostBindShaders();
+					m_device->BindVertexShader(m_vertexShader);
+					m_device->BindPixelShader(m_pixelShader);
 
+					GLProgram* fxProg = m_device->PostBindShaders();
+					assert(fxProg);
 					m_vtxDecl->Bind(fxProg, m_quadBuffer);
 
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_quadIndices->getGLBufferID());

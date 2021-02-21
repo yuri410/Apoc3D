@@ -22,6 +22,7 @@
 
 #pragma comment(lib, "Apoc3D.lib")
 #pragma comment(lib, "Apoc3D.D3D9RenderSystem.lib")
+#pragma comment(lib, "Apoc3D.OpenGL3RenderSystem.lib")
 #pragma comment(lib, "Apoc3D.WindowsInput.lib")
 #pragma comment(lib, "Apoc3D.Essentials.lib")
 

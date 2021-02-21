@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3d", "Apoc3D\Apoc3d.vcxproj", "{DB9F1707-9349-4171-B670-CC5AC4EE4170}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D", "Apoc3D\Apoc3d.vcxproj", "{DB9F1707-9349-4171-B670-CC5AC4EE4170}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APBuild", "APBuild\APBuild.vcxproj", "{84FF48B6-E1C8-447E-A1A1-B7D67E045E68}"
 EndProject
@@ -40,6 +40,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Font", "Samples\Font\Font.vcxproj", "{5BE097D4-AA3A-41C9-B58F-EF4627B13806}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GUI", "Samples\GUI\GUI.vcxproj", "{C29E77BC-60BF-4BFC-A74E-5C93E1918C51}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4ECF9A4B-40A2-458D-BCDB-B48440527408} = {4ECF9A4B-40A2-458D-BCDB-B48440527408}
+		{1476E25C-AE89-45D2-9F76-9929F6C8263F} = {1476E25C-AE89-45D2-9F76-9929F6C8263F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Terrain", "Samples\Terrain\Terrain.vcxproj", "{B7A302BD-C02D-4BB3-B6D5-B2CBEE6881BF}"
 EndProject
@@ -289,7 +293,8 @@ Global
 		{1476E25C-AE89-45D2-9F76-9929F6C8263F}.Release_Static|x64.Build.0 = Release_Static|x64
 		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Debug|Win32.Build.0 = Debug|Win32
-		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Debug|x64.ActiveCfg = Debug|Win32
+		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Debug|x64.ActiveCfg = Debug|x64
+		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Debug|x64.Build.0 = Debug|x64
 		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_DynLib|Win32.ActiveCfg = Release_DynLib|Win32
 		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_DynLib|Win32.Build.0 = Release_DynLib|Win32
 		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_DynLib|x64.ActiveCfg = Release_DynLib|Win32

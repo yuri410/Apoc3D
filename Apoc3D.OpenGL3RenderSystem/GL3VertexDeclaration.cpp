@@ -27,7 +27,7 @@ namespace Apoc3D
 				vb->Bind();
 				
 				MappingKey k;
-				k.m_prog = prog->getGLProgID();
+				k.m_prog = prog ? prog->getGLProgID() : 0;
 				k.m_vbo = vb->getGLBufferID();
 
 				GLVertexArray* vao = m_cachedVaos.TryGetValue(k);

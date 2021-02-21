@@ -32,6 +32,9 @@ namespace Apoc3D
 	{
 		namespace GL3RenderSystem
 		{
+			class GL3VertexShader;
+			class GL3PixelShader;
+
 			class GL3Sprite : public Sprite
 			{
 			public:
@@ -44,8 +47,6 @@ namespace Apoc3D
 				virtual void Submit(const SpriteDrawEntries& batch);
 
 			private:
-				GL3RenderDevice* m_gldevice;
-
 				void SetUVExtendedState(bool isExtended);
 
 				void SetRenderState();
@@ -67,7 +68,8 @@ namespace Apoc3D
 				GL3IndexBuffer* m_quadIndices;
 
 				GL3RenderDevice* m_device;
-
+				GL3VertexShader* m_vertexShader;
+				GL3PixelShader* m_pixelShader;
 			};
 		}
 	}

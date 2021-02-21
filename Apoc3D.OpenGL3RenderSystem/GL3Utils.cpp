@@ -477,8 +477,10 @@ namespace Apoc3D
 						elementType = GL_HALF_FLOAT;
 						elementCount = 4;
 						break;
+					default:
+						return false;
 				}
-				return false;
+				return true;
 			}
 		
 

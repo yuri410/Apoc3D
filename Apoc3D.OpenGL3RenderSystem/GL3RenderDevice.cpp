@@ -484,7 +484,10 @@ namespace Apoc3D
 				GLProgram* fxProg = nullptr;
 
 				if (!m_shaderDirty)
-					return false;
+				{
+					assert(m_vertexShader->getGLProgram() == m_pixelShader->getGLProgram());
+					return m_vertexShader->getGLProgram();
+				}
 
 				m_shaderDirty = false;
 
@@ -492,7 +495,7 @@ namespace Apoc3D
 				{
 					assert(m_vertexShader->getGLProgram() == m_pixelShader->getGLProgram());
 				
-					fxProg = m_vertexShader->getGLProgram();;
+					fxProg = m_vertexShader->getGLProgram();
 				}
 
 				glUseProgram(fxProg ? fxProg->getGLProgID() : 0);

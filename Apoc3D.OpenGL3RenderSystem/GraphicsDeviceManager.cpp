@@ -126,6 +126,12 @@ namespace Apoc3D
 				HGLRC tempHrc = wglCreateContext(tempHdc);
 				wglMakeCurrent(tempHdc, tempHrc);
 
+				if (!(gl3wInit() == GL3W_OK && wglInit()))
+				{
+					AP_EXCEPTION(ErrorID::NotSupported, L"GL3W failed.");
+					return;
+				}
+
 				int major = 0;
 				int minor = 0;
 				glGetIntegerv(GL_MAJOR_VERSION, &major);

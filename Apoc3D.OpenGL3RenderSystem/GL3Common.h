@@ -29,7 +29,7 @@
 
 #pragma comment(lib, "Apoc3D.lib")
 #pragma comment(lib, "Apoc3D.Win32.lib")
-//#pragma comment(lib, "OpenGL32.lib")
+#pragma comment(lib, "OpenGL32.lib")
 
 
 /*

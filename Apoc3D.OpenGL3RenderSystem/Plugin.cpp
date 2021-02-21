@@ -32,7 +32,7 @@ namespace Apoc3D
 			GL3RSPlugin::GL3RSPlugin()
 				: m_factory()
 			{
-				m_glInitialized = (gl3wInit() == GL3W_OK && wglInit());
+				m_glInitialized = true;// (gl3wInit() == GL3W_OK && wglInit());
 			}
 
 			bool GL3RSPlugin::Load()

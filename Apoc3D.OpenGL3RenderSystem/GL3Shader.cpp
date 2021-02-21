@@ -61,11 +61,19 @@ namespace Apoc3D
 			{
 				int32 dataLength = mb_i32_le((const char*)byteCode);
 				int32 sourceLength = mb_i32_le((const char*)byteCode + sizeof(int));
+
 				const GLchar* sourceCode = new GLchar[sourceLength + 1]();
 
-				int32 ret = LZ4_decompress_safe((const char*)byteCode + sizeof(int)*2, (char*)sourceCode, dataLength, sourceLength);
-				assert(ret == sourceLength);
-
+				if (sourceLength > dataLength)
+				{
+					int32 ret = LZ4_decompress_safe((const char*)byteCode + sizeof(int) * 2, (char*)sourceCode, dataLength, sourceLength);
+					assert(ret == sourceLength);
+				}
+				else
+				{
+					memcpy((void*)sourceCode, byteCode + sizeof(int) * 2, sourceLength);
+				}
+				
 				m_shaderID = glCreateShader(shaderType);
 				glShaderSource(m_shaderID, 1, &sourceCode, nullptr);
 				glCompileShader(m_shaderID);
