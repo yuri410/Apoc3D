@@ -31,11 +31,45 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="EssentialCommon.h" />
     <ClInclude Include="AI\PathFinder.h" />
+    <ClInclude Include="Network\HttpServer.h" />
+    <ClInclude Include="System\ArrayView.h" />
+    <ClInclude Include="System\Async.h" />
+    <ClInclude Include="System\Logger.h" />
+    <ClInclude Include="System\Optional.h" />
+    <ClInclude Include="System\TimeSystem.h" />
+    <ClInclude Include="UI\Chart.h" />
+    <ClInclude Include="UI\ChartDataSource.h" />
+    <ClInclude Include="UI\ChartFormat.h" />
+    <ClInclude Include="UI\Layout.h" />
+    <ClInclude Include="UI\Presentation.h" />
+    <ClInclude Include="UI\TabRenderer.h" />
+    <ClInclude Include="UI\UICommon.h" />
+    <ClInclude Include="UI\WorkerPanel.h" />
+    <ClInclude Include="Utils\Base64.h" />
+    <ClInclude Include="Utils\Compression.h" />
+    <ClInclude Include="Utils\DistributionHistogram.h" />
+    <ClInclude Include="Utils\IOUtils.h" />
+    <ClInclude Include="Utils\Json.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AI\PathFinder.cpp" />
     <ClCompile Include="AI\VolumePathFinder.cpp" />
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Network\HttpServer.cpp" />
+    <ClCompile Include="System\Logger.cpp" />
+    <ClCompile Include="System\TimeSystem.cpp" />
+    <ClCompile Include="UI\Chart.cpp" />
+    <ClCompile Include="UI\ChartDataSource.cpp" />
+    <ClCompile Include="UI\ChartFormat.cpp" />
+    <ClCompile Include="UI\Layout.cpp" />
+    <ClCompile Include="UI\Presentation.cpp" />
+    <ClCompile Include="UI\TabRenderer.cpp" />
+    <ClCompile Include="UI\UICommon.cpp" />
+    <ClCompile Include="UI\WorkerPanel.cpp" />
+    <ClCompile Include="Utils\Base64.cpp" />
+    <ClCompile Include="Utils\Compression.cpp" />
+    <ClCompile Include="Utils\DistributionHistogram.cpp" />
+    <ClCompile Include="Utils\IOUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Apoc3D\Apoc3d.vcxproj">
@@ -141,7 +175,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
@@ -161,7 +195,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
@@ -182,7 +216,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;APOC3D_DYNLIB;APOC3D_ESS_DYLIB_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;APOC3D_DYNLIB;APOC3D_ESS_DYLIB_EXPORT;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>
@@ -205,7 +239,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;APOC3D_DYNLIB;APOC3D_ESS_DYLIB_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;APOC3D_DYNLIB;APOC3D_ESS_DYLIB_EXPORT;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>
@@ -228,7 +262,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;APOC3D_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;APOC3D_MT;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -256,7 +290,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;APOC3D_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;APOC3D_MT;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>

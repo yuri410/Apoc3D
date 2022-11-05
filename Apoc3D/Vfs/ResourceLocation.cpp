@@ -105,6 +105,11 @@ namespace Apoc3D
 			return new FileStream(m_path);
 		}
 
+		bool FileLocation::operator ==(const FileLocation& o) const
+		{
+			return GetHashString() == o.GetHashString();
+		}
+
 		//////////////////////////////////////////////////////////////////////////
 
 		MemoryLocation::MemoryLocation(void* pos, int64 size)

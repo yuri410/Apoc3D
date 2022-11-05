@@ -18,6 +18,8 @@
 #define APOC3DEX_ESSENTIALCOMMON_H
 
 #include "apoc3d/ApocCommon.h"
+#include <fmt/format.h>
+#include <json.hpp>
 
 #ifndef APOC3D_DYNLIB
 #	define APEXAPI
@@ -45,6 +47,47 @@ namespace Apoc3D
 		class VolumePathFinderField;
 		struct VolumePathFinderResultPoint;
 	};
+
+	using ByteBuffer = std::string;
+
+	namespace UI
+	{
+		class IChartDataSource;
+		class IChartAxisFomatter;
+
+		class NumberRangeAxisFormatter;
+
+		class Tab;
+		class Pane;
+		class TabRenderer;
+		class WorkerPanel;
+	}
+
+	namespace Utility
+	{
+		class DistributionHistogram;
+	}
+}
+
+using nlohmann::json;
+
+using namespace Apoc3D;
+using namespace Apoc3D::Collections;
+
+namespace fmt
+{
+	template <typename CharType, typename AF>
+	class BasicFormatter;
+
+#define DEFINE_FMT_FORMAT(type) \
+	template <typename AF> void format_arg(BasicFormatter<char, AF> &f, const char *&format_str, const type& t) \
+	{ \
+		f.writer().write(_ToString(t)); \
+	} \
+	template <typename AF> void format_arg(BasicFormatter<wchar_t, AF> &f, const wchar_t *&format_str, const type& t) \
+	{ \
+		f.writer().write(StringUtils::toASCIIWideString(_ToString(t))); \
+	}
 }
 
 #endif

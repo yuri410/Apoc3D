@@ -19,6 +19,7 @@
  */
 
 #include "apoc3d/ApocCommon.h"
+#include "apoc3d/Collections/CollectionsCommon.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::IO;
@@ -100,6 +101,8 @@ namespace Apoc3D
 			bool isInArchive() const { return !!m_parent; }
 			const String& getPath() const { return m_path; } 
 
+			bool operator ==(const FileLocation& o) const;
+			bool operator !=(const FileLocation& o) const { return !operator==(o); }
 		protected:
 			FileLocation(const String& filePath, int64 size);
 
@@ -153,6 +156,22 @@ namespace Apoc3D
 		private:
 			Stream* m_stream;
 		};
+	}
+}
+
+namespace Apoc3D
+{
+	namespace Collections
+	{
+
+		template <>
+		struct EqualityComparer<Apoc3D::VFS::FileLocation>
+		{
+			static bool Equals(const Apoc3D::VFS::FileLocation& x, const Apoc3D::VFS::FileLocation& y) { return x == y; }
+
+			static int32 GetHashCode(const Apoc3D::VFS::FileLocation& obj) { return (int32)obj.GetHashCode(); }
+		};
+
 	}
 }
 #endif
