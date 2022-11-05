@@ -1,5 +1,5 @@
 @echo off
-Set Path=%Path%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin
+Set Path=%Path%;C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin
 
 msbuild assimp\workspaces\vc9\assimp.vcxproj -nologo -m -t:Rebuild -p:Configuration=debug-noboost-st -p:Platform=Win32
 msbuild assimp\workspaces\vc9\assimp.vcxproj -nologo -m -t:Rebuild -p:Configuration=debug-noboost-st -p:Platform=x64

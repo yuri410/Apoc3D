@@ -22,7 +22,7 @@ namespace Microsoft
 	{
 		namespace CppUnitTestFramework
 		{
-			template<> static std::wstring ToString<uint16>(const uint16& t) { return StringUtils::IntToString(t); }
+			//template<> static std::wstring ToString<uint16>(const uint16& t) { return StringUtils::IntToString(t); }
 		}
 	}
 }

@@ -46,8 +46,10 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	// manually add these plugins, since the library is built statically.
 	Plugin* input = new Apoc3D::Input::Win32::WinInputPlugin();
 	Plugin* d3d = new Apoc3D::Graphics::D3D9RenderSystem::D3D9RSPlugin();
+	Plugin* ogl = new Apoc3D::Graphics::GL3RenderSystem::GL3RSPlugin();
 	escon.PluginList.Add(input);
-	escon.PluginList.Add(d3d);
+	//escon.PluginList.Add(d3d);
+	escon.PluginList.Add(ogl);
 #else
 	escon.PluginDynLibList.Add(L"Apoc3D.D3D9RenderSystem.dll");
 	escon.PluginDynLibList.Add(L"Apoc3D.WindowsInput.dll");
@@ -110,6 +112,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 #ifndef APOC3D_DYNLIB
 	delete input;
 	delete d3d;
+	delete ogl;
 #endif
 
 	return 0;
