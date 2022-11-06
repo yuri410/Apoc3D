@@ -5,7 +5,7 @@
 #include <Windows.h>
 #endif
 
-namespace ms
+namespace Apoc3D
 {
 	void LogErrorBreak(const std::string& txt)
 	{

@@ -180,6 +180,41 @@ namespace Apoc3D
 			return false;
 		}
 
+		bool ListDirectoryFilesRecursiveGeneric(const char* path, const std::string& basePath, List<std::string>& items, int32 depth, int32 maxDepth)
+		{
+			DIR* dir;
+			struct dirent* ent;
+
+			if ((dir = opendir(path)) != NULL)
+			{
+				while ((ent = readdir(dir)) != NULL)
+				{
+					if (ent->d_type & S_IFREG)
+					{
+						if (basePath.size())
+							items.Add(PathUtils::Combine(basePath, ent->d_name));
+						else
+							items.Add(ent->d_name);
+					}
+					else if (ent->d_type & S_IFDIR)
+					{
+						if ((depth + 1 < maxDepth || maxDepth < 0) &&
+							strcmp(".", ent->d_name) != 0 &&
+							strcmp("..", ent->d_name) != 0)
+						{
+							std::string subPath = PathUtils::Combine(basePath, ent->d_name);
+							std::string spath = PathUtils::Combine(path, ent->d_name);
+
+							ListDirectoryFilesRecursiveGeneric(spath.c_str(), subPath, items, depth + 1, maxDepth);
+						}
+					}
+				}
+				closedir(dir);
+				return true;
+			}
+			return false;
+		}
+
 		bool File::ListDirectoryFiles(const String& path, List<String>& items)
 		{
 			std::string spath = StringUtils::toPlatformNarrowString(path);
@@ -191,6 +226,15 @@ namespace Apoc3D
 			std::string spath = StringUtils::toPlatformNarrowString(path);
 
 			return ListDirectoryFilesRecursiveGeneric(spath.c_str(), L"", items, 0, maxDepth);
+		}
+
+		bool File::ListDirectoryFiles(const std::string& path, List<std::string>& items)
+		{
+			return ListDirectoryFilesRecursiveGeneric(path.c_str(), "", items, 0, 0);
+		}
+		bool File::ListDirectoryFilesRecursive(const std::string& path, Apoc3D::Collections::List<std::string>& items, int32 maxDepth)
+		{
+			return ListDirectoryFilesRecursiveGeneric(path.c_str(), "", items, 0, maxDepth);
 		}
 	}
 }
