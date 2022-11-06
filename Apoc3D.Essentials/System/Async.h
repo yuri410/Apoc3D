@@ -8,10 +8,10 @@ namespace Apoc3D
 	{
 		Optional<T> m_data;
 		Optional<ET> m_error;
-		condition_variable m_condVar;
+		std::condition_variable m_condVar;
 		//int m_counter1 = 0;
 		//int m_counter2 = 0;
-		mutex m_mutex;
+		std::mutex m_mutex;
 
 		void Set(const T& data)
 		{
@@ -180,7 +180,7 @@ namespace Apoc3D
 		ET* GetError()	{ return m_result->GetError(); }
 
 	private:
-		shared_ptr<ShareType> m_result;
+		std::shared_ptr<ShareType> m_result;
 
 	};
 }
