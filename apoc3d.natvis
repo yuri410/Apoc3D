@@ -219,5 +219,38 @@
       </IndexListItems>
     </Expand>
   </Type>
+
+  <Type Name="Apoc3D::TimeOfDay">
+  	<DisplayString>[ {(m_time/(1000*60*60))}:{(m_time/(1000*60))%60}:{(m_time/1000)%60}:{m_time%1000} ]</DisplayString>
+  	<Expand>
+  		<Item Name="Hour">(m_time/(1000*60*60))</Item>
+  		<Item Name="Minute">(m_time/(1000*60)) % 60</Item>
+  		<Item Name="Second">(m_time/1000) % 60</Item>
+  		<Item Name="Milli">m_time % 1000</Item>
+  	</Expand>
+  </Type>
   
+  <Type Name="Apoc3D::Date">
+  	<DisplayString Condition="m_days == 0">[ Zero] </DisplayString>
+  	<DisplayString>[ {(int)m_debug.m_year}-{(int)m_debug.m_month}-{(int)m_debug.m_day} ]</DisplayString>
+  
+  	<Expand>
+  		<Item Name="Year">(int)m_debug.m_year</Item>
+  		<Item Name="Month">(int)m_debug.m_month</Item>
+  		<Item Name="Day">(int)m_debug.m_day</Item>
+  		<Item Name="Weekday">(ms::Weekday)(m_days >= -4 ? (m_days + 4) % 7 : (m_days + 5) % 7 + 6)</Item>
+  	</Expand>
+  </Type>
+  
+  
+  <Type Name="Apoc3D::DateTime">
+  	<DisplayString>{m_date} {m_timeOfDay}</DisplayString>
+  
+  </Type>
+  
+  <Type Name="Apoc3D::Optional&lt;*&gt;">
+  	<DisplayString Condition="!m_isSet">[ Empty ]</DisplayString>
+  	<DisplayString>[ {*($T1*)m_data} ]</DisplayString>
+  
+  </Type>
 </AutoVisualizer>
