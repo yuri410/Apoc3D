@@ -236,7 +236,7 @@ namespace Apoc3D
 			}
 
 			InstanceInfoBlob2::InstanceInfoBlob2(std::initializer_list<InstanceInfoBlobValue> layout)
-				: m_count(layout.size())
+				: m_count((int32)layout.size())
 			{
 				int32 totalSize = 0;
 				int32 localStorageCount = 0;

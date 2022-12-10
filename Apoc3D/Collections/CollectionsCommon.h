@@ -582,34 +582,60 @@ namespace Apoc3D
 				std::conditional<isTrivial, MoveToNew_Memcpy, std::conditional<NoRAII, MoveToNew_Assign, MoveToNew_Construct>::type>::type::Invoke(dest, src, count);
 			}
 
+			struct PutNew_Assign
+			{
+				template <typename T>
+				static void Invoke(T& dest, const T& src)
+				{
+					dest = src;
+				}
+			};
+
+			struct PutNew_Construct
+			{
+				template <typename T>
+				static void Invoke(T& dest, const T& src)
+				{
+					new (&dest)T(src);
+				}
+			};
+
 			template <typename T, bool NoRAII = false>
 			void DoPutNew(const T& val, int32 idx, T* elm)
 			{
 				assert(idx >= 0);
 
-				if (std::is_trivially_copyable<T>::value || NoRAII)
-				{
-					elm[idx] = val;
-				}
-				else
-				{
-					new (&elm[idx])T(val);
-				}
+				constexpr bool useAssign = std::is_trivially_copyable<T>::value || NoRAII;
+
+				std::conditional<useAssign, PutNew_Assign, PutNew_Construct>::type::Invoke(elm[idx], val);
 			}
+
+			struct PutNew_MoveAssign
+			{
+				template <typename T>
+				static void Invoke(T& dest, T&& src)
+				{
+					dest = std::move(src);
+				}
+			};
+
+			struct PutNew_MoveConstruct
+			{
+				template <typename T>
+				static void Invoke(T& dest, T&& src)
+				{
+					new (&dest)T(std::move(src));
+				}
+			};
 
 			template <typename T, bool NoRAII = false>
 			void DoPutNew(T&& val, int32 idx, T* elm)
 			{
 				assert(idx >= 0);
 
-				if (std::is_trivially_copyable<T>::value || NoRAII)
-				{
-					elm[idx] = std::move(val);
-				}
-				else
-				{
-					new (&elm[idx])T(std::move(val));
-				}
+				constexpr bool useAssign = std::is_trivially_copyable<T>::value || NoRAII;
+
+				std::conditional<useAssign, PutNew_MoveAssign, PutNew_MoveConstruct>::type::Invoke(elm[idx], std::move(val));
 			}
 
 			template <typename T, bool NoRAII = false>

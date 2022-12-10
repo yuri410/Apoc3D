@@ -121,6 +121,14 @@ namespace Apoc3D
 
 			void LoadFromPointer(const float* elements) { FillArray(Elements, elements); }
 
+			void LoadFromPointer(const double* elements)
+			{
+				for (int i = 0; i < countof(Elements); i++)
+				{
+					Elements[i] = static_cast<float>(elements[i]);
+				}
+			}
+
 			Vector3 GetX() const
 			{
 #if APOC3D_MATH_IMPL == APOC3D_SSE
