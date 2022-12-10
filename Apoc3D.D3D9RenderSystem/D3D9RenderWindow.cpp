@@ -89,7 +89,7 @@ namespace Apoc3D
 				// Creates almost every thing
 				D3D9_Create(getRenderParams());
 
-				MainLoop();
+				Win32_MainLoop();
 				// Releases almost every thing
 				D3D9_Release();
 			}
@@ -140,18 +140,18 @@ namespace Apoc3D
 					assert(!device->isInitialized());
 
 					device->Initialize();
-					OnInitialize(); // will make the event handler interface to process the event
+					Base_OnInitialize(); // will make the event handler interface to process the event
 				}
 			}
 
 			void D3D9RenderWindow::D3D9_Finalize(bool isDeviceReset)
 			{
 				if (!isDeviceReset)
-					OnFinalize();
+					Base_OnFinalize();
 			}
 
-			void D3D9RenderWindow::D3D9_LoadContent()   { OnLoad(); }
-			void D3D9RenderWindow::D3D9_UnloadContent() { OnUnload(); }
+			void D3D9RenderWindow::D3D9_LoadContent()   { Base_OnLoad(); }
+			void D3D9RenderWindow::D3D9_UnloadContent() { Base_OnUnload(); }
 
 			void D3D9RenderWindow::D3D9_OnDeviceLost()
 			{
@@ -167,13 +167,13 @@ namespace Apoc3D
 					device->OnDeviceReset();
 			}
 
-			void D3D9RenderWindow::OnRenderFrame(const AppTime* time)
+			void D3D9RenderWindow::Win32_OnRenderFrame(const AppTime* time)
 			{
 				if (!m_gameWindow->getIsMinimized())
 				{
 					if (!D3D9_OnFrameStart())
 					{
-						OnDraw(time);
+						Base_OnDraw(time);
 						D3D9_OnFrameEnd();
 					}
 				}
@@ -183,7 +183,7 @@ namespace Apoc3D
 			{
 				if (!m_graphicsDeviceManager->FrameStart())
 				{
-					OnFrameStart();
+					Base_OnFrameStart();
 					return false;
 				}
 				return true;
@@ -191,16 +191,16 @@ namespace Apoc3D
 
 			void D3D9RenderWindow::D3D9_OnFrameEnd()
 			{
-				OnFrameEnd();
+				Base_OnFrameEnd();
 				m_graphicsDeviceManager->FrameEnd();
 			}
 
-			bool D3D9RenderWindow::IsDeviceReady()
+			bool D3D9RenderWindow::Win32_IsDeviceReady()
 			{
 				return m_graphicsDeviceManager->IsDeviceReady();
 			}
 
-			void D3D9RenderWindow::ExecuteChangeDevice()
+			void D3D9RenderWindow::Win32_ExecuteChangeDevice()
 			{
 				const RenderParameters& params = getRenderParams();
 				m_gameWindow->MakeFixedSize(params.IsFixedWindow);

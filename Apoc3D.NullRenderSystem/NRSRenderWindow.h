@@ -72,6 +72,9 @@ namespace Apoc3D
 				virtual String getTitle() override;
 				virtual void setTitle(const String& name) override;
 
+				virtual bool getDragAcceptFiles() override;
+				virtual void setDragAcceptFiles(bool value) override;
+
 				virtual Size getClientSize() override;
 
 				virtual bool getIsActive() const { return m_active; }

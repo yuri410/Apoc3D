@@ -69,7 +69,10 @@ namespace Apoc3D
 
 				String getWindowTitle() const { return m_title; }
 				void setWindowTitle(const String& txt);
-				
+
+				bool getDragAcceptFiles() const { return m_dragAndAcceptFiles; }
+				void setDragAcceptFiles(bool value);
+
 				/** Gets the current client size */
 				Size getCurrentSize() const { return m_size; }
 
@@ -88,6 +91,8 @@ namespace Apoc3D
 				static void SigIntHandler(int sig);
 
 				bool m_isClosed = false;
+				bool m_dragAndAcceptFiles = false;
+
 				String m_title;
 				Size m_size;
 			};

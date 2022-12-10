@@ -89,10 +89,10 @@ namespace Apoc3D
 				bool D3D9_OnFrameStart();
 				void D3D9_OnFrameEnd();
 
-				void OnRenderFrame(const AppTime* time) override;
+				void Win32_OnRenderFrame(const AppTime* time) override;
 
-				bool IsDeviceReady() override;
-				void ExecuteChangeDevice() override;
+				bool Win32_IsDeviceReady() override;
+				void Win32_ExecuteChangeDevice() override;
 				
 				D3D9DeviceContext* m_dc;
 				String m_hardwareName;

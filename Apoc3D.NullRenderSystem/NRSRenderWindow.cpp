@@ -107,6 +107,9 @@ namespace Apoc3D
 			String NRSRenderWindow::getTitle() { return m_gameWindow->getWindowTitle(); }
 			void NRSRenderWindow::setTitle(const String& name) { m_gameWindow->setWindowTitle(name); }
 
+			bool NRSRenderWindow::getDragAcceptFiles() { return m_gameWindow->getDragAcceptFiles(); }
+			void NRSRenderWindow::setDragAcceptFiles(bool value) { m_gameWindow->setDragAcceptFiles(value); }
+
 			Size NRSRenderWindow::getClientSize() { return m_gameWindow->getCurrentSize(); }
 			
 			void NRSRenderWindow::SetVisible(bool v)
@@ -169,17 +172,17 @@ namespace Apoc3D
 					assert(!device->isInitialized());
 
 					device->Initialize();
-					OnInitialize(); // will make the event handler interface to process the event
+					Base_OnInitialize(); // will make the event handler interface to process the event
 				}
 				
 			}
 			void NRSRenderWindow::NRS_Finalize()
 			{
-				OnFinalize();
+				Base_OnFinalize();
 			}
 
-			void NRSRenderWindow::NRS_LoadContent() { OnLoad(); }
-			void NRSRenderWindow::NRS_UnloadContent() { OnUnload(); }
+			void NRSRenderWindow::NRS_LoadContent() { Base_OnLoad(); }
+			void NRSRenderWindow::NRS_UnloadContent() { Base_OnUnload(); }
 
 			void NRSRenderWindow::NRS_MainLoop()
 			{
@@ -301,14 +304,14 @@ namespace Apoc3D
 
 			void NRSRenderWindow::NRS_DrawFrame(const AppTime* time)
 			{
-				OnFrameStart();
+				Base_OnFrameStart();
 				NRS_Render(time);
-				OnFrameEnd();
+				Base_OnFrameEnd();
 			}
 
-			void NRSRenderWindow::NRS_Render(const AppTime* time) { OnDraw(time); }
-			void NRSRenderWindow::NRS_Update(const AppTime* time) { OnUpdate(time); }
-			void NRSRenderWindow::NRS_UpdateConstrainedVarTimeStep(const AppTime* time) { OnUpdateConstrainedVarTimeStep(time); }
+			void NRSRenderWindow::NRS_Render(const AppTime* time) { Base_OnDraw(time); }
+			void NRSRenderWindow::NRS_Update(const AppTime* time) { Base_OnUpdate(time); }
+			void NRSRenderWindow::NRS_UpdateConstrainedVarTimeStep(const AppTime* time) { Base_OnUpdateConstrainedVarTimeStep(time); }
 
 		}
 	}

@@ -48,6 +48,9 @@ namespace Apoc3D
 			/** Gets the current client size */
 			Size getCurrentSize() const;
 
+			bool getDragAcceptFiles() const { return m_acceptDragFiles; }
+			void setDragAcceptFiles(bool value);
+
 			HWND getHandle() const { return m_hWnd; }
 
 			/** Gets the mouse wheel amount from window message */
@@ -65,6 +68,7 @@ namespace Apoc3D
 			EventHandler eventSystemResume;
 			EventHandler eventMonitorChanged;
 			CancellableEventHandler eventScreensaver;
+			DropFilesEventHandler eventDropFiles;
 
 		private:
 			void OnUserResized();
@@ -88,9 +92,13 @@ namespace Apoc3D
 
 			void UpdateMonitor();
 
+			void DropFiles(HDROP hdrop);
+
 			bool m_minimized = false;
 			bool m_maximized = false;
 			bool m_inSizeMove = false;
+			bool m_acceptDragFiles = false;
+
 			String m_title;
 			String m_className;
 			Size m_cachedSize;

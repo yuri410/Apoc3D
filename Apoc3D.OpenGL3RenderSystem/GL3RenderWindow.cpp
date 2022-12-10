@@ -64,7 +64,7 @@ namespace Apoc3D
 				// Creates almost every thing
 				GL_Create(getRenderParams());
 
-				MainLoop();
+				Win32_MainLoop();
 				// Releases almost every thing
 				GL_Release();
 			}
@@ -94,30 +94,30 @@ namespace Apoc3D
 				m_renderDevice = nullptr;
 			}
 
-			void GL3RenderWindow::GL_Initialize()    { m_renderDevice->Initialize(); OnInitialize(); }
-			void GL3RenderWindow::GL_Finalize()      { OnFinalize(); }
-			void GL3RenderWindow::GL_LoadContent()   { OnLoad(); }
-			void GL3RenderWindow::GL_UnloadContent() { OnUnload(); }
+			void GL3RenderWindow::GL_Initialize()    { m_renderDevice->Initialize(); Base_OnInitialize(); }
+			void GL3RenderWindow::GL_Finalize()      { Base_OnFinalize(); }
+			void GL3RenderWindow::GL_LoadContent()   { Base_OnLoad(); }
+			void GL3RenderWindow::GL_UnloadContent() { Base_OnUnload(); }
 
-			void GL3RenderWindow::OnRenderFrame(const AppTime* time)
+			void GL3RenderWindow::Win32_OnRenderFrame(const AppTime* time)
 			{
 				if (!m_gameWindow->getIsMinimized() && m_graphicsDeviceManager->EnsureDevice())
 				{
 					if (!m_active)
 						Sleep(50);
 
-					OnFrameStart();
-					OnDraw(time);
-					OnFrameEnd();
+					Base_OnFrameStart();
+					Base_OnDraw(time);
+					Base_OnFrameEnd();
 				}
 			}
 
-			bool GL3RenderWindow::IsDeviceReady()
+			bool GL3RenderWindow::Win32_IsDeviceReady()
 			{
 				return true;
 			}
 
-			void GL3RenderWindow::ExecuteChangeDevice()
+			void GL3RenderWindow::Win32_ExecuteChangeDevice()
 			{
 				const RenderParameters& params = getRenderParams();
 				m_gameWindow->MakeFixedSize(params.IsFixedWindow);

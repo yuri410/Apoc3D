@@ -96,56 +96,62 @@ namespace Apoc3D
 				return m_timeStepMode; 
 			}
 
-			void RenderWindow::OnInitialize()
+			void RenderWindow::Base_OnInitialize()
 			{
 				if (m_evtHandler)
 					m_evtHandler->Initialize();
 			}
 
-			void RenderWindow::OnFinalize()
+			void RenderWindow::Base_OnFinalize()
 			{
 				if (m_evtHandler)
 					m_evtHandler->Finalize();
 			}
 
-			void RenderWindow::OnLoad()
+			void RenderWindow::Base_OnLoad()
 			{
 				if (m_evtHandler)
 					m_evtHandler->Load();
 			}
 
-			void RenderWindow::OnUnload()
+			void RenderWindow::Base_OnUnload()
 			{
 				if (m_evtHandler)
 					m_evtHandler->Unload();
 			}
 
-			void RenderWindow::OnDraw(const AppTime* time)
+			void RenderWindow::Base_OnDraw(const AppTime* time)
 			{
 				if (m_evtHandler)
 					m_evtHandler->Draw(time); 
 				UpdateFpsCounter(time);
 			}
-			void RenderWindow::OnUpdate(const AppTime* time)		
+			void RenderWindow::Base_OnUpdate(const AppTime* time)
 			{
 				if (m_evtHandler)
 					m_evtHandler->Update(time);
 			}
-			void RenderWindow::OnUpdateConstrainedVarTimeStep(const AppTime* time)
+			void RenderWindow::Base_OnUpdateConstrainedVarTimeStep(const AppTime* time)
 			{
 				if (m_evtHandler)
 					m_evtHandler->UpdateConstrainedVarTimeStep(time);
 			}
-			void RenderWindow::OnFrameStart()
+			void RenderWindow::Base_OnFrameStart()
 			{
 				if (m_evtHandler)
 					m_evtHandler->OnFrameStart();
 			}
-			void RenderWindow::OnFrameEnd()
+			void RenderWindow::Base_OnFrameEnd()
 			{
 				if (m_evtHandler)
 					m_evtHandler->OnFrameEnd();
 				Present();
+			}
+
+			void RenderWindow::Base_DropFiles(const List<String>* files)
+			{
+				if (m_evtHandler)
+					m_evtHandler->OnDropFiles(files);
 			}
 		}
 	}

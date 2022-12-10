@@ -152,6 +152,12 @@ namespace Apoc3D
 			SetWindowText(m_hWnd, txt.c_str());
 		}
 
+		void Win32Window::setDragAcceptFiles(bool value)
+		{
+			m_acceptDragFiles = value;
+			DragAcceptFiles(m_hWnd, value ? 1 : 0);
+		}
+
 		void Win32Window::Close()
 		{
 
@@ -316,9 +322,40 @@ namespace Apoc3D
 					m_mouseWheel += (int16)(wParam >> 0x10);
 					MainWindowMouseWheel = m_mouseWheel;
 					break;
+
+				case WM_DROPFILES:
+					HDROP hdrop = (HDROP)wParam;
+					DropFiles(hdrop);
+					break;
 			}
 
 			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
+
+		void Win32Window::DropFiles(HDROP hdrop)
+		{
+			List<String> fileList;
+
+			UINT uNumFiles = DragQueryFile(hdrop, -1, NULL, 0);
+
+			for (UINT uFile = 0; uFile < uNumFiles; uFile++)
+			{
+				UINT pathSize = DragQueryFile(hdrop, uFile, NULL, 0);
+
+				if (pathSize > 0)
+				{
+					TCHAR* path = new TCHAR[pathSize + 1]();
+					if (DragQueryFile(hdrop, uFile, path, MAX_PATH) > 0)
+					{
+						fileList.Add(path);
+					}
+					delete[] path;
+				}
+			}
+
+			DragFinish(hdrop);
+
+			eventDropFiles.Invoke(&fileList);
 		}
 	}
 }

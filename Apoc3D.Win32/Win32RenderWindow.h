@@ -25,6 +25,9 @@ namespace Apoc3D
 			virtual String getTitle() override;
 			virtual void setTitle(const String& name) override;
 
+			virtual bool getDragAcceptFiles() override;
+			virtual void setDragAcceptFiles(bool value) override;
+
 			virtual void SetVisible(bool v) override;
 			virtual Size getClientSize() override;
 
@@ -35,19 +38,12 @@ namespace Apoc3D
 		protected:
 			Win32RenderWindow(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm);
 
-			virtual void ExecuteChangeDevice() = 0;
-			virtual bool IsDeviceReady() = 0;
-			virtual void OnRenderFrame(const AppTime* time) = 0;
+			virtual void Win32_ExecuteChangeDevice() = 0;
+			virtual bool Win32_IsDeviceReady() = 0;
+			virtual void Win32_OnRenderFrame(const AppTime* time) = 0;
 
-			void MainLoop();
-			void Tick();
-
-			void Window_ApplicationActivated();
-			void Window_ApplicationDeactivated();
-			void Window_Suspend();
-			void Window_Resume();
-			void Window_Paint();
-
+			void Win32_MainLoop();
+			void Win32_Tick();
 
 			Win32Window* m_gameWindow;
 			Win32Clock* m_gameClock;
@@ -57,6 +53,16 @@ namespace Apoc3D
 
 			bool m_active = false;
 			bool m_hasPendingDeviceChange = false;
+
+		private:
+
+			void Window_ApplicationActivated();
+			void Window_ApplicationDeactivated();
+			void Window_Suspend();
+			void Window_Resume();
+			void Window_Paint();
+
+			void Window_DropFiles(const List<String>* files);
 		};
 	}
 }

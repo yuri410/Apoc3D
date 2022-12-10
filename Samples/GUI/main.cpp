@@ -48,8 +48,8 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	Plugin* d3d = new Apoc3D::Graphics::D3D9RenderSystem::D3D9RSPlugin();
 	Plugin* ogl = new Apoc3D::Graphics::GL3RenderSystem::GL3RSPlugin();
 	escon.PluginList.Add(input);
-	//escon.PluginList.Add(d3d);
-	escon.PluginList.Add(ogl);
+	escon.PluginList.Add(d3d);
+	//escon.PluginList.Add(ogl);
 #else
 	escon.PluginDynLibList.Add(L"Apoc3D.D3D9RenderSystem.dll");
 	escon.PluginDynLibList.Add(L"Apoc3D.WindowsInput.dll");

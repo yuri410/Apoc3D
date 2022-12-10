@@ -77,10 +77,10 @@ namespace Apoc3D
 
 				void GL_Release();
 
-				void OnRenderFrame(const AppTime* time) override;
+				void Win32_OnRenderFrame(const AppTime* time) override;
 
-				bool IsDeviceReady() override;
-				void ExecuteChangeDevice() override;
+				bool Win32_IsDeviceReady() override;
+				void Win32_ExecuteChangeDevice() override;
 
 				GL3DeviceContext* m_dc;
 

@@ -18,6 +18,7 @@ namespace Apoc3D
 			m_gameWindow->eventPaint.Bind(this, &Win32RenderWindow::Window_Paint);
 			m_gameWindow->eventResume.Bind(this, &Win32RenderWindow::Window_Resume);
 			m_gameWindow->eventSuspend.Bind(this, &Win32RenderWindow::Window_Suspend);
+			m_gameWindow->eventDropFiles.Bind(this, &Win32RenderWindow::Window_DropFiles);
 		}
 
 		Win32RenderWindow::~Win32RenderWindow()
@@ -38,7 +39,7 @@ namespace Apoc3D
 			RenderWindow::ChangeRenderParameters(params);
 
 			if (m_renderDevice == nullptr)
-				ExecuteChangeDevice();
+				Win32_ExecuteChangeDevice();
 			else
 				m_hasPendingDeviceChange = true;
 		}
@@ -70,6 +71,9 @@ namespace Apoc3D
 		String Win32RenderWindow::getTitle() { return m_gameWindow->getWindowTitle(); }
 		void Win32RenderWindow::setTitle(const String& name) { m_gameWindow->setWindowTitle(name); }
 
+		bool Win32RenderWindow::getDragAcceptFiles() { return m_gameWindow->getDragAcceptFiles(); }
+		void Win32RenderWindow::setDragAcceptFiles(bool value) { m_gameWindow->setDragAcceptFiles(value); }
+
 		Size Win32RenderWindow::getClientSize() { return m_gameWindow->getCurrentSize(); }
 
 		void Win32RenderWindow::SetVisible(bool v)
@@ -81,7 +85,7 @@ namespace Apoc3D
 		
 		//////////////////////////////////////////////////////////////////////////
 		
-		void Win32RenderWindow::MainLoop()
+		void Win32RenderWindow::Win32_MainLoop()
 		{
 			MSG msg;
 			ZeroMemory(&msg, sizeof(msg));
@@ -94,12 +98,12 @@ namespace Apoc3D
 				}
 				else
 				{
-					Tick();
+					Win32_Tick();
 				}
 			}
 		}
 
-		void Win32RenderWindow::Tick()
+		void Win32RenderWindow::Win32_Tick()
 		{
 			if (m_isExiting)
 				return;
@@ -136,7 +140,7 @@ namespace Apoc3D
 			{
 				m_hasPendingDeviceChange = false;
 
-				ExecuteChangeDevice();
+				Win32_ExecuteChangeDevice();
 			}
 
 			if (m_timeStepMode == TimeStepMode::FixedStep)
@@ -156,10 +160,10 @@ namespace Apoc3D
 
 				for (int32 i = 0; i < numUpdatesNeeded; i++)
 				{
-					if (IsDeviceReady())
+					if (Win32_IsDeviceReady())
 					{
 						AppTime gt(m_referenceElapsedTime, iterationFullDt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
-						OnUpdate(&gt);
+						Base_OnUpdate(&gt);
 					}
 				}
 
@@ -177,16 +181,16 @@ namespace Apoc3D
 
 					for (int32 i = 0; i < numUpdatesNeeded; i++)
 					{
-						if (IsDeviceReady())
+						if (Win32_IsDeviceReady())
 						{
 							AppTime gt(dtPerIteration, dt / numUpdatesNeeded, m_accumulatedDt_fixedStep, numUpdatesNeeded, fps, renderingSlow);
-							OnUpdateConstrainedVarTimeStep(&gt);
+							Base_OnUpdateConstrainedVarTimeStep(&gt);
 						}
 					}
 				}
 
 				AppTime gt(iterationFullDt, dt, m_accumulatedDt_fixedStep, 1, fps, renderingSlow);
-				OnRenderFrame(&gt);
+				Win32_OnRenderFrame(&gt);
 			}
 			else if (m_timeStepMode == TimeStepMode::Constrained)
 			{
@@ -204,26 +208,26 @@ namespace Apoc3D
 
 					for (int32 i = 0; i < numUpdatesNeeded; i++)
 					{
-						if (IsDeviceReady())
+						if (Win32_IsDeviceReady())
 						{
 							AppTime gt(dtPerIteration, dt / numUpdatesNeeded, 0, numUpdatesNeeded, fps, renderingSlow);
-							OnUpdate(&gt);
+							Base_OnUpdate(&gt);
 						}
 					}
 				}
 
 				AppTime gt(dt, dt, 0, 1, fps, renderingSlow);
-				OnRenderFrame(&gt);
+				Win32_OnRenderFrame(&gt);
 			}
 			else
 			{
 				AppTime gt(dt, fps);
 
-				if (IsDeviceReady())
+				if (Win32_IsDeviceReady())
 				{
-					OnUpdate(&gt);
+					Base_OnUpdate(&gt);
 				}
-				OnRenderFrame(&gt);
+				Win32_OnRenderFrame(&gt);
 			}
 		}
 
@@ -246,6 +250,10 @@ namespace Apoc3D
 		void Win32RenderWindow::Window_Paint()
 		{
 			
+		}
+		void Win32RenderWindow::Window_DropFiles(const List<String>* files)
+		{
+			Base_DropFiles(files);
 		}
 	}
 }

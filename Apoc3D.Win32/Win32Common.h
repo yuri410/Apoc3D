@@ -16,6 +16,7 @@ namespace Apoc3D
 	typedef EventDelegate<bool*> CancellableEventHandler;
 	typedef EventDelegate<> EventHandler;
 
+	typedef EventDelegate<const List<String>*> DropFilesEventHandler;
 
 	namespace Win32
 	{

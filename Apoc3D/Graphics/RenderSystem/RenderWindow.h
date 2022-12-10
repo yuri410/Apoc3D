@@ -124,6 +124,9 @@ namespace Apoc3D
 				virtual String getTitle() = 0;
 				virtual void setTitle(const String& name) = 0;
 
+				virtual bool getDragAcceptFiles() = 0;
+				virtual void setDragAcceptFiles(bool value) = 0;
+
 				virtual void SetVisible(bool v) = 0;
 
 				/** Represents if the window is activated. */
@@ -148,16 +151,18 @@ namespace Apoc3D
 				RenderWindow(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm)
 					: RenderView(dc, rd, pm) { }
 				
-				void OnInitialize();
-				void OnFinalize();
-				void OnLoad();
-				void OnUnload();
-				void OnUpdate(const AppTime* time);
-				void OnUpdateConstrainedVarTimeStep(const AppTime* time);
+				void Base_OnInitialize();
+				void Base_OnFinalize();
+				void Base_OnLoad();
+				void Base_OnUnload();
+				void Base_OnUpdate(const AppTime* time);
+				void Base_OnUpdateConstrainedVarTimeStep(const AppTime* time);
 
-				void OnDraw(const AppTime* time);
-				void OnFrameStart();
-				void OnFrameEnd();
+				void Base_OnDraw(const AppTime* time);
+				void Base_OnFrameStart();
+				void Base_OnFrameEnd();
+
+				void Base_DropFiles(const List<String>* files);
 
 				RenderWindowHandler* m_evtHandler = nullptr;
 

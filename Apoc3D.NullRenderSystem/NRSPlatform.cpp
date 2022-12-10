@@ -163,6 +163,11 @@ namespace Apoc3D
 #endif
 			}
 
+			void GameWindow::setDragAcceptFiles(bool value)
+			{
+				m_dragAndAcceptFiles = value;
+			}
+
 			void GameWindow::Close()
 			{
 				m_isClosed = true;

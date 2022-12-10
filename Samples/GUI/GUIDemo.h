@@ -25,6 +25,7 @@ namespace Sample_GUI
 		virtual void OnFrameStart();
 		virtual void OnFrameEnd();
 
+		virtual void OnDropFiles(const List<String>* files);
 	private:
 
 		void ShowAbout(MenuItem* ctrl);
