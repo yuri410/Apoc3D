@@ -51,6 +51,8 @@ namespace Apoc3D
 			
 			UIGraphicSimple Graphic;
 
+			ColorValue BorderColor = CV_Black;
+
 			PictureDrawEventHandler eventPictureDraw;
 
 			UIEventHandler eventMouseHover;

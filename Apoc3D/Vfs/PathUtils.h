@@ -74,6 +74,17 @@ namespace Apoc3D
 				return Combine(left, CombineMult(parts...)); 
 			}
 
+			template <typename T>
+			std::string CombineMult(const std::string& left, const T& right)
+			{
+				return Combine(left, right);
+			}
+
+			template <typename ... T>
+			std::string CombineMult(const std::string& left, const T&...parts)
+			{
+				return Combine(left, CombineMult(parts...));
+			}
 
 			/** Append sub dir to a path string */
 			APAPI void Append(String& str, const String& app);

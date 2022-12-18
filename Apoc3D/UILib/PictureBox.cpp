@@ -83,7 +83,7 @@ namespace Apoc3D
 				Apoc3D::Math::Rectangle borderRect = destRect;
 				borderRect.Inflate(m_border, m_border);
 
-				sprite->Draw(SystemUI::GetWhitePixel(), borderRect, nullptr, CV_Black);
+				sprite->Draw(SystemUI::GetWhitePixel(), borderRect, nullptr, BorderColor);
 			}
 			if (Graphic.isSet())
 			{
