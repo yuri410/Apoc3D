@@ -492,8 +492,11 @@ namespace Apoc3D
 				return 0;
 
 			const int sizeEstimate = (int)request_info->content_length;
-			me->m_trafficStats.m_downloadedBytes += sizeEstimate;
-			me->m_trafficStats.m_downloadedBytesTimed += sizeEstimate;
+			if (sizeEstimate > 0)
+			{
+				me->m_trafficStats.m_downloadedBytes += sizeEstimate;
+				me->m_trafficStats.m_downloadedBytesTimed += sizeEstimate;
+			}
 
 			if (dataPtr)
 			{
