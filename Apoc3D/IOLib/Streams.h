@@ -296,6 +296,111 @@ namespace Apoc3D
 			List<char> m_data;
 		};
 
+		class APAPI MemoryOutStream64 : public Stream
+		{
+			RTTI_DERIVED(MemoryOutStream64, Stream);
+		public:
+			MemoryOutStream64(int64 preserved)
+				: m_data(preserved)
+			{
+			}
+
+			MemoryOutStream64(MemoryOutStream64&& o)
+				: m_data(std::move(o.m_data)), m_position(o.m_position), m_length(o.m_length)
+			{ }
+
+			MemoryOutStream64& operator=(MemoryOutStream64&& rhs)
+			{
+				if (this != &rhs)
+				{
+					m_data = std::move(rhs.m_data);
+					m_length = rhs.m_length;
+					m_position = rhs.m_position;
+				}
+				return *this;
+			}
+
+			virtual ~MemoryOutStream64()
+			{ }
+
+			virtual bool IsReadEndianIndependent() const override { return false; }
+			virtual bool IsWriteEndianIndependent() const override { return false; }
+
+			virtual bool CanRead() const override { return true; }
+			virtual bool CanWrite() const override { return true; }
+
+			virtual int64 getLength() const override { return m_length; }
+
+			virtual void setPosition(int64 offset) override { m_position = offset; }
+			virtual int64 getPosition() override { return m_position; }
+
+			virtual int64 Read(char* dest, int64 count) override
+			{
+				if (m_position + count > m_length)
+				{
+					count = m_length - m_position;
+				}
+
+				for (int64 i = 0; i < count; i++)
+					dest[i] = m_data[i + m_position];
+
+				m_position += count;
+				return count;
+			}
+			virtual void Write(const char* src, int64 count) override
+			{
+				for (int64 i = 0; i < count; i++)
+				{
+					if (m_position >= m_length)
+					{
+						m_data.Add(src[i]);
+						m_length++;
+					}
+					else
+					{
+						m_data[m_position] = src[i];
+					}
+					m_position++;
+				}
+			}
+
+			virtual void Seek(int64 offset, SeekMode mode) override
+			{
+				switch (mode)
+				{
+				case SeekMode::Begin:   m_position = offset; break;
+				case SeekMode::Current: m_position += offset; break;
+				case SeekMode::End:     m_position = m_length + offset; break;
+				}
+				if (m_position < 0)
+					m_position = 0;
+				if (m_position > m_length)
+					m_position = m_length;
+			}
+
+			virtual void Flush() override { }
+
+			void Clear() 
+			{
+				m_data.Clear();
+				m_length = 0;
+				m_position = 0;
+			}
+
+			const char* getDataPointer() const { return m_data.getElements(); }
+			char* getDataPointer() { return m_data.getElements(); }
+
+			/*char* AllocateArrayCopy() const
+			{
+				return m_data.AllocateArrayCopy();
+			}*/
+
+		private:
+			int64 m_length = 0;
+			int64 m_position = 0;
+			List64<char> m_data;
+		};
+
 		class APAPI PipeOutStream : public MemoryOutStream
 		{
 			RTTI_DERIVED(PipeOutStream, MemoryOutStream);

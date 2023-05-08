@@ -1876,7 +1876,7 @@ namespace Apoc3D
 		TaggedDataWriter::Entry::Entry(const KeyType& name)
 			: Name(name)
 		{
-			Buffer = new MemoryOutStream(1024);
+			Buffer = new MemoryOutStream64(1024);
 		}
 
 		void TaggedDataWriter::Entry::ResetWritePosition() const { Buffer->setPosition(0); }
@@ -1911,7 +1911,7 @@ namespace Apoc3D
 			int64 offset = 0;
 			for (const Entry& e : m_positions.getValueAccessor())
 			{
-				MemoryOutStream* memBlock = e.Buffer;
+				MemoryOutStream64* memBlock = e.Buffer;
 				int64 blockSize = memBlock->getLength();
 
 				if (shouldUse64Bit)
@@ -1930,7 +1930,7 @@ namespace Apoc3D
 
 			for (const Entry& e : m_positions.getValueAccessor())
 			{
-				MemoryOutStream* memBlock = e.Buffer;
+				MemoryOutStream64* memBlock = e.Buffer;
 				bw.WriteBytes(memBlock->getDataPointer(), memBlock->getLength());
 			}
 
@@ -1940,7 +1940,7 @@ namespace Apoc3D
 			ConfigurationSection* sect = new ConfigurationSection(StringUtils::UTF8toUTF16(name.getString()));
 			for (const Entry& e : m_positions.getValueAccessor())
 			{
-				MemoryOutStream* memBlock = e.Buffer;
+				MemoryOutStream64* memBlock = e.Buffer;
 
 				String text;
 

@@ -322,6 +322,8 @@ namespace Apoc3D
 		class FileOutStream;
 		class MemoryStream;
 		class MemoryOutStream;
+		class MemoryOutStream64;
+
 		class VirtualStream;
 		class BufferedStreamReader;
 

@@ -497,6 +497,12 @@ namespace Apoc3D
 				me->m_trafficStats.m_downloadedBytes += sizeEstimate;
 				me->m_trafficStats.m_downloadedBytesTimed += sizeEstimate;
 			}
+			if (request_info->query_string)
+			{
+				int queryLen = strlen(request_info->query_string);
+				me->m_trafficStats.m_downloadedBytes += queryLen;
+				me->m_trafficStats.m_downloadedBytesTimed += queryLen;
+			}
 
 			if (dataPtr)
 			{

@@ -684,7 +684,7 @@ namespace Apoc3D
 			struct Entry
 			{
 				KeyType Name;
-				MemoryOutStream* Buffer = nullptr;
+				MemoryOutStream64* Buffer = nullptr;
 
 				Entry(const KeyType& name);
 				Entry() { }

@@ -923,7 +923,471 @@ namespace Apoc3D
 
 		};
 
-		
+
+		template <typename T>
+		class List64
+		{
+		public:
+
+			template <typename = typename std::enable_if<std::is_pointer<T>::value>>
+			void DeleteAndClear()
+			{
+				T* elm = (T*)m_elements;
+
+				for (int64 i = 0; i < m_count; i++)
+					delete elm[i];
+				Clear();
+			}
+
+			void Clear()
+			{
+				Utils::DoDestory(0, m_count, (T*)m_elements);
+				m_count = 0;
+			}
+
+			int64 IndexOf(const T& item) const
+			{
+				T* elm = (T*)m_elements;
+
+				for (int64 i = 0; i < m_count; i++)
+				{
+					if (elm[i] == item)
+						return i;
+				}
+				return -1;
+			}
+
+			template <typename Func>
+			int64 IndexOf(Func f) const
+			{
+				const T* elm = (const T*)m_elements;
+
+				for (int64 i = 0; i < m_count; i++)
+				{
+					if (f(std::cref(elm[i])))
+						return i;
+				}
+				return -1;
+			}
+
+			bool Contains(const T& item) const { return IndexOf(item) != -1; }
+
+			bool Remove(const T& item)
+			{
+				int64 index = IndexOf(item);
+				if (index != -1)
+				{
+					RemoveAt(index);
+					return true;
+				}
+				return false;
+			}
+			void RemoveChecked(const T& item)
+			{
+				if (!Remove(item))
+				{
+					AP_EXCEPTION(ErrorID::InvalidOperation, L"Removing failed.");
+				}
+			}
+			void RemoveAt(int64 index)
+			{
+				assert(index >= 0 && index < m_count);
+				T* elm = (T*)m_elements;
+
+				for (int64 i = index + 1; i < m_count; i++)
+				{
+					elm[i - 1] = std::move(elm[i]);
+				}
+				Utils::DoDestory(m_count - 1, 1, elm);
+				m_count--;
+			}
+
+			void RemoveAtSwapping(int64 index)
+			{
+				assert(index >= 0 && index < m_count);
+
+				T* elm = (T*)m_elements;
+
+				m_count--;
+				std::swap(elm[index], elm[m_count]);
+				Utils::DoDestory(m_count, 1, elm);
+			}
+			void RemoveRange(int64 start, int64 count)
+			{
+				if (count > 0)
+				{
+					assert(start >= 0 && start + count <= m_count);
+
+					T* elm = (T*)m_elements;
+
+					m_count -= count;
+
+					for (int64 i = start; i < m_count; i++)
+					{
+						elm[i] = std::move(elm[i + count]);
+					}
+
+					Utils::DoDestory(m_count, count, elm);
+				}
+			}
+
+			void RemoveEnd(int64 start)
+			{
+				int64 count = m_count - start;
+				if (count > 0)
+				{
+					assert(start >= 0);
+
+					m_count -= count;
+
+					Utils::DoDestory(m_count, count, (T*)m_elements);
+				}
+			}
+
+			void Reverse()
+			{
+				if (m_elements == nullptr)
+					return;
+
+				T* elm = (T*)m_elements;
+
+				for (int64 i = 0; i < m_count / 2; i++)
+				{
+					int64 another = m_count - i - 1;
+					std::swap(elm[i], elm[another]);
+				}
+			}
+
+			void Swap(int64 i, int64 j)
+			{
+				T* elm = (T*)m_elements;
+				std::swap(elm[i], elm[j]);
+			}
+
+			template <typename Func>
+			const T* Find(Func f) const
+			{
+				const T* elm = (const T*)m_elements;
+
+				for (int64 i = 0; i < m_count; i++)
+				{
+					if (f(std::cref(elm[i])))
+						return &elm[i];
+				}
+				return nullptr;
+			}
+
+			template <typename Func>
+			T* Find(Func f)
+			{
+				T* elm = (T*)m_elements;
+
+				for (int64 i = 0; i < m_count; i++)
+				{
+					if (f(std::cref(elm[i])))
+						return &elm[i];
+				}
+				return nullptr;
+			}
+
+			int64 ClampIndexInRange(int64 idx) const
+			{
+				if (idx >= m_count) return m_count - 1;
+				if (idx < 0) return 0;
+				return idx;
+			}
+
+
+			T& LastItem() { assert(m_count > 0); return ((T*)m_elements)[m_count - 1]; }
+			const T& LastItem() const { assert(m_count > 0); return ((T*)m_elements)[m_count - 1]; }
+
+			bool isIndexInRange(int64 idx) const { return idx >= 0 && idx < m_count; }
+			int64 getCount() const { return m_count; }
+
+			List64() : m_length(4) { }
+
+			explicit List64(int64 capacity)
+				: m_length(capacity) { }
+
+			List64(std::initializer_list<T> l)
+				: m_length(l.size())
+			{
+				EnsureElements();
+
+				for (const T& e : l)
+					Utils::DoPutNew(e, m_count++, m_elements);
+			}
+
+			List64(const List64& another)
+				: m_count(another.m_count), m_length(another.m_length)
+			{
+				if (another.m_elements)
+					m_elements = Allocate(m_length);
+
+				Utils::CopyToNew(m_elements, another.m_elements, m_count);
+			}
+			List64(List64&& other) noexcept
+				: m_elements(other.m_elements)
+				, m_count(other.m_count)
+				, m_length(other.m_length)
+			{
+				other.m_elements = nullptr;
+				other.m_count = 0;
+				other.m_length = 0;
+			}
+			~List64()
+			{
+				Clear();
+				Free(m_elements);
+			}
+
+			List64& operator=(const List64& rhs)
+			{
+				if (this != &rhs)
+				{
+					Clear();
+
+					if (m_length != rhs.m_length)
+					{
+						Free(m_elements);
+
+						m_length = rhs.m_length;
+
+						if (rhs.m_elements)
+							m_elements = Allocate(m_length);
+					}
+					else
+					{
+						if (m_elements == nullptr && rhs.m_elements)
+							m_elements = Allocate(m_length);
+					}
+
+					m_count = rhs.m_count;
+					Utils::CopyToNew(m_elements, rhs.m_elements, m_count);
+				}
+				return *this;
+			}
+			List64& operator=(List64&& rhs) noexcept
+			{
+				if (this != &rhs)
+				{
+					Clear();
+					Free(m_elements);
+
+					m_elements = rhs.m_elements;
+					m_count = rhs.m_count;
+					m_length = rhs.m_length;
+
+					rhs.m_elements = nullptr;
+					rhs.m_count = 0;
+					rhs.m_length = 0;
+				}
+				return *this;
+			}
+
+
+			void Add(const T& val)
+			{
+				EnsureElementIncrSize();
+				Utils::DoPutNew(val, m_count++, m_elements);
+			}
+			void Add(T&& val)
+			{
+				EnsureElementIncrSize();
+				Utils::DoPutNew(std::move(val), m_count++, m_elements);
+			}
+
+			void AddArray(const T* val, int64 count)
+			{
+				EnsureElementIncrSize(count);
+
+				for (int64 i = 0; i < count; i++)
+					Utils::DoPutNew(val[i], m_count++, m_elements);
+			}
+
+			void AddList(std::initializer_list<T> l)
+			{
+				EnsureElementIncrSize(l.size());
+
+				for (const T& e : l)
+					Utils::DoPutNew(e, m_count++, m_elements);
+			}
+
+
+			void Resize(int64 newSize)
+			{
+				assert(newSize >= m_count);
+				T* newArr = Allocate(newSize);
+
+				Utils::MoveToNew(newArr, m_elements, m_count);
+
+				Utils::DoDestory(0, m_count, m_elements);
+				Free(m_elements);
+
+				m_elements = newArr;
+				m_length = newSize;
+			}
+			void ResizeDiscard(int64 newSize)
+			{
+				Clear();
+				Free(m_elements);
+
+				m_elements = Allocate(newSize);
+				m_length = newSize;
+			}
+			void Reserve(int64 newCount)
+			{
+				if (m_length < newCount)
+					Resize(newCount);
+				else
+					EnsureElements();
+
+				for (int64 i = m_count; i < newCount; i++)
+					new (&m_elements[i])T();
+				m_count = newCount;
+			}
+			void ReserveDiscard(int64 newCount)
+			{
+				if (m_length < newCount)
+					ResizeDiscard(newCount);
+				else
+					EnsureElements();
+
+				Utils::DoDestory(0, m_count, m_elements);
+				for (int64 i = 0; i < newCount; i++)
+					new (&m_elements[i])T();
+				m_count = newCount;
+			}
+			void Trim()
+			{
+				if (m_count == 0)
+					return;
+
+				if (m_count < m_length)
+				{
+					Resize(m_count);
+				}
+			}
+
+			void Insert(int64 index, const T& item)
+			{
+				assert(index >= 0 && index <= m_count);
+				EnsureElementIncrSize();
+
+				if (index < m_count)
+				{
+					Utils::DoPutNew(std::move(m_elements[m_count - 1]), m_count, m_elements);
+
+					for (int64 i = m_count - 1; i > index; i--)
+					{
+						m_elements[i] = std::move(m_elements[i - 1]);
+					}
+
+					m_elements[index] = item;
+				}
+				else
+				{
+					Utils::DoPutNew(item, m_count, m_elements);
+				}
+
+				m_count++;
+			}
+
+
+			void InsertArray(int64 index, const T* item, int64 count)
+			{
+				assert(index >= 0 && index <= m_count);
+
+				EnsureElementIncrSize(count);
+
+				if (index < m_count)
+				{
+					for (int64 i = m_count + count - 1; i >= index + count; i--)
+					{
+						if (i >= m_count)
+							Utils::DoPutNew(std::move(m_elements[i - count]), i, m_elements);
+						else
+							m_elements[i] = std::move(m_elements[i - count]);
+					}
+
+					for (int64 i = 0; i < count; i++)
+					{
+						if (index + i >= m_count)
+							Utils::DoPutNew(item[i], index + i, m_elements);
+						else
+							m_elements[index + i] = item[i];
+					}
+					m_count += count;
+				}
+				else
+				{
+					AddArray(item, count);
+				}
+			}
+
+			//////////////////////////////////////////////////////////////////////////
+
+			int64 getCapacity() const { return m_length; }
+			T* getElements() const { return m_elements; }
+
+			T& operator [](int64 i) const
+			{
+				assert(i >= 0 && i < m_count);
+				return m_elements[i];
+			}
+
+			T* begin() const { return m_elements; }
+			T* end() const { return m_elements + m_count; }
+
+		private:
+			static T* Allocate(int64 size) { return (T*)malloc(sizeof(T) * size); }
+			static void Free(T*& ptr) { free(ptr); ptr = nullptr; }
+
+			void EnsureElementIncrSize()
+			{
+				if (m_length <= m_count)
+				{
+					Resize(m_length == 0 ? 4 : (m_length * 2));
+				}
+				else
+				{
+					EnsureElements();
+				}
+			}
+
+			void EnsureElementIncrSize(int64 count)
+			{
+				int64 finalCount = m_count + count;
+				if (m_length < finalCount)
+				{
+					int64 nextSize = m_length == 0 ? 4 : (m_length * 2);
+					if (nextSize < finalCount)
+						nextSize = finalCount;
+					Resize(nextSize);
+				}
+				else
+				{
+					if (m_length == 0)
+						m_length = finalCount;
+					EnsureElements();
+				}
+			}
+
+			void EnsureElements()
+			{
+				if (m_elements == nullptr)
+				{
+					m_elements = Allocate(m_length);
+				}
+			}
+
+			T* m_elements = nullptr;
+			int64 m_count = 0;
+			int64 m_length = 0;
+		};
+
+
+
 		namespace Utils
 		{
 			template <typename T, typename RetType>
